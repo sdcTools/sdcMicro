@@ -1,0 +1,10 @@
+Package: sdcMicroGUI
+Type: Package
+Title: Graphical user interface for package sdcMicro
+Version: 1.0.3
+Date: 2013-08-30
+Author: Alexander Kowarik, Matthias Templ, Bernhard Meindl, Francois Fonteneau
+Maintainer: Matthias Templ <matthias.templ@gmail.com>
+Description: A point and click graphical user interface based on top of the sdcMicro package to create anonymized data set. The graphical user interface provides full reproducibility of any result via the script menu in the GUI.
+Depends: sdcMicro (>= 4.0.4), gWidgetsRGtk2, tcltk, cairoDevice, vcd, foreign, Hmisc
+License: GPL-2

@@ -1,0 +1,39 @@
+\name{summary.freqCalc}
+\alias{summary.freqCalc}
+\title{ Summary method for objects from class freqCalc }
+\description{
+Summary method for objects of class \sQuote{freqCalc} to provide information 
+about local suppressions.
+}
+\usage{
+\method{summary}{freqCalc}(object, ...)
+}
+\arguments{
+  \item{object}{object from class freqCalc }
+  \item{\dots}{ Additional arguments passed through.  }
+}
+\details{
+  Shows the amount of local suppressions on each variable in which local suppression was applied.
+}
+\value{
+Information about local suppression in each variable (only if a local suppression is already done).
+}
+\author{Matthias Templ }
+\seealso{ \code{\link{freqCalc}} }
+\examples{
+## example from Capobianchi, Polettini and Lucarelli:
+data(francdat)
+f <- freqCalc(francdat, keyVars=c(2,4,5,6),w=8)
+f
+f$fk
+f$Fk
+## individual risk calculation:
+indivf <- indivRisk(f)  
+indivf$rk         
+## Local Suppression            
+localS <- localSupp(f, keyVar=2, indivRisk=indivf$rk, threshold=0.25)
+f2 <- freqCalc(localS$freqCalc, keyVars=c(4,5,6), w=8)
+summary(f2)
+}
+\keyword{ print }
+

@@ -1,0 +1,161 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper,left=20mm,right=20mm, top=15mm, bottom=15mm}
+\usepackage{hyperref}
+\hypersetup{
+   colorlinks,
+   citecolor=blue,
+   filecolor=blue,
+   linkcolor=blue,
+   urlcolor=blue
+}
+
+\usepackage{textcomp}
+\usepackage{color}
+\parindent0pt
+
+\title{<%=get.reportObj(repObj, "title")%>}
+\author{compiled by sdcMicroGUI}
+\date{\today}
+
+\begin{document}
+\section*{Data:}
+<% if ( !is.null(get.reportObj(repObj, "impFile"))) { %>
+The imported data file is: <%= get.reportObj(repObj, "impFile") %>
+<% } %>
+The data set consists of \textbf{<%= get.reportObj(repObj, "nrObs") %>} observations.
+
+\section*{Selected (Key) Variables:}
+<% print(xtable(get.reportObj(repObj, "tabKeyVars")),sanitize.text.function=identity) %>
+
+<% if ( !is.null(get.reportObj(repObj, "sensiblecn")) ) { %>
+\subsection*{L-Diversity:}
+for L-diversity the following sensible variables have been selected:
+<%= colnames(get.reportObj(repObj, "origData"))[get.reportObj(repObj, "sensiblecn")] %>
+<% } %>
+
+Modifications on categorical key variables: \textbf{<%= get.reportObj(repObj, "modCat") %>}
+
+Modifications on continuous key variables: \textbf{<%= get.reportObj(repObj, "modNum") %>} 
+
+Modifications using PRAM: \textbf{<%= get.reportObj(repObj, "modPram") %>}
+
+Local suppressions: \textbf{<%= get.reportObj(repObj, "modLocSupp") %>}     	
+
+\section*{Disclosure risk:}
+<% if ( get.reportObj(repObj, "pram.show") ) { %>
+\subsection*{Changes with PRAM:}
+\paragraph{Number of changed categories:}
+<% 
+cV <- get.reportObj(repObj, "pram.changedVars")
+%>
+<% for ( i in seq_along(cV) ) { %>
+<%= cV[[i]] %>
+<% } %>
+
+\paragraph{Total number of changes in the categorical key variables:}
+<%= get.reportObj(repObj, "pram.totChanges") %> ( <%= get.reportObj(repObj, "pram.percChanges") %> \%)
+<% } %>
+
+<% if ( get.reportObj(repObj, "kAnon.show") ) { %>
+\subsection*{Frequency Analysis for Categorical Key Variables:}
+\paragraph{Number of observations violating ...}
+
+\textbf{2-Anonymity:} 
+<%= get.reportObj(repObj, "kAnon.two.anon") %> (unmodified data: <%= get.reportObj(repObj, "kAnon.two.anon.unmod") %>)
+
+\textbf{3-Anonymity:} 
+<%= get.reportObj(repObj, "kAnon.three.anon") %> (unmodified data: <%= get.reportObj(repObj, "kAnon.three.anon.unmod") %>)
+
+\paragraph{Percentage of observations violating...}
+\textbf{2-Anonymity:} <%= get.reportObj(repObj, "kAnon.two.anon.perc") %> \% (unmodified data: <%= get.reportObj(repObj, "kAnon.two.anon.unmod.perc") %> \%)
+
+\textbf{3-Anonymity:} <%= get.reportObj(repObj, "kAnon.three.anon.perc") %> \% (unmodified data: <%= get.reportObj(repObj, "kAnon.three.anon.unmod.perc") %> \%)
+<% } %>
+
+<% if ( get.reportObj(repObj, "indivRisk.show") ) { %>
+\subsection*{Disclosure Risk Categorical Variables:}
+\paragraph{Expected Percentage of Reidentifications:} <%= get.reportObj(repObj, "indivRisk.expReidentifications.perc") %> \% ($\sim$ <%= get.reportObj(repObj, "indivRisk.expReidentifications") %> observations)
+
+( unmodified data: <%= get.reportObj(repObj, "indivRisk.unmodified") %> \% )
+
+\paragraph{10 combinations of categories with highest risk:}
+<% print(xtable(get.reportObj(repObj, "indivRisk.highest")),sanitize.text.function=identity) %>
+
+<% if ( get.reportObj(repObj, "riskNumKeyVars.show") ) { %>
+\subsection*{Disclosure Risk Continuous Scaled Variables:}
+Distance-based Disclosure Risk for Continuous Key Variables:
+
+Disclosure Risk is between:
+\[0\%;<%=get.reportObj(repObj, "riskNumKeyVars.risk") %>\%\] (current) (original data: $\sim$ 100\%)
+<%} %>
+<% } %>
+
+<% if ( get.reportObj(repObj, "hierRisk.show") ) { %>
+\subsection*{Hierarchical risk:}
+\paragraph{Expected no. of re-identifications:} <%=get.reportObj(repObj, "hierRisk.expReindent")
+ %> (<%=get.reportObj(repObj, "hierRisk.expReindent.perc") %> % )
+
+\paragraph{in original data:} <%=get.reportObj(repObj, "hierRisk.expReindentOrig") %> (<%=get.reportObj(repObj, "hierRisk.expReindentOrig.perc") %> %)
+<% } %>
+
+<% if ( get.reportObj(repObj, "dataUtility.show") ) { %>
+<% da <- get.reportObj(repObj, "dataUtility.info") %>
+\section*{Data Utility}
+\subsection*{Frequencies Categorical Key Variables:}
+<% for ( i in seq_along(da) ) { %>
+\paragraph{<%= da[[i]]$title %>}
+<% print(xtable(da[[i]]$tab),sanitize.text.function=identity) %>
+<% } %>
+<% } %>
+
+<% if ( get.reportObj(repObj, "localSupps.show") ) { %>
+\subsection*{Local Suppressions:}
+\paragraph{Number of local suppressions:}
+<% print(xtable(get.reportObj(repObj, "localSupps.tab")),sanitize.text.function=identity) %>
+<% } %>
+
+<% if ( get.reportObj(repObj, "dataUtilityCont.show") ) { %>
+\subsection*{Data Utility of Continuous Scaled Key Variables:}
+\paragraph{Univariate Summary:}
+<% print(xtable(get.reportObj(repObj, "dataUtilityCont.tabSummary")),sanitize.text.function=identity) %>
+
+\paragraph{Information Loss:}
+Criteria IL1: <%= get.reportObj(repObj, "dataUtilityCont.IL1") %>
+
+\paragraph{Difference in Eigenvalues:}
+current data: <%= get.reportObj(repObj, "dataUtilityCont.diffEigen") %> \% (original data: Information loss=0%)
+
+\paragraph{Boxplot of Differences}
+\includegraphics[width=0.7 \textwidth]{<%=get.reportObj(repObj, "dataUtilityCont.plotName") %>}
+<% } %>
+
+<% if ( !is.null(get.reportObj(repObj, "code")) ) { %>
+<% code <- get.reportObj(repObj, "code") %>
+\section*{R-Code:}
+<% for ( i in 1:length(code) ) { %>
+  ><%= code[[i]] %>*
+<% } 
+} %>
+
+<% if ( get.reportObj(repObj, "sessionInfo.show") ) { %>
+<% 
+sI <- get.reportObj(repObj, "sessionInfo.info")
+class(sI) <- "sessionInfo"
+%>
+\section*{Session-Info:}
+<% print(sI) %>
+<% } %>
+
+\section*{Disclaimer}
+\texttt{sdcMicro} and \texttt{sdcMicroGUI} packages are developed and maintained by \url{www.data-analysis.at}.
+
+Contact: Email us at \url{office@data-analysis.at} for any enquiries.
+
+This report was generated on <%=format(Sys.time(), "%a, %d/%m/%Y at %H:%M:%S")%>
+
+\end{document}

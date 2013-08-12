@@ -1,0 +1,7 @@
+# 4.0.4
+ - C++-Level glpk and R-Level Rglpk removed for better compatiblity with Mac
+ - configure,cleanup removed and Makevars and Makevars.win rewritten according to Rcpp documentation
+ - function microaggrGower added: microaggregation for numerical and categorical variables based on Gower distance
+ - completely new report facility (knitr and brew instead of R2HTML), new class 'reportObj' which stores all info for
+   reporting and is generate by calcReportData 
+ 

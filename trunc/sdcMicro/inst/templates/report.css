@@ -1,0 +1,44 @@
+@import url('http://fonts.googleapis.com/css?family=Cantarell');
+
+table {
+   max-width: 95%;
+   border: 1px solid #ccc;
+}
+ 
+th {
+  background-color: #005b99;
+  color: #ffffff;
+}
+ 
+td {
+  background-color: #ccc;
+}
+
+body {
+  font-family: 'Cantarell';
+  margin-left:10%;
+  margin-right:10%;
+}
+
+h1 {
+  font-size:160%;
+  font-weight:bold;
+  color: #204a87;
+}
+
+h2 {
+  font-size:140%;
+  font-weight:bold;
+  color: #a40000;
+}
+
+h3 {
+  font-size:120%;
+  font-weight:bold;
+  color: #000000;
+}
+
+img {
+  margin-left: auto;
+  margin-right: auto;
+}

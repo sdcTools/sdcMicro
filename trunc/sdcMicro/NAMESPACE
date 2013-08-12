@@ -1,0 +1,111 @@
+useDynLib(sdcMicro)
+import("methods")
+import("Rcpp")
+import("robustbase")
+import("MASS")
+import("car")
+import("cluster")
+import("e1071")
+import("xtable")
+import("tools")
+exportClasses(
+	'sdcMicroObj'
+#	,
+#	'reportObj'
+)
+
+exportMethods(
+	'freq',
+	'print',
+	'get.sdcMicroObj',
+	'nextSdcObj',
+	'report',
+	#'calcReportData',
+	'set.sdcMicroObj',
+	'addNoise',
+	'mafast','microaggregation',
+	'dataGen',
+	'dRisk',
+	'dRiskRMD',
+	'dUtility',
+	'localSupp',
+	'pram_strata','pram',
+	'topBotCoding',
+	'suda2',
+	'rankSwap',
+  'shuffle',
+	'localSuppression',
+	'globalRecode',
+	'LLmodGlobalRisk',
+	'LocalRecProg',
+	'measure_risk',
+	'ldiversity',
+	'calcRisks',
+  'undolast',
+  'varToFactor',
+  'varToNumeric',
+  'removeDirectID',
+  'extractManipData',
+  'microaggrGower'
+)
+
+
+##################################
+### Export remaining functions ###
+##################################
+export(removeDirectID,extractManipData,
+varToFactor,varToNumeric,groupVars,renameVars,freq,
+    undolast,calcRisks,
+    report,
+    #calcReportData,
+    addNoise, dataGen, dRisk, dUtility, globalRecode, LLmodGlobalRisk, LocalRecProg,
+    createSdcObj,
+    dRiskRMD,
+    freqCalc,
+    indivRisk,
+    localSuppression,
+    localSupp,
+    microaggregation,
+    mafast,
+    plot.localSuppression,
+    plotMicro,
+    pram,
+    print.freqCalc,
+    print.indivRisk,
+    print.localSuppression,
+    print.micro,
+    print.pram,
+    print.suda2,
+    summary.freqCalc,
+    summary.micro,
+    summary.pram,
+    swappNum,
+    topBotCoding,
+    valTable,
+    rankSwap,
+    shuffle,
+    suda2,
+    pram_strata,
+    measure_risk,
+    ldiversity,
+    # deprecated functions
+    localSupp2,
+    localSupp2Wrapper,
+    print.pram_strata,
+    microaggrGower,sampleCat,maxCat
+    
+)
+
+S3method(print, indivRisk)
+S3method(print, freqCalc)
+S3method(print, localSuppression)
+S3method(print, micro)
+S3method(print, pram)
+#S3method(print, pram_strata)
+S3method(print, measure_risk)
+S3method(print, ldiversity)
+S3method(print, suda2)
+S3method(summary, freqCalc)
+S3method(summary, micro)
+S3method(summary, pram)
+S3method(plot, localSuppression)

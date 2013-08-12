@@ -1,0 +1,2 @@
+export(plot.indivRisk,sdcGUI,sdcGUIoutput)
+S3method(plot, indivRisk)
