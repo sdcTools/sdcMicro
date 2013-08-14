@@ -3472,7 +3472,7 @@ writeVars <- function(t1,t2,t3,t4,t5){
       add(reportDialogFrame,dataUtilityContRadio)
       add(reportDialogFrame,sessionInfoRadio)
       reportDialogOutFrame <- gframe("Output Type:", container=reportDialogG, horizontal=FALSE)
-      outputRadio <- gradio(c("HTML", "LATEX"), 
+      outputRadio <- gradio(c("HTML", "LATEX", "TEXT"), 
           horizontal=TRUE, container=reportDialogOutFrame)
       okbutton <- gbutton("OK", container=reportDialogG, handler=function(h,...){
             obj <- ActiveSdcObject()
@@ -3480,17 +3480,28 @@ writeVars <- function(t1,t2,t3,t4,t5){
             if(existd("exportFileName")){
               exportFileName <- getd("exportFileName")
             }else{
-              if(svalue(outputRadio)=="LATEX")
+              if(svalue(outputRadio)=="LATEX") {
                 exportFileName <- gfile("Select file to save report to", parent=window, type="save" ,filter=list("LATEX"=list(patterns=c("*.tex")), "All files" = list(patterns = c("*"))))
-              else
+              } 
+              if (svalue(outputRadio)=="HTML") {
                 exportFileName <- gfile("Select file to save report to", parent=window, type="save" ,filter=list("HTML"=list(patterns=c("*.html", "*.htm")), "All files" = list(patterns = c("*"))))
+              }
+              if (svalue(outputRadio)=="TEXT") {
+                exportFileName <- gfile("Select file to save report to", parent=window, type="save" ,filter=list("TEXT"=list(patterns=c("*.txt")), "All files" = list(patterns = c("*"))))
+              }
             }
             outdir <- dirname(exportFileName)
             filename <- strsplit(basename(exportFileName),"\\.")[[1]][1]
-            if(svalue(outputRadio)=="LATEX")
+            if(svalue(outputRadio)=="LATEX") {
               filename <- paste(filename,".tex",sep="")
-            else
+            }
+            if (svalue(outputRadio)=="HTML") {
               filename <- paste(filename,".html",sep="")
+            }
+            if (svalue(outputRadio)=="TEXT") {
+              filename <- paste(filename,".txt",sep="")
+            }
+
             report(obj,
               pram=svalue(pramRadio),
               kAnon=svalue(kAnonRadio),
