@@ -1,4 +1,4 @@
 sdcMicro
 ========
 
-sdcMicro and sdcMicroGUI
+sdcMicro
