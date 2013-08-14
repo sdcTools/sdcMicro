@@ -472,8 +472,8 @@ setMethod(f='report', signature=c('sdcMicroObj'),
         dataUtilityCont=TRUE,
         sessionInfo=TRUE) { 
        
-       if ( !format %in% c("HTML","LATEX") ) {
-          stop("possible values for 'type' are 'HTML' and 'LATEX'!\n")
+       if ( !format %in% c("HTML","LATEX","TEXT") ) {
+          stop("possible values for 'type' are 'HTML','LATEX' and 'TEXT'!\n")
        }      
        
        repObj <- calcReportData(obj, 
@@ -519,6 +519,12 @@ setMethod(f='report', signature=c('sdcMicroObj'),
           
           texi2pdf(filename, clean=TRUE)
        }
+
+      if ( format == "TEXT" ) {
+         tpl <- system.file("templates", "template-report-text.brew", package="sdcMicro")
+         brew(file=tpl, output=filename)
+      }
+
        setwd(oldwd)
     }
 )
