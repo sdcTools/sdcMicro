@@ -4,7 +4,7 @@ setMethod(f='LLmodGlobalRisk', signature=c('sdcMicroObj'),
       if(is.null(form)){
         x <- get.sdcMicroObj(obj, type="manipKeyVars")
         form <- as.formula(paste(" ~ ", paste(colnames(x), collapse= "+")))
-      }else{
+      }else{ 
         vars <- labels(terms(form))
         mk <- get.sdcMicroObj(obj, type="manipKeyVars")
         mn <- get.sdcMicroObj(obj, type="manipNumVars")
