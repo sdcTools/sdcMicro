@@ -24,9 +24,19 @@ Modifications using PRAM: <%= get.reportObj(repObj, "modPram") %>
 
 Local suppressions: <%= get.reportObj(repObj, "modLocSupp") %>
 
+<%
+if ( 
+   get.reportObj(repObj, "pram.show") | 
+   get.reportObj(repObj, "kAnon.show") | 
+   get.reportObj(repObj, "indivRisk.show") | 
+   get.reportObj(repObj, "hierRisk.show") 
+   ) {
+%>
 ########################
 ### Disclosure risk: ###
 ########################
+<% } %>
+
 <% if ( get.reportObj(repObj, "pram.show") ) { %>
 
 ## Changes with PRAM ##
@@ -35,7 +45,7 @@ Local suppressions: <%= get.reportObj(repObj, "modLocSupp") %>
 cV <- get.reportObj(repObj, "pram.changedVars")
 %>
 <% for ( i in seq_along(cV) ) { %>
-<%= cV[[i]] %>
+<%=cV[[i]]$oName%> != <%=cV[[i]]$nName%>: <%=cV[[i]]$nr%> ( <%=cV[[i]]$perc %> % )
 <% } %>
 
 # Total number of changes in the categorical key variables #
@@ -68,8 +78,7 @@ Expected Percentage of Reidentifications: <%= get.reportObj(repObj, "indivRisk.e
 ## Disclosure Risk Continuous Scaled Variables ##
 Distance-based Disclosure Risk for Continuous Key Variables:
 
-Disclosure Risk is between:
-\[0%;<%=get.reportObj(repObj, "riskNumKeyVars.risk") %>%\] (current) (original data: ~ 100%)
+Disclosure Risk is between 0 % and <%=get.reportObj(repObj, "riskNumKeyVars.risk") %>% in the modified data. In the original data the risk is approximately 100 %.
 <%} %>
 <% } %>
 
@@ -143,7 +152,7 @@ class(sI) <- "sessionInfo"
 ##################
 ### Disclaimer ###
 ##################
-sdcMicro and sdcMicroGUI packages are developed and maintained by www.data-analysis.at.
+R-packages sdcMicro and sdcMicroGUI packages are actively developed and maintained by www.data-analysis.at.
 
 Contact: office@data-analysis.at
 

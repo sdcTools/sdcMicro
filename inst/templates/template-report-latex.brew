@@ -37,25 +37,34 @@ The data set consists of \textbf{<%= get.reportObj(repObj, "nrObs") %>} observat
 for L-diversity the following sensible variables have been selected:
 <%= colnames(get.reportObj(repObj, "origData"))[get.reportObj(repObj, "sensiblecn")] %>
 <% } %>
-
-Modifications on categorical key variables: \textbf{<%= get.reportObj(repObj, "modCat") %>}
-
-Modifications on continuous key variables: \textbf{<%= get.reportObj(repObj, "modNum") %>} 
-
-Modifications using PRAM: \textbf{<%= get.reportObj(repObj, "modPram") %>}
-
-Local suppressions: \textbf{<%= get.reportObj(repObj, "modLocSupp") %>}     	
-
+\begin{itemize}
+\item Modifications on categorical key variables: \textbf{<%= get.reportObj(repObj, "modCat") %>}
+\item Modifications on continuous key variables: \textbf{<%= get.reportObj(repObj, "modNum") %>} 
+\item Modifications using PRAM: \textbf{<%= get.reportObj(repObj, "modPram") %>}
+\item Local suppressions: \textbf{<%= get.reportObj(repObj, "modLocSupp") %>}     	
+\end{itemize}
+<%
+if ( 
+   get.reportObj(repObj, "pram.show") | 
+   get.reportObj(repObj, "kAnon.show") | 
+   get.reportObj(repObj, "indivRisk.show") | 
+   get.reportObj(repObj, "hierRisk.show") 
+   ) {
+%>
 \section*{Disclosure risk:}
+<% } %>
+
 <% if ( get.reportObj(repObj, "pram.show") ) { %>
 \subsection*{Changes with PRAM:}
 \paragraph{Number of changed categories:}
 <% 
 cV <- get.reportObj(repObj, "pram.changedVars")
 %>
+\begin{itemize}
 <% for ( i in seq_along(cV) ) { %>
-<%= cV[[i]] %>
+\item <%=cV[[i]]$oName%> != <%=cV[[i]]$nName%>: <%=cV[[i]]$nr%> ( <%=cV[[i]]$perc %> \% )
 <% } %>
+\end{itemize}
 
 \paragraph{Total number of changes in the categorical key variables:}
 <%= get.reportObj(repObj, "pram.totChanges") %> ( <%= get.reportObj(repObj, "pram.percChanges") %> \%)
@@ -90,8 +99,7 @@ cV <- get.reportObj(repObj, "pram.changedVars")
 \subsection*{Disclosure Risk Continuous Scaled Variables:}
 Distance-based Disclosure Risk for Continuous Key Variables:
 
-Disclosure Risk is between:
-\[0\%;<%=get.reportObj(repObj, "riskNumKeyVars.risk") %>\%\] (current) (original data: $\sim$ 100\%)
+Disclosure Risk is between 0 \% and <%=get.reportObj(repObj, "riskNumKeyVars.risk") %>\% in the modified data. In the original data the risk is approximately 100 \%.
 <%} %>
 <% } %>
 
@@ -108,7 +116,7 @@ Disclosure Risk is between:
 \section*{Data Utility}
 \subsection*{Frequencies Categorical Key Variables:}
 <% for ( i in seq_along(da) ) { %>
-\paragraph{<%= da[[i]]$title %>}
+\subsubsection*{<%= da[[i]]$title %>}
 <% print(xtable(da[[i]]$tab),sanitize.text.function=identity) %>
 <% } %>
 <% } %>
@@ -143,16 +151,36 @@ current data: <%= get.reportObj(repObj, "dataUtilityCont.diffEigen") %> \% (orig
 } %>
 
 <% if ( get.reportObj(repObj, "sessionInfo.show") ) { %>
+\section*{Session-Info:}
 <% 
 sI <- get.reportObj(repObj, "sessionInfo.info")
-class(sI) <- "sessionInfo"
+rV <- sI$R.version 
 %>
-\section*{Session-Info:}
-<% print(sI) %>
+R version <%= rV$major %>.<%= rV$minor %> (<%=rV$year%>-<%=rV$month%>-<%=rV$day%>) Platform: <%= sI$platform %> 
+\subsection*{locale}
+<% loc <- unlist(strsplit(sI$locale, ";")) %>
+\begin{itemize}
+\item <%= paste(loc, collapse=", ") %>
+\end{itemize}
+
+\subsection*{attached base packages}
+\begin{itemize}
+\item <%= paste(names(sI$basePkg), collapse=", ") %>
+\end{itemize}
+
+\subsection*{other attached packages}
+\begin{itemize}
+\item <%= paste(names(sI$otherPkgs), collapse=", ") %>
+\end{itemize}
+
+\subsection*{loaded via namespace and not attached}
+\begin{itemize}
+\item <%= paste(names(sI$loadedOnly), collapse=", ") %>
+\end{itemize}
 <% } %>
 
 \section*{Disclaimer}
-\texttt{sdcMicro} and \texttt{sdcMicroGUI} packages are developed and maintained by \url{www.data-analysis.at}.
+\texttt{R}-packages \texttt{sdcMicro} and \texttt{sdcMicroGUI} packages are actively developed and maintained by \url{www.data-analysis.at}.
 
 Contact: Email us at \url{office@data-analysis.at} for any enquiries.
 

@@ -14,15 +14,20 @@ The data set consists of **<%= get.reportObj(repObj, "nrObs") %>** observations.
   <%= colnames(get.reportObj(repObj, "origData"))[get.reportObj(repObj, "sensiblecn")] %>
 <% } %>
 
-Modifications on categorical key variables: **<%= get.reportObj(repObj, "modCat") %>**
-
-Modifications on continuous key variables: **<%= get.reportObj(repObj, "modNum") %>**  
-
-Modifications using PRAM: **<%= get.reportObj(repObj, "modPram") %>**
-
-Local suppressions: **<%= get.reportObj(repObj, "modLocSupp") %>**  		
-
++ Modifications on categorical key variables: **<%= get.reportObj(repObj, "modCat") %>**
++ Modifications on continuous key variables: **<%= get.reportObj(repObj, "modNum") %>**  
++ Modifications using PRAM: **<%= get.reportObj(repObj, "modPram") %>**
++ Local suppressions: **<%= get.reportObj(repObj, "modLocSupp") %>**  		
+<%
+if ( 
+   get.reportObj(repObj, "pram.show") | 
+   get.reportObj(repObj, "kAnon.show") | 
+   get.reportObj(repObj, "indivRisk.show") | 
+   get.reportObj(repObj, "hierRisk.show") 
+   ) {
+%>
 # Disclosure risk:
+<% } %>
 <% if ( get.reportObj(repObj, "pram.show") ) { %>
 ## Changes with PRAM
 ### Number of changed categories:
@@ -30,7 +35,7 @@ Local suppressions: **<%= get.reportObj(repObj, "modLocSupp") %>**
 cV <- get.reportObj(repObj, "pram.changedVars")
 %>
 <% for ( i in seq_along(cV) ) { %>
-<%= cV[[i]] %>
++ <%=cV[[i]]$oName%> != <%=cV[[i]]$nName%>: <%=cV[[i]]$nr%> ( <%=cV[[i]]$perc %> % )
 <% } %>
 
 ### Total number of changes in the categorical key variables:
@@ -63,8 +68,7 @@ Expected Percentage of Reidentifications: <%= get.reportObj(repObj, "indivRisk.e
 ## Disclosure Risk Continuous Scaled Variables:
 Distance-based Disclosure Risk for Continuous Key Variables:
 
-Disclosure Risk is between:
-\[0%;<%=get.reportObj(repObj, "riskNumKeyVars.risk") %>%\] (current) (original data: ~ 100%)
+Disclosure Risk is between 0 % and <%=get.reportObj(repObj, "riskNumKeyVars.risk") %>% in the modified data. In the original data the risk is approximately 100 %.
 <%} %>
 <% } %>
 
@@ -82,7 +86,7 @@ in original data: <%=get.reportObj(repObj, "hierRisk.expReindentOrig") %> (<%=ge
 ## Frequencies Categorical Key Variables:
 <% for ( i in seq_along(da) ) { %>
 ### <%= da[[i]]$title %>
-<% #print(xtable(da[[i]]$tab), type="html") %>
+<% print(xtable(da[[i]]$tab), type="html") %>
 <% } %>
 <% } %>
 
@@ -116,16 +120,28 @@ current data: <%= get.reportObj(repObj, "dataUtilityCont.diffEigen") %> % (origi
 } %>
 
 <% if ( get.reportObj(repObj, "sessionInfo.show") ) { %>
+# Session-Info
 <% 
 sI <- get.reportObj(repObj, "sessionInfo.info")
-class(sI) <- "sessionInfo"
+rV <- sI$R.version 
 %>
-# Session-Info:
-<% print(sI) %>
+R version <%= rV$major %>.<%= rV$minor %> (<%=rV$year%>-<%=rV$month%>-<%=rV$day%>) Platform: <%= sI$platform %> 
+## locale
+<% loc <- unlist(strsplit(sI$locale, ";")) %>
++ <%= paste(loc, collapse=", ") %>
+
+## attached base packages
++ <%= paste(names(sI$basePkg), collapse=", ") %>
+
+## other attached packages
++ <%= paste(names(sI$otherPkgs), collapse=", ") %>
+
+## loaded via namespace and not attached
++ <%= paste(names(sI$loadedOnly), collapse=", ") %>
 <% } %>
 
 # Disclaimer
-sdcMicro and sdcMicroGUI packages are developed and maintained by
+R-packages sdcMicro and sdcMicroGUI packages are actively developed and maintained by
 [www.data-analysis.at](http://www.data-analysis.at "www.data-analysis.at").
 
 Contact: [office@data-analysis.at](mailto:office@data-analysis.at "Email").
