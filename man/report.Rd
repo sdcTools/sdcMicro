@@ -14,13 +14,7 @@
  Summary statistics of the original and the perturbed data set
 }
 \usage{
-report(obj,
-  outdir=getwd(),filename="SDC-Report",format="HTML",title='SDC-Report',
-  pram=TRUE,kAnon=TRUE,indivRisk=TRUE,hierRisk=TRUE,riskNumKeyVars=TRUE,
-  dataUtility=TRUE,localSupps=TRUE,dataUtilityCont=TRUE,sessionInfo=TRUE)
-%calcReportData(obj, pram=TRUE,kAnon=TRUE,indivRisk=TRUE,
-%  riskNumKeyVars=TRUE,dataUtility=TRUE,localSupps=TRUE,dataUtilityCont=TRUE,
-%  sessionInfo=TRUE)
+report(obj, outdir=getwd(),filename="SDC-Report",format="HTML",title='SDC-Report',internal=FALSE)
 }
 \arguments{
 \item{obj}{
@@ -33,20 +27,12 @@ report(obj,
    	output filename
   }
   \item{format}{
-   	HTML or LATEX
+   	HTML, TEXT or LATEX
   }
   \item{title}{
    	Title for the report
   }
-  \item{pram}{TRUE/FALSE if information about pram should be included in the report (if it exists).}
-  \item{kAnon}{TRUE/FALSE if information about k-anonymity should be included in the report (if it exists).}
-  \item{indivRisk}{TRUE/FALSE if information about individual risk should be included in the report (if it exists).}
-  \item{hierRisk}{TRUE/FALSE if information about hierachical risk should be included in the report (if it exists).}
-  \item{riskNumKeyVars}{TRUE/FALSE if information about numeric risk should be included in the report (if it exists).}
-  \item{dataUtility}{TRUE/FALSE if information about categorical data utitlity should be included in the report (if it exists).}
-  \item{localSupps}{TRUE/FALSE if information about local suppressions should be included in the report (if it exists).}
-  \item{dataUtilityCont}{TRUE/FALSE if information about continuous data utility should be included in the report (if it exists).}
-  \item{sessionInfo}{TRUE/FALSE if information about the session should be included in the report (if it exists).}
+  \item{internal}{TRUE/FALSE, if TRUE a detailled internal report is produced, else a non-disclosive overview}
 }
 
 \details{
