@@ -77,7 +77,7 @@ measure_riskWORK <- function(data,keyVars,w=NULL,missing=-999,hid=NULL,max_globa
   }
  
   f <- freqCalc(data,keyVars=keyVars,w=w)
-  ir <- indivRisk(f)
+  ir <- indivRisk(f,survey=!is.null(w))
   Res <- matrix(NA,ncol=3,nrow=nrow(data))
   Res[,1] <- ir$rk
   Res[,2] <- ir$fk

@@ -1,28 +1,31 @@
 `freqCalc` <-
     function(x, keyVars, w=NULL, fast=TRUE){
 
-  classInfo <- character()
-  xKeys <- x[,keyVars]
-  xw <- x[,w]
-  for(i in 1:ncol(xKeys)){
-    classInfo[i] <- class(xKeys[,i])
-  }
-  dfInfo <- is.data.frame(x)
-  ## internally code as numbers:
-  for(i in 1:ncol(xKeys)){
-	  xKeys[,i] <- as.numeric(as.factor(xKeys[,i]))
-  }
+#  classInfo <- character()
+#  xKeys <- x[,keyVars,drop=FALSE]
+#  for(i in 1:ncol(xKeys)){
+#    classInfo[i] <- class(xKeys[,i])
+#  }
+#  dfInfo <- is.data.frame(x)
+#  ## internally code as numbers:
+#  for(i in 1:ncol(xKeys)){
+#	  xKeys[,i] <- as.numeric(as.factor(xKeys[,i]))
+#  }
   ## TODO: directly work with xKeys in ffc and freqCalc
-  x[,keyVars] <- xKeys
+ #x[,keyVars] <- xKeys
   if(fast){
-    z <- ffc(x,keyVars,w)
-    if(dfInfo) z$freqCalc <- data.frame(z$freqCalc)
-    if(any(classInfo == "factor")){
-      a <- which(classInfo=="factor")
-      for(i in a){
-        z$freqCalc[,i] <- as.factor(z$freqCalc[,i])
-      }
-    }
+    TFna <- any(is.na(x[,keyVars]))
+    if(TFna)
+      z <- ffc(x,keyVars,w)
+    else 
+      z <- sffc(x,keyVars,w)
+#    if(dfInfo) z$freqCalc <- data.frame(z$freqCalc)
+#    if(any(classInfo == "factor")){
+#      a <- which(classInfo=="factor")
+#      for(i in a){
+#        z$freqCalc[,i] <- as.factor(z$freqCalc[,i])
+#      }
+#    }
   }else{
     #x <- apply(x[,keyVars], 2, function(x) { as.integer(as.factor(x))})
     #x <- as.matrix(x)
@@ -42,13 +45,13 @@
         as.numeric(rep(0.0, N)),
         as.numeric(if(length(w)==0) rep(1,N) else y[,w]),
         PACKAGE="sdcMicro", NUOK=TRUE)
-    if(dfInfo) y <- data.frame(y)
-    if(any(classInfo == "factor")){
-      a <- which(classInfo=="factor")
-      for(i in a){
-        y[,i] <- as.factor(y[,i])
-      }
-    }
+#    if(dfInfo) y <- data.frame(y)
+#    if(any(classInfo == "factor")){
+#      a <- which(classInfo=="factor")
+#      for(i in a){
+#        y[,i] <- as.factor(y[,i])
+#      }
+#    }
     z <- list(freqCalc=y, keyVars=keyVars, w=w, indexG=NULL, fk=res[[3]], Fk=res[[4]], n1=length(which(res[[3]]==1)), n2=length(which(res[[3]]==2)))
     class(z) <- "freqCalc" 
   }
@@ -95,3 +98,49 @@ ffc <- function(x, keyVars, w = NULL) {
   invisible(res)
 }
 
+sffc <- function(x, keyVars, w = NULL) {
+  xorig <- x
+  x$idvarextraforsffc=1:nrow(x)
+  if(is.numeric(keyVars))
+    keyVars <- colnames(x)[keyVars]
+  if(is.null(w)){
+    dat <- data.table(x[,c(keyVars,"idvarextraforsffc")])
+    setkeyv(dat,keyVars)
+    erg <- vector()
+    cmd <- paste("ergO <- dat[,list(fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
+    eval(parse(text=cmd))
+    erg <- merge(ergO,dat)
+    setkey(erg,idvarextraforsffc)
+    res <- list(
+        freqCalc = xorig,
+        keyVars = keyVars,
+        w = w,
+        indexG = NULL,
+        fk = as.integer(erg$fk),
+        Fk = as.numeric(erg$fk),
+        n1 = length(which(erg$fk==1)),
+        n2 = length(which(erg$fk==2))
+    )
+  }else{
+    dat <- data.table(x[,c(keyVars,"idvarextraforsffc")],weight=x[,w])
+    setkeyv(dat,keyVars)
+    erg <- vector()
+    cmd <- paste("erg <- dat[,list(Fk=sum(weight),fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
+    eval(parse(text=cmd))
+    erg <- merge(erg,dat)
+    setkey(erg,idvarextraforsffc)
+    res <- list(
+        freqCalc = xorig,
+        keyVars = keyVars,
+        w = w,
+        indexG = NULL,
+        fk = as.integer(erg$fk),
+        Fk = as.numeric(erg$Fk),
+        n1 = length(which(erg$fk==1)),
+        n2 = length(which(erg$fk==2))
+    )
+  }
+  class(res) <- "freqCalc"
+  invisible(res)
+}
+  
