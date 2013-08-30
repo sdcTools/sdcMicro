@@ -49,6 +49,22 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
 )
 #,blow = TRUE, blowxm = 0)
 {
+  factorOfTotals <- function(x, aggr) {
+    n <- dim(x)[1]
+    abgerundet <- floor(n/aggr)
+    fot <- n/abgerundet
+    return(fot)
+  }
+  if(length(variables)==1){
+    res <- list()
+    res$mx <- mafast(x,variables=variables,by=strata_variables,aggr=aggr,measure=eval(parse(text=measure)))
+    res$x <- x
+    res$method <- "mafast"
+    res$aggr <- aggr
+    res$measure <- measure
+    res$fot <- factorOfTotals(x,aggr)
+    return(res)
+  }
   blow=TRUE
   weightedQuantile <- function (x, weights = NULL, probs = seq(0, 1, 0.25), sorted = FALSE, na.rm = FALSE) {
     if (!is.numeric(x)) 
@@ -116,12 +132,6 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
   #    warning("object$blow have been set to TRUE and \n
   #             object$xm == object$blowxm \n--------\n")
   #}
-  factorOfTotals <- function(x, aggr) {
-    n <- dim(x)[1]
-    abgerundet <- floor(n/aggr)
-    fot <- solve(abgerundet, n)
-    fot
-  }
   indexMicro <- function(x, aggr) {
     n <- dim(x)[1]
     if (n < 2 * aggr) {
