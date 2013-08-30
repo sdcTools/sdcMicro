@@ -42,35 +42,18 @@ setMethod(f='localSuppression', signature=c("matrix"),
 
 
 localSuppressionWORK <- function(x, keyVars,  k=2, importance=NULL) {
-#   my.dist <- function(dat, keyVars, ind) {
-#     l <- lapply(1:length(keyVars), function(x) { dat[,keyVars[x]] != dat[ind,keyVars[x]] }) 
-#     for (i in seq_along(l) ) {
-#       xind <- which(is.na(l[[i]]))
-#       if ( length(xind) > 0 )  {
-#         l[[i]][xind] <- FALSE
-#       }
-#     }
-#     dists <- Reduce("+", l)
-#     dists[ind] <- 0
-#     dists
-#   }
   my.dist <- function(dat, keyVars, ind) {
-    res <- rep(0, nrow(dat))
-    for ( i in keyVars) {
-      vec <- dat[,keyVars[i]]
-      val <- vec[ind]
-      
-      if ( !is.na(val) ) {
-        vec[is.na(vec)] <- val
-        res <- res + .Call(
-          "comp",
-          vec=as.integer(vec),
-          val=as.integer(val)
-        )$result
-      } 
-    } 
-    res
-  }  
+    l <- lapply(1:length(keyVars), function(x) { dat[,keyVars[x]] != dat[ind,keyVars[x]] }) 
+    for (i in seq_along(l) ) {
+      xind <- which(is.na(l[[i]]))
+      if ( length(xind) > 0 )  {
+        l[[i]][xind] <- FALSE
+      }
+    }
+    dists <- Reduce("+", l)
+    dists[ind] <- 0
+    dists
+  }
   if(is.numeric(keyVars))
     keyVars <- colnames(x)[keyVars]
   if ( is.null(importance) ) {
