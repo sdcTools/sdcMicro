@@ -15,7 +15,7 @@ LazyData: TRUE
 ByteCompile: TRUE
 LinkingTo: Rcpp
 Depends:
-    R (>= 2.10), brew, knitr
+    R (>= 2.10), brew, knitr,data.table
 Imports:
     car,
     robustbase,

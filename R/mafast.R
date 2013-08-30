@@ -5,12 +5,15 @@ setMethod(f='mafast', signature=c('sdcMicroObj'),
       if(is.null(by)){
         if(!is.null(obj@strataVar))
           by <- colnames(obj@origData)[obj@strataVar]
+      }else if(!all(by%in%colnames(x))){
+        x <- cbind(x,obj@origData[,by[!by%in%colnames(x)]])
       }
+        
       if(is.null(variables))
         variables <- colnames(obj@origData)[obj@numVars]
       res <- mafastWORK(x, variables=variables,by=by,aggr=aggr,measure=measure)
       obj <- nextSdcObj(obj)
-      obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(res)))
+      obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(res[,colnames(get.sdcMicroObj(obj, type="manipNumVars"))])))
       obj <- dRisk(obj)
 #      obj <- dRiskRMD(obj)
       obj <- dUtility(obj)
@@ -27,36 +30,46 @@ setMethod(f='mafast', signature=c("matrix"),
     })
 mafastWORK <- function(x,variables=colnames(x),by=NULL,aggr=3,measure=mean){
   vectoraggr <- function(y,aggr){
-    ord <- order(y)
     ngroup <- floor(length(y)/aggr)
-    start <- 1+aggr*(0:(ngroup-1))
-    end <- start+aggr-1
-    end[length(end)] <- length(y)
-    for(i in 1:length(start)){
-      y[ord][start[i]:end[i]] <-measure(y[ord][start[i]:end[i]]) 
-    }
-    y
+    g <- rep(1:ngroup,each=aggr)
+    nadd <- length(y)-length(g)
+    if(nadd>0)
+      g <- c(g,rep(g[length(g)],nadd))
+    ord <- order(y)
+    ord2 <- order(ord)
+    yy <- data.table(y=y,g=g[ord2],id=1:length(y))
+    setkey(yy,g)
+    erg <- merge(yy,yy[,j=list(ergy=measure(y)),by=g])
+    setkey(erg,id)
+    return(erg[,ergy,by=id]$ergy)
   }
   if(!is.null(by))
     if(any(!by%in%colnames(x)))
       stop(paste("Cannot find variable:",by[!by%in%colnames(x)]))
   if(any(!variables%in%colnames(x)))
     stop(paste("Cannot find variable:",variables[!variables%in%colnames(x)]))
-  x$PRIMARYIDFORRESORTING <- 1:nrow(x)
   if(is.null(by)){
     by <- "BYVARIABLEFORSPLIT"
     x$BYVARIABLEFORSPLIT<-factor(1)
+  }else if(length(by)>1){
+    x$BYVARIABLEFORSPLIT <- as.factor(paste(x[,by],collapse=" - "))
+    by <- "BYVARIABLEFORSPLIT"
+  }else{
+    x[,"BYVARIABLEFORSPLIT"] <- as.factor(x[,by])
+    by <- "BYVARIABLEFORSPLIT"
   }
-  
-  sp <- split(x,x[,by])
-  for(i in 1:length(sp)){
-    if(aggr>nrow(sp[[i]])){
-      warning(paste("Only",nrow(sp[[i]]),"observations could be aggregated in group:",paste(apply(sp[[i]][,by,drop=FALSE],2,unique),collapse=" - ")))
-    }
-    sp[[i]][,variables] <- apply(sp[[i]][,variables,drop=FALSE],2,vectoraggr,aggr=aggr)
-  }
-  x <- unsplit(sp,x[,by])
-  x <- x[order(x$PRIMARYIDFORRESORTING),]
-  x <- x[,!colnames(x)%in%c("BYVARIABLEFORSPLIT","PRIMARYIDFORRESORTING")]
+  x$idvariableforresorting <- 1:nrow(x)
+  xdat <- data.table(x[,c(variables,by,"idvariableforresorting")])
+  setkey(xdat,cols=BYVARIABLEFORSPLIT)
+  idf <- function(x)x
+  #TODO: Is there an better way to do this than to paste a cmd, it is fast though.
+  cmd <- paste("erg <- xdat[,j=list(idvariableforresorting=idf(idvariableforresorting),",
+      paste(variables,"= vectoraggr(",variables,",aggr=aggr)",collapse=",",sep=""),
+      "),by=BYVARIABLEFORSPLIT]")
+  erg <- vector() #To get no NOTE
+  eval(parse(text=cmd))            
+  x <- x[,!colnames(x)%in%c("BYVARIABLEFORSPLIT","idvariableforresorting")]
+  setkey(erg,idvariableforresorting)
+  x[,variables] <- data.frame(erg[,by=idvariableforresorting])[,variables]
   return(x)
 }
