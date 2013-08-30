@@ -107,9 +107,9 @@ sffc <- function(x, keyVars, w = NULL) {
     dat <- data.table(x[,c(keyVars,"idvarextraforsffc")])
     setkeyv(dat,keyVars)
     erg <- vector()
-    cmd <- paste("ergO <- dat[,list(fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
+    cmd <- paste("erg <- dat[,list(fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
     eval(parse(text=cmd))
-    erg <- merge(ergO,dat)
+    erg <- merge(erg,dat)
     setkey(erg,idvarextraforsffc)
     res <- list(
         freqCalc = xorig,
