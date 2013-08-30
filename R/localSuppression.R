@@ -54,7 +54,8 @@ localSuppressionWORK <- function(x, keyVars,  k=2, importance=NULL) {
     dists[ind] <- 0
     dists
   }
-  
+  if(is.numeric(keyVars))
+    keyVars <- colnames(x)[keyVars]
   if ( is.null(importance) ) {
     xx <- apply(x[,keyVars,drop=FALSE], 2, function(x) { length(table(x)) } )
     importance <- match(xx, sort(xx, decreasing=FALSE))
@@ -65,9 +66,37 @@ localSuppressionWORK <- function(x, keyVars,  k=2, importance=NULL) {
   }
   
   # nr supps before doing anything
-  totalNABefore <- length(which(is.na(x)))
+  NABefore <- is.na(x)
+  totalNABefore <- length(which(NABefore))
   NAinKey <- apply(x[, keyVars], 2, function(x) length(which(is.na(x))))
+
+  ##############
+  x$idvarextraforsls <- 1:nrow(x)
+  xKeys <- data.table(x[,c(keyVars,"idvarextraforsls")])
+  for(kV in keyVars){
+    cmd <- paste("xKeys[is.na(",kV,"),",kV,":=unique(xKeys$",kV,")[1]]")
+    eval(parse(text=cmd))
+  }
+  cmd <- paste("xKeys <- xKeys[",paste("!is.na(",keyVars,")",collapse="&",sep=""),"]",sep="")
+  eval(parse(text=cmd))
+  setkeyv(xKeys,keyVars)
+  cmd <- paste("erg <- xKeys[,list(fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
+  eval(parse(text=cmd))
+  xKeys <- merge(xKeys,erg)
+  erg <- xKeys[fk>k] # more than k
+  erg[,fkd:=fk-k]
   
+  cmd <- paste("erg2 <- erg[,tail(.SD,fkd),by=list(",paste(keyVars,collapse=","),")]",sep="")
+  eval(parse(text=cmd))
+  xKeys <- data.table(x)
+  setkey(xKeys,idvarextraforsls)
+  erg2 <- erg2[,list(idvarextraforsls)]
+  erg2[,weg:=1]
+  setkey(erg2,idvarextraforsls)
+  xKeys <- merge(xKeys,erg2,all=TRUE)
+  x <- data.frame(xKeys[is.na(weg),])
+  
+  ##############
   ff <- freqCalc(x, keyVars=keyVars)
   rk <- indivRisk(ff)
   runInd <- TRUE
@@ -108,7 +137,20 @@ localSuppressionWORK <- function(x, keyVars,  k=2, importance=NULL) {
       runInd <- FALSE
     } 
   }
+  xrem <- data.table(idvarextraforsls=x[,"idvarextraforsls"],weg=1)
+  x <- data.table(x[,-ncol(x)])
   
+  setkey(xrem,idvarextraforsls)
+  xKeys[,weg:=NULL]
+  setkey(xKeys,idvarextraforsls)
+  xKeys <- merge(xKeys,xrem,all=TRUE)
+  xKeys <- xKeys[is.na(weg),]
+  xKeys[,weg:=NULL]
+  x <- rbind(x,xKeys)
+  setkey(x,idvarextraforsls)
+  x[,idvarextraforsls:=NULL]
+  x <- data.frame(x)
+  x[NABefore] <- NA
   ## preparing the output:
   totalNA <- length(which(is.na(x)))
   supps <- apply(x[, keyVars], 2, function(x) length(which(is.na(x)))) - NAinKey
