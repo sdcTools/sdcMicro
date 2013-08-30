@@ -52,7 +52,7 @@ mafastWORK <- function(x,variables=colnames(x),by=NULL,aggr=3,measure=mean){
     by <- "BYVARIABLEFORSPLIT"
     x$BYVARIABLEFORSPLIT<-factor(1)
   }else if(length(by)>1){
-    x$BYVARIABLEFORSPLIT <- as.factor(paste(x[,by],collapse=" - "))
+    x$BYVARIABLEFORSPLIT <- as.factor(apply(x,1,function(x)paste(x[by],collapse="-")))
     by <- "BYVARIABLEFORSPLIT"
   }else{
     x[,"BYVARIABLEFORSPLIT"] <- as.factor(x[,by])
