@@ -14,7 +14,8 @@
  Summary statistics of the original and the perturbed data set
 }
 \usage{
-report(obj, outdir=getwd(),filename="SDC-Report",format="HTML",title='SDC-Report',internal=FALSE)
+report(obj, outdir=getwd(),filename="SDC-Report",format="HTML",title='SDC-Report',
+  internal=FALSE)
 }
 \arguments{
 \item{obj}{
@@ -32,7 +33,8 @@ report(obj, outdir=getwd(),filename="SDC-Report",format="HTML",title='SDC-Report
   \item{title}{
    	Title for the report
   }
-  \item{internal}{TRUE/FALSE, if TRUE a detailled internal report is produced, else a non-disclosive overview}
+  \item{internal}{TRUE/FALSE, if TRUE a detailled internal report is produced,
+    else a non-disclosive overview}
 }
 
 \details{
