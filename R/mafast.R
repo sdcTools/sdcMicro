@@ -30,6 +30,7 @@ setMethod(f='mafast', signature=c("matrix"),
     })
 mafastWORK <- function(x,variables=colnames(x),by=NULL,aggr=3,measure=mean){
   vectoraggr <- function(y,aggr){
+	ergy<-id <- NA#for CHECK-NOTES
     ngroup <- floor(length(y)/aggr)
     g <- rep(1:ngroup,each=aggr)
     nadd <- length(y)-length(g)
@@ -38,11 +39,12 @@ mafastWORK <- function(x,variables=colnames(x),by=NULL,aggr=3,measure=mean){
     ord <- order(y)
     ord2 <- order(ord)
     yy <- data.table(y=y,g=g[ord2],id=1:length(y))
-    setkey(yy,g)
+    setkey(yy,"g")
     erg <- merge(yy,yy[,j=list(ergy=measure(y)),by=g])
-    setkey(erg,id)
+    setkey(erg,"id")
     return(erg[,ergy,by=id]$ergy)
   }
+  BYVARIABLEFORSPLIT<-idvariableforresorting<-NA#for CHECK-NOTES
   if(!is.null(by))
     if(any(!by%in%colnames(x)))
       stop(paste("Cannot find variable:",by[!by%in%colnames(x)]))
@@ -69,7 +71,7 @@ mafastWORK <- function(x,variables=colnames(x),by=NULL,aggr=3,measure=mean){
   erg <- vector() #To get no NOTE
   eval(parse(text=cmd))            
   x <- x[,!colnames(x)%in%c("BYVARIABLEFORSPLIT","idvariableforresorting")]
-  setkey(erg,idvariableforresorting)
+  setkey(erg,"idvariableforresorting")
   x[,variables] <- data.frame(erg[,by=idvariableforresorting])[,variables]
   return(x)
 }

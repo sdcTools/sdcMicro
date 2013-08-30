@@ -1,6 +1,7 @@
 `freqCalc` <-
     function(x, keyVars, w=NULL, fast=TRUE){
-
+  if(is.numeric(keyVars))
+    keyVars <- colnames(x)[keyVars]
 #  classInfo <- character()
 #  xKeys <- x[,keyVars,drop=FALSE]
 #  for(i in 1:ncol(xKeys)){
@@ -100,7 +101,7 @@ ffc <- function(x, keyVars, w = NULL) {
 
 sffc <- function(x, keyVars, w = NULL) {
   xorig <- x
-  x$idvarextraforsffc=1:nrow(x)
+  x <- cbind(x,idvarextraforsffc=1:nrow(x))
   if(is.numeric(keyVars))
     keyVars <- colnames(x)[keyVars]
   if(is.null(w)){
@@ -110,7 +111,7 @@ sffc <- function(x, keyVars, w = NULL) {
     cmd <- paste("erg <- dat[,list(fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
     eval(parse(text=cmd))
     erg <- merge(erg,dat)
-    setkey(erg,idvarextraforsffc)
+    setkey(erg,"idvarextraforsffc")
     res <- list(
         freqCalc = xorig,
         keyVars = keyVars,
@@ -128,7 +129,7 @@ sffc <- function(x, keyVars, w = NULL) {
     cmd <- paste("erg <- dat[,list(Fk=sum(weight),fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
     eval(parse(text=cmd))
     erg <- merge(erg,dat)
-    setkey(erg,idvarextraforsffc)
+    setkey(erg,"idvarextraforsffc")
     res <- list(
         freqCalc = xorig,
         keyVars = keyVars,
