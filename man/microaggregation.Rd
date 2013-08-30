@@ -11,7 +11,7 @@
   Function to perform various methods of microaggregation.
 }
 \usage{
-microaggregation(obj,variables,aggr=3,strata_variables=NULL,method="mdav",
+microaggregation(obj,variables=NULL,aggr=3,strata_variables=NULL,method="mdav",
   weights=NULL, nc = 8, clustermethod = "clara", opt = FALSE, measure = "mean",
   trim = 0, varsort = 1, transf = "log")
 }
@@ -37,7 +37,9 @@ microaggregation(obj,variables,aggr=3,strata_variables=NULL,method="mdav",
 
 \arguments{
   \item{obj}{ either an object of class sdcMicroObj or a data frame or matrix }
-  \item{variables}{variables to microaggregate. If obj is of class sdcMicroObj the categorical key variables are chosen per default.}
+  \item{variables}{variables to microaggregate. For NULL:If obj is of class sdcMicroObj
+  the categorical key variables are chosen per default. For data.frames and matrices all
+  columns are chosen per default.}
   \item{aggr}{ aggregation level (default=3)}
   \item{strata_variables}{by-variables for applying microaggregation only within strata defined by the variables}
   \item{method}{ pca, rmd, onedims, single, simple, clustpca, pppca, clustpppca, mdav, clustmcdpca, influence, mcdpca }

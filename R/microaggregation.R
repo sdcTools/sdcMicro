@@ -1,10 +1,12 @@
-setGeneric('microaggregation', function(obj,variables,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
+setGeneric('microaggregation', function(obj,variables=NULL,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
         clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0, varsort = 1, transf = "log") {
       standardGeneric('microaggregation')})
 setMethod(f='microaggregation', signature=c('sdcMicroObj'),
-    definition=function(obj,variables,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
+    definition=function(obj,variables=NULL,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
         clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0, varsort = 1, transf = "log") { 
       x <- get.sdcMicroObj(obj, type="manipNumVars")
+	  if(is.null(variables))
+		  variables <- colnames(x)
       if(!is.null(strata_variables)){
         sx <- get.sdcMicroObj(obj, type="origData")[,strata_variables[!strata_variables%in%variables],drop=FALSE]
         x <- cbind(x,sx)
@@ -28,16 +30,20 @@ setMethod(f='microaggregation', signature=c('sdcMicroObj'),
       obj
     })
 setMethod(f='microaggregation', signature=c("data.frame"),
-    definition=function(obj,variables,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
+    definition=function(obj,variables=NULL,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
         clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0, varsort = 1, transf = "log") { 
-      microaggregationWORK(x=obj,variables=variables,aggr=aggr,strata_variables=strata_variables,method=method,
+	if(is.null(variables))
+		variables <- colnames(obj)
+	microaggregationWORK(x=obj,variables=variables,aggr=aggr,strata_variables=strata_variables,method=method,
           weights=weights,nc=nc,clustermethod=clustermethod,opt=opt,measure=measure,trim=trim,varsort=varsort,
           transf=transf)
     })
 setMethod(f='microaggregation', signature=c("matrix"),
-    definition=function(obj,variables,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
+    definition=function(obj,variables=NULL,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
         clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0, varsort = 1, transf = "log") { 
-      microaggregationWORK(x=obj,variables=variables,aggr=aggr,strata_variables=strata_variables,method=method,
+	if(is.null(variables))
+		variables <- colnames(obj)  
+	 microaggregationWORK(x=obj,variables=variables,aggr=aggr,strata_variables=strata_variables,method=method,
           weights=weights,nc=nc,clustermethod=clustermethod,opt=opt,measure=measure,trim=trim,varsort=varsort,
           transf=transf)
     })
@@ -690,7 +696,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       y[w, ] <- rep(colMeans(y[w, ]), each = length(w))
       for (i in 1:dim(x)[2]) {
         y[,i] <- as.numeric((y[, i] * csd[i]) + cm[i])
-        # eventuell C-Code ausf�hren: Bringt aber nicht viel und Probleme beim Vergleich mit der bisherigen Version
+        # eventuell C-Code ausfuehren: Bringt aber nicht viel und Probleme beim Vergleich mit der bisherigen Version
         #y[,i] <- as.numeric(.C("restandardise", erg=as.double(y[,i]), as.integer(nrow(x)), as.double(cm[i]), as.double(csd[i]))$erg)
       }
       
