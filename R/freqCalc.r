@@ -20,7 +20,11 @@
       if(!is.null(w)){
         z <- ffc(x,keyVars,w)
       }else{
-        z <- sffcNA(x,keyVars,w)
+        if(nrow(x)>5000){
+          z <- sffcNA(x,keyVars,w)
+        }else{
+          z <- ffc(x,keyVars,w)
+        }
       }
     }else{ 
       z <- sffc(x,keyVars,w)
@@ -107,17 +111,18 @@ ffc <- function(x, keyVars, w = NULL) {
 ## Author: Alexander Kowarik
 sffc <- function(x, keyVars, w = NULL) {
   xorig <- x
-  x$idvarextraforsffc=1:nrow(x)
+  .I <- idvarextraforsffc <- NULL
   if(is.numeric(keyVars))
     keyVars <- colnames(x)[keyVars]
   if(is.null(w)){
-    dat <- data.table(x[,c(keyVars,"idvarextraforsffc")])
+    dat <- data.table(x[,keyVars,])
+    dat[,idvarextraforsffc:=.I]
     setkeyv(dat,keyVars)
     erg <- vector()
     cmd <- paste("erg <- dat[,list(fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
     eval(parse(text=cmd))
     erg <- merge(erg,dat)
-    setkey(erg,idvarextraforsffc)
+    setkey(erg,"idvarextraforsffc")
     res <- list(
         freqCalc = xorig,
         keyVars = keyVars,
@@ -129,13 +134,14 @@ sffc <- function(x, keyVars, w = NULL) {
         n2 = sum(erg$fk==2,na.rm=TRUE)
     )
   }else{
-    dat <- data.table(x[,c(keyVars,"idvarextraforsffc")],weight=x[,w])
+    dat <- data.table(x[,keyVars],weight=x[,w])
+    dat[,idvarextraforsffc:=.I]
     setkeyv(dat,keyVars)
     erg <- vector()
     cmd <- paste("erg <- dat[,list(Fk=sum(weight),fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
     eval(parse(text=cmd))
     erg <- merge(erg,dat)
-    setkey(erg,idvarextraforsffc)
+    setkey(erg,"idvarextraforsffc")
     res <- list(
         freqCalc = xorig,
         keyVars = keyVars,
@@ -153,6 +159,7 @@ sffc <- function(x, keyVars, w = NULL) {
 ## data.table based frequency calculation with NA in keyVariables
 ## Author: Alexander Kowarik
 sffcNA <- function(x, keyVars, w = NULL) {
+  ergna4 <- idvarextraforsffc <- .I <- datwona <- fkneu <- fk <- ergna <- plusNA <- jjjj <- sfk <- matchedObs <- ind <- J <- NULL
   xorig <- x # for returning
   x <- x[,keyVars]#reduce data set to small necessary variables
   for(k in keyVars){#all keyVars should be numeric, (no factors)
@@ -234,9 +241,9 @@ sffcNA <- function(x, keyVars, w = NULL) {
           ergna3 <- ergna2[-indtmp,]
           if(nrow(ergna3)>0){
             for(j in indtmp){
-              cmd <- paste("ergna3 <- ergna3[",paste("(",notnakeyVars,"==ergna2[j,",notnakeyVars,"]|is.na(",notnakeyVars,"))",sep="",collapse="&"),",sum(plusNA)]",sep="")
+              cmd <- paste("ergna4 <- ergna3[",paste("(",notnakeyVars,"==ergna2[j,",notnakeyVars,"]|is.na(",notnakeyVars,"))",sep="",collapse="&"),",sum(plusNA)]",sep="")
               eval(parse(text=cmd))
-              ergna2[j,fk:=fk+ergna3]
+              ergna2[j,fk:=fk+ergna4]
             }
           }
     }     
@@ -247,16 +254,16 @@ sffcNA <- function(x, keyVars, w = NULL) {
     erg <- merge(erg,datwona)
     setkeyv(ergna2,keyVars)
     for(k in keyVars){
-      cmd <- paste("ergna2[is.na(",k,"),",k,":=999888777666]",sep="")
+      cmd <- paste("ergna2[is.na(",k,"),",k,":=999777666L]",sep="")
       eval(parse(text=cmd))
-      cmd <- paste("datwna[is.na(",k,"),",k,":=999888777666]",sep="")
+      cmd <- paste("datwna[is.na(",k,"),",k,":=999777666L]",sep="")
       eval(parse(text=cmd))
     }
     setkeyv(datwna,keyVars)
     setkeyv(ergna2,keyVars)
     datwna <- merge(ergna2,datwna)
     for(k in keyVars){
-      cmd <- paste("datwna[",k,"==999888777666,",k,":=NA]",sep="")
+      cmd <- paste("datwna[",k,"==999777666,",k,":=NA]",sep="")
       eval(parse(text=cmd))
     }
     erg <- rbind(datwna,erg)
