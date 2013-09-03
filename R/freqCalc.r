@@ -1,6 +1,6 @@
 `freqCalc` <-
     function(x, keyVars, w=NULL, fast=TRUE){
-  if(is.numeric(keyVars))
+   if(is.numeric(keyVars))
     keyVars <- colnames(x)[keyVars]
 #  classInfo <- character()
 #  xKeys <- x[,keyVars,drop=FALSE]
@@ -13,13 +13,18 @@
 #	  xKeys[,i] <- as.numeric(as.factor(xKeys[,i]))
 #  }
   ## TODO: directly work with xKeys in ffc and freqCalc
- #x[,keyVars] <- xKeys
+  #x[,keyVars] <- xKeys
   if(fast){
     TFna <- any(is.na(x[,keyVars]))
-    if(TFna)
-      z <- ffc(x,keyVars,w)
-    else 
+    if(TFna){
+      if(!is.null(w)){
+        z <- ffc(x,keyVars,w)
+      }else{
+        z <- sffcNA(x,keyVars,w)
+      }
+    }else{ 
       z <- sffc(x,keyVars,w)
+    }
 #    if(dfInfo) z$freqCalc <- data.frame(z$freqCalc)
 #    if(any(classInfo == "factor")){
 #      a <- which(classInfo=="factor")
@@ -73,7 +78,7 @@ ffc <- function(x, keyVars, w = NULL) {
   }
   dataX <- as.matrix(dataX)
   while(any(dataX==treatmissing,na.rm=TRUE)){
-	  treatmissing <- -sample(999:999999,1)
+    treatmissing <- -sample(999:999999,1)
   }  
   dataX[is.na(dataX)] <- treatmissing
   ind <- do.call(order,data.frame(dataX))
@@ -92,16 +97,17 @@ ffc <- function(x, keyVars, w = NULL) {
       indexG = NULL,
       fk = as.integer(fk),
       Fk = Fk,
-      n1 = length(which(fk==1)),
-      n2 = length(which(fk==2))
+      n1 = sum(fk==1,na.rm=TRUE),
+      n2 = sum(fk==2,na.rm=TRUE)
   )
   class(res) <- "freqCalc"
   invisible(res)
 }
-
+## data.table based frequency calculation without any NA in keyVariables
+## Author: Alexander Kowarik
 sffc <- function(x, keyVars, w = NULL) {
   xorig <- x
-  x <- cbind(x,idvarextraforsffc=1:nrow(x))
+  x$idvarextraforsffc=1:nrow(x)
   if(is.numeric(keyVars))
     keyVars <- colnames(x)[keyVars]
   if(is.null(w)){
@@ -111,7 +117,7 @@ sffc <- function(x, keyVars, w = NULL) {
     cmd <- paste("erg <- dat[,list(fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
     eval(parse(text=cmd))
     erg <- merge(erg,dat)
-    setkey(erg,"idvarextraforsffc")
+    setkey(erg,idvarextraforsffc)
     res <- list(
         freqCalc = xorig,
         keyVars = keyVars,
@@ -119,8 +125,8 @@ sffc <- function(x, keyVars, w = NULL) {
         indexG = NULL,
         fk = as.integer(erg$fk),
         Fk = as.numeric(erg$fk),
-        n1 = length(which(erg$fk==1)),
-        n2 = length(which(erg$fk==2))
+        n1 = sum(erg$fk==1,na.rm=TRUE),
+        n2 = sum(erg$fk==2,na.rm=TRUE)
     )
   }else{
     dat <- data.table(x[,c(keyVars,"idvarextraforsffc")],weight=x[,w])
@@ -129,7 +135,7 @@ sffc <- function(x, keyVars, w = NULL) {
     cmd <- paste("erg <- dat[,list(Fk=sum(weight),fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
     eval(parse(text=cmd))
     erg <- merge(erg,dat)
-    setkey(erg,"idvarextraforsffc")
+    setkey(erg,idvarextraforsffc)
     res <- list(
         freqCalc = xorig,
         keyVars = keyVars,
@@ -137,11 +143,137 @@ sffc <- function(x, keyVars, w = NULL) {
         indexG = NULL,
         fk = as.integer(erg$fk),
         Fk = as.numeric(erg$Fk),
-        n1 = length(which(erg$fk==1)),
-        n2 = length(which(erg$fk==2))
+        n1 = sum(erg$fk==1,na.rm=TRUE),
+        n2 = sum(erg$fk==2,na.rm=TRUE)
     )
   }
   class(res) <- "freqCalc"
   invisible(res)
 }
-  
+## data.table based frequency calculation with NA in keyVariables
+## Author: Alexander Kowarik
+sffcNA <- function(x, keyVars, w = NULL) {
+  xorig <- x # for returning
+  x <- x[,keyVars]#reduce data set to small necessary variables
+  for(k in keyVars){#all keyVars should be numeric, (no factors)
+    if(!is.numeric(x[,k]))
+      x[,k] <- as.numeric(x[,k])
+  }
+  if(is.numeric(keyVars))
+    keyVars <- colnames(x)[keyVars]
+  if(is.null(w)){
+    #Compute fk for observations without any NA
+    dat <- data.table(x)# create data.table
+    dat[,idvarextraforsffc:=.I]#unique id for easy outputting
+    #Split data set in data set with NAs and without
+    cmd <- paste("datwona <- dat[",paste("!is.na(",keyVars,")",collapse="&",sep=""),"]",sep="")
+    eval(parse(text=cmd))
+    cmd <- paste("datwna <- dat[",paste("is.na(",keyVars,")",collapse="|",sep=""),"]",sep="")
+    eval(parse(text=cmd))
+    setkeyv(datwona,keyVars)
+    erg <- vector()
+    #erg contains the 'first' fk for all observations without any NAs
+    cmd <- paste("erg <- datwona[,list(fk=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
+    eval(parse(text=cmd))
+    allCombKeysVars <- as.list(set_power(keyVars))## build the power set of all keyVars
+    allCombKeysVars <- allCombKeysVars[-c(1,length(allCombKeysVars))]##delete the empty set and the full set
+    cmd <- paste("ergna2 <- datwna[",paste("is.na(",keyVars,")",collapse="&",sep=""),
+        ",list(plusNA=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
+    eval(parse(text=cmd))
+    if(nrow(ergna2)>0){
+      allNAexist <- TRUE##TODO: What to do with observations where all key variables are missing?!
+    }else{
+      allNAexist <- FALSE
+    }
+    #First forloop updates fk for observations without any NA
+    matched <- vector()
+    erg[,fkneu:=fk]
+    for(i in seq_along(allCombKeysVars)){
+      nakeyVars <- unlist(as.list(allCombKeysVars[[i]]))
+      notnakeyVars <- keyVars[!keyVars%in%nakeyVars]
+      cmd <- paste("ergna <- datwna[",paste("is.na(",nakeyVars,")",collapse="&",sep=""),",list(plusNA=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
+      eval(parse(text=cmd))
+      if(nrow(ergna)>0){
+        indM <- nrow(ergna2)+1
+        ergna2 <- rbind(ergna2,ergna)
+        indM <- indM:nrow(ergna2)
+        setkeyv(erg,notnakeyVars)
+        setkeyv(ergna,notnakeyVars)
+        cmd <- paste("erg <- merge(erg,ergna[,list(",paste(c(notnakeyVars,"plusNA"),collapse=","),")],all.x=TRUE)")
+        eval(parse(text=cmd))
+        ergD <- erg[!is.na(plusNA),]
+        cmd <- paste("ergD <- ergD[,sum(fk,na.rm=TRUE),by=list(",paste(notnakeyVars,collapse=",",sep=""),")]")
+        eval(parse(text=cmd))
+        setnames(ergD,ncol(ergD),"sfk")
+        ergna2[,jjjj:=.I]
+        ergD <- merge(ergna2[indM,],ergD,all.x=TRUE,by=notnakeyVars)
+        ergD[is.na(sfk),sfk:=0L]
+        setkey(ergD,"jjjj")
+        ergna2[,jjjj:=NULL]
+        tmpX <- data.table(ind=i,indM=indM,matchedObs=ergD$sfk)
+        matched <- rbind(matched,tmpX)
+        erg[!is.na(plusNA),fkneu:=fkneu+plusNA]
+        erg[,plusNA:=NULL]
+      }
+    }
+    #Second forloop computes fk for observations with NA (only based on non-NA-obs)
+    ergna2[,indM:=.I]
+    setkey(ergna2,"indM")
+    setkey(matched,"indM")
+    ergna2 <- merge(ergna2,matched,all.x=TRUE)
+    ergna2[,fk:=plusNA+matchedObs]
+    ergna2[,matchedObs:=NULL]
+    ergna2[,indM:=NULL]
+    ergna2[,ind:=NULL]
+    setkey(matched,"ind")
+    indtmp <- NULL
+    for(i in matched[J(unique(ind)),"ind",with=FALSE,mult="first"]$ind){
+          nakeyVars <- unlist(as.list(allCombKeysVars[[i]]))
+          notnakeyVars <- keyVars[!keyVars%in%nakeyVars]
+          indtmp <- matched[J(i),"indM",with=FALSE]$indM
+          ergna3 <- ergna2[-indtmp,]
+          if(nrow(ergna3)>0){
+            for(j in indtmp){
+              cmd <- paste("ergna3 <- ergna3[",paste("(",notnakeyVars,"==ergna2[j,",notnakeyVars,"]|is.na(",notnakeyVars,"))",sep="",collapse="&"),",sum(plusNA)]",sep="")
+              eval(parse(text=cmd))
+              ergna2[j,fk:=fk+ergna3]
+            }
+          }
+    }     
+    ergna2[,plusNA:=NULL]
+    setkeyv(erg,keyVars)
+    erg[,fk:=fkneu]
+    erg[,fkneu:=NULL]
+    erg <- merge(erg,datwona)
+    setkeyv(ergna2,keyVars)
+    for(k in keyVars){
+      cmd <- paste("ergna2[is.na(",k,"),",k,":=999888777666]",sep="")
+      eval(parse(text=cmd))
+      cmd <- paste("datwna[is.na(",k,"),",k,":=999888777666]",sep="")
+      eval(parse(text=cmd))
+    }
+    setkeyv(datwna,keyVars)
+    setkeyv(ergna2,keyVars)
+    datwna <- merge(ergna2,datwna)
+    for(k in keyVars){
+      cmd <- paste("datwna[",k,"==999888777666,",k,":=NA]",sep="")
+      eval(parse(text=cmd))
+    }
+    erg <- rbind(datwna,erg)
+    setkey(erg,"idvarextraforsffc")
+    res <- list(
+        freqCalc = xorig,
+        keyVars = keyVars,
+        w = w,
+        indexG = NULL,
+        fk = as.integer(erg$fk),
+        Fk = as.numeric(erg$fk),
+        n1 = sum(erg$fk==1,na.rm=TRUE),
+        n2 = sum(erg$fk==2,na.rm=TRUE)
+    )
+  }else{
+    stop("not implemented in sffcNA yet, use ffc!")
+  }
+  class(res) <- "freqCalc"
+  invisible(res)
+}
