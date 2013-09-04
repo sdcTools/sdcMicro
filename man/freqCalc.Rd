@@ -2,8 +2,7 @@
 \alias{freqCalc}
 \title{ Frequencies calculation for risk estimation }
 \description{
-  Fast computation and estimation of the sample and population frequency counts 
-  which is also needed for risk estimation.
+  Computation and estimation of the sample and population frequency counts.
 }
 \usage{
 freqCalc(x, keyVars, w = NULL, fast=TRUE)
@@ -18,10 +17,8 @@ freqCalc(x, keyVars, w = NULL, fast=TRUE)
 The function considers the case of missing values in the data. 
 A missing value stands for any of the possible categories of the variable considered.
 It is possible to apply this function to large data sets with many (catergorical) key variables, 
-since the computation is done in C.
+since the computation is done in C. 
 
-Note that function \emph{measure_risk()} also estimates the frequencies, and this function using an faster
-C++ code.
 \emph{freqCalc()} does not support sdcMicro S4 class objects.
 }
 \value{
