@@ -1,7 +1,7 @@
 # 4.0.4
  - new implementation of freqCalc. Computation time is now linear with data size. 
    Gains a lot of speed for large data sets. 
- - localSuppression and createSdcJobj make use of new implementation of freqCalc
+ - localSuppression, measure_risk and createSdcJobj make use of new implementation of freqCalc
  - C++-Level glpk and R-Level Rglpk removed for better compatiblity with Mac
  - configure,cleanup removed and Makevars and Makevars.win rewritten according to Rcpp documentation
  - function microaggrGower added: microaggregation for numerical and categorical variables based on Gower distance
