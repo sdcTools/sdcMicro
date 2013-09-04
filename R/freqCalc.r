@@ -193,7 +193,7 @@ sffcNA <- function(x, keyVars, w = NULL) {
       allNAexist <- FALSE
     }
     #First forloop updates fk for observations without any NA
-    matched <- vector()
+    matched <- data.table(ind=1,indM=1,matchedObs=1)[-1]
     erg[,fkneu:=fk]
     cmd <- paste("ergna2 <- datwna[",paste("is.na(",keyVars,")",collapse="&",sep=""),
         ",list(plusNA=.N),by=list(",paste(keyVars,collapse=","),")]",sep="")
@@ -313,7 +313,7 @@ sffcNA <- function(x, keyVars, w = NULL) {
       allNAexist <- FALSE
     }
     #First forloop updates fk for observations without any NA
-    matched <- vector()
+    matched <- data.table(ind=1,indM=1,matchedObs=1,matchedObsW=1)[-1]
     erg[,fkneu:=fk]
     erg[,Fkneu:=Fk]
     cmd <- paste("ergna2 <- datwna[",paste("is.na(",keyVars,")",collapse="&",sep=""),
