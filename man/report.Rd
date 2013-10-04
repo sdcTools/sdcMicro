@@ -38,7 +38,7 @@ report(obj, outdir=getwd(),filename="SDC-Report",format="HTML",title='SDC-Report
 }
 
 \details{
-The application of this function provides you with a html or pdf-report for your sdcMicro object that contains useful summaries about the anonymization process. 
+The application of this function provides you with a html, text or pdf-report for your sdcMicro object that contains useful summaries about the anonymization process. 
 }
 
 \author{
