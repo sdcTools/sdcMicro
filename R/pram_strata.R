@@ -28,7 +28,8 @@ setMethod(f='pram_strata', signature=c('sdcMicroObj'),
 	#rownames(result) <- 1:nrow(result)
 	#colnames(result) <- c("transition", "Frequency")
 	
-	pram$summary <- print
+	#pram$summary <- print
+	pram$summary <- print.pram_strata(res)
 	obj <- set.sdcMicroObj(obj, type="pram", input=list(pram))
 	
 	obj <- calcRisks(obj)
@@ -36,17 +37,17 @@ setMethod(f='pram_strata', signature=c('sdcMicroObj'),
 	obj
 })
 setMethod(f='pram_strata', signature=c("data.frame"),
-		definition=function(obj, variables=NULL,strata_variables=NULL,
-				weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5) { 
-			pram_strataWORK(data=obj, variables=variables,strata_variables=strata_variables,
-					weights=weights,seed=seed,missing=missing,pd=pd,alpha=alpha)
-		})
+	definition=function(obj, variables=NULL,strata_variables=NULL,
+		weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5) { 
+	pram_strataWORK(data=obj, variables=variables,strata_variables=strata_variables,
+		weights=weights,seed=seed,missing=missing,pd=pd,alpha=alpha)
+})
 setMethod(f='pram_strata', signature=c("matrix"),
-		definition=function(obj, variables=NULL,strata_variables=NULL,
-				weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5) { 
-			pram_strataWORK(data=obj, variables=variables,strata_variables=strata_variables,
-					weights=weights,seed=seed,missing=missing,pd=pd,alpha=alpha)
-		})
+	definition=function(obj, variables=NULL,strata_variables=NULL,
+		weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5) { 
+	pram_strataWORK(data=obj, variables=variables,strata_variables=strata_variables,
+		weights=weights,seed=seed,missing=missing,pd=pd,alpha=alpha)
+})
 
 #require(sdcMicro)
 #data(testdata)
@@ -131,11 +132,18 @@ pram_strataWORK <- function(data,variables=NULL,strata_variables=NULL,
 print.pram_strata <- function(x, ...){
 	pram_var <- colnames(x)[grep("pram",colnames(x))]
 	var <- unlist(lapply(pram_var,function(x)substring(x,1,nchar(x)-5)))
+	
+	df <- data.frame(variable=var, nrChanges=NA, percChanges=NA, stringsAsFactors=FALSE)
 	cat("Number of changed observations: \n")
 	cat("- - - - - - - - - - - \n")
 	for(i in 1:length(pram_var)){
-		s <- sum(x[,var[i]]!=x[,pram_var[i]])
+		# FIXME: factor levels of x[,var[i]] and x[,pram_var[i]] not always the same!
+		#s <- sum(x[,var[i]]!=x[,pram_var[i]])
+		s <- sum(as.integer(x[,var[i]])!=as.integer(x[,pram_var[i]]))
 		p <- round(s/nrow(x)*100,2)
 		cat(var[i]," != ",pram_var[i]," : ",s," (",p,"%)","\n",sep="")
+		df[i,"nrChanges"] <- s
+		df[i,"percChanges"] <- p
 	}
+	return(invisible(df))
 }

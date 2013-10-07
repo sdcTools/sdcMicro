@@ -27,6 +27,7 @@ freq(obj,type="fk")
 Possible values for the type argument of the print function are:
 "freq": for Frequencies,
 "ls": for Local Supression output,
+"pram": for results of post-randomization
 "recode":for Recodes,
 "risk": forCategorical risk  and
 "numrisk": for Numerical risk.
@@ -44,7 +45,8 @@ Alexander Kowarik, Matthias Templ
 \examples{
 data(testdata)
 sdc <- createSdcObj(testdata,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+  keyVars=c('urbrur','roof','walls','relat','sex'),
+  pramVars=c('water','electcon'),
   numVars=c('expend','income','savings'), w='sampling_weight')
 fk=freq(sdc)
 Fk=freq(sdc,type="Fk")
@@ -53,5 +55,6 @@ print(sdc,type="ls")
 print(sdc,type="recode")
 print(sdc,type="risk")
 print(sdc,type="numrisk")
+print(sdc,type="pram")
 }
 \keyword{classes}

@@ -84,7 +84,16 @@ setMethod(f='print', signature=c('sdcMicroObj'),
             cat("--------------------------\n")
           }
         }
-      }else if(type=="ls"){
+      } else if ( type == "pram") {
+		  pp <- get.sdcMicroObj(obj, type="pram")
+		  if ( is.null(pp) ) {
+			  cat("PRAM has not been applied!\n")
+		  } else {
+			  cat("Number of changed observations: \n")
+			  cat("- - - - - - - - - - - \n")		  
+			  print(pp$summary)			  
+		  }
+	  } else if(type=="ls"){
         keyVars <- colnames(obj@manipKeyVars)
         maxnam <- max(sapply(keyVars, nchar))
         if(is.null(obj@localSuppression))
