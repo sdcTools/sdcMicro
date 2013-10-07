@@ -1,29 +1,29 @@
-setGeneric('pram', function(obj, keyVar=NULL,pd=0.8, alpha=0.5) {standardGeneric('pram')})
+setGeneric('pram', function(obj, pramVar=NULL,pd=0.8, alpha=0.5) {standardGeneric('pram')})
 setMethod(f='pram', signature=c('sdcMicroObj'),
-    definition=function(obj, keyVar=NULL,pd=0.8, alpha=0.5) { 
-      manipKeyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
-      x <- as.factor(manipKeyVars[,keyVar])
-      
-	  pW <- pramWORK(x=x, keyVar=keyVar,pd=pd,alpha=alpha)
-	  summarypW <- summary(pW)
-	  
-      manipKeyVars[,keyVar] <- pW$xpramed 
-      
-      obj <- nextSdcObj(obj)
-      
-      obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(manipKeyVars))
-      
-      obj <- calcRisks(obj)
-      
-	  obj <- set.sdcMicroObj(obj, type="pram", input=list(summarypW))
-	  
-      obj
-    })
+    definition=function(obj, pramVar=NULL,pd=0.8, alpha=0.5) { 
+    
+	if ( length(pramVar) > 1 ) {
+		stop("pram: parameter 'pramVar' must be of length 1!\n")
+	}
+	manipPramVars <- get.sdcMicroObj(obj, type="manipPramVars")
+  	x <- as.factor(manipPramVars[,pramVar])
+  
+  	pW <- pramWORK(x=x,pd=pd,alpha=alpha)
+  	summarypW <- summary(pW)
+  
+  	manipPramVars[,pramVar] <- pW$xpramed 
+  
+  	obj <- nextSdcObj(obj)  
+  	obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))  
+  	obj <- calcRisks(obj)  
+  	obj <- set.sdcMicroObj(obj, type="pram", input=list(summarypW))
+  	obj
+})
 setMethod(f='pram', signature=c("ANY"),
-    definition=function(obj, keyVar=NULL,pd=0.8, alpha=0.5) { 
-      pramWORK(x=obj,keyVar=keyVar,pd=pd,alpha=alpha)
-    })
-pramWORK <- function(x, pd=0.8, alpha=0.5, keyVar=NULL){ #COLUMN FOR V4 COMPATIBILITY
+	definition=function(obj, pramVar=NULL,pd=0.8, alpha=0.5) { 
+	pramWORK(x=obj,pramVar=pramVar,pd=pd,alpha=alpha)
+})
+pramWORK <- function(x, pramVar=NULL, pd=0.8, alpha=0.5){ #COLUMN FOR V4 COMPATIBILITY
   fac <- FALSE
   recoding <- FALSE
   xpramed <- x

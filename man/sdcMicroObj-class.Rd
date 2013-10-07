@@ -19,7 +19,7 @@ Class to save all information about the SDC process
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("sdcMicroObj", ...)}.
 }
-\usage{createSdcObj(dat, keyVars, numVars = NULL, weightVar = NULL, hhId = NULL, 
+\usage{createSdcObj(dat, keyVars, numVars = NULL, pramVars=NULL, weightVar = NULL, hhId = NULL, 
     strataVar = NULL, sensibleVar=NULL, options = NULL) 
     undolast(obj)
     nextSdcObj(obj)
@@ -28,6 +28,7 @@ Objects can be created by calls of the form \code{new("sdcMicroObj", ...)}.
   \item{dat}{A numeric matrix or data frame containing the data.}
   \item{obj}{An object of class 'sdcMicroObj'}
   \item{keyVars}{sfdf}
+  \item{pramVars}{sfdf}
   \item{numVars}{sfdf}
   \item{weightVar}{sfdf}
   \item{hhId}{sfdf}
@@ -39,12 +40,14 @@ Objects can be created by calls of the form \code{new("sdcMicroObj", ...)}.
   \describe{
     \item{\code{origData}:}{Object of class \code{"dataframeOrNULL"} ~~ }
     \item{\code{keyVars}:}{Object of class \code{"numericOrNULL"} ~~ }
+    \item{\code{pramVars}:}{Object of class \code{"numericOrNULL"} ~~ }
     \item{\code{numVars}:}{Object of class \code{"numericOrNULL"} ~~ }
     \item{\code{weightVar}:}{Object of class \code{"numericOrNULL"} ~~ }
     \item{\code{hhId}:}{Object of class \code{"numericOrNULL"} ~~ }
     \item{\code{strataVar}:}{Object of class \code{"numericOrNULL"} ~~ }
     \item{\code{sensibleVar}:}{Object of class \code{"numericOrNULL"} ~~ }
     \item{\code{manipKeyVars}:}{Object of class \code{"dataframeOrNULL"} ~~ }
+    \item{\code{manipPramVars}:}{Object of class \code{"dataframeOrNULL"} ~~ }
     \item{\code{manipNumVars}:}{Object of class \code{"dataframeOrNULL"} ~~ }
     \item{\code{manipStrataVar}:}{Object of class \code{"factorOrNULL"} ~~ }
     \item{\code{originalRisk}:}{Object of class \code{"listOrNULL"} ~~ }

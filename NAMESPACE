@@ -8,6 +8,9 @@ import("cluster")
 import("e1071")
 import("xtable")
 import("tools")
+import("brew")
+import("knitr")
+import("data.table")
 exportClasses(
 	'sdcMicroObj'
 #	,

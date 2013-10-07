@@ -32,23 +32,31 @@ standardizeInput <- function(obj, v) {
 }
 
 
-createSdcObj <- function(dat, keyVars, numVars=NULL, weightVar=NULL, hhId=NULL, strataVar=NULL, 
+createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, weightVar=NULL, hhId=NULL, strataVar=NULL, 
 		sensibleVar=NULL, options=NULL) {
+
 	obj <- new("sdcMicroObj")
-  if(!is.data.frame(dat))
-    dat <- as.data.frame(dat)
+ 	if(!is.data.frame(dat))
+    	dat <- as.data.frame(dat)
+	
 	obj <- set.sdcMicroObj(obj, type="origData", input=list(dat))
 	# key-variables
 	keyVarInd <- standardizeInput(obj, keyVars)
-  TFcharacter <- lapply(dat[,keyVarInd,drop=FALSE],class)%in%"character"
-  if(any(TFcharacter)){
-    for(kvi in which(TFcharacter)){
-      dat[,keyVarInd[kvi]] <- as.factor(dat[,keyVarInd[kvi]]) 
-    }
-  }
+  	TFcharacter <- lapply(dat[,keyVarInd,drop=FALSE],class)%in%"character"
+  	if(any(TFcharacter)){
+    	for(kvi in which(TFcharacter)){
+      		dat[,keyVarInd[kvi]] <- as.factor(dat[,keyVarInd[kvi]]) 
+    	}
+  	}
+	
 	obj <- set.sdcMicroObj(obj, type="keyVars", input=list(keyVarInd))
 	obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(dat[,keyVarInd,drop=FALSE]))
 
+	if ( !is.null(pramVars) ) {
+		pramVarInd <- standardizeInput(obj, pramVars)
+		obj <- set.sdcMicroObj(obj, type="pramVars", input=list(pramVarInd))
+		obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(dat[,pramVarInd,drop=FALSE]))
+	}
 	# numeric-variables
 	if ( !is.null(numVars) ) {
 		numVarInd <- standardizeInput(obj, numVars)
@@ -75,20 +83,18 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, weightVar=NULL, hhId=NULL, 
 		sensibleVarInd <- standardizeInput(obj, sensibleVar)
 		obj <- set.sdcMicroObj(obj, type="sensibleVar", input=list(sensibleVarInd))
 	}
-	if( !is.null(options) ) {
+	if ( !is.null(options) ) {
 		obj <- set.sdcMicroObj(obj, type="options", input=list(options))
 	}
 
 	obj <- measure_risk(obj)
-  obj@originalRisk <- obj@risk
+  	obj@originalRisk <- obj@risk
   
-  if ( length(numVars)>0 ) {
-    obj <- dRisk(obj)
-    #obj <- dRiskRMD(obj)
-    obj <- dUtility(obj)
-    
-  }
-
+  	if ( length(numVars)>0 ) {
+    	obj <- dRisk(obj)
+    	#obj <- dRiskRMD(obj)	
+		obj <- dUtility(obj)
+  	}
 	obj
 }
 computeNumberPrev <- function(obj){
@@ -151,23 +157,26 @@ setMethod(f='calcRisks', signature=c('sdcMicroObj'),
     })
 
 
-setGeneric('extractManipData', function(obj,ignoreKeyVars=FALSE,ignoreNumVars=FALSE,
+setGeneric('extractManipData', function(obj,ignoreKeyVars=FALSE,ignorePramVars=FALSE,ignoreNumVars=FALSE,
         ignoreStrataVar=FALSE) {standardGeneric('extractManipData')})
 setMethod(f='extractManipData', signature=c('sdcMicroObj'),
-    definition=function(obj,ignoreKeyVars=FALSE,ignoreNumVars=FALSE,
+    definition=function(obj,ignoreKeyVars=FALSE,ignorePramVars=FALSE,ignoreNumVars=FALSE,
         ignoreStrataVar=FALSE) { 
-      o <- obj@origData
-      k <- obj@manipKeyVars
-      n <- obj@manipNumVars
-      s <- obj@manipStrataVar
-      if(!is.null(k)&&!ignoreKeyVars)
-        o[,colnames(k)] <- k
-      if(!is.null(n)&&!ignoreNumVars)
-        o[,colnames(n)] <- n
-      if(!is.null(s)&&!ignoreStrataVar)
-        o$sdcGUI_strataVar <- s
-      return(o)
-    })
+	o <- obj@origData
+   	k <- obj@manipKeyVars
+	p <- obj@manipPramVars
+   	n <- obj@manipNumVars
+   	s <- obj@manipStrataVar
+   	if(!is.null(k)&&!ignoreKeyVars)
+   		o[,colnames(k)] <- k
+	if(!is.null(p)&&!ignorePramVars)
+		o[,colnames(p)] <- p	
+   	if(!is.null(n)&&!ignoreNumVars)
+     	o[,colnames(n)] <- n
+   	if(!is.null(s)&&!ignoreStrataVar)
+   		o$sdcGUI_strataVar <- s
+  	return(o)
+})
 ###
 #library(sdcMicro4)
 #data(francdat)

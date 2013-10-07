@@ -8,12 +8,13 @@
  Extract the manipulated data from an object of class 'sdcMicroObj'
 }
 \usage{
-extractManipData(obj,ignoreKeyVars=FALSE,ignoreNumVars=FALSE,
+extractManipData(obj,ignoreKeyVars=FALSE,ignorePramVars=FALSE,ignoreNumVars=FALSE,
         ignoreStrataVar=FALSE)
 }
 \arguments{
   \item{obj}{ object of class 'sdcMicroObj }
   \item{ignoreKeyVars}{If manipulated KeyVariables should be returned or the unchanged original variable}
+ 	\item{ignorePramVars}{If manipulated PramVariables should be returned or the unchanged original variable}
   \item{ignoreNumVars}{If manipulated NumericVariables should be returned or the unchanged original variable}
   \item{ignoreStrataVar}{If manipulated StrataVariables should be returned or the unchanged original variable}
 }  

@@ -46,33 +46,19 @@ setGeneric('undolast', function(obj) {standardGeneric('undolast')})
 #' @rdname get.sdcMicroObj-method
 setMethod(f='get.sdcMicroObj', signature=c('sdcMicroObj', 'character'),
 	definition=function(object, type) { 
-		if ( !type %in% c('origData', 'keyVars', 'numVars', 
+		if ( !type %in% c('origData', 'keyVars', 'pramVars', 'numVars', 
 				'weightVar', 'hhId', 'strataVar', 'sensibleVar',
-				'manipKeyVars','manipNumVars','manipStrataVar',
+				'manipKeyVars', 'manipPramVars', 'manipNumVars','manipStrataVar',
 				'originalRisk','risk', 'utility', 'pram', 'localSuppression','options', 'prev', 'set') ) {
 			stop("get.sdcMicroObj:: argument 'type' is not valid!\n")
 		}
 
 		if((!type %in% object@set) && !is.null(object@prev)) return (get.sdcMicroObj(object@prev, type))
 
-		if ( type == 'origData' ) return(object@origData)
-		if ( type == 'keyVars' ) return(object@keyVars)		
-		if ( type == 'numVars' ) return(object@numVars)	
-		if ( type == 'weightVar' ) return(object@weightVar)
-		if ( type == 'hhId' ) return(object@hhId)
-		if ( type == 'strataVar' ) return(object@strataVar)	
-		if ( type == 'sensibleVar' ) return(object@sensibleVar)	
-		if ( type == 'manipKeyVars' ) return(object@manipKeyVars)	
-		if ( type == 'manipNumVars' ) return(object@manipNumVars)	
-		if ( type == 'manipStrataVar' ) return(object@manipStrataVar)	
-		if ( type == 'prev' ) return(object@prev)
-		if ( type == 'set' ) return(object@set)
-		if ( type == 'risk' ) return(object@risk)
-    if ( type == 'originalRisk' ) return(object@originalRisk)
-		if ( type == 'utility' ) return(object@utility)
-		if ( type == 'pram' ) return(object@pram)	
-		if ( type == 'localSuppression' ) return(object@localSuppression)
-		if ( type == 'options' ) return(object@options)
+		if (!type %in% slotNames(object)) {
+			stop("wrong argument 'type'!\n")
+		}
+		return(slot(object, type))
 	}
 )
 
@@ -80,19 +66,21 @@ setMethod(f='get.sdcMicroObj', signature=c('sdcMicroObj', 'character'),
 #' @rdname set.sdcMicroObj-method
 setMethod(f='set.sdcMicroObj', signature=c('sdcMicroObj', 'character', 'listOrNULL'),
 	definition=function(object, type, input) { 
-		if ( !type %in% c('origData','keyVars','numVars','weightVar','hhId','strataVar',
-				'sensibleVar','manipKeyVars','manipNumVars','manipStrataVar','risk','utility','pram','localSuppression','options','prev','set') ) {
+		if ( !type %in% c('origData','keyVars', 'pramVars', 'numVars','weightVar','hhId','strataVar',
+				'sensibleVar', 'manipPramVars', 'manipKeyVars','manipNumVars','manipStrataVar','risk','utility','pram','localSuppression','options','prev','set') ) {
 			stop("set.sdcMicroObj:: check argument 'type'!\n")
 		}
 
 		if ( type == 'origData' ) object@origData <- input[[1]]
 		if ( type == 'keyVars' ) object@keyVars <- input[[1]]
+		if ( type == 'pramVars' ) object@pramVars <- input[[1]]
 		if ( type == 'numVars' ) object@numVars <- input[[1]]	
 		if ( type == 'weightVar' ) object@weightVar <- input[[1]]	
 		if ( type == 'hhId' ) object@hhId <- input[[1]]	
 		if ( type == 'strataVar' ) object@strataVar <- input[[1]]
 		if ( type == 'sensibleVar' ) object@sensibleVar <- input[[1]]
 		if ( type == 'manipKeyVars' ) object@manipKeyVars <- input[[1]]
+		if ( type == 'manipPramVars' ) object@manipPramVars <- input[[1]]
 		if ( type == 'manipNumVars' ) object@manipNumVars <- input[[1]]
 		if ( type == 'manipStrataVar' ) object@manipStrataVar <- input[[1]]
 		if ( type == 'risk' ) object@risk <- input[[1]]

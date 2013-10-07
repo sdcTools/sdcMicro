@@ -3,16 +3,20 @@ setGeneric('shuffle', function(obj, form, method="ds", weights=NULL, covmethod="
 setMethod(f='shuffle', signature=c('sdcMicroObj'),
     definition=function(obj, form, method="ds", weights=NULL, covmethod="spearman",
         regmethod="lm", gadp=TRUE) { 
-      xn <- get.sdcMicroObj(obj, type="manipNumVars")
-      xk <- get.sdcMicroObj(obj, type="manipKeyVars")
-      xs <- get.sdcMicroObj(obj, type="manipStrataVar")
-      vars <- gsub(" ","",unlist(strsplit(as.character(form)[[2]],"\\+")))
-      pred <- gsub(" ","",unlist(strsplit(as.character(form)[[3]],"\\+")))
-	  if(!is.null(xs)){
-      	x <- cbind(xn,xk,xs)
-  	  } else{
-		  x <- cbind(xn, xk)
-	  }
+	xn <- get.sdcMicroObj(obj, type="manipNumVars")	
+	xp <- get.sdcMicroObj(obj, type="manipPramVars")
+	xk <- get.sdcMicroObj(obj, type="manipKeyVars")
+	xs <- get.sdcMicroObj(obj, type="manipStrataVar")
+	vars <- gsub(" ","",unlist(strsplit(as.character(form)[[2]],"\\+")))
+	pred <- gsub(" ","",unlist(strsplit(as.character(form)[[3]],"\\+")))
+	  
+	x <- cbind(xn,xk)
+	if ( !is.null(xs) ) {
+		x <- cbind(x, xs)
+	}
+	if ( !is.null(xp) ) {
+	x <- cbind(x, xp)
+	}	  
     x <- x[,colnames(x)%in%c(pred,vars)]
     if(any(!(pred%in%colnames(x)))){
       xo <- get.sdcMicroObj(obj, type="origData")
@@ -22,21 +26,22 @@ setMethod(f='shuffle', signature=c('sdcMicroObj'),
     if(any(!vars%in%colnames(x))){
       stop(paste("Variables:",paste(vars[!vars%in%colnames(x)],collapse=","),"not found"))
     }
-      res <- shuffleWORK(data=x, form=form,method=method,weights=weights,
-          covmethod=covmethod,regmethod=regmethod,gadp=gadp)
-      if(any(!vars%in%colnames(xn)))
-        stop("All response variable have to be numeric!")
-      if(any(vars %in% colnames(xn))){
-        xn[,vars[vars%in%colnames(xn)]] <- res$shuffled[,vars[vars%in%colnames(xn)]]
-      }
-      obj <- nextSdcObj(obj)
+   
+	res <- shuffleWORK(data=x, form=form,method=method,weights=weights,
+  		covmethod=covmethod,regmethod=regmethod,gadp=gadp)
+   	if(any(!vars%in%colnames(xn)))
+   		stop("All response variable have to be numeric!")
+   	if(any(vars %in% colnames(xn))){
+   		xn[,vars[vars%in%colnames(xn)]] <- res$shuffled[,vars[vars%in%colnames(xn)]]
+   	}
+   	obj <- nextSdcObj(obj)
 	  
-      obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(xn)))
-      obj <- dRisk(obj)
+  	obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(xn)))
+   	obj <- dRisk(obj)
 #      obj <- dRiskRMD(obj)
-      obj <- dUtility(obj)
-      obj
-    })
+   	obj <- dUtility(obj)
+  	obj
+})
 setMethod(f='shuffle', signature=c("data.frame"),
     definition=function(obj, form, method="ds", weights=NULL, covmethod="spearman", regmethod="lm", gadp=TRUE) { 
       shuffleWORK(data=obj,form=form,method=method,weights=weights,covmethod=covmethod,

@@ -253,23 +253,23 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
   if ( is.null(pram) ) {
     repObj <- set.reportObj(repObj, "pram.show", list(FALSE))
   } 
-  
+  if ( is.null(get.sdcMicroObj(obj, "pramVars")) ) {
+	  repObj <- set.reportObj(repObj, "pram.show", list(FALSE))
+  }
   if ( get.reportObj(repObj, "pram.show") ) {
     changedVars <- list()
-    for ( i in 1:length(obj@keyVars) ) {
+    for ( i in 1:length(obj@pramVars) ) {
       changedVars[[i]] <- list()
-      s <- sum(x[,obj@keyVars[i]] != get.sdcMicroObj(obj, "manipKeyVars")[,i])
+      s <- sum(x[,obj@pramVars[i]] != get.sdcMicroObj(obj, "manipPramVars")[,i])
       p <- round(s/nrow(x)*100,2)
-      changedVars[[i]]$oName <- colnames(x)[get.sdcMicroObj(obj, "keyVars")][i]
+      changedVars[[i]]$oName <- colnames(x)[get.sdcMicroObj(obj, "pramVars")][i]
       changedVars[[i]]$nName <- paste(changedVars[[i]]$oName,".pramed")
       changedVars[[i]]$nr <- s
       changedVars[[i]]$perc <- p
-
-      #changedVars[[i]] <- paste(colnames(x)[get.sdcMicroObj(obj, "keyVars")][i]," != ", colnames(x)[get.sdcMicroObj(obj, "keyVars")][i],".pramed"," : ",s," (",p,"\\%)","\n",sep="")
     }
     repObj <- set.reportObj(repObj, "pram.changedVars", list(changedVars))
-    repObj <- set.reportObj(repObj, "pram.totChanges", list(sum(x[,get.sdcMicroObj(obj, "keyVars")] != get.sdcMicroObj(obj, "manipKeyVars"))))
-    repObj <- set.reportObj(repObj, "pram.percChanges", list(round(100*sum(x[,get.sdcMicroObj(obj, "keyVars")] != get.sdcMicroObj(obj, "manipKeyVars"))/(n*pCat),4)))
+    repObj <- set.reportObj(repObj, "pram.totChanges", list(sum(x[,get.sdcMicroObj(obj, "pramVars")] != get.sdcMicroObj(obj, "manipPramVars"))))
+    repObj <- set.reportObj(repObj, "pram.percChanges", list(round(100*sum(x[,get.sdcMicroObj(obj, "pramVars")] != get.sdcMicroObj(obj, "manipPramVars"))/(n*pCat),4)))
   } 
   
   ## k-anonymity
