@@ -130,6 +130,8 @@ pram_strataWORK <- function(data,variables=NULL,strata_variables=NULL,
 }
 
 print.pram_strata <- function(x, ...){
+	x <- apply(x, 2, as.character)
+	x[is.na(x)] <- "." # NA comparisons -> cast to character (better solution?)
 	pram_var <- colnames(x)[grep("pram",colnames(x))]
 	var <- unlist(lapply(pram_var,function(x)substring(x,1,nchar(x)-5)))
 	
@@ -139,7 +141,7 @@ print.pram_strata <- function(x, ...){
 	for(i in 1:length(pram_var)){
 		# FIXME: factor levels of x[,var[i]] and x[,pram_var[i]] not always the same!
 		#s <- sum(x[,var[i]]!=x[,pram_var[i]])
-		s <- sum(as.integer(x[,var[i]])!=as.integer(x[,pram_var[i]]))
+		s <- sum(as.character(x[,var[i]])!=as.character(x[,pram_var[i]]))
 		p <- round(s/nrow(x)*100,2)
 		cat(var[i]," != ",pram_var[i]," : ",s," (",p,"%)","\n",sep="")
 		df[i,"nrChanges"] <- s

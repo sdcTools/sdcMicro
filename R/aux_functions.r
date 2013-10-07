@@ -55,6 +55,15 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, weightVar=NU
 	if ( !is.null(pramVars) ) {
 		pramVarInd <- standardizeInput(obj, pramVars)
 		obj <- set.sdcMicroObj(obj, type="pramVars", input=list(pramVarInd))
+		
+		# variable only consists of NA values?
+		all.na <- which(sapply(obj@origData[,pramVars], function(x) { all(is.na(x))}))
+		if (  length(all.na) > 0 ) {
+			warning('at least one pramVar only contains NA values! --> we do not use this variable!\n')
+			obj <- set.sdcMicroObj(obj, type="pramVars", list(get.sdcMicroObj(obj, type="pramVars")[-all.na]))
+			pramVarInd <- pramVarInd[-all.na]			
+		}
+		pramData <- dat[,pramVarInd,drop=FALSE]			
 		obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(dat[,pramVarInd,drop=FALSE]))
 	}
 	# numeric-variables
