@@ -15,7 +15,7 @@ To be used on categorical data. It randomly change the values of variables on se
 }
 \usage{
 pram_strata(obj, variables=NULL,strata_variables=NULL,
-        weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5)
+        weights=NULL, pd=0.8, alpha=0.5)
 \method{print}{pram_strata}(x, ...)
 }
 \section{Methods}{
@@ -46,12 +46,6 @@ pram_strata(obj, variables=NULL,strata_variables=NULL,
   \item{weights}{
   a weight for each variable
 }
-  \item{seed}{
-  Integer value for the random seed
-}
-  \item{missing}{
-  A integer value to be used as missing value in the C++ routine
-}
 \item{x}{
  Output of pram_strata
 }
@@ -71,10 +65,7 @@ a modified \dQuote{sdcMicroObj} object or new variables with the suffix "_pram" 
 \url{http://www.ccsr.ac.uk/sars/guide/2001/pram.pdf}
 }
 \author{
-Alexander Kowarik, Bernd Prantner, IHSN C++ source
-}
-\note{
-The GNU Linear Programming Kit(GLPK) is used in this program. The modified make files from the R package Rglpk are used.
+Alexander Kowarik, Matthias Templ
 }
 \seealso{\code{pram}}
 \examples{
