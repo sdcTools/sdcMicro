@@ -66,7 +66,7 @@ cV <- get.reportObj(repObj, "pram.changedVars")
 <% } %>
 \end{itemize}
 
-\paragraph{Total number of changes in the categorical key variables:}
+\paragraph{Total number of changes in the categorical key variables due to pram:}
 <%= get.reportObj(repObj, "pram.totChanges") %> ( <%= get.reportObj(repObj, "pram.percChanges") %> \%)
 <% } %>
 

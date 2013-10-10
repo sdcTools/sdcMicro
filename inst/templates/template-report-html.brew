@@ -38,7 +38,7 @@ cV <- get.reportObj(repObj, "pram.changedVars")
 + <%=cV[[i]]$oName%> != <%=cV[[i]]$nName%>: <%=cV[[i]]$nr%> ( <%=cV[[i]]$perc %> % )
 <% } %>
 
-### Total number of changes in the categorical key variables:
+### Total number of changes in the categorical key variables due to pram:
 <%= get.reportObj(repObj, "pram.totChanges") %> ( <%= get.reportObj(repObj, "pram.percChanges") %> %)
 <% } %>
 

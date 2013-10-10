@@ -258,18 +258,27 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
   }
   if ( get.reportObj(repObj, "pram.show") ) {
     changedVars <- list()
-    for ( i in 1:length(obj@pramVars) ) {
+	vNames.pram <- colnames(x)[obj@pramVars]
+	vNames.key <- colnames(x)[obj@keyVars]
+    for ( i in 1:length(vNames.pram) ) {
       changedVars[[i]] <- list()
-      s <- sum(x[,obj@pramVars[i]] != get.sdcMicroObj(obj, "manipPramVars")[,i])
-      p <- round(s/nrow(x)*100,2)
-      changedVars[[i]]$oName <- colnames(x)[get.sdcMicroObj(obj, "pramVars")][i]
-      changedVars[[i]]$nName <- paste(changedVars[[i]]$oName,".pramed")
+	  ind <- which(vNames.pram[i] == vNames.key)
+	  if ( length(ind) == 1  ) {
+		  s <- sum(as.character(x[,vNames.pram[i]]) != as.character(get.sdcMicroObj(obj, "manipKeyVars")[,vNames.key[ind]]), na.rm=TRUE)
+		  p <- round(s/nrow(x)*100,2)		  
+	  } else {
+		  s <- sum(as.character(x[,vNames.pram[i]]) != as.character(get.sdcMicroObj(obj, "manipPramVars")[,vNames.pram[i]]), na.rm=TRUE)
+		  p <- round(s/nrow(x)*100,2)		  
+	  }
+      changedVars[[i]]$oName <- vNames.pram[i]
       changedVars[[i]]$nr <- s
       changedVars[[i]]$perc <- p
     }
+	totChanges <- sum(sapply(changedVars, function(x) x$nr))
+	percChanges <- 100 * totChanges / (n*length(vNames.pram))
     repObj <- set.reportObj(repObj, "pram.changedVars", list(changedVars))
-    repObj <- set.reportObj(repObj, "pram.totChanges", list(sum(x[,get.sdcMicroObj(obj, "pramVars")] != get.sdcMicroObj(obj, "manipPramVars"))))
-    repObj <- set.reportObj(repObj, "pram.percChanges", list(round(100*sum(x[,get.sdcMicroObj(obj, "pramVars")] != get.sdcMicroObj(obj, "manipPramVars"))/(n*pCat),4)))
+    repObj <- set.reportObj(repObj, "pram.totChanges", list(totChanges))
+    repObj <- set.reportObj(repObj, "pram.percChanges", list(percChanges))
   } 
   
   ## k-anonymity
@@ -449,13 +458,13 @@ setMethod(f='report', signature=c('sdcMicroObj'),
       brew(file=tpl, output=mdOut)
       knit2html(stylesheet=css, input=mdOut, quiet=TRUE) 
       file.remove(mdOut)
-      #xx <- file.rename("reportTemplate-out.html", paste(filename,".html", sep=""))
-      xx <- file.rename("reportTemplate.html", filename)
+      xx <- file.rename("reportTemplate.html", paste(filename,".html",sep=""))
       xx <- file.remove("reportTemplate.txt")
       setwd(oldwd)
     }
     
     if ( format == "LATEX" ) {
+	  filename <- paste(filename,".tex",sep="")
       tpl <- system.file("templates", "template-report-latex.brew", package="sdcMicro")
       brew(file=tpl, output=filename)
       
@@ -470,7 +479,7 @@ setMethod(f='report', signature=c('sdcMicroObj'),
     
     if ( format == "TEXT" ) {
       tpl <- system.file("templates", "template-report-text.brew", package="sdcMicro")
-      brew(file=tpl, output=filename)
+      brew(file=tpl, output=paste(filename,".txt",sep=""))
     }
 
     setwd(oldwd)
