@@ -16,17 +16,23 @@ setMethod(f='pram', signature=c('sdcMicroObj'),
       summarypW <- summary(pW)
       obj <- nextSdcObj(obj)
       if(pramVar%in%colnames(obj@manipKeyVars)){
+		warning("If pram is applied on key variables, the k-anonymity and risk assesement are not reasonable anymore.\n")
         obj@manipKeyVars[,pramVar] <- pW$xpramed
         obj@pramVars <- c(obj@pramVars,match(pramVar,colnames(obj@origData))) 
       }else if(pramVar%in%colnames(obj@manipPramVars)){
         obj@manipPramVars[,pramVar] <- pW$xpramed
       }else{
         x <- obj@origData[,pramVar,drop=FALSE]
-        x <- pW$xpramed
-        obj@manipPramVars <- x 
+        x[,pramVar] <- pW$xpramed
+		
+		mPv <- get.sdcMicroObj(obj, type="manipPramVars")
+		if ( is.null(mPv) ) {
+			obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(x)) 
+		} else {
+			obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(cbind(mPv,x))) 
+		}
         obj@pramVars <- c(obj@pramVars,match(pramVar,colnames(obj@origData)))
       }
-      obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))  
       obj <- calcRisks(obj)  
       obj <- set.sdcMicroObj(obj, type="pram", input=list(summarypW))
       obj
