@@ -1,52 +1,93 @@
 setGeneric('pram_strata', function(obj, variables=NULL,strata_variables=NULL,
-				weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5) {standardGeneric('pram_strata')})
+				weights=NULL, pd=0.8, alpha=0.5) {standardGeneric('pram_strata')})
 setMethod(f='pram_strata', signature=c('sdcMicroObj'),
 	definition=function(obj, variables=NULL,strata_variables=NULL,
-		weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5) { 
+		weights=NULL, pd=0.8, alpha=0.5) { 
 	
 	### Get data from manipPramVars
-	manipData <- get.sdcMicroObj(obj, type="manipPramVars")
-	pramVars <- colnames(obj@origData)[get.sdcMicroObj(obj, type="pramVars")]
-	strataVars <- get.sdcMicroObj(obj, type="strataVar")
-	if(length(strataVars)>0) {
-		sData <- get.sdcMicroObj(obj, type="origData")[,strataVars,drop=F]
-		manipData <- cbind(manipData, sData)
-		strataVars <- c(length(pramVars):length(manipData))
-	}
+  manipPramVars <- get.sdcMicroObj(obj, type="manipPramVars")
+  pramVars <- colnames(obj@origData)[get.sdcMicroObj(obj, type="pramVars")]
+  strataVars <- get.sdcMicroObj(obj, type="strataVar")
+  manipKeyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
+  kVar <- variables[variables%in%colnames(manipKeyVars)]
+  pVar <- variables[variables%in%colnames(manipPramVars)]
+  rVar <- variables[!variables%in%c(kVar,pVar)]
+  pramVars <- unique(c(get.sdcMicroObj(obj, type="pramVars"),which(colnames(obj@origData)%in%variables)))
+  if(length(kVar)>0){
+    warning("If pram is applied on key variables, the k-anonymity and risk assesement
+      are not reasonable anymore.\n")
+    manipData <- manipKeyVars[,kVar,drop=FALSE]
+  }
+  if(length(pVar)>0){
+    if(exists("manipData"))
+      manipData <- cbind(manipData,manipPramVars[,pVar,drop=FALSE])
+    else
+      manipData <- manipPramVars[,pVar,drop=FALSE]
+  }
+  if(length(rVar)>0){
+    if(exists("manipData"))
+      manipData <- cbind(manipData,obj@origData[,rVar,drop=FALSE])
+    else
+      manipData <- obj@origData[,rVar,drop=FALSE]
+  }
+  
+  if(!is.null(strata_variables)){
+    sData <- get.sdcMicroObj(obj, type="origData")[,strata_variables,drop=FALSE]
+    manipData <- cbind(manipData, sData)
+    strataVars <- c(length(pramVars):length(manipData))
+  }else if(length(strataVars)>0) {
+	sData <- get.sdcMicroObj(obj, type="origData")[,strataVars,drop=FALSE]
+	manipData <- cbind(manipData, sData)
+	strataVars <- c(length(pramVars):length(manipData))
+  }
 	
-	res <- pram_strataWORK(data=manipData,variables=variables,
-			strata_variables=strataVars,pd=pd,alpha=alpha, missing=missing,seed=seed,weights=weights)
-	manipData[,variables] <- res[,paste(variables,"_pram",sep="")]
-	obj <- nextSdcObj(obj)
-	
-	obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipData))
-	
-	pram <- get.sdcMicroObj(obj, type="pram")
-	pram$pd <- pd
-	pram$alpha <- alpha
-	
-	#rownames(result) <- 1:nrow(result)
-	#colnames(result) <- c("transition", "Frequency")
-	
-	#pram$summary <- print
-	pram$summary <- print.pram_strata(res)
-	obj <- set.sdcMicroObj(obj, type="pram", input=list(pram))
-	
-	obj <- calcRisks(obj)
-	
-	obj
+  res <- pram_strataWORK(data=manipData,variables=variables,
+	strata_variables=strataVars,pd=pd,alpha=alpha,weights=weights)
+  
+  manipData[,variables] <- res[,paste(variables,"_pram",sep="")]
+  obj <- nextSdcObj(obj)
+  
+  if(length(pVar)>0){
+    manipPramVars[,pVar] <- manipData[,pVar]
+  }
+  if(length(rVar)>0){
+	  if ( is.null(manipPramVars))
+		  manipPramVars <- manipData[,rVar,drop=FALSE]
+	  else 
+		manipPramVars <- cbind(manipPramVars,manipData[,rVar,drop=FALSE])
+  }
+  obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))
+  
+  if(length(kVar)>0){
+    manipKeyVars[,kVar] <- manipData[,kVar]
+    obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(manipKeyVars))
+  }
+  pram <- get.sdcMicroObj(obj, type="pram")
+  if ( is.null(pram)) {
+	  pram <- list()
+  }
+  pram$pd <- pd
+  pram$alpha <- alpha
+
+  #pram$summary <- print
+  pram$summary <- print.pram_strata(res)
+  obj <- set.sdcMicroObj(obj, type="pram", list(pram))
+  
+  obj <- set.sdcMicroObj(obj, type="pramVars", input=list(pramVars))
+  obj <- calcRisks(obj)
+  obj
 })
 setMethod(f='pram_strata', signature=c("data.frame"),
 	definition=function(obj, variables=NULL,strata_variables=NULL,
-		weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5) { 
+		weights=NULL, pd=0.8, alpha=0.5) { 
 	pram_strataWORK(data=obj, variables=variables,strata_variables=strata_variables,
-		weights=weights,seed=seed,missing=missing,pd=pd,alpha=alpha)
+		weights=weights,pd=pd,alpha=alpha)
 })
 setMethod(f='pram_strata', signature=c("matrix"),
 	definition=function(obj, variables=NULL,strata_variables=NULL,
-		weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5) { 
+		weights=NULL, pd=0.8, alpha=0.5) { 
 	pram_strataWORK(data=obj, variables=variables,strata_variables=strata_variables,
-		weights=weights,seed=seed,missing=missing,pd=pd,alpha=alpha)
+		weights=weights,pd=pd,alpha=alpha)
 })
 
 #require(sdcMicro)
@@ -60,7 +101,7 @@ setMethod(f='pram_strata', signature=c("matrix"),
 ## only frequency
 #x <- .Call("Pram",as.matrix(dat),-999,0,0,-1)
 pram_strataWORK <- function(data,variables=NULL,strata_variables=NULL,
-		weights=NULL,seed=NULL,missing=-999, pd=0.8, alpha=0.5){
+		weights=NULL, pd=0.8, alpha=0.5){
 	if(is.null(variables))
 		stop("Please define valid variables to pram!")
 	if(length(strata_variables)>0){
