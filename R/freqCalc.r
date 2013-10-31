@@ -115,7 +115,7 @@ sffc <- function(x, keyVars, w = NULL) {
   if(is.numeric(keyVars))
     keyVars <- colnames(x)[keyVars]
   if(is.null(w)){
-    dat <- data.table(x[,keyVars,])
+    dat <- data.table(x[,keyVars,drop=FALSE])
     dat[,idvarextraforsffc:=.I]
     setkeyv(dat,keyVars)
     erg <- vector()
@@ -162,7 +162,7 @@ sffcNA <- function(x, keyVars, w = NULL) {
   ergna4 <- idvarextraforsffc <- .I <- datwona <- fkneu <- fk <- ergna <- plusNA <- jjjj <- NULL
   datwonlyna<- Fk <- Fkneu <- sFk <- plusSUMNA <- sfk <- matchedObsW <- matchedObs <- ind <- J <- NULL
   xorig <- x # for returning
-  x <- x[,keyVars]#reduce data set to small necessary variables
+  x <- x[,keyVars,drop=FALSE]#reduce data set to small necessary variables
   for(k in keyVars){#all keyVars should be numeric, (no factors)
     if(!is.numeric(x[,k]))
       x[,k] <- as.numeric(x[,k])
