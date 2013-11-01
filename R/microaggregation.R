@@ -21,7 +21,7 @@ setMethod(f='microaggregation', signature=c('sdcMicroObj'),
       obj <- nextSdcObj(obj)
       x[,variables] <- res$mx
       
-      obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(x)))
+      obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(x[,variables])))
       
       obj <- dRisk(obj)
 #      obj <- dRiskRMD(obj)
