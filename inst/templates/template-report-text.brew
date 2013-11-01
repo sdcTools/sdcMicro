@@ -152,7 +152,7 @@ class(sI) <- "sessionInfo"
 ##################
 ### Disclaimer ###
 ##################
-R-packages sdcMicro and sdcMicroGUI packages are actively developed and maintained by www.data-analysis.at.
+R-packages sdcMicro and sdcMicroGUI packages are actively developed and maintained by Statistics Austria (www.statistik.at) and data-analysis OG (www.data-analysis.at).
 
 Contact: office@data-analysis.at
 

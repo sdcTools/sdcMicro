@@ -142,7 +142,7 @@ R version <%= rV$major %>.<%= rV$minor %> (<%=rV$year%>-<%=rV$month%>-<%=rV$day%
 
 # Disclaimer
 R-packages sdcMicro and sdcMicroGUI packages are actively developed and maintained by
-[www.data-analysis.at](http://www.data-analysis.at "www.data-analysis.at").
+[www.statistik.at](http://www.statistik.at "Statistics Austria") and [www.data-analysis.at](http://www.data-analysis.at "www.data-analysis.at").
 
 Contact: [office@data-analysis.at](mailto:office@data-analysis.at "Email").
 

@@ -180,7 +180,7 @@ R version <%= rV$major %>.<%= rV$minor %> (<%=rV$year%>-<%=rV$month%>-<%=rV$day%
 <% } %>
 
 \section*{Disclaimer}
-\texttt{R}-packages \texttt{sdcMicro} and \texttt{sdcMicroGUI} packages are actively developed and maintained by \url{www.data-analysis.at}.
+\texttt{R}-packages \texttt{sdcMicro} and \texttt{sdcMicroGUI} packages are actively developed and maintained by Statistics Austria (\url{www.statistik.at}) and data-analysis OG (\url{www.data-analysis.at}).
 
 Contact: Email us at \url{office@data-analysis.at} for any enquiries.
 
