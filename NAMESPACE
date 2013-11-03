@@ -10,7 +10,7 @@ import("tools")
 import("brew")
 import("knitr")
 import("data.table")
-import("sets")
+importFrom("sets","set_power")
 exportClasses(
 	'sdcMicroObj'
 #	,

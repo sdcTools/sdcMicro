@@ -15,7 +15,7 @@ LazyData: TRUE
 ByteCompile: TRUE
 LinkingTo: Rcpp
 Depends:
-    R (>= 2.10), brew, knitr,data.table,sets
+    R (>= 2.10), brew, knitr,data.table
 Imports:
     car,
     robustbase,
@@ -24,7 +24,7 @@ Imports:
     e1071,
     tools,
     Rcpp,
-    methods
+    methods,sets
 License: GPL-2
 URL: https://github.com/alexkowa/sdcMicro
 Collate:
