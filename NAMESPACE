@@ -6,11 +6,11 @@ import("MASS")
 import("car")
 import("cluster")
 import("e1071")
-import("xtable")
 import("tools")
 import("brew")
 import("knitr")
 import("data.table")
+import("sets")
 exportClasses(
 	'sdcMicroObj'
 #	,
