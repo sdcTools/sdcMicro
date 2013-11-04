@@ -7,6 +7,8 @@ setClass(
     nrObs='numericOrNULL',
     tabKeyVars='dataframeOrNULL',
     sensiblecn='numericOrNULL',
+	
+	delDirect='characterOrNULL',
     modCat='logicalOrNULL',
     modNum='logicalOrNULL',
     modPram='logicalOrNULL',
@@ -65,6 +67,8 @@ setClass(
     impFile=NULL,
     nrObs=NULL,
     sensiblecn=NULL,
+	
+	delDirect=NULL,
     modCat=NULL,
     modNum=NULL,
     modPram=NULL,
@@ -148,12 +152,12 @@ setMethod(f='set.reportObj', signature=c('reportObj', 'character', 'listOrNULL')
 )
 
 setGeneric('calcReportData',
-  function(obj, internal=FALSE,title) {
+  function(obj, internal=FALSE,title,outdir) {
     standardGeneric('calcReportData')
   }
 )
 
-setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(obj,internal,title) {
+setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(obj,internal,title,outdir) {
   repObj <- new("reportObj")
      
   if ( internal ) {
@@ -238,11 +242,13 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
   repObj <- set.reportObj(repObj, "sensiblecn", list(get.sdcMicroObj(obj, "sensibleVar")))
   
   ## information about anonymisation methods
+  delDirect <- get.sdcMicroObj(obj, "deletedVars")
   modCat <- sum(!(x[,get.sdcMicroObj(obj, "keyVars")] == get.sdcMicroObj(obj, "manipKeyVars")), na.rm=TRUE) > 0
   modNum <- sum(!(x[,get.sdcMicroObj(obj, "numVars")] == get.sdcMicroObj(obj, "manipNumVars")), na.rm=TRUE) > 0
   modPram <- !is.null(get.sdcMicroObj(obj, "pram"))
   modLocSupp <- !is.null(get.sdcMicroObj(obj, "localSuppression"))   		
   
+  repObj <- set.reportObj(repObj, "delDirect", list(delDirect))
   repObj <- set.reportObj(repObj, "modCat", list(modCat))
   repObj <- set.reportObj(repObj, "modNum", list(modNum))
   repObj <- set.reportObj(repObj, "modPram", list(modPram))
@@ -408,7 +414,7 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
     ### boxplot of differences
     mi <- min(x[,y2cn],y2)
     ma <- max(x[,y2cn],y2)
-    fn <- paste("Graph-",format(Sys.time(), "%d-%m-%Y-%H%M%S"),".png", sep="")
+	fn <- paste(outdir,"/Graph-",format(Sys.time(), "%d-%m-%Y-%H%M%S"),".png", sep="")
     png(filename=fn, height=400, width=600)
     b <- boxplot(x[,y2cn], boxwex=0.1, main="univariate comparison original vs. perturbed data", ylim=c(mi,ma))
     boxplot(y2, add=TRUE, at=1:ncol(y2)+0.2, boxwex=0.1, col="lightgrey", xaxt="n", xlab="")	
@@ -420,14 +426,13 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
   
   ## R-code
   if ( "cmd" %in% names(optionss) ) {
-    repObj <- set.reportObj(repObj, "code", list(obj@options$cmd))
+    repObj <- set.reportObj(repObj, "code", list(unlist(obj@options$cmd)))
   }
   
   ## information about current R-session
   if ( get.reportObj(repObj, "sessionInfo.show") ) {
     repObj <- set.reportObj(repObj, "sessionInfo.info", list(unclass(sessionInfo())))
-  }
-  
+  }  
   return(repObj)
 })
 
@@ -443,7 +448,7 @@ setMethod(f='report', signature=c('sdcMicroObj'),
       stop("possible values for 'type' are 'HTML','LATEX' and 'TEXT'!\n")
     }      
     
-    repObj <- calcReportData(obj, internal=internal, title=title)
+    repObj <- calcReportData(obj, internal=internal, title=title, outdir=outdir)
     
     oldwd <- getwd()
     setwd(outdir)   
@@ -458,13 +463,11 @@ setMethod(f='report', signature=c('sdcMicroObj'),
       brew(file=tpl, output=mdOut)
       knit2html(stylesheet=css, input=mdOut, quiet=TRUE) 
       file.remove(mdOut)
-      xx <- file.rename("reportTemplate.html", paste(filename,".html",sep=""))
       xx <- file.remove("reportTemplate.txt")
       setwd(oldwd)
     }
     
     if ( format == "LATEX" ) {
-	  filename <- paste(filename,".tex",sep="")
       tpl <- system.file("templates", "template-report-latex.brew", package="sdcMicro")
       brew(file=tpl, output=filename)
       
@@ -479,7 +482,7 @@ setMethod(f='report', signature=c('sdcMicroObj'),
     
     if ( format == "TEXT" ) {
       tpl <- system.file("templates", "template-report-text.brew", package="sdcMicro")
-      brew(file=tpl, output=paste(filename,".txt",sep=""))
+	  brew(file=tpl, output=filename)
     }
 
     setwd(oldwd)

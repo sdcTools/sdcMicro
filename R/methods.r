@@ -49,7 +49,7 @@ setMethod(f='get.sdcMicroObj', signature=c('sdcMicroObj', 'character'),
 		if ( !type %in% c('origData', 'keyVars', 'pramVars', 'numVars', 
 				'weightVar', 'hhId', 'strataVar', 'sensibleVar',
 				'manipKeyVars', 'manipPramVars', 'manipNumVars','manipStrataVar',
-				'originalRisk','risk', 'utility', 'pram', 'localSuppression','options', 'prev', 'set') ) {
+				'originalRisk','risk', 'utility', 'pram', 'localSuppression','options', 'prev', 'set', 'deletedVars') ) {
 			stop("get.sdcMicroObj:: argument 'type' is not valid!\n")
 		}
 

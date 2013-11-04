@@ -29,6 +29,18 @@ The imported data file is: <%= get.reportObj(repObj, "impFile") %>
 <% } %>
 The data set consists of \textbf{<%= get.reportObj(repObj, "nrObs") %>} observations.
 
+<% 
+delDirect <- get.reportObj(repObj, "delDirect")
+if ( !is.null(delDirect)) { %>
+\section*{Deleted direct identifiers}
+The following direct identifying variables have been deleted from the data set:
+\begin{itemize}
+<% for ( i in 1:length(delDirect) ) { %>
+\item <%=delDirect[i] %>
+<% } %>
+\end{itemize}
+<% } %>
+
 \section*{Selected (Key) Variables:}
 <% print(xtable(get.reportObj(repObj, "tabKeyVars")),sanitize.text.function=identity) %>
 

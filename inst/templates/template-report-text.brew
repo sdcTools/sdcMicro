@@ -6,6 +6,18 @@ Imported data file: <%= get.reportObj(repObj, "impFile") %>
 
 The data set consists of <%= get.reportObj(repObj, "nrObs") %> observations.
 
+<% 
+delDirect <- get.reportObj(repObj, "delDirect")
+if ( !is.null(delDirect)) { %>
+##################################
+### Deleted direct identifiers ###
+##################################
+The following direct identifying variables have been deleted from the data set:
+<% for ( i in 1:length(delDirect) ) { %>
+- <%=delDirect[i] %>
+<% }
+} %>
+
 ################################
 ### Selected (Key) Variables ###
 ################################
