@@ -59,6 +59,7 @@ Objects can be created by calls of the form \code{new("sdcMicroObj", ...)}.
     \item{\code{additionalResults}:}{Object of class \code{"listOrNULL"} ~~ }
     \item{\code{set}:}{Object of class \code{"listOrNULL"} ~~ }
     \item{\code{prev}:}{Object of class \code{"sdcmicroOrNULL"} ~~ }
+    \item{\code{deletedVars}:}{Object of class \code{"characterOrNULL"} ~~ }
   }
 }
 %\section{Extends}{

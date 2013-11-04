@@ -55,7 +55,8 @@ setClass(
 		options='listOrNULL',
     	additionalResults='listOrNULL',
 		set='listOrNULL',
-		prev='sdcmicroOrNULL'
+		prev='sdcmicroOrNULL',
+    deletedVars="characterOrNULL"
 	),
 	prototype=prototype(
 		origData=NULL,
@@ -78,7 +79,8 @@ setClass(
 		options=NULL,
     	additionalResults=NULL,
 		set=NULL,
-		prev=NULL
+		prev=NULL,
+    deletedVars=NULL
 	),
 	validity=function(object) {	
 		return(TRUE)
