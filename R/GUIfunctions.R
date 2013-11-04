@@ -2,12 +2,26 @@ setGeneric('removeDirectID', function(obj,var) {standardGeneric('removeDirectID'
 setMethod(f='removeDirectID', signature=c('sdcMicroObj'),
     definition=function(obj, var) {
       kV <- colnames(obj@origData)[get.sdcMicroObj(obj,"keyVars")]
+      nV <- colnames(obj@origData)[get.sdcMicroObj(obj,"numVars")]
+      wV <- colnames(obj@origData)[get.sdcMicroObj(obj,"weightVar")]
+      sV <- colnames(obj@origData)[get.sdcMicroObj(obj,"strataVar")]
+      hV <- colnames(obj@origData)[get.sdcMicroObj(obj,"hhId")]
+      
       if(any(var%in%kV))
-        stop("A direct identifier should not be seleceted as key variable.")
+        stop("A direct identifier should not be seleceted as key variable.\n Therefore it can not be removed.")
+      if(any(var%in%nV))
+        stop("A direct identifier should not be seleceted as numerical key variable.\n Therefore it can not be removed.")
+      if(any(var%in%wV))
+        stop("A direct identifier should not be seleceted as weight variable.\n Therefore it can not be removed.")
+      if(any(var%in%sV))
+        stop("A direct identifier should not be seleceted as strata variable.\n Therefore it can not be removed.")
+      if(any(var%in%hV))
+        stop("A direct identifier should not be seleceted as cluster ID.\n Therefore it can not be removed.")
+      
       o <- obj@origData
       if(any(!var%in%colnames(o)))
         stop("direct identifier variable not found on data set")
-      o[,colnames(o)%in%var] <- NA
+      o[,!colnames(o)%in%var,drop=FALSE]
       obj <- nextSdcObj(obj)
       obj@deletedVars <- c(obj@deletedVars,var) 
       obj@origData <- o
