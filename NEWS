@@ -1,4 +1,5 @@
-# 4.0.4
+# 4.1.0
+ - new IHSN SDC Guidelines included
  - new implementation of freqCalc. Computation time is now linear with data size. 
    Gains a lot of speed for large data sets. 
  - localSuppression, measure_risk and createSdcJobj make use of new implementation of freqCalc
