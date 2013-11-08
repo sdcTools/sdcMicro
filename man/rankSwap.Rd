@@ -9,8 +9,10 @@
 Rank Swapping
 }
 \description{
-Each ranked value is then swapped with another
-ranked value that has been chosen randomly within a restricted range.
+Swapping values within a range so that, first, the correlation structure of original variables are
+preserved, and second, the values in each record are disturbed.
+To be used on numeric or ordinal variables where the rank can be determined and the correlation
+coefficient makes sense.
 }
 \usage{
 rankSwap(obj, variables=NULL,TopPercent=5,BottomPercent=5,
@@ -40,20 +42,32 @@ names or index of variables for that rank swapping is applied.
 For an object of class 'sdcMicroObj' all numeric key variables are selected if variables=NULL.
 }
   \item{TopPercent}{
-Percentage of largest values that are group together before rank swapping is applied.
+Percentage of largest values that are grouped together before rank swapping is applied.
 }
   \item{BottomPercent}{
-Percentage of lowest values that are group together before rank swapping is applied.
+Percentage of lowest values that are grouped together before rank swapping is applied.
 }
   \item{K0}{
-Subset-mean preservation factor. Preserves the means before and after rank swapping within a range based on K0.
+Subset-mean preservation factor. Preserves the means before and after rank swapping
+within a range based on K0.
+K0 is the subset-mean preservation factor such that
+\eqn{| X_1 -X_2  | \leq \frac{2 K_0 X_1}{\sqrt(N_S)}}{abs(X_1-X_2<=2*K_0*X_1/sqrt (N_S)}, 
+where \eqn{X_1}{X_1} and \eqn{X_2}{X_2} are the subset means of the field before and after swapping,
+and \eqn{N_S}{N_S} is the sample size of the subset. 
 }
   \item{R0}{
-Multivariate preservation factor. Preserves the correlation between variables within a certain range based on
-the given constant R0.
+Multivariate preservation factor. Preserves the correlation between variables
+within a certain range based on the given constant R0.
+We can specify the preservation factor as \eqn{R_0 = \frac{R_1}{R_2}}{R_0 = R_1/R_2} where
+\eqn{R_1}{R_1} is the correlation coefficient of the two fields after swapping, and \eqn{R_2}{R_2}
+is the correlation coefficient of the two fields before swapping.
 }
-  \item{P}{
-Rank range as percentage of total sample size.
+\item{P}{
+Rank range as percentage of total sample size. We can specify the rank range itself directly,
+noted as \eqn{P}{P}, which is the percentage of the records. So two records are eligible
+for swapping if their ranks, \eqn{i}{i} and \eqn{j}{j} respectively, satisfy
+\eqn{| i-j | \le \frac{P N}{100}}{abs(i-j)<P*N/100}, where \eqn{N}{N} is the total
+sample size.
 }
   \item{missing}{
 missig value code.
@@ -66,8 +80,9 @@ Seed.
 Rank swapping sorts the values of one numeric variable by their
 numerical values (ranking).  
 The restricted range is determined by the rank of two swapped values, which
-cannot differ, by definition, by more than p percent of the total number of
+cannot differ, by definition, by more than \eqn{P}{P} percent of the total number of
 observations.
+R0 and K0 are only used if positive. Only one of the two are used (R0 is prefered if both are positive).
 
 
 }
