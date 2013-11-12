@@ -33,11 +33,11 @@ exportMethods(
 	'dRiskRMD',
 	'dUtility',
 	'localSupp',
-	'pram_strata','pram',
+  	'pram',
 	'topBotCoding',
 	'suda2',
 	'rankSwap',
-  'shuffle',
+  	'shuffle',
 	'localSuppression',
 	'globalRecode',
 	'LLmodGlobalRisk',
@@ -89,15 +89,12 @@ varToFactor,varToNumeric,groupVars,renameVars,freq,
     rankSwap,
     shuffle,
     suda2,
-    pram_strata,
     measure_risk,
     ldiversity,
     # deprecated functions
     localSupp2,
     localSupp2Wrapper,
-    print.pram_strata,
-    microaggrGower,sampleCat,maxCat
-    
+    microaggrGower,sampleCat,maxCat    
 )
 
 S3method(print, indivRisk)

@@ -25,7 +25,7 @@ Templ, M.
 \seealso{ \code{\link{pram}} }
 \examples{
 data(free1)
-x <- free1[,"MARSTAT"]
+x <- factor(free1[,"MARSTAT"])
 x2 <- pram(x)
 x2
 }
