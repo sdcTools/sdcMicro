@@ -1,3 +1,15 @@
+generateStrata <- function(df,stratavars,name){
+  strata <- rep("",nrow(df))
+  for(i in seq_along(stratavars)){
+    strata <- paste(strata,df[,stratavars[i]],sep="")
+    if(length(stratavars)>i)
+      strata <- paste(strata,"-",sep="")
+  }
+  df <- cbind(df,strata)
+  colnames(df)[length(colnames(df))] <- name
+  return(df)
+}
+
 setGeneric('removeDirectID', function(obj,var) {standardGeneric('removeDirectID')})
 setMethod(f='removeDirectID', signature=c('sdcMicroObj'),
     definition=function(obj, var) {
