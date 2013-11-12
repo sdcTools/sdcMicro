@@ -448,6 +448,16 @@ setMethod(f='report', signature=c('sdcMicroObj'),
       stop("possible values for 'type' are 'HTML','LATEX' and 'TEXT'!\n")
     }      
     
+	if ( format == "HTML" ) {
+		filename <- paste(filename,".html", sep="")
+	}
+	if ( format == "LATEX" ) {
+		filename <- paste(filename,".tex", sep="")
+	}
+	if ( format == "TEXT") {
+		filename <- paste(filename,".txt", sep="")
+	}
+	
     repObj <- calcReportData(obj, internal=internal, title=title, outdir=outdir)
     
     oldwd <- getwd()
@@ -461,9 +471,9 @@ setMethod(f='report', signature=c('sdcMicroObj'),
       mdOut <- "reportTemplate.md"
       
       brew(file=tpl, output=mdOut)
-      knit2html(stylesheet=css, input=mdOut, quiet=TRUE) 
+      knit2html(stylesheet=css, input=mdOut, output=filename, quiet=TRUE) 
       file.remove(mdOut)
-      xx <- file.remove("reportTemplate.txt")
+      xx <- file.remove("reportTemplate.html")
       setwd(oldwd)
     }
     
@@ -476,10 +486,12 @@ setMethod(f='report', signature=c('sdcMicroObj'),
       for ( k in 1:length(xx) ) {
         xx[k] <- gsub("_","\\_", xx[k], fixed=TRUE)
       }
-      cat(xx, file=filename, sep="\n")
-      texi2pdf(filename, clean=TRUE)
-    }
-    
+	  tryCatch(texi2pdf(filename, clean=TRUE),  
+		error = function(e) {
+			cat("\npdflatex was not found in the (global) path.\nPlease install pdflatex or generate the report with format='HTML' or 'TXT'.\nThe .tex (",filename,") file was produced and is located in",outdir,"\n") 
+		}, 
+		finally = TRUE)
+    }    
     if ( format == "TEXT" ) {
       tpl <- system.file("templates", "template-report-text.brew", package="sdcMicro")
 	  brew(file=tpl, output=filename)
