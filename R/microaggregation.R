@@ -19,7 +19,7 @@ setMethod(f='microaggregation', signature=c('sdcMicroObj'),
           weights=weights,nc=nc,clustermethod=clustermethod,opt=opt,
           measure=measure,trim=trim,varsort=varsort,transf=transf)
       obj <- nextSdcObj(obj)
-      x[,variables] <- res$mx
+      x[,variables] <- res$mx[,variables]
       
       obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(x[,variables,drop=FALSE])))
       
