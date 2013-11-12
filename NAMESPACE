@@ -57,7 +57,7 @@ exportMethods(
 ##################################
 ### Export remaining functions ###
 ##################################
-export(removeDirectID,extractManipData,
+export(generateStrata,removeDirectID,extractManipData,
 varToFactor,varToNumeric,groupVars,renameVars,freq,
     undolast,calcRisks,
     report,
