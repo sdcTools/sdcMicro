@@ -69,8 +69,8 @@ mafastWORK <- function(x,variables=colnames(x),by=NULL,aggr=3,measure=mean){
       paste(variables,"= vectoraggr(",variables,",aggr=aggr)",collapse=",",sep=""),
       "),by=BYVARIABLEFORSPLIT]")
   erg <- vector() #To get no NOTE
-  eval(parse(text=cmd))            
-  x <- x[,!colnames(x)%in%c("BYVARIABLEFORSPLIT","idvariableforresorting")]
+  eval(parse(text=cmd))       
+  x <- x[,!colnames(x)%in%c("BYVARIABLEFORSPLIT","idvariableforresorting"),drop=FALSE]
   setkey(erg,"idvariableforresorting")
   x[,variables] <- data.frame(erg[,by=idvariableforresorting])[,variables]
   return(x)
