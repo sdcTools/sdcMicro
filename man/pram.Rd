@@ -5,6 +5,7 @@
 \alias{pram,matrix-method}
 \alias{pram,vector-method}
 \alias{pram,sdcMicroObj-method}
+
 \alias{pram}
 \alias{print.pram}
 \title{
@@ -15,7 +16,7 @@ To be used on categorical data. It randomly change the values of variables on se
 (usually the risky ones) according to an invariant probability transition matrix.
 }
 \usage{
-pram_strata(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5)
+pram(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5)
 \method{print}{pram}(x, ...)
 }
 \section{Methods}{
@@ -27,6 +28,8 @@ pram_strata(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5)
 \item{\code{signature(obj = "matrix")}}{}
 
 \item{\code{signature(obj = "sdcMicroObj")}}{}
+
+\item{\code{signature(obj = "ANY")}}{}
 }}
 \arguments{
   \item{obj}{
@@ -59,7 +62,7 @@ a modified \dQuote{sdcMicroObj} object or a new object containing original and p
 \author{
 Alexander Kowarik, Matthias Templ, Bernhard Meindl
 }
-\seealso{\code{pram}}
+\note{The functionalities of pram_strata and pram are merged into pram, therefore pram_strata is deprecated.} 
 \examples{
 data(testdata)
 res <- pram(testdata,

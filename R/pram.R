@@ -1,3 +1,11 @@
+setGeneric('pram_strata', function(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5) {
+      standardGeneric('pram')
+    })
+setMethod(f='pram_strata', signature=c('ANY'),
+    definition=function(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5) {
+      .Deprecated("pram",package="sdcMicro",old="pram_strata")
+      pram(obj,variables=variables,strata_variables=strata_variables,pd=pd,alpha=alpha)
+    })
 setGeneric('pram', function(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5) {
   standardGeneric('pram')
 })
