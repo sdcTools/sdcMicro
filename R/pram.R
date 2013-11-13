@@ -1,5 +1,5 @@
 setGeneric('pram_strata', function(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5) {
-      standardGeneric('pram')
+      standardGeneric('pram_strata')
     })
 setMethod(f='pram_strata', signature=c('ANY'),
     definition=function(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5) {
