@@ -9,7 +9,7 @@ function(object, ...){
   print(table(object$x))
   cat("\n ----------------------")
   cat("\n frequencies after perturbation:\n")
-  print(table(object$xpramed))  #
+  print(table(object$x_pram))  #
   cat("\n ----------------------")
   cat("\n transitions:\n")
   result
