@@ -182,7 +182,6 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
     repObj <- set.reportObj(repObj, "dataUtilityCont.show", list(FALSE))
     repObj <- set.reportObj(repObj, "riskNumKeyVars.show", list(FALSE))  
     repObj <- set.reportObj(repObj, "sessionInfo.show", list(FALSE))
-    
   }
   repObj <- set.reportObj(repObj, "title", list(title))
   
@@ -396,13 +395,13 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
   }
   
   if ( get.reportObj(repObj, "dataUtilityCont.show") ) {
-    s <- apply(x[,y2cn], 2, summary, na.rm=TRUE) 
+    s <- apply(x[,y2cn,drop=FALSE], 2, summary, na.rm=TRUE) 
     ss <- apply(y2, 2, function(x) round(summary(x, na.rm=TRUE),1)) 
     colnames(ss) <- paste(colnames(ss),".m", sep="")
     pNum <- length(get.sdcMicroObj(obj, "numVars"))
     xx <- cbind(s,ss)
-    if ( pNum > 1 ) {
-      SEQ <- SEQinit <- c(1,pNum+1)
+    SEQ <- SEQinit <- c(1,pNum+1)
+    if ( pNum > 1 ) {      
       for(i in 1:(pNum-1)){
         SEQ <- c(SEQ, SEQinit+i)
       }
@@ -412,9 +411,9 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
     repObj <- set.reportObj(repObj, "dataUtilityCont.diffEigen", list(round(obj@utility$eigen*100,2)))
     
     ### boxplot of differences
-    mi <- min(x[,y2cn],y2)
-    ma <- max(x[,y2cn],y2)
-	fn <- paste(outdir,"/Graph-",format(Sys.time(), "%d-%m-%Y-%H%M%S"),".png", sep="")
+    mi <- min(x[,y2cn,drop=FALSE],y2)
+    ma <- max(x[,y2cn,drop=FALSE],y2)
+		fn <- paste(outdir,"/Graph-",format(Sys.time(), "%d-%m-%Y-%H%M%S"),".png", sep="")
     png(filename=fn, height=400, width=600)
     b <- boxplot(x[,y2cn], boxwex=0.1, main="univariate comparison original vs. perturbed data", ylim=c(mi,ma))
     boxplot(y2, add=TRUE, at=1:ncol(y2)+0.2, boxwex=0.1, col="lightgrey", xaxt="n", xlab="")	
@@ -473,7 +472,7 @@ setMethod(f='report', signature=c('sdcMicroObj'),
       brew(file=tpl, output=mdOut)
       knit2html(stylesheet=css, input=mdOut, output=filename, quiet=TRUE) 
       file.remove(mdOut)
-      xx <- file.remove("reportTemplate.html")
+      #xx <- file.remove("reportTemplate.html")
       setwd(oldwd)
     }
     
