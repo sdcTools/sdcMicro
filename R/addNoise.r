@@ -27,7 +27,7 @@ setMethod(f='addNoise', signature=c("data.frame"),
     definition=function(obj, variables,noise=150,method="additive",...)  { 
       if(missing(variables))
         variables <- 1:ncol(obj)
-      addNoiseWORK(x=obj[,variables],noise=noise,method=method,...)
+      addNoiseWORK(x=obj[,variables,drop=FALSE],noise=noise,method=method,...)
     })
 setMethod(f='addNoise', signature=c("matrix"),
     definition=function(obj, variables,noise=150,method="additive",...)  {
@@ -36,8 +36,7 @@ setMethod(f='addNoise', signature=c("matrix"),
       addNoiseWORK(x=obj[,variables],noise=noise,method=method,...)
     })
 
-addNoiseWORK <- function (x, noise = 150, method = "additive", p = 0.001, delta = 0.1)
-{
+addNoiseWORK <- function (x, noise = 150, method = "additive", p = 0.001, delta = 0.1){
 	 
     N <- dim(x)[1]
     P <- dim(x)[2]
