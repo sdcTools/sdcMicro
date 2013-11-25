@@ -125,7 +125,7 @@ current data: <%= get.reportObj(repObj, "dataUtilityCont.diffEigen") %> % (origi
 <% code <- get.reportObj(repObj, "code") %>
 # R-Code
 <% for ( i in 1:length(code) ) { %>
-  ><%= code[[i]] %>*
++ <%= code[[i]] %>
 <% } 
 } %>
 
@@ -141,7 +141,7 @@ R version <%= rV$major %>.<%= rV$minor %> (<%=rV$year%>-<%=rV$month%>-<%=rV$day%
 + <%= paste(loc, collapse=", ") %>
 
 ## attached base packages
-+ <%= paste(names(sI$basePkg), collapse=", ") %>
++ <%= paste(sI[[1]]$basePkg, collapse=", ") %>
 
 ## other attached packages
 + <%= paste(names(sI$otherPkgs), collapse=", ") %>

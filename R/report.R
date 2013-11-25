@@ -189,7 +189,8 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
   repObj <- set.reportObj(repObj, "origData", list(x))
   y1 <- get.sdcMicroObj(obj, type="manipKeyVars")
   y2 <- get.sdcMicroObj(obj, type="manipNumVars")
-  optionss <- get.sdcMicroObj(obj, type="options")
+  #optionss <- get.sdcMicroObj(obj, type="options")
+	optionss <- obj@options
   
   #####################
   ### imported File ###
@@ -425,7 +426,7 @@ setMethod(f='calcReportData', signature=c('sdcMicroObj'), definition=function(ob
   
   ## R-code
   if ( "cmd" %in% names(optionss) ) {
-    repObj <- set.reportObj(repObj, "code", list(unlist(obj@options$cmd)))
+    repObj <- set.reportObj(repObj, "code", list(as.list(obj@options$cmd)))
   }
   
   ## information about current R-session

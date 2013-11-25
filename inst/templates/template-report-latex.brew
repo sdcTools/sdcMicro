@@ -36,24 +36,31 @@ if ( !is.null(delDirect)) { %>
 The following direct identifying variables have been deleted from the data set:
 \begin{itemize}
 <% for ( i in 1:length(delDirect) ) { %>
-\item <%=delDirect[i] %>
+\item <%=gsub("_","\\\\textunderscore ", delDirect[i]) %>
 <% } %>
 \end{itemize}
 <% } %>
 
 \section*{Selected (Key) Variables:}
-<% print(xtable(get.reportObj(repObj, "tabKeyVars")),sanitize.text.function=identity) %>
+<% 
+tt <- get.reportObj(repObj, "tabKeyVars")
+rownames(tt) <- gsub("_","\\\\textunderscore ", rownames(tt))
+colnames(tt) <- gsub("_","\\\\textunderscore ", colnames(tt))
+tt <- apply(tt, 2, function(x) { gsub("_", "\\\\textunderscore ", x) } )
+print(xtable(tt),sanitize.text.function=identity) 
+%>
 
 <% if ( !is.null(get.reportObj(repObj, "sensiblecn")) ) { %>
 \subsection*{L-Diversity:}
 for L-diversity the following sensible variables have been selected:
-<%= colnames(get.reportObj(repObj, "origData"))[get.reportObj(repObj, "sensiblecn")] %>
+<%= gsub("_","\\\\textunderscore ", colnames(get.reportObj(repObj, "origData"))[get.reportObj(repObj, "sensiblecn")])%>
 <% } %>
 \begin{itemize}
-\item Modifications on categorical key variables: \textbf{<%= get.reportObj(repObj, "modCat") %>}
-\item Modifications on continuous key variables: \textbf{<%= get.reportObj(repObj, "modNum") %>} 
-\item Modifications using PRAM: \textbf{<%= get.reportObj(repObj, "modPram") %>}
-\item Local suppressions: \textbf{<%= get.reportObj(repObj, "modLocSupp") %>}     	
+
+\item Modifications on categorical key variables: \textbf{<%= gsub("_","\\\\textunderscore ", get.reportObj(repObj, "modCat")) %>}
+\item Modifications on continuous key variables: \textbf{<%= gsub("_","\\\\textunderscore ", get.reportObj(repObj, "modNum")) %>} 
+\item Modifications using PRAM: \textbf{<%= gsub("_","\\\\textunderscore ", get.reportObj(repObj, "modPram")) %>}
+\item Local suppressions: \textbf{<%= gsub("_","\\\\textunderscore ", get.reportObj(repObj, "modLocSupp")) %>}     	
 \end{itemize}
 <%
 if ( 
@@ -105,7 +112,13 @@ cV <- get.reportObj(repObj, "pram.changedVars")
 ( unmodified data: <%= get.reportObj(repObj, "indivRisk.unmodified") %> \% )
 
 \paragraph{10 combinations of categories with highest risk:}
-<% print(xtable(get.reportObj(repObj, "indivRisk.highest")),sanitize.text.function=identity) %>
+<% 
+tt <- get.reportObj(repObj, "indivRisk.highest")
+
+rownames(tt) <- gsub("_","\\\\textunderscore ", rownames(tt))
+colnames(tt) <- gsub("_","\\\\textunderscore ", colnames(tt))
+print(xtable(tt),sanitize.text.function=identity) 
+%>
 
 <% if ( get.reportObj(repObj, "riskNumKeyVars.show") ) { %>
 \subsection*{Disclosure Risk Continuous Scaled Variables:}
@@ -117,10 +130,9 @@ Disclosure Risk is between 0 \% and <%=get.reportObj(repObj, "riskNumKeyVars.ris
 
 <% if ( get.reportObj(repObj, "hierRisk.show") ) { %>
 \subsection*{Hierarchical risk:}
-\paragraph{Expected no. of re-identifications:} <%=get.reportObj(repObj, "hierRisk.expReindent")
- %> (<%=get.reportObj(repObj, "hierRisk.expReindent.perc") %> % )
+\paragraph{Expected no. of re-identifications:} <%=get.reportObj(repObj, "hierRisk.expReindent")%> (<%=get.reportObj(repObj, "hierRisk.expReindent.perc") %> \% )
 
-\paragraph{in original data:} <%=get.reportObj(repObj, "hierRisk.expReindentOrig") %> (<%=get.reportObj(repObj, "hierRisk.expReindentOrig.perc") %> %)
+\paragraph{in original data:} <%=get.reportObj(repObj, "hierRisk.expReindentOrig") %> (<%=get.reportObj(repObj, "hierRisk.expReindentOrig.perc") %> \%)
 <% } %>
 
 <% if ( get.reportObj(repObj, "dataUtility.show") ) { %>
@@ -129,7 +141,12 @@ Disclosure Risk is between 0 \% and <%=get.reportObj(repObj, "riskNumKeyVars.ris
 \subsection*{Frequencies Categorical Key Variables:}
 <% for ( i in seq_along(da) ) { %>
 \subsubsection*{<%= da[[i]]$title %>}
-<% print(xtable(da[[i]]$tab),sanitize.text.function=identity) %>
+<%
+tt <- da[[i]]$tab
+rownames(tt) <- gsub("_","\\\\textunderscore ", rownames(tt))
+colnames(tt) <- gsub("_","\\\\textunderscore ", colnames(tt))
+print(xtable(tt),sanitize.text.function=identity) 
+%>
 <% } %>
 <% } %>
 
@@ -157,10 +174,12 @@ current data: <%= get.reportObj(repObj, "dataUtilityCont.diffEigen") %> \% (orig
 <% if ( !is.null(get.reportObj(repObj, "code")) ) { %>
 <% code <- get.reportObj(repObj, "code") %>
 \section*{R-Code:}
+\begin{itemize}
 <% for ( i in 1:length(code) ) { %>
-  ><%= code[[i]] %>*
-<% } 
-} %>
+\item <%= gsub("_","\\\\textunderscore ", code[[i]]) %>
+<% } %>
+\end{itemize}
+<% } %>
 
 <% if ( get.reportObj(repObj, "sessionInfo.show") ) { %>
 \section*{Session-Info:}
@@ -168,26 +187,27 @@ current data: <%= get.reportObj(repObj, "dataUtilityCont.diffEigen") %> \% (orig
 sI <- get.reportObj(repObj, "sessionInfo.info")
 rV <- sI$R.version 
 %>
-R version <%= rV$major %>.<%= rV$minor %> (<%=rV$year%>-<%=rV$month%>-<%=rV$day%>) Platform: <%= sI$platform %> 
+
+R version <%= rV$major %>.<%= rV$minor %> (<%=rV$year%>-<%=rV$month%>-<%=rV$day%>) Platform: <%= gsub("_","\\\\textunderscore ", sI$platform) %> 
 \subsection*{locale}
 <% loc <- unlist(strsplit(sI$locale, ";")) %>
 \begin{itemize}
-\item <%= paste(loc, collapse=", ") %>
+\item <%= gsub("_","\\\\textunderscore ", paste(loc, collapse=", ")) %>
 \end{itemize}
 
 \subsection*{attached base packages}
 \begin{itemize}
-\item <%= paste(names(sI$basePkg), collapse=", ") %>
+\item <%= gsub("_","\\\\textunderscore ", paste(sI$basePkgs, collapse=", ")) %>
 \end{itemize}
 
 \subsection*{other attached packages}
 \begin{itemize}
-\item <%= paste(names(sI$otherPkgs), collapse=", ") %>
+\item <%= gsub("_","\\\\textunderscore ", paste(names(sI$otherPkgs), collapse=", ")) %>
 \end{itemize}
 
 \subsection*{loaded via namespace and not attached}
 \begin{itemize}
-\item <%= paste(names(sI$loadedOnly), collapse=", ") %>
+\item <%= gsub("_","\\\\textunderscore ", paste(names(sI$loadedOnly), collapse=", ")) %>
 \end{itemize}
 <% } %>
 
