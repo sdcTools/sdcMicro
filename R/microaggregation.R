@@ -69,6 +69,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
     res$aggr <- aggr
     res$measure <- measure
     res$fot <- factorOfTotals(x,aggr)
+    class(res) <- "micro"
     return(res)
   }
   blow=TRUE
@@ -787,5 +788,5 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
 #            measure = measure, trim = trim, varsort = varsort,
 #            transf = transf, blow = blow, blowxm = blowxm, fot = fot
   class(res1) <- "micro"  
-  invisible(res1)
+  return(res1)
 }
