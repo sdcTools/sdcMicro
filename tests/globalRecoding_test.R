@@ -4,9 +4,11 @@ sdc <- createSdcObj(testdata,
 		numVars=c('expend','income','savings'), 
 		w='sampling_weight', hhId='ori_hid')
 
-p1 <- print(sdc)
-sdc <- globalRecode(sdc, column="age",
+print(sdc)
+sdc2 <- globalRecode(sdc, column="age",
 		breaks=c(1,9,19,29,39,49,59,69,100), labels=1:8)
-p2 <- print(sdc)
+print(sdc2)
 
-if(identical(p1,p2)) stop("frequency counts are not updated")
+f1 <- get.sdcMicroObj(sdc, "risk")$fk
+f2 <- get.sdcMicroObj(sdc2, "risk")$fk
+if(identical(f1,f2)) stop("frequency counts are not updated")
