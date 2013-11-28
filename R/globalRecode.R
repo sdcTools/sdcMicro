@@ -5,7 +5,7 @@ setMethod(f='globalRecode', signature=c('sdcMicroObj'),
       x[,column] <- globalRecodeWORK(x[,column], ...)
       obj <- nextSdcObj(obj)
       obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(x))
-      obj <- measure_risk(obj)
+      obj <- calcRisks(obj)
       obj
     })
 setMethod(f='globalRecode', signature=c("ANY"),
