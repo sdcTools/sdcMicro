@@ -5,7 +5,7 @@ setMethod(f='globalRecode', signature=c('sdcMicroObj'),
       x[,column] <- globalRecodeWORK(x[,column], ...)
       obj <- nextSdcObj(obj)
       obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(x))
-	  obj <- calcRisks(obj)
+      obj <- measure_risk(obj)
       obj
     })
 setMethod(f='globalRecode', signature=c("ANY"),
@@ -28,7 +28,7 @@ globalRecodeWORK <- function(x, breaks, labels=NULL, method="equidistant"){
     b1 <- round(exp(b1))
     b1
   }
-  ## überall gleich viele
+  ## same-size groups
   equalAmount <- function(x, b=breaks){
     SEQ <- c(0, (1:b)/b)
     b1 <- quantile(x, SEQ)
