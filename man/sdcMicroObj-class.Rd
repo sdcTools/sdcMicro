@@ -25,16 +25,17 @@ Objects can be created by calls of the form \code{new("sdcMicroObj", ...)}.
     nextSdcObj(obj)
     }
 \arguments{
-  \item{dat}{A numeric matrix or data frame containing the data.}
+  \item{dat}{The microdata set. A numeric matrix or data frame containing the data.}
   \item{obj}{An object of class 'sdcMicroObj'}
-  \item{keyVars}{sfdf}
-  \item{pramVars}{sfdf}
-  \item{numVars}{sfdf}
-  \item{weightVar}{sfdf}
-  \item{hhId}{sfdf}
-  \item{strataVar}{sfdf}
-  \item{sensibleVar}{sfdf}
-  \item{options}{sfdf}
+  \item{keyVars}{Indices or names of categorical key variables. They must, of course, 
+          match with the columns of \sQuote{dat}.}
+  \item{pramVars}{Indices or names of categorical variables considered to be pramed.}
+  \item{numVars}{Index or names of continuous key variables.}
+  \item{weightVar}{Indices or name determining the vector of sampling weights.}
+  \item{hhId}{Index or name of the cluster ID (if available).}
+  \item{strataVar}{Indices or names of stratification variables.}
+  \item{sensibleVar}{Indices or names of sensible variables (for l-diversity)}
+  \item{options}{additional options.}
 }
 \section{Slots}{
   \describe{
@@ -74,7 +75,7 @@ Objects can be created by calls of the form \code{new("sdcMicroObj", ...)}.
 	 }
 }
 \author{
-Bernhard Meindl, Elias Rut, Alexander Kowarik, Matthias Templ
+Bernhard Meindl, Alexander Kowarik, Matthias Templ, Elias Rut
 }
 
 \examples{
