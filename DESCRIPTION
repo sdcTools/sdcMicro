@@ -71,3 +71,4 @@ Collate:
     'printFunctions.R'   
     'mafast.R'   
     'maG.R'   
+    'show_sdcMicroObj.R'

@@ -19,6 +19,7 @@ exportClasses(
 )
 
 exportMethods(
+    'show',
 	'freq',
 	'print',
 	'get.sdcMicroObj',
