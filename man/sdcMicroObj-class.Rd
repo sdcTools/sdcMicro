@@ -9,6 +9,8 @@
 \alias{get.sdcMicroObj,sdcMicroObj,character-method}
 \alias{set.sdcMicroObj,sdcMicroObj,character,listOrNULL-method}
 \alias{undolast,sdcMicroObj-method}
+\alias{show}
+\alias{show,sdcMicroObj-method}
 \alias{nextSdcObj,sdcMicroObj-method}
 \alias{createSdcObj}
 
@@ -23,10 +25,12 @@ Objects can be created by calls of the form \code{new("sdcMicroObj", ...)}.
     strataVar = NULL, sensibleVar=NULL, options = NULL) 
     undolast(obj)
     nextSdcObj(obj)
+    show(object)
     }
 \arguments{
   \item{dat}{The microdata set. A numeric matrix or data frame containing the data.}
   \item{obj}{An object of class 'sdcMicroObj'}
+  \item{object}{An object of class 'sdcMicroObj'}
   \item{keyVars}{Indices or names of categorical key variables. They must, of course, 
           match with the columns of \sQuote{dat}.}
   \item{pramVars}{Indices or names of categorical variables considered to be pramed.}
