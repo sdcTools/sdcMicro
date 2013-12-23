@@ -11,6 +11,7 @@ setGeneric('pram', function(obj, variables=NULL,strata_variables=NULL,pd=0.8, al
 })
 setMethod(f='pram', signature=c('sdcMicroObj'),
 	definition=function(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5) { 
+    pramVars <- get.sdcMicroObj(obj, type="pramVars")
     if ( length(pramVars) == 0 && is.null(variables) ) {
       stop("Error: slot pramVars is NULL and argument 'variables' was not specified!\nDefine one of them to use pram on these variables\n")
     }
