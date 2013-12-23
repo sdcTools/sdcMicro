@@ -1,73 +1,73 @@
-Package: sdcMicro   
-Type: Package   
-Title: Statistical Disclosure Control methods for anonymization of microdata and risk estimation   
-Version: 4.1.4 
+Package: sdcMicro    
+Type: Package    
+Title: Statistical Disclosure Control methods for anonymization of microdata and risk estimation    
+Version: 4.1.5 
 Date: 2013-12-23 
-Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl   
-Maintainer: Matthias Templ <matthias.templ@gmail.com>   
-Description: Data from statistical agencies and other institutions are mostly   
-    confidential. This package can be used for the generation of anonymized   
-    (micro)data, i.e. for the creation of public- and scientific-use files.   
-    In addition, various risk estimation methods are included.   
-    Note that the package sdcMicroGUI includes a graphical user interface for various methods   
-    in this package.   
-LazyData: TRUE   
-ByteCompile: TRUE   
-LinkingTo: Rcpp   
-Depends:   
-    R (>= 2.10), brew, knitr,data.table,xtable   
-Imports:   
-    car,   
-    robustbase,   
-    cluster,   
-    MASS,   
-    e1071,   
-    tools,   
-    Rcpp,   
-    methods,sets   
-License: GPL-2   
-URL: https://github.com/alexkowa/sdcMicro   
-Collate:   
-    '0classes.r'   
-    'addNoise.r'   
-    'aux_functions.r'   
-    'dataGen.r'   
-    'dRisk.R'   
-    'dRiskRMD.R'   
-    'dUtility.R'   
-    'freqCalc.r'   
-    'globalRecode.R'   
-    'GUIfunctions.R'   
-    'indivRisk.R'   
-    'LLmodGlobalRisk.R'   
-    'LocalRecProg.R'   
-    'localSupp.R'   
-    'localSupp2.R'   
-    'localSupp2Wrapper.R'   
-    'localSuppression.R'   
-    'mdav.R'   
-    'measure_risk.R'   
-    'methods.r'   
-    'microaggregation.R'   
-    'plot.localSuppression.R'   
-    'plotMicro.R'   
-    'pram.R'   
-    'print.freqCalc.R'   
-    'print.indivRisk.R'   
-    'print.localSuppression.R'   
-    'print.micro.R'   
-    'rankSwap.R'   
-    'report.R'   
-    'shuffle.R'   
-    'suda2.R'   
-    'summary.freqCalc.R'   
-    'summary.micro.R'   
-    'summary.pram.r'   
-    'swappNum.R'   
-    'timeEstimation.R'   
-    'topBotCoding.R'   
-    'valTable.R'   
-    'zzz.R'   
-    'printFunctions.R'   
-    'mafast.R'   
-    'maG.R'   
+Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl    
+Maintainer: Matthias Templ <matthias.templ@gmail.com>    
+Description: Data from statistical agencies and other institutions are mostly    
+    confidential. This package can be used for the generation of anonymized    
+    (micro)data, i.e. for the creation of public- and scientific-use files.    
+    In addition, various risk estimation methods are included.    
+    Note that the package sdcMicroGUI includes a graphical user interface for various methods    
+    in this package.    
+LazyData: TRUE    
+ByteCompile: TRUE    
+LinkingTo: Rcpp    
+Depends:    
+    R (>= 2.10), brew, knitr,data.table,xtable    
+Imports:    
+    car,    
+    robustbase,    
+    cluster,    
+    MASS,    
+    e1071,    
+    tools,    
+    Rcpp,    
+    methods,sets    
+License: GPL-2    
+URL: https://github.com/alexkowa/sdcMicro    
+Collate:    
+    '0classes.r'    
+    'addNoise.r'    
+    'aux_functions.r'    
+    'dataGen.r'    
+    'dRisk.R'    
+    'dRiskRMD.R'    
+    'dUtility.R'    
+    'freqCalc.r'    
+    'globalRecode.R'    
+    'GUIfunctions.R'    
+    'indivRisk.R'    
+    'LLmodGlobalRisk.R'    
+    'LocalRecProg.R'    
+    'localSupp.R'    
+    'localSupp2.R'    
+    'localSupp2Wrapper.R'    
+    'localSuppression.R'    
+    'mdav.R'    
+    'measure_risk.R'    
+    'methods.r'    
+    'microaggregation.R'    
+    'plot.localSuppression.R'    
+    'plotMicro.R'    
+    'pram.R'    
+    'print.freqCalc.R'    
+    'print.indivRisk.R'    
+    'print.localSuppression.R'    
+    'print.micro.R'    
+    'rankSwap.R'    
+    'report.R'    
+    'shuffle.R'    
+    'suda2.R'    
+    'summary.freqCalc.R'    
+    'summary.micro.R'    
+    'summary.pram.r'    
+    'swappNum.R'    
+    'timeEstimation.R'    
+    'topBotCoding.R'    
+    'valTable.R'    
+    'zzz.R'    
+    'printFunctions.R'    
+    'mafast.R'    
+    'maG.R'    
