@@ -11,15 +11,23 @@ setGeneric('pram', function(obj, variables=NULL,strata_variables=NULL,pd=0.8, al
 })
 setMethod(f='pram', signature=c('sdcMicroObj'),
 	definition=function(obj, variables=NULL,strata_variables=NULL,pd=0.8, alpha=0.5) { 
-	### Get data from manipPramVars
+    if ( length(pramVars) == 0 && is.null(variables) ) {
+      stop("Error: slot pramVars is NULL and argument 'variables' was not specified!\nDefine one of them to use pram on these variables\n")
+    }
+    if(is.null(variables)){
+      pramVars <- colnames(obj@origData)[get.sdcMicroObj(obj, type="pramVars")] 
+    }else{
+      pramVars <- variables
+    }
+  ### Get data from manipPramVars
   manipPramVars <- get.sdcMicroObj(obj, type="manipPramVars")
-  pramVars <- colnames(obj@origData)[get.sdcMicroObj(obj, type="pramVars")]
   strataVars <- get.sdcMicroObj(obj, type="strataVar")
   manipKeyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
-  kVar <- variables[variables%in%colnames(manipKeyVars)]
-  pVar <- variables[variables%in%colnames(manipPramVars)]
-  rVar <- variables[!variables%in%c(kVar,pVar)]
-  pramVars <- unique(c(get.sdcMicroObj(obj, type="pramVars"),which(colnames(obj@origData)%in%variables)))
+  kVar <- pramVars[pramVars%in%colnames(manipKeyVars)]
+  pVar <- pramVars[pramVars%in%colnames(manipPramVars)]
+  rVar <- pramVars[!pramVars%in%c(kVar,pVar)]
+  
+
   if(length(kVar)>0){
     warning("If pram is applied on key variables, the k-anonymity and risk assessment are not useful anymore.\n")
     manipData <- manipKeyVars[,kVar,drop=FALSE]
@@ -38,6 +46,9 @@ setMethod(f='pram', signature=c('sdcMicroObj'),
       manipData <- obj@origData[,rVar,drop=FALSE]
     }      
   }  
+  if(!exists("manipData")){
+    manipData <- obj@origData[,pramVars,drop=FALSE]
+  }
   if(!is.null(strata_variables)){
     sData <- get.sdcMicroObj(obj, type="origData")[,strata_variables,drop=FALSE]
     manipData <- cbind(manipData, sData)
@@ -48,9 +59,9 @@ setMethod(f='pram', signature=c('sdcMicroObj'),
 	  strataVars <- c(length(pramVars):length(manipData))
   }
 	
-  res <- pramWORK(data=manipData,variables=variables,strata_variables=strataVars,pd=pd,alpha=alpha)
+  res <- pramWORK(data=manipData,variables=pramVars,strata_variables=strataVars,pd=pd,alpha=alpha)
   tmp <- data.frame(unclass(res))
-  manipData[,variables] <- tmp[paste(variables,"_pram",sep="")]
+  manipData[,pramVars] <- tmp[,paste(pramVars,"_pram",sep=""),drop=FALSE]
   obj <- nextSdcObj(obj)
   
   if(length(pVar)>0){
@@ -60,7 +71,7 @@ setMethod(f='pram', signature=c('sdcMicroObj'),
 	  if ( is.null(manipPramVars))
 		  manipPramVars <- manipData[,rVar,drop=FALSE]
 	  else 
-		manipPramVars <- cbind(manipPramVars,manipData[,rVar,drop=FALSE])
+		  manipPramVars <- cbind(manipPramVars,manipData[,rVar,drop=FALSE])
   }
   obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))
   
@@ -77,8 +88,8 @@ setMethod(f='pram', signature=c('sdcMicroObj'),
 
   pram$summary <- print.pram(res)
   obj <- set.sdcMicroObj(obj, type="pram", list(pram))
-  
-  obj <- set.sdcMicroObj(obj, type="pramVars", input=list(pramVars))
+  pramVarInd <- standardizeInput(obj, pramVars)
+  obj <- set.sdcMicroObj(obj, type="pramVars", input=list(pramVarInd))
   obj <- calcRisks(obj)
   obj
 })
