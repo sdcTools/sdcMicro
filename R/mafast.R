@@ -6,11 +6,18 @@ setMethod(f='mafast', signature=c('sdcMicroObj'),
         if(!is.null(obj@strataVar))
           by <- colnames(obj@origData)[obj@strataVar]
       }else if(!all(by%in%colnames(x))){
-        x <- cbind(x,obj@origData[,by[!by%in%colnames(x)]])
+        tmp <- obj@manipKeyVars[,by[by%in%colnames(obj@manipKeyVars)&!by%in%colnames(x)],drop=FALSE]
+        x <- cbind(x,tmp)
+        if(!all(by%in%colnames(x))){
+          tmp <- obj@origData[,by[!by%in%colnames(x)],drop=FALSE]
+          x <- cbind(x,tmp)
+        }
       }
         
-      if(is.null(variables))
+      if(is.null(variables)){
         variables <- colnames(obj@origData)[obj@numVars]
+        variables <- variables[!variables%in%by]
+      }
       res <- mafastWORK(x, variables=variables,by=by,aggr=aggr,measure=measure)
       obj <- nextSdcObj(obj)
       obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(res[,colnames(get.sdcMicroObj(obj, type="manipNumVars"))])))
