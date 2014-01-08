@@ -184,6 +184,13 @@ setMethod(f='extractManipData', signature=c('sdcMicroObj'),
      	o[,colnames(n)] <- n
    	if(!is.null(s)&&!ignoreStrataVar)
    		o$sdcGUI_strataVar <- s
+  ## quick and dirty: ensure that 
+  ## keyVars are factors:
+	if(!is.null(k)&&!ignoreKeyVars){
+  for(i in 1:length(colnames(k))){
+    o[, colnames(k)[i]] <- as.factor(o[, colnames(k)[i]])
+  }
+	}
   	return(o)
 })
 ###
