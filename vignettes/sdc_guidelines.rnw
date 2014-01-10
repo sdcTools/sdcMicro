@@ -1,3 +1,4 @@
+%\VignetteIndexEntry{IHSN SDC Guidelines}
 \documentclass[12pt]{scrartcl}
 \usepackage{da1}
 \usepackage[nogin]{Sweave}
