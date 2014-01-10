@@ -47,6 +47,7 @@ setMethod(f='print', signature=c('sdcMicroObj'),
                 "(orig: ",round(sum(obj@originalRisk$individual[,2]<3)/n*100,2),"%",")"))
         else
           cat(paste(round(sum(obj@risk$individual[,2]<3)/n*100,2),"% \n"))
+        invisible(c(sum(obj@risk$individual[,2]<2),sum(obj@risk$individual[,2]<3)))
       }else if(type=="risk"){
         risk <- obj@risk
         originalRisk <- obj@originalRisk
@@ -159,4 +160,5 @@ setMethod(f='print', signature=c('sdcMicroObj'),
         
       }else
         stop(paste("type=",type,"is unknown."))
+      
     })
