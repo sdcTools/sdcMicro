@@ -185,7 +185,7 @@ f1 <- function(x){
 #set.seed(123)
 #res <- f1(x)
 #save(res, file="../Daten/res.RData")
-load("../../Daten/res.RData")
+load("res.RData")
 par(cex.lab=1.5, mar=c(5,4.5,1,0.1))
 plot(cbind(res$risk, res$utility), type="l", 
 	xlab="disclosure risk", ylab="information loss",
