@@ -397,7 +397,6 @@ can be expected to exist in the population.
  
 
 <<freq, echo=FALSE>>=
-require(devtools)
 require(sdcMicro)
 require(xtable)
 data(francdat)   ## toy data set
