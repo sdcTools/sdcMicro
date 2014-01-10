@@ -1,3 +1,7 @@
+# 4.1.7
+ - IHSN SDC guidelines as vignette
+ - cat. key variables returned as factors in extractManipData
+
 # 4.1.6
  - show method for sdcMicroObj
 
