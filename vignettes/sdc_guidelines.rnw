@@ -40,6 +40,10 @@
 \pagestyle{fancy}           
 \begin{document}
 
+%\VignetteIndexEntry{Guidelines for statistical disclosure control using sdcMicro} \\
+%\VignetteKeywords{sdcMicro,sdc,disclosure control,perturbation,suppression} \\
+%\VignettePackage{sdcMicro} \\
+
 \newgeometry{top=20mm, bottom=20mm}
 \maketitle
 
@@ -388,7 +392,7 @@ can be expected to exist in the population.
  
 
 <<freq, echo=FALSE>>=
-require(devtools)
+#require(devtools)
 require(sdcMicro)
 require(xtable)
 data(francdat)   ## toy data set
