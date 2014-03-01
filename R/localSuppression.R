@@ -95,7 +95,7 @@ localSuppressionWORK <- function(x, keyVars,  k=2, importance=NULL) {
   erg <- xKeys[fk>k] # more than k
   erg[,fkd:=fk-k]
   if(nrow(erg)>0){
-    cmd <- paste("erg2 <- erg[,tail(.SD,fkd),by=list(",paste(keyVars,collapse=","),")]",sep="")
+    cmd <- paste("erg2 <- erg[,tail(.SD,fkd[1]),by=list(",paste(keyVars,collapse=","),")]",sep="")
     eval(parse(text=cmd))
     xKeys <- data.table(x)
     setkey(xKeys,"idvarextraforsls")
