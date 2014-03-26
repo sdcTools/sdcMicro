@@ -12,14 +12,13 @@ setMethod(f='addNoise', signature=c('sdcMicroObj'),
         x[,variables] <- addNoiseWORK(x1tmp, noise=noise, method=method,...)$xm[,2,drop=FALSE]
       } else {
         x[,variables] <- addNoiseWORK(x=x[,variables], noise=noise,method=method,...)$xm
-        
-        manipData <- x
-        colnames(manipData) <- colnames(x)
-        obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(manipData))) 
-      }
+      }  
+      manipData <- x
+      colnames(manipData) <- colnames(x)
+      obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(manipData))) 
       
       obj <- dRisk(obj)
-#      obj <- dRiskRMD(obj)
+      #obj <- dRiskRMD(obj)
       obj <- dUtility(obj)
       obj
     })
