@@ -5,7 +5,7 @@ setMethod(f='localSupp', signature=c('sdcMicroObj'),
       keyVars <- colnames(manipData)
       rk <- get.sdcMicroObj(obj, type="risk")$individual[,1]
       TF <- rk>threshold
-      if(!keyVar%in%colnames(manipData))
+      if(!all(keyVar%in%colnames(manipData)))
         stop("keyVar must be a defined categorical keyVariable!\n")
       manipData[TF,keyVar] <- NA
       obj <- nextSdcObj(obj)
