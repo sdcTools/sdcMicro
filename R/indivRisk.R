@@ -1,7 +1,17 @@
 `indivRisk` <-
     function(x, method="approx", qual=1, survey=TRUE){
   ## x ... object from freqCalc
-  if(length(colnames(x$freqCalc)) > 0) knames <- colnames(x$freqCalc)[x$keyVars] else knames <- NULL
+  if(length(colnames(x$freqCalc)) > 0){
+    if(all(is.numeric(x$keyVars))){
+      knames <- colnames(x$freqCalc)[x$keyVars]
+    }else if(all(is.character(x$keyVars))){
+      knames <- x$keyVars
+    }else{
+      stop("in 'indivRisk' all keyVars must be defined in the same way:\n as column index or as column name.")
+    }
+  }else{
+    knames <- NULL
+  } 
   if( survey == TRUE ){
     P <- ncol(x$freqCalc)
     N <- dim(x$freqCalc)[1]
@@ -55,6 +65,10 @@
           rk[k] <- (pk[k]/(1-pk[k])) * log(1/pk[k])
         }
       }    
+    }
+    TF <- fk==Fk
+    if(any(TF)){
+      rk[TF] <- 1/fk[TF]
     }
     rk <- rk * qual
     rk <- list(rk=rk, method=method, qual=qual, fk=x$fk, knames=knames)
