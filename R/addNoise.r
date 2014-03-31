@@ -49,7 +49,9 @@ addNoiseWORK <- function (x, noise = 150, method = "additive", p = 0.001, delta 
   }else if (method == "correlated") {
     if (dim(x)[2] < 2)
       stop("must have more than 2 variables")
-    x <- x + mvrnorm(N, colMeans(x,na.rm = TRUE), Sigma = noise/100 *
+#    x <- x + mvrnorm(N, colMeans(x,na.rm = TRUE), Sigma = noise/100 *
+#            cov(na.omit(x)))
+        x <- x + mvrnorm(N, rep(0,ncol(x)), Sigma = noise/100 *
             cov(na.omit(x)))
   }else if (method == "correlated2") {
     d1 <- sqrt(1 - delta^2)
