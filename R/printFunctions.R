@@ -115,7 +115,7 @@ setMethod(f='print', signature=c('sdcMicroObj'),
         cat("\n")
         k <- length(obj@keyVars)
         tab <- tab2 <- ssize <- ssize2 <- msize <- msize2 <- numeric(k)
-        names(tab) <- colnames(obj@origData[,obj@keyVars])
+        names(tab) <- colnames(obj@origData)[obj@keyVars]
         cat("\n")
         for(i in 1:k){
           tab2[i] <- length(unique(obj@origData[,obj@keyVars[i]]))
