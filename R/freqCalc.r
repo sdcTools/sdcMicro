@@ -116,6 +116,7 @@ sffc <- function(x, keyVars, w = NULL) {
     keyVars <- colnames(x)[keyVars]
   if(is.null(w)){
     dat <- data.table(x[,keyVars,drop=FALSE])
+		setnames(dat, keyVars)
     dat[,idvarextraforsffc:=.I]
     setkeyv(dat,keyVars)
     erg <- vector()
@@ -135,6 +136,7 @@ sffc <- function(x, keyVars, w = NULL) {
     )
   }else{
     dat <- data.table(x[,keyVars],weight=x[,w])
+		setnames(dat, c(keyVars,"weight"))
     dat[,idvarextraforsffc:=.I]
     setkeyv(dat,keyVars)
     erg <- vector()
