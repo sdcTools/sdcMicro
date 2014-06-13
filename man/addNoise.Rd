@@ -72,11 +72,11 @@ be specified.
                Lecture Notes in Computer Science, vol. 3050, pp. 149-161, 2004. 
                ISSN 0302-9743. Vol. Privacy in Statistical Databases, 
                eds. J. Domingo-Ferrer and V. Torra, Berlin: Springer-Verlag. 
-               \url{http://vneumann.etse.urv.es/publications/sci/lncs3050OntheSec.pdf},
+               \url{http://crises-deim.urv.cat/webCrises/publications/isijcr/lncs3050OntheSec.pdf},
                
               Ting, D. Fienberg, S.E. and Trottini, M. \dQuote{ROMM Methodology for Microdata Release} 
               Joint UNECE/Eurostat work session on statistical data confidentiality, Geneva, Switzerland, 2005, 
-              \url{http://www.niss.org/dgii/TR/wp.11.e(ROMM).pdf} 
+              \url{http://www.unece.org/fileadmin/DAM/stats/documents/ece/ces/ge.46/2005/wp.11.e.pdf} 
               
 				Ting, D., Fienberg, S.E., Trottini, M. 
  				\dQuote{Random orthogonal matrix masking methodology for microdata release}, 
