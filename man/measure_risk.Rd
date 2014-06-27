@@ -70,23 +70,50 @@ Method for object of S4 class \dQuote{sdcMicroObj}
   name of variable containing sample weights
 }
  \item{hid}{
- name of the Household ID
+ name of the clustering variable, e.g. the household ID
 }
   \item{missing}{
-  A integer value to be used as missing value in the C++ routine
+  a integer value to be used as missing value in the C++ routine
 }
   \item{ldiv_index}{
   indices (or names) of the variables used for l-diversity
   }
  \item{l_recurs_c}{
- L-Diversity Constant
+ l-Diversity Constant
 }
 
    \item{x}{
    Output of measure_risk, measure_hier or measure_thres
   }
   \item{max_global_risk}{Maximal global risk for threshold computation}
-  \item{fast_hier}{If TRUE a faster approximation is computed if household data are provided.}
+  \item{fast_hier}{If TRUE a fast approximation is computed if household data are provided.}
+}
+\details{
+Measuring individual risk: 
+The individual risk approach based on so-called super-population models. In such models population
+frequency counts are modeled given a certain distribution. 
+The estimation procedure of sample frequency counts given the population frequency counts is
+modeled by assuming a negative binomial distribution. This is used for the estimation of the individual risk.
+The extensive theory can be found in Skinner (1998), the approximation formulas for 
+the individual risk used is described in Franconi and Polettini (2004).
+ 
+Measuring hierarchical risk: 
+If \dQuote{hid} - the index of variable holding information on the hierarchical cluster structures (e.g., individuals that are clustered in households) - is provided, the hierarchical risk is additional estimated. 
+Note that the risk of
+re-identifying an individual within a household may also affect the probability of disclosure of other members in the same household. Thus, the household or
+cluster-structure of the data must be taken into account when estimating disclosure risks. It is commonly assumed that the risk of re-identification of a household is the
+risk that at least one member of the household can be disclosed. Thus this
+probability can be simply estimated from individual risks as 1 minus the
+probability that no member of the household can be identified. 
+
+Global risk:
+The sum of the individual risks in the dataset gives the
+  expected number of re-identifications that serves as measure of the global risk. 
+  
+l-Diversity:
+If \dQuote{ldiv_index} is unequal to NULL, i.e. if the indices of sensible variables are specified, various measures for l-diversity are calculated.
+l-diverstiy is an extension of the well-known k-anonymity approach where also
+ the uniqueness in sensible variables for each pattern spanned by the key variables are evaluated.
 }
 \value{
 A modified \dQuote{sdcMicroObj} object or a 
@@ -100,11 +127,16 @@ list with the following elements:
 \item{hier_risk_ER}{ expected number of re-identification with household structure.}
 \item{hier_risk}{ global risk with household structure(sum of indivdual risks).}
 \item{hier_risk_pct}{ global risk  with household structure in percent.}
-\item{ldiverstiy}{ Matrix with Distinct_Ldiversity, Entropy_Ldiversity andRecursive_Ldiversity for each sensitivity variable.}
+\item{ldiverstiy}{ Matrix with Distinct_Ldiversity, Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}
 
 }
 \references{
-\url{http://neon.vb.cbs.nl/casc/Software/MuManual4.1.pdf}
+    Franconi, L. and Polettini, S. (2004) \emph{Individual risk estimation in mu-Argus: a review}. Privacy in Statistical Databases, Lecture Notes in Computer Science, 262--272. Springer
+
+    Machanavajjhala, A. and Kifer, D. and Gehrke, J. and Venkitasubramaniam, M. (2007) \emph{l-Diversity: Privacy Beyond k-Anonymity}.
+ ACM Trans. Knowl. Discov. Data, 1(1)
+ 
+ additionally, have a look at the vignettes of sdcMicro for further reading.
 }
 \author{
 Alexander Kowarik, Bernd Prantner, Matthias Templ, minor parts of IHSN C++ source
@@ -118,8 +150,10 @@ data(testdata)
 sdc <- createSdcObj(testdata,
   keyVars=c('urbrur','roof','walls','water','electcon'),
 numVars=c('expend','income','savings'), w='sampling_weight')
+
 ## risk is already estimated and available in...
 names(sdc@risk)
+
 ## measure risk on data frames or matrices:
 res <- measure_risk(testdata,
   keyVars=c("urbrur","roof","walls","water","sex"))
@@ -137,10 +171,12 @@ res2 <- ldiversity(testdata,
   keyVars=c("urbrur","roof","walls","water","sex"),ldiv_index=c("electcon","relat"))
 print(res2)
 head(res2)
+
 # measure risk with household risk
 resh <- measure_risk(testdata,
   keyVars=c("urbrur","roof","walls","water","sex"),w="sampling_weight",hid="ori_hid")
 print(resh)
+
 # change max_global_risk
 rest <- measure_risk(testdata,
   keyVars=c("urbrur","roof","walls","water","sex"),

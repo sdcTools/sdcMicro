@@ -28,13 +28,18 @@ individual risk with the same method.
   \item{fk }{frequency count}
   \item{knames }{colnames of the key variables}  
 }
-\references{ have a look at: \url{http://neon.vb.cbs.nl/casc/Deliv/12d1.pdf} or
-\url{http://www.istat.it/dati/pubbsci/contributi/Contributi/contr_2003/2003_14.pdf}  
+\references{ 
+    Franconi, L. and Polettini, S. (2004) \emph{Individual risk estimation in mu-Argus: a review}. Privacy in Statistical Databases, Lecture Notes in Computer Science, 262--272. Springer
+
+    Machanavajjhala, A. and Kifer, D. and Gehrke, J. and Venkitasubramaniam, M. (2007) \emph{l-Diversity: Privacy Beyond k-Anonymity}.
+ ACM Trans. Knowl. Discov. Data, 1(1)
+ 
+ additionally, have a look at the vignettes of sdcMicro for further reading.
 }
 \author{ Matthias Templ. Bug in method \dQuote{exact} fixed since version 2.6.5. by Youri Baeyens.}
 \note{ The base individual risk method was developed by Benedetti, Capobianchi and Franconi 
 }
-\seealso{  \code{\link{freqCalc}} }
+\seealso{  \code{\link{measure_risk}}, \code{\link{freqCalc}} }
 \examples{
 ## example from Capobianchi, Polettini and Lucarelli:
 data(francdat)
