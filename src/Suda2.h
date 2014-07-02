@@ -184,10 +184,9 @@ public:
     while (Ptr)
     {
       T *Tmp = (T *) Ptr->m_pNext;
-      delete Ptr;
+      CleanDeleteT(Ptr);
       Ptr = Tmp;
     }
-
     m_pFirst = NULL;
     m_NbElement = 0;
     CleanDeleteT(m_pIndexed);
@@ -834,7 +833,7 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
         }
 
         CSudaMsu *pMsuNext = (CSudaMsu *) pMsu->m_pNext;
-        delete pMsu;
+        delete[]pMsu;
         pMsu = pMsuNext;
       }
     }
