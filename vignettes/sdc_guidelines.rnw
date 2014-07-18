@@ -564,27 +564,49 @@ uniqueness by simulation based on the sample information population, but to our
 knowledge, they generally do not consider sampling weights, and biased estimates
 may therefore result.      
  
-<<suda, echo=FALSE>>= 
-data(francdat)   ## toy data set
-sdc <- createSdcObj(francdat, keyVars=c('Key1','Key2','Key3','Key4'), numVars=c('Num1','Num2','Num3'), w='w')
-df <- cbind(francdat[,c(2,4,5,6,8)], get.sdcMicroObj(sdc, "risk")$individual)	
-df$Key3[df$Key3==5] <- 2
-colnames(df)[1:4] <- c("Age", "Location", "Sex", "Education")
-
-s <- suda2(df, variables=1:4)
-ff <- freqCalc(df, keyVars=1:4)
-
-df <- cbind(df[,1:4], fk=ff$fk, scores=s$score, disScores=s$disScore)
-df <- xtable(df, digits=c(0,0,0,0,0,0,2,4), align = "|l|llll|l|ll|",
-	caption="Example of SUDA scores (scores) and DIS SUDA scores (disScores).", 
-	label="listingsuda")
-@
 
 \begin{small}
-<<freqprint, echo=FALSE, results=tex>>=
-print(df,include.rownames = getOption("xtable.include.rownames", TRUE), caption.placement="top")
-@
-\end{small}
+% latex table generated in R 3.1.0 by xtable 1.7-3 package
+% Fri Jul 18 14:04:13 2014
+\begin{table}[ht]
+\centering
+\caption{Example of SUDA scores (scores) and DIS SUDA scores (disScores).} 
+\label{listingsuda}
+\begin{tabular}{|l|llll|l|ll|}
+  \hline
+ & Age & Location & Sex & Education & fk & scores & disScores \\ 
+  \hline
+1 & 1 & 2 & 2 & 1 & 2 & 0.00 & 0.0000 \\ 
+  2 & 1 & 2 & 1 & 1 & 2 & 0.00 & 0.0000 \\ 
+  3 & 1 & 2 & 1 & 1 & 2 & 0.00 & 0.0000 \\ 
+  4 & 3 & 3 & 1 & 5 & 1 & 2.25 & 0.0149 \\ 
+  5 & 4 & 3 & 1 & 4 & 1 & 1.75 & 0.0111 \\ 
+  6 & 4 & 3 & 1 & 1 & 1 & 1.00 & 0.0057 \\ 
+  7 & 6 & 2 & 1 & 5 & 1 & 2.25 & 0.0149 \\ 
+  8 & 1 & 2 & 2 & 1 & 2 & 0.00 & 0.0000 \\ 
+   \hline
+\end{tabular}
+\end{table}\end{small}
+%<<suda, echo=FALSE>>= 
+%data(francdat)   ## toy data set
+%sdc <- createSdcObj(francdat, keyVars=c('Key1','Key2','Key3','Key4'),
+% numVars=c('Num1','Num2','Num3'), w='w') df <- cbind(francdat[,c(2,4,5,6,8)], get.sdcMicroObj(sdc, "risk")$individual)	
+%df$Key3[df$Key3==5] <- 2
+%colnames(df)[1:4] <- c("Age", "Location", "Sex", "Education")
+
+%s <- suda2(df, variables=1:4)
+%ff <- freqCalc(df, keyVars=1:4)
+
+%df <- cbind(df[,1:4], fk=ff$fk, scores=s$score, disScores=s$disScore)
+%df <- xtable(df, digits=c(0,0,0,0,0,0,2,4), align = "|l|llll|l|ll|",
+%	caption="Example of SUDA scores (scores) and DIS SUDA scores (disScores).", 
+%	label="listingsuda")
+%@
+%\begin{small}
+%<<freqprint, echo=FALSE, results=tex>>=
+%print(df,include.rownames = getOption("xtable.include.rownames", TRUE),
+% caption.placement="top") @
+%\end{small}
 
 In Table~\ref{listingsuda}, we use the same test dataset as in 
 Section~\ref{method:Freq}. Sample frequency counts  $f_i$ as well as the SUDA

@@ -85,6 +85,7 @@ Co-operation and Development (OECD). This work builds on previous work which
 is elsewhere acknowledged.
 }
 \examples{
+\dontrun{
 data(testdata2)
 data_suda2 <- suda2(testdata2,variables=c("urbrur","roof","walls","water","sex"))
 data_suda2
@@ -96,5 +97,6 @@ sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'), 
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- suda2(sdc)
+}
 }
 \keyword{ manip }

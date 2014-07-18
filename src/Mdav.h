@@ -391,6 +391,8 @@ RcppExport SEXP Mdav(SEXP data,SEXP data2,SEXP g_MissingValue_R,SEXP weights_R,S
 
 
   //=== Uninit
+  CleanDeleteT(g_pMissingValueDist);
+  CleanDeleteT(g_pWeight);
   CleanDeleteT(pNextIndex);
   CleanDeleteT(pPrevIndex);
   CleanDeleteT(pNextInHash);

@@ -17,8 +17,10 @@ Table of dis suda scores.
 \author{ Matthias Templ }
 \seealso{ \code{\link{suda2}} }
 \examples{
+\dontrun{
 data(testdata)
 data_suda2 <- suda2(testdata,variables=c("urbrur","roof","walls","water","sex"))
 data_suda2
+}
 }
 \keyword{ print }
