@@ -169,8 +169,14 @@ RcppExport SEXP Mdav(SEXP data,SEXP data2,SEXP g_MissingValue_R,SEXP weights_R,S
 
     //=== Core Loop: It always removes to groups of observations of size k therefore it has to stop, when only NbRowLeft-g_K*2>=g_K
   int Loop = 0;
-  while (NbRowLeft- g_K * 2>=g_K)
+  int ngroups; // ngroups introduced to fix the bug that groups smaller than k remain in the last aggregation step after the while loop
+//  while (NbRowLeft- g_K * 2>=g_K)
+  while(NbRowLeft- g_K >=g_K)
   {
+    if(NbRowLeft- g_K * 2<g_K)
+      ngroups=1;
+    else
+      ngroups=2;
 //    Rprintf("NbRowLeft %d \n",NbRowLeft);
 //    Rprintf("g_K %d \n \n",g_K);
     ++Loop;
@@ -214,7 +220,7 @@ RcppExport SEXP Mdav(SEXP data,SEXP data2,SEXP g_MissingValue_R,SEXP weights_R,S
 //    ASSERT(k == NbRowLeft);
 
       // Find the K closest rows & average them, both from Farthest Row & Opposite Farthest Row
-    ForLoop (l, 2)
+    ForLoop (l, ngroups)
     {
         //=== Calculate Distances from Farthest Row
       int Farthest = FirstIndex, Closest = FirstIndex;
@@ -338,187 +344,12 @@ RcppExport SEXP Mdav(SEXP data,SEXP data2,SEXP g_MissingValue_R,SEXP weights_R,S
 
     }
 
-    NbRowLeft -= g_K * 2;
+    NbRowLeft -= g_K * ngroups;
 
-  }
-  //=== This part is a copy of the loop above, but only takes g_K observations in one group
-  //== START REMOVE one close group
-  if (NbRowLeft- g_K >=g_K){
-      Rprintf("NbRowLeft %d \n",NbRowLeft);
-      Rprintf("g_K %d \n \n",g_K);
-      //=== Calculate Center
-      ClearMemT(pCenter, g_NbVar);
-      ClearMemT(pNbNonMissingValue, g_NbVar);
-
-      for (i = FirstIndex; i >= 0; i = pNextIndex[i]){
-        ForLoop (ii, g_NbVar){
-                  pVar1[ii]=Mat(i,ii);
-        }
-        AddRow(pCenter, pVar1, pNbNonMissingValue);
-      }
-
-      ForLoop (j, g_NbVar)
-      {
-        if (pNbNonMissingValue[j])
-          pCenter[j] /= pNbNonMissingValue[j];
-        else
-          pCenter[j] = g_MissingValue;
-
-      }
-
-        //=== Find Farthest Row from Center
-      int CurrentFarthest = FirstIndex;
-
-  //    k = 0;
-
-      for (i = FirstIndex; i >= 0; i = pNextIndex[i])
-      {
-        ForLoop (ii, g_NbVar){
-            pVar1[ii]=Mat(i,ii);
-        }
-        pDist[i] = DistXX(pVar1, pCenter);
-        if (pDist[i] > pDist[CurrentFarthest])
-          CurrentFarthest = i;
-
-  //      ++k;
-      }
-
-  //    ASSERT(k == NbRowLeft);
-
-        // Find the K closest rows & average them, both from Farthest Row & Opposite Farthest Row
-// No loop with 2 runs, so only 1 group will be found and removed.
-//      ForLoop (l, 2)
-//      {
-          //=== Calculate Distances from Farthest Row
-        int Farthest = FirstIndex, Closest = FirstIndex;
-
-        for (i = FirstIndex; i >= 0; i = pNextIndex[i])
-        {
-          ForLoop (ii, g_NbVar){
-              pVar1[ii]=Mat(i,ii);
-              pVar2[ii]=Mat(CurrentFarthest,ii);
-          }
-          pDist[i] = Dist(pVar1, pVar2);
-          if (pDist[i] > pDist[Farthest])
-            Farthest = i;
-          else if (pDist[i] < pDist[Closest])
-            Closest = i;
-        }
-
-        CurrentFarthest = Farthest;
-
-        Rprintf("Closest: %d ; Farthest: %d\n", Closest, Farthest);
-          //=== Hash Sort from Closest to Farthest
-        TDist MinD = pDist[Closest];
-        TDist DeltaD = pDist[Farthest] - MinD;
-
-        if (!DeltaD)
-          ++DeltaD;
-        DeltaD *= (es_NbHashListXX + 1.0) / es_NbHashListXX;
-
-        ClearMemV(HashList, -1);
-
-        for (i = FirstIndex; i >= 0; i = pNextIndex[i])
-        {
-          TDist Dist = pDist[i];
-          int HashIndex = (int) (es_NbHashListXX * (Dist - MinD) / DeltaD);
-
-          int Index = HashList[HashIndex];
-
-          if (Index >= 0 && pDist[Index] < Dist)
-          {
-            while (pNextInHash[Index] >= 0 && pDist[pNextInHash[Index]] < Dist)
-              Index = pNextInHash[Index];
-
-            int NextIndex = pNextInHash[Index];
-            pNextInHash[Index] = i;
-            pNextInHash[i] = NextIndex;
-          }
-          else
-          {
-            pNextInHash[i] = Index;
-            HashList[HashIndex] = i;
-          }
-        }
-
-          //=== Get the K closest Rows, average them & remove them from the set
-        ClearMemT(pCenter, g_NbVar);
-        ClearMemT(pNbNonMissingValue, g_NbVar);
-        k = 0;
-        ForLoop (i, es_NbHashListXX)
-        {
-          int Index = HashList[i];
-          //int kk=0;
-          while (Index >= 0)
-          {
-            Rprintf("Got & Remove: %d\n", Index);
-            ForLoop (ii, g_NbVar){
-                      pVar1[ii]=Mat(Index,ii);
-            }
-            AddRow(pCenter, pVar1, pNbNonMissingValue);
-            ++k;
-            if (k >= g_K)
-            {
-              i = es_NbHashListXX;
-              break;
-            }
-
-            Index = pNextInHash[Index];
-          }
-        }
-
-        ForLoop (j, g_NbVar)
-        {
-          if (pNbNonMissingValue[j])
-            pCenter[j] /= pNbNonMissingValue[j];
-          else
-            pCenter[j] = g_MissingValue;
-        }
-
-        k = 0;
-
-        ForLoop (i, es_NbHashListXX)
-        {
-          int Index = HashList[i];
-
-          while (Index >= 0)
-          {
-
-            ForLoop (j, g_NbVar)
-             Res(Index,j)=pCenter[j];
-
-
-              //=== Remove from List
-            if (FirstIndex == Index)
-              FirstIndex = pNextIndex[Index];
-
-            if (pPrevIndex[Index] >= 0)
-              pNextIndex[pPrevIndex[Index]] = pNextIndex[Index];
-
-            if (pNextIndex[Index] >= 0)
-              pPrevIndex[pNextIndex[Index]] = pPrevIndex[Index];
-
-            ++k;
-            if (k >= g_K)
-            {
-              i = es_NbHashListXX;
-              break;
-            }
-
-            Index = pNextInHash[Index];
-          }
-        }
-
-//      }
-
-      NbRowLeft -= g_K;
-     //== END of removing one group
-
-    //=== Calculate Average of Remaining Rows
   }
   if (NbRowLeft)
   {
-    Rprintf("FINAL NbRowLeft %d \n",NbRowLeft);
+//    Rprintf("FINAL NbRowLeft %d \n",NbRowLeft);
     ClearMemT(pCenter, g_NbVar);
     ClearMemT(pNbNonMissingValue, g_NbVar);
 
