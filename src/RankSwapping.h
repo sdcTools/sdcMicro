@@ -40,7 +40,7 @@ SEXP g_TopRatio_R,SEXP g_BottomRatio_R,SEXP g_K0_R,SEXP g_R0_R,SEXP g_P_R,SEXP s
   /*float g_TopRatio = 0.0f, g_BottomRatio = 0.0f,  g_R0 = -1.0f,g_K0 = -1.0f,  g_P = 0.0f;*/
 
   int HashList[es_NbHashList+1];
-    int *pFromIndex = new int[g_NbRow],
+  int *pFromIndex = new int[g_NbRow],
     *pIndexR = new int[g_NbRow],
     *pListNext = new int[g_NbRow];
   BOOL *pSwapFlag = new BOOL[g_NbRow],
@@ -332,6 +332,13 @@ SEXP g_TopRatio_R,SEXP g_BottomRatio_R,SEXP g_K0_R,SEXP g_R0_R,SEXP g_P_R,SEXP s
   }
 
 
+  CleanDeleteT(pFromIndex);
+  CleanDeleteT(pIndexR);
+  CleanDeleteT(pListNext);
+  CleanDeleteT(pNewValue);
+  CleanDeleteT(pOrderedValue);
+  CleanDeleteT(pSwapFlag);
+  CleanDeleteT(pOrderedSwapFlag);
 
 
 
