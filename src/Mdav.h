@@ -396,6 +396,8 @@ RcppExport SEXP Mdav(SEXP data,SEXP data2,SEXP g_MissingValue_R,SEXP weights_R,S
   CleanDeleteT(pNextInHash);
   CleanDeleteT(pCenter);
   CleanDeleteT(pDist);
+  CleanDeleteT(pVar1);
+  CleanDeleteT(pVar2);
   CleanDeleteT(pNbNonMissingValue);
   return Rcpp::List::create(
       Rcpp::Named( "Res" ) = Res

@@ -306,6 +306,7 @@ RcppExport SEXP ffc(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, SEXP missing_
 
     delete[] group_key;
     delete[] obs_key;
+    delete[] miss_key;
     return Rcpp::List::create(
       Rcpp::Named( "Res") = Res
     );
