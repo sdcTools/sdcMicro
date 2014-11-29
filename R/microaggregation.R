@@ -661,7 +661,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       #dyn.load("functionsRMD.dll")
       y <- x
       cm <- colMeans(x, na.rm = TRUE)
-      csd <- sd(x, na.rm = TRUE)
+      csd <- apply(x, 2, sd, na.rm = TRUE)
       len <- nrow(y)
       
       y <- apply(y, 2, function(x) (x - mean(x, na.rm = TRUE))/sd(x, na.rm = TRUE))
