@@ -18,7 +18,7 @@ setMethod(f='removeDirectID', signature=c('sdcMicroObj'),
       wV <- colnames(obj@origData)[get.sdcMicroObj(obj,"weightVar")]
       sV <- colnames(obj@origData)[get.sdcMicroObj(obj,"strataVar")]
       hV <- colnames(obj@origData)[get.sdcMicroObj(obj,"hhId")]
-      
+
       if(any(var%in%kV))
         stop("A direct identifier should not be seleceted as key variable.\n Therefore it can not be removed.")
       if(any(var%in%nV))
@@ -29,13 +29,13 @@ setMethod(f='removeDirectID', signature=c('sdcMicroObj'),
         stop("A direct identifier should not be seleceted as strata variable.\n Therefore it can not be removed.")
       if(any(var%in%hV))
         stop("A direct identifier should not be seleceted as cluster ID.\n Therefore it can not be removed.")
-      
+
       o <- obj@origData
       if(any(!var%in%colnames(o)))
         stop("direct identifier variable not found on data set")
       o[,!colnames(o)%in%var,drop=FALSE]
       obj <- nextSdcObj(obj)
-      obj@deletedVars <- c(obj@deletedVars,var) 
+      obj@deletedVars <- c(obj@deletedVars,var)
       obj@origData <- o
       obj
     })
@@ -62,8 +62,17 @@ setMethod(f='varToNumeric', signature=c('sdcMicroObj'),
 setGeneric('groupVars', function(obj,var, before,after) {standardGeneric('groupVars')})
 setMethod(f='groupVars', signature=c('sdcMicroObj'),
     definition=function(obj,var, before,after) {
+      if ( length(before)!=length(after) ) {
+        stop("Arguments 'before' and 'after' have different length!\n")
+      }
       x <- get.sdcMicroObj(obj, type="manipKeyVars")
       obj <- nextSdcObj(obj)
+      if ( !all(before %in% levels(x[,var])) ) {
+        stop("some elements of 'before' are not valid levels in variable 'var'!\n")
+      }
+      if ( any(duplicated(before)) ) {
+        stop("each level from the original factor must be listed only once in argument 'before'!")
+      }
       for( i in 1:length(before) ) {
         levels(x[,var]) <- ifelse(levels(x[,var])==before[i], after, levels(x[,var]))
       }
