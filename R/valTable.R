@@ -56,7 +56,7 @@ function (X, k = 0, sca = "mad", scores = TRUE)
         }
         if( method[i] == "swappNum" ){ m[[i]] <- rankSwap(x, P=p) }
         if( substring(method[i],1,8) == "addNoise" ){
-          m[[i]] <- addNoise(x, noise=noise, method=substring(method[i],11,nchar(method[i])))
+          m[[i]] <- addNoise(x, noise=noise, method=substring(method[i],11,nchar(method[i],type="width")))
         }
         if( method[i] == "dataGen" ){ 
           d <- dataGen(x, n=dim(x)[1])

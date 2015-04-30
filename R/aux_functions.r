@@ -133,7 +133,7 @@ setMethod(f='nextSdcObj', signature=c('sdcMicroObj'),
         return(obj)
       }
       if(length(grep("maxUndo",options))>0)
-        maxUndo <- as.numeric(substr(options[grep("maxUndo",options)],9,stop=nchar(options[grep("maxUndo",options)])))
+        maxUndo <- as.numeric(substr(options[grep("maxUndo",options)],9,stop=nchar(options[grep("maxUndo",options)],type="width")))
       else
         maxUndo <- 1
       obj <- deletePrevSave(obj,maxUndo)

@@ -1,9 +1,9 @@
 plot.localSuppression <- function(x, ...){
   checkCN <- function(x) {
-        if (max(sapply(x, nchar)) > 11) {
+        if (max(sapply(x, nchar,type="width")) > 11) {
             warning("Too long variable names are cutted")
         }
-        w <- which(sapply(x, nchar) > 11)
+        w <- which(sapply(x, nchar,type="width") > 11)
         x[w] <- substr(x[w], 1, 11)
         x
     }

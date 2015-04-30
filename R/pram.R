@@ -288,7 +288,7 @@ print.pram <- function(x, ...){
 	x <- apply(x, 2, as.character)
 	x[is.na(x)] <- "." # NA comparisons -> cast to character (better solution?)
 	pram_var <- colnames(x)[grep("pram",colnames(x))]
-	var <- unlist(lapply(pram_var,function(x)substring(x,1,nchar(x)-5)))
+	var <- unlist(lapply(pram_var,function(x)substring(x,1,nchar(x,type="width")-5)))
 	
 	df <- data.frame(variable=var, nrChanges=NA, percChanges=NA, stringsAsFactors=FALSE)
 	cat("Number of changed observations: \n")

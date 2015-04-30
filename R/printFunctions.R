@@ -96,7 +96,7 @@ setMethod(f='print', signature=c('sdcMicroObj'),
 		  }
 	  } else if(type=="ls"){
         keyVars <- colnames(obj@manipKeyVars)
-        maxnam <- max(sapply(keyVars, nchar))
+        maxnam <- max(sapply(keyVars, nchar,type="width"))
         if(is.null(obj@localSuppression))
           lsup <- list(rep(0,length(keyVars)))
         else
@@ -105,7 +105,7 @@ setMethod(f='print', signature=c('sdcMicroObj'),
           nam <- keyVars[i]
           n <- nrow(obj@origData)
           cat("\n")
-          cat(keyVars[i],paste(rep(".",2+maxnam-nchar(nam)), collapse=""),lsup[[1]][i])
+          cat(keyVars[i],paste(rep(".",2+maxnam-nchar(nam,type="width")), collapse=""),lsup[[1]][i])
           cat(" [", round(100*lsup[[1]][i]/n,3), "%]\n")
         }
       }else if(type=="recode"){
@@ -127,16 +127,16 @@ setMethod(f='print', signature=c('sdcMicroObj'),
           ssize[i] <- min(t1)
           ssize2[i] <- min(t2)
         }
-        nc <- sapply(names(tab), nchar)
+        nc <- sapply(names(tab), nchar,type="width")
         maxnam <- max(nc)
         for(i in 1:k){
           nam <- names(tab)[i]
           cat("-------------\n")
           if(TFchange)
-            cat(nam, paste(rep(".",2+maxnam-nchar(nam)), collapse=""),tab[i],"|",msize[i],"|",ssize[i], 
+            cat(nam, paste(rep(".",2+maxnam-nchar(nam,type="width")), collapse=""),tab[i],"|",msize[i],"|",ssize[i], 
               "\n     (orig:", tab2[i],"|",msize2[i],"|",ssize2[i],") \n")
           else
-            cat(nam, paste(rep(".",2+maxnam-nchar(nam)), collapse=""),tab[i],"|",msize[i],"|",ssize[i], 
+            cat(nam, paste(rep(".",2+maxnam-nchar(nam,type="width")), collapse=""),tab[i],"|",msize[i],"|",ssize[i], 
                 "\n ")
         }
       }else if(type=="numrisk"){
