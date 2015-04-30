@@ -30,7 +30,7 @@ function(x, w=1:(dim(x)[2]), p){
       }
       z
 #    }
-    z[r]  ## rückordnen
+    z[r]  ## rueckordnen
   }
   # Univariat
   if(length(w)==1)
