@@ -78,7 +78,7 @@ LocalRecProgWORK <- function(data,categorical,numerical=NULL,ancestors=NULL,ance
   cbind(data[,c(categorical,numerical)],res$Res)
 }
 #require(sdcMicro)
-## Link zum Testdatenset (data(testdata) enthält die ancestors nicht)
+## Link zum Testdatenset (data(testdata) enthaelt die ancestors nicht)
 #setwd("M:\\Kowarik\\WorkspaceEclipse\\sdcMicro\\IHSN-SDC-Cpp\\IHSN-SDC\\Yichun 2 February 2009\\anonymization\\test\\win")
 #dataset <- read.table("Test7_data.txt",sep="\t",header=TRUE)
 #
