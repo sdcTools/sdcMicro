@@ -39,9 +39,9 @@ setGeneric('set.sdcMicroObj', function(object, type, input) {standardGeneric('se
 #' @note internal function
 #' @author Elias Rut
 setGeneric('undolast', function(obj) {standardGeneric('undolast')})
-############################################
+###########################################
 ### methods only for class 'sdcMicroObj' ###
-########################################ä###
+###########################################
 #' @aliases get.sdcMicroObj,sdcMicroObj,character-method
 #' @rdname get.sdcMicroObj-method
 setMethod(f='get.sdcMicroObj', signature=c('sdcMicroObj', 'character'),
