@@ -24,7 +24,6 @@ records. The function apply the rank swapping on each variable independently.
   \item{xm  }{the rank swapped data }
   \item{method  }{ info about the method name }
 }
-\references{ Look, e.g. on \url{http://www.niss.org/dgii/TR/dataswap-finalrevision.pdf} }
 \author{ Matthias Templ}
 \seealso{ \code{\link{microaggregation}} }
 \examples{
