@@ -43,7 +43,7 @@ eigenvalues and robust eigenvalues form the original data and the perturbed data
 \value{
 data utility or modified entry for data utility the \dQuote{sdcMicroObj}.
 }
-\references{for IL1s: see \url{http://vneumann.etse.urv.es/publications/sci/lncs3050Outlier.pdf},
+\references{for IL1s: see \url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf},
  
  Templ, M. and Meindl, B., 
                \emph{Robust Statistics Meets {SDC}: New Disclosure Risk Measures for 

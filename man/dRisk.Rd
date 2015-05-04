@@ -41,7 +41,7 @@ With parameter k one can enlarge or down scale the interval.
 \value{
 The disclosure risk or/and the modified \dQuote{sdcMicroObj}
 }
-\references{ see method SDID in \url{http://vneumann.etse.urv.es/publications/sci/lncs3050Outlier.pdf} }
+\references{ see method SDID in \url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf} }
 \author{Matthias Templ }
 \seealso{ \code{\link{dUtility}}, \code{\link{dUtility}} }
 \examples{
