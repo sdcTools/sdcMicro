@@ -39,7 +39,7 @@ For details see at the reference.
 \value{
  the generated synthetic data.
 }
-\references{ Have a look at \url{http://vneumann.etse.urv.es/publications/sci/lncs3050FastGen.pdf} }
+\references{ Have a look at \url{http://crises2-deim.urv.cat/docs/publications/lncs/443.pdf} }
 \author{ Matthias Templ }
 \note{ With this method only multivariate normal distributed data with approxiomately the same covariance as the original data can be generated
 without reflecting the distribution of real complex data, which are, in general, not follows 
