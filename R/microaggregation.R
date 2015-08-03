@@ -864,7 +864,6 @@ microaggregationWORK <- function(x, variables = colnames(x), method = "mdav", ag
 #'
 #' Print method for objects from class micro.
 #'
-#' @rdname microaggregation
 #' @param x object from class micro
 #' @param \dots Additional arguments passed through.
 #' @return information about method and aggregation level from objects of class
@@ -900,7 +899,6 @@ print.micro <- function(x, ...) {
 #'
 #' This function computes several measures of information loss, such as
 #'
-#' @rdname microaggregation
 #' @param object objects from class micro
 #' @param \dots Additional arguments passed through.
 #' @return

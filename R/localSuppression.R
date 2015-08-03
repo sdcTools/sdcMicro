@@ -233,7 +233,6 @@ localSuppressionWORK <- function(x, keyVars, k = 2, importance = NULL) {
 #'
 #' Print method for objects from class localSuppression.
 #'
-#' @rdname localSuppression
 #' @param x object from class localSuppression
 #' @param \dots Additional arguments passed through.
 #' @return Information about the frequency counts for key variables for object

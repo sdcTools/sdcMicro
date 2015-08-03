@@ -7,7 +7,7 @@
 #'
 #' @name pram
 #' @aliases pram-methods pram,data.frame-method pram,matrix-method
-#' pram,vector-method pram,sdcMicroObj-method pram print.pram
+#' pram,vector-method pram,sdcMicroObj-method pram
 #' @docType methods
 #' @param obj Input data. Allowed input data are objects of class 'matrix',
 #' 'data.frame', 'vector' or \code{\link{sdcMicroObj-class}}.
@@ -337,8 +337,8 @@ pramWORK <- function(data, variables = NULL, strata_variables = NULL, pd = 0.8, 
 #' Print method for objects from class pram
 #'
 #' Print method for objects from class pram
-#' @rdname pram
 #' @param x an object of class \code{\link{pram}}
+#' @param \dots Additional arguments passed through.
 #' @return absolute and relative frequencies of changed observations in each modified variable
 #' @author Bernhard Meindl, Matthias Templ
 #' @seealso \code{\link{pram}}
@@ -373,7 +373,6 @@ print.pram <- function(x, ...) {
 #' about transitions.
 #'
 #' Shows various information about the transitions.
-#' @rdname pram
 #' @param object object from class \sQuote{pram}
 #' @param \dots Additional arguments passed through.
 #' @return The summary of object from class \sQuote{pram}.

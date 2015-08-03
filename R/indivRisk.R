@@ -134,7 +134,6 @@ indivRisk <- function(x, method = "approx", qual = 1, survey = TRUE) {
 #'
 #' Print method for objects from class indivRisk
 #'
-#' @rdname indivRisk
 #' @param x object from class indivRisk
 #' @param \dots Additional arguments passed through.
 #' @return few information about the method and the final correction factor for

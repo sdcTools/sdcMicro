@@ -451,7 +451,6 @@ sffcNA <- function(x, keyVars, w = NULL) {
 #'
 #' Print method for objects from class freqCalc.
 #'
-#' @rdname freqCalc
 #' @param x object from class \code{\link{freqCalc}}
 #' @param \dots Additional arguments passed through.
 #' @return information about the frequency counts for key variables for object
@@ -484,7 +483,6 @@ print.freqCalc <- function(x, ...) {
 #' Shows the amount of local suppressions on each variable in which local
 #' suppression was applied.
 #'
-#' @rdname freqCalc
 #' @param object object from class freqCalc
 #' @param \dots Additional arguments passed through.
 #' @return Information about local suppression in each variable (only if a
