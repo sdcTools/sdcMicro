@@ -61,7 +61,6 @@ Collate:
     'shuffle.R'
     'suda2.R'
     'summary.micro.R'
-    'summary.pram.r'
     'timeEstimation.R'
     'topBotCoding.R'
     'valTable.R'
