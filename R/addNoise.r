@@ -1,3 +1,96 @@
+#' Adding noise to perturb data
+#'
+#' Various methods for adding noise to perturb continuous scaled variables.
+#'
+#' If \sQuote{obj} is of class \code{\link{sdcMicroObj-class}} all continuous key
+#' variables are selected per default. If \sQuote{obj} is of class
+#' \dQuote{data.frame} or \dQuote{matrix}, the continuous variables have to be
+#' specified.
+#'
+#' Method \sQuote{additive} adds noise completely at random to each variable
+#' depending on there size and standard deviation. \sQuote{correlated} and
+#' method \sQuote{correlated2} adds noise and preserves the covariances as
+#' descriped in R. Brand (2001) or in the reference given below.  Method
+#' \sQuote{restr} takes the sample size into account when adding noise.  Method
+#' \sQuote{ROMM} is an implementation of the algorithm ROMM (Random
+#' Orthogonalized Matrix Masking) (Fienberg, 2004).  Method \sQuote{outdect}
+#' adds noise only to outliers.  The outliers are idedentified with univariate
+#' and robust multivariate procedures based on a robust mahalanobis distancs
+#' calculated by the MCD estimator.
+#'
+#' @name addNoise
+#' @aliases addNoise addNoise-methods addNoise,data.frame-method
+#' addNoise,matrix-method addNoise,sdcMicroObj-method
+#' @docType methods
+#' @param obj either a data frame, matrix or a \code{\link{sdcMicroObj-class}} that should be perturbed
+#' @param variables vector with names of variables that should be perturbed
+#' @param noise amount of noise (in percentages)
+#' @param method choose between \sQuote{additive}, \sQuote{correlated},
+#' \sQuote{correlated2}, \sQuote{restr}, \sQuote{ROMM}, \sQuote{outdect}
+#' @param ... see possible arguments below
+#' @return If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
+#' slots are filled, like manipNumVars, risk and utility.
+#'
+#' If \sQuote{obj} was of class \dQuote{data.frame} or \dQuote{matrix} an
+#' object of class \dQuote{micro} with following entities is returned:
+#' \item{x}{ the original data }
+#' \item{xm}{ the modified (perturbed) data}
+#' \item{method}{method used for perturbation}
+#' \item{noise}{amount of noise}
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"data.frame\")")}{}
+#' \item{list("signature(obj = \"matrix\")")}{}
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @author Matthias Templ
+#' @seealso \code{\link{sdcMicroObj-class}}, \code{\link{summary.micro}}
+#' @references Domingo-Ferrer, J. and Sebe, F. and Castella, J., \dQuote{On the
+#' security of noise addition for privacy in statistical databases}, Lecture
+#' Notes in Computer Science, vol. 3050, pp. 149-161, 2004.  ISSN 0302-9743.
+#' Vol. Privacy in Statistical Databases, eds. J. Domingo-Ferrer and V. Torra,
+#' Berlin: Springer-Verlag.
+#' \url{http://crises-deim.urv.cat/webCrises/publications/isijcr/lncs3050OntheSec.pdf},
+#'
+#' Ting, D. Fienberg, S.E. and Trottini, M. \dQuote{ROMM Methodology for
+#' Microdata Release} Joint UNECE/Eurostat work session on statistical data
+#' confidentiality, Geneva, Switzerland, 2005,
+#' \url{http://www.unece.org/fileadmin/DAM/stats/documents/ece/ces/ge.46/2005/wp.11.e.pdf}
+#'
+#' Ting, D., Fienberg, S.E., Trottini, M.  \dQuote{Random orthogonal matrix
+#' masking methodology for microdata release}, International Journal of
+#' Information and Computer Security, vol. 2, pp. 86-105, 2008.
+#'
+#' Templ, M. and Meindl, B., \emph{Robustification of Microdata Masking Methods
+#' and the Comparison with Existing Methods}, Lecture Notes in Computer
+#' Science, Privacy in Statistical Databases, vol. 5262, pp. 177-189, 2008.
+#'
+#' Templ, M.  \emph{New Developments in Statistical Disclosure Control and
+#' Imputation: Robust Statistics Applied to Official Statistics},
+#' Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
+#' 264 pages.
+#'
+#' Templ, M. and Meindl, B.: \emph{Practical Applications in Statistical
+#' Disclosure Control Using R}, Privacy and Anonymity in Information Management
+#' Systems New Techniques for New Practical Problems, Springer, 31-62, 2010,
+#' ISBN: 978-1-84996-237-7.
+#' @keywords manip
+#' @export
+#' @examples
+#'
+#' data(Tarragona)
+#' a1 <- addNoise(Tarragona)
+#' a1
+#'
+#' data(testdata)
+#' testdata[, c('expend','income','savings')] <-
+#' addNoise(testdata[,c('expend','income','savings')])$xm
+#'
+#' ## for objects of class sdcMicroObj:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- addNoise(sdc)
+#'
 setGeneric("addNoise", function(obj, variables = NULL, noise = 150, method = "additive", ...) {
   standardGeneric("addNoise")
 })

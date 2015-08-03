@@ -1,3 +1,145 @@
+#' Microaggregation
+#'
+#' Function to perform various methods of microaggregation.
+#'
+#' On \url{http://neon.vb.cbs.nl/casc/Glossary.htm} one can found the
+#' \dQuote{official} definition of microaggregation:
+#'
+#' Records are grouped based on a proximity measure of variables of interest,
+#' and the same small groups of records are used in calculating aggregates for
+#' those variables. The aggregates are released instead of the individual
+#' record values.
+#'
+#' The recommended method is \dQuote{rmd} which forms the proximity using
+#' multivariate distances based on robust methods. It is an extension of the
+#' well-known method \dQuote{mdav}.  However, when computational speed is
+#' important, method \dQuote{mdav} is the preferable choice.
+#'
+#' While for the proximity measure very different concepts can be used, the
+#' aggregation itself is naturally done with the arithmetic mean.
+#' Nevertheless, other measures of location can be used for aggregation,
+#' especially when the group size for aggregation has been taken higher than 3.
+#' Since the median seems to be unsuitable for microaggregation because of
+#' being highly robust, other mesures which are included can be chosen. If a
+#' complex sample survey is microaggregated, the corresponding sampling weights
+#' should be determined to either aggregate the values by the weighted
+#' arithmetic mean or the weighted median.
+#'
+#' This function contains also a method with which the data can be clustered
+#' with a variety of different clustering algorithms. Clustering observations
+#' before applying microaggregation might be useful.  Note, that the data are
+#' automatically standardised before clustering.
+#'
+#' The usage of clustering method \sQuote{Mclust} requires package mclust02,
+#' which must be loaded first. The package is not loaded automatically, since
+#' the package is not under GPL but comes with a different licence.
+#'
+#' The are also some projection methods for microaggregation included.  The
+#' robust version \sQuote{pppca} or \sQuote{clustpppca} (clustering at first)
+#' are fast implementations and provide almost everytime the best results.
+#'
+#' Univariate statistics are preserved best with the individual ranking method
+#' (we called them \sQuote{onedims}, however, often this method is named
+#' \sQuote{individual ranking}), but multivariate statistics are strong
+#' affected.
+#'
+#' With method \sQuote{simple} one can apply microaggregation directly on the
+#' (unsorted) data. It is useful for the comparison with other methods as a
+#' benchmark, i.e. replies the question how much better is a sorting of the
+#' data before aggregation.
+#'
+#' @name microaggregation
+#' @aliases microaggregation-methods microaggregation,ANY-method
+#' microaggregation,data.frame-method microaggregation,matrix-method
+#' microaggregation,sdcMicroObj-method microaggregation
+#' @docType methods
+#' @param obj either an object of class sdcMicroObj or a data frame or matrix
+#' @param variables variables to microaggregate. For NULL:If obj is of class
+#' sdcMicroObj the categorical key variables are chosen per default. For
+#' data.frames and matrices all columns are chosen per default.
+#' @param aggr aggregation level (default=3)
+#' @param strata_variables by-variables for applying microaggregation only
+#' within strata defined by the variables
+#' @param method pca, rmd, onedims, single, simple, clustpca, pppca,
+#' clustpppca, mdav, clustmcdpca, influence, mcdpca
+#' @param nc number of cluster, if the chosen method performs cluster analysis
+#' @param weights sampling weights. If obj is of class sdcMicroObj the vector
+#' of sampling weights is chosen automatically. If determined, a weighted
+#' version of the aggregation measure is chosen automatically, e.g. weighted
+#' median or weighted mean.
+#' @param clustermethod clustermethod, if necessary
+#' @param opt experimental
+#' @param measure aggregation statistic, mean, median, trim, onestep (default=mean)
+#' @param trim trimming percentage, if measure=trim
+#' @param varsort variable for sorting, if method= single
+#' @param transf transformation for data x
+#' @return If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
+#' slots are filled, like manipNumVars, risk and utility.  If \sQuote{obj} was
+#' of class \dQuote{data.frame} or \dQuote{matrix} an object of class
+#' \dQuote{micro} with following entities is returned:
+#' \itemize{
+#' \item{mx}{the aggregated data}
+#' \item{x}{original data}
+#' \item{method}{method}
+#' \item{aggr}{aggregation level}
+#' \item{measure}{ proximity measure for aggregation}
+#' \item{fot}{ correction factor, necessary if totals calculated and n divided by aggr
+#' is not an integer.}}
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"ANY\")")}{}
+#' \item{list("signature(obj = \"data.frame\")")}{}
+#' \item{list("signature(obj = \"matrix\")")}{}
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @author Matthias Templ
+#'
+#' For method \dQuote{mdav}: This work is being supported by the International
+#' Household Survey Network (IHSN) and funded by a DGF Grant provided by the
+#' World Bank to the PARIS21 Secretariat at the Organisation for Economic
+#' Co-operation and Development (OECD).  This work builds on previous work
+#' which is elsewhere acknowledged.
+#'
+#' Author for the integration of the code for mdav in R: Alexander Kowarik.
+#' @seealso \code{\link{summary.micro}}, \code{\link{plotMicro}},
+#' \code{\link{valTable}}
+#' @references
+#' \url{http://www.springerlink.com/content/v257655u88w2/?sortorder=asc&p\_o=20}
+#'
+#' Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New Disclosure
+#' Risk Measures for Continuous Microdata Masking}, Lecture Notes in Computer
+#' Science, Privacy in Statistical Databases, vol. 5262, pp. 113-126, 2008.
+#'
+#' Templ, M.  \emph{Statistical Disclosure Control for Microdata Using the
+#' R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number 2, pp.
+#' 67-85, 2008.  \url{http://www.tdp.cat/issues/abs.a004a08.php}
+#'
+#' Templ, M.  \emph{New Developments in Statistical Disclosure Control and
+#' Imputation: Robust Statistics Applied to Official Statistics},
+#' Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
+#' 264 pages.
+#'
+#' Templ, M. and Meindl, B.: \emph{Practical Applications in Statistical
+#' Disclosure Control Using R}, Privacy and Anonymity in Information Management
+#' Systems New Techniques for New Practical Problems, Springer, 31-62, 2010,
+#' ISBN: 978-1-84996-237-7.
+#' @keywords manip
+#' @export
+#' @examples
+#'
+#' data(Tarragona)
+#' m1 <- microaggregation(Tarragona, method="onedims", aggr=3)
+#' ## summary(m1)
+#' data(testdata)
+#' m2 <- microaggregation(testdata[1:100,c("expend","income","savings")],
+#'   method="mdav", aggr=4)
+#' summary(m2)
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- microaggregation(sdc)
+#'
 setGeneric("microaggregation", function(obj, variables = NULL, aggr = 3, strata_variables = NULL,
   method = "mdav", weights = NULL, nc = 8, clustermethod = "clara", opt = FALSE, measure = "mean",
   trim = 0, varsort = 1, transf = "log") {

@@ -1,3 +1,5 @@
+#' @rdname print.sdcMicroObj
+#' @export
 setGeneric("freq", function(obj, type = "fk") {
   standardGeneric("freq")
 })
@@ -10,6 +12,46 @@ definition = function(obj, type = "fk") {
   return(ret)
 })
 
+#' Print and Extractor Functions for objects of class \code{\link{sdcMicroObj-class}}
+#'
+#' Descriptive print function for Frequencies, local Supression, Recoding,
+#' categorical risk and numerical risk.
+#'
+#' Possible values for the type argument of the print function are: "freq": for
+#' Frequencies, "ls": for Local Supression output, "pram": for results of
+#' post-randomization "recode":for Recodes, "risk": forCategorical risk and
+#' "numrisk": for Numerical risk.
+#'
+#' Possible values for the type argument of the freq function are: "fk": Sample
+#' frequencies and "Fk": weighted frequencies.
+#'
+#' @name print.sdcMicroObj
+#' @aliases print-methods freq-methods print,sdcMicroObj-method
+#' freq,sdcMicroObj-method freq print
+#' @docType methods
+#' @param x An object of class \code{\link{sdcMicroObj-class}}
+#' @param obj An object of class \code{\link{sdcMicroObj-class}}
+#' @param type Selection of the content to be returned or printed-
+#' @param ... the type argument for the print method
+#' @author Alexander Kowarik, Matthias Templ
+#' @keywords classes
+#' @export
+#' @examples
+#'
+#' data(testdata)
+#' sdc <- createSdcObj(testdata,
+#'   keyVars=c('urbrur','roof','walls','relat','sex'),
+#'   pramVars=c('water','electcon'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' fk=freq(sdc)
+#' Fk=freq(sdc,type="Fk")
+#' print(sdc)
+#' print(sdc,type="ls")
+#' print(sdc,type="recode")
+#' print(sdc,type="risk")
+#' print(sdc,type="numrisk")
+#' print(sdc,type="pram")
+#'
 setMethod(f = "print", signature = c("sdcMicroObj"),
 definition = function(x, type = "freq", ...) {
   obj = x

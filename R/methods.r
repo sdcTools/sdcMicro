@@ -1,5 +1,5 @@
-#' @rdname get.sdcMicroObj-method
-#'
+#' @rdname sdcMicroObj-class
+#' @export
 #' @note internal function
 #' @author Bernhard Meindl \email{bernhard.meindl@@statistik.gv.at}
 setGeneric("get.sdcMicroObj", function(object, type) {
@@ -8,7 +8,6 @@ setGeneric("get.sdcMicroObj", function(object, type) {
 
 #' modify \code{sdcMicroObj}-objects depending on argument \code{type}
 #'
-#' @param object an object of class \code{sdcMicroObj}
 #' @param type a character vector of length 1 defining what to calculate|return|modify. Allowed types are:}
 #' \itemize{
 #' \item origData: set slot 'origData' of argument \code{object}
@@ -19,8 +18,7 @@ setGeneric("get.sdcMicroObj", function(object, type) {
 #' @return an object of class \code{sdcMicroObj}
 #'
 #' @export
-#' @docType methods
-#' @rdname set.sdcMicro-method
+#' @rdname sdcMicroObj-class
 #'
 #' @note internal function
 #' @author Bernhard Meindl \email{bernhard.meindl@@statistik.gv.at}
@@ -37,16 +35,16 @@ setGeneric("set.sdcMicroObj", function(object, type, input) {
 #'
 #' @export
 #' @docType methods
-#' @rdname set.sdcMicro-method
+#' @rdname sdcMicroObj-class
 #'
 #' @note internal function
 #' @author Elias Rut
-setGeneric("undolast", function(obj) {
+setGeneric("undolast", function(object) {
   standardGeneric("undolast")
 })
 
 #' @aliases get.sdcMicroObj,sdcMicroObj,character-method
-#' @rdname get.sdcMicroObj-method
+#' @rdname sdcMicroObj-class
 setMethod(f = "get.sdcMicroObj", signature = c("sdcMicroObj", "character"),
 definition = function(object, type) {
   if (!type %in% c("origData", "keyVars", "pramVars", "numVars", "weightVar", "hhId", "strataVar",
@@ -64,7 +62,7 @@ definition = function(object, type) {
 })
 
 #' @aliases set.sdcMicroObj,sdcMicroObj,character,listOrNULL-method
-#' @rdname set.sdcMicroObj-method
+#' @rdname sdcMicroObj-class
 setMethod(f = "set.sdcMicroObj", signature = c("sdcMicroObj", "character", "listOrNULL"),
 definition = function(object, type, input) {
   if (!type %in% c("origData", "keyVars", "pramVars", "numVars", "weightVar", "hhId", "strataVar",
@@ -143,12 +141,13 @@ definition = function(object, type, ...) {
   }
 })
 
-#' @rdname undo.sdcMicroObj-method
+#' @rdname sdcMicroObj-class
 setMethod(f = "undolast", signature = c("sdcMicroObj"),
-definition = function(obj) {
-  if (is.null(obj@prev)) {
+definition = function(object) {
+  if (is.null(object@prev)) {
     warning("Can not undo. No previous state stored. (The input object is returned).\n")
-    return(obj)
+    return(object)
   }
-  return(obj@prev)
+  return(object@prev)
 })
+

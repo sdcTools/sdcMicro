@@ -1,3 +1,32 @@
+#' Comparison plots
+#'
+#' Plots for the comparison of the original data and perturbed data.
+#'
+#' Univariate and multivariate comparison plots are implemented to detect
+#' differences between the perturbed and the original data, but also to compare
+#' perturbed data which are produced by different methods.
+#'
+#' @param x object from class micro
+#' @param p necessary parameter for the box cox transformation (lambda)
+#' @param which.plot which plot should be created?
+#' \itemize{
+#' \item 1: density traces
+#' \item 2: parallel boxplots
+#' \item 3: differences in totals}
+#' @author Matthias Templ
+#' @seealso \code{\link{microaggregation}}
+#' @references Templ, M. and Meindl, B., \emph{Software Development for SDC in
+#' R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,
+#' vol. 4302, pp. 347-359, 2006.
+#' @keywords aplot
+#' @export
+#' @examples
+#'
+#' data(free1)
+#' m1 <- microaggregation(free1[, 31:34], method="onedims", aggr=3)
+#' m2 <- microaggregation(free1[, 31:34], method="pca", aggr=3)
+#' plotMicro(m1, 0.1, which.plot=1)
+#'
 plotMicro <- function(x, p, which.plot = 1:3) {
   bct <- function(y, p) {
     gm <- exp(mean(log(y)))

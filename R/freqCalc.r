@@ -1,3 +1,69 @@
+#' Frequencies calculation for risk estimation
+#'
+#' Computation and estimation of the sample and population frequency counts.
+#'
+#' The function considers the case of missing values in the data.  A missing
+#' value stands for any of the possible categories of the variable considered.
+#' It is possible to apply this function to large data sets with many
+#' (catergorical) key variables, since the computation is done in C.
+#'
+#' \emph{freqCalc()} does not support sdcMicro S4 class objects.
+#'
+#' @param x data frame or matrix
+#' @param keyVars key variables
+#' @param w column index of the weight variable. Should be set to NULL if one
+#' deal with a population.
+#' @param fast beta version of faster algorithm should not change the results
+#' in any way
+#' @return Object from class freqCalc.
+#' \item{freqCalc}{data set}
+#' \item{keyVars}{variables used for frequency calculation}
+#' \item{w}{index of weight vector. NULL if you do not have a sample.}
+#' \item{indexG}{}
+#' \item{fk}{the frequency of equal observations in
+#' the key variables subset sample given for each observation.}
+#' \item{Fk}{estimated frequency in the population}
+#' \item{n1}{number of observations with fk=1}
+#' \item{n2}{number of observations with fk=2}
+#' @author Bernhard Meindl and Matthias Templ
+#' @seealso \code{\link{indivRisk}}, \code{\link{measure_risk}}
+#' @references look e.g. in \url{http://neon.vb.cbs.nl/casc/Deliv/12d1.pdf}
+#' Templ, M.  \emph{Statistical Disclosure Control for Microdata Using the
+#' R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number 2, pp.
+#' 67-85, 2008.  \url{http://www.tdp.cat/issues/abs.a004a08.php}
+#'
+#' Templ, M.  \emph{New Developments in Statistical Disclosure Control and
+#' Imputation: Robust Statistics Applied to Official Statistics},
+#' Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
+#' 264 pages.
+#'
+#' Templ, M. and Meindl, B.: \emph{Practical Applications in Statistical
+#' Disclosure Control Using R}, Privacy and Anonymity in Information Management
+#' Systems New Techniques for New Practical Problems, Springer, 31-62, 2010,
+#' ISBN: 978-1-84996-237-7.
+#' @keywords manip
+#' @export
+#' @examples
+#'
+#' data(francdat)
+#' f <- freqCalc(francdat, keyVars=c(2,4,5,6),w=8)
+#' f
+#' f$freqCalc
+#' f$fk
+#' f$Fk
+#' ## with missings:
+#' x <- francdat
+#' x[3,5] <- NA
+#' x[4,2] <- x[4,4] <- NA
+#' x[5,6]  <- NA
+#' x[6,2]  <- NA
+#' f2 <- freqCalc(x,  keyVars=c(2,4,5,6),w=8)
+#' f2$Fk
+#' # time comparison freqCalc old version  vs. new version
+#' data(testdata)
+#' system.time( f3 <-  freqCalc(testdata,keyVars=c(1:4,7),w=14,fast=FALSE) )
+#' system.time( f3f <- freqCalc(testdata,keyVars=c(1:4,7),w=14,fast=TRUE) )
+#'
 freqCalc <- function(x, keyVars, w = NULL, fast = TRUE) {
   if (is.numeric(keyVars)) {
     keyVars <- colnames(x)[keyVars]

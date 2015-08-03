@@ -1,3 +1,21 @@
+#' Generate one strata variable from multiple factors
+#'
+#' For strata defined by multiple variables (e.g. sex,age,country) one combined
+#' variable is generated.
+#'
+#'
+#' @param df a data.frame
+#' @param stratavars character vector with variable name
+#' @param name name of the newly generated variable
+#' @return The original data set with one new column.
+#' @author Alexander Kowarik
+#' @export
+#' @examples
+#'
+#' x <- testdata
+#' x <- generateStrata(x,c("sex","urbrur"),"strataIDvar")
+#' head(x)
+#'
 generateStrata <- function(df, stratavars, name) {
   strata <- rep("", nrow(df))
   for (i in seq_along(stratavars)) {
@@ -11,6 +29,32 @@ generateStrata <- function(df, stratavars, name) {
   return(df)
 }
 
+#' Remove certain variables from the data set inside a sdc object.
+#'
+#' Delete variables without changing anything else in the sdcObject (writing
+#' NAs).
+#'
+#'
+#' @name removeDirectID
+#' @aliases removeDirectID removeDirectID-methods
+#' removeDirectID,sdcMicroObj-method
+#' @docType methods
+#' @param obj object of class \code{\link{sdcMicroObj-class}}
+#' @param var name of the variable(s) to be remove
+#' @return the modified \code{\link{sdcMicroObj-class}}
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @author Alexander Kowarik
+#' @keywords methods
+#' @export
+#' @examples
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata, keyVars=c('urbrur','roof'),
+#'  numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- removeDirectID(sdc, var="age")
+#'
 setGeneric("removeDirectID", function(obj, var) {
   standardGeneric("removeDirectID")
 })
@@ -44,6 +88,32 @@ definition = function(obj, var) {
   obj
 })
 
+#' Change the a keyVariable of an object of class \code{\link{sdcMicroObj-class}} from Numeric to
+#' Factor or from Factor to Numeric
+#'
+#' Change the scale of a variable
+#'
+#'
+#' @name varToFactor
+#' @aliases varToFactor varToNumeric varToFactor-methods varToNumeric-methods
+#' varToFactor,sdcMicroObj-method varToNumeric,sdcMicroObj-method
+#' @docType methods
+#' @param obj object of class \code{\link{sdcMicroObj-class}}
+#' @param var name of the keyVariable to change
+#' @return the modified \code{\link{sdcMicroObj-class}}
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @keywords methods
+#' @export
+#' @examples
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- varToFactor(sdc, var="urbrur")
+#'
 setGeneric("varToFactor", function(obj, var) {
   standardGeneric("varToFactor")
 })
@@ -57,6 +127,7 @@ definition = function(obj, var) {
   obj
 })
 
+#' @export
 setGeneric("varToNumeric", function(obj, var) {
   standardGeneric("varToNumeric")
 })
@@ -71,6 +142,39 @@ definition = function(obj, var) {
   obj
 })
 
+#' Join levels of a keyVariable in an object of class \code{\link{sdcMicroObj-class}}
+#'
+#' Transforms the factor variable into a factors with less levels and
+#' recomputes risk.
+#'
+#' @name groupVars
+#' @aliases groupVars groupVars-methods groupVars,sdcMicroObj-method
+#' @docType methods
+#' @param obj object of class \code{\link{sdcMicroObj-class}}
+#' @param var name of the keyVariable to change
+#' @param before vector of levels before recoding
+#' @param after vector of levels after recoding
+#' @return the modified \code{\link{sdcMicroObj-class}}
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{
+#' This method transform a factor variable with some levels into a new factor
+#' variable with less levels. The user must make sure that all levels of the
+#' original variable are listed in argument 'before' and that the number of
+#' elements in argument 'after' (the new levels) have the same length. This
+#' means that there should be a one to one mapping from any level of the
+#' original factor to a level in the recoded variable. } }
+#' @keywords methods
+#' @export
+#' @examples
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' testdata2$urbrur <- as.factor(testdata2$urbrur)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- groupVars(sdc, var="urbrur", before=c("1","2"), after=c("1","1"))
+#'
 setGeneric("groupVars", function(obj, var, before, after) {
   standardGeneric("groupVars")
 })
@@ -95,6 +199,32 @@ definition = function(obj, var, before, after) {
   obj
 })
 
+#' Change the name of levels of a keyVariable in an object of class
+#' \code{\link{sdcMicroObj-class}}
+#'
+#' Change the labels of levels.
+#'
+#' @name renameVars
+#' @aliases renameVars renameVars-methods renameVars,sdcMicroObj-method
+#' @docType methods
+#' @param obj object of class \code{\link{sdcMicroObj-class}}
+#' @param var name of the keyVariable to change
+#' @param before vector of levels before
+#' @param after vector of levels after
+#' @return the modified \code{\link{sdcMicroObj-class}}
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @keywords manip
+#' @export
+#' @examples
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- renameVars(sdc, var="urbrur", before=2, after=78)
+#'
 setGeneric("renameVars", function(obj, var, before, after) {
   standardGeneric("renameVars")
 })

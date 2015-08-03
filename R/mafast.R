@@ -1,3 +1,63 @@
+#' Fast and Simple Microaggregation
+#'
+#' Function to perform a fast and simple (primitive) method of
+#' microaggregation. (for large datasets)
+#'
+#'
+#' @name mafast
+#' @aliases mafast-methods mafast,ANY-method mafast,data.frame-method
+#' mafast,matrix-method mafast,sdcMicroObj-method mafast
+#' @docType methods
+#' @param obj either an object of class sdcMicroObj or a data frame or matrix
+#' @param variables variables to microaggregate. If obj is of class sdcMicroObj
+#' the numerical key variables are chosen per default.
+#' @param by grouping variable for microaggregation. If obj is of class
+#' sdcMicroObj the strata variables are chosen per default.
+#' @param aggr aggregation level (default=3)
+#' @param measure aggregation statistic, mean, median, trim, onestep (default =
+#' mean)
+#' @return If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
+#' slots are filled, like manipNumVars, risk and utility.  If \sQuote{obj} was
+#' of class \dQuote{data.frame} or \dQuote{matrix} an object of the same class
+#' is returned.
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"ANY\")")}{}
+#' \item{list("signature(obj = \"data.frame\")")}{}
+#' \item{list("signature(obj = \"matrix\")")}{}
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @author Alexander Kowarik
+#' @seealso \code{\link{microaggregation}}
+#' @keywords manip
+#' @export
+#' @examples
+#'
+#' data(Tarragona)
+#' m1 <- mafast(Tarragona, variables=c("GROSS.PROFIT","OPERATING.PROFIT","SALES"),aggr=3)
+#' data(testdata)
+#' m2 <- mafast(testdata,variables=c("expend","income","savings"),aggr=50,by="sex")
+#' summary(m2)
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- dRisk(sdc)
+#' sdc@@risk$numeric
+#' sdc1 <- mafast(sdc,aggr=4)
+#' sdc1@@risk$numeric
+#'
+#' sdc2 <- mafast(sdc,aggr=10)
+#' sdc2@@risk$numeric
+#' \dontrun{
+#' ### Performance tests
+#' x <- testdata
+#' for(i in 1:20){
+#'   x <- rbind(x,testdata)
+#' }
+#' system.time(xx <- mafast(x,variables=c("expend","income","savings"),aggr=50,by="sex"))
+#' }
+#'
 setGeneric("mafast", function(obj, variables = NULL, by = NULL, aggr = 3, measure = mean) {
   standardGeneric("mafast")
 })

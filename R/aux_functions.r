@@ -27,6 +27,18 @@ standardizeInput <- function(obj, v) {
   }
 }
 
+#' @name sdcMicroObj-class
+#' @param dat The microdata set. A numeric matrix or data frame containing the data.
+#' @param keyVars Indices or names of categorical key variables. They must, of
+#' course, match with the columns of \sQuote{dat}.
+#' @param pramVars Indices or names of categorical variables considered to be pramed.
+#' @param numVars Index or names of continuous key variables.
+#' @param weightVar Indices or name determining the vector of sampling weights.
+#' @param hhId Index or name of the cluster ID (if available).
+#' @param strataVar Indices or names of stratification variables.
+#' @param sensibleVar Indices or names of sensible variables (for l-diversity)
+#' @param options additional options.
+#' @export
 createSdcObj <- function(dat, keyVars, numVars = NULL, pramVars = NULL, weightVar = NULL, hhId = NULL,
   strataVar = NULL, sensibleVar = NULL, options = NULL) {
 
@@ -145,6 +157,34 @@ setMethod(f = "nextSdcObj", signature = c("sdcMicroObj"), definition = function(
   return(obj)
 })
 
+#' Recompute Risk and Frequencies for a sdcMicroObj
+#'
+#' Recomputation of Risk should be done after manual changing the content of an
+#' object of class \code{\link{sdcMicroObj-class}}
+#'
+#' By applying this function, the dislosure risk is re-estimated and the
+#' corresponding slots of an object of class \code{\link{sdcMicroObj-class}} are updated.
+#' This function mostly used internally to automatically update the risk after
+#' an sdc method is applied.
+#'
+#' @name calcRisks
+#' @aliases calcRisks-methods calcRisks calcRisks,sdcMicroObj-method
+#' @docType methods
+#' @param obj an object of class \code{\link{sdcMicroObj-class}}
+#' @param ... no arguments at the moment
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @seealso \code{\link{sdcMicroObj-class}}
+#' @keywords methods
+#' @export
+#' @examples
+#'
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- calcRisks(sdc)
+#'
 setGeneric("calcRisks", function(obj, ...) {
   standardGeneric("calcRisks")
 })
@@ -170,6 +210,40 @@ setMethod(f = "calcRisks", signature = c("sdcMicroObj"), definition = function(o
   obj
 })
 
+#' Remove certain variables from the data set inside a sdc object.
+#'
+#' Extract the manipulated data from an object of class \code{\link{sdcMicroObj-class}}
+#'
+#'
+#' @name extractManipData
+#' @aliases extractManipData extractManipData-methods
+#' extractManipData,sdcMicroObj-method
+#' @docType methods
+#' @param obj object of class \code{\link{sdcMicroObj-class}}
+#' @param ignoreKeyVars If manipulated KeyVariables should be returned or the
+#' unchanged original variable
+#' @param ignorePramVars If manipulated PramVariables should be returned or the
+#' unchanged original variable
+#' @param ignoreNumVars If manipulated NumericVariables should be returned or
+#' the unchanged original variable
+#' @param ignoreStrataVar If manipulated StrataVariables should be returned or
+#' the unchanged original variable
+#' @return a data frame
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @author Alexander Kowarik
+#' @keywords methods
+#' @export
+#' @examples
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata,
+#'   keyVars=c('urbrur','roof'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- removeDirectID(sdc, var="age")
+#' dataM <- extractManipData(sdc)
+#'
 setGeneric("extractManipData", function(obj, ignoreKeyVars = FALSE, ignorePramVars = FALSE,
   ignoreNumVars = FALSE, ignoreStrataVar = FALSE) {
   standardGeneric("extractManipData")
@@ -198,8 +272,3 @@ setMethod(f = "extractManipData", signature = c("sdcMicroObj"), definition = fun
   }
   return(o)
 })
-### library(sdcMicro4) data(francdat) sdcObj <- createSdcObj(dat=francdat,
-### keyVars=c('Key1','Key2','Key3','Key4'), numVars=c(1,3,7), weightVar=8) sdcObj <-
-### freqCalc4(sdcObj) sdcObj <- indivRisk4(sdcObj, method='approx', qual=1, survey=TRUE)
-### sdcMicro4:::calc.sdcMicroObj(sdcObj, type='violateKAnon', k=2) sdcObj <-
-### addNoise4(sdcObj)

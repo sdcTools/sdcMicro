@@ -1,3 +1,56 @@
+#' Local Suppression to obtain k-anonymity
+#'
+#' Algorithm to achieve k-anonymity by performing local suppression.
+#'
+#' The algorithm provides a k-anonymized data set by suppressing values in key
+#' variables. The algorithm tries to find an optimal solution to suppress as
+#' few values as possible and considers the specified importance vector. If not
+#' specified, the importance vector is constructed in a way such that key
+#' variables with a high number of characteristics are considered less
+#' important than key variables with a low number of characteristics.
+#'
+#' @name localSuppression
+#' @aliases localSuppression-methods localSuppression,data.frame-method
+#' localSuppression,matrix-method localSuppression,sdcMicroObj-method
+#' localSuppression
+#' @docType methods
+#' @param obj an object of class sdcMicroObj or a data frame or matrix
+#' @param k threshold for k-anonymity
+#' @param importance numeric vector of numbers between 1 and n (n=length of
+#' vector keyVars).  This vector represents the "importance" of variables that
+#' should be used for local suppression in order to obtain k-anonymity.
+#' key-variables with importance=1 will - if possible - not suppressed,
+#' key-variables with importance=n will be used whenever possible.
+#' @param ... see arguments below
+#' \itemize{
+#' \item{keyVars}{numeric vector specifying indices of (categorical) key-variables}}
+#' @return Manipulated data set with suppressions that has k-anonymity with
+#' respect to specified key-variables or the manipulated data stored in the
+#' \code{\link{sdcMicroObj-class}}.
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"data.frame\")")}{}
+#' \item{list("signature(obj = \"matrix\")")}{}
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @author Bernhard Meindl, Matthias Templ
+#' @keywords manip
+#' @export
+#' @note Deprecated methods 'localSupp2' and 'localSupp2Wrapper' are no longer available
+#' in sdcMicro > 4.5.0
+#' @examples
+#'
+#' data(francdat)
+#' ## Local Suppression
+#' localS <- localSuppression(francdat, keyVar=c(4,5,6))
+#' localS
+#' plot(localS)
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- localSuppression(sdc)
+#'
 setGeneric("localSuppression", function(obj, k = 2, importance = NULL, ...) {
   standardGeneric("localSuppression")
 })

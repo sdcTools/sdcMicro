@@ -1,3 +1,46 @@
+#' Comparison of different microaggregation methods
+#'
+#' A Function for the comparison of different perturbation methods.
+#'
+#' Tabelarise the output from summary.micro. Will be enhanced to all
+#' perturbation methods in future versions.
+#'
+#' @param x data frame or matrix
+#' @param method microaggregation methods or adding noise methods or rank swapping.
+#' @param measure FUN for aggregation. Possible values are mean (default), median, trim, onestep.
+#' @param clustermethod clustermethod, if a method will need a clustering procedure
+#' @param aggr aggregation level (default=3)
+#' @param nc number of clusters. Necessary, if a method will need a clustering procedure
+#' @param transf Transformation of variables before clustering.
+#' @param p Swapping range, if method swappNum has been chosen
+#' @param noise noise addition, if an addNoise method has been chosen
+#' @param w variables for swapping, if method swappNum has been chosen
+#' @param delta parameter for adding noise method \sQuote{correlated2}
+#' @return Measures of information loss splitted for the comparison of different methods.
+#'
+#' Methods for adding noise should be named via \dQuote{addNoise: method}, e.g.
+#' \dQuote{addNoise: correlated}, i.e. the term \sQuote{at first} then followed
+#' by a \sQuote{:} and a blank and then followed by the name of the method as
+#' described in function \sQuote{addNoise}.
+#' @author Matthias Templ
+#' @seealso \code{\link{microaggregation}}, \code{\link{summary.micro}}
+#' @references Templ, M. and Meindl, B., \emph{Software Development for SDC in
+#' R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,
+#' vol. 4302, pp. 347-359, 2006.
+#' @keywords print
+#' @export
+#' @examples
+#'
+#' data(Tarragona)
+#' \dontrun{
+#' valTable(Tarragona[100:200,],
+#' method=c("simple","onedims","pca","addNoise: additive"))
+#' valTable(Tarragona,
+#' method=c("simple","onedims","pca","clustpppca",
+#' "mdav", "addNoise: additive", "swappNum"))
+#' ## clustpppca in combination with Mclust outperforms
+#' ## the other algorithms for this data set...
+#' }
 valTable <- function(x, method = c("simple", "onedims", "clustpppca", "addNoise: additive", "swappNum"),
   measure = "mean", clustermethod = "clara", aggr = 3, nc = 8, transf = "log",
   p = 15, noise = 15, w = 1:dim(x)[2], delta = 0.1) {

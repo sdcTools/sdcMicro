@@ -1,14 +1,61 @@
-setGeneric("pram_strata", function(obj, variables = NULL, strata_variables = NULL,
-  pd = 0.8, alpha = 0.5) {
-  standardGeneric("pram_strata")
-})
-
-setMethod(f = "pram_strata", signature = c("ANY"),
-definition = function(obj, variables = NULL, strata_variables = NULL, pd = 0.8, alpha = 0.5) {
-  .Deprecated("pram", package = "sdcMicro", old = "pram_strata")
-  pram(obj, variables = variables, strata_variables = strata_variables, pd = pd, alpha = alpha)
-})
-
+#' Post Randomization
+#'
+#' To be used on categorical data. It randomly change the values of variables
+#' on selected records (usually the risky ones) according to an invariant
+#' probability transition matrix.
+#'
+#'
+#' @name pram
+#' @aliases pram-methods pram,data.frame-method pram,matrix-method
+#' pram,vector-method pram,sdcMicroObj-method pram print.pram
+#' @docType methods
+#' @param obj Input data. Allowed input data are objects of class 'matrix',
+#' 'data.frame', 'vector' or \code{\link{sdcMicroObj-class}}.
+#' @param variables Names of variables in 'obj' on which post-randomization
+#' should be applied. If obj is a vector, this argument is ignored.
+#' @param strata_variables Names of variables for stratification (will be set
+#' automatically for an object of class \code{\link{sdcMicroObj-class}}
+#' @param ...  further input, currently ignored.
+#' @param pd minimum diagonal entries for the generated transition matrix P.
+#' Either a vector of length 1 or a vector of length ( number of categories ).
+#' @param alpha amount of perturbation for the invariant Pram method
+#' @return a modified \code{\link{sdcMicroObj-class}} object or a new object containing
+#' original and post-randomized variables (with suffix "_pram").
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{...}
+#' \item{list("signature(obj = \"data.frame\")")}{...}
+#' \item{list("signature(obj = \"matrix\")")}{...}
+#' \item{list("signature(obj = \"vector\")")}{...}}
+#' @author Alexander Kowarik, Matthias Templ, Bernhard Meindl
+#' @references \url{http://www.gnu.org/software/glpk}
+#'
+#' \url{http://www.ccsr.ac.uk/sars/guide/2001/pram.pdf}
+#' @keywords manip
+#' @export
+#' @note Deprecated method 'pram_strata'is no longer available
+#' in sdcMicro > 4.5.0
+#' @examples
+#'
+#' data(testdata)
+#' res <- pram(testdata,
+#'   variables="roof",
+#'   strata_variables=c("urbrur","sex"))
+#' print(res)
+#'
+#' res1 <- pram(testdata,variables=c("roof","walls","water"),strata_variables=c("urbrur","sex"))
+#' print(res1)
+#'
+#' res2 <- pram(testdata,variables=c("roof","walls","water"),
+#'   strata_variables=NULL)
+#' print(res2)
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- pram(sdc, variables=c("urbrur"))
+#'
 setGeneric("pram", function(obj, variables = NULL, strata_variables = NULL,
   pd = 0.8, alpha = 0.5) {
   standardGeneric("pram")
@@ -287,6 +334,17 @@ pramWORK <- function(data, variables = NULL, strata_variables = NULL, pd = 0.8, 
   invisible(res)
 }
 
+#' Print method for objects from class pram
+#'
+#' Print method for objects from class pram
+#' @rdname pram
+#' @param x an object of class \code{\link{pram}}
+#' @return absolute and relative frequencies of changed observations in each modified variable
+#' @author Bernhard Meindl, Matthias Templ
+#' @seealso \code{\link{pram}}
+#' @keywords print
+#' @method print pram
+#' @export
 print.pram <- function(x, ...) {
   x <- as.data.frame(unclass(x))
   x <- apply(x, 2, as.character)

@@ -1,3 +1,48 @@
+#' Fast generation of synthetic data
+#'
+#' Fast generation of (primitive) synthetic multivariate normal data.
+#'
+#' Uses the cholesky decomposition to generate synthetic data with approx. the
+#' same means and covariances.  For details see at the reference.
+#'
+#' @name dataGen
+#' @aliases dataGen dataGen-methods dataGen,data.frame-method
+#' dataGen,matrix-method dataGen,sdcMicroObj-method
+#' @docType methods
+#' @param obj data.frame or matix
+#' @param ... see possible arguments below
+#' \itemize{
+#' \item{n}{amount of observations for the generated data}}
+#' @return the generated synthetic data.
+#' @note With this method only multivariate normal distributed data with
+#' approxiomately the same covariance as the original data can be generated
+#' without reflecting the distribution of real complex data, which are, in
+#' general, not follows a multivariate normal distribution.
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"data.frame\")")}{}
+#' \item{list("signature(obj = \"matrix\")")}{}
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @author Matthias Templ
+#' @seealso \code{\link{sdcMicroObj-class}}, \code{\link{shuffle}}
+#' @references Have a look at
+#' \url{http://crises2-deim.urv.cat/docs/publications/lncs/443.pdf}
+#' @keywords manip
+#' @export
+#' @examples
+#'
+#' data(mtcars)
+#' cov(mtcars[,4:6])
+#' cov(dataGen(mtcars[,4:6]))
+#' pairs(mtcars[,4:6])
+#' pairs(dataGen(mtcars[,4:6]))
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- dataGen(sdc)
+#'
 setGeneric("dataGen", function(obj, ...) {
   standardGeneric("dataGen")
 })

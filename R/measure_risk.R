@@ -1,3 +1,144 @@
+#' Disclosure Risk for Categorical Variables
+#'
+#' The function measures the disclosure risk for weighted or unweighted data.
+#' It computes the individual risk (and household risk if reasonable) and the
+#' global risk. It also computes a risk threshold based on a global risk value.
+#'
+#' To be used when risk of disclosure for individuals within a family is
+#' considered to be statistical independent.
+#'
+#' Internally, function \emph{freqCalc()} and \emph{indivRisk} are used for
+#' estimation.
+#'
+#' Measuring individual risk: The individual risk approach based on so-called
+#' super-population models. In such models population frequency counts are
+#' modeled given a certain distribution.  The estimation procedure of sample
+#' frequency counts given the population frequency counts is modeled by
+#' assuming a negative binomial distribution. This is used for the estimation
+#' of the individual risk. The extensive theory can be found in Skinner (1998),
+#' the approximation formulas for the individual risk used is described in
+#' Franconi and Polettini (2004).
+#'
+#' Measuring hierarchical risk: If \dQuote{hid} - the index of variable holding
+#' information on the hierarchical cluster structures (e.g., individuals that
+#' are clustered in households) - is provided, the hierarchical risk is
+#' additional estimated.  Note that the risk of re-identifying an individual
+#' within a household may also affect the probability of disclosure of other
+#' members in the same household. Thus, the household or cluster-structure of
+#' the data must be taken into account when estimating disclosure risks. It is
+#' commonly assumed that the risk of re-identification of a household is the
+#' risk that at least one member of the household can be disclosed. Thus this
+#' probability can be simply estimated from individual risks as 1 minus the
+#' probability that no member of the household can be identified.
+#'
+#' Global risk: The sum of the individual risks in the dataset gives the
+#' expected number of re-identifications that serves as measure of the global
+#' risk.
+#'
+#' l-Diversity: If \dQuote{ldiv_index} is unequal to NULL, i.e. if the indices
+#' of sensible variables are specified, various measures for l-diversity are
+#' calculated. l-diverstiy is an extension of the well-known k-anonymity
+#' approach where also the uniqueness in sensible variables for each pattern
+#' spanned by the key variables are evaluated.
+#'
+#' @name measure_risk
+#' @aliases measure_risk-methods measure_risk,data.frame-method
+#' measure_risk,matrix-method measure_risk,sdcMicroObj-method measure_risk
+#' ldiversity ldiversity-methods ldiversity,data.frame-method
+#' ldiversity,matrix-method ldiversity,sdcMicroObj-method print.measure_risk
+#' print.ldiversity
+#' @docType methods
+#' @param obj Object of class \code{\link{sdcMicroObj-class}}
+#' @param x Output of measure_risk() or ldiversity()
+
+#' @param ... see arguments below
+#' \itemize{
+#' \item{data}{Input data, either a matrix or a data.frame.}
+#' \item{keyVars}{Names of categorical key variables}
+#' \item{w}{name of variable containing sample weights}
+#' \item{hid}{name of the clustering variable, e.g. the household ID}
+#' \item{max_global_risk}{Maximal global risk for threshold computation}
+#' \item{fast_hier}{If TRUE a fast approximation is computed if household data are provided.}
+#' }
+#' @return A modified \code{\link{sdcMicroObj-class}} object or a list with the following elements:
+#' \itemize{
+#' \item{global_risk_ER}{expected number of re-identification.}
+#' \item{global_risk}{global risk (sum of indivdual risks).}
+#' \item{global_risk_pct}{global risk in percent.}
+#' \item{Res}{matrix with the risk, frequency in the sample and grossed-up frequency in the population (and the hierachical risk) for each observation.}
+#' \item{global_threshold}{for a given max_global_risk the threshold for the risk of observations.}
+#' \item{max_global_risk}{the input max_global_risk of the function.}
+#' \item{hier_risk_ER}{expected number of re-identification with household structure.}
+#' \item{hier_risk}{global risk with household structure (sum of indivdual risks).}
+#' \item{hier_risk_pct}{global risk with household structure in percent.}
+#' \item{ldiverstiy}{Matrix with Distinct_Ldiversity,
+#' Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}}
+#' @section Methods: \describe{
+#' \item{list("signature(obj = \"data.frame\")")}{Method for object of class \dQuote{data.frame}}
+#' \item{list("signature(obj = \"matrix\")")}{Method for object of class \dQuote{matrix}}
+#' \item{list("signature(obj = \"sdcMicroObj\")")}{Method for object of S4 class \code{\link{sdcMicroObj-class}}}
+#' }
+#' @author Alexander Kowarik, Bernd Prantner, Matthias Templ, minor parts of IHSN C++ source
+#' @seealso \code{\link{freqCalc}}, \code{\link{indivRisk}}
+#' @references Franconi, L. and Polettini, S. (2004) \emph{Individual risk
+#' estimation in mu-Argus: a review}. Privacy in Statistical Databases, Lecture
+#' Notes in Computer Science, 262--272. Springer
+#'
+#' Machanavajjhala, A. and Kifer, D. and Gehrke, J. and Venkitasubramaniam, M.
+#' (2007) \emph{l-Diversity: Privacy Beyond k-Anonymity}.  ACM Trans. Knowl.
+#' Discov. Data, 1(1)
+#'
+#' additionally, have a look at the vignettes of sdcMicro for further reading.
+#' @keywords manip
+#' @export
+#' @examples
+#'
+#' ## measure_risk with sdcMicro objects:
+#' data(testdata)
+#' sdc <- createSdcObj(testdata,
+#'   keyVars=c('urbrur','roof','walls','water','electcon'),
+#' numVars=c('expend','income','savings'), w='sampling_weight')
+#'
+#' ## risk is already estimated and available in...
+#' names(sdc@@risk)
+#'
+#' ## measure risk on data frames or matrices:
+#' res <- measure_risk(testdata,
+#'   keyVars=c("urbrur","roof","walls","water","sex"))
+#' print(res)
+#' head(res$Res)
+#' resw <- measure_risk(testdata,
+#'   keyVars=c("urbrur","roof","walls","water","sex"),w="sampling_weight")
+#' print(resw)
+#' head(resw$Res)
+#' res1 <- ldiversity(testdata,
+#'   keyVars=c("urbrur","roof","walls","water","sex"),ldiv_index="electcon")
+#' print(res1)
+#' head(res1)
+#' res2 <- ldiversity(testdata,
+#'   keyVars=c("urbrur","roof","walls","water","sex"),ldiv_index=c("electcon","relat"))
+#' print(res2)
+#' head(res2)
+#'
+#' # measure risk with household risk
+#' resh <- measure_risk(testdata,
+#'   keyVars=c("urbrur","roof","walls","water","sex"),w="sampling_weight",hid="ori_hid")
+#' print(resh)
+#'
+#' # change max_global_risk
+#' rest <- measure_risk(testdata,
+#'   keyVars=c("urbrur","roof","walls","water","sex"),
+#'   w="sampling_weight",max_global_risk=0.0001)
+#' print(rest)
+#'
+#' ## for objects of class sdcMicro:
+#' data(testdata2)
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' ## already interally applied and availabe in object sdc:
+#' ## sdc <- measure_risk(sdc)
+#'
 setGeneric("measure_risk", function(obj, ...) {
   standardGeneric("measure_risk")
 })
@@ -155,6 +296,13 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
   invisible(res)
 }
 
+#' @rdname measure_risk
+#' @export
+#' @param missing a integer value to be used as missing value in the C++ routine
+#' @param ldiv_index indices (or names) of the variables used for l-diversity
+#' @param l_recurs_c l-Diversity Constant
+#' @note internal function
+#' @author Bernhard Meindl \email{bernhard.meindl@@statistik.gv.at}
 setGeneric("ldiversity", function(obj, ldiv_index, l_recurs_c = 2, missing = -999, ...) {
   standardGeneric("ldiversity")
 })
@@ -237,6 +385,16 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing = -999, l_recurs_c
   invisible(res)
 }
 
+#' Print method for objects from class ldiversity
+#'
+#' Print method for objects from class ldiversity
+#' @rdname measure_risk
+#' @return Prints risk-information into the console
+#' @author Bernhard Meindl, Matthias Templ
+#' @seealso \code{\link{measure_risk}}
+#' @keywords print
+#' @method print measure_risk
+#' @export
 print.measure_risk <- function(x, ...) {
   cat("\n")
   cat("--------------------------\n")
@@ -256,7 +414,6 @@ print.measure_risk <- function(x, ...) {
       cat("--------------------------\n")
       cat("Expected no. of re-identifications:\n", round(x$hier_risk_ER, 2), "")
       cat("(", round(x$hier_risk_pct, 2), "% )\n")
-      # print(round(summary(x$Res[,4]),2))
     } else {
       cat("--------------------------\n")
       cat("Hierarchical risk not available\n")
@@ -265,6 +422,16 @@ print.measure_risk <- function(x, ...) {
   }
 }
 
+#' Print method for objects from class ldiversity
+#'
+#' Print method for objects from class ldiversity
+#' @rdname measure_risk
+#' @return Information on L-Diversity Measures in the console
+#' @author Bernhard Meindl, Matthias Templ
+#' @seealso \code{\link{measure_risk}}
+#' @keywords print
+#' @method print ldiversity
+#' @export
 print.ldiversity <- function(x, ...) {
   cat("--------------------------\n")
   cat("L-Diversity Measures \n")
