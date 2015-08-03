@@ -1,6 +1,5 @@
-`summary.pram` <-
-function(object, ...){
-  rr <- apply(rbind(object$x,object$xpramed), 2, paste, collapse=" --> ")
+summary.pram <- function(object, ...) {
+  rr <- apply(rbind(object$x, object$xpramed), 2, paste, collapse = " --> ")
   result <- data.frame(table(rr))
   rownames(result) <- 1:nrow(result)
   colnames(result) <- c("transition", "Frequency")
@@ -14,4 +13,3 @@ function(object, ...){
   cat("\n transitions:\n")
   result
 }
-

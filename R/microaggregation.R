@@ -1,97 +1,100 @@
-setGeneric('microaggregation', function(obj,variables=NULL,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
-        clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0, varsort = 1, transf = "log") {
-      standardGeneric('microaggregation')})
-setMethod(f='microaggregation', signature=c('sdcMicroObj'),
-    definition=function(obj,variables=NULL,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
-        clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0, varsort = 1, transf = "log") { 
-      x <- get.sdcMicroObj(obj, type="manipNumVars")
-	  if(is.null(variables))
-		  variables <- colnames(x)
-      if(!is.null(strata_variables)){
-        sx <- get.sdcMicroObj(obj, type="origData")[,strata_variables[!strata_variables%in%variables],drop=FALSE]
-        x <- cbind(x,sx)
-      }
-      
-      if(!is.null(weights)&&!is.null(get.sdcMicroObj(obj, type="weightVar"))){
-        weights <- get.sdcMicroObj(obj, type="origData")[,get.sdcMicroObj(obj, type="weightVar")]
-      }
-      res <- microaggregationWORK(x, variables=variables, aggr=aggr,strata_variables=strata_variables,method=method,
-          weights=weights,nc=nc,clustermethod=clustermethod,opt=opt,
-          measure=measure,trim=trim,varsort=varsort,transf=transf)
-      obj <- nextSdcObj(obj)
-      x[,variables] <- res$mx[,variables]
-      
-      obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(x[,colnames(obj@origData)[obj@numVars],drop=FALSE])))
-      
-      obj <- dRisk(obj)
-#      obj <- dRiskRMD(obj)
-      obj <- dUtility(obj)
-      
-      obj
-    })
-setMethod(f='microaggregation', signature=c("data.frame"),
-    definition=function(obj,variables=NULL,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
-        clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0, varsort = 1, transf = "log") { 
-	if(is.null(variables))
-		variables <- colnames(obj)
-	microaggregationWORK(x=obj,variables=variables,aggr=aggr,strata_variables=strata_variables,method=method,
-          weights=weights,nc=nc,clustermethod=clustermethod,opt=opt,measure=measure,trim=trim,varsort=varsort,
-          transf=transf)
-    })
-setMethod(f='microaggregation', signature=c("matrix"),
-    definition=function(obj,variables=NULL,aggr=3,strata_variables=NULL,method="mdav",weights=NULL, nc = 8,
-        clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0, varsort = 1, transf = "log") { 
-	if(is.null(variables))
-		variables <- colnames(obj)  
-	 microaggregationWORK(x=obj,variables=variables,aggr=aggr,strata_variables=strata_variables,method=method,
-          weights=weights,nc=nc,clustermethod=clustermethod,opt=opt,measure=measure,trim=trim,varsort=varsort,
-          transf=transf)
-    })
+setGeneric("microaggregation", function(obj, variables = NULL, aggr = 3, strata_variables = NULL,
+  method = "mdav", weights = NULL, nc = 8, clustermethod = "clara", opt = FALSE, measure = "mean",
+  trim = 0, varsort = 1, transf = "log") {
+  standardGeneric("microaggregation")
+})
 
+setMethod(f = "microaggregation", signature = c("sdcMicroObj"),
+definition = function(obj, variables = NULL, aggr = 3, strata_variables = NULL, method = "mdav",
+  weights = NULL, nc = 8, clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0,
+  varsort = 1, transf = "log") {
 
-microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr = 3, weights=NULL, nc = 8,
-    clustermethod = "clara",
-    opt = FALSE, measure = "mean", trim = 0, varsort = 1, transf = "log", strata_variables=NULL
-)
-#,blow = TRUE, blowxm = 0)
-{
+  x <- get.sdcMicroObj(obj, type = "manipNumVars")
+  if (is.null(variables))
+    variables <- colnames(x)
+  if (!is.null(strata_variables)) {
+    sx <- get.sdcMicroObj(obj, type = "origData")[, strata_variables[!strata_variables %in%
+      variables], drop = FALSE]
+    x <- cbind(x, sx)
+  }
+
+  if (!is.null(weights) && !is.null(get.sdcMicroObj(obj, type = "weightVar"))) {
+    weights <- get.sdcMicroObj(obj, type = "origData")[, get.sdcMicroObj(obj, type = "weightVar")]
+  }
+  res <- microaggregationWORK(x, variables = variables, aggr = aggr, strata_variables = strata_variables,
+    method = method, weights = weights, nc = nc, clustermethod = clustermethod, opt = opt,
+    measure = measure, trim = trim, varsort = varsort, transf = transf)
+  obj <- nextSdcObj(obj)
+  x[, variables] <- res$mx[, variables]
+
+  obj <- set.sdcMicroObj(obj, type = "manipNumVars", input = list(as.data.frame(x[, colnames(obj@origData)[obj@numVars], drop = FALSE])))
+  obj <- dRisk(obj)
+  obj <- dUtility(obj)
+  obj
+})
+
+setMethod(f = "microaggregation", signature = c("data.frame"),
+definition = function(obj, variables = NULL, aggr = 3, strata_variables = NULL, method = "mdav",
+  weights = NULL, nc = 8, clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0,
+  varsort = 1, transf = "log") {
+
+  if (is.null(variables))
+    variables <- colnames(obj)
+  microaggregationWORK(x = obj, variables = variables, aggr = aggr, strata_variables = strata_variables,
+    method = method, weights = weights, nc = nc, clustermethod = clustermethod, opt = opt,
+    measure = measure, trim = trim, varsort = varsort, transf = transf)
+})
+
+setMethod(f = "microaggregation", signature = c("matrix"),
+definition = function(obj, variables = NULL, aggr = 3, strata_variables = NULL, method = "mdav",
+  weights = NULL, nc = 8, clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0,
+  varsort = 1, transf = "log") {
+
+  if (is.null(variables))
+    variables <- colnames(obj)
+  microaggregationWORK(x = obj, variables = variables, aggr = aggr, strata_variables = strata_variables,
+    method = method, weights = weights, nc = nc, clustermethod = clustermethod, opt = opt,
+    measure = measure, trim = trim, varsort = varsort, transf = transf)
+})
+
+microaggregationWORK <- function(x, variables = colnames(x), method = "mdav", aggr = 3,
+  weights = NULL, nc = 8, clustermethod = "clara", opt = FALSE, measure = "mean", trim = 0,
+  varsort = 1, transf = "log", strata_variables = NULL) {
   factorOfTotals <- function(x, aggr) {
     n <- dim(x)[1]
     abgerundet <- floor(n/aggr)
     fot <- n/abgerundet
     return(fot)
   }
-  if(length(variables)==1){
+  if (length(variables) == 1) {
     res <- list()
-    res$mx <- mafast(x,variables=variables,by=strata_variables,aggr=aggr,measure=eval(parse(text=measure)))
+    res$mx <- mafast(x, variables = variables, by = strata_variables, aggr = aggr, measure = eval(parse(text = measure)))
     res$x <- x
     res$method <- "mafast"
     res$aggr <- aggr
     res$measure <- measure
-    res$fot <- factorOfTotals(x,aggr)
+    res$fot <- factorOfTotals(x, aggr)
     class(res) <- "micro"
     return(res)
   }
-  blow=TRUE
-  weightedQuantile <- function (x, weights = NULL, probs = seq(0, 1, 0.25), sorted = FALSE, na.rm = FALSE) {
-    if (!is.numeric(x)) 
+  blow = TRUE
+  weightedQuantile <- function(x, weights = NULL, probs = seq(0, 1, 0.25), sorted = FALSE,
+    na.rm = FALSE) {
+    if (!is.numeric(x))
       stop("'x' must be a numeric vector")
     n <- length(x)
     if (n == 0 || (!isTRUE(na.rm) && any(is.na(x)))) {
       return(rep.int(NA, length(probs)))
     }
     if (!is.null(weights)) {
-      if (!is.numeric(weights)) 
-        stop("'weights' must be a numeric vector")
-      else if (length(weights) != n) {
+      if (!is.numeric(weights))
+        stop("'weights' must be a numeric vector") else if (length(weights) != n) {
         stop("'weights' must have the same length as 'x'")
-      }
-      else if (!all(is.finite(weights))) 
+      } else if (!all(is.finite(weights)))
         stop("missing or infinite weights")
-      if (any(weights < 0)) 
+      if (any(weights < 0))
         warning("negative weights")
-      if (!is.numeric(probs) || all(is.na(probs)) || isTRUE(any(probs < 
-                  0 | probs > 1))) {
+      if (!is.numeric(probs) || all(is.na(probs)) || isTRUE(any(probs < 0 | probs > 1))) {
         stop("'probs' must be a numeric vector with values in [0,1]")
       }
       if (all(weights == 0)) {
@@ -102,7 +105,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
     if (isTRUE(na.rm)) {
       indices <- !is.na(x)
       x <- x[indices]
-      if (!is.null(weights)) 
+      if (!is.null(weights))
         weights <- weights[indices]
     }
     if (!isTRUE(sorted)) {
@@ -110,40 +113,31 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       x <- x[order]
       weights <- weights[order]
     }
-    if (is.null(weights)) 
-      rw <- (1:n)/n
-    else rw <- cumsum(weights)/sum(weights)
+    if (is.null(weights))
+      rw <- (1:n)/n else rw <- cumsum(weights)/sum(weights)
     q <- sapply(probs, function(p) {
-          if (p == 0) 
-            return(x[1])
-          else if (p == 1) 
-            return(x[n])
-          select <- min(which(rw >= p))
-          if (rw[select] == p) 
-            mean(x[select:(select + 1)])
-          else x[select]
-        })
+      if (p == 0)
+        return(x[1]) else if (p == 1)
+        return(x[n])
+      select <- min(which(rw >= p))
+      if (rw[select] == p)
+        mean(x[select:(select + 1)]) else x[select]
+    })
     return(unname(q))
   }
-  weightedMedian <- function (x, weights = NULL, sorted = FALSE, na.rm = FALSE) {
-    weightedQuantile(x, weights, probs = 0.5, sorted = sorted, 
-        na.rm = na.rm)
+  weightedMedian <- function(x, weights = NULL, sorted = FALSE, na.rm = FALSE) {
+    weightedQuantile(x, weights, probs = 0.5, sorted = sorted, na.rm = na.rm)
   }
-  
+
   rownames(x) <- 1:nrow(x)
-  stopifnot(method %in% c("simple", "single", "onedims", "pca",
-          "mcdpca", "pppca", "clustmcdpca", "clustpppca", "clustpca",
-          "rmd", "mdav", "influence","mdavold"))
-  #if (method == "rmd") {
-  #    blow = FALSE
-  #    warning("object$blow have been set to TRUE and \n
-  #             object$xm == object$blowxm \n--------\n")
-  #}
+  stopifnot(method %in% c("simple", "single", "onedims", "pca", "mcdpca", "pppca", "clustmcdpca",
+    "clustpppca", "clustpca", "rmd", "mdav", "influence", "mdavold"))
+  # if (method == 'rmd') { blow = FALSE warning('object$blow have been set to TRUE and \n
+  # object$xm == object$blowxm \n--------\n') }
   indexMicro <- function(x, aggr) {
     n <- dim(x)[1]
     if (n < 2 * aggr) {
-      stop(paste("Too less observations (", n, ") for aggregate = ",
-              aggr, sep = ""))
+      stop(paste("Too less observations (", n, ") for aggregate = ", aggr, sep = ""))
     }
     aa <- seq(1, n, aggr)
     j <- 1
@@ -155,8 +149,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
         index[[i]] <- d1[j:(j + aggr - 1)]
         j <- j + aggr
       }
-    }
-    else {
+    } else {
       for (i in 1:(length(aa) - 2)) {
         index[[i]] <- d1[j:(j + aggr - 1)]
         j <- j + aggr
@@ -179,12 +172,12 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
     }
     if (measure == "mean" & !is.null(weights)) {
       for (i in 1:length(index)) {
-        m[i, ] <- apply(x[index[[i]], ], 2, function(x) weighted.mean(x, w=weights[index[[i]]]))
+        m[i, ] <- apply(x[index[[i]], ], 2, function(x) weighted.mean(x, w = weights[index[[i]]]))
       }
     }
     if (measure == "median" & !is.null(weights)) {
       for (i in 1:length(index)) {
-        m[i, ] <- apply(x[index[[i]], ], 2, function(x) weightedMedian(x, weights=weights[index[[i]]]))
+        m[i, ] <- apply(x[index[[i]], ], 2, function(x) weightedMedian(x, weights = weights[index[[i]]]))
       }
     }
     if (measure == "trim") {
@@ -204,14 +197,14 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
         limit2 <- m1 - constant * m2
         for (ii in 1:length(index[[i]])) {
           if (any(x[index[[i]][ii], ] > limit1)) {
-            w <- which(x[index[[i]][ii], ] > limit1)
-            le <- length(w)
-            y[index[[i]][ii], w] <- limit1[w]
+          w <- which(x[index[[i]][ii], ] > limit1)
+          le <- length(w)
+          y[index[[i]][ii], w] <- limit1[w]
           }
           if (any(x[index[[i]][ii], ] < limit2)) {
-            w <- which(x[index[[i]][ii], ] < limit2)
-            le <- length(w)
-            y[index[[i]][ii], w] <- limit2[w]
+          w <- which(x[index[[i]][ii], ] < limit2)
+          le <- length(w)
+          y[index[[i]][ii], w] <- limit2[w]
           }
           m[i, ] <- colMeans(y[index[[i]], ])
         }
@@ -234,8 +227,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
         }
         j <- j + aggr
       }
-    }
-    else {
+    } else {
       for (i in 1:(length(aa) - 2)) {
         for (s in j:(j + aggr - 1)) {
           xx[s, ] <- as.matrix(mr[i, , drop = FALSE])
@@ -249,8 +241,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
     rownames(xx) <- rownames(x)
     xx
   }
-  clust <- function(x, nc, clustermethod = "clara", opt = FALSE,
-      transf = "log") {
+  clust <- function(x, nc, clustermethod = "clara", opt = FALSE, transf = "log") {
     if (transf == "none") {
       y <- x
     }
@@ -296,31 +287,14 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       size <- groesse
       clustresult <- a$cluster
     }
-    #       if (clustermethod == "Mclust" && opt == FALSE) {
-#			if(!exists("lm",  mode="function")) stop("library(mclust) have to be installed and loaded first") 
-#            a <- Mclust(x, nc, nc)
-#            centers <- t(a$mu)
-#            groesse <- rep(0, nc)
-#            for (i in seq(nc)) {
-#                groesse[i] <- length(which(a$classification ==
-#                  i))
-#            }
-#            size <- groesse
-#            clustresult <- a$classification
-#        }
-#        if (clustermethod == "Mclust" && opt == TRUE) {
-#			if(!exists("lm",  mode="function")) stop("library(mclust) have to be installed and loaded first")
-#            a <- Mclust(x, 2, nc)
-#            centers <- t(a$mu)
-#            nc <- a$G
-#            groesse <- rep(0, nc)
-#            for (i in seq(nc)) {
-#                groesse[i] <- length(which(a$classification ==
-#                  i))
-#            }
-#            size <- groesse
-#            clustresult <- a$classification
-#        }
+    # if (clustermethod == 'Mclust' && opt == FALSE) { if(!exists('lm', mode='function'))
+    # stop('library(mclust) have to be installed and loaded first') a <- Mclust(x, nc, nc)
+    # centers <- t(a$mu) groesse <- rep(0, nc) for (i in seq(nc)) { groesse[i] <-
+    # length(which(a$classification == i)) } size <- groesse clustresult <- a$classification }
+    # if (clustermethod == 'Mclust' && opt == TRUE) { if(!exists('lm', mode='function'))
+    # stop('library(mclust) have to be installed and loaded first') a <- Mclust(x, 2, nc)
+    # centers <- t(a$mu) nc <- a$G groesse <- rep(0, nc) for (i in seq(nc)) { groesse[i] <-
+    # length(which(a$classification == i)) } size <- groesse clustresult <- a$classification }
     list(centers = centers, clustresult = clustresult, nc = nc)
   }
   prcompRob <- function(X, k = 0, sca = "mad", scores = TRUE) {
@@ -328,8 +302,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
     p <- ncol(X)
     if (k == 0) {
       p1 <- min(n, p)
-    }
-    else {
+    } else {
       p1 <- k
     }
     S <- rep(1, p1)
@@ -344,10 +317,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       Y <- A %*% P %*% t(X)
       if (sca == "mad")
         s <- apply(Y, 1, mad)
-      #if (sca == "tau")
-      #    s <- apply(Y, 1, scale.tau)
-      #if (sca == "A")
-      #    s <- apply(Y, 1, scale.a)
+      # if (sca == 'tau') s <- apply(Y, 1, scale.tau) if (sca == 'A') s <- apply(Y, 1, scale.a)
       j <- order(s)[n]
       S[k] <- s[j]
       V[, k] <- A[j, ]
@@ -356,34 +326,30 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       P <- P - (V[, k] %*% t(V[, k]))
     }
     if (scores) {
-      list(scale = S, loadings = V, scores = Xcentr %*%
-              V)
-    }
-    else list(scale = S, loadings = V)
+      list(scale = S, loadings = V, scores = Xcentr %*% V)
+    } else list(scale = S, loadings = V)
   }
   xall <- x
-  if(!is.null(strata_variables)){
-    if(!all(strata_variables%in%colnames(x)))
-      stop("strata_variables are not found in the data set!")
-    else{
-      byvar <- rep("",nrow(x))
-      for(i in 1:length(strata_variables)){
-        byvar <- paste(byvar,x[,strata_variables[i]],sep="-")
+  if (!is.null(strata_variables)) {
+    if (!all(strata_variables %in% colnames(x)))
+      stop("strata_variables are not found in the data set!") else {
+      byvar <- rep("", nrow(x))
+      for (i in 1:length(strata_variables)) {
+        byvar <- paste(byvar, x[, strata_variables[i]], sep = "-")
       }
-      xsp <- split(x,as.factor(byvar))
+      xsp <- split(x, as.factor(byvar))
     }
-  }else{
-    xsp <- list(dataset=x)
+  } else {
+    xsp <- list(dataset = x)
   }
   reslist <- list()
-  for(spind in 1:length(xsp)){
-    x <- xsp[[spind]][,variables,drop=FALSE]
+  for (spind in 1:length(xsp)) {
+    x <- xsp[[spind]][, variables, drop = FALSE]
     fot <- factorOfTotals(x, aggr)
-    if (method == "simple" || method == "single" || method ==
-        "pca" || method == "mcdpca" || method == "pppca") {
+    if (method == "simple" || method == "single" || method == "pca" || method == "mcdpca" ||
+      method == "pppca") {
       clustering <- FALSE
-    }
-    else {
+    } else {
       clustering <- TRUE
     }
     if (method == "simple") {
@@ -393,36 +359,32 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       if (blow == TRUE) {
         blowxm <- blowup(x, m, aggr)
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = nc, xm = m, roundxm = mr, clustermethod = clustermethod,
-          measure = measure, trim = trim, varsort = varsort,
-          transf = transf, blow = blow, blowxm = blowxm, fot = fot)
-    }else if (method == "single") {
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blow = blow, blowxm = blowxm, fot = fot)
+    } else if (method == "single") {
       sortvec <- sort(x[, varsort], index.return = TRUE)$ix
       xx <- x[sortvec, ]
       index <- indexMicro(xx, aggr)
-      m <- means(x = xx, index = index, measure = measure,
-          trim = trim)
+      m <- means(x = xx, index = index, measure = measure, trim = trim)
       mr <- round(m)
       if (blow == TRUE) {
         blowxm <- blowup(x, m, aggr)
         rownames(blowxm) <- rownames(xx)
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = nc, xm = m, roundxm = mr, clustermethod = clustermethod,
-          measure = measure, trim = trim, varsort = varsort,
-          transf = transf, blow = blow, blowxm = blowxm, fot = fot)
-    }else if (method == "onedims") {
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blow = blow, blowxm = blowxm, fot = fot)
+    } else if (method == "onedims") {
       i <- dim(x)[2]
       xx <- sapply(1:i, function(i) {
-            x[order(x[, i]), i]
-          })
+        x[order(x[, i]), i]
+      })
       xxx <- sapply(1:i, function(i) {
-            rank(x[, i], ties.method = "min")
-          })
+        rank(x[, i], ties.method = "min")
+      })
       index <- indexMicro(xx, aggr)
-      m <- means(x = xx, index = index, measure = measure,
-          trim = trim)
+      m <- means(x = xx, index = index, measure = measure, trim = trim)
       mr <- round(m)
       blow = TRUE
       b <- blowup(x, m, aggr)
@@ -430,65 +392,55 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       for (i in 1:dim(x)[2]) {
         y[, i] <- b[xxx[, i], i]
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = nc, xm = m, roundxm = mr, clustermethod = clustermethod,
-          measure = measure, trim = trim, varsort = varsort,
-          transf = transf, blow = blow, blowxm = y, fot = fot)
-    }else if (method == "pca") {
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blow = blow, blowxm = y, fot = fot)
+    } else if (method == "pca") {
       p <- princomp(scale(x))
       s1 <- sort(p$scores[, 1], index.return = TRUE)$ix
       xx <- x[s1, ]
       index <- indexMicro(xx, aggr)
-      m <- means(x = xx, index = index, measure = measure,
-          trim = trim)
+      m <- means(x = xx, index = index, measure = measure, trim = trim)
       mr <- round(m)
       if (blow == TRUE) {
         blowxm <- blowup(x, m, aggr)
         rownames(blowxm) <- rownames(xx)
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = nc, xm = m, roundxm = mr, clustermethod = clustermethod,
-          measure = measure, trim = trim, varsort = varsort,
-          transf = transf, blow = blow, blowxm = blowxm, fot = fot)
-    }else if (method == "mcdpca") {
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blow = blow, blowxm = blowxm, fot = fot)
+    } else if (method == "mcdpca") {
       x.mcd <- cov.mcd(x, cor = TRUE)
       x.scale <- scale(x, x.mcd$center, sqrt(diag(x.mcd$cor)))
       p <- princomp(x.scale, covmat = x.mcd)
       s1 <- sort(p$scores[, 1], index.return = TRUE)$ix
       xx <- x[s1, ]
       index <- indexMicro(xx, aggr)
-      m <- means(x = xx, index = index, measure = measure,
-          trim = trim)
+      m <- means(x = xx, index = index, measure = measure, trim = trim)
       mr <- round(m)
       if (blow == TRUE) {
         blowxm <- blowup(x, m, aggr)
         rownames(blowxm) <- rownames(xx)
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = nc, xm = m, roundxm = mr, clustermethod = clustermethod,
-          measure = measure, trim = trim, varsort = varsort,
-          transf = transf, blowup = blowup, blowxm = blowxm,
-          fot = fot)
-    }else if (method == "pppca") {
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blowup = blowup, blowxm = blowxm, fot = fot)
+    } else if (method == "pppca") {
       p <- prcompRob(x)
       s1 <- sort(p$scores[, 1], index.return = TRUE)$ix
       xx <- x[s1, ]
       index <- indexMicro(xx, aggr)
-      m <- means(x = xx, index = index, measure = measure,
-          trim = trim)
+      m <- means(x = xx, index = index, measure = measure, trim = trim)
       mr <- round(m)
       if (blow == TRUE) {
         blowxm <- blowup(x, m, aggr)
         rownames(blowxm) <- rownames(xx)
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = nc, xm = m, roundxm = mr, clustermethod = clustermethod,
-          measure = measure, trim = trim, varsort = varsort,
-          transf = transf, blowup = blowup, blowxm = blowxm,
-          fot = fot)
-    }else if (method == "influence") {
-      ac.scale <- clust(x = x, nc = nc, clustermethod = clustermethod,
-          opt = FALSE, transf = "log")
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blowup = blowup, blowxm = blowxm, fot = fot)
+    } else if (method == "influence") {
+      ac.scale <- clust(x = x, nc = nc, clustermethod = clustermethod, opt = FALSE, transf = "log")
       cent <- matrix(ac.scale$centers, ncol = nc, byrow = TRUE)
       j <- matrix(ncol = 1, nrow = nc)
       vmax <- matrix(ncol = 1, nrow = nc)
@@ -505,31 +457,27 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       }
       for (i in 1:nc) {
         if (i == 1) {
-          yy <- matrix(unlist(xx[[i]]), ncol = ncol(x),
-              dimnames = list(rownames(xx[[i]]), colnames(xx[[i]])))
+          yy <- matrix(unlist(xx[[i]]), ncol = ncol(x), dimnames = list(rownames(xx[[i]]),
+          colnames(xx[[i]])))
         }
         if (i > 1) {
-          yy <- rbind(yy, matrix(unlist(xx[[i]]), ncol = ncol(x),
-                  dimnames = list(rownames(xx[[i]]), colnames(xx[[i]]))))
+          yy <- rbind(yy, matrix(unlist(xx[[i]]), ncol = ncol(x), dimnames = list(rownames(xx[[i]]),
+          colnames(xx[[i]]))))
         }
       }
       xx <- yy
       index <- indexMicro(xx, aggr)
-      m <- means(x = xx, index = index, measure = measure,
-          trim = trim)
+      m <- means(x = xx, index = index, measure = measure, trim = trim)
       mr <- round(m)
       if (blow == TRUE) {
         blowxm <- blowup(x, m, aggr)
         rownames(blowxm) <- rownames(yy)
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = ac.scale$nc, xm = m, roundxm = mr,
-          clustermethod = clustermethod, measure = measure,
-          trim = trim, varsort = varsort, transf = transf,
-          blowup = blowup, blowxm = blowxm, fot = fot)
-    }else if (method == "clustpca") {
-      ac.scale <- clust(x = x, nc = nc, clustermethod = clustermethod,
-          opt = FALSE, transf = "log")
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = ac.scale$nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blowup = blowup, blowxm = blowxm, fot = fot)
+    } else if (method == "clustpca") {
+      ac.scale <- clust(x = x, nc = nc, clustermethod = clustermethod, opt = FALSE, transf = "log")
       cent <- matrix(ac.scale$centers, ncol = nc, byrow = TRUE)
       xx <- list()
       for (i in 1:nc) {
@@ -537,10 +485,8 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
         if (length(w) < dim(x)[2]) {
           y <- x[w, , drop = FALSE]
           xx[[i]] <- y[order(y[, varsort]), ]
-        }
-        else {
-          p <- princomp(scale(x[w, , drop = FALSE]))$scores[,
-              1]
+        } else {
+          p <- princomp(scale(x[w, , drop = FALSE]))$scores[, 1]
           psortind <- sort(p, index.return = TRUE)$ix
           y <- x[w, , drop = FALSE]
           xx[[i]] <- y[psortind, ]
@@ -548,31 +494,27 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       }
       for (i in 1:nc) {
         if (i == 1) {
-          yy <- matrix(unlist(xx[[i]]), ncol = ncol(x),
-              dimnames = list(rownames(xx[[i]]), colnames(xx[[i]])))
+          yy <- matrix(unlist(xx[[i]]), ncol = ncol(x), dimnames = list(rownames(xx[[i]]),
+          colnames(xx[[i]])))
         }
         if (i > 1) {
-          yy <- rbind(yy, matrix(unlist(xx[[i]]), ncol = ncol(x),
-                  dimnames = list(rownames(xx[[i]]), colnames(xx[[i]]))))
+          yy <- rbind(yy, matrix(unlist(xx[[i]]), ncol = ncol(x), dimnames = list(rownames(xx[[i]]),
+          colnames(xx[[i]]))))
         }
       }
       xx <- yy
       index <- indexMicro(xx, aggr)
-      m <- means(x = xx, index = index, measure = measure,
-          trim = trim)
+      m <- means(x = xx, index = index, measure = measure, trim = trim)
       mr <- round(m)
       if (blow == TRUE) {
         blowxm <- blowup(x, m, aggr)
         rownames(blowxm) <- rownames(xx)
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = ac.scale$nc, xm = m, roundxm = mr,
-          clustermethod = clustermethod, measure = measure,
-          trim = trim, varsort = varsort, transf = transf,
-          blowup = blowup, blowxm = blowxm, fot = fot)
-    }else if (method == "clustmcdpca") {
-      ac.scale <- clust(x = x, nc = nc, clustermethod = clustermethod,
-          opt = FALSE, transf = "log")
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = ac.scale$nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blowup = blowup, blowxm = blowxm, fot = fot)
+    } else if (method == "clustmcdpca") {
+      ac.scale <- clust(x = x, nc = nc, clustermethod = clustermethod, opt = FALSE, transf = "log")
       cent <- matrix(ac.scale$centers, ncol = nc, byrow = TRUE)
       xx <- list()
       for (i in 1:nc) {
@@ -580,12 +522,10 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
         if (length(w) < dim(x)[2]) {
           y <- x[w, , drop = FALSE]
           xx[[i]] <- y[order(y[, varsort]), ]
-        }
-        else {
+        } else {
           x.mcd <- cov.mcd(x[w, ], cor = TRUE)
           x.scale <- scale(x[, w], x.mcd$center, sqrt(diag(x.mcd$cor)))
-          p <- princomp(x.scale, covmat = x.mcd)$scores[,
-              1]
+          p <- princomp(x.scale, covmat = x.mcd)$scores[, 1]
           psortind <- sort(p, index.return = TRUE)$ix
           y <- x[w, , drop = FALSE]
           xx[[i]] <- y[psortind, ]
@@ -593,31 +533,27 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       }
       for (i in 1:nc) {
         if (i == 1) {
-          yy <- matrix(unlist(xx[[i]]), ncol = ncol(x),
-              dimnames = list(rownames(xx[[i]]), colnames(xx[[i]])))
+          yy <- matrix(unlist(xx[[i]]), ncol = ncol(x), dimnames = list(rownames(xx[[i]]),
+          colnames(xx[[i]])))
         }
         if (i > 1) {
-          yy <- rbind(yy, matrix(unlist(xx[[i]]), ncol = ncol(x),
-                  dimnames = list(rownames(xx[[i]]), colnames(xx[[i]]))))
+          yy <- rbind(yy, matrix(unlist(xx[[i]]), ncol = ncol(x), dimnames = list(rownames(xx[[i]]),
+          colnames(xx[[i]]))))
         }
       }
       xx <- yy
       index <- indexMicro(xx, aggr)
-      m <- means(x = xx, index = index, measure = measure,
-          trim = trim)
+      m <- means(x = xx, index = index, measure = measure, trim = trim)
       mr <- round(m)
       if (blow == TRUE) {
         blowxm <- blowup(x, m, aggr)
         rownames(blowxm) <- rownames(xx)
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = ac.scale$nc, xm = m, roundxm = mr,
-          clustermethod = clustermethod, measure = measure,
-          trim = trim, varsort = varsort, transf = transf,
-          blowup = blowup, blowxm = blowxm, fot = fot)
-    }else if (method == "clustpppca") {
-      ac.scale <- clust(x = x, nc = nc, clustermethod = clustermethod,
-          opt = FALSE, transf = transf)
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = ac.scale$nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blowup = blowup, blowxm = blowxm, fot = fot)
+    } else if (method == "clustpppca") {
+      ac.scale <- clust(x = x, nc = nc, clustermethod = clustermethod, opt = FALSE, transf = transf)
       cent <- matrix(ac.scale$centers, ncol = nc, byrow = TRUE)
       xx <- list()
       for (i in 1:nc) {
@@ -625,8 +561,7 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
         if (length(w) < dim(x)[2]) {
           y <- x[w, , drop = FALSE]
           xx[[i]] <- y[order(y[, varsort]), ]
-        }
-        else {
+        } else {
           p <- prcompRob(x[w, , drop = FALSE], 1)$scores
           psortind <- sort(p, index.return = TRUE)$ix
           y <- x[w, , drop = FALSE]
@@ -635,43 +570,39 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       }
       for (i in 1:nc) {
         if (i == 1) {
-          yy <- matrix(unlist(xx[[i]]), ncol = ncol(x),
-              dimnames = list(rownames(xx[[i]]), colnames(xx[[i]])))
+          yy <- matrix(unlist(xx[[i]]), ncol = ncol(x), dimnames = list(rownames(xx[[i]]),
+          colnames(xx[[i]])))
         }
         if (i > 1) {
-          yy <- rbind(yy, matrix(unlist(xx[[i]]), ncol = ncol(x),
-                  dimnames = list(rownames(xx[[i]]), colnames(xx[[i]]))))
+          yy <- rbind(yy, matrix(unlist(xx[[i]]), ncol = ncol(x), dimnames = list(rownames(xx[[i]]),
+          colnames(xx[[i]]))))
         }
       }
       xx <- yy
       index <- indexMicro(xx, aggr)
-      m <- means(x = xx, index = index, measure = measure,
-          trim = trim)
+      m <- means(x = xx, index = index, measure = measure, trim = trim)
       mr <- round(m)
       if (blow == TRUE) {
         blowxm <- blowup(x, m, aggr)
         rownames(blowxm) <- rownames(xx)
       }
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = ac.scale$nc, xm = m, roundxm = mr,
-          clustermethod = clustermethod, measure = measure,
-          trim = trim, varsort = varsort, transf = transf,
-          blowup = blowup, blowxm = blowxm, fot = fot)
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = ac.scale$nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blowup = blowup, blowxm = blowxm, fot = fot)
     } else if (method == "rmd") {
-      #dyn.load("functionsRMD.dll")
+      # dyn.load('functionsRMD.dll')
       y <- x
       cm <- colMeans(x, na.rm = TRUE)
       csd <- apply(x, 2, sd, na.rm = TRUE)
       len <- nrow(y)
-      
+
       y <- apply(y, 2, function(x) (x - mean(x, na.rm = TRUE))/sd(x, na.rm = TRUE))
-      
-      # eventuell C-Code (bringt aber nicht sonderlich viel!
-      # wenn dann noch irgendwo  dyn.load("functionsRMD.dll")  hinschreiben
-      #for (i in 1:ncol(y)) {
-      #    y[,i] <- .C("standardise", erg=as.double(y[,i]), as.integer(len), as.double(cm[i]), as.double(csd[i]))$erg
-      #}
-      
+
+      # eventuell C-Code (bringt aber nicht sonderlich viel!  wenn dann noch irgendwo
+      # dyn.load('functionsRMD.dll') hinschreiben for (i in 1:ncol(y)) { y[,i] <-
+      # .C('standardise', erg=as.double(y[,i]), as.integer(len), as.double(cm[i]),
+      # as.double(csd[i]))$erg }
+
       d <- as.matrix(dist(y))
       set.seed(123)
       rr <- covMcd(y)
@@ -685,36 +616,34 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
         }
         return(w)
       }
-      
+
       for (i in 1:(floor(dim(x)[1]/aggr) - 1)) {
         s <- which.max(md)
-        w <- kn(d[,s], aggr)
-        d[w,] <- NA
+        w <- kn(d[, s], aggr)
+        d[w, ] <- NA
         md[w] <- NA
         y[w, ] <- rep(colMeans(y[w, ]), each = aggr)
       }
       w <- which(!is.na(d[, 1]))
       y[w, ] <- rep(colMeans(y[w, ]), each = length(w))
       for (i in 1:dim(x)[2]) {
-        y[,i] <- as.numeric((y[, i] * csd[i]) + cm[i])
-        # eventuell C-Code ausfuehren: Bringt aber nicht viel und Probleme beim Vergleich mit der bisherigen Version
-        #y[,i] <- as.numeric(.C("restandardise", erg=as.double(y[,i]), as.integer(nrow(x)), as.double(cm[i]), as.double(csd[i]))$erg)
+        y[, i] <- as.numeric((y[, i] * csd[i]) + cm[i])
+        # eventuell C-Code ausfuehren: Bringt aber nicht viel und Probleme beim Vergleich mit der
+        # bisherigen Version y[,i] <- as.numeric(.C('restandardise', erg=as.double(y[,i]),
+        # as.integer(nrow(x)), as.double(cm[i]), as.double(csd[i]))$erg)
       }
-      
-      res <- list(x = x, method = method, clustering = clustering,
-          aggr = aggr, nc = nc, xm = y, roundxm = round(y),
-          clustermethod = clustermethod, measure = measure,
-          trim = trim, varsort = varsort, transf = transf,
-          blow = TRUE, blowxm = y, fot = fot)
-    }else if (method == "mdav") {
-      ########R method mdav - deprecated, because faster c++ is available		
-      resX <- mdav(x,variables=NULL,weights=NULL,K=aggr,missing=-999)
-      res <- list(x = x, method = method, clustering = NULL,
-          aggr = aggr, nc = NULL, xm = NULL, roundxm = NULL, clustermethod = NULL,
-          measure = "mean", trim = NULL, varsort = NULL,
-          transf = NULL, blow = NULL, blowxm = resX, fot = fot)
-    }else if(method=="mdavold"){
-      ########R method mdavold - deprecated, because faster c++ is available      
+
+      res <- list(x = x, method = method, clustering = clustering, aggr = aggr, nc = nc,
+        xm = y, roundxm = round(y), clustermethod = clustermethod, measure = measure,
+        trim = trim, varsort = varsort, transf = transf, blow = TRUE, blowxm = y, fot = fot)
+    } else if (method == "mdav") {
+      ######## R method mdav - deprecated, because faster c++ is available
+      resX <- mdav(x, variables = NULL, weights = NULL, K = aggr, missing = -999)
+      res <- list(x = x, method = method, clustering = NULL, aggr = aggr, nc = NULL,
+        xm = NULL, roundxm = NULL, clustermethod = NULL, measure = "mean", trim = NULL,
+        varsort = NULL, transf = NULL, blow = NULL, blowxm = resX, fot = fot)
+    } else if (method == "mdavold") {
+      ######## R method mdavold - deprecated, because faster c++ is available
       maxDistinct <- function(d, j) {
         return(which(d == max(d), arr.ind = TRUE)[1, j])
       }
@@ -755,38 +684,36 @@ microaggregationWORK <- function (x, variables=colnames(x),method = "mdav", aggr
       if (blow == TRUE) {
         blowxm <- blowup(b, m, aggr)
       }
-      res <- list(x = b, method = method, clustering = clustering,
-          aggr = aggr, nc = nc, xm = m, roundxm = mr, clustermethod = clustermethod,
-          measure = measure, trim = trim, varsort = varsort,
-          transf = transf, blow = blow, blowxm = blowxm, fot = fot)
+      res <- list(x = b, method = method, clustering = clustering, aggr = aggr, nc = nc,
+        xm = m, roundxm = mr, clustermethod = clustermethod, measure = measure, trim = trim,
+        varsort = varsort, transf = transf, blow = blow, blowxm = blowxm, fot = fot)
     }
-    reslist[[spind]]<- res
+    reslist[[spind]] <- res
   }
   res <- reslist[[1]]
-  if(length(reslist)>1){
+  if (length(reslist) > 1) {
     blowxm <- vector()
     fot <- vector()
-    for(i in 1:length(reslist)){
-      blowxm <- rbind(blowxm,reslist[[i]]$blowxm)
-      fot <- c(fot,reslist[[i]]$fot)
+    for (i in 1:length(reslist)) {
+      blowxm <- rbind(blowxm, reslist[[i]]$blowxm)
+      fot <- c(fot, reslist[[i]]$fot)
     }
     res$x <- xall
     res$blowxm <- blowxm
-    names(fot) <- substring(names(xsp),2)
+    names(fot) <- substring(names(xsp), 2)
     res$fot <- fot
   }
-  
-  res$x <- res$x[order(as.numeric(rownames(res$x))),]
-  res$blowxm <- res$blowxm[order(as.numeric(rownames(res$blowxm))),]
-  res$blowxm <- res$blowxm[1:nrow(xall),]
+
+  res$x <- res$x[order(as.numeric(rownames(res$x))), ]
+  res$blowxm <- res$blowxm[order(as.numeric(rownames(res$blowxm))), ]
+  res$blowxm <- res$blowxm[1:nrow(xall), ]
   class(res) <- "micro"
   res$mx <- res$blowxm
-  resv <- c("mx","x","method", "aggr","measure","fot")
+  resv <- c("mx", "x", "method", "aggr", "measure", "fot")
   res1 <- list()
-  for(v in resv)
-    res1[[v]]<-res[[v]]
-#            measure = measure, trim = trim, varsort = varsort,
-#            transf = transf, blow = blow, blowxm = blowxm, fot = fot
-  class(res1) <- "micro"  
+  for (v in resv) res1[[v]] <- res[[v]]
+  # measure = measure, trim = trim, varsort = varsort, transf = transf, blow = blow, blowxm =
+  # blowxm, fot = fot
+  class(res1) <- "micro"
   return(res1)
 }
