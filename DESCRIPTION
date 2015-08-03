@@ -52,7 +52,6 @@ Collate:
     'plot.localSuppression.R'
     'plotMicro.R'
     'pram.R'
-    'print.localSuppression.R'
     'rankSwap.R'
     'report.R'
     'sdcMicro-package.R'
