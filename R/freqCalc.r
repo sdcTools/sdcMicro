@@ -446,3 +446,80 @@ sffcNA <- function(x, keyVars, w = NULL) {
   class(res) <- "freqCalc"
   invisible(res)
 }
+
+#' Print method for objects from class freqCalc
+#'
+#' Print method for objects from class freqCalc.
+#'
+#' @rdname freqCalc
+#' @param x object from class \code{\link{freqCalc}}
+#' @param \dots Additional arguments passed through.
+#' @return information about the frequency counts for key variables for object
+#' of class \code{\link{freqCalc}}.
+#' @author Matthias Templ
+#' @seealso \code{\link{freqCalc}}
+#' @keywords print
+#' @method print freqCalc
+#' @export
+#' @examples
+#'
+#' ## example from Capobianchi, Polettini and Lucarelli:
+#' data(francdat)
+#' f <- freqCalc(francdat, keyVars=c(2,4,5,6),w=8)
+#' f
+#'
+print.freqCalc <- function(x, ...) {
+  P <- dim(x)[2]
+  cat("\n --------------------------\n")
+  cat(paste(x$n1, "obs. violate 2-anonymity \n"))
+  cat(paste(x$n2 + x$n1, "obs. violate 3-anonymity \n"))
+  cat(" --------------------------\n")
+}
+
+#' Summary method for objects from class freqCalc
+#'
+#' Summary method for objects of class \sQuote{freqCalc} to provide information
+#' about local suppressions.
+#'
+#' Shows the amount of local suppressions on each variable in which local
+#' suppression was applied.
+#'
+#' @rdname freqCalc
+#' @param object object from class freqCalc
+#' @param \dots Additional arguments passed through.
+#' @return Information about local suppression in each variable (only if a
+#' local suppression is already done).
+#' @author Matthias Templ
+#' @seealso \code{\link{freqCalc}}
+#' @keywords print
+#' @method summary freqCalc
+#' @export
+#' @examples
+#'
+#' ## example from Capobianchi, Polettini and Lucarelli:
+#' data(francdat)
+#' f <- freqCalc(francdat, keyVars=c(2,4,5,6),w=8)
+#' f
+#' f$fk
+#' f$Fk
+#' ## individual risk calculation:
+#' indivf <- indivRisk(f)
+#' indivf$rk
+#' ## Local Suppression
+#' localS <- localSupp(f, keyVar=2, indivRisk=indivf$rk, threshold=0.25)
+#' f2 <- freqCalc(localS$freqCalc, keyVars=c(4,5,6), w=8)
+#' summary(f2)
+#'
+summary.freqCalc <- function(object, ...) {
+  a1 <- c(apply(object$freqCalc[, object$keyVars, drop = FALSE], 2, function(x) {
+    sum(is.na(x))
+  }))
+  P <- dim(object$freqCalc)[1]
+  cat("\n Suppressions: \n")
+  for (i in 1:length(a1)) {
+    if (a1[i] != 0)
+      cat(paste("\nLocal suppression in", names(a1)[i], ":", a1[i], "/", P, "\n"))
+  }
+}
+
+
