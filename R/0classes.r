@@ -13,6 +13,7 @@
 #' @import 'knitr'
 #' @import 'xtable'
 #' @import 'data.table'
+#' @import 'ggplot2'
 #' @importFrom 'sets' 'set_power'
 
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))

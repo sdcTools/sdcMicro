@@ -25,7 +25,9 @@ Imports:
     e1071,
     tools,
     Rcpp,
-    methods,sets
+    methods,
+    sets,
+    ggplot2
 License: GPL-2
 URL: https://github.com/alexkowa/sdcMicro
 Collate:
@@ -49,10 +51,10 @@ Collate:
     'measure_risk.R'
     'methods.r'
     'microaggregation.R'
-    'plot.localSuppression.R'
     'plotMicro.R'
     'pram.R'
     'rankSwap.R'
+    'RcppExports.R'
     'report.R'
     'sdcMicro-package.R'
     'shuffle.R'

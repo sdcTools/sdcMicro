@@ -65,6 +65,11 @@
 #' system.time( f3f <- freqCalc(testdata,keyVars=c(1:4,7),w=14,fast=TRUE) )
 #'
 freqCalc <- function(x, keyVars, w = NULL, fast = TRUE) {
+  # some parts do not work yet with data.tables
+  # this should be fixed
+  if ( is.data.table(x) ) {
+    class(x) <- "data.frame"
+  }
   if (is.numeric(keyVars)) {
     keyVars <- colnames(x)[keyVars]
   }
