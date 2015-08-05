@@ -276,7 +276,9 @@ sffcNA <- function(x, keyVars, w = NULL) {
           notnakeyVars, "]|is.na(", notnakeyVars, "))", sep = "", collapse = "&"),
           ",sum(plusNA)]", sep = "")
           eval(parse(text = cmd))
-          ergna2[j, `:=`(fk, fk + ergna4)]
+          if ( nrow(ergna4) > 0 ) {
+            ergna2[j, `:=`(fk, fk + ergna4)]
+          }
         }
       }
     }
@@ -408,7 +410,9 @@ sffcNA <- function(x, keyVars, w = NULL) {
           notnakeyVars, "]|is.na(", notnakeyVars, "))", sep = "", collapse = "&"),
           ",list(sum(plusNA),sum(plusSUMNA))]", sep = "")
           eval(parse(text = cmd))
-          ergna2[j, `:=`(c("fk", "Fk"), list(fk + ergna4$V1, Fk + ergna4$V2))]
+          if ( nrow(ergna4) > 0 ) {
+            ergna2[j, `:=`(c("fk", "Fk"), list(fk + ergna4$V1, Fk + ergna4$V2))]
+          }
         }
       }
     }
