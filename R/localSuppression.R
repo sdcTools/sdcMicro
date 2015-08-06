@@ -26,6 +26,13 @@
 #' should be used for local suppression in order to obtain k-anonymity.
 #' key-variables with importance=1 will - if possible - not suppressed,
 #' key-variables with importance=n will be used whenever possible.
+#' @param combs numeric vector. if specified, the algorithm will provide k-anonymity
+#' for each combination of n key variables (with n being the value of the ith element
+#' of this parameter. For example, if combs=c(4,3), the algorithm will provide
+#' k-anonymity to all combinations of 4 key variables and then k-anonymity to all
+#' combinations of 3 key variables. It is possible to apply different k to these
+#' subsets by specifying k as a vector. If k has only one element, the same value
+#' of k will be used for all subgroups.
 #' @param ... see arguments below
 #' \itemize{
 #' \item{keyVars}{numeric vector specifying indices of (categorical) key-variables}
@@ -66,6 +73,16 @@
 #'   strataVar='ageG')
 #' sdc <- localSuppression(sdc)
 #'
+#' ## it is also possible to provide k-anonymity for subsets of key-variables
+#' ## with different parameter k!
+#' ## in this case we want to provide 10-anonymity for all combinations
+#' ## of 5 key variables, 20-anonymity for all combinations with 4 key variables
+#' ## and 30-anonymity for all combinations of 3 key variables.
+#' ## note: stratas are automatically considered!
+#' combs <- 5:3
+#' k <- c(10,20,30)
+#' sdc <- localSuppression(sdc, k=k, combs=combs)
+#'
 #' ## data.frame method (no stratification)
 #' keyVars <- c("urbrur","roof","walls","water","electcon","relat","sex")
 #' strataVars <- c("ageG")
@@ -79,28 +96,25 @@
 #' print(ls)
 #' plot(ls, showTotalSupps=TRUE)
 #'
-setGeneric("localSuppression", function(obj, k = 2, importance = NULL, ...) {
+setGeneric("localSuppression", function(obj, k = 2, importance = NULL, combs=NULL, ...) {
   standardGeneric("localSuppression")
 })
 
 setMethod(f='localSuppression', signature=c('sdcMicroObj'),
-definition=function(obj, k=2, importance=NULL, ...) {
+definition=function(obj, k=2, importance=NULL, combs=NULL) {
   ### get data from manipKeyVars
-  inp <- as.data.frame(get.sdcMicroObj(obj, type="manipKeyVars"))
-
+  df <- as.data.frame(get.sdcMicroObj(obj, type="manipKeyVars"))
   strataVars <- get.sdcMicroObj(obj, "strataVar")
   keyVars <- 1:length(obj@keyVars)
-
-  if ( is.null(strataVars) ) {
-    ls <- localSuppression(obj=inp, k=k, importance=importance, keyVars=keyVars, strataVars=NULL)
+  if ( !is.null(strataVars) ) {
+    df <- cbind(df, get.sdcMicroObj(obj, type="origData")[,strataVars,drop=F])
+    stratV <- length(keyVars) + 1:length(strataVars)
   } else {
-    ## we want k-anonymity in each strata!
-    strat <- get.sdcMicroObj(obj, type="origData")[,strataVars,drop=F]
-    stratV <- (ncol(inp)+1):(ncol(inp)+ncol(strat))
-    inp <- cbind(inp, strat)
-    ls <- localSuppression(obj=inp, k=k, importance=importance, keyVars=keyVars,
-      strataVars=stratV) # data.frame-method calls localSuppressionWORK()!
+    stratV <- NULL
   }
+
+  ls <- localSuppressionWORK(x=df, keyVars=keyVars, strataVars=stratV,
+    k=k, combs=combs, importance=importance)
 
   # create final output
   obj <- nextSdcObj(obj)
@@ -122,70 +136,206 @@ definition=function(obj, k=2, importance=NULL, ...) {
 })
 
 setMethod(f='localSuppression', signature=c("data.frame"),
-definition=function(obj, k=2, keyVars, importance=NULL, strataVars=NULL) {
-  if ( !is.null(strataVars) ) {
-    ## we want k-anonymity in each strata!
-    inp <- data.table(obj[,keyVars])
-    inp[,strata:=apply(obj[,strataVars,drop=F],1,paste,collapse="-")]
-    inp[,sortidforls:=1:nrow(inp)]
-    spl <- split(inp, inp$strata)
-    ls <- list(); length(ls) <- length(spl)
-    supps <- list(); length(supps) <- length(spl)
-    xAnon <- list(); length(xAnon) <- length(spl)
-    anon <- rep(NA, length(spl))
-    # todo: using parallel/mclapply?
-    for ( i in seq_along(spl) ) {
-      x <- spl[[i]]
-      ls[[i]] <- localSuppressionWORK(x, k=k, importance=importance, keyVars=keyVars)
-      supps[[i]] <- ls[[i]]$supps
-      xAnon[[i]] <- ls[[i]]$xAnon
-      anon[i] <- ls[[i]]$anonymity
-    }
-    supps <- as.data.frame(rbindlist(supps))
-    rownames(supps) <- names(spl)
-    xAnon <- rbindlist(xAnon)
-    setkey(xAnon, sortidforls)
-    xAnon[,sortidforls:=NULL]
-    xAnon[,strata:=NULL]
-
-    # combine results!
-    ls <- ls[[1]]
-    ls$xAnon <- as.data.frame(xAnon)
-    ls$supps <- supps
-    ls$totalSupps <- sum(supps)
-    ls$anonymity <- anon
-    ls$strataVars <- strataVars
-  } else {
-    inp <- data.table(obj[,keyVars])
-    inp[,strata:=1]
-    inp[,sortidforls:=1:nrow(inp)]
-    ls <- localSuppressionWORK(x=inp, keyVars=1:length(keyVars), k=k, importance=importance)
-    ls$xAnon <- ls$xAnon[,-match(c("strata","sortidforls"), names(ls$xAnon)),drop=F]
-    obj[,keyVars] <- ls$xAnon
-    ls$xAnon <- obj
-  }
-  ls
+definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL) {
+  localSuppressionWORK(x=obj, keyVars=keyVars, strataVars=strataVars,
+    importance=importance, combs=combs)
 })
 
 setMethod(f='localSuppression', signature=c("matrix"),
-definition=function(obj, k=2, importance=NULL, keyVars, strataVars=NULL) {
-  localSuppression(as.data.frame(obj), k=k, importance=importance, keyVars=keyVars, strataVars=strataVars)
+definition=function(obj, keyVars, k=2, strataVars=NULL, importance=NULL, combs=NULL) {
+  localSuppressionWORK(x=as.data.frame(obj), keyVars=keyVars, strataVars=strataVars,
+    importance=importance, combs=combs)
 })
 
-localSuppressionWORK <- function(x, keyVars, k=2, importance=NULL) {
-  if ( !"data.table" %in% class(x) ) {
+
+localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=NULL) {
+  # find a suppression pattern for a simple subset that is not stratified
+  # input: df=data.table with only keyVars
+  # k: parameter for k-anonymity (length 1)
+  # importance: importance-vector with length equals ncol(df)
+  suppSubset <- function(x, k, importance)  {
+    # checks
+    if ( length(k) != 1 | k < 1 ) {
+      stop("argument 'k' must be of length 1 and > 0 ")
+    }
+    if ( !is.null(importance) ) {
+      if ( length(importance)!=ncol(x) ) {
+        stop("length of importance-vector does not match number of key variables!\n")
+      }
+    }
+
+    # k can be at most the number of obs!
+    k <- min(k, nrow(x))
+
+    keys <- 1:ncol(x)
+    keyVars <- names(x)
     x <- data.table(x)
-  } else {
-    x <- copy(x)
+
+    # calculate number of suppressions for each keyVar
+    # before trying to achieve k-anonymity
+    NABefore <- is.na(x)
+    NAinKey <- x[,lapply(.SD, function(x) sum(is.na(x)))]
+    totalNABefore <- sum(NAinKey)
+
+    x[,idvarextraforsls:=.I]
+
+    ##############
+    # The dataset is reduced to a smaller dataset in the following way
+    # 1) all NAs are initialized with the first unique value
+    # of the corresponding keyVariable
+    xKeys <- x[,c(keyVars, "idvarextraforsls"),with=F]
+    for ( kV in keyVars ) {
+      if (NAinKey[[kV]] > 0 ) {
+        e1 <- parse(text=paste0("is.na(",kV,")"))
+        e2 <- parse(text=paste0(kV,":=unique(",kV,")[1]"))
+        xKeys[eval(e1), eval(e2)]
+      }
+    }
+    setkeyv(xKeys, keyVars)
+
+    # 2) fk is computed
+    erg <- xKeys[,list(fk=.N), by=key(xKeys)]
+    xKeys <- merge(xKeys, erg)
+
+    # 3) from groups with fk>k, all observations except k observations are removed
+    weg <- fkd <- idvarextraforsls <- fk <- NA #for CHECK-NOTES
+    erg <- xKeys[fk>k] # more than k
+    erg[,fkd:=fk-k]
+    if ( nrow(erg) >0 ) {
+      erg2 <- erg[,tail(.SD,fkd[1]),by=key(erg)]
+      xKeys <- data.table(x)
+      setkey(xKeys,"idvarextraforsls")
+      erg2 <- erg2[,list(idvarextraforsls)]
+      erg2[,weg:=1]
+      setkey(erg2,"idvarextraforsls")
+      xKeys <- merge(xKeys,erg2,all=TRUE)
+      x <- xKeys[is.na(weg)]
+    }
+
+    # 4) afterwards the old lS-Algo is applied
+    ff <- freqCalc(x, keyVars=keyVars)
+    rk <- indivRisk(ff)
+    runInd <- TRUE
+
+    importanceI <- (length(importance)+1)-importance
+
+    # prepare data input for cpp_calcSuppInds()
+    # factors must be recoded as numeric
+    mat <- x[,keyVars,with=F]
+    for ( kV in names(mat) ) {
+      if ( is.factor(mat[[kV]]) ) {
+        ex <- parse(text=paste0(kV,":=as.numeric(",kV,")"))
+        mat[,eval(ex)]
+      }
+    }
+    mat <- as.matrix(mat)
+    while ( runInd ) {
+      ind.problem <- which(ff$fk < k)
+      ind.problem  <- ind.problem[order(rk$rk[ind.problem],decreasing=TRUE)]
+      for ( i in 1:length(ind.problem) ) {
+        res <- cpp_calcSuppInds(mat, mat[ind.problem[i],])
+        if ( res$fk >= k ) {
+          break;
+        }
+        ind <- res$ids
+        if ( length(ind) > 0 ) {
+          colInd <- NULL
+          colIndsSorted <- keyVars[order(importanceI)]
+          while ( is.null(colInd) ) {
+            for ( cc in colIndsSorted ) {
+              z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
+              if ( length(z) > 0 ) {
+                colInd <- cc
+                break;
+              }
+            }
+          }
+          x[[colInd]][ind.problem[i]] <- NA
+          mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
+        } else {
+          stop("Error\n")
+        }
+      }
+      ff <- freqCalc(x, keyVars=keyVars)
+      rk <- indivRisk(ff)
+      if ( all(ff$fk >= k) ) {
+        runInd <- FALSE
+      }
+    }
+
+    # 5) the last step is to merge the smaller k-anonymized data set back to the
+    # original data set with initial NAs introduced again
+    if ( nrow(erg)>0 ) {
+      xrem <- data.table(x[,"idvarextraforsls",with=F],weg=1)
+      x[,weg:=NULL]
+
+      setkey(xrem,"idvarextraforsls")
+      xKeys[,weg:=NULL]
+      setkey(xKeys,"idvarextraforsls")
+      xKeys <- merge(xKeys,xrem,all=TRUE)
+      xKeys <- xKeys[is.na(weg),]
+      xKeys[,weg:=NULL]
+      x <- rbind(x,xKeys)
+      setkey(x,"idvarextraforsls")
+      x[,idvarextraforsls:=NULL]
+      x <- as.data.frame(x)
+      if( any(NABefore) ) {
+        x[NABefore] <- NA
+      }
+    } else {
+      setkey(x,"idvarextraforsls")
+      x[,idvarextraforsls:=NULL]
+    }
+    ## preparing the output:
+    supps <- as.data.table(t(apply(x, 2, function(x) {
+      sum(is.na(x))
+    }))) - NAinKey
+
+    totalSupps <- sum(supps)
+    out <- list(
+      xAnon=x,
+      supps=supps,
+      totalSupps=totalSupps)
+    return(out)
+  }
+  strata <- NULL
+  if ( !"data.table" %in% class(x) ) {
+    x <- as.data.table(x)
   }
   if ( is.numeric(keyVars) ) {
+    keyVarsNum <- keyVars
     keyVars <- names(x)[keyVars]
   }
+  if ( is.numeric(strataVars) ) {
+    strataVarsNum <- strataVars
+    strataVars <- names(x)[strataVars]
+  }
 
+  # checks and preparations if we apply localSuppression on
+  # subsets of key variables
+  if ( !is.null(combs) ) {
+    if ( length(combs) != length(k) ) {
+      # using the same k!
+      k <- rep(k, length(combs))
+    }
+    if ( !all(combs > 0) ) {
+      stop("each element of 'comb' must be > 0!\n")
+    }
+    if ( any(combs) > length(keyVars) ) {
+      stop("at least one element of 'combs' is to large!\n")
+    }
+
+    # all combinations we need to tackle are stored here
+    tree <- lapply(combs, function(x) {
+      combn(keyVarsNum, x)
+    })
+    nrProbs <- sum(sapply(tree, ncol))
+  }
+
+  # calculate importance if specified
   if ( is.null(importance) ) {
-    xx <- x[,lapply(.SD, function(x) length(table(x))), .SDcols=keyVars]
-    #importance <- as.numeric(rank(xx, ties.method="first"))
-    importance <- match(xx, sort(xx, decreasing = FALSE))
+    xx <- x[,lapply(.SD, function(y) { length(table(y))}), .SDcols=keyVars]
+    importance <- match(xx, sort(xx, decreasing=FALSE))
   } else {
     if ( length(setdiff(sort(importance), 1:length(keyVars))) > 0 ) {
       stop("importance vector needs to be discrete numbers between 1 and the number of key-variables!\n")
@@ -198,128 +348,113 @@ localSuppressionWORK <- function(x, keyVars, k=2, importance=NULL) {
   NAinKey <- x[,lapply(.SD, function(x) sum(is.na(x))), .SDcols=keyVars]
   totalNABefore <- sum(NAinKey)
 
-  ##############
-  # The dataset is reduced to a smaller dataset in the following way
-  # 1) all NAs are initialized with the first unique value
-  # of the corresponding keyVariable
-  x[,idvarextraforsls:=.I]
-  xKeys <- x[,c(keyVars,"sortidforls","idvarextraforsls"),with=F]
-  for ( kV in keyVars ) {
-    if (NAinKey[[kV]] > 0 ) {
-      e1 <- parse(text=paste0("is.na(",kV,")"))
-      e2 <- parse(text=paste0(kV,":=unique(",kV,")[1]"))
-      xKeys[eval(e1), eval(e2)]
-    }
-  }
-  setkeyv(xKeys, keyVars)
-
-  # 2) fk is computed
-  erg <- xKeys[,list(fk=.N), by=key(xKeys)]
-  xKeys <- merge(xKeys, erg)
-
-  # 3) from groups with fk>k, all observations except k observations are removed
-  weg <- fkd <- idvarextraforsls <- fk <- NA #for CHECK-NOTES
-  erg <- xKeys[fk>k] # more than k
-  erg[,fkd:=fk-k]
-  if ( nrow(erg) >0 ) {
-    erg2 <- erg[,tail(.SD,fkd[1]),by=key(erg)]
-    xKeys <- data.table(x)
-    setkey(xKeys,"idvarextraforsls")
-    erg2 <- erg2[,list(idvarextraforsls)]
-    erg2[,weg:=1]
-    setkey(erg2,"idvarextraforsls")
-    xKeys <- merge(xKeys,erg2,all=TRUE)
-    x <- xKeys[is.na(weg)]
-  }
-
-  # 4) afterwards the old lS-Algo is applied
-  ff <- freqCalc(x, keyVars=keyVars)
-  rk <- indivRisk(ff)
-  runInd <- TRUE
-
-  importanceI <- (length(importance)+1)-importance
-
-  # prepare data input for cpp_calcSuppInds()
-  # factors must be recoded as numeric
-  mat <- x[,keyVars,with=F]
-  for ( kV in names(mat) ) {
-    if ( is.factor(mat[[kV]]) ) {
-      ex <- parse(text=paste0(kV,":=as.numeric(",kV,")"))
-      mat[,eval(ex)]
-    }
-  }
-  mat <- as.matrix(mat)
-  while ( runInd ) {
-    ind.problem <- which(ff$fk < k)
-    ind.problem  <- ind.problem[order(rk$rk[ind.problem],decreasing=TRUE)]
-    for ( i in 1:length(ind.problem) ) {
-      res <- cpp_calcSuppInds(mat, mat[ind.problem[i],])
-      if ( res$fk >= k ) {
-        break;
+  # performing the k-Anon algorithm
+  # no stratification required
+  if ( is.null(strataVars) ) {
+    if ( is.null(combs) ) {
+      inpDat <- x[,keyVars,with=F]
+      res <- suppSubset(x=inpDat, k=k, importance=importance)
+      supps <- res$supps
+      totalSupps <- res$totalSupps
+      xAnon <- res$xAnon
+    } else {
+      # no strata but subsets of key variables (combs)
+      counter <- 0
+      tmpDat <- copy(x)
+      for ( gr in seq_along(tree) ) {
+        cur_k <- k[gr]
+        #log <- paste0("providing ",cur_k,"-Anonymity for ",ncol(tree[[gr]])," combinations ")
+        #log <- paste0(log, "of ",combs[gr]," key variables.\n")
+        #cat(log)
+        for ( comb in 1:ncol(tree[[gr]]) ) {
+          counter <- counter+1
+          kV <- tree[[gr]][,comb]
+          cur_importance <- rank(importance[kV], ties.method="min")
+          inpDat <- tmpDat[,kV,with=F]
+          res <- suppSubset(x=inpDat, k=cur_k, importance=cur_importance)
+          # replace: is there a more elegant way?
+          for ( z in 1:length(kV) ) {
+            set(tmpDat, i=NULL, j=kV[z], res$xAnon[[z]])
+          }
+        }
       }
-      ind <- res$ids
-      if ( length(ind) > 0 ) {
-        colInd <- NULL
-        colIndsSorted <- keyVars[order(importanceI)]
-        while ( is.null(colInd) ) {
-          for ( cc in colIndsSorted ) {
-            z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
-            if ( length(z) > 0 ) {
-              colInd <- cc
-              break;
+      # prepare output
+      xAnon <- tmpDat
+      supps <- as.data.frame(t(apply(tmpDat, 2, function(x) {
+        sum(is.na(x))
+      })))
+      totalSupps <- sum(supps)
+    }
+  } else {
+    ## we want k-anonymity in each strata!
+    inpDat <- x[,keyVars,with=F]
+    inpDat[,strata:=apply(x[,strataVars,with=F],1,paste,collapse="-")]
+    inpDat[,sortid:=1:nrow(inpDat)]
+    spl <- split(inpDat, inpDat$strata)
+
+    # to be able to sort back later!
+    sortid <- as.numeric(unlist(sapply(spl, function(x) {
+      x[["sortid"]]
+    })))
+    supps <- list(); length(supps) <- length(spl)
+    xAnon <- list(); length(xAnon) <- length(spl)
+    totalSupps <- rep(NA, length(spl))
+    if ( is.null(combs) ) {
+      # todo: using parallel/mclapply?
+      for ( i in seq_along(spl) ) {
+        res <- suppSubset(spl[[i]][,keyVars, with=F], k=k, importance=importance)
+        supps[[i]] <- res$supps
+        xAnon[[i]] <- res$xAnon
+        totalSupps[i] <- res$totalSupps
+      }
+    } else {
+      # local Suppression by strata and combination of subsets!
+      for ( i in seq_along(spl) ) {
+        counter <- 0
+        tmpDat <- copy(spl[[i]])
+        for ( gr in seq_along(tree) ) {
+          cur_k <- k[gr]
+          #log <- paste0("providing ",cur_k,"-Anonymity for ",ncol(tree[[gr]])," combinations ")
+          #log <- paste0(log, "of ",combs[gr]," key variables in strata ", names(spl)[i],"!\n")
+          #cat(log)
+          for ( comb in 1:ncol(tree[[gr]]) ) {
+            counter <- counter+1
+            kV <- tree[[gr]][,comb]
+            cur_importance <- rank(importance[kV], ties.method="min")
+            inpDat <- tmpDat[,kV,with=F]
+            res <- suppSubset(x=inpDat, k=cur_k, importance=cur_importance)
+            # replace: is there a more elegant way?
+            for ( z in 1:length(kV) ) {
+              set(tmpDat, i=NULL, j=kV[z], res$xAnon[[z]])
             }
           }
         }
-        x[[colInd]][ind.problem[i]] <- NA
-        mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
-      } else {
-        stop("Error\n")
+        # prepare output
+        tmpDat[,strata:=NULL]
+        tmpDat[,sortid:=NULL]
+        xAnon[[i]] <- tmpDat
+        supps[[i]] <- as.data.frame(t(apply(tmpDat, 2, function(x) {
+          sum(is.na(x))
+        })))
+        totalSupps[i] <- res$totalSupps
       }
     }
-    ff <- freqCalc(x, keyVars=keyVars)
-    rk <- indivRisk(ff)
-    if ( all(ff$fk >= k) ) {
-      runInd <- FALSE
-    }
+    supps <- as.data.frame(rbindlist(supps))
+    supps <- rbind(supps, colSums(supps))
+    rownames(supps) <- c(names(spl),"Total")
+    xAnon <- rbindlist(xAnon)
+    xAnon[,sortid:=sortid]
+    setkey(xAnon, sortid)
+    xAnon[,sortid:=NULL]
+    totalSupps <- sum(supps[nrow(supps),])
   }
-
-  # 5) the last step is to merge the smaller k-anonymized data set back to the
-  # original data set with initial NAs introduced again
-  if ( nrow(erg)>0 ) {
-    xrem <- data.table(x[,"idvarextraforsls",with=F],weg=1)
-    x[,weg:=NULL]
-
-    setkey(xrem,"idvarextraforsls")
-    xKeys[,weg:=NULL]
-    setkey(xKeys,"idvarextraforsls")
-    xKeys <- merge(xKeys,xrem,all=TRUE)
-    xKeys <- xKeys[is.na(weg),]
-    xKeys[,weg:=NULL]
-    x <- rbind(x,xKeys)
-    setkey(x,"idvarextraforsls")
-    x[,idvarextraforsls:=NULL]
-    x <- as.data.frame(x)
-    if( any(NABefore) ) {
-      x[NABefore] <- NA
-    }
-  } else {
-    setkey(x,"idvarextraforsls")
-    x[,idvarextraforsls:=NULL]
-  }
-
-  ## preparing the output:
-  x <- as.data.frame(x)
-  totalNA <- length(which(is.na(x[,keyVars])))
-  supps <- apply(x[, keyVars], 2, function(x) {
-    length(which(is.na(x)))
-  })-NAinKey
-
-  res <- list(xAnon=as.data.frame(x), supps=as.data.frame(supps),
-    totalSupps=totalNA-totalNABefore, anonymity=TRUE, keyVars=keyVars,
-    strataVars=NULL, importance=importance, k=k)
+  res <- list(xAnon=as.data.frame(xAnon), supps=supps,
+    totalSupps=totalSupps-totalNABefore, anonymity=TRUE, keyVars=keyVars,
+    strataVars=strataVars, importance=importance, k=k, combs=combs)
   class(res) <- "localSuppression"
   invisible(res)
 }
+
 
 #' Print method for objects from class localSuppression
 #'

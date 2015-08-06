@@ -173,6 +173,12 @@ setClass(Class = "sdcMicroObj",
     prev = NULL,
     deletedVars = NULL),
   validity = function(object) {
+    if ( !is.null(object@manipKeyVars) && ncol(object@manipKeyVars) != length(object@keyVars) ) {
+      stop("wrong dimension of slot 'manipKeyVars'!\n")
+    }
+    if ( !is.null(object@manipNumVars) && ncol(object@manipNumVars) != length(object@numVars) ) {
+      stop("wrong dimension of slot 'manipNumVars'!\n")
+    }
     return(TRUE)
   })
 
