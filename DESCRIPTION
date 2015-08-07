@@ -51,6 +51,7 @@ Collate:
     'measure_risk.R'
     'methods.r'
     'microaggregation.R'
+    'plotFunctions.R'
     'plotMicro.R'
     'pram.R'
     'rankSwap.R'
