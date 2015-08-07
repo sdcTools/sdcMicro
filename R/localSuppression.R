@@ -126,6 +126,27 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
   ls$xAnon <- NULL
   class(ls) <- unclass("list")
   obj <- set.sdcMicroObj(obj, type="localSuppression", input=list(ls))
+
+  # transfer suppression patterns if ghostVars is specified
+  ghostVars <- get.sdcMicroObj(obj, type="ghostVars")
+  if ( !is.null(ghostVars) ) {
+    manipData <- get.sdcMicroObj(obj, type="manipKeyVars")
+    manipGhostVars <- get.sdcMicroObj(obj, type="manipGhostVars")
+    cn <- colnames(get.sdcMicroObj(obj, type="origData"))
+    for ( i in seq_along(ghostVars) ) {
+      # index of keyVar within manipData
+      kV <- match(cn[ghostVars[[i]][[1]]], colnames(manipData))
+      isna <- is.na(manipData[[kV]])
+
+      # get indices of linked variables within ghostVars and
+      # transfer suppression pattern
+      vv <- match(cn[ghostVars[[i]][[2]]], colnames(manipGhostVars))
+      for ( j in 1:length(vv) ) {
+        manipGhostVars[[vv[j]]][isna] <- NA
+      }
+    }
+    obj <- set.sdcMicroObj(obj, type="manipGhostVars", input=list(manipGhostVars))
+  }
   obj <- calcRisks(obj)
   obj
 })

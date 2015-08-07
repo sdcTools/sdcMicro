@@ -101,11 +101,9 @@ setClassUnion("sdcmicroOrNULL", c("NULL"))
 #' head(get.sdcMicroObj(sdc, type="manipNumVars"))
 #' head(sdc@@risk$individual)
 #' sdc@@risk$global
-#' \dontrun{
 #' ### suda2
 #' sdc <- suda2(sdc)
 #' sdc@@risk$suda2
-#' }
 #' ### topBotCoding
 #' head(get.sdcMicroObj(sdc, type="manipNumVars"))
 #' sdc@@risk$numeric
@@ -131,6 +129,7 @@ setClass(Class = "sdcMicroObj",
     keyVars = "numericOrNULL",
     pramVars = "numericOrNULL",
     numVars = "numericOrNULL",
+    ghostVars = "listOrNULL",
     weightVar = "numericOrNULL",
     hhId = "numericOrNULL",
     strataVar = "numericOrNULL",
@@ -138,6 +137,7 @@ setClass(Class = "sdcMicroObj",
     manipKeyVars = "dataframeOrNULL",
     manipPramVars = "dataframeOrNULL",
     manipNumVars = "dataframeOrNULL",
+    manipGhostVars = "dataframeOrNULL",
     manipStrataVar = "factorOrNULL",
     originalRisk = "listOrNULL",
     risk = "listOrNULL",
@@ -154,6 +154,7 @@ setClass(Class = "sdcMicroObj",
     keyVars = NULL,
     pramVars = NULL,
     numVars = NULL,
+    ghostVars = NULL,
     weightVar = NULL,
     hhId = NULL,
     strataVar = NULL,
@@ -161,6 +162,7 @@ setClass(Class = "sdcMicroObj",
     manipKeyVars = NULL,
     manipPramVars = NULL,
     manipNumVars = NULL,
+    manipGhostVars = NULL,
     manipStrataVar = NULL,
     originalRisk = NULL,
     risk = NULL,

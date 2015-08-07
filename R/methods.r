@@ -47,8 +47,8 @@ setGeneric("undolast", function(object) {
 #' @rdname sdcMicroObj-class
 setMethod(f = "get.sdcMicroObj", signature = c("sdcMicroObj", "character"),
 definition = function(object, type) {
-  if (!type %in% c("origData", "keyVars", "pramVars", "numVars", "weightVar", "hhId", "strataVar",
-    "sensibleVar", "manipKeyVars", "manipPramVars", "manipNumVars", "manipStrataVar", "originalRisk",
+  if (!type %in% c("origData", "keyVars", "pramVars", "numVars", "ghostVars", "weightVar", "hhId", "strataVar",
+    "sensibleVar", "manipKeyVars", "manipPramVars", "manipNumVars", "manipGhostVars", "manipStrataVar", "originalRisk",
     "risk", "utility", "pram", "localSuppression", "options", "prev", "set", "deletedVars")) {
     stop("get.sdcMicroObj:: argument 'type' is not valid!\n")
   }
@@ -65,8 +65,8 @@ definition = function(object, type) {
 #' @rdname sdcMicroObj-class
 setMethod(f = "set.sdcMicroObj", signature = c("sdcMicroObj", "character", "listOrNULL"),
 definition = function(object, type, input) {
-  if (!type %in% c("origData", "keyVars", "pramVars", "numVars", "weightVar", "hhId", "strataVar",
-    "sensibleVar", "manipPramVars", "manipKeyVars", "manipNumVars", "manipStrataVar", "risk",
+  if (!type %in% c("origData", "keyVars", "pramVars", "numVars", "ghostVars", "weightVar", "hhId", "strataVar",
+    "sensibleVar", "manipPramVars", "manipKeyVars", "manipNumVars", "manipGhostVars", "manipStrataVar", "risk",
     "utility", "pram", "localSuppression", "options", "prev", "set")) {
     stop("set.sdcMicroObj:: check argument 'type'!\n")
   }
@@ -79,6 +79,8 @@ definition = function(object, type, input) {
     object@pramVars <- input[[1]]
   if (type == "numVars")
     object@numVars <- input[[1]]
+  if (type == "ghostVars")
+    object@ghostVars <- input[[1]]
   if (type == "weightVar")
     object@weightVar <- input[[1]]
   if (type == "hhId")
@@ -93,6 +95,8 @@ definition = function(object, type, input) {
     object@manipPramVars <- input[[1]]
   if (type == "manipNumVars")
     object@manipNumVars <- input[[1]]
+  if (type == "manipGhostVars")
+    object@manipGhostVars <- input[[1]]
   if (type == "manipStrataVar")
     object@manipStrataVar <- input[[1]]
   if (type == "risk")

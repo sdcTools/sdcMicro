@@ -45,7 +45,7 @@
 #'
 #' Templ, M.  \emph{Statistical Disclosure Control for Microdata Using the
 #' R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number 2, pp.
-#' 67-85, 2008.  \url{http://www.tdp.cat/issues/abs.a004a08.php}
+#' 67-85, 2008. \url{http://www.tdp.cat/issues/abs.a004a08.php}
 #'
 #' Templ, M.  \emph{New Developments in Statistical Disclosure Control and
 #' Imputation: Robust Statistics Applied to Official Statistics},
@@ -212,11 +212,9 @@
 #' head(get.sdcMicroObj(sdc, type="manipNumVars"))
 #' head(sdc@@risk$individual)
 #' sdc@@risk$global
-#' \dontrun{
 #' ### suda2
 #' sdc <- suda2(sdc)
 #' sdc@@risk$suda2
-#' }
 #' ### topBotCoding
 #' head(get.sdcMicroObj(sdc, type="manipNumVars"))
 #' sdc@@risk$numeric
