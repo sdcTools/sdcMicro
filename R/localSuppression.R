@@ -18,6 +18,8 @@
 #' @aliases localSuppression-methods localSuppression,data.frame-method
 #' localSuppression,matrix-method localSuppression,sdcMicroObj-method
 #' localSuppression
+#' kAnon-methods kAnon,data.frame-method kAnon,matrix-method
+#' kAnon,sdcMicroObj-method kAnon
 #' @docType methods
 #' @param obj an object of class sdcMicroObj or a data frame or matrix
 #' @param k threshold for k-anonymity
@@ -49,7 +51,9 @@
 #' @keywords manip
 #' @export
 #' @note Deprecated methods 'localSupp2' and 'localSupp2Wrapper' are no longer available
-#' in sdcMicro > 4.5.0
+#' in sdcMicro > 4.5.0.
+#' \code{kAnon} is a more intutitive term for localSuppression because the aim is always
+#' to obtain k-anonymity for some parts of the data.
 #' @examples
 #'
 #' data(francdat)
@@ -92,7 +96,7 @@
 #' plot(ls)
 #'
 #' ## data.frame method (with stratification)
-#' ls <- localSuppression(inp, keyVars=1:7, strataVars=8)
+#' ls <- kAnon(inp, keyVars=1:7, strataVars=8)
 #' print(ls)
 #' plot(ls, showTotalSupps=TRUE)
 #'
@@ -119,18 +123,9 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
   # create final output
   obj <- nextSdcObj(obj)
   obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(ls$xAnon))
-
-  a <- get.sdcMicroObj(obj, type="origData")[,get.sdcMicroObj(obj, type="keyVars")]
-  b <- ls$xAnon
-  w = which(is.na(a))
-  r = w%%nrow(a)
-  cc = ceiling(w/nrow(a))
-  wb = which(is.na(b))
-  rb = wb%%nrow(b)
-  cb = ceiling(wb/nrow(b))
-  d = data.frame(id=1:ncol(a), before=NA, after=NA)
-  d[,2:3] <- t(sapply(1:ncol(a), function (x) c(sum(cc==x), sum(cb==x))))
-  obj <- set.sdcMicroObj(obj, type="localSuppression", input=list(list(d$after-d$before)))
+  ls$xAnon <- NULL
+  class(ls) <- unclass("list")
+  obj <- set.sdcMicroObj(obj, type="localSuppression", input=list(ls))
   obj <- calcRisks(obj)
   obj
 })
@@ -591,4 +586,30 @@ plot.localSuppression <- function(x, ...) {
   p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))
   p
 }
+
+#' @export
+kAnon <- function(obj, k = 2, importance = NULL, combs=NULL, ...) {
+  localSuppression(obj, k=k, importance=importance, combs=combs, ...)
+}
+
+setGeneric("kAnon", function(obj, k = 2, importance = NULL, combs=NULL, ...) {
+  standardGeneric("kAnon")
+})
+
+setMethod(f='kAnon', signature=c('sdcMicroObj'),
+definition=function(obj, k=2, importance=NULL, combs=NULL) {
+  localSuppression(obj, k=k, importance=importance, combs=combs)
+})
+
+setMethod(f='kAnon', signature=c("data.frame"),
+definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL) {
+  localSuppression(obj, k=k, keyVars=keyVars, strataVars=strataVars,
+    importance=importance, combs=combs)
+})
+
+setMethod(f='kAnon', signature=c("matrix"),
+definition=function(obj, keyVars, k=2, strataVars=NULL, importance=NULL, combs=NULL) {
+  localSuppression(as.data.frame(obj), keyVars=keyVars, strataVars=strataVars,
+    importance=importance, combs=combs)
+})
 

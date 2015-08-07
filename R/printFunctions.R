@@ -124,22 +124,27 @@ definition = function(x, type = "freq", ...) {
     }
   } else if (type == "ls") {
     keyVars <- colnames(obj@manipKeyVars)
-    maxnam <- max(sapply(keyVars, nchar, type = "width"))
-    if (is.null(obj@localSuppression))
-      lsup <- list(rep(0, length(keyVars))) else lsup <- obj@localSuppression
-    for (i in 1:length(keyVars)) {
-      nam <- keyVars[i]
-      n <- nrow(obj@origData)
-      cat("\n")
-      cat(keyVars[i], paste(rep(".", 2 + maxnam - nchar(nam, type = "width")), collapse = ""),
-        lsup[[1]][i])
-      cat(" [", round(100 * lsup[[1]][i]/n, 3), "%]\n")
+    ls <- get.sdcMicroObj(obj, "localSuppression")
+    supps <- ls$supps
+    if ( is.null(supps) ) {
+      cat("local Suppression has not been applied!\n")
+    } else {
+      if ( nrow(supps) > 1 ) {
+        cat("Suppression was performed by strata given by variables:", paste0(ls$strataVars, collapse=", "),"!\n")
+      } else {
+        supps_perc <- as.numeric(100*(supps[nrow(supps)]/nrow(obj@origData)))
+        supps_perc <- formatC(supps_perc, format="f", digits=3)
+        out <- data.table(keyVars, xx="|", supps=as.numeric(supps), y="|",supps_perc)
+        setnames(out, c("KeyVar", "|","Suppressions (#)","|","Suppressions (%)"))
+        print(out, row.names=F)
+      }
     }
   } else if (type == "recode") {
     cat("Reported is the")
     cat("\n")
     cat(" number | mean size and | size of smallest category")
     cat("\n")
+
     k <- length(obj@keyVars)
     tab <- tab2 <- ssize <- ssize2 <- msize <- msize2 <- numeric(k)
     names(tab) <- colnames(obj@origData)[obj@keyVars]
@@ -163,7 +168,7 @@ definition = function(x, type = "freq", ...) {
         cat(nam, paste(rep(".", 2 + maxnam - nchar(nam, type = "width")), collapse = ""),
           tab[i], "|", msize[i], "|", ssize[i], "\n     (orig:", tab2[i], "|", msize2[i],
           "|", ssize2[i], ") \n") else cat(nam, paste(rep(".", 2 + maxnam - nchar(nam, type = "width")), collapse = ""),
-        tab[i], "|", msize[i], "|", ssize[i], "\n ")
+        tab[i], "|", msize[i], "|", ssize[i], "\n")
     }
   } else if (type == "numrisk") {
     risk <- obj@risk
