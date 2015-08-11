@@ -70,7 +70,7 @@ definition = function(obj, type = "fk") {
 #' print(sdc,type="kAnon")
 #'
 setMethod(f = "print", signature = c("sdcMicroObj"),
-definition = function(x, type = "freq", ...) {
+definition = function(x, type = "kAnon", ...) {
   if ( !type %in% c("kAnon","ls","pram","recode","risk","numrisk","general") ) {
     stop(paste("type=", type, "is unknown."))
   }
