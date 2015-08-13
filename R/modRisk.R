@@ -151,6 +151,7 @@ definition = function(obj, method = "default", weights, formulaM, bound=Inf) {
     sum(as.numeric(freq == 1) * risk)
   }
 
+  . <- inclProb <- counts <- id <- Fk <- NULL
   x <- obj
   if ( !is.data.frame(x) ) {
     stop("input 'x' must be a data.frame!\n")

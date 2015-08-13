@@ -47,28 +47,18 @@
 #' Statistical Databases. Lecture Notes in Computer Science.  Springer-Verlag,
 #' 82--93.
 #' @keywords manip
+#' @note LLmodGlobalRisk is depcrecated for \code{\link{modRisk}} and is only
+#' provided for compatibility with older versions of this package. It may be removed
+#' in future versions.
+#' @seealso \code{\link{modRisk}}
 #' @export
-#' @examples
-#'
-#' data(testdata2)
-#' x <- testdata2[,c("sex","water","roof")]
-#' res <- LLmodGlobalRisk(x, form=~sex+water+roof,
-#'            inclProb=1/testdata2[,"sampling_weight"])
-#' res$gr1; res$gr2
-#'
-#' ## for objects of class sdcMicro:
-#' data(testdata2)
-#' sdc <- createSdcObj(testdata2,
-#'   keyVars=c('urbrur','roof','walls','electcon','relat','sex'),
-#'   numVars=c('expend','income','savings'), w='sampling_weight')
-#' sdc <- LLmodGlobalRisk(sdc,form=~sex+water+roof)
-#'
 setGeneric("LLmodGlobalRisk", function(obj, method = "IPF", inclProb = NULL, form = NULL, modOutput = FALSE) {
   standardGeneric("LLmodGlobalRisk")
 })
 
 setMethod(f = "LLmodGlobalRisk", signature = c("sdcMicroObj"),
 definition = function(obj, method = "IPF", inclProb = NULL, form = NULL, modOutput = FALSE) {
+  .Deprecated("modRisk")
   if (is.null(form)) {
     x <- get.sdcMicroObj(obj, type = "manipKeyVars")
     form <- as.formula(paste(" ~ ", paste(colnames(x), collapse = "+")))
@@ -102,6 +92,7 @@ definition = function(obj, method = "IPF", inclProb = NULL, form = NULL, modOutp
 
 setMethod(f = "LLmodGlobalRisk", signature = c("data.frame"),
 definition = function(obj, method = "IPF", inclProb = NULL, form = NULL, modOutput = FALSE) {
+  .Deprecated("modRisk")
   if (is.null(form)) {
     form <- as.formula(paste(" ~ ", paste(colnames(obj), collapse = "+")))
   }
@@ -110,6 +101,7 @@ definition = function(obj, method = "IPF", inclProb = NULL, form = NULL, modOutp
 
 setMethod(f = "LLmodGlobalRisk", signature = c("matrix"),
 definition = function(obj, method = "IPF", inclProb = NULL, form = NULL, modOutput = FALSE) {
+  .Deprecated("modRisk")
   if (is.null(form)) {
     form <- as.formula(paste(" ~ ", paste(colnames(obj), collapse = "+")))
   }
