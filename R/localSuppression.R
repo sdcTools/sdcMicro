@@ -534,7 +534,7 @@ print.localSuppression <- function(x, ...) {
 #' @param x object of class \sQuote{localSuppression}
 #' @param \dots Additional arguments, currently available are:
 #' \itemize{
-#' \item showDetails logical, if setn a plot of suppressions by
+#' \item showDetails logical, if set, a plot of suppressions by
 #' strata is shown (if possible)
 #' }
 #' @author Bernhard Meindl, Matthias Templ
