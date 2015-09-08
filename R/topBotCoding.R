@@ -1,6 +1,6 @@
 setGeneric('topBotCoding', function(obj, value, replacement, kind="top", column=NULL) {standardGeneric('topBotCoding')})
 setMethod(f='topBotCoding', signature=c('sdcMicroObj'),
-    definition=function(obj, value, replacement, kind="top", column=NULL) { 
+    definition=function(obj, value, replacement, kind="top", column=NULL) {
       manipNumVars <- get.sdcMicroObj(obj, type="manipNumVars")
       manipKeyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
       o <- get.sdcMicroObj(obj, type="origData")
@@ -20,21 +20,21 @@ setMethod(f='topBotCoding', signature=c('sdcMicroObj'),
         obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(manipKeyVars))
         obj <- measure_risk(obj)
       } else if(column%in%colnames(manipPramVars)){
-		x <- manipPramVars[,column]
-		if(!is.numeric(x))
-			stop("Only numeric variables can be top or bottom coded.")
-		manipPramVars[,column] <- topBotCodingWORK(x, value=value,replacement=replacement,kind=kind,column=column)
-		obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))
-		obj <- measure_risk(obj)
-	} else if(column%in%colnames(o)){
+    x <- manipPramVars[,column]
+    if(!is.numeric(x))
+      stop("Only numeric variables can be top or bottom coded.")
+    manipPramVars[,column] <- topBotCodingWORK(x, value=value,replacement=replacement,kind=kind,column=column)
+    obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))
+    obj <- measure_risk(obj)
+  } else if(column%in%colnames(o)){
         stop("topBotCoding on variable which is neither a categorical nor a numeric key variable.")
       }else
         stop("variable could not be found in the data set")
       invisible(obj)
     })
 setMethod(f='topBotCoding', signature=c("ANY"),
-    definition=function(obj, value, replacement, kind="top", column=NULL) { 
-      topBotCodingWORK(x=obj,value, replacement, kind="top", column=NULL)
+    definition=function(obj, value, replacement, kind="top", column=NULL) {
+      topBotCodingWORK(x=obj,value, replacement, kind=kind, column=column)
     })
 
 
