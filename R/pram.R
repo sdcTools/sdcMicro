@@ -57,6 +57,13 @@
 #'   keyVars=c('roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- pram(sdc, variables=c("urbrur"))
+#' 
+#' # this is equal to the previous application:
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight',
+#'   pramVars="urbrur")
+#' sdc <- pram(sdc)
 #'
 #' ## using a custom strata variable
 #' # we want to apply pram to variable 'urbrur' for each group of variable 'urbrur'
@@ -67,6 +74,7 @@
 #'   keyVars=c('walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sv <- testdata$urbrur
+#' # new category for those that observations that should not change:
 #' sv[testdata$roof==4] <- max(sv)+1
 #' sdc <- pram(sdc, variables=c("roof"), strata_variables=sv)
 #' orig <- get.sdcMicroObj(sdc, "origData")$roof
