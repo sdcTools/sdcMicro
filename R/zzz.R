@@ -1,13 +1,9 @@
-.onAttach <- function(lib,pkg)
-{
-	packageStartupMessage("\n--------\n\n")   
-	packageStartupMessage("for references have a look at\n")
-	packageStartupMessage("citation('sdcMicro')    \n")                 
-	packageStartupMessage("\n Note that since version 2.6.6. the graphical user-interface is provided\n by package sdcMicroGUI.\n")
-	packageStartupMessage("--------\n\n")
-  packageStartupMessage("Suggestions and bug-reports can be submitted at: https://github.com/alexkowa/sdcMicro/issues")
-   
+.onAttach <- function(lib, pkg) {
+  msg <- "--------\n"
+  msg <- paste0(msg, "This is sdcMicro v",utils::packageVersion("sdcMicro"),".\n")
+  msg <- paste0(msg, "For references, please have a look at citation('sdcMicro')\n")
+  msg <- paste0(msg, "Note: since version 2.6.6, the graphical user-interface is provided by package sdcMicroGUI.\n")
+  msg <- paste0(msg, "Please submit suggestions and bugs at: https://github.com/alexkowa/sdcMicro/issues\n")
+  msg <- paste0(msg,"--------")
+  packageStartupMessage(msg)
 }
-
-
-

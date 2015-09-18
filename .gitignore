@@ -2,3 +2,5 @@
 *.so
 *.dll
 .project
+.Rproj.user
+*.Rproj

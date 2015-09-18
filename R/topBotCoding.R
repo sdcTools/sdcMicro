@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 setGeneric('topBotCoding', function(obj, value, replacement, kind="top", column=NULL) {standardGeneric('topBotCoding')})
 setMethod(f='topBotCoding', signature=c('sdcMicroObj'),
     definition=function(obj, value, replacement, kind="top", column=NULL) {
@@ -62,6 +63,8 @@ topBotCodingWORK <- function(x, value, replacement, kind="top", column=NULL){ #C
     } else{
       x[x < value ] <- replacement
 =======
+=======
+>>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
 #' Top and Bottom Coding
 #'
 #' Function for Top and Bottom Coding.
@@ -166,6 +169,9 @@ topBotCodingWORK <- function(x, value, replacement, kind = "top", column = NULL)
       x[x > value] <- replacement
     } else {
       x[x < value] <- replacement
+<<<<<<< HEAD
+>>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
+=======
 >>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
     }
     x <- as.factor(x)
@@ -173,7 +179,10 @@ topBotCodingWORK <- function(x, value, replacement, kind = "top", column = NULL)
   invisible(x)
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
 =======
 >>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319

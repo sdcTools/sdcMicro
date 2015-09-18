@@ -1,8 +1,13 @@
 ###################################################
 # LLmodRisk Function
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Calculates two disclosure risk measures with 
 # four possible log-linear models (standard, CE, PSE, weightedLLM)
+=======
+# Calculates two disclosure risk measures with
+# five possible log-linear models (standard, CE, PSE, weightedLLM, IPF)
+>>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
 =======
 # Calculates two disclosure risk measures with
 # five possible log-linear models (standard, CE, PSE, weightedLLM, IPF)
@@ -11,6 +16,7 @@
 # 2. estimates the number of correct matches of sample uniques
 ###################################################
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 ###################################################
 #library(sdcMicro)
@@ -29,6 +35,8 @@ modRisk <- function (x, method = "standard", weights = NULL, formulaM = NULL, ke
     formulaM = as.formula(paste(" ~ ", paste(c(as.character(keyVars)), collapse = "+")))
   }
 =======
+=======
+>>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
 #' Global risk using log-linear models.
 #'
 #' The sample frequencies are assumed to be independent and following a Poisson
@@ -162,6 +170,9 @@ definition = function(obj, method = "default", weights, formulaM, bound=Inf) {
 # todo: modRisk-data.frame() should be the workhorse
 setMethod(f = "modRisk", signature = c("data.frame"),
 definition = function(obj, method = "default", weights, formulaM, bound=Inf) {
+<<<<<<< HEAD
+>>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
+=======
 >>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
   risk1 <- function(l, p) {
     v = (1 - p) * l
@@ -174,6 +185,7 @@ definition = function(obj, method = "default", weights, formulaM, bound=Inf) {
   file_risk <- function(freq, risk) {
     sum(as.numeric(freq == 1) * risk)
   }
+<<<<<<< HEAD
 <<<<<<< HEAD
   
   # all sample keys and their counts
@@ -240,6 +252,8 @@ definition = function(obj, method = "default", weights, formulaM, bound=Inf) {
   res <- list(popunique=gr1, matches=gr2)
 }
 =======
+=======
+>>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
 
   . <- inclProb <- counts <- id <- Fk <- NULL
   x <- obj
@@ -371,4 +385,7 @@ print.modrisk <- function(x, ...) {
   cat(paste0("\tRisk-Measure 1: ", prettyF(x$gr1, digits=3)," (",prettyF(x$gr1perc, digits=3)," %)\n"))
   cat(paste0("\tRisk-Measure 2: ", prettyF(x$gr2, digits=3)," (",prettyF(x$gr2perc, digits=3)," %)\n"))
 }
+<<<<<<< HEAD
+>>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
+=======
 >>>>>>> 339cf5fe97d56497d3d3207964b847ee5d7a9319
