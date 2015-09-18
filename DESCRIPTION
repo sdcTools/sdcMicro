@@ -1,71 +1,71 @@
-Package: sdcMicro  
-Type: Package  
-Title: Statistical Disclosure Control Methods for Anonymization of Microdata and Risk Estimation  
-Version: 4.6.2 
+Package: sdcMicro   
+Type: Package   
+Title: Statistical Disclosure Control Methods for Anonymization of Microdata and Risk Estimation   
+Version: 4.6.3 
 Date: 2015-09-18 
-Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl  
-Maintainer: Matthias Templ <matthias.templ@gmail.com>  
-Description: Data from statistical agencies and other institutions are mostly  
-    confidential. This package can be used for the generation of anonymized  
-    (micro)data, i.e. for the creation of public- and scientific-use files.  
-    In addition, various risk estimation methods are included.  
-    Note that the package 'sdcMicroGUI' includes a graphical user interface for various methods  
-    in this package.  
-LazyData: TRUE  
-ByteCompile: TRUE  
-LinkingTo: Rcpp  
-Depends:  
-    R (>= 2.10), brew, knitr,data.table,xtable  
-Suggests: laeken  
-Imports:  
-    car,  
-    robustbase,  
-    cluster,  
-    MASS,  
-    e1071,  
-    tools,  
-    Rcpp,  
-    methods,  
-    sets,  
-    ggplot2  
-License: GPL-2  
-URL: https://github.com/alexkowa/sdcMicro  
-Collate:  
-    '0classes.r'  
-    'addNoise.r'  
-    'aux_functions.r'  
-    'dataGen.r'  
-    'dataSets.R'  
-    'dRisk.R'  
-    'dRiskRMD.R'  
-    'dUtility.R'  
-    'freqCalc.r'  
-    'globalRecode.R'  
-    'GUIfunctions.R'  
-    'indivRisk.R'  
-    'LLmodGlobalRisk.R'  
-    'LocalRecProg.R'  
-    'localSupp.R'  
-    'localSuppression.R'  
-    'mdav.R'  
-    'measure_risk.R'  
-    'methods.r'  
-    'microaggregation.R'  
-    'modRisk.R'  
-    'plotFunctions.R'  
-    'plotMicro.R'  
-    'pram.R'  
-    'rankSwap.R'  
-    'RcppExports.R'  
-    'report.R'  
-    'sdcMicro-package.R'  
-    'shuffle.R'  
-    'suda2.R'  
-    'timeEstimation.R'  
-    'topBotCoding.R'  
-    'valTable.R'  
-    'zzz.R'  
-    'printFunctions.R'  
-    'mafast.R'  
-    'maG.R'  
-    'show_sdcMicroObj.R'  
+Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl   
+Maintainer: Matthias Templ <matthias.templ@gmail.com>   
+Description: Data from statistical agencies and other institutions are mostly   
+    confidential. This package can be used for the generation of anonymized   
+    (micro)data, i.e. for the creation of public- and scientific-use files.   
+    In addition, various risk estimation methods are included.   
+    Note that the package 'sdcMicroGUI' includes a graphical user interface for various methods   
+    in this package.   
+LazyData: TRUE   
+ByteCompile: TRUE   
+LinkingTo: Rcpp   
+Depends:   
+    R (>= 2.10), brew, knitr,data.table,xtable   
+Suggests: laeken   
+Imports:   
+    car,   
+    robustbase,   
+    cluster,   
+    MASS,   
+    e1071,   
+    tools,   
+    Rcpp,   
+    methods,   
+    sets,   
+    ggplot2   
+License: GPL-2   
+URL: https://github.com/alexkowa/sdcMicro   
+Collate:   
+    '0classes.r'   
+    'addNoise.r'   
+    'aux_functions.r'   
+    'dataGen.r'   
+    'dataSets.R'   
+    'dRisk.R'   
+    'dRiskRMD.R'   
+    'dUtility.R'   
+    'freqCalc.r'   
+    'globalRecode.R'   
+    'GUIfunctions.R'   
+    'indivRisk.R'   
+    'LLmodGlobalRisk.R'   
+    'LocalRecProg.R'   
+    'localSupp.R'   
+    'localSuppression.R'   
+    'mdav.R'   
+    'measure_risk.R'   
+    'methods.r'   
+    'microaggregation.R'   
+    'modRisk.R'   
+    'plotFunctions.R'   
+    'plotMicro.R'   
+    'pram.R'   
+    'rankSwap.R'   
+    'RcppExports.R'   
+    'report.R'   
+    'sdcMicro-package.R'   
+    'shuffle.R'   
+    'suda2.R'   
+    'timeEstimation.R'   
+    'topBotCoding.R'   
+    'valTable.R'   
+    'zzz.R'   
+    'printFunctions.R'   
+    'mafast.R'   
+    'maG.R'   
+    'show_sdcMicroObj.R'   
