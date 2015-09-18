@@ -14,7 +14,9 @@
 #' @param variables Names of variables in 'obj' on which post-randomization
 #' should be applied. If obj is a vector, this argument is ignored.
 #' @param strata_variables Names of variables for stratification (will be set
-#' automatically for an object of class \code{\link{sdcMicroObj-class}}
+#' automatically for an object of class \code{\link{sdcMicroObj-class}}. One can also specify
+#' an integer vector or factor that specifies that desired groups. This vector must match the dimension
+#' of the input data set, however. For a possible use case, have a look at the examples.
 #' @param ...  further input, currently ignored.
 #' @param pd minimum diagonal entries for the generated transition matrix P.
 #' Either a vector of length 1 or a vector of length ( number of categories ).
@@ -56,6 +58,20 @@
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- pram(sdc, variables=c("urbrur"))
 #'
+#' ## using a custom strata variable
+#' # we want to apply pram to variable 'urbrur' for each group of variable 'urbrur'
+#' # however: values no value should be changed where roof==4
+#' # thus, we are creating a new value for these observations
+#' data(testdata)
+#' sdc <- createSdcObj(testdata,
+#'   keyVars=c('walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sv <- testdata$urbrur
+#' sv[testdata$roof==4] <- max(sv)+1
+#' sdc <- pram(sdc, variables=c("roof"), strata_variables=sv)
+#' orig <- get.sdcMicroObj(sdc, "origData")$roof
+#' pramed <- get.sdcMicroObj(sdc, "manipPramVars")$roof
+#' all(pramed[orig==4]==4) # nothing has changed!
 setGeneric("pram", function(obj, variables = NULL, strata_variables = NULL,
   pd = 0.8, alpha = 0.5) {
   standardGeneric("pram")
@@ -101,14 +117,24 @@ definition = function(obj, variables = NULL, strata_variables = NULL, pd = 0.8, 
   if (!exists("manipData")) {
     manipData <- obj@origData[, pramVars, drop = FALSE]
   }
-  if (!is.null(strata_variables)) {
-    sData <- get.sdcMicroObj(obj, type = "origData")[, strata_variables, drop = FALSE]
+
+  if ( !is.null(strata_variables) ) {
+    # case 1: character vector
+    if ( is.character(strata_variables) ) {
+      sData <- get.sdcMicroObj(obj, type = "origData")[, strata_variables, drop = FALSE]
+    }
+    if ( class(strata_variables) %in% c("integer","numeric","factor") ) {
+      sData <- data.table(strat=strata_variables)
+      if ( nrow(sData) != nrow(manipData) ) {
+        stop("Dimension of 'strata_variables' does not match with dimension of dataset!\n")
+      }
+    }
     manipData <- cbind(manipData, sData)
-    strataVars <- c(length(pramVars):length(manipData))
+    strataVars <- c((length(pramVars)+1):length(manipData))
   } else if (length(strataVars) > 0) {
     sData <- get.sdcMicroObj(obj, type = "origData")[, strataVars, drop = FALSE]
     manipData <- cbind(manipData, sData)
-    strataVars <- c(length(pramVars):length(manipData))
+    strataVars <- c((length(pramVars)+1):length(manipData))
   }
 
   res <- pramWORK(data = manipData, variables = pramVars, strata_variables = strataVars,
@@ -267,69 +293,65 @@ pramWORK <- function(data, variables = NULL, strata_variables = NULL, pd = 0.8, 
     stop("Please define valid variables to pram!\n")
   }
 
+  data <- as.data.table(data)
   if (length(strata_variables) > 0) {
-    data$idvarpram <- 1:nrow(data)
-    fac <- list()
-    chara <- list()
-    f <- rep("", nrow(data))
-    for (sv in strata_variables) {
-      f <- paste(f, as.character(data[, sv]), "_", sep = "")
-    }
-    f <- as.factor(f)
-    s <- split(data[, c(variables, "idvarpram"), drop = FALSE], f)
+    data[,idvarpram:=1:.N]
+    fac <- chara <- list()
+
+    f <- as.factor(apply(data[,strata_variables,with=F],1,paste0, collapse="_"))
+    data[,tmpfactor_for_pram:=f]
+    s <- split(data[, c(variables, "idvarpram"), with = FALSE], f)
     for (i in 1:length(variables)) {
       v <- variables[i]
+      cmd <- paste0("data[,",v,"_pram:='']")
+      eval(parse(text=cmd))
+
       fac[[i]] <- FALSE
-      if (!is.factor(data[, v]) & is.character(data[, v])) {
+      if (!is.factor(data[[v]]) & is.character(data[[v]])) {
         fac[[i]] <- TRUE
         chara[[i]] <- TRUE
-      } else if (!is.factor(data[, v]) & is.numeric(data[, v])) {
+      } else if (!is.factor(data[[v]]) & is.numeric(data[[v]])) {
         chara[[i]] <- FALSE
-        data[, v] <- as.character(data[, v])
       } else {
         fac[[i]] <- TRUE
-        data[, v] <- as.character(data[, v])
       }
-      for (si in 1:length(s)) {
-        s[[si]][, paste(v, "_pram", sep = "")] <- as.character(do.pram(x = as.factor(s[[si]][,
-          v]), pd = pd, alpha = alpha)$xpramed)
+      ll <- levels(f)
+      for ( si in ll ) {
+        res <- do.pram(x = as.factor(data[tmpfactor_for_pram==si][[v]]), pd = pd, alpha = alpha)$xpramed
+        cmd <- paste0("data[tmpfactor_for_pram==",si,",",v,"_pram:=as.character(res)]")
+        eval(parse(text=cmd))
       }
-    }
-    r <- vector()
-    for (si in 1:length(s)) {
-      r <- rbind(r, s[[si]])
-    }
-    r <- r[order(r$idvarpram), ]  # fix order
-    for (i in 1:length(variables)) {
-      v <- variables[i]
-      if (!fac[[i]]) {
-        if (chara[[i]]) {
-          data[, v] <- as.character(data[, v])
-          data[, paste(v, "_pram", sep = "")] <- as.character(r[, paste(v, "_pram",
-          sep = "")])
+      # correct output class
+      if ( !fac[[i]] ) {
+        if ( chara[[i]] ) {
+          cmd <- paste0("data[,",v,"_pram:=as.character(",v,"_pram)]")
         } else {
-          data[, v] <- as.numeric(data[, v])
-          data[, paste(v, "_pram", sep = "")] <- as.numeric(r[, paste(v, "_pram", sep = "")])
+          cmd <- paste0("data[,",v,"_pram:=as.numeric(",v,"_pram)]")
         }
       } else {
-        data[, v] <- as.factor(data[, v])
-        data[, paste(v, "_pram", sep = "")] <- as.factor(r[, paste(v, "_pram", sep = "")])
+        cmd <- paste0("data[,",v,"_pram:=as.factor(",v,"_pram)]")
       }
+      eval(parse(text=cmd))
     }
-    data <- data[, -which(colnames(data) == "idvarpram"), drop = FALSE]
+    setkey(data, idvarpram)
+    data[,c("idvarpram","tmpfactor_for_pram"):=NULL]
   } else {
     for (v in variables) {
-      if (is.factor(data[, v]))
-        data[, paste(v, "_pram", sep = "")] <- do.pram(x = data[, v], pd = pd, alpha = alpha)$xpramed else if (is.numeric(data[, v])) {
-        data[, paste(v, "_pram", sep = "")] <- as.numeric(as.character(do.pram(x = as.factor(as.character(data[,
-          v])), pd = pd, alpha = alpha)$xpramed))
-      } else if (is.character(data[, v])) {
-        data[, paste(v, "_pram", sep = "")] <- as.character(do.pram(as.factor(x = data[,
-          v]), pd = pd, alpha = alpha)$xpramed)
+      pV <- data[[v]]
+      if ( is.factor(pV) ) {
+        res <- do.pram(x=pV, pd=pd, alpha=alpha)$xpramed
+        cmd <- paste0("data[,",v,"_pram:=res]")
+      } else if ( is.numeric(pV) ) {
+        res <- do.pram(x=as.factor(as.character(pV)), pd=pd, alpha=alpha)$xpramed
+        cmd <- paste0("data[,",v,"_pram:=as.numeric(as.character(res))]")
+      } else if ( is.character(pV) ) {
+        res <- do.pram(x=as.factor(pV), pd=pd, alpha=alpha)$xpramed
+        cmd <- paste0("data[,",v,"_pram:=as.factor(res)]")
       }
+      eval(parse(text=cmd))
     }
   }
-  res <- data
+  res <- as.data.frame(data)
   class(res) <- "pram"
   invisible(res)
 }
