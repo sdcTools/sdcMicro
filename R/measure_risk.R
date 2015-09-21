@@ -313,6 +313,18 @@ definition = function(obj, ldiv_index, l_recurs_c = 2, missing = -999) {
   k <- obj@manipKeyVars
   n <- obj@manipNumVars
   s <- obj@manipStrataVar
+  ldiv_index <- ldiv_index
+  if ( is.null(ldiv_index) ) {
+    sensVar <- get.sdcMicroObj(obj, "sensibleVar")
+    if ( is.null(sensVar) ) {
+      err <- paste0("You need to specify argument 'sensibleVar' in 'createSdcObj()'")
+      err <- paste0(err, " or specify it directly (argument 'ldiv_index') so that the")
+      err <- paste0(err, " ldiversity risk-measure can be calculated!\n")
+      stop(err)
+    } else{
+      ldiv_index <- sensVar
+    }
+  }
   if (!is.null(k))
     o[, colnames(k)] <- k
   if (!is.null(n))
