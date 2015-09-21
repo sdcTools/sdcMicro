@@ -57,7 +57,7 @@
 #'   keyVars=c('roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- pram(sdc, variables=c("urbrur"))
-#' 
+#'
 #' # this is equal to the previous application:
 #' sdc <- createSdcObj(testdata2,
 #'   keyVars=c('roof','walls','water','electcon','relat','sex'),
@@ -191,8 +191,12 @@ definition = function(obj, variables = NULL, strata_variables = NULL, pd = 0.8, 
 
 setMethod(f = "pram", signature = c("vector"),
 definition = function(obj, variables = NULL, strata_variables = NULL, pd = 0.8, alpha = 0.5) {
-  xx <- data.frame(x = obj, stringsAsFactors = FALSE)
-  pramWORK(data = xx, variables = "x", strata_variables = NULL, pd = pd, alpha = alpha)
+  if ( !is.null(strata_variables) ) {
+    xx <- data.frame(x = obj, strata=strata_variables, stringsAsFactors = FALSE)
+  } else {
+    xx <- data.frame(x = obj, stringsAsFactors = FALSE)
+  }
+  pramWORK(data = xx, variables = "x", strata_variables = strata_variables, pd = pd, alpha = alpha)
 })
 
 # handling of NA and NULL Values for weight-vector with strata x <-
@@ -326,7 +330,7 @@ pramWORK <- function(data, variables = NULL, strata_variables = NULL, pd = 0.8, 
       ll <- levels(f)
       for ( si in ll ) {
         res <- do.pram(x = as.factor(data[tmpfactor_for_pram==si][[v]]), pd = pd, alpha = alpha)$xpramed
-        cmd <- paste0("data[tmpfactor_for_pram==",si,",",v,"_pram:=as.character(res)]")
+        cmd <- paste0("data[tmpfactor_for_pram==",shQuote(si),",",v,"_pram:=as.character(res)]")
         eval(parse(text=cmd))
       }
       # correct output class
