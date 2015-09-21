@@ -303,12 +303,12 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
 #' @param l_recurs_c l-Diversity Constant
 #' @note internal function
 #' @author Bernhard Meindl \email{bernhard.meindl@@statistik.gv.at}
-setGeneric("ldiversity", function(obj, ldiv_index, l_recurs_c = 2, missing = -999, ...) {
+setGeneric("ldiversity", function(obj, ldiv_index=NULL, l_recurs_c = 2, missing = -999, ...) {
   standardGeneric("ldiversity")
 })
 
 setMethod(f = "ldiversity", signature = c("sdcMicroObj"),
-definition = function(obj, ldiv_index, l_recurs_c = 2, missing = -999) {
+definition = function(obj, ldiv_index=NULL, l_recurs_c = 2, missing = -999) {
   o <- obj@origData
   k <- obj@manipKeyVars
   n <- obj@manipNumVars
