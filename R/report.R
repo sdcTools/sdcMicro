@@ -222,7 +222,11 @@ definition = function(obj, internal, title, outdir) {
   ## information about anonymisation methods
   delDirect <- get.sdcMicroObj(obj, "deletedVars")
   modCat <- sum(!(x[, get.sdcMicroObj(obj, "keyVars")] == get.sdcMicroObj(obj, "manipKeyVars")),na.rm = TRUE) > 0
-  modNum <- sum(!(x[, get.sdcMicroObj(obj, "numVars")] == get.sdcMicroObj(obj, "manipNumVars")),na.rm = TRUE) > 0
+  if ( is.null(get.sdcMicroObj(obj, "manipNumVars"))) {
+    modNum <- NA
+  } else {
+    modNum <- sum(!(x[, get.sdcMicroObj(obj, "numVars")] == get.sdcMicroObj(obj, "manipNumVars")),na.rm = TRUE) > 0
+  }
   modPram <- !is.null(get.sdcMicroObj(obj, "pram"))
   modLocSupp <- !is.null(get.sdcMicroObj(obj, "localSuppression"))
 
@@ -345,13 +349,18 @@ definition = function(obj, internal, title, outdir) {
     dataUtility <- list()
     for (i in y1cn) {
       dataUtility[[i]] <- list()
-      maxcols <- length(unique(x[, i]))  #max(apply(x[, y1cn], 2, function(x) length(unique(x))))
+      dat_o <- table(y1[,ind], useNA="always")
+      dat_m <- table(factor(y1[, ind]), useNA="always")
+
+      maxcols <- length(names(dat_o))
       df <- data.frame(matrix(, ncol = maxcols, nrow = 4))  #length(y1cn)))
       colnames(df) <- paste(1:maxcols)
-      df[1, ] <- levels(factor(x[, i]))
-      df[2, ] <- table(factor(x[, i]))
-      df[4, ] <- extend(table(factor(y1[, ind])), maxcols)
-      df[3, ] <- extend(levels(factor(y1[, ind])), maxcols)
+      df[1, ] <- names(dat_o)
+      df[1,maxcols] <- "NA"
+      df[2, ] <- dat_o
+      df[4, ] <- extend(dat_m, maxcols)
+      df[3, ] <- extend(names(dat_m), maxcols)
+      df[3,maxcols] <- "NA"
       rownames(df) <- c("categories1", "orig", "categories2", "recoded")
       ww <- which(colnames(x) %in% i)
 
@@ -377,13 +386,13 @@ definition = function(obj, internal, title, outdir) {
   }
 
   ## information about data-utility for continous variables nothing to show
-  if (ncol(y2) == 0) {
+  if ( is.null(y2) || ncol(y2) == 0 ) {
     repObj <- set.reportObj(repObj, "dataUtilityCont.show", list(FALSE))
   }
 
   if (get.reportObj(repObj, "dataUtilityCont.show")) {
-    s <- apply(x[, y2cn, drop = FALSE], 2, summary, na.rm = TRUE)
-    ss <- apply(y2, 2, function(x) round(summary(x, na.rm = TRUE), 1))
+    s <- apply(na.omit(x[, y2cn, drop = FALSE]), 2, summary)
+    ss <- apply(na.omit(y2), 2, function(x) round(summary(x), 1))
     colnames(ss) <- paste(colnames(ss), ".m", sep = "")
     pNum <- length(get.sdcMicroObj(obj, "numVars"))
     xx <- cbind(s, ss)
@@ -401,8 +410,8 @@ definition = function(obj, internal, title, outdir) {
       100, 2)))
 
     ### boxplot of differences
-    mi <- min(x[, y2cn, drop = FALSE], y2)
-    ma <- max(x[, y2cn, drop = FALSE], y2)
+    mi <- min(x[, y2cn, drop = FALSE], y2, na.rm=TRUE)
+    ma <- max(x[, y2cn, drop = FALSE], y2, na.rm=TRUE)
     fn <- paste(outdir, "/Graph-", format(Sys.time(), "%d-%m-%Y-%H%M%S"), ".png", sep = "")
     png(filename = fn, height = 400, width = 600)
     b <- boxplot(x[, y2cn], boxwex = 0.1, main = "univariate comparison original vs. perturbed data",
