@@ -152,18 +152,41 @@ definition = function(obj, variables = NULL, aggr = 3, strata_variables = NULL, 
   varsort = 1, transf = "log") {
 
   x <- get.sdcMicroObj(obj, type = "manipNumVars")
-  if (is.null(variables))
+  if (is.null(variables)) {
     variables <- colnames(x)
-  if (!is.null(strata_variables)) {
-    sx <- get.sdcMicroObj(obj, type = "origData")[, strata_variables[!strata_variables %in%
-      variables], drop = FALSE]
+  }
+  strataVars <- get.sdcMicroObj(obj, type = "strataVar")
+
+  if ( !is.null(strata_variables) ) {
+    # case 1: character vector
+    if ( is.character(strata_variables) ) {
+      if ( any(strata_variables %in% variables) ) {
+        err <- "Some variables that should be used for stratification of the dataset should also be microaggregated."
+        err <- paste0(err,"\nThis is not possible. Please check your inputs!\n")
+        stop(err)
+      }
+      sx <- get.sdcMicroObj(obj, type = "origData")[, strata_variables, drop=FALSE]
+      x <- cbind(x, strata=apply(sx, 1, paste0, collapse="_"))
+    }
+    if ( class(strata_variables) %in% c("integer","numeric","factor") ) {
+      sx <- data.table(strata=strata_variables)
+      if ( nrow(sx) != nrow(x) ) {
+        stop("Dimension of 'strata_variables' does not match with dimension of dataset!\n")
+      }
+      x <- cbind(x, strata=sx$strat)
+    }
+    strataVars <- "strata"
+  } else if (length(strataVars) > 0) {
+    sx <- get.sdcMicroObj(obj, type = "origData")[, strataVars, drop = FALSE]
     x <- cbind(x, sx)
+    strataVars <- tail(colnames(x),1)
   }
 
   if (!is.null(weights) && !is.null(get.sdcMicroObj(obj, type = "weightVar"))) {
     weights <- get.sdcMicroObj(obj, type = "origData")[, get.sdcMicroObj(obj, type = "weightVar")]
   }
-  res <- microaggregationWORK(x, variables = variables, aggr = aggr, strata_variables = strata_variables,
+
+  res <- microaggregationWORK(x, variables = variables, aggr = aggr, strata_variables = strataVars,
     method = method, weights = weights, nc = nc, clustermethod = clustermethod, opt = opt,
     measure = measure, trim = trim, varsort = varsort, transf = transf)
   obj <- nextSdcObj(obj)
