@@ -45,7 +45,10 @@ the records. So two records are eligible for swapping if their ranks,
 \eqn{i}{i} and \eqn{j}{j} respectively, satisfy \eqn{| i-j | \le \frac{P
 N}{100}}{abs(i-j)<P*N/100}, where \eqn{N}{N} is the total sample size.}
 
-\item{missing}{missing value code.}
+\item{missing}{missing - the value to be used as missing value
+in the C++ routine instead of NA. If NA, a suitable value is calculated internally.
+Note that in the returned dataset, all NA-values (if any) will be replaced with
+this value.}
 
 \item{seed}{Seed.}
 }
