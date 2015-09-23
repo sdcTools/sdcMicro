@@ -9,12 +9,12 @@
 #' @import 'cluster'
 #' @import 'e1071'
 #' @import 'tools'
-#' @import 'brew'
 #' @import 'knitr'
 #' @import 'xtable'
 #' @import 'data.table'
 #' @import 'ggplot2'
 #' @importFrom 'sets' 'set_power'
+#' @importFrom 'rmarkdown' 'render'
 
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))
 setClassUnion("numericOrNULL", c("numeric", "NULL"))

@@ -4,98 +4,35 @@ setClass(Class = "reportObj",
     origData = "dataframeOrNULL",
     impFile = "characterOrNULL",
     nrObs = "numericOrNULL",
-    tabKeyVars = "dataframeOrNULL",
-    sensiblecn = "numericOrNULL",
-    delDirect = "characterOrNULL",
-    modCat = "logicalOrNULL",
-    modNum = "logicalOrNULL",
-    modPram = "logicalOrNULL",
-    modLocSupp = "logicalOrNULL",
-    pram.show = "logical",
-    pram.changedVars = "listOrNULL",
-    pram.totChanges = "numericOrNULL",
-    pram.percChanges = "numericOrNULL",
-    kAnon.show = "logical",
-    kAnon.two.anon = "numericOrNULL",
-    kAnon.two.anon.unmod = "numericOrNULL",
-    kAnon.three.anon = "numericOrNULL",
-    kAnon.three.anon.unmod = "numericOrNULL",
-    kAnon.two.anon.perc = "numericOrNULL",
-    kAnon.two.anon.unmod.perc = "numericOrNULL",
-    kAnon.three.anon.perc = "numericOrNULL",
-    kAnon.three.anon.unmod.perc = "numericOrNULL",
-    indivRisk.show = "logical",
-    indivRisk.expReidentifications = "numericOrNULL",
-    indivRisk.expReidentifications.perc = "numericOrNULL",
-    indivRisk.unmodified = "numericOrNULL",
-    indivRisk.highest = "dataframeOrNULL",
-    hierRisk.show = "logical",
-    hierRisk.expReindent = "numericOrNULL",
-    hierRisk.expReindent.perc = "numericOrNULL",
-    hierRisk.expReindentOrig = "numericOrNULL",
-    hierRisk.expReindentOrig.perc = "numericOrNULL",
-    riskNumKeyVars.show = "logical",
-    riskNumKeyVars.risk = "numericOrNULL",
-    dataUtility.show = "logical",
-    dataUtility.info = "listOrNULL",
-    localSupps.show = "logical",
-    localSupps.tab = "dataframeOrNULL",
-    dataUtilityCont.show = "logical",
-    dataUtilityCont.tabSummary = "dataframeOrNULL",
-    dataUtilityCont.IL1 = "numericOrNULL",
-    dataUtilityCont.diffEigen = "numericOrNULL",
-    dataUtilityCont.plotName = "characterOrNULL",
+    importantVariables = "listOrNULL",
+    modifications = "listOrNULL",
+    pram = "listOrNULL",
+    kAnon = "listOrNULL",
+    indivRisk = "listOrNULL",
+    hierRisk = "listOrNULL",
+    riskNumKeyVars = "listOrNULL",
+    dataUtility = "listOrNULL",
+    localSupps = "listOrNULL",
+    dataUtilityCont = "listOrNULL",
     code = "listOrNULL",
-    sessionInfo.show = "logical",
-    sessionInfo.info = "listOrNULL"),
+    sessionInfo = "listOrNULL"),
   prototype = prototype(
     title = "SDC-Report",
     origData = NULL,
     impFile = NULL,
     nrObs = NULL,
-    sensiblecn = NULL,
-    delDirect = NULL,
-    modCat = NULL,
-    modNum = NULL,
-    modPram = NULL,
-    modLocSupp = NULL,
-    pram.show = FALSE,
-    pram.changedVars = NULL,
-    pram.totChanges = NULL,
-    pram.percChanges = NULL,
-    kAnon.show = FALSE,
-    kAnon.two.anon = NULL,
-    kAnon.two.anon.unmod = NULL,
-    kAnon.three.anon = NULL,
-    kAnon.three.anon.unmod = NULL,
-    kAnon.two.anon.perc = NULL,
-    kAnon.two.anon.unmod.perc = NULL,
-    kAnon.three.anon.perc = NULL,
-    kAnon.three.anon.unmod.perc = NULL,
-    indivRisk.show = FALSE,
-    indivRisk.expReidentifications = NULL,
-    indivRisk.expReidentifications.perc = NULL,
-    indivRisk.unmodified = NULL,
-    indivRisk.highest = NULL,
-    hierRisk.show = FALSE,
-    hierRisk.expReindent = NULL,
-    hierRisk.expReindent.perc = NULL,
-    hierRisk.expReindentOrig = NULL,
-    hierRisk.expReindentOrig.perc = NULL,
-    riskNumKeyVars.show = FALSE,
-    riskNumKeyVars.risk = NULL,
-    dataUtility.show = FALSE,
-    dataUtility.info = NULL,
-    localSupps.show = FALSE,
-    localSupps.tab = NULL,
-    dataUtilityCont.show = FALSE,
-    dataUtilityCont.tabSummary = NULL,
-    dataUtilityCont.IL1 = NULL,
-    dataUtilityCont.diffEigen = NULL,
-    dataUtilityCont.plotName = NULL,
+    importantVariables = NULL,
+    modifications = NULL,
+    pram = NULL,
+    kAnon = NULL,
+    indivRisk = NULL,
+    hierRisk = NULL,
+    riskNumKeyVars = NULL,
+    dataUtility = NULL,
+    localSupps = NULL,
+    dataUtilityCont = NULL,
     code = NULL,
-    sessionInfo.show = TRUE,
-    sessionInfo.info = NULL),
+    sessionInfo = NULL),
   validity = function(object) {
     return(TRUE)
 })
@@ -120,7 +57,6 @@ setGeneric("set.reportObj", function(object, type, input) {
 
 setMethod(f = "set.reportObj", signature = c("reportObj", "character", "listOrNULL"),
 definition = function(object, type, input) {
-
   ind <- match(type, slotNames(object))
   if (length(ind) == 1) {
     slot(object, type) <- input[[1]]
@@ -137,30 +73,22 @@ setGeneric("calcReportData", function(obj, internal = FALSE, title, outdir) {
 
 setMethod(f = "calcReportData", signature = c("sdcMicroObj"),
 definition = function(obj, internal, title, outdir) {
-  repObj <- new("reportObj")
+  niceF <- function(x) {
+    sprintf("%.3f", x)
+  }
 
+  repObj <- new("reportObj")
   if (internal) {
-    repObj <- set.reportObj(repObj, "pram.show", list(TRUE))
-    repObj <- set.reportObj(repObj, "kAnon.show", list(TRUE))
-    repObj <- set.reportObj(repObj, "indivRisk.show", list(TRUE))
-    repObj <- set.reportObj(repObj, "hierRisk.show", list(TRUE))
-    repObj <- set.reportObj(repObj, "riskNumKeyVars.show", list(TRUE))
-    repObj <- set.reportObj(repObj, "dataUtility.show", list(TRUE))
-    repObj <- set.reportObj(repObj, "localSupps.show", list(TRUE))
-    repObj <- set.reportObj(repObj, "dataUtilityCont.show", list(TRUE))
-    repObj <- set.reportObj(repObj, "riskNumKeyVars.show", list(TRUE))
-    repObj <- set.reportObj(repObj, "sessionInfo.show", list(TRUE))
-  } else {
-    repObj <- set.reportObj(repObj, "pram.show", list(FALSE))
-    repObj <- set.reportObj(repObj, "kAnon.show", list(FALSE))
-    repObj <- set.reportObj(repObj, "indivRisk.show", list(FALSE))
-    repObj <- set.reportObj(repObj, "hierRisk.show", list(FALSE))
-    repObj <- set.reportObj(repObj, "riskNumKeyVars.show", list(FALSE))
-    repObj <- set.reportObj(repObj, "dataUtility.show", list(FALSE))
-    repObj <- set.reportObj(repObj, "localSupps.show", list(FALSE))
-    repObj <- set.reportObj(repObj, "dataUtilityCont.show", list(FALSE))
-    repObj <- set.reportObj(repObj, "riskNumKeyVars.show", list(FALSE))
-    repObj <- set.reportObj(repObj, "sessionInfo.show", list(FALSE))
+    repObj <- set.reportObj(repObj, "pram", list(list()))
+    repObj <- set.reportObj(repObj, "kAnon", list(list()))
+    repObj <- set.reportObj(repObj, "indivRisk", list(list()))
+    repObj <- set.reportObj(repObj, "hierRisk", list(list()))
+    repObj <- set.reportObj(repObj, "riskNumKeyVars", list(list()))
+    repObj <- set.reportObj(repObj, "dataUtility", list(list()))
+    repObj <- set.reportObj(repObj, "localSupps", list(list()))
+    repObj <- set.reportObj(repObj, "dataUtilityCont", list(list()))
+    repObj <- set.reportObj(repObj, "code", list(list()))
+    repObj <- set.reportObj(repObj, "sessionInfo", list(list()))
   }
   repObj <- set.reportObj(repObj, "title", list(title))
 
@@ -176,51 +104,42 @@ definition = function(obj, internal, title, outdir) {
     repObj <- set.reportObj(repObj, "impFile", list(optionss$filename))
   }
 
-  y1cn <- get.sdcMicroObj(obj, type = "keyVars")
-  y1cn <- colnames(x)[y1cn]
+  cn <- colnames(x)
+  y1cn <- get.sdcMicroObj(obj, type = "keyVars"); y1cn <- cn[y1cn]
+  y2cn <- get.sdcMicroObj(obj, type = "numVars"); y2cn <- cn[y2cn]
 
-  y2cn <- get.sdcMicroObj(obj, type = "numVars")
-  y2cn <- colnames(x)[y2cn]
+  hhid <- get.sdcMicroObj(obj, type = "hhId")
+  hhIdcn <- ifelse(length(hhid)>0, cn[hhid], "not defined")
 
-  if (length(get.sdcMicroObj(obj, type = "hhId")) > 0) {
-    hhIdcn <- colnames(x)[get.sdcMicroObj(obj, type = "hhId")]
-  } else {
-    hhIdcn <- "not defined"
-  }
-  if (length(get.sdcMicroObj(obj, type = "strataVar")) > 0) {
-    stratacn <- colnames(x)[get.sdcMicroObj(obj, type = "strataVar")]
-  } else {
-    stratacn <- "not defined"
-  }
+  strataV <- get.sdcMicroObj(obj, type = "strataVar")
+  stratacn <- ifelse(length(strataV)>0, cn[strataV], "not defined")
+
   n <- nrow(x)
   pCat <- length(get.sdcMicroObj(obj, "keyVars"))
+
   wind <- get.sdcMicroObj(obj, type = "weightVar")
-  if (length(wind) > 0) {
-    weightcn <- colnames(x)[wind]
-  } else {
-    weightcn <- "not defined"
+  weightcn <- ifelse(length(wind)>0, cn[wind], "not defined")
+
+  senscn <- get.sdcMicroObj(obj, "sensibleVar")
+  if ( !is.null(senscn)) {
+    senscn <- cn[senscn]
   }
 
   ## information on categorical key-variables
   repObj <- set.reportObj(repObj, "nrObs", list(nrow(x)))
-  maxcols <- max(c(length(y1cn), length(y2cn)))
-  df <- data.frame(matrix(, ncol = maxcols, nrow = 5))
-  colnames(df) <- paste(1:maxcols)
-  extend <- function(x, maxcols) {
-    if (length(x) == maxcols)
-      return(x) else return(c(x, rep("", maxcols - length(x))))
-  }
-  df[1, ] <- extend(y1cn, maxcols)
-  df[2, ] <- extend(y2cn, maxcols)
-  df[3, ] <- extend(weightcn, maxcols)
-  df[4, ] <- extend(hhIdcn, maxcols)
-  df[5, ] <- extend(stratacn, maxcols)
-  rownames(df) <- c("Categorical", "Continuous", "weight", "hhID", "strata")
-  repObj <- set.reportObj(repObj, "tabKeyVars", list(df))
-  repObj <- set.reportObj(repObj, "sensiblecn", list(get.sdcMicroObj(obj, "sensibleVar")))
+
+  importantVariables <- list()
+  importantVariables$catVars <- y1cn
+  importantVariables$numVars <- y2cn
+  importantVariables$weightVar <- weightcn
+  importantVariables$hhId <- hhIdcn
+  importantVariables$strataVars <- stratacn
+  importantVariables$sensibleVar <- senscn
+  repObj <- set.reportObj(repObj, "importantVariables", list(importantVariables))
 
   ## information about anonymisation methods
   delDirect <- get.sdcMicroObj(obj, "deletedVars")
+
   modCat <- sum(!(x[, get.sdcMicroObj(obj, "keyVars")] == get.sdcMicroObj(obj, "manipKeyVars")),na.rm = TRUE) > 0
   if ( is.null(get.sdcMicroObj(obj, "manipNumVars"))) {
     modNum <- NA
@@ -230,21 +149,19 @@ definition = function(obj, internal, title, outdir) {
   modPram <- !is.null(get.sdcMicroObj(obj, "pram"))
   modLocSupp <- !is.null(get.sdcMicroObj(obj, "localSuppression"))
 
-  repObj <- set.reportObj(repObj, "delDirect", list(delDirect))
-  repObj <- set.reportObj(repObj, "modCat", list(modCat))
-  repObj <- set.reportObj(repObj, "modNum", list(modNum))
-  repObj <- set.reportObj(repObj, "modPram", list(modPram))
-  repObj <- set.reportObj(repObj, "modLocSupp", list(modLocSupp))
+  modifications <- list(delDirect=delDirect,modCat=modCat,modNum=modNum,modPram=modPram,modLocSupp=modLocSupp)
+  repObj <- set.reportObj(repObj, "modifications", list(modifications))
 
   ## information about disclosure risk and k-anonymity
   pram <- get.sdcMicroObj(obj, "pram")
-  if (is.null(pram)) {
-    repObj <- set.reportObj(repObj, "pram.show", list(FALSE))
+  if ( is.null(pram) ) {
+    repObj <- set.reportObj(repObj, "pram", list(NULL))
   }
-  if (is.null(get.sdcMicroObj(obj, "pramVars"))) {
-    repObj <- set.reportObj(repObj, "pram.show", list(FALSE))
+  if ( is.null(get.sdcMicroObj(obj, "pramVars")) ) {
+    repObj <- set.reportObj(repObj, "pram", list(NULL))
   }
-  if (get.reportObj(repObj, "pram.show")) {
+  if ( is.list(get.reportObj(repObj, "pram")) ) {
+    pramOut <- list()
     changedVars <- list()
     vNames.pram <- colnames(x)[obj@pramVars]
     vNames.key <- colnames(x)[obj@keyVars]
@@ -266,172 +183,180 @@ definition = function(obj, internal, title, outdir) {
     }
     totChanges <- sum(sapply(changedVars, function(x) x$nr))
     percChanges <- 100 * totChanges/(n * length(vNames.pram))
-    repObj <- set.reportObj(repObj, "pram.changedVars", list(changedVars))
-    repObj <- set.reportObj(repObj, "pram.totChanges", list(totChanges))
-    repObj <- set.reportObj(repObj, "pram.percChanges", list(percChanges))
+
+    pramOut$changedVars <- changedVars
+    pramOut$totChanges <- totChanges
+    pramOut$percChanges <- niceF(percChanges)
+    repObj <- set.reportObj(repObj, "pram", list(pramOut))
   }
 
   ## k-anonymity if we pram, kAnon is useless
-  if (get.reportObj(repObj, "pram.show")) {
-    repObj <- set.reportObj(repObj, "kAnon.show", list(FALSE))
+  if ( is.list(get.reportObj(repObj, "pram")) ) {
+    repObj <- set.reportObj(repObj, "kAnon", list(NULL))
   }
 
-  if (get.reportObj(repObj, "kAnon.show")) {
+  if ( is.list(get.reportObj(repObj, "kAnon")) ) {
+    kAnon <- list()
     n <- nrow(x)
-    repObj <- set.reportObj(repObj, "kAnon.two.anon",
-      list(sum(obj@risk$individual[, 2] <2)))
-    repObj <- set.reportObj(repObj, "kAnon.two.anon.unmod",
-      list(sum(obj@originalRisk$individual[,2] < 2)))
-    repObj <- set.reportObj(repObj, "kAnon.three.anon",
-      list(sum(obj@risk$individual[,2] < 3)))
-    repObj <- set.reportObj(repObj, "kAnon.three.anon.unmod",
-      list(sum(obj@originalRisk$individual[,2] < 3)))
-    repObj <- set.reportObj(repObj, "kAnon.two.anon.perc",
-      list(round(sum(obj@risk$individual[,2] < 2)/n * 100, 2)))
-    repObj <- set.reportObj(repObj, "kAnon.two.anon.unmod.perc",
-      list(round(sum(obj@originalRisk$individual[,2] < 2)/n * 100, 2)))
-    repObj <- set.reportObj(repObj, "kAnon.three.anon.perc",
-      list(round(sum(obj@risk$individual[,2] < 3)/n * 100, 2)))
-    repObj <- set.reportObj(repObj, "kAnon.three.anon.unmod.perc",
-      list(round(sum(obj@originalRisk$individual[,2] < 3)/n * 100, 2)))
+    kAnon$anon2 <- sum(obj@risk$individual[, 2] < 2)
+    kAnon$anon2p <- niceF((kAnon$anon2 / n) * 100)
+    kAnon$anon2o <- sum(obj@originalRisk$individual[,2] < 2)
+    kAnon$anon2op <- niceF((kAnon$anon2o / n) * 100)
+    kAnon$anon3 <- sum(obj@risk$individual[, 2] < 3)
+    kAnon$anon3p <- niceF((kAnon$anon3 / n) * 100)
+    kAnon$anon3o <- sum(obj@originalRisk$individual[,2] < 3)
+    kAnon$anon3op <- niceF((kAnon$anon3o / n) * 100)
+    repObj <- set.reportObj(repObj, "kAnon", list(kAnon))
   }
 
   ## information about individual risk
-  if (get.reportObj(repObj, "indivRisk.show")) {
-    risk <- get.sdcMicroObj(obj, type = "risk")
-    repObj <- set.reportObj(repObj, "indivRisk.expReidentifications", list(round(risk$global$risk * nrow(x))))
-    repObj <- set.reportObj(repObj, "indivRisk.expReidentifications.perc", list(round(risk$global$risk_pct, 4)))
+  if ( is.list(get.reportObj(repObj, "indivRisk")) ) {
+    indivRisk <- list()
+    risk <- get.sdcMicroObj(obj, type="risk")
+
+    indivRisk$expRI <- risk$global$risk * nrow(x)
+    indivRisk$expRIp <- niceF(risk$global$risk_pct)
+    indivRisk$expRI <- niceF(indivRisk$expRI)
 
     ## TODO: save risk of original data and not renewly calculate it:
-    if (weightcn == "not defined") {
+    if ( weightcn == "not defined" ) {
       weightcn <- NULL
     }
-    ro <- measure_risk(x, keyVars = y1cn, w = weightcn)$global_risk_pct
-    repObj <- set.reportObj(repObj, "indivRisk.unmodified", list(round(ro, 4)))
+    ro <- measure_risk(x, keyVars = y1cn, w = weightcn)
+    indivRisk$expRIop <- ro$global_risk_pct
+    indivRisk$expRIo <- indivRisk$expRIop/100 * nrow(x)
+    indivRisk$expRIop <- niceF(indivRisk$expRIop)
+    indivRisk$expRIo <- niceF(indivRisk$expRIo)
 
     # 10 combinations with highest risks
     or <- cbind(y1, risk$individual)
     index <- apply(y1, 1, paste, collapse = "")
     or <- or[!duplicated(index), ]
     or <- or[order(or$risk, decreasing = TRUE), ]
-    repObj <- set.reportObj(repObj, "indivRisk.highest", list(or[1:10, ]))
+    indivRisk$highest <- or[1:10, ]
+    indivRisk$highest$risk <- niceF(indivRisk$highest$risk)
+    repObj <- set.reportObj(repObj, "indivRisk", list(indivRisk))
   }
 
   ## information about hierarchical risk
   if (!"hier_risk_ER" %in% names(obj@risk$global)) {
-    repObj <- set.reportObj(repObj, "hierRisk.show", list(FALSE))
+    repObj <- set.reportObj(repObj, "hierRisk", list(NULL))
   }
 
-  if (get.reportObj(repObj, "hierRisk.show")) {
+  if ( is.list(get.reportObj(repObj, "hierRisk")) ) {
     if (is.na(obj@risk$global$hier_risk_ER)) {
-      repObj <- set.reportObj(repObj, "hierRisk.show", list(FALSE))
+      repObj <- set.reportObj(repObj, "hierRisk", list(NULL))
     }
   }
 
-  if (get.reportObj(repObj, "hierRisk.show")) {
-    repObj <- set.reportObj(repObj, "hierRisk.expReindent", list(round(obj@risk$global$hier_risk_ER, 2)))
-    repObj <- set.reportObj(repObj, "hierRisk.expReindent.perc", list(round(obj@risk$global$hier_risk_pct, 2)))
-    repObj <- set.reportObj(repObj, "hierRisk.expReindentOrig", list(round(obj@originalRisk$global$hier_risk_ER, 2)))
-    repObj <- set.reportObj(repObj, "hierRisk.expReindentOrig.perc", list(round(obj@originalRisk$global$hier_risk_pct, 2)))
+  if ( is.list(get.reportObj(repObj, "hierRisk")) ) {
+    hierRisk <- list()
+    hierRisk$expReident <- niceF(obj@risk$global$hier_risk_ER)
+    hierRisk$expReidentp <- niceF(obj@risk$global$hier_risk_pct)
+    hierRisk$expReidento <- niceF(obj@originalRisk$global$hier_risk_ER)
+    hierRisk$expReidentop <- niceF(obj@originalRisk$global$hier_risk_pct)
+    repObj <- set.reportObj(repObj, "hierRisk", list(hierRisk))
   }
 
   ## information about disclosure risk on continuous key variables
   risknum <- get.sdcMicroObj(obj, "risk")$numeric
-  if (is.null(is.null(get.sdcMicroObj(obj, "manipNumVars")))) {
-    repObj <- set.reportObj(repObj, "riskNumKeyVars.show", list(FALSE))
+  riskNumKeyVars <- list()
+  if ( is.null(get.sdcMicroObj(obj, "manipNumVars")) ) {
+    repObj <- set.reportObj(repObj, "riskNumKeyVars", list(NULL))
   } else {
-    repObj <- set.reportObj(repObj, "riskNumKeyVars.risk", list(round(100 * obj@risk$numeric, 2)))
+    riskNumKeyVars <- list()
+    riskNumKeyVars$risk <- niceF(100 * obj@risk$numeric)
+    repObj <- set.reportObj(repObj, "riskNumKeyVars", list(riskNumKeyVars))
   }
 
   ## information about data-utility
-  if (get.reportObj(repObj, "dataUtility.show")) {
-    ind <- 1
-    dataUtility <- list()
+  if ( is.list(get.reportObj(repObj, "dataUtility")) ) {
+    dU <- list()
     for (i in y1cn) {
-      dataUtility[[i]] <- list()
-      dat_o <- table(y1[,ind], useNA="always")
-      dat_m <- table(factor(y1[, ind]), useNA="always")
+      dU[[i]] <- list()
+      dat_o <- as.data.frame.table(table(x[[i]], useNA="ifany"))
+      dat_m <- as.data.frame.table(table(factor(y1[[i]]), useNA="ifany"))
 
-      maxcols <- length(names(dat_o))
-      df <- data.frame(matrix(, ncol = maxcols, nrow = 4))  #length(y1cn)))
-      colnames(df) <- paste(1:maxcols)
-      df[1, ] <- names(dat_o)
-      df[1,maxcols] <- "NA"
-      df[2, ] <- dat_o
-      df[4, ] <- extend(dat_m, maxcols)
-      df[3, ] <- extend(names(dat_m), maxcols)
-      df[3,maxcols] <- "NA"
-      rownames(df) <- c("categories1", "orig", "categories2", "recoded")
-      ww <- which(colnames(x) %in% i)
-
-      dataUtility[[i]]$title <- colnames(x)[ww]
-      dataUtility[[i]]$tab <- df
-      ind <- ind + 1
+      df <- merge(dat_o, dat_m, by="Var1", all.x=TRUE, all.y=TRUE)
+      names(df) <- c("Categories","Original data", "Modified data")
+      df$Categories <- as.character(df$Categories)
+      df$Categories[is.na(df$Categories)] <- "NA"
+      dU[[i]]$title <- i
+      dU[[i]]$tab <- df
     }
-    repObj <- set.reportObj(repObj, "dataUtility.info", list(dataUtility))
+    repObj <- set.reportObj(repObj, "dataUtility", list(dU))
   }
 
   ## Local Suppressions
-  if (get.reportObj(repObj, "localSupps.show")) {
-    locsupps <- as.numeric(unlist(get.sdcMicroObj(obj, "localSuppression")))
-    if (length(locsupps) == 0) {
-      locsupps <- rep(0, length(y1cn))
+  if ( is.list(get.reportObj(repObj, "localSupps")) ) {
+    df <- as.data.frame(get.sdcMicroObj(obj, "localSuppression")$supps)
+    if ( nrow(df) == 0 ) {
+      repObj <- set.reportObj(repObj, "localSupps", list(NULL))
+    } else {
+      df <- rbind(df, 100*(df[1,]/nrow(x)))
+      df[1,] <- sprintf("%1.0f", df[1,])
+      df[2,] <- sprintf("%.3f", df[2,])
+      rownames(df) <- c("Number of Suppression", "Percentage")
+      localSupps <- list()
+      localSupps$tab <- df
+      repObj <- set.reportObj(repObj, "localSupps", list(localSupps))
     }
-    df <- data.frame(matrix(, ncol = length(y1cn), nrow = 2))
-    colnames(df) <- y1cn
-    rownames(df) <- c("absolute", "relative (in percent)")
-    df[1, ] <- paste(as.integer(locsupps))
-    df[2, ] <- round(locsupps/nrow(x) * 100, 2)
-    repObj <- set.reportObj(repObj, "localSupps.tab", list(df))
   }
 
-  ## information about data-utility for continous variables nothing to show
-  if ( is.null(y2) || ncol(y2) == 0 ) {
-    repObj <- set.reportObj(repObj, "dataUtilityCont.show", list(FALSE))
-  }
-
-  if (get.reportObj(repObj, "dataUtilityCont.show")) {
+  ## dataUtility for continuous variables
+  dataUtilityCont_show <- !(is.null(y2) || ncol(y2) == 0) & is.list(get.reportObj(repObj, "dataUtilityCont"))
+  if ( dataUtilityCont_show ) {
+    dataUtilityCont <- list()
     s <- apply(na.omit(x[, y2cn, drop = FALSE]), 2, summary)
     ss <- apply(na.omit(y2), 2, function(x) round(summary(x), 1))
-    colnames(ss) <- paste(colnames(ss), ".m", sep = "")
-    pNum <- length(get.sdcMicroObj(obj, "numVars"))
-    xx <- cbind(s, ss)
-    SEQ <- SEQinit <- c(1, pNum + 1)
-    if (pNum > 1) {
-      for (i in 1:(pNum - 1)) {
-        SEQ <- c(SEQ, SEQinit + i)
-      }
-    }
-    repObj <- set.reportObj(repObj, "dataUtilityCont.tabSummary", list(as.data.frame(xx[,
-      SEQ])))
-    repObj <- set.reportObj(repObj, "dataUtilityCont.IL1", list(round(obj@utility$il1,
-      2)))
-    repObj <- set.reportObj(repObj, "dataUtilityCont.diffEigen", list(round(obj@utility$eigen *
-      100, 2)))
 
-    ### boxplot of differences
-    mi <- min(x[, y2cn, drop = FALSE], y2, na.rm=TRUE)
-    ma <- max(x[, y2cn, drop = FALSE], y2, na.rm=TRUE)
-    fn <- paste(outdir, "/Graph-", format(Sys.time(), "%d-%m-%Y-%H%M%S"), ".png", sep = "")
-    png(filename = fn, height = 400, width = 600)
-    b <- boxplot(x[, y2cn], boxwex = 0.1, main = "univariate comparison original vs. perturbed data",
-      ylim = c(mi, ma))
-    boxplot(y2, add = TRUE, at = 1:ncol(y2) + 0.2, boxwex = 0.1, col = "lightgrey", xaxt = "n",
-      xlab = "")
-    legend("topright", legend = c("orig", "pert"), pch = 15, col = c("white", "lightgrey"))
-    legend("topright", legend = c("orig", "pert"), pch = 22)
-    dev.off()
-    repObj <- set.reportObj(repObj, "dataUtilityCont.plotName", list(fn))
+    tabSummary <- lapply(1:ncol(ss), function(x) {
+      xx <- data.frame(s[,x,drop=F], ss[,x,drop=F])
+      xx$diff <- xx[,1]-xx[,2]
+      colnames(xx) <- c("Original", "Modified","Difference")
+      xx
+    })
+    names(tabSummary) <- colnames(ss)
+    dataUtilityCont$tabSummary <- tabSummary
+
+    dataUtilityCont$IL1 <- niceF(obj@utility$il1)
+    dataUtilityCont$diffEigen <- niceF(obj@utility$eigen*100)
+    dataUtilityCont$boxplotData <- list(orig=x[, y2cn, drop = FALSE], modified=y2)
+    repObj <- set.reportObj(repObj, "dataUtilityCont", list(dataUtilityCont))
   }
 
   ## R-code
-  if ("cmd" %in% names(optionss)) {
+  if ( "cmd" %in% names(optionss) & is.list(get.reportObj(repObj, "code")) ) {
     repObj <- set.reportObj(repObj, "code", list(as.list(obj@options$cmd)))
   }
 
-  ## information about current R-session
-  if (get.reportObj(repObj, "sessionInfo.show")) {
-    repObj <- set.reportObj(repObj, "sessionInfo.info", list(unclass(sessionInfo())))
+  ## Information about current R-session
+  if ( !is.null(get.reportObj(repObj, "sessionInfo")) ) {
+    sessionInfo <- list()
+    sI <- sessionInfo()
+    # 1) R-Version
+    sessionInfo$version <- sI$R.version$version.string
+
+    # 2) Platform
+    sessionInfo$platform <- sI$R.version$platform
+
+    # 3) base-Packages
+    sessionInfo$basePgks <- sI$basePkgs
+
+    # 4) other loaded packages
+    sessionInfo$otherPkgs <- as.character(sapply(sI$otherPkgs, function(x) {
+      paste0(x$Package," (",x$Version,")")
+    }))
+
+    # 5) packages that are only attached
+    sessionInfo$loaded <- as.character(sapply(sI$loadedOnly, function(x) {
+      paste0(x$Package," (",x$Version,")")
+    }))
+
+    # 6) Localization
+    sessionInfo$loc <- unlist(strsplit(sI$locale, ";"))
+
+    repObj <- set.reportObj(repObj, "sessionInfo", list(sessionInfo))
   }
   return(repObj)
 })
@@ -476,56 +401,39 @@ setMethod(f = "report", signature = c("sdcMicroObj"),
 definition = function(obj, outdir = getwd(), filename = "SDC-Report",
   format = "HTML", title = "SDC-Report", internal = FALSE) {
 
-  if (!format %in% c("HTML", "LATEX", "TEXT")) {
+  if (!format %in% c("HTML", "LATEX","TEXT")) {
     stop("possible values for 'type' are 'HTML','LATEX' and 'TEXT'!\n")
   }
 
-  if (format == "HTML") {
+  if ( format=="TEXT" ) {
+    msg <- "Please note for sdcMicro > 4.5.0 this option has changed.\n"
+    msg <- paste0(msg, "You will get receive an html-output!\n")
+    message(msg)
+  }
+
+  if ( format %in% c("HTML","TEXT") ) {
     filename <- paste(filename, ".html", sep = "")
   }
-  if (format == "LATEX") {
-    filename <- paste(filename, ".tex", sep = "")
-  }
-  if (format == "TEXT") {
-    filename <- paste(filename, ".txt", sep = "")
+  if ( format == "LATEX" ) {
+    filename <- paste(filename, ".pdf", sep = "")
   }
 
   repObj <- calcReportData(obj, internal = internal, title = title, outdir = outdir)
-
-  oldwd <- getwd()
-  setwd(outdir)
-
-  if (format == "HTML") {
-    # markdown --> html
-    css <- system.file("templates", "report.css", package = "sdcMicro")
-    tpl <- system.file("templates", "template-report-html.brew", package = "sdcMicro")
-
-    mdOut <- "reportTemplate.md"
-
-    brew(file = tpl, output = mdOut)
-    knit2html(stylesheet = css, input = mdOut, output = filename, quiet = TRUE)
-    file.remove(mdOut)
-    # xx <- file.remove('reportTemplate.html')
-    setwd(oldwd)
+  fTemplate <- system.file("templates", "report-template.rmd", package="sdcMicro")
+  if ( format == "HTML" ) {
+    render(fTemplate, quiet=TRUE,output_format="html_document", output_dir=outdir, output_file=filename)
   }
-
-  if (format == "LATEX") {
-    tpl <- system.file("templates", "template-report-latex.brew", package = "sdcMicro")
-    brew(file = tpl, output = filename)
-
-    # replace special chars
-    xx <- readLines(filename)
-    for (k in 1:length(xx)) {
-      xx[k] <- gsub("_", "\\_", xx[k], fixed = TRUE)
-    }
-    tryCatch(texi2pdf(filename, clean = TRUE), error = function(e) {
-      cat("\npdflatex was not found in the (global) path.\nPlease install pdflatex or generate the report with format='HTML' or 'TXT'.\nThe .tex (",
-        filename, ") file was produced and is located in", outdir, "\n")
+  if ( format == "LATEX" ) {
+    tryCatch(render(fTemplate, quiet=TRUE,output_format="pdf_document", output_dir=outdir, output_file=filename), error = function(e) {
+      cat("It was not possible to produce a pdf-output. Please generate the report using format='HTML'\n")
     }, finally = TRUE)
   }
-  if (format == "TEXT") {
-    tpl <- system.file("templates", "template-report-text.brew", package = "sdcMicro")
-    brew(file = tpl, output = filename)
+
+  if ( internal ) {
+    txt <- paste0("An internal (extensive) report was successfully generated.\n")
+  } else {
+    txt <- paste0("An short report was successfully generated.\n")
   }
-  setwd(oldwd)
+  txt <- paste0(txt, "It was saved in '", outdir,"/",filename,"'.\n")
+  cat(txt)
 })

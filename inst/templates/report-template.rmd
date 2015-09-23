@@ -1,0 +1,247 @@
+---
+output:
+  html_document:
+    mathjax: null
+    theme: united
+    highlight: tango
+    css: report.css
+  pdf_document:
+    fig_width: 5
+    fig_height: 5
+---
+
+```{r, echo=F}
+## boxplot of differences
+diffBP <- function(inp) {
+  orig <- inp[[1]]
+  modified <- inp[[2]]
+  mi <- min(orig, modified, na.rm=TRUE)
+  ma <- max(orig, modified, na.rm=TRUE)
+  tt <- "Univariate comparison of original vs. perturbed data"
+  b <- boxplot(orig, boxwex=0.1, main=tt, ylim = c(mi, ma))
+  boxplot(modified, add=TRUE, at=1:ncol(modified)+0.2, boxwex=0.1, col="lightgrey", xaxt="n",xlab="")
+  legend("topright", legend = c("orig", "pert"), pch=15, col=c("white", "lightgrey"))
+  legend("topright", legend = c("orig", "pert"), pch=22)
+}
+```
+
+# `r get.reportObj(repObj, "title")`
+
+```{r, eval=TRUE, echo=FALSE}
+modifications <- get.reportObj(repObj, "modifications") 
+```
+
+```{r, echo=FALSE, results="asis"}
+nrObs <- get.reportObj(repObj, "nrObs")
+impFile <- get.reportObj(repObj, "impFile")
+
+cat(paste0("## Input Data\n"))
+cat(paste0("The data set consists of **",nrObs,"** observations"))
+if ( !is.null(impFile) ) {
+  cat(paste0(" and was imported from **", impFile,"**"))
+} 
+cat(".\n\n")
+```
+
+```{r, echo=FALSE, results="asis"}
+if ( !is.null(modifications$delDirect) ) {
+  cat(paste0("## Deleted direct identifiers\n"))
+  cat(paste0("The following direct identifying variables have been deleted from the data set:\n"))
+  cat(paste0("- *",paste(modifications$delDirect, collapse="* | *"),"*"))
+}
+```
+
+```{r, echo=FALSE, results="asis"}
+impVars <- get.reportObj(repObj, "importantVariables")
+cat(paste0("## Information on selected important (Key) Variables\n"))
+cat(paste0("- **Categorical Key-Variable(s)**: *", paste(impVars$catVars, collapse="* | *"),"*\n")) 
+cat(paste0("- **Continuous Key-Variable(s)**: *", paste(impVars$numVars, collapse="* | *"),"*\n")) 
+cat(paste0("- **Weight-Variable**: *", paste(impVars$weightVar, collapse="* | *"),"*\n")) 
+cat(paste0("- **householdID**: *", paste(impVars$hhId, collapse="* | *"),"*\n")) 
+cat(paste0("- **strataVariable(s)**: *", paste(impVars$strataVars, collapse="* | *"),"*\n")) 
+
+#sensVar <- get.reportObj(repObj, "sensiblecn")
+if ( !is.null(impVars$sensibleVar ) ) {
+  cat(paste0("- **sensitive Variable(s) for l-diversity**: "))
+  cat(paste0("*",paste(impVars$sensibleVar, collapse="* | *"),"*"))
+}
+cat("\n\n")
+```
+
+```{r, echo=FALSE, results="asis"}
+cat(paste0("## Modifications\n"))
+cat(paste0("- Modifications on categorical key variables: **", modifications$modCat,"**\n"))
+cat(paste0("- Modifications on continuous key variables: **", modifications$modNum,"**\n"))
+cat(paste0("- Modifications using PRAM: **", modifications$modPram,"**\n"))
+cat(paste0("- Local suppressions: **", modifications$modLocSupp,"**\n"))
+```
+
+
+```{r, echo=FALSE, results="asis"}
+show_pram <- is.list(get.reportObj(repObj, "pram"))
+show_kanon <- is.list(get.reportObj(repObj, "kAnon"))
+show_indivrisk <- is.list(get.reportObj(repObj, "indivRisk"))
+show_hierrisk <- is.list(get.reportObj(repObj, "hierRisk"))
+
+if ( any(show_pram,show_kanon,show_indivrisk,show_hierrisk) ) {
+  cat(paste0("## Disclosure risk:\n"))  
+}
+```
+
+
+```{r, echo=FALSE, results="asis"}
+if ( show_pram ) {
+  pram <- get.reportObj(repObj, "pram")
+  cV <- pram$changedVars
+  cat(paste0("### Changes with PRAM\n"))
+  cat(paste0("#### Number of changed categories\n")) 
+  for ( i in seq_along(cV) ) {
+    cat(paste0("- **",cV[[i]]$oName,"**: ", cV[[i]]$nr," values (",cV[[i]]$perc,"%) changed!\n"))
+  }
+  cat("\n\n")
+
+  if ( length(cV) > 0 ) {
+    cat(paste0("#### Total number of changes in the categorical key variables due to PRAM\n")) 
+    cat(paste0("- Total number of values changed: **",pram$totChanges,"** (",pram$percChanges,"%)\n")) 
+  }
+}
+```
+
+```{r, echo=FALSE, results="asis"}
+if ( show_kanon ) {
+  kAnon <- get.reportObj(repObj, "kAnon")
+  cat(paste0("### Frequency Analysis for Categorical Key Variables\n"))
+  cat(paste0("#### Number of observations violating\n"))
+
+  cat(paste0("- **2-Anonymity:** ", kAnon$anon2, " (original dataset: ",kAnon$anon2o,")\n"))
+  cat(paste0("- **3-Anonymity:** ", kAnon$anon3, " (original dataset: ",kAnon$anon3o,")\n\n\n"))
+
+  cat(paste0("#### Percentage of observations violating\n"))
+  cat(paste0("- **2-Anonymity:** ", kAnon$anon2p, "% (original dataset: ",kAnon$anon2op,"%)\n"))
+  cat(paste0("- **3-Anonymity:** ", kAnon$anon3p, "% (original dataset: ",kAnon$anon3op,"%)\n"))  
+  cat("\n\n")
+}
+```
+
+```{r, echo=FALSE, results="asis"}
+if ( show_indivrisk ) {
+  indivRisk <- get.reportObj(repObj, "indivRisk")
+  cat(paste0("###  Disclosure Risk for Categorical Variables\n"))
+  cat(paste0("Expected Percentage of Reidentifications:\n\n"))
+  cat(paste0("- **modified data**: ", indivRisk$expRIp,"% (~ ",indivRisk$expRI," observations)\n"))
+  cat(paste0("- **original data**: ", indivRisk$expRIop,"% (~ ",indivRisk$expRIo," observations)\n\n\n"))
+
+  cat(paste0("#### 10 combinations of categories with highest risks\n"))
+  print(kable(indivRisk$highest, row.names=FALSE))
+  cat("\n\n")
+
+  riskNumKeyVars <- get.reportObj(repObj, "riskNumKeyVars")
+  if ( is.list(riskNumKeyVars) ) {
+    cat(paste0("### Disclosure Risk Continuous Scaled Variables\n"))
+    cat(paste0("The (distance-based) disclosure risk for continous key-variables is between "))
+    cat(paste0("0.000% and ",riskNumKeyVars$risk,"% in the modified data.\n\n"))
+    cat(paste0("In the original data, the risk is assumed to be approximately 100.000%.\n\n"))
+  }
+}
+```
+
+
+```{r, echo=FALSE, results="asis"}
+if ( show_hierrisk ) {
+  hierRisk <- get.reportObj(repObj, "hierRisk")
+  cat(paste0("###  Hierarchical risk\n"))
+  cat(paste0("- **modified data**: ",hierRisk$expReident," (",hierRisk$expReidentp,"%)\n"))
+  cat(paste0("- **original data**: ",hierRisk$expReidento," (",hierRisk$expReidentop,"%)\n"))
+}
+```
+
+```{r, echo=FALSE, results="asis"}
+dU <- get.reportObj(repObj, "dataUtility")
+if ( is.list(dU) ) {
+  cat(paste0("## Data Utility\n"))
+  cat(paste0("### Frequencies Categorical Key Variables:\n"))
+  for ( i in seq_along(dU) ) {
+    cat(paste0("#### Variable: *", dU[[i]]$title,"*\n"))
+    print(kable(dU[[i]]$tab), row.names=TRUE); cat("\n")
+  }
+}
+```
+
+```{r, echo=FALSE, results="asis"}
+ls <- get.reportObj(repObj, "localSupps")
+if ( is.list(ls) ) {
+  cat(paste0("### Local Suppressions\n"))
+  cat(paste0("The table below shows for each categorical key variable the number (1st row) "))
+  cat(paste0("and the percentages (2nd row) of suppressed cells."))
+  print(kable(ls$tab), row.names=TRUE); cat("\n\n")
+}
+```
+
+```{r, echo=FALSE, results="asis"}
+dataUtilityCont <- get.reportObj(repObj, "dataUtilityCont")
+if ( is.list(dataUtilityCont) ) {
+  cat(paste0("### Data Utility of Continuous Scaled Key Variables\n"))
+  tabs <- dataUtilityCont$tabSummary
+  
+  for ( z in seq_along(tabs)) {
+    cat(paste0("#### Univariate summary of variable *",names(tabs)[z],"*\n"))
+    print(kable(tabs[[z]]), row.names=FALSE); cat("\n\n")
+  }
+  
+  cat(paste0("#### Information Loss Criteria\n"))
+  cat(paste0("- **Criteria IL1:** ", dataUtilityCont$IL1,"%\n"))
+  cat(paste0("- **Difference of Eigenvalues in modified data:** ",dataUtilityCont$diffEigen,"% (0.00% in original data)\n\n"))
+  
+  cat(paste0("#### Boxplot of Differences\n"))
+}
+```
+
+```{r, echo=FALSE}
+if ( is.list(dataUtilityCont) ) {
+  diffBP(dataUtilityCont$boxplotData)
+}
+```
+
+```{r, echo=FALSE, results="asis"}
+if ( is.list(repObj@code)) {
+  cat(paste0("## R-Code\n"))
+}
+```
+```{r, code=paste0(paste(unlist(repObj@code), collapse="\n"),"\n\n"), eval=FALSE}
+```
+
+
+```{r, echo=FALSE, results="asis"}
+sI <- get.reportObj(repObj, "sessionInfo")
+if ( !is.null(sI) ) {
+  cat(paste0("## Session-Info\n"))
+  cat(paste0("### About the R-Version\n"))
+  cat(paste0("- **Version**: ", sI$version,"\n"))
+  cat(paste0("- **Platform**: ", sI$platform,"\n\n"))
+
+  cat(paste0("### Locales\n"))
+  cat(paste0("*",paste(sI$loc, collapse="* | *"),"*")); cat("\n\n")
+  
+  cat(paste0("### Attached base packages\n"))
+  cat(paste0("*",paste(sI$basePgks, collapse="* | *"),"*")); cat("\n\n")
+
+  cat(paste0("### Other attached packages\n"))
+  cat(paste0("*",paste(sI$otherPkgs, collapse="* | *"),"*")); cat("\n\n")
+
+  cat(paste0("### Packages loaded via Namespace (but not attached)\n"))
+  cat(paste0("*",paste(sI$loaded, collapse="* | *"),"*")); cat("\n\n")
+}
+```
+
+# Disclaimer
+**R**-Packages **sdcMicro** and **sdcMicroGUI** are actively developed and maintained by
+[**www.statistik.at**](http://www.statistik.at "Statistics Austria") and [**www.data-analysis.at**](http://www.data-analysis.at "www.data-analysis.at").
+
+Please use the issue-tracker on *github* to report any issues:
+
+- [**Issue-Tracker for sdcMicro**](https://github.com/alexkowa/sdcMicro/issues)
+- [**Issue-Tracker for sdcMicroGUI**](https://github.com/alexkowa/sdcMicroGUI/issues)
+
+--------------------------------------
+This report was generated on `r format(Sys.time(), "%a, %d/%m/%Y at %H:%M:%S")`.
+
