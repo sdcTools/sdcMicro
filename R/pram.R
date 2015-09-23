@@ -301,6 +301,7 @@ pramWORK <- function(data, variables = NULL, strata_variables = NULL, pd = 0.8, 
     return(list(x = x, xpramed = xpramed))
   }
 
+  idvarpram <- tmpfactor_for_pram <- NULL
   if (is.null(variables)) {
     stop("Please define valid variables to pram!\n")
   }
