@@ -61,8 +61,8 @@ test_that("data frame method gives the same as method on sdcMicro object", {
 ## the result should look like (method 3) (3-anonymity)
 ##   region  status agegroup  freq
 ## 1      A       *        5     5
-## 2      A married        5     3
-## 3      A married        5     3
+## 2      A married        5     3.2
+## 3      A married        5     3.2
 ## 4      A       *        5     5
 ## 5      A       *        5     5 
 
