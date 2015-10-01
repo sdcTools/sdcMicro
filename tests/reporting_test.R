@@ -18,6 +18,6 @@ sdcObject <- localSuppression(sdcObject, k = c(3), importance = c(1, 3, 1, 3))
 sdcObject <- microaggregation(sdcObject, aggr = c(3), method = c("mdav"),
   variables = c("expend"), strata_variables = c("sex"))
 
-td <- tempdir()
-report(sdcObject, outdir = td)
-report(sdcObject, outdir = td, internal = TRUE, filename = "fullreport")
+#td <- tempdir()
+#report(sdcObject, outdir = td)
+#report(sdcObject, outdir = td, internal = TRUE, filename = "fullreport")
