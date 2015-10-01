@@ -1,0 +1,23 @@
+bibentry(bibtype = "Article",
+  title        = "Statistical Disclosure Control for Micro-Data Using the {R} Package {sdcMicro}",
+  author       = c(person(given = "Matthias",
+                          family = "Templ"),
+                   person(given = "Alexander",
+                          family = "Kowarik"),
+                   person(given = "Bernhard",
+                          family = "Meindl")),
+  journal      = "Journal of Statistical Software",
+  year         = "2015",
+  volume       = "67",
+  number       = "4",
+  pages        = "1--36",
+  doi          = "10.18637/jss.v067.i04",
+
+  header       = "To cite sdcMicro in publications use:",
+  textVersion  =
+  paste("Matthias Templ, Alexander Kowarik, Bernhard Meindl (2015).",
+        "Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.",
+        "Journal of Statistical Software, 67(4), 1-36.",
+        "doi:10.18637/jss.v067.i04")
+)
+
