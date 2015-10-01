@@ -117,10 +117,9 @@
 #' Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 #' 264 pages.
 #'
-#' Templ, M. and Meindl, B.: \emph{Practical Applications in Statistical
-#' Disclosure Control Using R}, Privacy and Anonymity in Information Management
-#' Systems New Techniques for New Practical Problems, Springer, 31-62, 2010,
-#' ISBN: 978-1-84996-237-7.
+#' Templ, M. and Meindl, B. and Kowarik, A.: \emph{Statistical Disclosure Control for 
+#' Micro-Data Using the R Package sdcMicro}, Journal of Statistical Software, 
+#' 67 (4), 1--36, 2015.
 #' @keywords manip
 #' @export
 #' @examples
