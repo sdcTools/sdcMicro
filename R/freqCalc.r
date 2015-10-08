@@ -276,7 +276,7 @@ sffcNA <- function(x, keyVars, w = NULL) {
           notnakeyVars, "]|is.na(", notnakeyVars, "))", sep = "", collapse = "&"),
           ",sum(plusNA)]", sep = "")
           eval(parse(text = cmd))
-          if ( nrow(ergna4) > 0 ) {
+          if ( is.data.table(ergna4) ) {
             ergna2[j, `:=`(fk, fk + ergna4)]
           }
         }
