@@ -108,6 +108,11 @@ definition = function(obj, internal, title, outdir) {
   y1cn <- get.sdcMicroObj(obj, type = "keyVars"); y1cn <- cn[y1cn]
   y2cn <- get.sdcMicroObj(obj, type = "numVars"); y2cn <- cn[y2cn]
 
+  if ( length(y2cn) == 0 ) {
+    y2cn <- "not defined"
+  }
+
+
   hhid <- get.sdcMicroObj(obj, type = "hhId")
   hhIdcn <- ifelse(length(hhid)>0, cn[hhid], "not defined")
 
@@ -323,6 +328,8 @@ definition = function(obj, internal, title, outdir) {
     dataUtilityCont$diffEigen <- niceF(obj@utility$eigen*100)
     dataUtilityCont$boxplotData <- list(orig=x[, y2cn, drop = FALSE], modified=y2)
     repObj <- set.reportObj(repObj, "dataUtilityCont", list(dataUtilityCont))
+  } else {
+    repObj <- set.reportObj(repObj, "dataUtilityCont", list(NULL))
   }
 
   ## R-code
