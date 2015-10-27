@@ -145,7 +145,15 @@ definition = function(obj, internal, title, outdir) {
   ## information about anonymisation methods
   delDirect <- get.sdcMicroObj(obj, "deletedVars")
 
-  modCat <- sum(!(x[, get.sdcMicroObj(obj, "keyVars")] == get.sdcMicroObj(obj, "manipKeyVars")),na.rm = TRUE) > 0
+  dat_kv <- x[, get.sdcMicroObj(obj, "keyVars")]
+  dat_modkv <- get.sdcMicroObj(obj, "manipKeyVars")
+  if ( !identical(sapply(dat_kv, levels), sapply(dat_modkv, levels)) ) {
+    # probably due to group_vars
+    modCat <- TRUE
+  } else {
+    modCat <- sum(!(dat_kv == dat_modkv),na.rm = TRUE) > 0
+  }
+
   if ( is.null(get.sdcMicroObj(obj, "manipNumVars"))) {
     modNum <- NA
   } else {
