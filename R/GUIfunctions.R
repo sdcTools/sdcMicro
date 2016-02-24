@@ -81,7 +81,7 @@ definition = function(obj, var) {
   o <- obj@origData
   if (any(!var %in% colnames(o)))
     stop("direct identifier variable not found on data set")
-  o[, !colnames(o) %in% var, drop = FALSE]
+  o <- o[, !colnames(o) %in% var, drop = FALSE]
   obj <- nextSdcObj(obj)
   obj@deletedVars <- c(obj@deletedVars, var)
   obj@origData <- o
