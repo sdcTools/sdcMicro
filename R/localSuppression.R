@@ -153,13 +153,13 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
 
 setMethod(f='localSuppression', signature=c("data.frame"),
 definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL) {
-  localSuppressionWORK(x=obj, keyVars=keyVars, strataVars=strataVars,
+  localSuppressionWORK(x=obj, keyVars=keyVars, k=k, strataVars=strataVars,
     importance=importance, combs=combs)
 })
 
 setMethod(f='localSuppression', signature=c("matrix"),
 definition=function(obj, keyVars, k=2, strataVars=NULL, importance=NULL, combs=NULL) {
-  localSuppressionWORK(x=as.data.frame(obj), keyVars=keyVars, strataVars=strataVars,
+  localSuppressionWORK(x=as.data.frame(obj), keyVars=keyVars, k=k, strataVars=strataVars,
     importance=importance, combs=combs)
 })
 
