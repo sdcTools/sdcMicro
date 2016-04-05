@@ -12,26 +12,40 @@
 #' @aliases suda2-methods suda2,data.frame-method suda2,matrix-method
 #' suda2,sdcMicroObj-method suda2
 #' @docType methods
-#' @param obj object of class \dQuote{data.frame} or object of class \code{\link{sdcMicroObj-class}}
+#' @param obj object of class \code{data.frame} or object of class \code{\link{sdcMicroObj-class}}
 #' @param ... see arguments below
 #' \itemize{
-#' \item{variables}{Categorical (key) variables. Either the column names or and
+#' \item{\code{variables}: }{Categorical (key) variables. Either the column names or and
 #' index of the variables to be used for risk measurement.}
-#' \item{missing}{Missing value coding in the given data set.}
-#' \item{DisFraction}{It is the sampling fraction for the simple random
+#' \item{\code{missing}: }{Missing value coding in the given data set.}
+#' \item{\code{DisFraction}: }{It is the sampling fraction for the simple random
 #' sampling, and the common sampling fraction for stratified sampling. By
 #' default, it's set to 0.01.}}
 #' @return A modified \code{\link{sdcMicroObj-class}} object or the following list
 #' \itemize{
-#' \item{ContributionPercent}{The contribution of each key variable to the SUDA
+#' \item{\code{ContributionPercent}: }{The contribution of each key variable to the SUDA
 #' score, calculated for each row.}
-#' \item{score }{The suda score.}
-#' \item{disscore }{The dis suda score}}
-#' @section Methods: \describe{#'
+#' \item{\code{score}: }{The suda score.}
+#' \item{\code{disscore}: }{The dis suda score}
+#' \item{\code{attribute_contributions: }}{\code{data.frame} showing how much of the total risk is contributed
+#' by each variable. This information is stored in a \code{data.frame} in two variables:
+#' \itemize{
+#'  \item \code{variable}: containing the name of the variable
+#'  \item \code{contribution}: contains how much risk a variable contributes to the total risk.
+#' }}
+#' \item{\code{attribute_level_contributions: }}{shows risks of each attribute-level. this is saved in a
+#' \code{data.frame} with three columns.
+#' \itemize{
+#'  \item \code{variable}: containing the name of the variable
+#'  \item \code{attribute}: holding relevant level-codes and
+#'  \item \code{contribution}: contains the risk of this level within the variable.)
+#'  }
+#' }}
+#' @section Methods: \describe{
 #' \item{list("signature(obj = \"data.frame\")")}{}
 #' \item{list("signature(obj = \"matrix\")")}{}
 #' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
-#' @author Alexander Kowarik based on the C++ code from the Organisation For
+#' @author Alexander Kowarik and Bernhard Meindl (based on the C++ code from the Organisation For
 #' Economic Co-Operation And Development.
 #'
 #' For the C++ code: This work is being supported by the International
@@ -58,6 +72,7 @@
 #' data(testdata2)
 #' data_suda2 <- suda2(testdata2,variables=c("urbrur","roof","walls","water","sex"))
 #' data_suda2
+#' str(data_suda)
 #' summary(data_suda2)
 #'
 #' ## for objects of class sdcMicro:
@@ -112,8 +127,30 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
     dat <- dat[, -3] else if (length(variables) == 1)
     dat <- dat[, c(-2, -3)]
   colnames(dat) <- c(paste(variables, "_contribution", sep = ""), "suda_score", "dis_suda_score")
-  res <- list(contributionPercent = dat[, 1:length(variables)], score = dat[, "suda_score"],
-    disScore = dat[, "dis_suda_score"])
+  res <- list(
+    contributionPercent=dat[, 1:length(variables)],
+    score=dat[,"suda_score"],
+    disScore=dat[, "dis_suda_score"])
+
+  # attribute contributions
+  contribs <- res$contributionPercent * res$score
+  df <- data.frame(variable=variables, contribution=100*(colSums(contribs) / sum(res$score)), stringsAsFactors=FALSE)
+  rownames(df) <- NULL
+  res$attribute_contributions <- df
+
+  # attribute level contributions
+  tmp <- cbind(data[,variables,drop=FALSE], contribs)
+  tots <- apply(contribs, 2, sum)
+  df <- NULL
+  for ( vv in variables ) {
+    levs <- sort(unique(data[[vv]]))
+    val <- sapply(levs, function(x) {
+      100*(sum(tmp[[paste0(vv,"_contribution")]][tmp[[vv]]==x]))
+    }) / tots[[paste0(vv,"_contribution")]]
+    df <- rbind(df, data.frame(variable=vv, attribute=levs, contribution=val, stringsAsFactors=FALSE))
+  }
+  res$attribute_level_contributions <- df
+
   class(res) <- "suda2"
   if (length(variables) <= 2) {
     warn_s <- "This version of Suda2 can find MSUs only in Dataset with more than 2 variables."
@@ -148,8 +185,12 @@ print.suda2 <- function(x, ...) {
   DISSudaScore <- paste(">", seq(0, 0.7, 0.1))
   tab <- table(cut(x$disScore, breaks = c(-1, SEQ)))
   res <- data.frame(thresholds = DISSudaScore, number = as.numeric(tab))
-  cat("\n Dis suda scores table: \n")
+  cat("\nDis suda scores table: \n")
   cat("- - - - - - - - - - - \n")
   print(res)
-  cat(" - - - - - - - - - - - \n")
+  cat("- - - - - - - - - - - \n")
+  cat("Attribute contribution:\n")
+  cat("- - - - - - - - - - - \n")
+  print(x$attribute_contributions)
+  cat("- - - - - - - - - - - \n")
 }
