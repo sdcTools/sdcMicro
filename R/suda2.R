@@ -182,8 +182,8 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
 #'
 print.suda2 <- function(x, ...) {
   SEQ <- seq(0, 0.7, 0.1) + .Machine$double.eps
-  DISSudaScore <- paste(">", seq(0, 0.7, 0.1))
-  tab <- table(cut(x$disScore, breaks = c(-1, SEQ)))
+  DISSudaScore <- c("0",paste(">", c("0.0",seq(0.1, 0.7, 0.1))))
+  tab <- table(cut(x$disScore, breaks = c(-1, SEQ, Inf)))
   res <- data.frame(thresholds = DISSudaScore, number = as.numeric(tab))
   cat("\nDis suda scores table: \n")
   cat("- - - - - - - - - - - \n")
