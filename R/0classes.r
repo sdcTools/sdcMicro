@@ -63,6 +63,7 @@
 #' @importFrom 'utils' 'data'
 #' @importFrom 'utils' 'flush.console'
 #' @importFrom 'utils' 'tail'
+#' @importFrom 'utils' 'read.table'
 #' @importFrom haven read_spss
 #' @importFrom haven read_dta
 #' @importFrom haven read_sas

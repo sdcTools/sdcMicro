@@ -4,3 +4,4 @@
 .project
 .Rproj.user
 *.Rproj
+inst/shiny-examples/sdcGUI/issues*
