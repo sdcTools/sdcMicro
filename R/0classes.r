@@ -14,6 +14,8 @@
 #' @import 'data.table'
 #' @import 'ggplot2'
 #' @import 'shiny'
+#' @import 'rhandsontable'
+#' @import 'ggthemes'
 #' @importFrom 'sets' 'set_power'
 #' @importFrom 'rmarkdown' 'render'
 #' @importFrom 'graphics' 'axis'

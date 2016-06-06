@@ -34,7 +34,9 @@ Imports:
     sets,
     ggplot2,
     shiny,
-    haven
+    haven,
+    ggthemes,
+    rhandsontable
 License: GPL-2
 URL: https://github.com/alexkowa/sdcMicro
 Collate:
