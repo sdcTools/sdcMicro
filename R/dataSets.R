@@ -316,6 +316,7 @@ NULL
 #' @examples
 #'
 #' data(microData)
+#' microData <- as.data.frame(microData)
 #' m1 <- microaggregation(microData, method="mdav")
 #' summary(m1)
 #'

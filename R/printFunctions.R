@@ -48,7 +48,7 @@ definition = function(obj, type = "fk") {
 #' \item risk: displays information on re-identification risks
 #' \item numrisk: displays risk- and utility measures for numerical key variables
 #' }
-#' @author Alexander Kowarik, Matthias Templ
+#' @author Alexander Kowarik, Matthias Templ, Bernhard Meindl
 #' @keywords classes
 #' @export
 #' @examples
@@ -92,37 +92,35 @@ definition = function(x, type = "kAnon", ...) {
     txt_f <- paste0(txt_f, "\t- 2-anonymity: ")
     f_2anon <- sum(obj@risk$individual[,2]<2)
     f_2anon_o <- sum(obj@originalRisk$individual[,2]<2)
+
     f_3anon <- sum(obj@risk$individual[,2]<3)
     f_3anon_o <- sum(obj@originalRisk$individual[,2]<3)
-    if ( TFchange ) {
-      txt_f <- paste0(txt_f, f_2anon, " (original data: ",f_2anon_o,")\n")
-    } else {
-      txt_f <- paste0(txt_f, f_2anon_o,"\n")
-    }
-    txt_f <- paste0(txt_f, "\t- 3-anonymity: ")
-    if ( TFchange ) {
-      txt_f <- paste0(txt_f, f_3anon, " (original data: ",f_3anon_o,")\n")
-    } else {
-      txt_f <- paste0(txt_f, f_3anon_o,"\n")
-    }
-    txt_f <- paste0(txt_f, "\n")
 
-    txt_f <- paste0(txt_f, "Percentage of observations violating\n")
-    txt_f <- paste0(txt_f, "\t- 2-anonymity: ")
+    f_5anon <- sum(obj@risk$individual[,2]<5)
+    f_5anon_o <- sum(obj@originalRisk$individual[,2]<5)
+
+    f_2anon_p <- prettyF(100*f_2anon/n); f_2anon_op <- prettyF(100*f_2anon_o/n)
+    f_3anon_p <- prettyF(100*f_3anon/n); f_3anon_op <- prettyF(100*f_3anon_o/n)
+    f_5anon_p <- prettyF(100*f_5anon/n); f_5anon_op <- prettyF(100*f_5anon_o/n)
+
     if ( TFchange ) {
-      f_2anon_o <- sum(obj@originalRisk$individual[,2]<2)
-      txt_f <- paste0(txt_f, prettyF(100*f_2anon/n), " % (original data: ",prettyF(100*f_2anon_o/n)," %)\n")
+      txt_f <- paste0(txt_f, f_2anon, " (",f_2anon_p,"%) | in original data: ",f_2anon_o," (",f_2anon_op,"%)\n")
     } else {
-      txt_f <- paste0(txt_f, prettyF(100*f_2anon_o/n)," %\n")
+      txt_f <- paste0(txt_f, f_2anon_o," (",f_2anon_op,"%)\n")
     }
     txt_f <- paste0(txt_f, "\t- 3-anonymity: ")
     if ( TFchange ) {
-      f_3anon_o <- sum(obj@originalRisk$individual[,2]<3)
-      txt_f <- paste0(txt_f, prettyF(100*f_3anon/n), " % (original data: ",prettyF(100*f_3anon_o/n)," %)\n")
+      txt_f <- paste0(txt_f, f_3anon, " (",f_3anon_p,"%) | in original data: ",f_3anon_o," (",f_3anon_op,"%)\n")
     } else {
-      txt_f <- paste0(txt_f, prettyF(100*f_3anon_o/n)," %\n")
+      txt_f <- paste0(txt_f, f_3anon_o," (",f_3anon_op,"%)\n")
     }
-    txt_f <- paste0(txt_f, hr,"\n\n")
+    txt_f <- paste0(txt_f, "\t- 5-anonymity: ")
+    if ( TFchange ) {
+      txt_f <- paste0(txt_f, f_5anon, " (",f_5anon_p,"%) | in original data: ",f_5anon_o," (",f_5anon_op,"%)\n")
+    } else {
+      txt_f <- paste0(txt_f, f_5anon_o," (",f_5anon_op,"%)\n")
+    }
+    txt_f <- paste0(txt_f, "\n",hr,"\n\n")
     cat(txt_f)
     invisible(c(f_2anon_o, f_3anon_o))
   }
@@ -191,12 +189,16 @@ definition = function(x, type = "kAnon", ...) {
       cat(paste0("PRAM has not been applied!\n"))
       return(invisible(NULL))
     }
-    txt_pram <- paste0("Post-Randomization (PRAM):\n")
-    txt_pram <- paste0(txt_pram,"\tParameters used: 'pd'=", pp$pd," | ")
-    txt_pram <- paste0(txt_pram, "'alpha'=", pp$alpha,"\n\n")
-    txt_pram <- paste0(txt_pram, "Number of changed observations:\n")
-    cat(txt_pram)
-    print(pp$summary, row.names=FALSE)
+    ss <- pp$summary
+    params <- pp$params
+    cat("Post-Randomization (PRAM):\n")
+    for ( i in 1:nrow(ss)) {
+      cat("Variable:",ss$variable[i],"\n")
+      cat("--> final Transition-Matrix:\n")
+      print(params[[i]]$Rs)
+    }
+    cat("\nChanged observations:\n")
+    print(ss)
     cat(hr,"\n\n")
   }
 
@@ -210,7 +212,7 @@ definition = function(x, type = "kAnon", ...) {
     txt_ls <- paste0("Local Suppression")
     supps <- as.data.table(ls$supps)
     if ( nrow(supps) > 1 ) {
-      txt_ls <- paste0(txt_ls, " (applied per strata given by variables ", paste0(ls$strataVars, collapse=", "),")\n")
+      txt_ls <- paste0(txt_ls, " (applied per strata given by variable(s) ", paste0(ls$strataVars, collapse=", "),")\n")
     } else {
       txt_ls <- paste0(txt_ls, ":\n")
     }

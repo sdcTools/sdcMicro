@@ -112,11 +112,9 @@ LLmodGlobalRiskWORK <- function(x, method = "IPF", inclProb = NULL, form = as.fo
   paste(colnames(x), collapse = "+"))), modOutput = FALSE) {
 
   if (is.null(inclProb)) {
-    warn_sw <- paste0("Please provide the inclusion probabilities, eg.\n");
-    warn_sw <- paste0(warn_sw, "approx by 1/sampling weights.\n")
-    warn_sw <- paste0(warn_sw, "They are now set to 0.1 which is simple a wrong assumption.")
-    warning(warn_sw)
-    inclProb = 0.1
+    errMsg <- paste0("Please provide the inclusion probabilities, eg.\n");
+    errMsg <- paste0(errMsg, "approx by 1/sampling weights.\n")
+    stop(errMsg)
   }
   # x risk functions P(F_k=r | f_k = r)
   risk1 <- function(l, p) {

@@ -270,7 +270,7 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
     dataX <- as.matrix(dataX)
     maxHH <- max(table(dataX[, 1]), na.rm = TRUE)
     if (fast_hier) {
-      # warning('The households are to large for a fast computation of the hierachical risk.\n
+      # warning('The households are too large for a fast computation of the hierachical risk.\n
       # (Use the parameter forceHier to perform the computation anyway)')
       reshier <- by(dataX[, 2], dataX[, 1], function(x) 1 - prod(1 - x), simplify = TRUE)
       reshier <- data.frame(cbind(reshier, unique(dataX[, 1])))

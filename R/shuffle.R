@@ -52,11 +52,7 @@
 #' @note In this version, the covariance method chosen is used for any
 #' covariance and correlation estimations in the whole gadp and shuffling
 #' function.
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"data.frame\")")}{}
-#' \item{list("signature(obj = \"matrix\")")}{}
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
-#' @author Matthias Templ, Alexander Kowarik
+#' @author Matthias Templ, Alexander Kowarik, Bernhard Meindl
 #' @seealso \code{\link{rankSwap}, \link{lm}}
 #' @references K. Muralidhar, R. Parsa, R. Saranthy (1999). A general additive
 #' data perturbation method for database security. \emph{Management Science},
@@ -70,6 +66,7 @@
 #' Computer Science}, J. Domingo-Ferrer, Y. Saygin (editors.); Springer,
 #' Berlin/Heidelberg, 2008, ISBN: 978-3-540-87470-6, pp. 14-25.
 #' @keywords manip
+#' @rdname shuffle
 #' @export
 #' @examples
 #'
@@ -96,6 +93,8 @@ setGeneric("shuffle", function(obj, form, method = "ds", weights = NULL,
   standardGeneric("shuffle")
 })
 
+#' @rdname shuffle
+#' @export
 setMethod(f = "shuffle", signature = c("sdcMicroObj"),
   definition = function(obj, form, method = "ds", weights = NULL,
     covmethod = "spearman", regmethod = "lm", gadp = TRUE) {
@@ -139,6 +138,8 @@ setMethod(f = "shuffle", signature = c("sdcMicroObj"),
   obj
 })
 
+#' @rdname shuffle
+#' @export
 setMethod(f = "shuffle", signature = c("data.frame"),
 definition = function(obj, form, method = "ds", weights = NULL,
   covmethod = "spearman", regmethod = "lm", gadp = TRUE) {
@@ -147,6 +148,8 @@ definition = function(obj, form, method = "ds", weights = NULL,
     covmethod = covmethod, regmethod = regmethod, gadp = gadp)
 })
 
+#' @rdname shuffle
+#' @export
 setMethod(f = "shuffle", signature = c("matrix"),
 definition = function(obj, form, method = "ds", weights = NULL,
   covmethod = "spearman", regmethod = "lm", gadp = TRUE) {

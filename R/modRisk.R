@@ -64,9 +64,9 @@
 #' Smoothing Model for Sample Disclosure Risk Estimation}. Privacy in
 #' Statistical Databases. Lecture Notes in Computer Science.  Springer-Verlag,
 #' 82--93.
-#' 
+#'
 #' Clogg, C.C. and Eliasson, S.R. (1987). \emph{Some Common Problems in Log-Linear Analysis}. Sociological Methods and Research, 8-44.
-#' 
+#'
 #' @keywords manip
 #' @export
 #' @examples
@@ -120,14 +120,14 @@ setMethod(f = "modRisk", signature = c("sdcMicroObj"),
                 x <- data.frame(x, ok[, colnames(ok) %in% vars, drop = FALSE])
               }
             }
-            
+
             wV <- get.sdcMicroObj(obj, type="weightVar")
             weightsVar <- cn[wV]
             if ( is.null(wV) ) {
               stop("It is not possible to calculate model-based risks for data without sampling weights (slot 'weightVar')!\n")
             }
             x[[weightsVar]] <- orig[[wV]]
-            
+
             risk <- get.sdcMicroObj(obj, type="risk")
             risk$model <- modRisk(x, method=method, weights=weightsVar, formulaM=formulaM, bound=bound)
             obj <- set.sdcMicroObj(obj, type="risk", input=list(risk))
@@ -153,15 +153,14 @@ setMethod(f = "modRisk", signature = c("data.frame"),
             file_risk <- function(freq, risk) {
               sum(as.numeric(freq == 1) * risk)
             }
-            
+
             . <- inclProb <- counts <- id <- Fk <- NULL
             x <- obj
             if ( !is.data.frame(x) ) {
               stop("input 'x' must be a data.frame!\n")
             }
             if ( !method %in% c("default","CE","PML","weightedLLM","IPF") ) {
-              warning("Unknown method was selected. Falling back to default estimation method!\n")
-              method <- "default"
+              stop("Unknown value for 'method' was detected!\n")
             }
             if ( !weights %in% colnames(x) ) {
               stop("Please provide a valid variable name that contains sampling weights!\n")
@@ -169,34 +168,34 @@ setMethod(f = "modRisk", signature = c("data.frame"),
             if ( length(bound) != 1 & bound[1] <= 0) {
               stop("Argument 'bound' must be numeric > 0!\n")
             }
-            
+
             form_info <- terms(formulaM)
             orders <- attributes(form_info)$order
             vars <- labels(form_info)[orders==1]
-            
+
             if ( method=="IPF" && any(orders>1) ) {
               stop("Sorry, but method 'IPF' cannot be used for models with interactions!\n")
             }
-            
+
             if ( !all(vars %in% colnames(x)) ) {
               stop("all variables specified in the formula must exist in the input dataset!\n")
             }
-            
+
             x <- x[,c(vars, weights)]
             colnames(x) <- c(vars, "weights")
             y <- data.table(x, key=vars)
             y[,inclProb:=1/weights]
             y <- y[,.(counts=.N, weights=sum(weights), inclProb=sum(inclProb)), by=key(y)]
-            
+
             grid <- data.table(expand.grid(lapply(1:length(vars), function(t) unique((x[[vars[t]]])))))
             setnames(grid, vars)
             setkeyv(grid, vars)
-            
+
             x <- merge(grid, y, all.x=TRUE)
             x[is.na(counts), counts:=0]
             x[is.na(weights ), weights :=0]
             x[is.na(inclProb), inclProb:=0]
-            
+
             # model selection
             if ( method == "default" ) {
               form <- as.formula(paste(c("counts", as.character(formulaM)), collapse = ""))
@@ -224,7 +223,7 @@ setMethod(f = "modRisk", signature = c("data.frame"),
               tab <- xtabs(form, x)
               tabP <- xtabs(form2, x)
             }
-            
+
             # running the model with the chosen formula
             if ( method == "IPF" ) {
               mod <- loglm(form, data = tab, fitted = TRUE)
@@ -232,7 +231,7 @@ setMethod(f = "modRisk", signature = c("data.frame"),
               mod <- glm(form, data = x, family = poisson())
             }
             lambda <- fitted(mod)
-            
+
             # calculate risk and estimate
             # 1. the number of sample uniques that are population unique
             # 2. the number of correct matches of sample uniques
@@ -257,7 +256,7 @@ setMethod(f = "modRisk", signature = c("data.frame"),
             r2 <- risk2(x$Fk, x$inclProb) / nrow(x)
             gr1 <- file_risk(x$counts, r1)
             gr2 <- file_risk(x$counts, r2)
-            
+
             res <- list(gr1=gr1, gr2=gr2, gr1perc=gr1*100, gr2perc=gr2*100,
                         method=method, model=formulaM, fitted=fitted(mod), inclProb=x$inclProb)
             class(res) <- "modrisk"

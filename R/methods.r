@@ -1,7 +1,6 @@
 #' @rdname sdcMicroObj-class
 #' @export
 #' @note internal function
-#' @author Bernhard Meindl \email{bernhard.meindl@@statistik.gv.at}
 setGeneric("get.sdcMicroObj", function(object, type) {
   standardGeneric("get.sdcMicroObj")
 })
@@ -19,9 +18,6 @@ setGeneric("get.sdcMicroObj", function(object, type) {
 #'
 #' @export
 #' @rdname sdcMicroObj-class
-#'
-#' @note internal function
-#' @author Bernhard Meindl \email{bernhard.meindl@@statistik.gv.at}
 setGeneric("set.sdcMicroObj", function(object, type, input) {
   standardGeneric("set.sdcMicroObj")
 })
@@ -36,9 +32,6 @@ setGeneric("set.sdcMicroObj", function(object, type, input) {
 #' @export
 #' @docType methods
 #' @rdname sdcMicroObj-class
-#'
-#' @note internal function
-#' @author Elias Rut
 setGeneric("undolast", function(object) {
   standardGeneric("undolast")
 })
@@ -47,16 +40,11 @@ setGeneric("undolast", function(object) {
 #' @rdname sdcMicroObj-class
 setMethod(f = "get.sdcMicroObj", signature = c("sdcMicroObj", "character"),
 definition = function(object, type) {
-  if (!type %in% c("origData", "keyVars", "pramVars", "numVars", "ghostVars", "weightVar", "hhId", "strataVar",
-    "sensibleVar", "manipKeyVars", "manipPramVars", "manipNumVars", "manipGhostVars", "manipStrataVar", "originalRisk",
-    "risk", "utility", "pram", "localSuppression", "options", "prev", "set", "deletedVars")) {
+  if (!type %in% slotNames(object)) {
     stop("get.sdcMicroObj:: argument 'type' is not valid!\n")
   }
   if ((!type %in% object@set) && !is.null(object@prev)) {
     return(get.sdcMicroObj(object@prev, type))
-  }
-  if (!type %in% slotNames(object)) {
-    stop("wrong argument 'type'!\n")
   }
   return(slot(object, type))
 })
@@ -67,7 +55,7 @@ setMethod(f = "set.sdcMicroObj", signature = c("sdcMicroObj", "character", "list
 definition = function(object, type, input) {
   if (!type %in% c("origData", "keyVars", "pramVars", "numVars", "ghostVars", "weightVar", "hhId", "strataVar",
     "sensibleVar", "manipPramVars", "manipKeyVars", "manipNumVars", "manipGhostVars", "manipStrataVar", "risk",
-    "utility", "pram", "localSuppression", "options", "prev", "set")) {
+    "utility", "pram", "localSuppression", "options", "prev", "set", "additionalResults", "deletedVars")) {
     stop("set.sdcMicroObj:: check argument 'type'!\n")
   }
 
@@ -113,6 +101,10 @@ definition = function(object, type, input) {
     object@prev <- input[[1]]
   if (type == "set")
     object@set <- input[[1]]
+  if (type == "additionalResults")
+    object@additionalResults <- input[[1]]
+  if (type == "deletedVars")
+    object@deletedVars <- input[[1]]
   if (is.null(object@set))
     object@set <- list()
   if (length(object@set) == 0 || !type %in% object@set)
@@ -149,9 +141,48 @@ definition = function(object, type, ...) {
 setMethod(f = "undolast", signature = c("sdcMicroObj"),
 definition = function(object) {
   if (is.null(object@prev)) {
-    warning("Can not undo. No previous state stored. (The input object is returned).\n")
+    warnMsg <- "Can not undo. No previous state stored. (The input object is returned).\n"
+    obj <- addWarning(obj, warnMsg=warnMsg, method="undolast", variable=NA)
+    warning(warnMsg)
     return(object)
   }
   return(object@prev)
+})
+
+
+#' \code{strataVar<-} allows to modify the variable which is used if anonymization limitation
+#' techniques are applied independent for each characteristic of the defined strata.
+#' @param value \code{NULL} or a character vector of length 1 specifying a valid variable name
+#' @return an object of class \code{sdcMicroObj} with modified slot \code{@strataVar}
+#'
+#' @export
+#' @docType methods
+#' @rdname sdcMicroObj-class
+setGeneric("strataVar<-", function(object, value) {
+  standardGeneric("strataVar<-")
+})
+
+#' @rdname sdcMicroObj-class
+#' @export
+setReplaceMethod(f="strataVar",
+signature=signature(object="sdcMicroObj", value="characterOrNULL"),
+definition = function(object, value) {
+ if (is.null(value)) {
+   object@strataVar <- NULL
+   return(object)
+ }
+
+ cn <- colnames(object@origData)
+ if (length(value)!=1) {
+   stop("only a single (existing) variable might be set as stratification variable!\n")
+ }
+ if (!value%in%cn) {
+   stop("stratification-variables could not be found!\n")
+ }
+ if (value%in%colnames(object@manipKeyVars)) {
+   stop("stratification-variables cannot be a categorical key-variable!\n")
+ }
+ object@strataVar <- match(value, cn)
+ return(object)
 })
 

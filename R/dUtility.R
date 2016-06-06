@@ -36,6 +36,7 @@
 #' @examples
 #'
 #' data(free1)
+#' free1 <- as.data.frame(free1)
 #' m1 <- microaggregation(free1[, 31:34], method="onedims", aggr=3)
 #' m2 <- microaggregation(free1[, 31:34], method="pca", aggr=3)
 #' dRisk(obj=free1[, 31:34], xm=m1$mx)
@@ -64,6 +65,8 @@ setGeneric("dUtility", function(obj, ...) {
   standardGeneric("dUtility")
 })
 
+#' @rdname dUtility
+#' @export
 setMethod(f = "dUtility", signature = c("sdcMicroObj"),
 definition = function(obj, ...) {
   numVars <- get.sdcMicroObj(obj, type = "numVars")
@@ -77,17 +80,17 @@ definition = function(obj, ...) {
   obj
 })
 
+#' @rdname dUtility
+#' @export
 setMethod(f = "dUtility", signature = c("data.frame"), definition = function(obj, ...) {
-  dUtilityWORK(x = obj, ...)
-})
-
-setMethod(f = "dUtility", signature = c("matrix"), definition = function(obj, ...) {
   dUtilityWORK(x = obj, ...)
 })
 
 dUtilityWORK <- function(x, xm, method = "IL1") {
   if (dim(x)[1] != dim(xm)[1]) {
-    warning("dimension of perturbed data and original data are different")
+    warnMsg <- "dimension of perturbed data and original data are different\n"
+    obj <- addWarning(obj, warnMsg=warnMsg, method="dUtility", variable=NA)
+    warning(warnMsg)
     xm <- xm[1:dim(x)[1], ]
   }
   if (method == "IL1") {

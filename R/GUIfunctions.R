@@ -118,12 +118,29 @@ setGeneric("varToFactor", function(obj, var) {
   standardGeneric("varToFactor")
 })
 
+#' @rdname varToFactor
+#' @export
 setMethod(f = "varToFactor", signature = c("sdcMicroObj"),
 definition = function(obj, var) {
-  x <- get.sdcMicroObj(obj, type = "manipKeyVars")
+  x <- get.sdcMicroObj(obj, type="manipKeyVars")
+  x2 <- varToFactor(x, var=var)
   obj <- nextSdcObj(obj)
-  x[, var] <- as.factor(x[, var])
-  obj <- set.sdcMicroObj(obj, type = "manipKeyVars", input = list(as.data.frame(x)))
+  obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(as.data.frame(x2)))
+  obj
+})
+
+#' @rdname varToFactor
+#' @export
+setMethod(f="varToFactor", signature=c("data.frame"),
+definition=function(obj, var) {
+  if ( length(var)!=1) {
+    stop("More than 1 variable specified in 'var'!\n")
+  }
+  if ( !var %in% colnames(obj)) {
+    stop("variable specified in 'var' not available in 'obj'!\n")
+  }
+  obj[[var]] <- as.factor(obj[[var]])
+  obj
   obj
 })
 
@@ -142,13 +159,23 @@ definition = function(obj, var) {
   obj
 })
 
-#' Join levels of a keyVariable in an object of class \code{\link{sdcMicroObj-class}}
+
+#' Join levels of a variables in an object of class
+#' \code{\link{sdcMicroObj-class}} or \code{factor} or \code{data.frame}
 #'
-#' Transforms the factor variable into a factors with less levels and
-#' recomputes risk.
+#' If the input is an object of class \code{\link{sdcMicroObj-class}}, the
+#' specified factor-variable is recoded into a factor with less levels and
+#' risk-measures are automatically recomputed.
 #'
-#' @name groupVars
-#' @aliases groupVars groupVars-methods groupVars,sdcMicroObj-method
+#' If the input is of class \code{data.frame}, the result is a \code{data.frame} with
+#' a modified column specified by \code{var}.
+#'
+#' If the input is of class \code{factor}, the result is a \code{factor} with different
+#' levels.
+#'
+#' @name groupAndRename
+#' @aliases groupAndRename groupAndRename,data.frame-method,
+#' groupAndRename,factor-method,groupAndRename,sdcMicroObj-method
 #' @docType methods
 #' @param obj object of class \code{\link{sdcMicroObj-class}}
 #' @param var name of the keyVariable to change
@@ -164,76 +191,160 @@ definition = function(obj, var) {
 #' means that there should be a one to one mapping from any level of the
 #' original factor to a level in the recoded variable. } }
 #' @keywords methods
+#' @author Bernhard Meindl
 #' @export
 #' @examples
-#'
 #' ## for objects of class sdcMicro:
 #' data(testdata2)
 #' testdata2$urbrur <- as.factor(testdata2$urbrur)
 #' sdc <- createSdcObj(testdata2,
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
-#' sdc <- groupVars(sdc, var="urbrur", before=c("1","2"), after=c("1","1"))
-#'
-setGeneric("groupVars", function(obj, var, before, after) {
-  standardGeneric("groupVars")
+#' sdc <- groupAndRename(sdc, var="urbrur", before=c("1","2"), after=c("1"))
+setGeneric("groupAndRename", function(obj, var, before, after) {
+  standardGeneric("groupAndRename")
 })
 
-setMethod(f = "groupVars", signature = c("sdcMicroObj"),
-definition = function(obj, var, before, after) {
-  if (length(before) != length(after)) {
-    stop("Arguments 'before' and 'after' have different length!\n")
-  }
-  x <- get.sdcMicroObj(obj, type = "manipKeyVars")
-  obj <- nextSdcObj(obj)
-  if (!all(before %in% levels(x[, var]))) {
+#' @rdname groupAndRename
+#' @export
+setMethod(f="groupAndRename", signature=c("factor"),
+definition=function(obj, var, before, after) {
+  if (!all(before %in% levels(obj))) {
     stop("some elements of 'before' are not valid levels in variable 'var'!\n")
   }
   if (any(duplicated(before))) {
     stop("each level from the original factor must be listed only once in argument 'before'!")
   }
-  for (i in 1:length(before)) {
-    levels(x[, var]) <- ifelse(levels(x[, var]) == before[i], after, levels(x[, var]))
-  }
-  obj <- set.sdcMicroObj(obj, type = "manipKeyVars", input = list(x))
+  ll <- levels(obj)
+  ll[ll %in% before] <- after[1]
+  levels(obj) <- ll
   obj
 })
 
-#' Change the name of levels of a keyVariable in an object of class
-#' \code{\link{sdcMicroObj-class}}
-#'
-#' Change the labels of levels.
-#'
-#' @name renameVars
-#' @aliases renameVars renameVars-methods renameVars,sdcMicroObj-method
-#' @docType methods
-#' @param obj object of class \code{\link{sdcMicroObj-class}}
-#' @param var name of the keyVariable to change
-#' @param before vector of levels before
-#' @param after vector of levels after
-#' @return the modified \code{\link{sdcMicroObj-class}}
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
-#' @keywords manip
+#' @rdname groupAndRename
 #' @export
-#' @examples
-#'
-#' ## for objects of class sdcMicro:
-#' data(testdata2)
-#' sdc <- createSdcObj(testdata2,
-#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-#'   numVars=c('expend','income','savings'), w='sampling_weight')
-#' sdc <- renameVars(sdc, var="urbrur", before=2, after=78)
-#'
-setGeneric("renameVars", function(obj, var, before, after) {
-  standardGeneric("renameVars")
-})
-
-setMethod(f = "renameVars", signature = c("sdcMicroObj"),
-definition = function(obj, var, before, after) {
-  x <- get.sdcMicroObj(obj, type = "manipKeyVars")
-  obj <- nextSdcObj(obj)
-  levels(x[, var]) <- ifelse(levels(x[, var]) == before, after, levels(x[, var]))
-  obj <- set.sdcMicroObj(obj, type = "manipKeyVars", input = list(x))
+setMethod(f="groupAndRename", signature=c("data.frame"),
+definition=function(obj, var, before, after) {
+  if (length(var) != 1) {
+    stop("length of input 'var' != 1!\n")
+  }
+  if (!var %in% colnames(obj)) {
+    stop("variable specified in 'var' is not available in 'obj'!\n")
+  }
+  fac <- obj[[var]]
+  if (!is.factor(obj[[var]]) ) {
+    stop("check input, we do not have a factor here!\n")
+  }
+  obj[[var]] <- groupAndRename(obj[[var]], var=NULL, before=before, after=after)
   obj
 })
+
+#' @rdname groupAndRename
+#' @export
+setMethod(f="groupAndRename", signature=c("sdcMicroObj"),
+definition=function(obj, var, before, after) {
+  x <- get.sdcMicroObj(obj, type="manipKeyVars")
+  x <- groupAndRename(x, var=var, before=before, after=after)
+  obj <- nextSdcObj(obj)
+  obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(x))
+  obj
+})
+
+
+# wrapper for tryCatch()
+tryCatchFn <- function(expr) {
+  result <- tryCatch({expr},
+   error=function(e) {
+     return(e)
+   })
+  return(result)
+}
+
+#' readMicrodata
+#'
+#' reads data from various formats into R. Used by default in \code{\link{sdcGUI}}.
+#'
+#' @param path a file path
+#' @param type which format does the file have. currently allowed values are
+#' \itemize{
+#' \item \code{sas}
+#' \item \code{spss}
+#' \item \code{stata}
+#' \item \code{R}
+#' \item \code{rdf}
+#' \item \code{csv}
+#' }
+#' @param convertCharToFac (logical) if TRUE, all character vectors are automatically
+#' converted to factors
+#' @param drop_all_missings (logical) if TRUE, all variables that contain NA-values only
+#' will be dropped
+#' @param ... additional parameters. Currently used only if \code{type='csv'} to pass
+#' arguments to \code{read.table()}.
+#'
+#' @return a data.frame or an object of class 'simple.error'
+#' @author Bernhard Meindl
+#' @export
+readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=TRUE, ...) {
+  if (type=="sas") {
+    res <- tryCatchFn(read_sas(b7dat=path))
+  }
+  if (type=="spss") {
+    res <- tryCatchFn(read_spss(path=path))
+  }
+  if (type=="stata") {
+    res <- tryCatchFn(read_dta(path=path))
+  }
+  if (type=="R") {
+    res <- tryCatchFn(get(load(file=path)))
+  }
+  if (type=="rdf") {
+    res <- tryCatchFn(get(paste(path)))
+  }
+  if (type=="csv") {
+    opts <- list(...)
+    header <- ifelse(opts$header==TRUE, TRUE, FALSE)
+    sep <- opts$sep
+    res <- tryCatchFn(read.table(path, sep=sep, header=header))
+  }
+  if ( "simpleError" %in% class(res) ) {
+    return(res)
+  } else {
+    if (!"data.frame" %in% class(res)) {
+      res$message <- paste0(res$message,"\ndata read into the system was not of class 'data.frame'!")
+      return(res)
+    }
+    # convert result to clas 'data.frame' if it is a 'tbl_df'...
+    if ("tbl_df" %in% class(res)) {
+      class(res) <- "data.frame"
+    }
+    # check if any variable has class 'labelled' and convert it to factors.
+    # this might happen if we read data with read_xxx() from haven
+    cl_lab <- which(sapply(res, class)=="labelled")
+    if (length(cl_lab) > 0) {
+      if (length(cl_lab)==1) {
+        res[[cl_lab]] <- as_factor(res[[cl_lab]])
+      } else {
+        res[,cl_lab] <- lapply(res[,cl_lab] , as_factor)
+      }
+    }
+
+    if (convertCharToFac) {
+      # convert character-variables to factors
+      cl_char <- which(sapply(res, class)=="character")
+      if (length(cl_char) >0) {
+        if (length(cl_char) == 1) {
+          res[[cl_char]] <- as.factor(res[[cl_char]])
+        } else {
+          res[,cl_char] <- lapply(res[,cl_char], as.factor)
+        }
+      }
+    }
+    if (drop_all_missings) {
+      # drop all variables that are NA-only
+      keep <- which(sapply(res, function(x) sum(is.na(x))!=length(x)))
+      res <- res[,keep,drop=FALSE]
+    }
+  }
+  res
+}
+

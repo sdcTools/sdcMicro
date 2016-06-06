@@ -1,3 +1,15 @@
+# 4.7.0
+- new argument 'excludeVars' in createSdcObj()
+- sdcGUI() opens shiny-app automatically
+- shiny-version of the GUI directly included in the package
+- save pram-parameters in slot '@pram' for each pramed-variable
+- new helper function `addWarnings()` which adds warnings also to slot `@additionalResults$sdcMicro_warnings`. This is required so that we can access warnings easier within shiny and use `tryCatch()` in a managable way.
+- new method 'addGhostVars()' that allows to specify ghostVars easier within the GUI.
+- remove parameter 'opt' in microaggregation
+- removed matrix-method for microaggregation()
+- removed argument 'strata_variables() for sdcMicroObj-method of microaggregation()
+- new method "strataVar<-" that allows temporarily resetting strata variable in an sdcMicroObj-object
+
 # 4.1.7
  - IHSN SDC guidelines as vignette
  - cat. key variables returned as factors in extractManipData
@@ -7,22 +19,22 @@
 
 # 4.1.5
  - pram bug fix
- 
+
 # 4.1.4
  - bug fix mafasts
- 
+
 # 4.1.1
  - only small bug fixes
 
 # 4.1.0
  - new IHSN SDC Guidelines included
- - new implementation of freqCalc. Computation time is now linear with data size. 
-   Gains a lot of speed for large data sets. 
+ - new implementation of freqCalc. Computation time is now linear with data size.
+   Gains a lot of speed for large data sets.
  - localSuppression, measure_risk and createSdcJobj make use of new implementation of freqCalc
  - C++-Level glpk and R-Level Rglpk removed for better compatiblity with Mac
  - configure,cleanup removed and Makevars and Makevars.win rewritten according to Rcpp documentation
  - function microaggrGower added: microaggregation for numerical and categorical variables based on Gower distance
  - completely new report facility (knitr and brew instead of R2HTML), new class 'reportObj' which stores all info for
    reporting and is generate by calcReportData
- - new slot in class sdcObj for manipPramVars 
- 
+ - new slot in class sdcObj for manipPramVars
+

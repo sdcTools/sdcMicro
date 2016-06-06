@@ -72,7 +72,7 @@
 #' indivf <- indivRisk(f)
 #' indivf$rk
 #' ## Local Suppression
-#' localS <- localSupp(f, keyVar=2, indivRisk=indivf$rk, threshold=0.25)
+#' localS <- localSupp(f, keyVar=2, threshold=0.25)
 #' f2 <- freqCalc(localS$freqCalc, keyVars=c(2,4,5,6), w=8)
 #' indivf2 <- indivRisk(f2)
 #' indivf2$rk
@@ -80,6 +80,7 @@
 #' ## select another keyVar and run localSupp once again,
 #' #if you think the table is not fully protected
 #' data(free1)
+#' free1 <- as.data.frame(free1)
 #' f <- freqCalc(free1, keyVars=1:3, w=30)
 #' ind <- indivRisk(f)
 #' ## and now you can use the interactive plot for individual risk objects:
@@ -96,6 +97,7 @@
 #' ## Data from mu-Argus:
 #' ## Global recoding:
 #' data(free1)
+#' free1 <- as.data.frame(free1)
 #' free1[, "AGE"] <- globalRecode(free1[,"AGE"], c(1,9,19,29,39,49,59,69,100), labels=1:8)
 #'
 #' ## Top coding:
@@ -116,12 +118,14 @@
 #'
 #'
 #' data(microData)
+#' microData <- as.data.frame(microData)
 #' m1 <- microaggregation(microData, method="mdav")
 #' x <- m1$x  ### fix me
 #' summary(m1)
-#' plotMicro(m1, 0.1, which.plot=1)  # too less observations...
+#' plotMicro(m1, 1, which.plot=1)  # too less observations...
 #' data(free1)
-#' plotMicro(microaggregation(free1[,31:34], method="onedims"), 0.1, which.plot=1)
+#' free1 <- as.data.frame(free1)
+#' plotMicro(microaggregation(free1[,31:34], method="onedims"), 1, which.plot=1)
 #'
 #'
 #' ## disclosure risk (interval) and data utility:
@@ -148,12 +152,15 @@
 #' set.seed(123)
 #' x <- factor(sample(1:4, 250, replace=TRUE))
 #' pr1 <- pram(x)
-#' length(which(pr1$xpramed == x))
+#' length(which(pr1$x_pram == x))
+#' summary(pr1)
 #' x2 <- factor(sample(1:4, 250, replace=TRUE))
-#' length(which(pram(x2)$xpramed == x2))
+#' length(which(pram(x2)$x_pram == x2))
 #'
 #' data(free1)
-#' marstatPramed <- pram(free1[,"MARSTAT"])
+#' marstat <- as.factor(free1[,"MARSTAT"])
+#' marstatPramed <- pram(marstat)
+#' summary(marstatPramed)
 #' \dontrun{
 #' # FOR OBJECTS OF CLASS sdcMicro
 #' data(testdata)

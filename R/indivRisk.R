@@ -15,11 +15,11 @@
 #' @param survey TRUE, if we have survey data and FALSE if we deal with a population.
 #' @return
 #' \itemize{
-#' \item{rk}{ base individual risk }
-#' \item{method }{method}
-#' \item{qual}{final correction factor}
-#' \item{fk}{frequency count}
-#' \item{knames}{colnames of the key variables}}
+#' \item{rk: }{ base individual risk }
+#' \item{method: }{method}
+#' \item{qual: }{final correction factor}
+#' \item{fk: }{frequency count}
+#' \item{knames: }{colnames of the key variables}}
 #' @note The base individual risk method was developed by Benedetti,
 #' Capobianchi and Franconi
 #' @author Matthias Templ. Bug in method \dQuote{exact} fixed since version

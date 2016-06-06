@@ -1,0 +1,174 @@
+---
+title: "Todos/Issues for sdcMicroGUI with shiny"
+author: "Bernhard Meindl"
+output: 
+  html_document: 
+    theme: united
+---
+
+<style type="text/css">
+.table {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+suppressPackageStartupMessages(require(lubridate))
+suppressPackageStartupMessages(require(data.table))
+suppressPackageStartupMessages(require(knitr))
+```
+
+## Hours
+```{r}
+dt <- data.table()
+dt <- rbind(dt, data.table(day=dmy("09-04-2016"), hours=6))
+dt <- rbind(dt, data.table(day=dmy("09-04-2016"), hours=6))
+dt <- rbind(dt, data.table(day=dmy("10-04-2016"), hours=3))
+dt <- rbind(dt, data.table(day=dmy("11-04-2016"), hours=4))
+dt <- rbind(dt, data.table(day=dmy("14-04-2016"), hours=6))
+dt <- rbind(dt, data.table(day=dmy("15-04-2016"), hours=8))
+dt <- rbind(dt, data.table(day=dmy("16-04-2016"), hours=4))
+dt <- rbind(dt, data.table(day=dmy("17-04-2016"), hours=4))
+dt <- rbind(dt, data.table(day=dmy("18-04-2016"), hours=4))
+dt <- rbind(dt, data.table(day=dmy("19-04-2016"), hours=3))
+dt <- rbind(dt, data.table(day=dmy("20-04-2016"), hours=3))
+dt <- rbind(dt, data.table(day=dmy("23-04-2016"), hours=5))
+dt <- rbind(dt, data.table(day=dmy("26-04-2016"), hours=8))
+dt <- rbind(dt, data.table(day=dmy("27-04-2016"), hours=8))
+dt <- rbind(dt, data.table(day=dmy("28-04-2016"), hours=8))
+dt <- rbind(dt, data.table(day=dmy("29-04-2016"), hours=4))
+dt <- rbind(dt, data.table(day=dmy("30-04-2016"), hours=4))
+dt <- rbind(dt, data.table(day=dmy("20-05-2016"), hours=4))
+dt <- rbind(dt, data.table(day=dmy("23-05-2016"), hours=4))
+dt <- rbind(dt, data.table(day=dmy("24-05-2016"), hours=4))
+kable(dt)
+```
+
+**Total Hours worked:** `r sum(dt$hours)`
+
+## Issues
+### Risk measurement
+- ~~Add 5-anonymity to the standard overview of number of records violating k-anonymity and add option to calculate the number of violators for any value of k.~~ (issue #1)
+- ~~Add option to view records violating 2- and 5-anonimity to the overview of risk measures for categorical key variables (currently this only exists for 3-anonimity).~~
+- When viewing records with certain characteristics (e.g. high risk, violating l-diversity, etc.), the selected key variables (and other variables of interest, e.g. weight) should appear in the  first columns and the other variables only after that. The user must be able to explore these subsets and sort them.
+- For l-diversity: the output window should include the number of records violating the set level of l-diversity.
+- Add SUDA score (overview of number of violating records at different set levels, as in  sdcMicro output) and plot (barplot or density plot).
+- Add risk measures for continuous variables (e.g. distance based measures, closest-neighbor), including measures that account for outliers.
+- For all risk measures, add an overview of the values before and after anonymization in such  a way that they are always visible in the display or easily accessed for viewing.
+- Add the possibility to compare the effect on risk of different methods/parameters (e.g., show the risk after using local suppression with k=3 and k=5).
+- Add different methods to compute frequencies/k-anonymity (see discussion with Olivier Dupriez) and allow the user to select the method (default should be the current method)
+
+### SDC methods
+#### General
+- Explicitly display the default parameters used for all methods, regardless of whether the parameters can be set in the GUI or not (e.g. aggr = 3 and method = “mdav” in the  microaggregation function).
+- Check default values to be sure they are sensible for all methods (value used if parameter is not set). 
+- All parameters that are commonly used should be settable in the GUI.
+- Explicitly indicate the effect of specifying strata in the sdcMicro object (which methods are  applied within strata, show this as warning when applying a certain method) and explain the effect of specifying strata when creating the sdcMicro object.
+- Create an option to prevent automatic re-calculation of risk measures after every  application of an SDC method. This would save time when rerunning a script or applying several methods in a row.
+
+#### ~~Recoding~~
+- ~~Add option to recode variables that are not selected as key variables.~~ (Issue #47)
+
+#### Top and bottom coding and banding
+- ~~Add banding, and top and bottom coding for continuous variables (`topBotCoding()`).~~ (Issue #46)
+
+#### ~~Local Suppression (optimal k-anonymity)~~
+- ~~if no importance vector is explicitly specified, the (implicitly used) importance vector should still be shown.~~ (Issue #42)
+- ~~Add option (e.g. tick box) to use or not use an importance vector. There is currently no option to exclude an importance vector.~~ (Issue #43)
+- ~~Add the possibility to freely specify the importance vector. Give values 1-p, allow repeating of the same value in the vector.~~ (Issue #41)
+- ~~Include the option to use key variable subsets (combs).~~ (Issue #44)
+
+#### ~~PRAM~~
+- ~~Allow setting a seed each time a probabilistic method is used (PRAM, etc.). This allows  replicating results, even if the order of the methods is changed or a method is omitted.~~ (done in `createSdcObj()` with parameter `seed`, implemented in the gui, issue #20)
+- ~~Add the possibility to set pd and alpha or the complete transition matrix.~~ (in sdcMicro)
+- ~~Add possibility to retrieve the transition matrix.~~ (in sdcMicro)
+- ~~Fix slot `@pram` in case of subsequent calls to `pram()`.~~ (in sdcMicro)
+
+#### ~~Microaggregation~~
+- ~~Add the `measure` argument to allow for choosing the replacement value~~ (Issue #15)
+- ~~Allow stratification~~ (Issue #45)
+
+#### Add noise
+- Check default values (150 percent and correlated2). (Issue #16)
+- ~~Make available all methods available in sdcMicro/listed in the help function as options.~~ (Issue #17)
+
+#### Rank swapping
+- Add rank swapping to the GUI with all options. (Issue #18)
+
+#### ~~Removing direct identifiers and other variables~~
+- ~~Add possibility to remove variables besides direct identifiers and present this as an SDC method.~~ (argument `excludeVars` in `createSdcObj()`, see also issue #71)
+
+#### Randomization
+- ~~Add possibility to randomize the order of records. This is useful if the order of the records contains a specific pattern (e.g. geographical or position in family). Suppressing or recoding alone will not protect these records, if the neighboring records are from the same region or the second record in a household is always the spouse.~~ (Issue #48, new argument `randomizeRecords` in `createSdcObj()`)
+- Add possibility to generate new randomized records (IDs), with randomization options for the whole dataset or within strata. This is useful if the record IDs consist, for example, of a geo identifier and the household line number. To prevent the use of the IDs for reconstructing the possible information, these should be replaced with randomized IDs. These randomized IDs can then be used for sorting the dataset and could serve to randomize the order of the records. Randomized IDs are also required if the order of records is randomized and the IDs could be used to reconstruct the original order. (Issue #49)
+
+### Utility measures
+- ~~Add utility measures for continuous variables (in the information loss window). This is especially important to evaluate perturbative methods.~~ (Issue #54)
+    - ~~overview of summary statistics of each continuous variable (by categorical variable) before and after~~
+    - ~~correlation measures~~
+    - ~~possibly other measures.~~
+- Add a feature to directly compare datasets before and after anonymization (see the compare datasets feature in the NSD version). This should allow the sorting of records, highlight changes and select subsets of the dataset based on certain criteria (e.g. for specific value in another variable or only records with changes). (Issue #55)
+- ~~Add the option to look at (bivariate) tabulations before and after recoding should be added to the GUI on the utility side.~~ (Issue #52)
+- Any of the features used to explore the data (see below) should be added.
+- ~~Add the functionality for exploring data (e.g. mosaic plot) also for comparing changes before and after anonymization.~~ (Issue #53)
+
+### Importing, exploring and exporting data
+#### Importing data
+- ~~STATA files from STATA version 13 onwards are not readable with the read.dta function. Support for STATA 13 files (both read and write) from the readstata13 or haven packages should be added.~~ (issue #21)
+- ~~On data load put a flag next to ‘all missing’ variables in the ‘Select variables’ dialog box, so users can immediately drop these variables. This is to prevent a fatal error later. While choosing key variables, a warning message should appear that the selected key variables contains only missing values (or very many), to prevent the error later on in the process.~~ (issue #22)
+- ~~In general, the GUI should do checks (e.g. on variable class, value range) to prevent obvious errors. These should appear as pop-up warning messages.~~ (issue #23)
+- Add in the ‘Select variables’ dialog box more information on the variables, such as the label, data type and range. (issue #24)
+- ~~Add option to change categorical key variables to class factor (`varToFactor()`) when appropriate while importing.~~ (issue #25)
+- Add under help or in the documentation a section on – what your data needs to look like to be imported. This to avoid reading in data that is not valid in R and the GUI and cannot be changed in the GUI to meet the R requirements (e.g. variable names with ‘_’). (issue #26)
+- Explain the use of the ‘generate strata’ functionality in the GUI (see above). (issue #26)
+- ~~write reactive expression to generate the code for data input. This might require a new helper-function in `sdcMicro`.~~ (Issue #27, new function `readMicrodata()` in `sdcMicro`)
+
+#### Exploring data
+- ~~Add visualization of summary statistics in the ‘Select variables’ window (boxplot, histogram, see NSD version). This aids the decision as to which variables to select and which methods might work best.~~ (issue #28)
+- ~~Add option to remove variables from the dataset (besides direct identifiers). This is useful for variables that only contain missing values or are too detailed for release. This could be as simple as renaming the button to ‘Remove variables’ or ‘Remove direct identifiers and other variables’ (see also SDC methods)~~ (issue #29)
+- The list of removed variables should be shown on the first tab (‘Identifiers’) as well as added to the report. (issue #30)
+- ~~Add the possibility to choose the variables for the mosaic plot interactively from the set of categorical key variables. Add colors to mosaic plot.~~ (issue #31)
+- ~~Add summary statistics, (bivariate tabulations), and graphs, such as boxplots and mosaic plots, to the first tab (‘Identifiers’). This functionality should allow choosing which variables to use for which type of data summary (e.g. with radio buttons), to allow the user to explore bivariate statistics too.~~ (Issue #32)
+- ~~A possibility to view and browse the data in a spreadsheet format (`View()` in `R`) should be available. This spreadsheet should have the possibility to sort the data based on each variable and select records based on variable values.~~
+- ~~Add possibility to set specific values to NA (recoding set these values to `NA`, a string)~~ (issue #33)
+
+#### ~~Exporting data~~
+- ~~The export menu should allow more (or all) arguments to be set for the corresponding export function from the foreign package in R. An important example is how to export factor variables (as labels, strings, numerical values).~~ (issue #34, `write_xxx()` functions from `haven` do not have any options)
+
+### Other features and issues
+- ~~Include the option to add ghost variables (linked variables).~~ (issue #36)
+- Resolve any issues bugs that occur in the current sdcMicroGUI version, if the new GUI builds upon the existing version.
+- Show error messages and warnings (also) directly in a (pop-up) window in the GUI. Currently, they appear only in the R console. Any R error message (and warning message) should be communicated to the user in the GUI. It should not for example show script running, as the current version does, even when the method has failed.
+- Add possibility to track computation time.
+- Since the running time can be very long on larger datasets, the ability to run on a sample of records to test before running on the full sample should be added. It would be good to be able to set a percentage or sample size to work with to test the methods. The method to choose the subset should also be possible to select, e.g. first n/ 10%, every 10th. (Issue #50) 
+- Add possibility to turn off immediate risk calculation after each step (to save time)
+- Keeping `undolast()` as it is but possible add save/reload buttons within the GUI on relevant pages is probably the easiest way to allow to try different methods and revert back to the previous-state.
+- Enable dealing with household structure (adding unique household id, selecting records on higher hierarchical level and doing the anonymization in two steps, merging back based on household ID, etc.)
+- ~~Add report function to export menu.~~ (issue #35)
+- The script option in the current GUI is not complete (steps are missing). The script should be ready to run in R when exported. This would enhance learning for users interested in moving to command line R from the GUI.
+- Provide improved help files customized for the GUI user. Links to sdcMicro help-files are not useful for GUI user.
+- Provide overview (list) of all methods applied with the respective variables and parameter values. This could be similar to the script function, but readable for someone who is not familiar with R.
+
+### GUI-Layout (not-binding)
+- Include tabs: 
+    - 1) Data exploration/visualization, 
+    - 2) SDC methods for categorical key variables, 
+    - 3) SDC methods for continuous key variables, 
+    - 4) Export and reporting, 
+    - 5) continuous viewing changes to risk before and after methods.
+- Data exploration tab: 
+    - exploring data
+    - selecting variables
+    - initializing sdcMicro object. 
+This tab could have a similar structure as the ‘Variables’ tab in Nesstar v.4.0.9., i.e. variable overview, summary statistics by variable, and overview of selected variables (see screenshot below). The different variable types can be selected as the weight variable is in the last column in the screenshot. The Nesstar publisher is freeware and can be downloaded from http://www.nesstar.org/Release-free/NesstarPublisherInstaller_v4.0.9.exe
+- Export and reporting tab: possibility to preview and browse data, select option for export (e.g. labels) and generate standardized report as well as extracting the script and list of applied methods.
+- Reduce the number of pop-up windows.
+
+## Todos
+
+## Nice-To-Have
+
+## Bugs

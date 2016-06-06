@@ -1,22 +1,24 @@
 Package: sdcMicro
 Type: Package
-Title: Statistical Disclosure Control Methods for Anonymization of Microdata and Risk Estimation
-Version: 4.6.0
-Date: 2015-10-01
+Title: Statistical Disclosure Control Methods for Anonymization of Microdata and
+    Risk Estimation
+Version: 4.7.0
+Date: 2016-04-10
 Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl
 Maintainer: Matthias Templ <matthias.templ@gmail.com>
 Description: Data from statistical agencies and other institutions are mostly
     confidential. This package can be used for the generation of anonymized
-    (micro)data, i.e. for the creation of public- and scientific-use files.
-    In addition, various risk estimation methods are included.
-    Note that the package 'sdcMicroGUI' includes a graphical user interface for various methods
-    in this package.
+    (micro)data, i.e. for the creation of public- and scientific-use files. In
+    addition, various risk estimation methods are included. Note that the package
+    'sdcMicroGUI' includes a graphical user interface for various methods in this
+    package.
 LazyData: TRUE
 ByteCompile: TRUE
 LinkingTo: Rcpp
 Depends:
     R (>= 2.10),rmarkdown,knitr,data.table,xtable
-Suggests: laeken,testthat
+Suggests:
+    laeken,testthat
 Imports:
     utils,
     stats,
@@ -30,11 +32,14 @@ Imports:
     Rcpp,
     methods,
     sets,
-    ggplot2
+    ggplot2,
+    shiny,
+    haven
 License: GPL-2
 URL: https://github.com/alexkowa/sdcMicro
 Collate:
     '0classes.r'
+    'addGhostVars.R'
     'addNoise.r'
     'aux_functions.r'
     'dataGen.r'
@@ -71,4 +76,6 @@ Collate:
     'printFunctions.R'
     'mafast.R'
     'maG.R'
+    'sdcGUI.R'
     'show_sdcMicroObj.R'
+RoxygenNote: 5.0.1

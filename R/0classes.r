@@ -13,6 +13,7 @@
 #' @import 'xtable'
 #' @import 'data.table'
 #' @import 'ggplot2'
+#' @import 'shiny'
 #' @importFrom 'sets' 'set_power'
 #' @importFrom 'rmarkdown' 'render'
 #' @importFrom 'graphics' 'axis'
@@ -62,6 +63,10 @@
 #' @importFrom 'utils' 'data'
 #' @importFrom 'utils' 'flush.console'
 #' @importFrom 'utils' 'tail'
+#' @importFrom haven read_spss
+#' @importFrom haven read_dta
+#' @importFrom haven read_sas
+#' @importFrom haven as_factor
 
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))
 setClassUnion("numericOrNULL", c("numeric", "NULL"))

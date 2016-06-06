@@ -8,18 +8,12 @@
 #' @name localSupp
 #' @aliases localSupp-methods localSupp,ANY-method localSupp,sdcMicroObj-method localSupp
 #' @docType methods
-#' @param obj object of class freqCalc or sdcMicroObj
+#' @param obj object of class \code{\link{freqCalc}} or \code{\link{sdcMicroObj-class}}.
 #' @param threshold threshold for individual risk
 #' @param keyVar Variable on which some values might be suppressed
-#' @param ... see arguments below
-#' \itemize{
-#' \item{indivRisk}{object from class indivRisk}}
-#' @return Manipulated data with suppressions or the \code{\link{sdcMicroObj-class}}
+#' @return an updated object of class \code{\link{freqCalc}} or the \code{\link{sdcMicroObj-class}}
 #' object with manipulated data.
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}
-#' \item{list("signature(obj = \"ANY\")")}{}}
-#' @author Matthias Templ
+#' @author Matthias Templ and Bernhard Meindl
 #' @seealso \code{\link{freqCalc}}, \code{\link{indivRisk}}
 #' @references Templ, M. \emph{Statistical Disclosure Control for Microdata
 #' Using the R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number
@@ -27,10 +21,10 @@
 #' @keywords manip
 #' @export
 #' @examples
-#'
 #' ## example from Capobianchi, Polettini and Lucarelli:
 #' data(francdat)
-#' f <- freqCalc(francdat, keyVars=c(2,4,5,6),w=8)
+#' keyVars <- paste0("Key",1:4)
+#' f <- freqCalc(francdat, keyVars=keyVars,w=8)
 #' f
 #' f$fk
 #' f$Fk
@@ -38,64 +32,124 @@
 #' indivf <- indivRisk(f)
 #' indivf$rk
 #' ## Local Suppression
-#' localS <- localSupp(f, keyVar=2, indivRisk=indivf$rk, threshold=0.25)
-#' f2 <- freqCalc(localS$freqCalc, keyVars=c(4,5,6), w=8)
+#' localS <- localSupp(f, keyVar="Key4", threshold=0.15)
+#' f2 <- freqCalc(localS$freqCalc, keyVars=keyVars, w=8)
 #' indivf2 <- indivRisk(f2)
 #' indivf2$rk
+#' identical(indivf$rk, indivf2$rk)
+#'
 #' ## select another keyVar and run localSupp once again,
 #' # if you think the table is not fully protected
 #'
-#'
 #' ## for objects of class sdcMicro:
-#' data(testdata2)
-#' sdc <- createSdcObj(testdata2,
+#' data(testdata)
+#' sdc <- createSdcObj(testdata,
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
-#' sdc <- localSupp(sdc, keyVar='urbrur')
+#' sdc <- localSupp(sdc, keyVar='urbrur', threshold=0.045)
+#' print(sdc, type="ls")
 #'
-setGeneric("localSupp", function(obj, threshold = 0.15, keyVar, ...) {
+setGeneric("localSupp", function(obj, threshold = 0.15, keyVar) {
   standardGeneric("localSupp")
 })
 
-setMethod(f = "localSupp", signature = c("sdcMicroObj"),
-definition = function(obj, threshold = 0.15, keyVar, ...) {
-  manipData <- get.sdcMicroObj(obj, type = "manipKeyVars")
-  keyVars <- colnames(manipData)
-  rk <- get.sdcMicroObj(obj, type = "risk")$individual[, 1]
+#' @rdname localSupp
+#' @export
+setMethod(f="localSupp", signature=c(obj="sdcMicroObj"),
+definition = function(obj, threshold=0.15, keyVar) {
+  manipData <- get.sdcMicroObj(obj, type="manipKeyVars")
+  rk <- get.sdcMicroObj(obj, type="risk")$individual[, 1]
+
+  if (!is.character(keyVar)) {
+    stop("key-variables need to be specified by their name!\n")
+  }
+  if ( length(keyVar)!=1) {
+    stop("more than 1 key-variable specified!\n")
+  }
+
+  cn <- colnames(get.sdcMicroObj(obj, type="origData"))[get.sdcMicroObj(obj, type="keyVars")]
+  if (!keyVar %in% cn) {
+    stop("invalid key-variable specified!\n")
+  }
+
+  ls <- localSuppWORK(x=manipData, rk=rk, keyVar=keyVar, threshold=threshold)
+
+  # create final output
+  obj <- nextSdcObj(obj)
+  obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(ls$xAnon))
+  ls$xAnon <- NULL
+  class(ls) <- unclass("list")
+  obj <- set.sdcMicroObj(obj, type="localSuppression", input=list(ls))
+
+  # transfer suppression patterns if ghostVars is specified
+  ghostVars <- get.sdcMicroObj(obj, type="ghostVars")
+  if ( !is.null(ghostVars) ) {
+    manipData <- get.sdcMicroObj(obj, type="manipKeyVars")
+    manipGhostVars <- get.sdcMicroObj(obj, type="manipGhostVars")
+    cn <- colnames(get.sdcMicroObj(obj, type="origData"))
+    for ( i in seq_along(ghostVars) ) {
+      # index of keyVar within manipData
+      kV <- match(cn[ghostVars[[i]][[1]]], colnames(manipData))
+      isna <- is.na(manipData[[kV]])
+
+      # get indices of linked variables within ghostVars and
+      # transfer suppression pattern
+      vv <- match(cn[ghostVars[[i]][[2]]], colnames(manipGhostVars))
+      for ( j in 1:length(vv) ) {
+        manipGhostVars[[vv[j]]][isna] <- NA
+      }
+    }
+    obj <- set.sdcMicroObj(obj, type="manipGhostVars", input=list(manipGhostVars))
+  }
+  obj <- calcRisks(obj)
+  obj
+})
+
+
+#' @rdname localSupp
+#' @export
+setMethod(f="localSupp", signature=c("ANY"),
+definition = function(obj, threshold=0.15, keyVar) {
+  if (!class(obj)=="freqCalc") {
+    stop("'obj' must be of class 'freqCalc'\n")
+  }
+  rk <- indivRisk(obj)$rk
+  x <- obj$freqCalc[,obj$keyVars]
+  if ( length(keyVar)!=1) {
+    stop("more than 1 key-variable specified!\n")
+  }
+  if (is.numeric(keyVar)) {
+    keyVar <- colnames(obj$freqCalc)[keyVar]
+  }
+  if (is.na(keyVar)) {
+    stop("invalid key-variable specified!\n")
+  }
+  res <- localSuppWORK(x=x, rk=rk, threshold=threshold, keyVar=keyVar)
+  cat(res$newSupps,"observations has individual risks >=",threshold,"and were suppressed!\n")
+  inpdf <- obj$freqCalc
+  inpdf[,obj$keyVars] <- res$xAnon
+
+  freqCalc(inpdf, keyVars=obj$keyVars, w=obj$w)
+})
+
+
+localSuppWORK <- function(x, rk, keyVar, threshold) {
+  na_before <- as.data.table(t(apply(x, 2, function(x) {
+    sum(is.na(x))
+  })))
+
   TF <- rk > threshold
-  if (!all(keyVar %in% colnames(manipData))) {
-    stop("keyVar must be a defined categorical keyVariable!\n")
-  }
-
   if (any(TF)) {
-    manipData[which(TF), keyVar] <- NA
-    obj <- nextSdcObj(obj)
-    obj <- set.sdcMicroObj(obj, type = "manipKeyVars", input = list(manipData))
-    a <- get.sdcMicroObj(obj, type = "origData")[, get.sdcMicroObj(obj, type = "keyVars")]
-    b <- manipData
-    w = which(is.na(a))
-    r = w%%nrow(a)
-    cc = ceiling(w/nrow(a))
-    wb = which(is.na(b))
-    rb = wb%%nrow(b)
-    cb = ceiling(wb/nrow(b))
-    d = data.frame(id = 1:ncol(a), before = NA, after = NA)
-    d[, 2:3] <- t(sapply(1:ncol(a), function(x) c(sum(cc == x), sum(cb == x))))
-    obj <- set.sdcMicroObj(obj, type = "localSuppression", input = list(list(d$after - d$before)))
-    obj <- calcRisks(obj)
+    x[which(TF), keyVar] <- NA
   }
-  obj
-})
 
-setMethod(f = "localSupp", signature = c("ANY"),
-definition = function(obj, threshold = 0.15, keyVar, indivRisk) {
-  ## x ... object from class freqCalc keyVar ... variables used for local suppression, ordered
-  ## indivRisk ... vector of individual risks fixme: better method for local suppression
-  ## calculate risk a second (and third time) and choose another keyVar! no keyVars =
-  ## x$keyVars + 1 ## indexG is now first
-  if (class(obj) != "freqCalc") {
-    stop("obj is not from class freqCalc")
-  }
-  obj$freqCalc[indivRisk > threshold, keyVar[1]] <- NA
-  obj
-})
+  supps <- as.data.table(t(apply(x, 2, function(x) { sum(is.na(x))})))
+  importance <- rep(NA, ncol(x))
+  importance[match(keyVar, colnames(x))] <- ncol(x)
+  importance[is.na(importance)] <- sample(1:(ncol(x)-1))
+  res <- list(xAnon=as.data.frame(x), supps=supps,
+    totalSupps=sum(supps), newSupps=sum(supps)-sum(na_before), anonymity=NA, keyVars=colnames(x),
+    strataVars=NULL, importance=importance, k=NA, threshold=threshold, combs=NULL)
+  class(res) <- "localSuppression"
+  res
+}

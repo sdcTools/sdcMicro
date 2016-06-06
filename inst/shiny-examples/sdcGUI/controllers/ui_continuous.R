@@ -1,0 +1,184 @@
+# returns TRUE if numeric key-variables exist in obj$sdcObj
+has_numkeyvars <- reactive({
+  if (is.null(obj$sdcObj)) {
+    return(NULL)
+  }
+  length(get.sdcMicroObj(obj$sdcObj, type="numVars"))>0
+})
+
+# GUI-output for microaggregation()
+output$ui_microaggregation <- renderUI({
+  # returns possible methods for microaggregation
+  choices_aggmethods <- reactive({
+    if (is.null(input$rb_microagg_cluster)) {
+      return(NULL)
+    }
+    if (input$rb_microagg_cluster=="Yes") {
+      return(c("influence", "clustpca", "clustmcdpca", "clustpppca"))
+    } else {
+      return(c("mdav", "rmd", "simple", "single","onedims", "pca", "mcdpca", "pppca"))
+    }
+  })
+
+  # additional ui-elements for cluster-based methods
+  output$ui_microagg_clusterbased <- renderUI({
+    rb_clustermethod <- radioButtons("rb_microagg_clustermethod", label=h4("Clustermethod"),
+      choices=c("clara","pam","kmeans","cmeans","bclust"),
+      width="100%", selected=input$rb_microagg_clustermethod, inline=TRUE)
+    rb_transf <- radioButtons("rb_microagg_transf", label=h4("Transformation"),
+      choices=c("none","log","boxcox"), width="100%", selected=input$rb_microagg_transf, inline=TRUE)
+    sl_nc <- isolate(sliderInput("sl_microagg_nc", label=h4("Number of clusters"), min=1, max=15, step=1, value=3, width="100%"))
+    out <- list(htmlTemplate("tpl_three_col.html", inp1=rb_clustermethod, inp2=rb_transf, inp3=sl_nc))
+    out
+  })
+
+  output$ui_microagg_strata <- ui_custom_selectInput(
+    choices=c("Use existing stratification-variable"="usedefault",
+              "Do not use any stratification variable"="none",possStrataVars()),
+    id="sel_microagg_strata", label="Stratification variable", multiple=FALSE)
+
+  rb_clbased <- radioButtons("rb_microagg_cluster", label=h5("Do you want to use a cluster-based method?"),
+    choices=c("No","Yes"), selected=input$rb_microagg_cluster, inline=TRUE, width="100%")
+  sel_method <- selectInput("sel_microagg_method", label=h5("Select the method"),
+    choices=choices_aggmethods(), selected=input$sel_microagg_method, width="100%")
+
+  lab_microvars <- h5("Select Variables for Microaggregation")
+  if (has_numkeyvars()) {
+    lab_microvars <- list(lab_microvars, p("If empty, the specified numerical key variables will be used!"))
+  }
+
+  sel_microvars <- selectInput("sel_microagg_v", choices=possvars_numericmethods(),
+    label=lab_microvars, selected=input$sel_microagg_v, width="100%", multiple=TRUE)
+
+  out <- list(
+    htmlTemplate("tpl_three_col.html", inp1=sel_method, inp2=rb_clbased, inp3=uiOutput("ui_microagg_strata")))
+
+  # simple, onedims, pca, mcdpca, pppca: --> aggr, measure, trim
+  # single: --> aggr, measure, trim, varsort
+  # influence, clustpca, clustmcdpca, clustpppca: --> aggr, measure, trim, clustermethod, transf, nc
+  # rmd, mdav: aggr,
+  if ( !is.null(input$sel_microagg_method) ) {
+    sl1 <- sliderInput("sl_microagg_aggr", label=h4("Aggregation-Level"), min=1, max=15, step=1, value=3, width="100%")
+    out <- list(out, htmlTemplate("tpl_two_col.html", inp1=sl1, inp2=sel_microvars))
+
+    if (!input$sel_microagg_method %in% c("mdav","rmd")) {
+      rb_measure <- radioButtons("sl_microagg_measure", label=h4("Aggregation Statistics"), choices=c("mean", "median", "trim", "onestep"),
+        width="100%", selected=input$sl_microagg_measure, inline=TRUE)
+      sl_trim <- sliderInput("sl_microagg_trim", label=h4("Trimming-Percentage"), min=0, max=0.5, step=0.01, value=0, width="100%")
+
+      if (input$sel_microagg_method=="single") {
+        sel_varsort <- selectInput("sel_microagg_varsort", label=h5("Select variable for sorting"),
+          choices=get_allNumericVars_name(), selected=input$sel_microagg_varsort, width="100%")
+        out <- list(out, htmlTemplate("tpl_three_col.html", inp1=rb_measure, inp2=sl_trim, inp3=sel_varsort))
+      } else {
+        out <- list(out, htmlTemplate("tpl_two_col.html", inp1=rb_measure, inp2=sl_trim))
+      }
+      # cluster-based methods
+      if (input$rb_microagg_cluster=="Yes") {
+        out <- list(out, uiOutput("ui_microagg_clusterbased"))
+      }
+    }
+  }
+  btn_microagg <- myActionButton("btn_microagg", label="Perform Microaggregation", "primary")
+  if (has_numkeyvars() | length(input$sel_microagg_v)>0 ) {
+    out <- list(out, htmlTemplate("tpl_one_col.html", inp=btn_microagg))
+  }
+  out
+})
+
+# GUI-output for addNoise()
+output$ui_noise <- renderUI({
+  # returns possible methods for addNoise()
+  # 'correlated' needs at least two columns=variables
+  choices_noise <- reactive({
+    #if (is.null(input$sel_anon_continuous)) {
+    #  return(NULL)
+    #}
+    m <- c("additive","correlated2","restr","ROMM","outdect")
+    if (length(input$sel_noise_v) >=2 | length(get.sdcMicroObj(obj$sdcObj, type="numVars")) >= 2) {
+      m <- c(m, "correlated")
+    }
+    m
+  })
+  # this needs to be a bit complicated because otherwise sliders would be constantly
+  # resetting to default values!
+  # also we have different parameters for methods (noise, p, delta) that we
+  # catch with a single slider
+
+
+  if (!has_numkeyvars()) {
+    return(htmlTemplate("tpl_one_col.html", inp=list(
+      h4("The current sdcProblem contains no",code("numerical key variables"),
+      "but",code("addNoise()"),"can only be applied on such variables!",
+      "Please modify the",code("sdcProblem"),"in tab",code("Setup SDC-Problem."))
+    )))
+  }
+
+  # ui for slider defining noise, p or delta
+  output$ui_noise_slider <- renderUI({
+    input$sel_noise_method
+    isolate({
+      if (is.null(input$sel_noise_method)) {
+        return(NULL)
+      }
+      if (input$sel_noise_method=="correlated2") {
+        lab <- h4("Parameter 'delta'")
+        par <- c(value=0.1, min=0.1, max=2, step=0.01)
+      } else if (input$sel_noise_method=="ROMM") {
+        lab <- h4("Parameter 'p'")
+        par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
+      } else {
+        lab <- h4("Amount of noise (in %)")
+        #par <- c(value=100, min=10, max=300, step=1)
+        par <- c(value=0.1, min=0.1, max=3, step=0.1)
+      }
+      sliderInput("sl_noise_noise", label=lab,
+        min=par["min"], max=par["max"], step=par["step"], value=par["value"], width="100%")
+    })
+  })
+
+  # ui for selection of method
+  output$ui_noise_method <- renderUI({
+    input$sel_noise_method
+    isolate({
+      sel_method <- selectInput("sel_noise_method", label=h5("Select the Algorithm"),
+        choices=choices_noise(),
+        selected=input$sel_noise_method, width="100%")
+      sel_method
+    })
+  })
+
+  # variables selected
+  output$ui_noise_vars <- renderUI({
+    input$sel_noise_method
+    isolate({
+      lab <- h5("Select Variables")
+      if (has_numkeyvars()) {
+        lab <- list(lab, p("If empty, all numerical key variables will be used!"))
+      }
+      sel_noisevars <- selectInput("sel_noise_v", choices=possvars_numericmethods(),
+        label=lab, selected=input$sel_noise_v, width="100%", multiple=TRUE)
+      sel_noisevars
+    })
+  })
+
+  # ui for 'btn_noise
+  output$ui_noise_btn <- renderUI({
+    btn <- NULL
+    if (has_numkeyvars() | length(input$sel_noise_v)>0) {
+      btn <- myActionButton("btn_noise", label="Apply addNoise()", "primary")
+    }
+    btn
+  })
+
+  out <- list(
+    htmlTemplate("tpl_two_col.html", inp1=uiOutput("ui_noise_method"), inp2=uiOutput("ui_noise_slider"), inp3=NULL),
+    htmlTemplate("tpl_three_col.html", inp1=NULL, inp2=uiOutput("ui_noise_vars"), inp3=NULL))
+  out <- list(out, htmlTemplate("tpl_one_col.html", inp=uiOutput("ui_noise_btn")))
+  out
+})
+
+# GUI-output for shuffling()
+output$ui_shuffling <- renderUI({
+  htmlTemplate("tpl_one_col.html", inp=h4("Shuffling"))
+})

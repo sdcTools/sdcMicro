@@ -174,29 +174,17 @@ definition = function(obj, internal, title, outdir) {
     repObj <- set.reportObj(repObj, "pram", list(NULL))
   }
   if ( is.list(get.reportObj(repObj, "pram")) ) {
+    ss <- obj@pram$summary
     pramOut <- list()
     changedVars <- list()
-    vNames.pram <- colnames(x)[obj@pramVars]
-    vNames.key <- colnames(x)[obj@keyVars]
-    for (i in 1:length(vNames.pram)) {
+    for (i in 1:nrow(ss)) {
       changedVars[[i]] <- list()
-      ind <- which(vNames.pram[i] == vNames.key)
-      if (length(ind) == 1) {
-        s <- sum(as.character(x[, vNames.pram[i]]) != as.character(get.sdcMicroObj(obj,
-          "manipKeyVars")[, vNames.key[ind]]), na.rm = TRUE)
-        p <- round(s/nrow(x) * 100, 2)
-      } else {
-        s <- sum(as.character(x[, vNames.pram[i]]) != as.character(get.sdcMicroObj(obj,
-          "manipPramVars")[, vNames.pram[i]]), na.rm = TRUE)
-        p <- round(s/nrow(x) * 100, 2)
-      }
-      changedVars[[i]]$oName <- vNames.pram[i]
-      changedVars[[i]]$nr <- s
-      changedVars[[i]]$perc <- p
+      changedVars[[i]]$oName <- ss$variable[i]
+      changedVars[[i]]$nr <- ss$nrChanges[i]
+      changedVars[[i]]$perc <- ss$percChanges[i]
     }
-    totChanges <- sum(sapply(changedVars, function(x) x$nr))
-    percChanges <- 100 * totChanges/(n * length(vNames.pram))
-
+    totChanges <- sum(ss$nrChanges)
+    percChanges <- 100 * totChanges/(n * length(nrow(ss)))
     pramOut$changedVars <- changedVars
     pramOut$totChanges <- totChanges
     pramOut$percChanges <- niceF(percChanges)

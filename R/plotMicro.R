@@ -23,9 +23,10 @@
 #' @examples
 #'
 #' data(free1)
+#' free1 <- as.data.frame(free1)
 #' m1 <- microaggregation(free1[, 31:34], method="onedims", aggr=3)
 #' m2 <- microaggregation(free1[, 31:34], method="pca", aggr=3)
-#' plotMicro(m1, 0.1, which.plot=1)
+#' plotMicro(m1, p=1, which.plot=1)
 #'
 plotMicro <- function(x, p, which.plot = 1:3) {
   bct <- function(y, p) {

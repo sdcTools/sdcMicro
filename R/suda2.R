@@ -155,6 +155,7 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
   if (length(variables) <= 2) {
     warn_s <- "This version of Suda2 can find MSUs only in Dataset with more than 2 variables."
     warn_s <- paste0(warn_s,"\nDummy variables have been added and the result might be wrong!")
+    obj <- addWarning(obj, warnMsg=warn_s, method="suda2", variable=NA)
     warning(warn_s)
   }
   invisible(res)
@@ -182,8 +183,8 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
 #'
 print.suda2 <- function(x, ...) {
   SEQ <- seq(0, 0.7, 0.1) + .Machine$double.eps
-  DISSudaScore <- c("0",paste(">", c("0.0",seq(0.1, 0.7, 0.1))))
-  tab <- table(cut(x$disScore, breaks = c(-1, SEQ, Inf)))
+  DISSudaScore <- paste(">", seq(0, 0.7, 0.1))
+  tab <- table(cut(x$disScore, breaks = c(-1, SEQ)))
   res <- data.frame(thresholds = DISSudaScore, number = as.numeric(tab))
   cat("\nDis suda scores table: \n")
   cat("- - - - - - - - - - - \n")
