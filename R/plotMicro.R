@@ -12,6 +12,7 @@
 #' \itemize{
 #' \item 1: density traces
 #' \item 2: parallel boxplots
+#' 
 #' \item 3: differences in totals}
 #' @author Matthias Templ
 #' @seealso \code{\link{microaggregation}}
@@ -29,7 +30,7 @@
 #'
 plotMicro <- function(x, p, which.plot = 1:3) {
   bct <- function(y, p) {
-    gm <- exp(mean(log(y)))
+    gm <- exp(colMeans(log(y)))
     if (p == 0)
       return(log(y) * gm)
     (y^p - 1)/(p * gm^(p - 1))
