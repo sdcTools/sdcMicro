@@ -279,9 +279,18 @@ definition = function(x, type = "kAnon", ...) {
     cat(txt_r)
   }
 
-  if ( type == "general") {
+  if (type == "general") {
     dims <- dim(get.sdcMicroObj(x, "origData"))
-    txt <- paste("Data set with", dims[1], "rows and", dims[2], "columns.\n")
+    txt <- paste("The input dataset consists of", dims[1], "rows and", dims[2], "variables.\n")
+
+    delVars <- x@deletedVars
+    if (!is.null(delVars)) {
+      txt <- paste0(txt, "\nThe following variables have been deleted are not available in the output dataset:\n")
+      for (i in 1:length(delVars)) {
+        txt <- paste0(txt, "\t--> ", delVars[i],"\n")
+      }
+      txt <- paste0(txt, "\n\n")
+    }
 
     kV <- get.sdcMicroObj(x, "keyVars")
     if ( length(kV) > 0 ) {

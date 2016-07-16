@@ -35,18 +35,20 @@ modifications <- get.reportObj(repObj, "modifications")
 nrObs <- get.reportObj(repObj, "nrObs")
 impFile <- get.reportObj(repObj, "impFile")
 
+delVars <- get.reportObj(repObj, "delVars")
+
 cat(paste0("## Input Data\n"))
 cat(paste0("The data set consists of **",nrObs,"** observations"))
 if ( !is.null(impFile) ) {
-  cat(paste0(" and was imported from **", impFile,"**"))
+  cat(paste0(" and was imported from **", impFile,"**."))
 } 
-cat(".\n\n")
+cat("\n\n")
 ```
 
 ```{r, echo=FALSE, results="asis"}
 if ( !is.null(modifications$delDirect) ) {
-  cat(paste0("## Deleted direct identifiers\n"))
-  cat(paste0("The following direct identifying variables have been deleted from the data set:\n"))
+  cat(paste0("## Deleted variables\n"))
+  cat(paste0("The following (direct identifying) variables have been deleted from the data set:\n\n"))
   cat(paste0("- *",paste(modifications$delDirect, collapse="* | *"),"*"))
 }
 ```
