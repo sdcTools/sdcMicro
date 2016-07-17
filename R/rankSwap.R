@@ -47,10 +47,6 @@
 #' this value.
 #' @param seed Seed.
 #' @return The rank-swapped data set or a modified \code{\link{sdcMicroObj-class}} object.
-#' @section Methods: \describe{
-#' \item{list("signature(obj=\"data.frame\")")}{}
-#' \item{list("signature(obj=\"matrix\")")}{}
-#' \item{list("signature(obj=\"sdcMicroObj\")")}{}}
 #' @author Alexander Kowarik for the interface, Bernhard Meindl for improvements.
 #'
 #' For the underlying C++ code: This work is being supported by the

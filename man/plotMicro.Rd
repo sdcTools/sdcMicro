@@ -15,6 +15,7 @@ plotMicro(x, p, which.plot = 1:3)
 \itemize{
 \item 1: density traces
 \item 2: parallel boxplots
+
 \item 3: differences in totals}}
 }
 \description{
