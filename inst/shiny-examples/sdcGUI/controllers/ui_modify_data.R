@@ -1,4 +1,4 @@
-# GUI-output for recoding a variable to a factor
+# UI-output for recoding a variable to a factor
 output$ui_modify_recode_to_factor <- renderUI({
   # automatically generated breakpoints
   output$ui_globalRecode_auto <- renderUI({
@@ -83,7 +83,7 @@ output$ui_modify_recode_to_factor <- renderUI({
   out
 })
 
-# GUI-output for modifying a factor-variable
+# UI-output for modifying a factor-variable
 output$ui_modify_change_factor <- renderUI({
   # plot of curretn factor
   output$plot_fac <- renderPlot({
@@ -130,7 +130,7 @@ output$ui_modify_change_factor <- renderUI({
   out
 })
 
-# GUI-output to create a stratification variable
+# UI-output to create a stratification variable
 output$ui_modify_create_stratvar <- renderUI({
   sel <- selectInput("sel_allvars_strata",label=h5("Select Variables"), multiple=TRUE,
     choices=allVars(), selected=input$sel_allvars_strata, width="100%")
@@ -152,7 +152,7 @@ output$ui_modify_create_stratvar <- renderUI({
   )
 })
 
-# GUI-output to create a stratification variable
+# UI-output to create a stratification variable
 output$ui_set_to_na <- renderUI({
   output$tab_inputdata_setna <- renderDataTable({
     a <- obj$inputdata
@@ -175,7 +175,7 @@ output$ui_set_to_na <- renderUI({
     htmlTemplate("tpl_one_col.html", inp=dataTableOutput("tab_inputdata_setna")))
 })
 
-# GUI-output for top/bottom-coding of numerical variables
+# UI-output for top/bottom-coding of numerical variables
 output$ui_topbotcoding <- renderUI({
   output$ui_topbot_plot <- renderPlot({
     if (is.null(input$sel_topbot_var) ) {
@@ -369,11 +369,11 @@ output$ui_view_var <- renderUI({
   out
 })
 
-# GUI-output to allow to undo all modifications
+# UI-output to allow to undo all modifications
 #output$ui_reset_vars <- renderUI({
 #})
 
-# GUI-output to display and reset currently available microdata
+# UI-output to display and reset currently available microdata
 output$ui_show_microdata <- renderUI({
   output$tab_inputdata <- renderDataTable({
     obj$inputdata

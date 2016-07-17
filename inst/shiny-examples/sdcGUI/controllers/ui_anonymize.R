@@ -60,6 +60,9 @@ output$ui_anonymize <- renderUI({
       if (input$sel_sdcresults=="sdcObj_addghostvars") {
         out <- list(out, uiOutput("ui_sdcObj_addghostvars"))
       }
+      if (input$sel_sdcresults=="sdcObj_randIds") {
+        out <- list(out, uiOutput("ui_sdcObj_randIds"))
+      }
       if (input$sel_sdcresults=="sdcObj_reset") {
         out <- list(out, uiOutput("ui_sdcObj_reset"))
       }

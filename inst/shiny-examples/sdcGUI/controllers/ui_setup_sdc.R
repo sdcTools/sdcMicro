@@ -48,6 +48,29 @@ output$ui_sdcObj_addghostvars <- renderUI({
   out
 })
 
+## add new random ID-variable
+output$ui_sdcObj_randIds <- renderUI({
+  output$randid_newid <- renderUI({
+    textInput("txt_randid_newid", label=h5("The desired name of your new ID-variable"), width="100%")
+  })
+  output$randid_withinvar <- renderUI({
+    selectInput("sel_randid_withinvar", label=h5("If used, the ID will be the same for equal values of the selected variable"),
+      choices=c("none",allVars()), selected=input$sel_randid_withinvar, multiple=FALSE, width="100%")
+  })
+  output$randid_btn <- renderUI({
+    if (is.null(input$txt_randid_newid) || input$txt_randid_newid=="") {
+      return(NULL)
+    }
+    myActionButton("btn_addRandID",label=("add a new random ID-variable"), "primary")
+  })
+  out <- list(
+    htmlTemplate("tpl_one_col.html", inp=h4("Add a new random ID variable to the the existing Problem")),
+    htmlTemplate("tpl_two_col.html", inp1=uiOutput("randid_newid"), inp2=uiOutput("randid_withinvar")),
+    htmlTemplate("tpl_one_col.html", inp=uiOutput("randid_btn")))
+  out
+})
+
+
 ## reset Problem
 output$ui_sdcObj_reset <- renderUI({
   btn_reset <- myActionButton("btn_reset_sdc",label=("Reset SDC Problem"), "danger")

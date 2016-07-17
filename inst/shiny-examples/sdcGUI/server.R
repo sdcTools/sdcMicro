@@ -101,6 +101,18 @@ shinyServer(function(session, input, output) {
     cmd
   })
 
+  # create a new randomized ID
+  code_addRandID <- reactive({
+    cmd <- paste0("sdcObj <- createNewID(sdcObj")
+    cmd <- paste0(cmd, ", newID=",dQuote(input$txt_randid_newid))
+    if (input$sel_randid_withinvar=="none") {
+      cmd <- paste0(cmd, ", withinVar=NULL)")
+    } else {
+      cmd <- paste0(cmd, ", withinVar=",dQuote(input$sel_randid_withinvar),")")
+    }
+    cmd
+  })
+
   # code for expert pram-application
   code_pram_expert <- reactive({
     v <- as.vector(as.matrix(obj$transmat))
@@ -398,6 +410,13 @@ shinyServer(function(session, input, output) {
     #cat(paste("'btn_addGhostVars' was clicked",input$btn_addGhostVars,"times..!\n"))
     cmd <- code_addGhostvars()
     runEvalStr(cmd=cmd, comment="## Adding linked (ghost)-Variables")
+    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+  })
+  # add new random IDs to an existing sdcMicroObj
+  observeEvent(input$btn_addRandID, {
+    #cat(paste("'btn_addRandID' was clicked",input$btn_addRandID,"times..!\n"))
+    cmd <- code_addRandID()
+    runEvalStr(cmd=cmd, comment="## Adding a new randomized ID-variable")
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # reset the sdcMicroObj

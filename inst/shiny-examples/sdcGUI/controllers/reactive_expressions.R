@@ -161,6 +161,7 @@ res_choices_anon <- reactive({
     choices <- c(
       "Show Summary"="sdcObj_summary",
       "Add 'Ghost'-Variables"="sdcObj_addghostvars",
+      "Create new IDs"="sdcObj_randIds",
       "Reset sdcProblem"="sdcObj_reset")
   }
   if (input$sel_anonymize=="cat_anon") {
