@@ -174,7 +174,8 @@ res_choices_anon <- reactive({
     choices <- c(
       "Apply Microaggregation"="microaggregation",
       "Adding Noise to the data"="noise",
-      "Shuffling the data"="shuffling")
+      #"Shuffling the data"="shuffling",
+      "Apply Rank-Swapping"="rankswap")
   }
   choices
 })

@@ -299,6 +299,22 @@ shinyServer(function(session, input, output) {
     cmd
   })
 
+  # code for rankSwap()
+  code_rankSwap <- reactive({
+    cmd <- paste0("sdcObj <- rankSwap(obj=sdcObj")
+    if (is.null(input$sel_rankswap_v)) {
+      cmd <- paste0(cmd, ", variables=NULL")
+    } else {
+      cmd <- paste0(cmd, ", variables=",VecToRStr(input$sel_rankswap_v, quoted=TRUE))
+    }
+    cmd <- paste0(cmd, ", TopPercent=",input$sl_rankswap_top)
+    cmd <- paste0(cmd, ", BottomPercent=",input$sl_rankswap_bot)
+    cmd <- paste0(cmd, ", K0=",input$sl_rankswap_k0)
+    cmd <- paste0(cmd, ", R0=",input$sl_rankswap_r0)
+    cmd <- paste0(cmd, ", P=",input$sl_rankswap_p)
+    cmd <- paste0(cmd, ", missing=NA, seed=NULL)")
+    cmd
+  })
   ### END CODE GENERATION EXPRESSIONS ####
 
   ### EVENTS ###
@@ -466,7 +482,6 @@ shinyServer(function(session, input, output) {
     #})
   })
 
-
   ### anonymization methods (numerical) ###
   # microaggregation()
   observeEvent(input$btn_microagg, {
@@ -498,7 +513,13 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Adding stochastic noise")
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
-
+  # rankSwap()
+  observeEvent(input$btn_rankswap, {
+    #cat(paste("'btn_rankswap' was clicked",input$btn_rankswap,"times..!\n"))
+    cmd <- code_rankSwap()
+    runEvalStr(cmd=cmd, comment="## Performing rankSwapping")
+    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+  })
   # create links to sdcProblem
   lapply(href_to_setup, function(x) {
     eval(parse(text=x))

@@ -63,7 +63,6 @@ output$ui_anonymize <- renderUI({
       if (input$sel_sdcresults=="sdcObj_reset") {
         out <- list(out, uiOutput("ui_sdcObj_reset"))
       }
-
       ## categorical methods
       if (input$sel_sdcresults=="pram") {
         out <- list(out, uiOutput("ui_pram"))
@@ -84,8 +83,11 @@ output$ui_anonymize <- renderUI({
       if (input$sel_sdcresults=="microaggregation") {
         out <- list(out, uiOutput("ui_microaggregation"))
       }
-      if (input$sel_sdcresults=="shuffling") {
-        out <- list(out, uiOutput("ui_shuffling"))
+      #if (input$sel_sdcresults=="shuffling") {
+      #  out <- list(out, uiOutput("ui_shuffling"))
+      #}
+      if (input$sel_sdcresults=="rankswap") {
+        out <- list(out, uiOutput("ui_rankswap"))
       }
     }
   }

@@ -182,3 +182,45 @@ output$ui_noise <- renderUI({
 output$ui_shuffling <- renderUI({
   htmlTemplate("tpl_one_col.html", inp=h4("Shuffling"))
 })
+
+# GUI-output for rankSwap()
+output$ui_rankswap <- renderUI({
+  if (!has_numkeyvars()) {
+    return(htmlTemplate("tpl_one_col.html", inp=list(
+      h4("The current sdcProblem contains no",code("numerical key variables"),
+         "but",code("rankSwap()"),"can only be applied on such variables!",
+         "Please modify the",code("sdcProblem"),"in tab",code("Setup SDC-Problem."))
+    )))
+  }
+
+  # ui for 'btn_rankswap
+  output$ui_rankswap_btn <- renderUI({
+    btn <- NULL
+    if (has_numkeyvars() | length(input$sel_rankswap_v)>0) {
+      btn <- myActionButton("btn_rankswap", label="Apply rankSwap()", "primary")
+    }
+    btn
+  })
+
+  output$ui_rankswap_vars <- renderUI({
+    lab <- h5("Select Variables")
+    if (has_numkeyvars()) {
+      lab <- list(lab, p("If empty, all numerical key variables will be used!"))
+    }
+    sel_rankswapvars <- selectInput("sel_rankswap_v", choices=possvars_numericmethods(),
+      label=lab, selected=input$sel_rankswap_v, width="100%", multiple=TRUE)
+    sel_rankswapvars
+  })
+
+  sl_rankswap_top <- isolate(sliderInput("sl_rankswap_top", label=h4("Percentage of largest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%"))
+  sl_rankswap_bot <- isolate(sliderInput("sl_rankswap_bot", label=h4("Percentage of lowest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%"))
+  sl_rankswap_k0 <- isolate(sliderInput("sl_rankswap_k0", label=h4("Subset-mean preservation factor"), min=0, max=1, step=0.01, value=0, width="100%"))
+  sl_rankswap_r0 <- isolate(sliderInput("sl_rankswap_r0", label=h4("Multivariate preservation factor"), min=0, max=1, step=0.01, value=0.95, width="100%"))
+  sl_rankswap_p <- isolate(sliderInput("sl_rankswap_p", label=h4("Rank range as percentage of total sample size."), min=0, max=100, step=1, value=0, width="100%"))
+
+  out <- list(
+    htmlTemplate("tpl_three_col.html", inp1=uiOutput("ui_rankswap_vars"), inp2=sl_rankswap_bot, inp3=sl_rankswap_top),
+    htmlTemplate("tpl_three_col.html", inp1=sl_rankswap_k0, inp2=sl_rankswap_r0, inp3=sl_rankswap_p))
+  out <- list(out, htmlTemplate("tpl_one_col.html", inp=uiOutput("ui_rankswap_btn")))
+  out
+})

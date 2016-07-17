@@ -32,7 +32,7 @@
 #' swapping, and \eqn{N_S}{N_S} is the sample size of the subset.
 #' @param R0 Multivariate preservation factor. Preserves the correlation
 #' between variables within a certain range based on the given constant R0.  We
-#' can specify the preservation factor as \eqn{R_0 = \frac{R_1}{R_2}}{R_0 =
+#' can specify the preservation factor as \eqn{R_0=\frac{R_1}{R_2}}{R_0 =
 #' R_1/R_2} where \eqn{R_1}{R_1} is the correlation coefficient of the two
 #' fields after swapping, and \eqn{R_2}{R_2} is the correlation coefficient of
 #' the two fields before swapping.
@@ -48,9 +48,9 @@
 #' @param seed Seed.
 #' @return The rank-swapped data set or a modified \code{\link{sdcMicroObj-class}} object.
 #' @section Methods: \describe{
-#' \item{list("signature(obj = \"data.frame\")")}{}
-#' \item{list("signature(obj = \"matrix\")")}{}
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' \item{list("signature(obj=\"data.frame\")")}{}
+#' \item{list("signature(obj=\"matrix\")")}{}
+#' \item{list("signature(obj=\"sdcMicroObj\")")}{}}
 #' @author Alexander Kowarik for the interface, Bernhard Meindl for improvements.
 #'
 #' For the underlying C++ code: This work is being supported by the
@@ -72,48 +72,44 @@
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- rankSwap(sdc)
-setGeneric("rankSwap", function(obj, variables = NULL, TopPercent = 5, BottomPercent = 5,
-  K0 = -1, R0 = 0.95, P = 0, missing = NA, seed = NULL) {
+setGeneric("rankSwap", function(obj, variables=NULL, TopPercent=5, BottomPercent=5,
+  K0=-1, R0=0.95, P=0, missing=NA, seed=NULL) {
   standardGeneric("rankSwap")
 })
 
-setMethod(f = "rankSwap", signature = c("sdcMicroObj"),
-definition = function(obj, variables = NULL, TopPercent = 5, BottomPercent = 5, K0 = -1,
-  R0 = 0.95, P = 0, missing = NA, seed = NULL) {
+#' @rdname rankSwap
+#' @export
+setMethod(f="rankSwap", signature=c("sdcMicroObj"),
+definition=function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=-1,
+  R0=0.95, P=0, missing=NA, seed=NULL) {
 
-  manipData <- get.sdcMicroObj(obj, type = "manipNumVars")
+  manipData <- get.sdcMicroObj(obj, type="manipNumVars")
 
   if ( is.null(variables) ) {
     variables <- colnames(manipData)
   }
 
-  res <- rankSwap(manipData, variables = variables, TopPercent = TopPercent,
-    BottomPercent = BottomPercent, K0 = K0, R0 = R0, P = P, missing = missing, seed = seed)
+  res <- rankSwap(manipData, variables=variables, TopPercent=TopPercent,
+    BottomPercent=BottomPercent, K0=K0, R0=R0, P=P, missing=missing, seed=seed)
 
   obj <- nextSdcObj(obj)
-  obj <- set.sdcMicroObj(obj, type = "manipNumVars", input = list(res))
+  obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(res))
   obj <- dRisk(obj)
   obj <- dUtility(obj)
   obj
 })
 
-setMethod(f = "rankSwap", signature = c("matrix"),
-definition = function(obj, variables = NULL, TopPercent = 5, BottomPercent = 5, K0 = -1,
-  R0 = 0.95, P = 0, missing = NA, seed = NULL) {
-  obj <- as.data.frame(obj)
-  rankSwap(obj, variables = variables, TopPercent = TopPercent,
-    BottomPercent = BottomPercent, K0 = K0, R0 = R0, missing = missing, seed = seed)
-})
-
-setMethod(f = "rankSwap", signature = c("data.frame"),
-definition = function(obj, variables = NULL, TopPercent = 5, BottomPercent = 5, K0 = -1,
-  R0 = 0.95, P = 0, missing = NA, seed = NULL) {
+#' @rdname rankSwap
+#' @export
+setMethod(f="rankSwap", signature=c("data.frame"),
+definition=function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=-1,
+  R0=0.95, P=0, missing=NA, seed=NULL) {
 
   # by default, all variables will be used
-  if ( is.null(variables) ) {
+  if (is.null(variables)) {
     variables <- colnames(obj)
   }
-  dataX <- obj[, variables]
+  dataX <- obj[, variables, drop=FALSE]
   dataX <- as.matrix(dataX)
 
   if (!all(apply(dataX, 2, is.numeric))) {
@@ -125,13 +121,13 @@ definition = function(obj, variables = NULL, TopPercent = 5, BottomPercent = 5, 
 
   index_missing <- is.na(dataX)
   miss_val <- ifelse(is.na(missing), min(dataX, na.rm=TRUE)-1, missing)
-  if ( sum(index_missing) > 0 ) {
+  if (sum(index_missing) > 0) {
     dataX[index_missing] <- miss_val
   }
 
   seed <- ifelse(is.null(seed), -1L, as.integer(seed))
   dat <- .Call("RankSwap", dataX, data2, miss_val, TopPercent, BottomPercent, K0, R0, P, seed)$Res
-  if ( sum(index_missing) > 0 & is.na(missing) ) {
+  if (sum(index_missing) > 0 & is.na(missing)) {
     dat[dat==miss_val] <- NA
   }
   obj[, variables] <- dat
