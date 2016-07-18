@@ -10,6 +10,10 @@
 \title{Suda2: Detecting Special Uniques}
 \usage{
 suda2(obj, ...)
+
+\S4method{suda2}{sdcMicroObj}(obj, ...)
+
+\S4method{suda2}{data.frame}(obj, ...)
 }
 \arguments{
 \item{obj}{object of class \code{data.frame} or object of class \code{\link{sdcMicroObj-class}}}
@@ -54,12 +58,6 @@ algorithm generates all possible variable subsets of defined categorical key
 variables and scans them for unique patterns in the subsets of variables.
 The lower the amount of variables needed to receive uniqueness, the higher
 the risk of the corresponding observation.
-}
-\section{Methods}{
- \describe{
-\item{list("signature(obj = \"data.frame\")")}{}
-\item{list("signature(obj = \"matrix\")")}{}
-\item{list("signature(obj = \"sdcMicroObj\")")}{}}
 }
 \examples{
 

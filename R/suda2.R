@@ -41,10 +41,6 @@
 #'  \item \code{contribution}: contains the risk of this level within the variable.)
 #'  }
 #' }}
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"data.frame\")")}{}
-#' \item{list("signature(obj = \"matrix\")")}{}
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
 #' @author Alexander Kowarik and Bernhard Meindl (based on the C++ code from the Organisation For
 #' Economic Co-Operation And Development.
 #'
@@ -65,6 +61,7 @@
 #' algorithm for statistical disclosure assessment. \emph{Data Min Knowl Disc}
 #' 16:165 -- 196
 #' @keywords manip
+#' @rdname suda2
 #' @export
 #' @examples
 #'
@@ -87,6 +84,8 @@ setGeneric("suda2", function(obj, ...) {
   standardGeneric("suda2")
 })
 
+#' @rdname suda2
+#' @export
 setMethod(f = "suda2", signature = c("sdcMicroObj"),
 definition = function(obj, ...) {
   manipData <- get.sdcMicroObj(obj, type = "manipKeyVars")
@@ -99,12 +98,9 @@ definition = function(obj, ...) {
   obj
 })
 
+#' @rdname suda2
+#' @export
 setMethod(f = "suda2", signature = c("data.frame"),
-definition = function(obj, ...) {
-  suda2WORK(data = obj, ...)
-})
-
-setMethod(f = "suda2", signature = c("matrix"),
 definition = function(obj, ...) {
   suda2WORK(data = obj, ...)
 })
