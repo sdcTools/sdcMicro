@@ -20,6 +20,79 @@ output$ui_rescat_recodes <- renderUI({
   return(htmlTemplate("tpl_one_col.html",inp=h4("Information about Recodes")))
 })
 
+# display information on l-diversity risk-measure
+output$ui_rescat_ldiv <- renderUI({
+  # recursive constant
+  output$ldiv_recconst <- renderUI({
+    val <- input$ldiv_recconst
+    if (is.null(val)) {
+      val <- 2
+    }
+    sliderInput("ldiv_recconst", label=h5("Select a value for the recursive-constant"), min=1, max=100, value=val, width="100%")
+  })
+  # sensitive variable
+  output$ldiv_sensvar <- renderUI({
+    vv <- setdiff(allVars(), c(get_weightVar_name(),get_keyVars_names()))
+    selectInput("ldiv_sensvar", label=h5("Select one or more sensitive-variables"), choices=vv, multiple=TRUE, selected=input$ldiv_sensvar, width="100%")
+  })
+  output$ldiv_btn <- renderUI({
+    if (is.null(input$ldiv_sensvar) || length(input$ldiv_sensvar)==0) {
+      return(NULL)
+    }
+    myActionButton("btn_ldiv", label="Calculate l-diversity risk-measure", btn.style="primary")
+  })
+
+  output$ldiv_result <- renderPrint({
+    if (is.null(input$ldiv_sensvar) || length(input$ldiv_sensvar)==0) {
+      return(NULL)
+    }
+    res <- obj$sdcObj@risk$ldiversity
+    if (is.null(res)) {
+      return(NULL)
+    }
+    print(res)
+  })
+
+  output$ldiv_violating <- renderDataTable({
+    risk <- obj$sdcObj@risk
+    ldiv <- risk$ldiversity
+    if (is.null(input$ldiv_sensvar) || length(input$ldiv_sensvar)==0 || is.null(ldiv)) {
+      return(NULL)
+    }
+    ldiv <- ldiv[,grep("_Distinct_Ldiversity",colnames(ldiv)),drop=FALSE]
+    fk <- risk$individual[,2]
+    TFfk <- apply(ldiv,1,function(x)any(x<input$ldiv_recconst))
+    if (!any(TFfk)) {
+      return(data.frame())
+    }
+    orig <- get_origData()
+    kV <- get_manipKeyVars()
+    nV <- get_manipNumVars()
+    orig <- orig[,!colnames(orig) %in% c(colnames(kV), colnames(nV)), drop=FALSE]
+    d <- orig
+    if (!is.null(kV)) {
+      d <- cbind(kV, orig)
+    }
+    if (!is.null(nV))
+      d <- cbind(nV,orig)
+    xtmp <- cbind(ldiv[TFfk,],fk[TFfk],d[TFfk,])
+    colnames(xtmp)[1:ncol(ldiv)] <- colnames(ldiv)
+    colnames(xtmp)[ncol(ldiv)+1] <- "fk"
+    xtmp <- xtmp[order(xtmp[,1]),]
+    xtmp
+  })
+
+  return(list(
+    htmlTemplate("tpl_one_col.html",inp=h4("l-Diversity risk-measure")),
+    htmlTemplate("tpl_two_col.html",inp1=uiOutput("ldiv_sensvar"), inp2=uiOutput("ldiv_recconst")),
+    htmlTemplate("tpl_one_col.html",inp=uiOutput("ldiv_btn")),
+    htmlTemplate("tpl_one_col.html",inp=verbatimTextOutput("ldiv_result")),
+    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("ldiv_violating"))
+    ))
+})
+
+
+
 # display a risk-plot
 output$ui_rescat_freqCalc <- renderUI({
   output$plot_risk <- renderPlot({

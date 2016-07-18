@@ -49,6 +49,14 @@ get_weightVar <- reactive({
   return(obj$sdcObj@weightVar)
 })
 
+# weightVar by name
+get_weightVar_name <- reactive({
+  if (is.null(obj$sdcObj)) {
+    return(NULL)
+  }
+  return(colnames(get_origData())[get_weightVar()])
+})
+
 # index of numerical key variables
 get_numVars <- reactive({
   if (is.null(obj$sdcObj)) {

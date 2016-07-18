@@ -7,6 +7,7 @@ output$ui_results <- renderUI({
     if (input$rb_results_type=="res_cat") {
       choices <- c(
         "Risk"="freqcalc",
+        "l-Diversity risk-measure"="ldiv",
         "View Histogram/Mosaicplot"="mosaicplot",
         "View (bivariate) Tabulations"="tabulations",
         "Information Loss (Recodings)"="recodes",
@@ -48,6 +49,9 @@ output$ui_results <- renderUI({
     ## Categorical (defined in controller/ui_results_categorical.R)
     if ( input$sel_results=="freqcalc" ) {
       out <- list(out, uiOutput("ui_rescat_freqCalc"))
+    }
+    if ( input$sel_results=="ldiv" ) {
+      out <- list(out, uiOutput("ui_rescat_ldiv"))
     }
     if ( input$sel_results=="mosaicplot" ) {
       out <- list(out, uiOutput("ui_rescat_mosaicplot"))

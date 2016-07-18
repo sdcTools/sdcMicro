@@ -200,7 +200,7 @@ shinyServer(function(session, input, output) {
     } else {
       excludeVars <- NULL
     }
-    cmd <- paste0("obj$sdcObj <- createSdcObj(dat=inputdata,")
+    cmd <- paste0("obj$sdcObj <- createSdcObj(dat=obj$inputdata,")
     cmd <- paste0(cmd, "\n\tkeyVars=",VecToRStr(input$sel_kV, quoted=TRUE))
     if (!is.null(nV)) {
       cmd <- paste0(cmd, ", \n\tnumVars=",VecToRStr(nV, quoted=TRUE))
@@ -327,6 +327,16 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", missing=NA, seed=NULL)")
     cmd
   })
+
+  # code for l-diversity
+  code_ldiv <- reactive({
+    cmd <- paste0("sdcObj <- ldiversity(obj=sdcObj")
+    cmd <- paste0(cmd, ", ldiv_index=",VecToRStr(input$ldiv_sensvar, quoted=TRUE))
+    cmd <- paste0(cmd, ", l_recurs_c=",input$ldiv_recconst)
+    cmd <- paste0(cmd, ", missing=-999)")
+    cmd
+  })
+
   ### END CODE GENERATION EXPRESSIONS ####
 
   ### EVENTS ###
@@ -395,6 +405,7 @@ shinyServer(function(session, input, output) {
     #cat(paste("'btn_recode_to_factor' was clicked",input$btn_recode_to_factor,"times..!\n"))
     cmd <- code_globalRecodeMicrodata()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
     updateSelectInput(session, "sel_moddata",selected="View/Analyse a variable")
   })
   # setup the sdcMicroObj
@@ -402,8 +413,9 @@ shinyServer(function(session, input, output) {
     #cat(paste("'btn_setup_sdc' was clicked",input$btn_setup_sdc,"times..!\n"))
     cmd <- code_createSdcObj()
     eval(parse(text=cmd))
-    obj$code_read_and_modify <- c(obj$code_read_and_modify, gsub("obj[$]sdcObj","sdcObj", cmd))
-    inputdata <- obj$inputdata
+    cmd <- gsub("obj[$]sdcObj","sdcObj", cmd)
+    cmd <- gsub("obj[$]inputdata","inputdata",cmd)
+    obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # add ghost-vars to an existing sdcMicroObj
@@ -540,6 +552,14 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Performing rankSwapping")
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
+
+  ### risk-measurements ###
+  observeEvent(input$btn_ldiv, {
+    #cat(paste("'btn_ldiv' was clicked",input$btn_ldiv,"times..!\n"))
+    cmd <- code_ldiv()
+    runEvalStr(cmd=cmd, comment="## calculating l-diversity measure")
+  })
+
   # create links to sdcProblem
   lapply(href_to_setup, function(x) {
     eval(parse(text=x))
