@@ -8,6 +8,7 @@ output$ui_results <- renderUI({
       choices <- c(
         "Risk"="freqcalc",
         "l-Diversity risk-measure"="ldiv",
+        "Suda2 risk-measure"="suda2",
         "View Histogram/Mosaicplot"="mosaicplot",
         "View (bivariate) Tabulations"="tabulations",
         "Information Loss (Recodings)"="recodes",
@@ -52,6 +53,9 @@ output$ui_results <- renderUI({
     }
     if ( input$sel_results=="ldiv" ) {
       out <- list(out, uiOutput("ui_rescat_ldiv"))
+    }
+    if ( input$sel_results=="suda2" ) {
+      out <- list(out, uiOutput("ui_rescat_suda2"))
     }
     if ( input$sel_results=="mosaicplot" ) {
       out <- list(out, uiOutput("ui_rescat_mosaicplot"))

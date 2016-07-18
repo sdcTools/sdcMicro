@@ -91,6 +91,44 @@ output$ui_rescat_ldiv <- renderUI({
     ))
 })
 
+# display suda2-risk measure
+output$ui_rescat_suda2 <- renderUI({
+  # DisFraction
+  output$suda2_disf <- renderUI({
+    val <- input$suda2_disf
+    if (is.null(val)) {
+      val <- 0.01
+    }
+    sliderInput("suda2_disf", label=h5("Select a value for sampling fraction for the stratified sampling"), min=0.01, max=0.5, step=0.01,value=val, width="100%")
+  })
+  output$suda2_btn <- renderUI({
+    if (is.null(input$suda2_disf)) {
+      return(NULL)
+    }
+    myActionButton("btn_suda2", label="Calculate suda2-scores", btn.style="primary")
+  })
+
+  output$suda2_result <- renderPrint({
+    res <- obj$sdcObj@risk$suda2
+    if (is.null(input$suda2_disf) || is.null(res)) {
+      return(NULL)
+    }
+    print(res)
+  })
+
+  # suda2 can only be calculated for sdcProblems with >= 3 categorical key variables
+  if (length(get_keyVars()<=2)) {
+    return(list(
+      htmlTemplate("tpl_one_col.html",inp=h4("suda2 risk-measure")),
+      htmlTemplate("tpl_one_col.html",inp=p("Suda2 scores can only be computed for scenarios with",code(">= 3"),"categorical key variables!"))
+    ))
+  }
+  return(list(
+    htmlTemplate("tpl_one_col.html",inp=h4("suda2 risk-measure")),
+    htmlTemplate("tpl_two_col.html",inp1=uiOutput("suda2_disf"), inp2=uiOutput("suda2_btn")),
+    htmlTemplate("tpl_one_col.html",inp=verbatimTextOutput("suda2_result"))
+  ))
+})
 
 
 # display a risk-plot

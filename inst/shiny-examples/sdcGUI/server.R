@@ -337,6 +337,12 @@ shinyServer(function(session, input, output) {
     cmd
   })
 
+  # code for l-diversity
+  code_suda2 <- reactive({
+    cmd <- paste0("sdcObj <- suda2(obj=sdcObj")
+    cmd <- paste0(cmd, ", DisFraction=",input$suda2_disf,")")
+    cmd
+  })
   ### END CODE GENERATION EXPRESSIONS ####
 
   ### EVENTS ###
@@ -554,12 +560,20 @@ shinyServer(function(session, input, output) {
   })
 
   ### risk-measurements ###
+  # ldiversity()
   observeEvent(input$btn_ldiv, {
     #cat(paste("'btn_ldiv' was clicked",input$btn_ldiv,"times..!\n"))
     cmd <- code_ldiv()
+    cat(cmd,"\n")
     runEvalStr(cmd=cmd, comment="## calculating l-diversity measure")
   })
-
+  # suda2()
+  observeEvent(input$btn_suda2, {
+    #cat(paste("'btn_suda2' was clicked",input$btn_suda2,"times..!\n"))
+    cmd <- code_suda2()
+    cat(cmd,"\n")
+    runEvalStr(cmd=cmd, comment="## calculating suda2 risk-measure")
+  })
   # create links to sdcProblem
   lapply(href_to_setup, function(x) {
     eval(parse(text=x))
