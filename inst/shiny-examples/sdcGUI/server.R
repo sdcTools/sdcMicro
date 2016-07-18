@@ -363,7 +363,8 @@ shinyServer(function(session, input, output) {
     #cat(paste("'btn_chooose_df' was clicked",input$btn_chooose_df,"times..!\n"))
     cmd <- code_useRObj()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
-    obj$code_read_and_modify <- tail(obj$code_read_and_modify, 1)
+    #obj$code_read_and_modify <- tail(obj$code_read_and_modify, 1)
+    obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
     obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata")
     obj$inputdataB <- obj$inputdata
     obj$sdcObj <- NULL # start fresh
@@ -400,9 +401,9 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_setup_sdc, {
     #cat(paste("'btn_setup_sdc' was clicked",input$btn_setup_sdc,"times..!\n"))
     cmd <- code_createSdcObj()
-    obj$code <- c(obj$code, cmd)
-    inputdata <- obj$inputdata
     eval(parse(text=cmd))
+    obj$code_read_and_modify <- c(obj$code_read_and_modify, gsub("obj[$]sdcObj","sdcObj", cmd))
+    inputdata <- obj$inputdata
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # add ghost-vars to an existing sdcMicroObj

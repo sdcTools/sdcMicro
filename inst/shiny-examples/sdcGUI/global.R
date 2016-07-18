@@ -70,7 +70,7 @@ runEvalStrMicrodat_no_errorchecking <- function(cmd, comment=NULL) {
   if (!is.null(comment)) {
     cmd <- paste0(comment,"\n",cmd)
   }
-  obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
+  #obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
 }
 
 # runEvaluationString and update Objects for microdata-modifications
@@ -89,7 +89,7 @@ runEvalStrMicrodat <- function(cmd, comment=NULL) {
     if (!is.null(comment)) {
       cmd <- paste0(comment,"\n",cmd)
     }
-    obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
+    #obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
     # check if we have some new warnings
   } else {
     obj$last_error <- res$message
