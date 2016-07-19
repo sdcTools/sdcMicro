@@ -1,10 +1,26 @@
+# message if no continous key-variables have been specified
+output$nonumkey_continous_results <- renderUI({
+  if (!has_numkeyvars()) {
+    return(htmlTemplate("tpl_one_col.html", inp=list(
+      h4("The current sdcProblem contains no",code("numerical key variables"),
+         "thus no measures can be computed.")
+    )))
+  }
+})
+
 # display information on numerical risk
 output$ui_resnum_numrisk <- renderUI({
+  if (!has_numkeyvars()) {
+    return(uiOutput("nonumkey_continous_results"))
+  }
   return(htmlTemplate("tpl_one_col.html",inp=h4("Information about numerical risk")))
 })
 
 # display information about information-loss
 output$ui_resnum_infoloss <- renderUI({
+  if (!has_numkeyvars()) {
+    return(uiOutput("nonumkey_continous_results"))
+  }
   return(htmlTemplate("tpl_one_col.html",inp=h4("Information about information loss")))
 })
 
@@ -78,6 +94,9 @@ output$ui_resnum_comparison <- renderUI({
     txt <- paste("Correlation between original and modified variable:", code(vv))
     htmlTemplate("tpl_one_col.html",inp=h5(HTML(txt)))
   })
+  if (!has_numkeyvars()) {
+    return(uiOutput("nonumkey_continous_results"))
+  }
   list(
     htmlTemplate("tpl_two_col.html",inp1=uiOutput("ui_numvar_numres"), inp2=uiOutput("ui_catvar_numres")),
     uiOutput("ui_numvar_cor"),
