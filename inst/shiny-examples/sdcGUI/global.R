@@ -35,7 +35,7 @@ runEvalStr <- function(cmd, comment=NULL) {
       cmdeval <- strsplit(cmdeval, "<-")[[1]][2]
     }
   }
-  evalstr <- paste0("res <- tryCatchFn({",cmdeval,"})")
+  evalstr <- paste0("res <- sdcMicro:::tryCatchFn({",cmdeval,"})")
   eval(parse(text=evalstr))
   if (!"simpleError" %in% class(res)) {
     obj$last_error <- NULL
@@ -78,7 +78,7 @@ runEvalStrMicrodat <- function(cmd, comment=NULL) {
   # evaluate using tryCatchFn()
   cmdeval <- gsub("inputdata","obj$inputdata", cmd)
   cmdeval <- strsplit(cmdeval, "<-")[[1]][2]
-  evalstr <- paste0("res <- tryCatchFn({",cmdeval,"})")
+  evalstr <- paste0("res <- sdcMicro:::tryCatchFn({",cmdeval,"})")
   #cat("evalstr:", evalstr,"\n")
   eval(parse(text=evalstr))
   #print(str(res))
