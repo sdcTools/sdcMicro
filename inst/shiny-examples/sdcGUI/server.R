@@ -343,6 +343,13 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", DisFraction=",input$suda2_disf,")")
     cmd
   })
+
+  # code to undo the last operation (if possible)
+  # create a new randomized ID
+  code_undo <- reactive({
+    cmd <- paste0("sdcObj <- undolast(sdcObj)")
+    cmd
+  })
   ### END CODE GENERATION EXPRESSIONS ####
 
   ### EVENTS ###
@@ -395,11 +402,12 @@ shinyServer(function(session, input, output) {
     updateSelectInput(session, "sel_moddata",selected="View/Analyse a variable")
   })
   # undo-button
-  observeEvent(input$b_undo, {
-    #cat(paste("'b_undo' was clicked",input$b_undo,"times..!\n"))
-    session$sendCustomMessage(
-      type='testmessage',
-      message='Undo-Button was clicked!')
+  observeEvent(input$btn_undo, {
+    #cat(paste("'btn_undo' was clicked",input$btn_undo,"times..!\n"))
+    cmd <- code_undo()
+    runEvalStr(cmd=cmd, comment=NULL)
+    updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
+    updateNavbarPage(session, "mainnav", selected="Anonymize")
   })
   # export data
   observeEvent(input$b_export, {
@@ -564,16 +572,15 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_ldiv, {
     #cat(paste("'btn_ldiv' was clicked",input$btn_ldiv,"times..!\n"))
     cmd <- code_ldiv()
-    cat(cmd,"\n")
     runEvalStr(cmd=cmd, comment="## calculating l-diversity measure")
   })
   # suda2()
   observeEvent(input$btn_suda2, {
     #cat(paste("'btn_suda2' was clicked",input$btn_suda2,"times..!\n"))
     cmd <- code_suda2()
-    cat(cmd,"\n")
     runEvalStr(cmd=cmd, comment="## calculating suda2 risk-measure")
   })
+
   # create links to sdcProblem
   lapply(href_to_setup, function(x) {
     eval(parse(text=x))
