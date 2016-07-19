@@ -348,3 +348,23 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   res
 }
 
+#' importProblem
+#'
+#' reads an sdcProblem with code that has been exported within \code{\link{sdcGUI}}.
+#'
+#' @param path a file path
+#' @return an object of class \code{sdcMicro_GUI_export} or an object of class 'simple.error'
+#' @author Bernhard Meindl
+#' @export
+importProblem <- function(path) {
+  res <- tryCatchFn(get(load(file=path)))
+  if ( "simpleError" %in% class(res) ) {
+    return(res)
+  } else {
+    if (!"sdcMicro_GUI_export" %in% class(res)) {
+      res$message <- paste0(res$message,"\ndata read into the system was not of class 'sdcMicro_GUI_export'!")
+      return(res)
+    }
+  }
+  res
+}

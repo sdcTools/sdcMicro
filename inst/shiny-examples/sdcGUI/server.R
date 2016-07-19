@@ -43,6 +43,12 @@ shinyServer(function(session, input, output) {
     cmd
   })
 
+  # code to import previously saved sdcProblem
+  code_import_problem <- reactive({
+    cmd <- paste0("res <- importProblem(path=",dQuote(input$file_importProblem$datapath),")")
+    cmd
+  })
+
   # code to reset variables in the input data set
   code_resetmicrovar <- reactive({
     cmd <- paste0("inputdata[[",dQuote(input$view_selvar),"]] <- inputdataB[[",dQuote(input$view_selvar),"]]")
@@ -464,6 +470,10 @@ shinyServer(function(session, input, output) {
     #cat(paste("'btn_reset_inputerror' was clicked",input$btn_reset_inputerror,"times..!\n"))
     obj$last_error <- NULL
   })
+  observeEvent(input$btn_reset_inputerror2, {
+    #cat(paste("'btn_reset_inputerror2' was clicked",input$btn_reset_inputerror,"times..!\n"))
+    obj$last_error <- NULL
+  })
   # event to generate stratification variable!
   observeEvent(input$btn_create_stratavar, {
     #cat(paste("'btn_create_stratavar' was clicked",input$btn_create_stratavar,"times..!\n"))
@@ -579,6 +589,45 @@ shinyServer(function(session, input, output) {
     #cat(paste("'btn_suda2' was clicked",input$btn_suda2,"times..!\n"))
     cmd <- code_suda2()
     runEvalStr(cmd=cmd, comment="## calculating suda2 risk-measure")
+  })
+
+  ## reproducibility ##
+  #observeEvent(input$btn_exportProblem, {
+  #  #cat(paste("'btn_undo' was clicked",input$btn_undo,"times..!\n"))
+  #  cmd <- code_undo()
+  #  runEvalStr(cmd=cmd, comment=NULL)
+  #  updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
+  #  updateNavbarPage(session, "mainnav", selected="Anonymize")
+  #})
+
+  observeEvent(input$file_importProblem, {
+    #cat("input$file_importProblem (",input$file_importProblem$name,") has been pressed!\n")
+    code <- code_import_problem()
+    eval(parse(text=code))
+    if ("simpleError" %in% class(res)) {
+      obj$last_error <- res$message
+      return(NULL)
+      # an error has occured -> warn the user!
+    } else {
+      if (!"sdcMicro_GUI_export" %in% class(res)) {
+        obj$last_error <- "data read into the system was not of class 'sdcMicro_GUI_export'"
+        obj$inputdata <- NULL
+        obj$code_read <- NULL
+        return(NULL)
+      }
+      obj$last_error <- NULL
+      obj$inputdata <- res$inputdata
+      obj$last_warning <- res$last_warning
+      obj$code <- res$code
+      obj$sdcObj <- res$sdcObj
+      obj$code_anonymize <- res$code_anonymize
+      obj$transmat <- res$transmat
+      obj$inputdataB <- res$inputdataB
+      obj$code_read_and_modify <- res$code_read_and_modify
+      rm(res)
+      updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
+      updateNavbarPage(session, "mainnav", selected="Anonymize")
+    }
   })
 
   # create links to sdcProblem
