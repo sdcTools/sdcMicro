@@ -174,9 +174,9 @@ res_choices_anon <- reactive({
   }
   if (input$sel_anonymize=="cat_anon") {
     choices <- c(
-      "Postrandomization (PRAM)"="pram",
       "Recoding"="recode",
       "k-Anonymity"="kanon",
+      "Postrandomization (PRAM)"="pram",
       "Supress values with high risks"="supp_threshold")
   }
   if (input$sel_anonymize=="cat_num") {
