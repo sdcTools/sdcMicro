@@ -35,13 +35,14 @@ output$ui_rescat_ldiv <- renderUI({
     vv <- setdiff(allVars(), c(get_weightVar_name(),get_keyVars_names()))
     selectInput("ldiv_sensvar", label=h5("Select one or more sensitive-variables"), choices=vv, multiple=TRUE, selected=input$ldiv_sensvar, width="100%")
   })
+  # button
   output$ldiv_btn <- renderUI({
     if (is.null(input$ldiv_sensvar) || length(input$ldiv_sensvar)==0) {
       return(NULL)
     }
     myActionButton("btn_ldiv", label="Calculate l-diversity risk-measure", btn.style="primary")
   })
-
+  # ldiversity-results
   output$ldiv_result <- renderPrint({
     if (is.null(input$ldiv_sensvar) || length(input$ldiv_sensvar)==0) {
       return(NULL)
@@ -52,7 +53,7 @@ output$ui_rescat_ldiv <- renderUI({
     }
     print(res)
   })
-
+  #  data table showing violating obs
   output$ldiv_violating <- renderDataTable({
     risk <- obj$sdcObj@risk
     ldiv <- risk$ldiversity
@@ -101,13 +102,14 @@ output$ui_rescat_suda2 <- renderUI({
     }
     sliderInput("suda2_disf", label=h5("Select a value for sampling fraction for the stratified sampling"), min=0.01, max=0.5, step=0.01,value=val, width="100%")
   })
+  # button
   output$suda2_btn <- renderUI({
     if (is.null(input$suda2_disf)) {
       return(NULL)
     }
     myActionButton("btn_suda2", label="Calculate suda2-scores", btn.style="primary")
   })
-
+  # suda2-results
   output$suda2_result <- renderPrint({
     res <- obj$sdcObj@risk$suda2
     if (is.null(input$suda2_disf) || is.null(res)) {
