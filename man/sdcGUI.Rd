@@ -4,14 +4,18 @@
 \alias{sdcGUI}
 \title{sdcGUI}
 \usage{
-sdcGUI()
+sdcGUI(maxRequestSize = 50)
+}
+\arguments{
+\item{maxRequestSize}{(numeric) number defining the maximum allowed filesize (in megabytes)
+for uploaded files, defaults to 50MB}
 }
 \value{
 starts the interactive graphical user interface which may be used to perform the
 anonymisation process.
 }
 \description{
-sdcGUI
+starts the graphical user interface developed with \emph{shiny}.
 }
 \examples{
 \dontrun{
