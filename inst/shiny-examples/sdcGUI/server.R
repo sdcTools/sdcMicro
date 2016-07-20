@@ -64,6 +64,13 @@ shinyServer(function(session, input, output) {
     cmd
   })
 
+  # code to use only parts of the original microdata
+  code_subsetMicrodata <- reactive({
+    cmd <- paste0("inputdata <- sdcMicro:::subsetMicrodata(obj=inputdata, type=",dQuote(input$sel_sdcP_sample_type))
+    cmd <- paste0(cmd, ", n=",input$sel_sdcP_sample_n,")")
+    cmd
+  })
+
   # creating factors from numeric variables for input data
   code_globalRecodeMicrodata <- reactive({
     if (input$sel_custom_split=="no") {
@@ -393,7 +400,7 @@ shinyServer(function(session, input, output) {
     cmd <- code_useRObj()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     #obj$code_read_and_modify <- tail(obj$code_read_and_modify, 1)
-    obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
+    #obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
     obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata")
     obj$inputdataB <- obj$inputdata
     obj$sdcObj <- NULL # start fresh
@@ -479,25 +486,40 @@ shinyServer(function(session, input, output) {
     #cat(paste("'btn_create_stratavar' was clicked",input$btn_create_stratavar,"times..!\n"))
     cmd <- code_generateStrata()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
+    updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_factor, {
     #cat(paste("'btn_update_factor' was clicked",input$btn_update_factor,"times..!\n"))
     cmd <- code_groupAndRename()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
+    updateNavbarPage(session, "mainnav", selected="Microdata")
+  })
+  # event to use only a subset of the available microdata
+  observeEvent(input$btn_sample_microdata, {
+    cat(paste("'btn_sample_microdata' was clicked",input$btn_sample_microdata,"times..!\n"))
+    cmd <- code_subsetMicrodata()
+    runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
+    updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   # event to set values to na in inputdata
   observeEvent(input$btn_set_to_na, {
     #cat(paste("'btn_set_to_na' was clicked",input$btn_set_to_na,"times..!\n"))
     cmd <- code_set_to_na()
     runEvalStrMicrodat_no_errorchecking(cmd=cmd, comment="## Set specific values to 'NA'")
+    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
+    updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   # event to apply top-/bottomcoding
   observeEvent(input$btn_topbotcoding, {
     #cat(paste("'btn_topbotcoding' was clicked",input$btn_topbotcoding,"times..!\n"))
     cmd <- code_topBotCoding()
     runEvalStrMicrodat(cmd=cmd, comment="## Apply Top-/Bottom coding")
+    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
+    updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   ### anonymization methods (categorical) ###
   # pram() with given transition-matrix
@@ -530,12 +552,8 @@ shinyServer(function(session, input, output) {
   })
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_recfac, {
-    #cat(paste("'btn_update_recfac' was clicked",input$btn_update_recfac,"times..!\n"))
-    #updateNavbarPage(session, "mainnav", selected="View/Analyse Results")
-    #withProgress(message="Updating Factors", value=0, {
-      cmd <- code_groupAndRename_keyvar()
-      runEvalStr(cmd=cmd, comment=NULL)
-    #})
+    cmd <- code_groupAndRename_keyvar()
+    runEvalStr(cmd=cmd, comment=NULL)
   })
 
   ### anonymization methods (numerical) ###

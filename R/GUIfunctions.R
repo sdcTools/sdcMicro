@@ -368,3 +368,48 @@ importProblem <- function(path) {
   }
   res
 }
+
+#' subsetMicrodata
+#'
+#' allows to restrict original data to only a subset. This may be useful to test some anonymization
+#' methods. This function will only be used in the graphical user interface \code{\link{sdcGUI}}.
+#'
+#' @param obj an object of class \code{\link{data.frame}} containing micro data
+#' @param type algorithm used to sample from original microdata. Currently supported choices are
+#' \itemize{
+#' \item \code{n_perc}{ the restricted microdata will be a \code{n-percent} sample of the original microdata.}
+#' \item \code{first_n}{ only the first \code{n} observations will be used.}
+#' \item \code{every_n}{ the restricted microdata set consists of every \code{n-th} record.}
+#' \item \code{size_n}{ a total of \code{n} observations will be randomly drawn.}
+#' }
+#' @param n numeric vector of length 1 specifying the specific parameter with respect to argument \code{type}.
+#' @return an object of class \code{\link{sdcMicroObj-class}} with modified slot \code{@origData}.
+#' @author Bernhard Meindl
+#' @rdname subsetMicrodata
+subsetMicrodata <- function(obj, type, n) {
+  if (!type %in% c("n_perc","first_n","every_n","size_n")) {
+    stop("invalid value in argument 'type'\n")
+  }
+  if (n < 1) {
+    stop("argument 'n' must be >=1\n")
+  }
+
+  dat <- obj
+  nrObs <- nrow(dat)
+  if (type=="n_perc") {
+    ssize <- ceiling((nrObs/100)*n)
+    dat <- dat[sample(1:nrObs, ssize),,drop=FALSE]
+  }
+  if (type=="first_n") {
+    dat <- dat[1:n,,drop=F]
+  }
+  if (type=="every_n") {
+    ssize <- (1:nrObs)%%n==1
+    dat <- dat[ssize,,drop=F]
+  }
+  if (type=="size_n") {
+    dat <- dat[sample(1:nrObs, n),,drop=F]
+  }
+  dim(dat)
+  return(dat)
+}

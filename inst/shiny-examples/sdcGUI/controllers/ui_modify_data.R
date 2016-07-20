@@ -158,7 +158,7 @@ output$ui_set_to_na <- renderUI({
     a <- obj$inputdata
     cbind(id=1:nrow(a),a)
   }, options = list(scrollX=TRUE, lengthMenu=list(c(5, 15, 50, -1), c('5', '15', '50', 'All')), pageLength=10))
-  output$ui_nasuppid <- ui_custom_numericInput(id="num_na_suppid", label="In which ID do you want to suppress values?", min=1, max=nrow(get_origData()))
+  output$ui_nasuppid <- ui_custom_numericInput(id="num_na_suppid", label="In which ID do you want to suppress values?", min=1, max=nrow(obj$inputdata))
   output$ui_nasuppvar <- ui_custom_selectInput(choices=allVars(), id="sel_na_suppvar", multiple=TRUE, label="Select Variable for Suppression")
   output$ui_ansuppbtn <- renderUI({
     if (is.null(input$sel_na_suppvar) || length(input$sel_na_suppvar)==0) {
@@ -387,6 +387,50 @@ output$ui_show_microdata <- renderUI({
   out
 })
 
+# UI-output to use only a subset of the available microdata
+output$ui_sample_microdata <- renderUI({
+  sel1 <- selectInput("sel_sdcP_sample_type", label=h5("How would you like to restrict the microdata?"),
+  choices=c('n-Percent of the data'='n_perc',
+            'the first n-observations'='first_n',
+            'every n-th observation'='every_n',
+            'exactly n randomly drawn observations'='size_n'),
+  selected=input$sel_sdcP_sample_type, multiple=FALSE, width="100%")
+
+  if (!is.null(input$sel_sdcP_sample_type)) {
+    sl_val <- 1
+    if (input$sel_sdcP_sample_type=="n_perc") {
+      sl_from <- 1
+      sl_to <- 100
+    }
+    if (input$sel_sdcP_sample_type=="first_n") {
+      sl_from <- 1
+      sl_to <- nrow(obj$inputdata)
+    }
+    if (input$sel_sdcP_sample_type=="every_n") {
+      sl_from <- 1
+      sl_to <- max(pmin(1:nrow(obj$inputdata), 500))
+    }
+    if (input$sel_sdcP_sample_type=="size_n") {
+      sl_from <- 1
+      sl_to <- nrow(obj$inputdata)
+    }
+    if (!is.null(input$sel_sdcP_sample_n)) {
+      sl_val <- input$sel_sdcP_sample_n
+    }
+    sl1 <- sliderInput("sel_sdcP_sample_n", label=h5("Choose your 'n'"),
+      value=sl_val, min=sl_from, max=sl_to, step=1, width="100%")
+  } else {
+    sl1 <- NULL
+  }
+
+  btn <- myActionButton("btn_sample_microdata", label="Apply subsetting of the microdata", btn.style="primary")
+  out <- list(
+    htmlTemplate("tpl_two_col.html", inp1=sel1, inp2=sl1),
+    htmlTemplate("tpl_one_col.html", inp=btn)
+    )
+  return(out)
+})
+
 output$ui_modify_data <- renderUI({
   out <- htmlTemplate("tpl_one_col.html",inp=h2("Modify/Recode Data"))
 
@@ -398,6 +442,7 @@ output$ui_modify_data <- renderUI({
     cc <- c(
       "Display/Reset Microdata"="show_microdata",
       "Explore variables"="view_var",
+      "Use only a subset of the available microdata"="sample_microdata",
       "Convert numeric variables to factors"="recode_to_factor",
       "Modify an existing factor-variable"="modify_factor",
       "Create a stratification variable"="createstratvar",
@@ -424,6 +469,9 @@ output$ui_modify_data <- renderUI({
   if (!is.null(input$sel_moddata)) {
     if (input$sel_moddata=="show_microdata") {
       out <- list(out, uiOutput("ui_show_microdata"))
+    }
+    if (input$sel_moddata=="sample_microdata") {
+      out <- list(out, uiOutput("ui_sample_microdata"))
     }
     if (input$sel_moddata=="view_var") {
       out <- list(out, uiOutput("ui_view_var"))

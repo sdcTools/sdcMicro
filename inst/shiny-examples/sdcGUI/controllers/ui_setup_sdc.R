@@ -70,7 +70,6 @@ output$ui_sdcObj_randIds <- renderUI({
   out
 })
 
-
 ## reset Problem
 output$ui_sdcObj_reset <- renderUI({
   btn_reset <- myActionButton("btn_reset_sdc",label=("Reset SDC Problem"), "danger")
@@ -84,11 +83,9 @@ output$ui_sdcObj_reset <- renderUI({
 ## create problem
 output$ui_sdcObj_create <- renderUI({
   possVars <- sdcVars()
-  #print(str(possVars))
   out <- list(
     htmlTemplate("tpl_one_col.html", inp=h2("Setup SDC-Problem")),
-    htmlTemplate("tpl_three_col.html", inp1=h4("Choose key variables"), inp2=NULL, inp3=NULL)
-  )
+    htmlTemplate("tpl_three_col.html", inp1=h4("Choose key variables"), inp2=NULL, inp3=NULL))
 
   sel_kv <- selectInput("sel_kV", label=NULL, choices=possVars$kv, selected=input$sel_kV, multiple=TRUE, selectize=TRUE, width="100%")
   help_kv <- helpText("Help text for selection of categorical key-variables")
@@ -97,8 +94,7 @@ output$ui_sdcObj_create <- renderUI({
   out <- list(out,
     htmlTemplate("tpl_three_col.html", inp1=h5("Categorical key variables"), inp2=h5("Numerical key variables"), inp3=NULL),
     htmlTemplate("tpl_three_col.html", inp1=sel_kv, inp2=sel_nv, inp3=NULL),
-    htmlTemplate("tpl_three_col.html", inp1=help_kv, inp2=help_nv, inp3=NULL)
-  )
+    htmlTemplate("tpl_three_col.html", inp1=help_kv, inp2=help_nv, inp3=NULL))
 
   out <- list(out, htmlTemplate("tpl_three_col.html", inp1=h4("Choose auxiliary variables"), inp2=NULL, inp3=NULL))
   sel_wv <- selectInput("sel_wV", label=NULL, choices=possVars$wv, selected=input$sel_wV, multiple=FALSE, selectize=TRUE, width="100%")
@@ -110,16 +106,14 @@ output$ui_sdcObj_create <- renderUI({
   out <- list(out,
     htmlTemplate("tpl_three_col.html", inp1=h5("Weight variable"), inp2=h5("Cluster-ID"), inp3=h5("Strata Variable")),
     htmlTemplate("tpl_three_col.html", inp1=sel_wv, inp2=sel_cluster, inp3=sel_strata),
-    htmlTemplate("tpl_three_col.html", inp1=help_wv, inp2=help_cluster, inp3=help_strata)
-  )
+    htmlTemplate("tpl_three_col.html", inp1=help_wv, inp2=help_cluster, inp3=help_strata))
 
   # do not include some variables in the sdcObj
   sel_rmv <- selectInput("sel_removeVars", label=h5("Remove Variables"), choices=possRemoveVars(), selected=input$sel_removeVars, multiple=TRUE, selectize=TRUE, width="100%")
   sl_ranseed <- sliderInput("sl_ranseed", label=h5("Random Seed"), value=input$sl_ranseed, min=-10000, max=10000, step=1, width="100%")
   rb_randomize <- radioButtons("rb_setup_randomizeorder", label=h5("Randomize Order of Observations"), choices=c("No"=FALSE,"Yes"=TRUE),
     width="100%", selected=input$rb_setup_randomizeorder, inline=TRUE)
-    out <- list(out,
-      htmlTemplate("tpl_three_col.html", inp1=rb_randomize, inp2=sel_rmv, inp3=sl_ranseed))
+    out <- list(out, htmlTemplate("tpl_three_col.html", inp1=rb_randomize, inp2=sel_rmv, inp3=sl_ranseed))
 
   if ( length(input$sel_kV) > 0 ) {
     btn_setup <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
