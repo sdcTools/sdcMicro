@@ -31,7 +31,7 @@ shinyServer(function(session, input, output) {
   # read microdata
   code_readMicrodata <- reactive({
     cmd <- paste0("res <- readMicrodata(")
-    cmd <- paste0(cmd, "path=",dQuote(input$file1$datapath))
+    cmd <- paste0(cmd, "path=",dQuote(normalizePath(input$file1$datapath,winslash = "/")))
     cmd <- paste0(cmd, ", type=",dQuote(input$dat_type))
     cmd <- paste0(cmd, ", convertCharToFac=",input$rb_convert_c_to_f)
     cmd <- paste0(cmd, ", drop_all_missings=",input$rb_drop_all_missings)
