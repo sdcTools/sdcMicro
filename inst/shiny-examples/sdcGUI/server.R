@@ -45,7 +45,7 @@ shinyServer(function(session, input, output) {
 
   # code to import previously saved sdcProblem
   code_import_problem <- reactive({
-    cmd <- paste0("res <- importProblem(path=",dQuote(input$file_importProblem$datapath),")")
+    cmd <- paste0("res <- importProblem(path=",dQuote(normalizePath(input$file_importProblem$datapath,winslash = "/")),")")
     cmd
   })
 
