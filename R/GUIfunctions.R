@@ -247,6 +247,9 @@ definition=function(obj, var, before, after) {
   x <- groupAndRename(x, var=var, before=before, after=after)
   obj <- nextSdcObj(obj)
   obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(x))
+
+  # calculate risk
+  obj <- calcRisks(obj)
   obj
 })
 
