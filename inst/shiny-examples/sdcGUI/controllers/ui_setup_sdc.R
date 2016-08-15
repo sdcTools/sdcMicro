@@ -87,14 +87,23 @@ output$ui_sdcObj_create <- renderUI({
     htmlTemplate("tpl_one_col.html", inp=h2("Setup SDC-Problem")),
     htmlTemplate("tpl_three_col.html", inp1=h4("Choose key variables"), inp2=NULL, inp3=NULL))
 
-  sel_kv <- selectInput("sel_kV", label=NULL, choices=possVars$kv, selected=input$sel_kV, multiple=TRUE, selectize=TRUE, width="100%")
+  sel_kv <- selectInput("sel_kV", label=h5("Categorical key variables"), choices=possVars$kv, selected=input$sel_kV, multiple=TRUE, selectize=TRUE, width="100%")
   help_kv <- helpText("Help text for selection of categorical key-variables")
-  sel_nv <- selectInput("sel_nV", label=NULL, choices=possVars$nv, selected=input$sel_nV, multiple=TRUE, selectize=TRUE, width="100%")
+  sel_nv <- selectInput("sel_nV", label=h5("Numerical key variables"), choices=possVars$nv, selected=input$sel_nV, multiple=TRUE, selectize=TRUE, width="100%")
   help_nv <- helpText("Help text for selection of numerical key-variables")
+
+  if (is.null(input$sl_alpha)) {
+    val_alpha <- 1
+  } else {
+    val_alpha <- input$sl_alpha
+  }
+
+  sl_alpha <- sliderInput("sl_alpha", label=h5("Parameter 'alpha'"), value=val_alpha, min=0, max=1, step=0.01, width="100%")
+  help_alpha <- helpText("The higher alpha, the more keys containing missing values will contribute to the calculation of 'fk' and 'Fk'")
+
   out <- list(out,
-    htmlTemplate("tpl_three_col.html", inp1=h5("Categorical key variables"), inp2=h5("Numerical key variables"), inp3=NULL),
-    htmlTemplate("tpl_three_col.html", inp1=sel_kv, inp2=sel_nv, inp3=NULL),
-    htmlTemplate("tpl_three_col.html", inp1=help_kv, inp2=help_nv, inp3=NULL))
+    htmlTemplate("tpl_three_col.html", inp1=sel_kv, inp2=sel_nv, inp3=sl_alpha),
+    htmlTemplate("tpl_three_col.html", inp1=help_kv, inp2=help_nv, inp3=help_alpha))
 
   out <- list(out, htmlTemplate("tpl_three_col.html", inp1=h4("Choose auxiliary variables"), inp2=NULL, inp3=NULL))
   sel_wv <- selectInput("sel_wV", label=NULL, choices=possVars$wv, selected=input$sel_wV, multiple=FALSE, selectize=TRUE, width="100%")

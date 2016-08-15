@@ -248,6 +248,8 @@ shinyServer(function(session, input, output) {
     } else {
       cmd <- paste0(cmd, ", \n\trandomizeRecords=FALSE")
     }
+
+    cmd <- paste0(cmd, ", \n\talpha=",VecToRStr(input$sl_alpha, quoted=FALSE))
     cmd <- paste0(cmd,")")
     cmd
   })
