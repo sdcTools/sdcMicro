@@ -4,17 +4,26 @@
 \name{localSuppression}
 \alias{kAnon}
 \alias{kAnon,data.frame-method}
-\alias{kAnon,matrix-method}
 \alias{kAnon,sdcMicroObj-method}
-\alias{kAnon-methods}
 \alias{localSuppression}
 \alias{localSuppression,data.frame-method}
-\alias{localSuppression,matrix-method}
 \alias{localSuppression,sdcMicroObj-method}
-\alias{localSuppression-methods}
 \title{Local Suppression to obtain k-anonymity}
 \usage{
 localSuppression(obj, k = 2, importance = NULL, combs = NULL, ...)
+
+\S4method{localSuppression}{sdcMicroObj}(obj, k = 2, importance = NULL,
+  combs = NULL)
+
+\S4method{localSuppression}{data.frame}(obj, k = 2, keyVars,
+  strataVars = NULL, importance = NULL, combs = NULL, alpha = 1)
+
+kAnon(obj, k = 2, importance = NULL, combs = NULL, ...)
+
+\S4method{kAnon}{sdcMicroObj}(obj, k = 2, importance = NULL, combs = NULL)
+
+\S4method{kAnon}{data.frame}(obj, k = 2, keyVars, strataVars = NULL,
+  importance = NULL, combs = NULL)
 }
 \arguments{
 \item{obj}{an object of class sdcMicroObj or a data frame or matrix}
@@ -35,7 +44,20 @@ combinations of 3 key variables. It is possible to apply different k to these
 subsets by specifying k as a vector. If k has only one element, the same value
 of k will be used for all subgroups.}
 
-\item{...}{see arguments below
+\item{...}{see arguments below}
+
+\item{keyVars}{names (or indices) of categorical key variables (for data-frame method)}
+
+\item{strataVars}{name (or index) of variable which is used for stratification purposes, used
+in the data.frame method. This means that k-anonymity is provided within each category
+of the specified variable.}
+
+\item{alpha}{numeric value between 0 and 1 specifying how much keys that
+contain missing values (\code{NAs}) should contribute to the calculation
+of \code{fk} and \code{Fk}. For the default value of \code{1}, nothing changes with
+respect to the implementation in prior versions. Each \emph{wildcard-match} would
+be counted while for \code{alpha=0} keys with missing values would be basically ignored.
+Used in the data-frame method only.
 \itemize{
 \item{keyVars}{numeric vector specifying indices of (categorical) key-variables}
 \item{strataVars}{numeric vector specifying indices of variables that should be used
@@ -59,7 +81,7 @@ important than key variables with a low number of characteristics.
 
 The implementation provides k-anonymity per strata, if slot 'strataVar' has
 been set in \code{\link{sdcMicroObj-class}} or if parameter 'strataVar' is
-used when appying the data.frame- or matrix method. For details, have a look
+used when appying the data.frame method. For details, have a look
 at the examples provided.
 }
 \note{
@@ -67,12 +89,6 @@ Deprecated methods 'localSupp2' and 'localSupp2Wrapper' are no longer available
 in sdcMicro > 4.5.0.
 \code{kAnon} is a more intutitive term for localSuppression because the aim is always
 to obtain k-anonymity for some parts of the data.
-}
-\section{Methods}{
- \describe{
-\item{list("signature(obj = \"data.frame\")")}{}
-\item{list("signature(obj = \"matrix\")")}{}
-\item{list("signature(obj = \"sdcMicroObj\")")}{}}
 }
 \examples{
 

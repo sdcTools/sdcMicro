@@ -22,7 +22,6 @@ Barplot for objects from class localSuppression.
 Just look at the resulting plot.
 }
 \examples{
-
 ## example from Capobianchi, Polettini and Lucarelli:
 data(francdat)
 l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))

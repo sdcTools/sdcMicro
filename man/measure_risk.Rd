@@ -4,21 +4,27 @@
 \name{measure_risk}
 \alias{ldiversity}
 \alias{ldiversity,data.frame-method}
-\alias{ldiversity,matrix-method}
 \alias{ldiversity,sdcMicroObj-method}
-\alias{ldiversity-methods}
 \alias{measure_risk}
 \alias{measure_risk,data.frame-method}
-\alias{measure_risk,matrix-method}
 \alias{measure_risk,sdcMicroObj-method}
-\alias{measure_risk-methods}
 \alias{print.ldiversity}
 \alias{print.measure_risk}
 \title{Disclosure Risk for Categorical Variables}
 \usage{
 measure_risk(obj, ...)
 
+\S4method{measure_risk}{sdcMicroObj}(obj, ...)
+
+\S4method{measure_risk}{data.frame}(obj, ...)
+
 ldiversity(obj, ldiv_index = NULL, l_recurs_c = 2, missing = -999, ...)
+
+\S4method{ldiversity}{sdcMicroObj}(obj, ldiv_index = NULL, l_recurs_c = 2,
+  missing = -999)
+
+\S4method{ldiversity}{data.frame}(obj, keyVars, ldiv_index, l_recurs_c = 2,
+  missing = -999)
 
 \method{print}{measure_risk}(x, ...)
 
@@ -27,21 +33,23 @@ ldiversity(obj, ldiv_index = NULL, l_recurs_c = 2, missing = -999, ...)
 \arguments{
 \item{obj}{Object of class \code{\link{sdcMicroObj-class}}}
 
-\item{...}{see arguments below
-\itemize{
-\item{data}{Input data, either a matrix or a data.frame.}
-\item{keyVars}{Names of categorical key variables}
-\item{w}{name of variable containing sample weights}
-\item{hid}{name of the clustering variable, e.g. the household ID}
-\item{max_global_risk}{Maximal global risk for threshold computation}
-\item{fast_hier}{If TRUE a fast approximation is computed if household data are provided.}
-}}
+\item{...}{see arguments below}
 
 \item{ldiv_index}{indices (or names) of the variables used for l-diversity}
 
 \item{l_recurs_c}{l-Diversity Constant}
 
 \item{missing}{a integer value to be used as missing value in the C++ routine}
+
+\item{keyVars}{names (or indices) of categorical key variables (for data-frame method)
+\itemize{
+\item{data}{Input data, a data.frame.}
+\item{keyVars}{Names of categorical key variables}
+\item{w}{name of variable containing sample weights}
+\item{hid}{name of the clustering variable, e.g. the household ID}
+\item{max_global_risk}{Maximal global risk for threshold computation}
+\item{fast_hier}{If TRUE a fast approximation is computed if household data are provided.}
+}}
 
 \item{x}{Output of measure_risk() or ldiversity()}
 }
@@ -69,9 +77,9 @@ The function measures the disclosure risk for weighted or unweighted data.
 It computes the individual risk (and household risk if reasonable) and the
 global risk. It also computes a risk threshold based on a global risk value.
 
-Print method for objects from class ldiversity
+Prints a 'measure_risk'-object
 
-Print method for objects from class ldiversity
+Prints a 'ldiversity'-object
 }
 \details{
 To be used when risk of disclosure for individuals within a family is
@@ -114,15 +122,7 @@ spanned by the key variables are evaluated.
 \note{
 internal function
 }
-\section{Methods}{
- \describe{
-\item{list("signature(obj = \"data.frame\")")}{Method for object of class \dQuote{data.frame}}
-\item{list("signature(obj = \"matrix\")")}{Method for object of class \dQuote{matrix}}
-\item{list("signature(obj = \"sdcMicroObj\")")}{Method for object of S4 class \code{\link{sdcMicroObj-class}}}
-}
-}
 \examples{
-
 ## measure_risk with sdcMicro objects:
 data(testdata)
 sdc <- createSdcObj(testdata,
@@ -168,16 +168,9 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 ## already interally applied and availabe in object sdc:
 ## sdc <- measure_risk(sdc)
-
 }
 \author{
-Alexander Kowarik, Bernd Prantner, Matthias Templ, minor parts of IHSN C++ source
-
-Bernhard Meindl \email{bernhard.meindl@statistik.gv.at}
-
-Bernhard Meindl, Matthias Templ
-
-Bernhard Meindl, Matthias Templ
+Alexander Kowarik, Bernhard Meindl, Matthias Templ, Bernd Prantner, minor parts of IHSN C++ source
 }
 \references{
 Franconi, L. and Polettini, S. (2004) \emph{Individual risk
@@ -192,8 +185,6 @@ additionally, have a look at the vignettes of sdcMicro for further reading.
 }
 \seealso{
 \code{\link{freqCalc}}, \code{\link{indivRisk}}
-
-\code{\link{measure_risk}}
 
 \code{\link{measure_risk}}
 }

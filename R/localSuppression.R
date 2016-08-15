@@ -11,16 +11,10 @@
 #'
 #' The implementation provides k-anonymity per strata, if slot 'strataVar' has
 #' been set in \code{\link{sdcMicroObj-class}} or if parameter 'strataVar' is
-#' used when appying the data.frame- or matrix method. For details, have a look
+#' used when appying the data.frame method. For details, have a look
 #' at the examples provided.
 #'
-#' @name localSuppression
-#' @aliases localSuppression-methods localSuppression,data.frame-method
-#' localSuppression,matrix-method localSuppression,sdcMicroObj-method
-#' localSuppression
-#' kAnon-methods kAnon,data.frame-method kAnon,matrix-method
-#' kAnon,sdcMicroObj-method kAnon
-#' @docType methods
+#' @rdname localSuppression
 #' @param obj an object of class sdcMicroObj or a data frame or matrix
 #' @param k threshold for k-anonymity
 #' @param importance numeric vector of numbers between 1 and n (n=length of
@@ -36,6 +30,16 @@
 #' subsets by specifying k as a vector. If k has only one element, the same value
 #' of k will be used for all subgroups.
 #' @param ... see arguments below
+#' @param keyVars names (or indices) of categorical key variables (for data-frame method)
+#' @param strataVars name (or index) of variable which is used for stratification purposes, used
+#' in the data.frame method. This means that k-anonymity is provided within each category
+#' of the specified variable.
+#' @param alpha numeric value between 0 and 1 specifying how much keys that
+#' contain missing values (\code{NAs}) should contribute to the calculation
+#' of \code{fk} and \code{Fk}. For the default value of \code{1}, nothing changes with
+#' respect to the implementation in prior versions. Each \emph{wildcard-match} would
+#' be counted while for \code{alpha=0} keys with missing values would be basically ignored.
+#' Used in the data-frame method only.
 #' \itemize{
 #' \item{keyVars}{numeric vector specifying indices of (categorical) key-variables}
 #' \item{strataVars}{numeric vector specifying indices of variables that should be used
@@ -43,10 +47,6 @@
 #' @return Manipulated data set with suppressions that has k-anonymity with
 #' respect to specified key-variables or the manipulated data stored in the
 #' \code{\link{sdcMicroObj-class}}.
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"data.frame\")")}{}
-#' \item{list("signature(obj = \"matrix\")")}{}
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
 #' @author Bernhard Meindl, Matthias Templ
 #' @keywords manip
 #' @export
@@ -104,6 +104,9 @@ setGeneric("localSuppression", function(obj, k = 2, importance = NULL, combs=NUL
   standardGeneric("localSuppression")
 })
 
+
+#' @rdname localSuppression
+#' @export
 setMethod(f='localSuppression', signature=c('sdcMicroObj'),
 definition=function(obj, k=2, importance=NULL, combs=NULL) {
   ### get data from manipKeyVars
@@ -117,8 +120,9 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
     stratV <- NULL
   }
 
+  alpha <- get.sdcMicroObj(obj, type="options")$alpha
   ls <- localSuppressionWORK(x=df, keyVars=keyVars, strataVars=stratV,
-    k=k, combs=combs, importance=importance)
+    k=k, combs=combs, importance=importance, alpha=alpha)
 
   # create final output
   obj <- nextSdcObj(obj)
@@ -151,25 +155,20 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
   obj
 })
 
+#' @rdname localSuppression
+#' @export
 setMethod(f='localSuppression', signature=c("data.frame"),
-definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL) {
+definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL, alpha=1) {
   localSuppressionWORK(x=obj, keyVars=keyVars, k=k, strataVars=strataVars,
-    importance=importance, combs=combs)
+    importance=importance, combs=combs, alpha=1)
 })
 
-setMethod(f='localSuppression', signature=c("matrix"),
-definition=function(obj, keyVars, k=2, strataVars=NULL, importance=NULL, combs=NULL) {
-  localSuppressionWORK(x=as.data.frame(obj), keyVars=keyVars, k=k, strataVars=strataVars,
-    importance=importance, combs=combs)
-})
-
-
-localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=NULL) {
+localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=NULL, alpha) {
   # find a suppression pattern for a simple subset that is not stratified
   # input: df=data.table with only keyVars
   # k: parameter for k-anonymity (length 1)
   # importance: importance-vector with length equals ncol(df)
-  suppSubset <- function(x, k, importance)  {
+  suppSubset <- function(x, k, importance, alpha=alpha)  {
     # checks
     if (length(k) != 1 | k < 1) {
       stop("argument 'k' must be of length 1 and > 0 ")
@@ -229,7 +228,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     }
 
     # 4) afterwards the old lS-Algo is applied
-    ff <- freqCalc(x, keyVars=keyVars)
+    ff <- freqCalc(x, keyVars=keyVars, alpha=alpha)
     rk <- indivRisk(ff)
     runInd <- TRUE
 
@@ -272,7 +271,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
           stop("Error\n")
         }
       }
-      ff <- freqCalc(x, keyVars=keyVars)
+      ff <- freqCalc(x, keyVars=keyVars, alpha=alpha)
       rk <- indivRisk(ff)
       if (all(ff$fk >= k)) {
         runInd <- FALSE
@@ -308,10 +307,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     }))) - NAinKey
 
     totalSupps <- sum(supps)
-    out <- list(
-      xAnon=x,
-      supps=supps,
-      totalSupps=totalSupps)
+    out <- list(xAnon=x, supps=supps, totalSupps=totalSupps)
     return(out)
   }
   strata <- NULL
@@ -369,7 +365,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   if (is.null(strataVars)) {
     if (is.null(combs)) {
       inpDat <- x[,keyVars,with=F]
-      res <- suppSubset(x=inpDat, k=k, importance=importance)
+      res <- suppSubset(x=inpDat, k=k, importance=importance, alpha=alpha)
       supps <- res$supps
       totalSupps <- res$totalSupps
       xAnon <- res$xAnon
@@ -387,7 +383,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
           kV <- tree[[gr]][,comb]
           cur_importance <- rank(importance[kV], ties.method="min")
           inpDat <- tmpDat[,kV,with=F]
-          res <- suppSubset(x=inpDat, k=cur_k, importance=cur_importance)
+          res <- suppSubset(x=inpDat, k=cur_k, importance=cur_importance, alpha=alpha)
           # replace: is there a more elegant way?
           for (z in 1:length(kV)) {
             set(tmpDat, i=NULL, j=kV[z], res$xAnon[[z]])
@@ -418,7 +414,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     if (is.null(combs)) {
       # todo: using parallel/mclapply?
       for (i in seq_along(spl)) {
-        res <- suppSubset(spl[[i]][,keyVars, with=F], k=k, importance=importance)
+        res <- suppSubset(spl[[i]][,keyVars, with=F], k=k, importance=importance, alpha=alpha)
         supps[[i]] <- res$supps
         xAnon[[i]] <- res$xAnon
         totalSupps[i] <- res$totalSupps
@@ -438,7 +434,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
             kV <- tree[[gr]][,comb]
             cur_importance <- rank(importance[kV], ties.method="min")
             inpDat <- tmpDat[,kV,with=F]
-            res <- suppSubset(x=inpDat, k=cur_k, importance=cur_importance)
+            res <- suppSubset(x=inpDat, k=cur_k, importance=cur_importance, alpha=alpha)
             # replace: is there a more elegant way?
             for (z in 1:length(kV)) {
               set(tmpDat, i=NULL, j=kV[z], res$xAnon[[z]])
@@ -471,10 +467,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   invisible(res)
 }
 
-
 #' Print method for objects from class localSuppression
-#'
-#' Print method for objects from class localSuppression.
 #'
 #' @param x object from class localSuppression
 #' @param \dots Additional arguments passed through.
@@ -486,7 +479,6 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
 #' @method print localSuppression
 #' @export
 #' @examples
-#'
 #' ## example from Capobianchi, Polettini and Lucarelli:
 #' data(francdat)
 #' l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))
@@ -552,7 +544,6 @@ print.localSuppression <- function(x, ...) {
 #' @method plot localSuppression
 #' @export
 #' @examples
-#'
 #' ## example from Capobianchi, Polettini and Lucarelli:
 #' data(francdat)
 #' l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))
@@ -619,6 +610,7 @@ plot.localSuppression <- function(x, ...) {
   p
 }
 
+#' @rdname localSuppression
 #' @export
 kAnon <- function(obj, k = 2, importance = NULL, combs=NULL, ...) {
   localSuppression(obj, k=k, importance=importance, combs=combs, ...)
@@ -628,20 +620,17 @@ setGeneric("kAnon", function(obj, k = 2, importance = NULL, combs=NULL, ...) {
   standardGeneric("kAnon")
 })
 
+#' @rdname localSuppression
+#' @export
 setMethod(f='kAnon', signature=c('sdcMicroObj'),
 definition=function(obj, k=2, importance=NULL, combs=NULL) {
   localSuppression(obj, k=k, importance=importance, combs=combs)
 })
 
+#' @rdname localSuppression
+#' @export
 setMethod(f='kAnon', signature=c("data.frame"),
 definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL) {
   localSuppression(obj, k=k, keyVars=keyVars, strataVars=strataVars,
     importance=importance, combs=combs)
 })
-
-setMethod(f='kAnon', signature=c("matrix"),
-definition=function(obj, keyVars, k=2, strataVars=NULL, importance=NULL, combs=NULL) {
-  localSuppression(as.data.frame(obj), keyVars=keyVars, strataVars=strataVars,
-    importance=importance, combs=combs)
-})
-

@@ -21,7 +21,7 @@
 createSdcObj(dat, keyVars, numVars = NULL, pramVars = NULL,
   ghostVars = NULL, weightVar = NULL, hhId = NULL, strataVar = NULL,
   sensibleVar = NULL, excludeVars = NULL, options = NULL, seed = NULL,
-  randomizeRecords = FALSE)
+  randomizeRecords = FALSE, alpha = 1)
 
 get.sdcMicroObj(object, type)
 
@@ -77,6 +77,9 @@ reproducablity. The number will be rounded and saved as element \code{seed} in s
 
 \item{randomizeRecords}{(logical) if \code{TRUE}, the order of observations in the input microdata set
 will be randomized.}
+
+\item{alpha}{numeric between 0 and 1 specifying the fraction on how much keys containing \code{NAs} should
+contribute to the frequency calculation which is also crucial for risk-estimation.}
 
 \item{object}{an object of class \code{sdcMicroObj}}
 

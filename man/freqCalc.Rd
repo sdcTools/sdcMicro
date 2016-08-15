@@ -4,7 +4,7 @@
 \alias{freqCalc}
 \title{Frequencies calculation for risk estimation}
 \usage{
-freqCalc(x, keyVars, w = NULL, fast = TRUE)
+freqCalc(x, keyVars, w = NULL, alpha = 1)
 }
 \arguments{
 \item{x}{data frame or matrix}
@@ -14,15 +14,18 @@ freqCalc(x, keyVars, w = NULL, fast = TRUE)
 \item{w}{column index of the weight variable. Should be set to NULL if one
 deal with a population.}
 
-\item{fast}{beta version of faster algorithm should not change the results
-in any way}
+\item{alpha}{numeric value between 0 and 1 specifying how much keys that
+contain missing values (\code{NAs}) should contribute to the calculation
+of \code{fk} and \code{Fk}. For the default value of \code{1}, nothing changes with
+respect to the implementation in prior versions. Each \emph{wildcard-match} would
+be counted while for \code{alpha=0} keys with missing values would be basically ignored.}
 }
 \value{
 Object from class freqCalc.
 \item{freqCalc}{data set}
 \item{keyVars}{variables used for frequency calculation}
 \item{w}{index of weight vector. NULL if you do not have a sample.}
-\item{indexG}{}
+\item{alpha}{value of parameter \code{alpha}}
 \item{fk}{the frequency of equal observations in
 the key variables subset sample given for each observation.}
 \item{Fk}{estimated frequency in the population}
@@ -54,13 +57,15 @@ x[3,5] <- NA
 x[4,2] <- x[4,4] <- NA
 x[5,6]  <- NA
 x[6,2]  <- NA
-f2 <- freqCalc(x,  keyVars=c(2,4,5,6),w=8)
-f2$Fk
-# time comparison freqCalc old version  vs. new version
-data(testdata)
-system.time( f3 <-  freqCalc(testdata,keyVars=c(1:4,7),w=14,fast=FALSE) )
-system.time( f3f <- freqCalc(testdata,keyVars=c(1:4,7),w=14,fast=TRUE) )
+f2 <- freqCalc(x, keyVars=c(2,4,5,6),w=8)
+cbind(f2$fk, f2$Fk)
 
+## test parameter 'alpha'
+f3a <- freqCalc(x, keyVars=c(2,4,5,6), w=8, alpha=1)
+f3b <- freqCalc(x, keyVars=c(2,4,5,6), w=8, alpha=0.5)
+f3c <- freqCalc(x, keyVars=c(2,4,5,6), w=8, alpha=0.1)
+data.frame(fka=f3a$fk, fkb=f3b$fk, fkc=f3c$fk)
+data.frame(Fka=f3a$Fk, Fkb=f3b$Fk, Fkc=f3c$Fk)
 }
 \author{
 Bernhard Meindl and Matthias Templ

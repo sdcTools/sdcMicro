@@ -54,7 +54,6 @@ enum{
 
 //#include "Pram.h"
 
-#include "freqCalc.h"
 #include "Measure_Risk.h"
 #include "Measure_Hierarchical.h"
 

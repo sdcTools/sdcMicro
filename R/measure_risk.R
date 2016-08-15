@@ -41,19 +41,13 @@
 #' approach where also the uniqueness in sensible variables for each pattern
 #' spanned by the key variables are evaluated.
 #'
-#' @name measure_risk
-#' @aliases measure_risk-methods measure_risk,data.frame-method
-#' measure_risk,matrix-method measure_risk,sdcMicroObj-method measure_risk
-#' ldiversity ldiversity-methods ldiversity,data.frame-method
-#' ldiversity,matrix-method ldiversity,sdcMicroObj-method print.measure_risk
-#' print.ldiversity
-#' @docType methods
+#' @rdname measure_risk
 #' @param obj Object of class \code{\link{sdcMicroObj-class}}
 #' @param x Output of measure_risk() or ldiversity()
-
 #' @param ... see arguments below
+#' @param keyVars names (or indices) of categorical key variables (for data-frame method)
 #' \itemize{
-#' \item{data}{Input data, either a matrix or a data.frame.}
+#' \item{data}{Input data, a data.frame.}
 #' \item{keyVars}{Names of categorical key variables}
 #' \item{w}{name of variable containing sample weights}
 #' \item{hid}{name of the clustering variable, e.g. the household ID}
@@ -73,12 +67,7 @@
 #' \item{hier_risk_pct}{global risk with household structure in percent.}
 #' \item{ldiverstiy}{Matrix with Distinct_Ldiversity,
 #' Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}}
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"data.frame\")")}{Method for object of class \dQuote{data.frame}}
-#' \item{list("signature(obj = \"matrix\")")}{Method for object of class \dQuote{matrix}}
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{Method for object of S4 class \code{\link{sdcMicroObj-class}}}
-#' }
-#' @author Alexander Kowarik, Bernd Prantner, Matthias Templ, minor parts of IHSN C++ source
+#' @author Alexander Kowarik, Bernhard Meindl, Matthias Templ, Bernd Prantner, minor parts of IHSN C++ source
 #' @seealso \code{\link{freqCalc}}, \code{\link{indivRisk}}
 #' @references Franconi, L. and Polettini, S. (2004) \emph{Individual risk
 #' estimation in mu-Argus: a review}. Privacy in Statistical Databases, Lecture
@@ -92,7 +81,6 @@
 #' @keywords manip
 #' @export
 #' @examples
-#'
 #' ## measure_risk with sdcMicro objects:
 #' data(testdata)
 #' sdc <- createSdcObj(testdata,
@@ -138,11 +126,12 @@
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' ## already interally applied and availabe in object sdc:
 #' ## sdc <- measure_risk(sdc)
-#'
 setGeneric("measure_risk", function(obj, ...) {
   standardGeneric("measure_risk")
 })
 
+#' @rdname measure_risk
+#' @export
 setMethod(f = "measure_risk", signature = c("sdcMicroObj"),
   definition = function(obj, ...) {
   origData <- get.sdcMicroObj(obj, type = "origData")
@@ -159,7 +148,9 @@ setMethod(f = "measure_risk", signature = c("sdcMicroObj"),
     manipData <- cbind(manipData, origData[, hhId])
     hhId <- length(manipData)
   } else hhId <- NULL
-  res <- measure_riskWORK(manipData, keyVars, w = w, hid = hhId, ...)
+
+  alpha <- get.sdcMicroObj(obj, type="options")$alpha
+  res <- measure_riskWORK(manipData, keyVars, w = w, hid = hhId, alpha=alpha, ...)
   risk <- get.sdcMicroObj(obj, type = "risk")
   risk$global <- list()
   risk$global$risk <- res$global_risk
@@ -178,17 +169,20 @@ setMethod(f = "measure_risk", signature = c("sdcMicroObj"),
   obj
 })
 
+#' @rdname measure_risk
+#' @export
 setMethod(f = "measure_risk", signature = c("data.frame"),
 definition = function(obj, ...) {
-  measure_riskWORK(data = obj, ...)
+  params <- list(...)
+  if (!is.null(params$alpha)) {
+    alpha <- params$alpha
+  } else {
+    alpha <- 1
+  }
+  measure_riskWORK(data = obj, alpha=alpha, ...)
 })
 
-setMethod(f = "measure_risk", signature = c("matrix"),
-definition = function(obj, ...) {
-  measure_riskWORK(data = obj, ...)
-})
-
-measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL, max_global_risk = 0.01, fast_hier = TRUE) {
+measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL, max_global_risk = 0.01, fast_hier = TRUE, alpha) {
   if (!is.data.frame(data)) {
     data <- as.data.frame(data)
   }
@@ -214,7 +208,7 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
     }
   }
 
-  f <- freqCalc(data, keyVars = keyVars, w = w)
+  f <- freqCalc(data, keyVars = keyVars, w = w, alpha=alpha)
   ir <- indivRisk(f, survey = !is.null(w))
   Res <- matrix(NA, ncol = 3, nrow = nrow(data))
   Res[, 1] <- ir$rk
@@ -302,11 +296,12 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
 #' @param ldiv_index indices (or names) of the variables used for l-diversity
 #' @param l_recurs_c l-Diversity Constant
 #' @note internal function
-#' @author Bernhard Meindl \email{bernhard.meindl@@statistik.gv.at}
 setGeneric("ldiversity", function(obj, ldiv_index=NULL, l_recurs_c = 2, missing = -999, ...) {
   standardGeneric("ldiversity")
 })
 
+#' @rdname measure_risk
+#' @export
 setMethod(f = "ldiversity", signature = c("sdcMicroObj"),
 definition = function(obj, ldiv_index=NULL, l_recurs_c = 2, missing = -999) {
   o <- obj@origData
@@ -336,13 +331,10 @@ definition = function(obj, ldiv_index=NULL, l_recurs_c = 2, missing = -999) {
   return(obj)
 })
 
+#' @rdname measure_risk
+#' @export
 setMethod(f = "ldiversity", signature = c("data.frame"),
 definition = function(obj, keyVars, ldiv_index, l_recurs_c = 2, missing = -999) {
-  ldiversityWORK(data = obj, keyVars = keyVars, ldiv_index = ldiv_index, l_recurs_c = l_recurs_c, missing = missing)
-})
-
-setMethod(f = "ldiversity", signature = c("matrix"), definition = function(obj, keyVars, ldiv_index,
-  l_recurs_c = 2, missing = -999) {
   ldiversityWORK(data = obj, keyVars = keyVars, ldiv_index = ldiv_index, l_recurs_c = l_recurs_c, missing = missing)
 })
 
@@ -397,13 +389,12 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing = -999, l_recurs_c
   invisible(res)
 }
 
-#' Print method for objects from class ldiversity
+#' Print method for objects of class measure_risk
 #'
-#' Print method for objects from class ldiversity
+#' Prints a 'measure_risk'-object
+#'
 #' @rdname measure_risk
 #' @return Prints risk-information into the console
-#' @author Bernhard Meindl, Matthias Templ
-#' @seealso \code{\link{measure_risk}}
 #' @keywords print
 #' @method print measure_risk
 #' @export
@@ -436,10 +427,10 @@ print.measure_risk <- function(x, ...) {
 
 #' Print method for objects from class ldiversity
 #'
-#' Print method for objects from class ldiversity
+#' Prints a 'ldiversity'-object
+#'
 #' @rdname measure_risk
 #' @return Information on L-Diversity Measures in the console
-#' @author Bernhard Meindl, Matthias Templ
 #' @seealso \code{\link{measure_risk}}
 #' @keywords print
 #' @method print ldiversity

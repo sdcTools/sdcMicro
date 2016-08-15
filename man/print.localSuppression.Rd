@@ -16,10 +16,9 @@ Information about the frequency counts for key variables for object
 of class \sQuote{localSuppression}.
 }
 \description{
-Print method for objects from class localSuppression.
+Print method for objects from class localSuppression
 }
 \examples{
-
 ## example from Capobianchi, Polettini and Lucarelli:
 data(francdat)
 l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))

@@ -22,12 +22,10 @@ Print method for objects from class indivRisk
 
 ## example from Capobianchi, Polettini and Lucarelli:
 data(francdat)
-f <- freqCalc(francdat, keyVars=c(2,4,5,6),w=8)
-f
-f$fk
-f$Fk
+f1 <- freqCalc(francdat, keyVars=c(2,4,5,6),w=8)
+data.frame(fk=f1$fk, Fk=f1$Fk)
 ## individual risk calculation:
-indivRisk(f)
+indivRisk(f1)
 
 }
 \author{

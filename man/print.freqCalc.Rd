@@ -2,7 +2,7 @@
 % Please edit documentation in R/freqCalc.r
 \name{print.freqCalc}
 \alias{print.freqCalc}
-\title{Print method for objects from class freqCalc}
+\title{Print method for objects from class freqCalc.}
 \usage{
 \method{print}{freqCalc}(x, ...)
 }

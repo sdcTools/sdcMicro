@@ -55,6 +55,8 @@ standardizeInput <- function(obj, v) {
 #' reproducablity. The number will be rounded and saved as element \code{seed} in slot \code{options}.
 #' @param randomizeRecords (logical) if \code{TRUE}, the order of observations in the input microdata set
 #' will be randomized.
+#' @param alpha numeric between 0 and 1 specifying the fraction on how much keys containing \code{NAs} should
+#' contribute to the frequency calculation which is also crucial for risk-estimation.
 #' @export
 #' @examples
 #' ## we can also specify ghost (linked) variables
@@ -106,7 +108,7 @@ standardizeInput <- function(obj, v) {
 #' colnames(get.sdcMicroObj(obj, "origData"))
 createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NULL, weightVar=NULL,
   hhId=NULL, strataVar=NULL, sensibleVar=NULL, excludeVars=NULL, options=NULL, seed=NULL,
-  randomizeRecords=FALSE) {
+  randomizeRecords=FALSE, alpha=1) {
 
   obj <- new("sdcMicroObj")
   if (!is.null(seed) && is.numeric(seed)) {
@@ -223,8 +225,13 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
     obj <- set.sdcMicroObj(obj, type="sensibleVar", input=list(sensibleVarInd))
   }
   if (!is.null(options)) {
-    obj <- set.sdcMicroObj(obj, type="options", input=list(options))
+    options$alpha <- alpha
+  } else {
+    options <- list()
+    options$alpha <- alpha
   }
+  obj <- set.sdcMicroObj(obj, type="options", input=list(options))
+
   obj <- measure_risk(obj)
   obj@originalRisk <- obj@risk
 
