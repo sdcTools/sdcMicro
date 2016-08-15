@@ -2,7 +2,7 @@ Package: sdcMicro
 Type: Package
 Title: Statistical Disclosure Control Methods for Anonymization of Microdata and
     Risk Estimation
-Version: 4.7.1
+Version: 4.7.2
 Date: 2016-08-15
 Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl
 Maintainer: Matthias Templ <matthias.templ@gmail.com>
