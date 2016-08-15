@@ -196,6 +196,9 @@ definition = function(obj, var, before, after) {
     levels(x[, var]) <- ifelse(levels(x[, var]) == before[i], after, levels(x[, var]))
   }
   obj <- set.sdcMicroObj(obj, type = "manipKeyVars", input = list(x))
+
+  # calculate risk
+  obj <- calcRisks(obj)
   obj
 })
 
