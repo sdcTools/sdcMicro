@@ -1,4 +1,4 @@
-The following 12 files were written by **Probhonjon Baruah** as part of Google Summer of Code 2016 under the organization **TU Wien** with the help of mentor **Matthias Templ**. 
+The following 11 files were written by **Probhonjon Baruah** as part of Google Summer of Code 2016 under the organization **TU Wien** with the help of mentor **Matthias Templ**. 
 Following is a brief description of the files created.
 
 **1. test_addNoise.R :<br>**
@@ -24,13 +24,21 @@ Following is a brief description of the files created.
 	No BUGS reported.
 
 
-**3. test_generateStrata.R :<br>**
+**3. test_dataGen.R :<br>**
+	this function was created for the function dataGen. The code is written for both sdcObject and dataframe. The two data types used are (a) data without missing value (b) data with missing value.
+
+	BUGS reported:
+	* in case of data with missing data, error "the leading minor of order 1 is not positive definite" is shown
+	* in dataframe method minimum data created is of length 200. So if we want low amount of data per column created we cant
+
+
+**4. test_generateStrata.R :<br>**
 	this function was created for the function generateStrata. The code is written for only sdcObject. The two data types used are (a) data without missing value (b) data with missing value. Each part is then divided into two parts based on whether it was divided into two levels or three levels
 
 	No BUGS reported.
 
 
-**4. test_globalRecode.R :<br>**
+**5. test_globalRecode.R :<br>**
 	this function was created for the function globalRecode. The code is divided into two parts : (a) dataframe (b) sdcObject. Each has continuous and categorical data. Each part has been divided into 4 separate parts : equidistant, logEqui, equalAmount, none. Also each method has been divided into 3 parts corresponding to the three different types of breaks: only 1, more than 1 breaks, cutoff style breaks. Along with the breaks the code is again divided into 3 parts with labels: present, not present, invalid number of labels.
 
 	BUGS reported:
@@ -50,19 +58,19 @@ Following is a brief description of the files created.
 	* sdc method not detecting manipNumVars (numeric data)
 
 
-**5. test_groupvars.R :<br>**
+**6. test_groupvars.R :<br>**
 	this function was created for the function groupVars. The code is written for only sdcObject. The two data types used are (a) data without missing value (b) data with missing value.
 
 	No BUGS reported.
 
 
-**6. test_localSuppression.R :<br>**
+**7. test_localSuppression.R :<br>**
 	this function was created for the function localSuppression. The code is written for both dataframe and sdcObject. The two data types used are (a) data without missing value (b) data with missing value. Each data types are divided into two parts based on k-anonymity (2 or 3), then each individual part is divided based on importance (NULL/c(3,1,2)/c(1,2,3)) and again based on combs (NULL / c(3:2) / c(1:2))
 
 	No BUGS reported.
 
 
-**7. test_modRisks.R :<br>**
+**8. test_modRisks.R :<br>**
 	this function was created for the function modRisks. The code is written for both dataframe and sdcObject. The two data types used are (a) data without missing value (b) data with missing value. Each data types are divided into five parts default, CE, PML, weightedLLM, IPF. Then each individual part is divided based on whether the data is weighted or not and again based on bounds (yes / no)
 
 	BUGS reported:
@@ -72,31 +80,31 @@ Following is a brief description of the files created.
 	* no difference when bound value is changed in case of missing values
 
 
-**8. test_pram.R :<br>**
+**9. test_pram.R :<br>**
 	this function was created for the function pram. The code is written for both dataframe and sdcObject. The three data types used are (a) data without missing value (b) data with missing value (c) data with more columns then rows with missing values. Each data types are divided into two parts based on whether one or many stratavariables were used. Then each individual part is divided based on whether one or many variables were used. Then each section is divided based on pd values (default / different) and alpha (default / different)
 
 	No BUGS reported.
 
 
-**9. test_suda2.R :<br>**
+**10. test_suda2.R :<br>**
 	this function was created for the function suda. The code is written for both dataframe and sdcObject. The four data types used are (a) data without missing value (b) data with missing value (c) data with one column with missing (d) data with more columns then rows with missing values. Each data types are divided into two parts based on whether default or different value of DisFraction is used.
 
 	No BUGS reported.
 
 
-**10. test_topBotCoding.R :<br>**
+**11. test_topBotCoding.R :<br>**
 	this function was created for the function suda. The code is written for both dataframe and sdcObject. The two data types used are (a) data without missing value (b) data with missing value. Each data types are divided into two parts based on whether values were substituted using the option top or bottom
 
 	No BUGS reported.
 
 
-**11. test_varToFactor.R :<br>**
+**12. test_varToFactor.R :<br>**
 	this function was created for the function varToFactor. The code is written for only sdcObject. The two data types used are (a) data without missing value (b) data with missing value.
 
 	No BUGS reported.
 
 
-**12. test_varToNumeric.R :<br>**
+**13. test_varToNumeric.R :<br>**
 	this function was created for the function varToNumeric. The code is written for only sdcObject. The two data types used are (a) data without missing value (b) data with missing value.
 
 	BUGS reported:
