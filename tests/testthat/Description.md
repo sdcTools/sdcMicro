@@ -1,4 +1,4 @@
-The following 11 files were written by **Probhonjon Baruah** as part of Google Summer of Code 2016 under the organization **TU Wien** with the help of mentor **Matthias Templ**. 
+The following 12 files were written by **Probhonjon Baruah** as part of Google Summer of Code 2016 under the organization **TU Wien** with the help of mentor **Matthias Templ**. 
 Following is a brief description of the files created.
 
 **1. test_addNoise.R :<br>**
