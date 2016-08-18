@@ -62,6 +62,7 @@
 #' localS
 #' plot(localS)
 #'
+#' \dontrun{
 #' ## for objects of class sdcMicro, no stratification
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata2,
@@ -85,9 +86,7 @@
 #' ## note: stratas are automatically considered!
 #' combs <- 5:3
 #' k <- c(10,20,30)
-#' \dontrun{
 #' sdc <- localSuppression(sdc, k=k, combs=combs)
-#' }
 #'
 #' ## data.frame method (no stratification)
 #' keyVars <- c("urbrur","roof","walls","water","electcon","relat","sex")
@@ -101,7 +100,7 @@
 #' ls <- kAnon(inp, keyVars=1:7, strataVars=8)
 #' print(ls)
 #' plot(ls, showTotalSupps=TRUE)
-#'
+#' }
 setGeneric("localSuppression", function(obj, k = 2, importance = NULL, combs=NULL, ...) {
   standardGeneric("localSuppression")
 })
