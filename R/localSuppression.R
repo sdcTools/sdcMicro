@@ -85,7 +85,9 @@
 #' ## note: stratas are automatically considered!
 #' combs <- 5:3
 #' k <- c(10,20,30)
+#' \dontrun{
 #' sdc <- localSuppression(sdc, k=k, combs=combs)
+#' }
 #'
 #' ## data.frame method (no stratification)
 #' keyVars <- c("urbrur","roof","walls","water","electcon","relat","sex")

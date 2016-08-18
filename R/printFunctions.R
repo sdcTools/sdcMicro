@@ -77,7 +77,7 @@ definition = function(x, type = "kAnon", ...) {
 
   # type=kAnon,ls,recode,risk,numrisk,general
   obj <- x
-  hr <- paste0(rep("-", 75), collapse="")
+  hr <- paste0(rep("-", 70), collapse="")
   n <- nrow(get.sdcMicroObj(x, "origData"))
   cn <- colnames(get.sdcMicroObj(x, "origData"))
 
