@@ -1,32 +1,89 @@
-# display a table with observations ordered by descending individual risk
-output$ui_rescat_riskyobs <- renderUI({
-  # slider for minimal risk
-  output$riskyobs_slider <- renderUI({
-    sliderInput("sl_riskyobs", label=h5("Minimum Risk for observations to be shown in the Table below"), min=0, max=max(get_risk()$risk), value=0, width="100%")
+output$ui_rescat_riskinfo <- renderUI({
+  # rb for measure-selection
+  output$rb_riskselection <- renderUI({
+    radioButtons("rb_riskselection", label=h5("What kind of results do you want to show?"),
+      choices=c("Risk Measures"="ui_rescat_riskymeasures", "Risky Observations"="ui_rescat_riskyobs", "Plot of risks"="ui_rescat_riskplot"),
+      selected=input$rb_riskselection, inline=TRUE, width="100%")
   })
 
-  # table containing the corresponding observations
-  output$tab_risk <- renderDataTable({
-    if (is.null(obj$sdcObj)) {
-      return(NULL)
-    }
-    if (is.null(input$sl_riskyobs)) {
-      return(NULL)
-    }
-    df <- as.data.frame(get_origData()[,get_keyVars()])
-    rk <- get_risk()
-    df$fk <- rk$fk
-    df$Fk <- rk$Fk
-    df$indivRisk=rk$risk
-    df[!duplicated(df),]
-    df[order(df$indivRisk, decreasing=TRUE),]
-    df[df$indivRisk > input$sl_riskyobs,,drop=F]
-  }, options = list(pageLength = 10, searching=FALSE))
+  # Risk-measures
+  output$ui_rescat_riskymeasures <- renderUI({
+    riskinfo <- measure_riskComp()
+    out <- list(
+      htmlTemplate("tpl_one_col.html",inp=h4("Risk-measures")),
+      htmlTemplate("tpl_one_col.html",inp=p(code(riskinfo$s),"observations (",code(riskinfo$sorig),"in the original data) have a
+      higher risk than the benchmark value of", code(riskinfo$benchmark),".")),
+      htmlTemplate("tpl_one_col.html",inp=p("We expect",code(riskinfo$exp_reident_m),"re-identifications (",code(riskinfo$exp_reident_mp),"%) in the
+        anonymized data set. In the original dataset we expected",code(riskinfo$exp_reident_o),"(",code(riskinfo$exp_reident_op),"%) re-identifications.")))
 
-  return(list(
-    htmlTemplate("tpl_one_col.html",inp=h4("Display risky-observations in a Table")),
-    htmlTemplate("tpl_one_col.html",inp=uiOutput("riskyobs_slider")),
-    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("tab_risk"))))
+    if (riskinfo$hierrisk) {
+      out <- list(out,
+      htmlTemplate("tpl_one_col.html",inp=p("If",strong("hierarchical information"),"is taken into account, we expect to have",code(riskinfo$hier_exp_m),
+        "(",code(riskinfo$hier_exp_mp),"%) re-identifications given the anonymized data set. For the original data, we expected to have",
+        code(riskinfo$hier_exp_o),"(",code(riskinfo$hier_exp_op),"%)) re-identifications.")))
+    }
+  })
+
+  # table and slider observation with risk > than specified threshold
+  output$ui_rescat_riskyobs <- renderUI({
+    # slider for minimal risk
+    output$riskyobs_slider <- renderUI({
+      sliderInput("sl_riskyobs", label=h5("Minimum Risk for observations to be shown in the Table below"), min=0, max=max(get_risk()$risk), value=0, width="100%")
+    })
+
+    # table containing the corresponding observations
+    output$tab_risk <- renderDataTable({
+      if (is.null(obj$sdcObj)) {
+        return(NULL)
+      }
+      if (is.null(input$sl_riskyobs)) {
+        return(NULL)
+      }
+      df <- as.data.frame(get_origData()[,get_keyVars()])
+      rk <- get_risk()
+      df$fk <- rk$fk
+      df$Fk <- rk$Fk
+      df$indivRisk=rk$risk
+      df[!duplicated(df),]
+      df[order(df$indivRisk, decreasing=TRUE),]
+      df[df$indivRisk > input$sl_riskyobs,,drop=F]
+    }, options = list(pageLength = 10, searching=FALSE))
+
+    return(list(
+      htmlTemplate("tpl_one_col.html",inp=h4("Display risky-observations in a Table")),
+      htmlTemplate("tpl_one_col.html",inp=uiOutput("riskyobs_slider")),
+      htmlTemplate("tpl_one_col.html",inp=dataTableOutput("tab_risk"))))
+  })
+
+  # display a risk-plot
+  output$ui_rescat_riskplot <- renderUI({
+    output$plot_risk <- renderPlot({
+      if (is.null(obj$sdcObj)) {
+        return(NULL)
+      }
+      rk <- get_risk()
+      hist(rk$risk, xlab="Risks", main="Individual risks", col="lightgrey")
+    })
+    return(list(
+      htmlTemplate("tpl_one_col.html",inp=h4("Plot of showing individual reidentification-risks")),
+      htmlTemplate("tpl_one_col.html",inp=plotOutput("plot_risk"))))
+  })
+
+  out <- list(
+    htmlTemplate("tpl_one_col.html", inp=h4("Information on Risks")),
+    htmlTemplate("tpl_one_col.html", inp=uiOutput("rb_riskselection")))
+  if (!is.null(input$rb_riskselection)) {
+    if (input$rb_riskselection=="ui_rescat_riskymeasures") {
+      out <- list(out, uiOutput("ui_rescat_riskymeasures"))
+    }
+    if (input$rb_riskselection=="ui_rescat_riskyobs") {
+      out <- list(out, uiOutput("ui_rescat_riskyobs"))
+    }
+    if (input$rb_riskselection=="ui_rescat_riskplot") {
+      out <- list(out, uiOutput("ui_rescat_riskplot"))
+    }
+  }
+  out
 })
 
 # display information on recodings
@@ -175,19 +232,7 @@ output$ui_rescat_suda2 <- renderUI({
   ))
 })
 
-# display a risk-plot
-output$ui_rescat_freqCalc <- renderUI({
-  output$plot_risk <- renderPlot({
-    if (is.null(obj$sdcObj)) {
-      return(NULL)
-    }
-    rk <- get_risk()
-    hist(rk$risk, xlab="Risks", main="Individual risks", col="lightgrey")
-  })
-  return(list(
-    htmlTemplate("tpl_one_col.html",inp=h4("Plot of showing individual reidentification-risks")),
-    htmlTemplate("tpl_one_col.html",inp=plotOutput("plot_risk"))))
-})
+
 
 # information on k-anonymity
 output$ui_rescat_violating_kanon <- renderUI({

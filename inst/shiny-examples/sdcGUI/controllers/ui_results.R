@@ -6,8 +6,7 @@ output$ui_results <- renderUI({
     }
     if (input$rb_results_type=="res_cat") {
       choices <- c(
-        "Display a risk-plot"="freqcalc",
-        "Show 'risky' observations"="riskyobs",
+        "Information of Risks"="riskinfo",
         "l-Diversity risk-measure"="ldiv",
         "Suda2 risk-measure"="suda2",
         "View Histogram/Mosaicplot"="mosaicplot",
@@ -48,8 +47,8 @@ output$ui_results <- renderUI({
   )
   if ( !is.null(input$sel_results) ) {
     ## Categorical (defined in controller/ui_results_categorical.R)
-    if ( input$sel_results=="freqcalc" ) {
-      out <- list(out, uiOutput("ui_rescat_freqCalc"))
+    if ( input$sel_results=="riskinfo" ) {
+      out <- list(out, uiOutput("ui_rescat_riskinfo"))
     }
     if ( input$sel_results=="ldiv" ) {
       out <- list(out, uiOutput("ui_rescat_ldiv"))

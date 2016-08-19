@@ -196,7 +196,7 @@ sdcVars <- reactive({
   out$kv <- c("",setdiff(facVars(), c(input$sel_nV,input$sel_wV,input$sel_hhID,input$sel_strataV)))
   out$nv <- c("",setdiff(numVars(), c(input$sel_kV,input$sel_wV,input$sel_hhID,input$sel_strataV)))
   out$wv <- c("(do not use sampling weights)"="none",setdiff(numVars(), c(input$sel_kV,input$sel_nV,input$sel_hhID,input$sel_strataV)))
-  out$hhid <- c("(do not use household-identification variable)"="none",setdiff(facVars(), c(input$sel_kV,input$sel_nV,input$sel_wV,input$sel_strataV)))
+  out$hhid <- c("(do not use household-identification variable)"="none",setdiff(allVars(), c(input$sel_kV,input$sel_nV,input$sel_wV,input$sel_strataV)))
   out$strataV <- c("(do not use stratification variable)"="none",setdiff(facVars(), c(input$sel_kV,input$sel_nV,input$sel_wV,input$sel_hhID)))
   out
 })
@@ -245,6 +245,42 @@ possGhostVars <- reactive({
 # the (anonymized) dataset that will be written to a file
 exportData <- reactive({
   extractManipData(obj$sdcObj)
+})
+
+
+# compute some risk-measures
+measure_riskComp <- reactive({
+  if (is.null(obj$sdcObj)) {
+    return(NULL)
+  }
+
+  bm <- 0.1
+  res <- list()
+  risk <- obj$sdcObj@risk
+  originalRisk <- obj$sdcObj@originalRisk
+  res$s <- sum((risk$individual[,1] > median(risk$individual[,1])+2*mad(risk$individual[,1])) & (risk$indiviual[,1] > bm))
+  res$sorig <- sum((originalRisk$individual[,1] > median(originalRisk$individual[,1])+2*mad(originalRisk$individual[,1])) & (originalRisk$indiviual[,1] > bm))
+  res$benchmark <- bm
+
+  res$exp_reident_m <- round(risk$global$risk_ER,2)
+  res$exp_reident_mp <- round(risk$global$risk_pct,2)
+  res$exp_reident_o <- round(originalRisk$global$risk_ER,2)
+  res$exp_reident_op <- round(originalRisk$global$risk_pct,2)
+
+  res$hierrisk <- FALSE
+  if ("hier_risk_ER"%in%names(risk$global)) {
+    if (!is.na(risk$global$hier_risk_ER)) {
+      res$hierrisk <- TRUE
+      res$hier_exp_m <- round(risk$global$hier_risk_ER,2)
+      res$hier_exp_mp <- round(risk$global$hier_risk_pct,2)
+      res$hier_exp_o <- round(originalRisk$global$hier_risk_ER,2)
+      res$hier_exp_op <- round(originalRisk$global$hier_risk_pct,2)
+    } else {
+      res$hier <- NA
+    }
+  } else {
+  }
+  res
 })
 
 
