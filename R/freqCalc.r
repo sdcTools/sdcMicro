@@ -118,7 +118,7 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
 ## Author: Alexander Kowarik and Bernhard Meindl
 sffc <- function(dt, keyVars) {
   .I <- idvarextraforsffc <- NULL
-  dt[, `:=`(idvarextraforsffc, .I)]
+  dt[, idvarextraforsffc:=.I]
   setkeyv(dt, keyVars)
   erg <- vector()
   cmd <- paste("erg <- dt[,list(Fk=sum(weight),fk=.N),by=key(dt)]")
