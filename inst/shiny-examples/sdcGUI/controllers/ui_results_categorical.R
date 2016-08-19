@@ -31,10 +31,36 @@ output$ui_rescat_riskyobs <- renderUI({
 
 # display information on recodings
 output$ui_rescat_recodes <- renderUI({
-  return(htmlTemplate("tpl_one_col.html",inp=h4("Information about Recodes")))
+  # calculate recoding information-loss measures
+  output$tab_recodes <- renderDataTable({
+    if (is.null(obj$sdcObj)) {
+      return(NULL)
+    }
 
+    # key var | nr_cat_orig | nr_cat_mod | mean.size(orig) | smallest(orig)
+    kV_o <- get_origData()[,get_keyVars_names()]
+    kV_m <- get_manipKeyVars()
 
+    res_o <- lapply(kV_o, function(x) { c(nr=length(unique(x)), mean=mean(table(x)), min=min(table(x)))})
+    res_m <- lapply(kV_m, function(x) { c(nr=length(unique(x)), mean=mean(table(x)), min=min(table(x)))})
+    k <- ncol(kV_o)
+    out <- NULL
+    for (i in 1:k) {
+      out <- rbind(out,
+        data.frame(keyVar=names(kV_o[i]),
+          nrCategories.orig=res_o[[i]][1], nrCategories.mod=res_m[[i]][1],
+          mean.size.orig=res_o[[i]][2], mean.size.mod=res_m[[i]][2],
+          min.size.orig=res_o[[i]][3], min.size.mod=res_m[[i]][3]))
+    }
+    out
+  }, options = list(pageLength = 10, searching=FALSE))
 
+  return(list(
+    htmlTemplate("tpl_one_col.html",inp=h4("Display information loss based on Recodings of categorical key variables")),
+    htmlTemplate("tpl_one_col.html", inp=p("For each categorical key variable, the following key figures are computed:")),
+    htmlTemplate("tpl_one_col.html", inp=p("a) The number of categories in original and modified variables, b) The mean size
+      of groups in original and modified variables and c) The size of the smallest category/group in original and modified variables")),
+    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("tab_recodes"))))
 })
 
 # display information on l-diversity risk-measure
