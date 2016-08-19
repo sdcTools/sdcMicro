@@ -162,7 +162,7 @@ output$ui_rescat_suda2 <- renderUI({
   })
 
   # suda2 can only be calculated for sdcProblems with >= 3 categorical key variables
-  if (length(get_keyVars()<=2)) {
+  if (length(get_keyVars())<=2) {
     return(list(
       htmlTemplate("tpl_one_col.html",inp=h4("suda2 risk-measure")),
       htmlTemplate("tpl_one_col.html",inp=p("Suda2 scores can only be computed for scenarios with",code(">= 3"),"categorical key variables!"))
