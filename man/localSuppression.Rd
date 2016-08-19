@@ -91,13 +91,13 @@ in sdcMicro > 4.5.0.
 to obtain k-anonymity for some parts of the data.
 }
 \examples{
-
 data(francdat)
 ## Local Suppression
 localS <- localSuppression(francdat, keyVar=c(4,5,6))
 localS
 plot(localS)
 
+\dontrun{
 ## for objects of class sdcMicro, no stratification
 data(testdata2)
 sdc <- createSdcObj(testdata2,
@@ -135,7 +135,7 @@ plot(ls)
 ls <- kAnon(inp, keyVars=1:7, strataVars=8)
 print(ls)
 plot(ls, showTotalSupps=TRUE)
-
+}
 }
 \author{
 Bernhard Meindl, Matthias Templ
