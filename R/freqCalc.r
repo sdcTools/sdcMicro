@@ -158,7 +158,7 @@ sffcNA <- function(dt, keyVars, alpha) {
 
   erg <- vector()
   # erg contains the 'first' fk for all observations without any NAs
-  cmd <- paste0("erg <- datwona[,list(fk=as.numeric(.N),Fk=sum(weight)),by=key(datwona)]")
+  cmd <- paste0("erg <- datwona[,list(fk=as.numeric(.N),Fk=as.numeric(sum(weight))),by=key(datwona)]")
   eval(parse(text=cmd))
   allCombKeysVars <- as.list(set_power(keyVars))  ## build the power set of all keyVars
   allCombKeysVars <- allCombKeysVars[-c(1, length(allCombKeysVars))]  ##delete the empty set and the full set
