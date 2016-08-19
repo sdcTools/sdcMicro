@@ -41,7 +41,7 @@ output$ui_catvar_numres <- renderUI({
 
 # display comparison (before-after) about numeric variables
 output$ui_resnum_comparison <- renderUI({
-  output$ui_numvar_modtab <- renderTable({
+  output$ui_numvar_modtab <- renderDataTable({
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
     }
@@ -60,8 +60,8 @@ output$ui_resnum_comparison <- renderUI({
       tab_m <- as.data.frame(t(summaryfn(df_m[[input$sel_res_numvar1]])))
     }
     tab_m
-  }, include.rownames=FALSE)
-  output$ui_numvar_origtab <- renderTable({
+  }, options=list(searching=FALSE, paging=FALSE))
+  output$ui_numvar_origtab <- renderDataTable({
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
     }
@@ -80,7 +80,7 @@ output$ui_resnum_comparison <- renderUI({
       tab_o <- as.data.frame(t(summaryfn(df_o[[input$sel_res_numvar1]])))
     }
     tab_o
-  }, include.rownames=FALSE)
+  }, options=list(searching=FALSE, paging=FALSE))
   output$ui_numvar_cor <- renderUI({
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
@@ -101,7 +101,7 @@ output$ui_resnum_comparison <- renderUI({
     htmlTemplate("tpl_two_col.html",inp1=uiOutput("ui_numvar_numres"), inp2=uiOutput("ui_catvar_numres")),
     uiOutput("ui_numvar_cor"),
     htmlTemplate("tpl_one_col.html",inp=h5("Original Values")),
-    htmlTemplate("tpl_one_col.html",inp=tableOutput("ui_numvar_origtab")),
+    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("ui_numvar_origtab")),
     htmlTemplate("tpl_one_col.html",inp=h5("Modified Data")),
-    htmlTemplate("tpl_one_col.html",inp=tableOutput("ui_numvar_modtab")))
+    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("ui_numvar_modtab")))
 })
