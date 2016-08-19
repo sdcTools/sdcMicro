@@ -4,7 +4,6 @@
 \name{addNoise}
 \alias{addNoise}
 \alias{addNoise,data.frame-method}
-\alias{addNoise,matrix-method}
 \alias{addNoise,sdcMicroObj-method}
 \alias{addNoise-methods}
 \title{Adding noise to perturb data}
@@ -44,15 +43,15 @@ object of class \dQuote{micro} with following entities is returned:
 Various methods for adding noise to perturb continuous scaled variables.
 }
 \details{
-If \sQuote{obj} is of class \code{\link{sdcMicroObj-class}} all continuous key
+If \sQuote{obj} is of class \code{\link{sdcMicroObj-class}}, all continuous key
 variables are selected per default. If \sQuote{obj} is of class
 \dQuote{data.frame} or \dQuote{matrix}, the continuous variables have to be
 specified.
 
 Method \sQuote{additive} adds noise completely at random to each variable
-depending on there size and standard deviation. \sQuote{correlated} and
+depending on its size and standard deviation. \sQuote{correlated} and
 method \sQuote{correlated2} adds noise and preserves the covariances as
-descriped in R. Brand (2001) or in the reference given below.  Method
+descriped in R. Brand (2001) or in the reference given below. Method
 \sQuote{restr} takes the sample size into account when adding noise.  Method
 \sQuote{ROMM} is an implementation of the algorithm ROMM (Random
 Orthogonalized Matrix Masking) (Fienberg, 2004).  Method \sQuote{outdect}
