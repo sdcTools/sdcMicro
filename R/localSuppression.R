@@ -55,14 +55,13 @@
 #' \code{kAnon} is a more intutitive term for localSuppression because the aim is always
 #' to obtain k-anonymity for some parts of the data.
 #' @examples
-#'
+#' \dontrun{
 #' data(francdat)
 #' ## Local Suppression
 #' localS <- localSuppression(francdat, keyVar=c(4,5,6))
 #' localS
 #' plot(localS)
 #'
-#' \dontrun{
 #' ## for objects of class sdcMicro, no stratification
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata2,
@@ -489,10 +488,11 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
 #' @examples
 #'
 #' ## example from Capobianchi, Polettini and Lucarelli:
+#' \dontrun{
 #' data(francdat)
 #' l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))
 #' l1
-#'
+#' }
 print.localSuppression <- function(x, ...) {
   byStrata <- !is.null(x$strataVars)
   pp <- "\n-----------------------\n"
@@ -546,6 +546,7 @@ print.localSuppression <- function(x, ...) {
 #' @examples
 #'
 #' ## example from Capobianchi, Polettini and Lucarelli:
+#' \dontrun{
 #' data(francdat)
 #' l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))
 #' l1
@@ -561,7 +562,7 @@ print.localSuppression <- function(x, ...) {
 #' print(ls)
 #' plot(ls)
 #' plot(ls, showDetails=TRUE)
-#'
+#' }
 #' @export plot.localSuppression
 plot.localSuppression <- function(x, ...) {
   vals <- keyVars <- NULL

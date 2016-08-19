@@ -142,7 +142,7 @@ addNoiseWORK <- function(x, noise = 150, method = "additive", p = 0.001, delta =
   eps <- matrix(0, ncol = P, nrow = N)
   if (method == "additive") {
     x <- apply(x, 2, function(x) {
-      x + rnorm(N, 0, noise * sd(x, na.rm = TRUE))  #1.96 * sd(x)/sqrt(N) * wnoise)
+      x + rnorm(N, 0, noise/100 * sd(x, na.rm = TRUE))  #1.96 * sd(x)/sqrt(N) * wnoise)
     })
   } else if (method == "correlated") {
     if (dim(x)[2] < 2)

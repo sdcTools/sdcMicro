@@ -30,8 +30,6 @@
 #' \item{list("signature(obj = \"vector\")")}{...}}
 #' @author Alexander Kowarik, Matthias Templ, Bernhard Meindl
 #' @references \url{http://www.gnu.org/software/glpk}
-#'
-#' \url{http://www.ccsr.ac.uk/sars/guide/2001/pram.pdf}
 #' @keywords manip
 #' @export
 #' @note Deprecated method 'pram_strata'is no longer available
