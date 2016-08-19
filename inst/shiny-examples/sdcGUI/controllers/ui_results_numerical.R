@@ -82,6 +82,7 @@ output$ui_resnum_comparison <- renderUI({
     tab_o
   }, options=list(searching=FALSE, paging=FALSE))
   output$ui_numvar_cor <- renderUI({
+    cat("juuu\n")
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
     }
@@ -91,8 +92,10 @@ output$ui_resnum_comparison <- renderUI({
     v_o <- get_origData()[[input$sel_res_numvar1]]
     v_m <- extractManipData(obj$sdcObj)[[input$sel_res_numvar1]]
     vv <- round(cor(v_o, v_m), digits=3)
-    txt <- paste("Correlation between original and modified variable:", code(vv))
-    htmlTemplate("tpl_one_col.html",inp=h5(HTML(txt)))
+    txt_cor <- paste0("The ",strong("correlation")," between original and modified variable is", code(vv),". The ",strong("standard deviation"),
+    " of the original variable is ",code(round(sd(v_o),digits=3))," and the ",strong("standard deviation")," of the
+    modified variable is ", code(round(sd(v_m),digits=3)),".")
+    htmlTemplate("tpl_one_col.html",inp=p(HTML(txt_cor)))
   })
   if (!has_numkeyvars()) {
     return(uiOutput("nonumkey_continous_results"))

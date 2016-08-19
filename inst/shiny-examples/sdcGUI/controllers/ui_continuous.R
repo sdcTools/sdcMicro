@@ -128,9 +128,8 @@ output$ui_noise <- renderUI({
         lab <- h4("Parameter 'p'")
         par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
       } else {
-        lab <- h4("Amount of noise (in %)")
-        #par <- c(value=100, min=10, max=300, step=1)
-        par <- c(value=0.1, min=0.1, max=3, step=0.1)
+        lab <- h4("Amount of noise")
+        par <- c(value=150, min=0, max=300, step=1)
       }
       sliderInput("sl_noise_noise", label=lab,
         min=par["min"], max=par["max"], step=par["step"], value=par["value"], width="100%")
