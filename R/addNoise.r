@@ -130,7 +130,7 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
   addNoise_additive <- function(x, noise) {
     N <- nrow(x)
     x <- apply(x, 2, function(x) {
-      x + rnorm(N, 0, noise * sd(x, na.rm=TRUE))  #1.96 * sd(x)/sqrt(N) * wnoise)
+      x + rnorm(N, 0, noise/100 * sd(x, na.rm=TRUE))  #1.96 * sd(x)/sqrt(N) * wnoise)
     })
     x
   }
