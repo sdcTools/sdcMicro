@@ -7,12 +7,12 @@ output$ui_results <- renderUI({
     if (input$rb_results_type=="res_cat") {
       choices <- c(
         "Risk"="freqcalc",
+        "Risky Observations"="riskyobs",
         "l-Diversity risk-measure"="ldiv",
         "Suda2 risk-measure"="suda2",
         "View Histogram/Mosaicplot"="mosaicplot",
         "View (bivariate) Tabulations"="tabulations",
         "Information Loss (Recodings)"="recodes",
-        "Risky Observations"="riskyobs",
         "Obs violating k-Anon"="violating_kanon")
     }
     if (input$rb_results_type=="res_num") {

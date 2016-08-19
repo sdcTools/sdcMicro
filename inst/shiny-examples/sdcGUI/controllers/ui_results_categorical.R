@@ -1,7 +1,15 @@
 # display a table with observations ordered by descending individual risk
 output$ui_rescat_riskyobs <- renderUI({
+
+  output$riskyobs_slider <- renderUI({
+    sliderInput("sl_riskyobs", label=h5("Minimum Risk for observations to be shown in the Table below"), min=0, max=max(get_risk()$risk), value=0, width="100%")
+  })
+
   output$tab_risk <- renderDataTable({
-    if ( is.null(obj$sdcObj) ) {
+    if (is.null(obj$sdcObj)) {
+      return(NULL)
+    }
+    if (is.null(input$sl_riskyobs)) {
       return(NULL)
     }
     df <- as.data.frame(get_origData()[,get_keyVars()])
@@ -11,8 +19,12 @@ output$ui_rescat_riskyobs <- renderUI({
     df$indivRisk=rk$risk
     df[!duplicated(df),]
     df[order(df$indivRisk, decreasing=TRUE),]
-  }, options = list(pageLength = 10))
-  return(htmlTemplate("tpl_one_col.html",inp=dataTableOutput("tab_risk")))
+    df[df$indivRisk > input$sl_riskyobs,,drop=F]
+  }, options = list(pageLength = 10, searching=FALSE))
+
+  return(list(
+    htmlTemplate("tpl_one_col.html",inp=uiOutput("riskyobs_slider")),
+    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("tab_risk"))))
 })
 
 # display information on recodings
@@ -83,13 +95,13 @@ output$ui_rescat_ldiv <- renderUI({
     xtmp
   })
 
-  return(list(
+  res <- list(
     htmlTemplate("tpl_one_col.html",inp=h4("l-Diversity risk-measure")),
     htmlTemplate("tpl_two_col.html",inp1=uiOutput("ldiv_sensvar"), inp2=uiOutput("ldiv_recconst")),
     htmlTemplate("tpl_one_col.html",inp=uiOutput("ldiv_btn")),
     htmlTemplate("tpl_one_col.html",inp=verbatimTextOutput("ldiv_result")),
-    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("ldiv_violating"))
-    ))
+    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("ldiv_violating")))
+  res
 })
 
 # display suda2-risk measure
@@ -131,7 +143,6 @@ output$ui_rescat_suda2 <- renderUI({
     htmlTemplate("tpl_one_col.html",inp=verbatimTextOutput("suda2_result"))
   ))
 })
-
 
 # display a risk-plot
 output$ui_rescat_freqCalc <- renderUI({
@@ -185,7 +196,6 @@ output$ui_rescat_violating_kanon <- renderUI({
   out
 })
 
-
 output$ui_catvar1 <- renderUI({
   kv <- get_keyVars_names()
   if (length(kv)>1) {
@@ -219,7 +229,6 @@ output$ui_show_orig_or_modified <- renderUI({
   radioButtons("rb_orig_or_modified",label=h5("What do you want to use?"),
     choices=cc, selected=input$rb_orig_or_modified, width="100%", inline=TRUE)
 })
-
 
 # mosaicplot of one or two categorical key-variables
 output$ui_rescat_mosaicplot <- renderUI({
