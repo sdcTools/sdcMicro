@@ -111,7 +111,7 @@ output$ui_sdcObj_create <- renderUI({
   sel_cluster <- selectInput("sel_hhID", label=NULL, choices=possVars$hhid, selected=input$sel_hhID, multiple=FALSE, selectize=TRUE, width="100%")
   help_cluster <- helpText("Help for selection of cluster variable (e.g. household ID)")
   sel_strata <- selectInput("sel_strataV", label=NULL, choices=possVars$strataV, selected=input$sel_strataV, multiple=FALSE, selectize=TRUE, width="100%")
-  help_strata <- helpText("Help for selection of strata variable")
+  help_strata <- helpText("If you coose a variable here, some methods (e.g. localSuppression()) will be applied independently for each value of the selected variable.")
   out <- list(out,
     htmlTemplate("tpl_three_col.html", inp1=h5("Weight variable"), inp2=h5("Cluster-ID"), inp3=h5("Strata Variable")),
     htmlTemplate("tpl_three_col.html", inp1=sel_wv, inp2=sel_cluster, inp3=sel_strata),

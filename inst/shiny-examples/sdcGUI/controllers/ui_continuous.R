@@ -51,6 +51,12 @@ output$ui_microaggregation <- renderUI({
     label=lab_microvars, selected=input$sel_microagg_v, width="100%", multiple=TRUE)
 
   out <- list(
+    htmlTemplate("tpl_one_col.html", inp=h4("Microaggregation for numerical variables")),
+    htmlTemplate("tpl_one_col.html", inp=p("Many different algorithms to microaggregate (some) or all numeric key variables can be selected here. The most important
+      parameter is the",code("aggregation level"), "because it specifies how many observations are grouped together before replacing actual values with some kind of aggregate.")),
+    htmlTemplate("tpl_one_col.html", inp=p("By default, microaggregation is performed by strata (if a strata-variable has been selected in the creating of the sdc-Problem. However,
+      This can be circumvented by selecting",tags$i("Do not use any stratification variable"),"in the corresponding selection menu. In this place, also other variables may be selected
+      which will be used only for the microaggregation procedure as stratification variable.")),
     htmlTemplate("tpl_three_col.html", inp1=sel_method, inp2=rb_clbased, inp3=uiOutput("ui_microagg_strata")))
 
   # simple, onedims, pca, mcdpca, pppca: --> aggr, measure, trim
@@ -104,7 +110,6 @@ output$ui_noise <- renderUI({
   # resetting to default values!
   # also we have different parameters for methods (noise, p, delta) that we
   # catch with a single slider
-
 
   if (!has_numkeyvars()) {
     return(htmlTemplate("tpl_one_col.html", inp=list(
@@ -171,6 +176,10 @@ output$ui_noise <- renderUI({
   })
 
   out <- list(
+    htmlTemplate("tpl_one_col.html", inp=h4("Adding stochastic noise")),
+    htmlTemplate("tpl_one_col.html", inp=p("Various methods for adding noise to perturb continuous scaled variables can be selected below. Please note, that even if a
+      stratification variable has been defined during the initialization of the sdc-Problem, this information will not be used in this case. So the noise will be applied on
+      the entire data set.")),
     htmlTemplate("tpl_two_col.html", inp1=uiOutput("ui_noise_method"), inp2=uiOutput("ui_noise_slider"), inp3=NULL),
     htmlTemplate("tpl_three_col.html", inp1=NULL, inp2=uiOutput("ui_noise_vars"), inp3=NULL))
   out <- list(out, htmlTemplate("tpl_one_col.html", inp=uiOutput("ui_noise_btn")))
@@ -218,6 +227,11 @@ output$ui_rankswap <- renderUI({
   sl_rankswap_p <- isolate(sliderInput("sl_rankswap_p", label=h4("Rank range as percentage of total sample size."), min=0, max=100, step=1, value=0, width="100%"))
 
   out <- list(
+    htmlTemplate("tpl_one_col.html", inp=h4("Rank swapping")),
+    htmlTemplate("tpl_one_col.html", inp=p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
+      so that correlation structure of original variables are preserved and also some perturbation is applied. Please note, that even if a
+      stratification variable has been defined during the initialization of the sdc-Problem, this information will not be used in this case. So the noise will be applied on
+      the entire data set.")),
     htmlTemplate("tpl_three_col.html", inp1=uiOutput("ui_rankswap_vars"), inp2=sl_rankswap_bot, inp3=sl_rankswap_top),
     htmlTemplate("tpl_three_col.html", inp1=sl_rankswap_k0, inp2=sl_rankswap_r0, inp3=sl_rankswap_p))
   out <- list(out, htmlTemplate("tpl_one_col.html", inp=uiOutput("ui_rankswap_btn")))
