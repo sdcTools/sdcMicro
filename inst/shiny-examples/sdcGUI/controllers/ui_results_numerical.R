@@ -82,7 +82,6 @@ output$ui_resnum_comparison <- renderUI({
     tab_o
   }, options=list(searching=FALSE, paging=FALSE))
   output$ui_numvar_cor <- renderUI({
-    cat("juuu\n")
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
     }
