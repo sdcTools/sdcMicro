@@ -1,3 +1,13 @@
+.Rhistory
+vignettes/sdc_guidelines-001.pdf
+vignettes/sdc_guidelines.aux
+vignettes/sdc_guidelines.idx
+vignettes/sdc_guidelines.ilg
+vignettes/sdc_guidelines.ind
+vignettes/sdc_guidelines.log
+vignettes/sdc_guidelines.out
+vignettes/sdc_guidelines.pdf
+vignettes/sdc_guidelines.tex
 *.o
 *.so
 *.dll
