@@ -1,10 +1,11 @@
 # display a table with observations ordered by descending individual risk
 output$ui_rescat_riskyobs <- renderUI({
-
+  # slider for minimal risk
   output$riskyobs_slider <- renderUI({
     sliderInput("sl_riskyobs", label=h5("Minimum Risk for observations to be shown in the Table below"), min=0, max=max(get_risk()$risk), value=0, width="100%")
   })
 
+  # table containing the corresponding observations
   output$tab_risk <- renderDataTable({
     if (is.null(obj$sdcObj)) {
       return(NULL)
@@ -23,6 +24,7 @@ output$ui_rescat_riskyobs <- renderUI({
   }, options = list(pageLength = 10, searching=FALSE))
 
   return(list(
+    htmlTemplate("tpl_one_col.html",inp=h4("Display risky-observations in a Table")),
     htmlTemplate("tpl_one_col.html",inp=uiOutput("riskyobs_slider")),
     htmlTemplate("tpl_one_col.html",inp=dataTableOutput("tab_risk"))))
 })
@@ -30,6 +32,9 @@ output$ui_rescat_riskyobs <- renderUI({
 # display information on recodings
 output$ui_rescat_recodes <- renderUI({
   return(htmlTemplate("tpl_one_col.html",inp=h4("Information about Recodes")))
+
+
+
 })
 
 # display information on l-diversity risk-measure
@@ -147,13 +152,15 @@ output$ui_rescat_suda2 <- renderUI({
 # display a risk-plot
 output$ui_rescat_freqCalc <- renderUI({
   output$plot_risk <- renderPlot({
-    if ( is.null(obj$sdcObj) ) {
+    if (is.null(obj$sdcObj)) {
       return(NULL)
     }
     rk <- get_risk()
     hist(rk$risk, xlab="Risks", main="Individual risks", col="lightgrey")
   })
-  return(htmlTemplate("tpl_one_col.html",inp=plotOutput("plot_risk")))
+  return(list(
+    htmlTemplate("tpl_one_col.html",inp=h4("Plot of showing individual reidentification-risks")),
+    htmlTemplate("tpl_one_col.html",inp=plotOutput("plot_risk"))))
 })
 
 # information on k-anonymity
