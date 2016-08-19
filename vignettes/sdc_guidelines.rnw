@@ -389,7 +389,7 @@ In Table~\ref{listingFreq} a very simple data set is used to explain the
 calulation of sample frequency counts and the (first rough) estimation of
 population frequency counts.
 One can easily see that observation $1$ and $8$ are equal, given the
-key-variables {\it Age Class} , {\it Location}, {\it Sex} and {\it Education}.
+key-variables \textit{Age Class} , \textit{Location}, \textit{Sex} and \textit{Education}.
 Because the values of observations $1$ and $8$ are equal and therefore the
 sample frequency counts are $f_1=2$ and $f_8=2$.
 Estimated population frequencies are obtained by summing up the sample weights
@@ -439,7 +439,7 @@ print(df,include.rownames = getOption("xtable.include.rownames", TRUE), caption.
 %\lstinline{freqCalc()} includes basically three parameters which could be displayed in \R \
 %either by using
 %\begin{lstlisting}[frame=single, label=code:sdcMicro6,
-%caption={Displaying the arguments of function {\tt freqCalc()}.}]
+%caption={Displaying the arguments of function \texttt{freqCalc()}.}]
 %args(freqCalc)
 %  function (x, keyVars = 1:3, w = 4, ...)
 %\end{lstlisting}
@@ -876,7 +876,7 @@ be found inside a second interval around this masked observation, these
 observations are considered \textit{safe}.
 
 These methods are also implemented and available in sdcMicro as
-\lstinline{dRisk()} and \lstinline{dRiskRMD()}. The former is automatically applied to objects of class {\it sdcMicroObj}, while the
+\lstinline{dRisk()} and \lstinline{dRiskRMD()}. The former is automatically applied to objects of class \textit{sdcMicroObj}, while the
 latter has to be specified explicitly and can currently not be applied using the
 graphical user interface.
 
@@ -1023,8 +1023,8 @@ dataset independently. In this case, the user needs to select the stratification
 variable defining the sub-groups. If the specification of this variable is
 omitted, the PRAM procedure is applied to all observations in the dataset.
 We note that the output of PRAM is slightly different in \pkg{sdcMicroGUI}. In this case
-for each variable values {\it nrChanges} shows the total number of changed values for a given
-variable while {\it percChanges} lists the percentage of changed values any variable
+for each variable values \textit{nrChanges} shows the total number of changed values for a given
+variable while \textit{percChanges} lists the percentage of changed values any variable
 for which PRAM has been applied.
 
 
@@ -1064,11 +1064,11 @@ partition of the observations to groups.
 In \pkg{sdcMicroGUI}, five different methods for micro-aggregation can be
 selected:
 \begin{itemize}
-\item {\bf mdav:} grouping is based on classical (Euclidean) distance measures.
-\item {\bf rmd:} grouping is based on robust multivariate (Mahalanobis) distance measures.
-\item {\bf pca:} grouping is based on principal component analysis whereas the data are sorted on the first principal component.
-\item {\bf clustpppca:} grouping is based on clustering and (robust) principal component analysis for each cluster.
-\item {\bf influence:} grouping is based on clustering and aggregation is performed within clusters.
+\item \textbf{mdav:} grouping is based on classical (Euclidean) distance measures.
+\item \textbf{rmd:} grouping is based on robust multivariate (Mahalanobis) distance measures.
+\item \textbf{pca:} grouping is based on principal component analysis whereas the data are sorted on the first principal component.
+\item \textbf{clustpppca:} grouping is based on clustering and (robust) principal component analysis for each cluster.
+\item \textbf{influence:} grouping is based on clustering and aggregation is performed within clusters.
 \end{itemize}
 
 %\sdcMicro~features a set of different algorithms to specify the algorithm. It is possible to
@@ -1217,7 +1217,7 @@ Note that these measures are automatically estimated in \sdcMicro \ when an
 object of class \textit{sdcMicroObj} is generated or whenever continuous key
 variables are modified in such an object. Thus, no user input is required. We note however
 that only the former two measures are automatically presented in the GUI in
-tab {\it Continuous)} as {\it IL1} and {\it Difference Eigenvalues} respectively.
+tab \textit{Continuous)} as \textit{IL1} and \textit{Difference Eigenvalues} respectively.
 
 \subsection{Specific tools} \label{utilityT}
 In practice, it is not possible to create an anonymized file with the same
@@ -1522,11 +1522,11 @@ also][for a similar scenario]{ichim07}:
 
 % brauchen wir nicht nocheinmal erklaeren
 \begin{itemize}
-  \item {\bf Size} %size of the enterprise
-  \item {\bf Age} %age in years
-  \item {\bf Sex}
-	\item {\bf Location} %geographic location with 3 categories
-	\item {\bf Economic Activity}: % the economic branch of the corresponding work
+  \item \textbf{Size} %size of the enterprise
+  \item \textbf{Age} %age in years
+  \item \textbf{Sex}
+	\item \textbf{Location} %geographic location with 3 categories
+	\item \textbf{Economic Activity}: % the economic branch of the corresponding work
 	% centre given as NACE Rev. 2 - Statistical classification of economic activities
 \end{itemize}
 
@@ -1534,10 +1534,10 @@ As continuous key variables at employment level the following variables are
 selected after careful discussions with subject matter specialists who are
 aware about the availability of external information on this data set:
 \begin{itemize}
-	\item {\bf Earnings}%: gross earnings
-%   \item {\bf special payments}:
+	\item \textbf{Earnings}%: gross earnings
+%   \item \textbf{special payments}:
 %special payments
-   \item {\bf Overtime Earinings}%: generated from earnings and hours paid in
+   \item \textbf{Overtime Earinings}%: generated from earnings and hours paid in
    % Listing~\ref{listing:sesrecode1}.
 \end{itemize}
 Thus it is assumed that possible data intruders have information on earnings of
@@ -1685,7 +1685,7 @@ A bunch of methods are available to perturb continuously scaled (key) variables.
 %as well as adding (correlated) stochastic noise to continuously scaled variables.
 We use the \texttt{mdav} microaggregation method that can be selected in
 \sdcMicroGUI \ and \sdcMicro .
-%In this example the {\it mdav} method for microaggregation is used.
+%In this example the \textit{mdav} method for microaggregation is used.
 The aggregation level determines how many observations are
 aggregated together when performing the aggregation.
 \index{microaggregation}
@@ -1707,7 +1707,7 @@ As an alternative, also adding noise can be used (method \textit{correlated2} is
 the default method for adding noise and recommended).
 %In Listing~\ref{listing:sesNum1} we show how to use function
 %\lstinline{addNoise()} to add correlated noise to numerical key variables.
-%In this case it is required to set parameter {\tt method='correlated'} when calling the function/method.
+%In this case it is required to set parameter \texttt{method='correlated'} when calling the function/method.
 %We note that quite a few different methods for noise-addition - even methods that takes the
 %structure of outlying observations into account - can be selected in function \lstinline{addNoise()}.
 
@@ -1761,9 +1761,4 @@ We applied different anonymization methods independently.
 The anonymization by Recoding $+$ local suppression $+$ microaggregation performs best and the confidence intervals obtained from the anonymised data cover the confidence intervals obtained from the original data almost always completely.
 Almost as good is the quality of data anonymized by recoding $+$ local suppression $+$ adding correlated noise. The results from invariant pram $+$ microaggregation are good for all coefficients except those are related to \textit{economic activitiy}. This is not surprising since this variable was one of the variables which was pramed.
 Some few coefficients are well perserved from the recoding $+$ local suppression $+$ shuffling anonymized data, but others are not. The reason is that even if the distribution of the continuous shuffled variables are well perserved, the relation to other variables that are not included in the shuffling model might be not preserved. A better model would probably lead to better results.
-
-
-
-
-
 \end{document}
