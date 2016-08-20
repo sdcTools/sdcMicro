@@ -13,6 +13,15 @@ output$ui_sdcObj_summary <- renderUI({
   output$sdcInfo <- renderPrint({
     show(obj$sdcObj)
   })
+  comptime <- reactive({
+    z <- as.difftime(obj$comptime, units="secs")
+
+    if (obj$comptime <60) {
+      return(paste(round(as.numeric(z, units="secs"), digits=2),"seconds"))
+    } else {
+      return(paste(round(as.numeric(z, units="mins"), digits=2),"minutes"))
+    }
+  })
   cur_warning <- lastWarning()
   out <- list(htmlTemplate("tpl_one_col.html", inp=h4("Summary of the current SDC-Problem")))
   if (!is.null(lastError())) {
@@ -25,6 +34,7 @@ output$ui_sdcObj_summary <- renderUI({
       htmlTemplate("tpl_one_col.html", inp=h4("Application of the last method resulted in the following warning!")),
       htmlTemplate("tpl_one_col.html", inp=verbatimTextOutput("ui_lastwarning")))
   }
+  out <- list(out, htmlTemplate("tpl_one_col.html", inp=p("The current computation time was ~",code(comptime()),".")))
   out <- list(out, htmlTemplate("tpl_one_col.html", inp=verbatimTextOutput("sdcInfo")))
   out
 })

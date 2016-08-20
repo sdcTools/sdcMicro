@@ -370,7 +370,7 @@ shinyServer(function(session, input, output) {
   ### EVENTS ###
   # read data if fileInput() has been triggered
   observeEvent(input$file1, {
-    #cat("input$file1 (",input$file1$name,") has been pressed!\n")
+    ptm <- proc.time()
     code <- code_readMicrodata()
     eval(parse(text=code))
     if ("simpleError" %in% class(res)) {
@@ -394,114 +394,143 @@ shinyServer(function(session, input, output) {
       obj$inputdataB <- obj$inputdata
       obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata")
       obj$sdcObj <- NULL # start fresh
+      ptm <- proc.time()-ptm
+      obj$comptime <- obj$comptime+ptm[3]
     }
   })
   # use existing data.frame from global environment
   observeEvent(input$btn_chooose_df, {
-    #cat(paste("'btn_chooose_df' was clicked",input$btn_chooose_df,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_useRObj()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
-    #obj$code_read_and_modify <- tail(obj$code_read_and_modify, 1)
-    #obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
     obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata")
     obj$inputdataB <- obj$inputdata
     obj$sdcObj <- NULL # start fresh
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
   })
   # reset variables in inputdataset to their original values
   observeEvent(input$btn_resetmicrovar, {
-    #cat(paste("'btn_resetmicrovar' was clicked",input$btn_resetmicrovar,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_resetmicrovar()
     evalcmd <- gsub("inputdata","obj$inputdata", cmd)
     eval(parse(text=evalcmd))
     obj$code_read_and_modify <- c(obj$code_read_and_modify,cmd)
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_moddata",selected="View/Analyse a variable")
   })
   # undo-button
   observeEvent(input$btn_undo, {
-    #cat(paste("'btn_undo' was clicked",input$btn_undo,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_undo()
     runEvalStr(cmd=cmd, comment=NULL)
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
     updateNavbarPage(session, "mainnav", selected="Anonymize")
   })
   # export data
   observeEvent(input$b_export, {
-    #cat(paste("'b_export' was clicked",input$b_export,"times..!\n"))
+    ptm <- proc.time()
     session$sendCustomMessage(type='testmessage', message='Export-Button was clicked!')
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
   })
   # recode to factor
   observeEvent(input$btn_recode_to_factor, {
-    #cat(paste("'btn_recode_to_factor' was clicked",input$btn_recode_to_factor,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_globalRecodeMicrodata()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_moddata",selected="View/Analyse a variable")
   })
   # setup the sdcMicroObj
   observeEvent(input$btn_setup_sdc, {
-    #cat(paste("'btn_setup_sdc' was clicked",input$btn_setup_sdc,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_createSdcObj()
     eval(parse(text=cmd))
     cmd <- gsub("obj[$]sdcObj","sdcObj", cmd)
     cmd <- gsub("obj[$]inputdata","inputdata",cmd)
     obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # add ghost-vars to an existing sdcMicroObj
   observeEvent(input$btn_addGhostVars, {
-    #cat(paste("'btn_addGhostVars' was clicked",input$btn_addGhostVars,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_addGhostvars()
     runEvalStr(cmd=cmd, comment="## Adding linked (ghost)-Variables")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # add new random IDs to an existing sdcMicroObj
   observeEvent(input$btn_addRandID, {
-    #cat(paste("'btn_addRandID' was clicked",input$btn_addRandID,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_addRandID()
     runEvalStr(cmd=cmd, comment="## Adding a new randomized ID-variable")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # reset the sdcMicroObj
   observeEvent(input$btn_reset_sdc, {
-    #cat(paste("'btn_reset_sdc' was clicked",input$btn_reset_sdc,"times..!\n"))
+    ptm <- proc.time()
     obj$sdcObj <- NULL
     obj$code_anonymize <- c()
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # reset the inputdata by setting obj$inputdata to NULL
   observeEvent(input$btn_reset_inputdata, {
     #cat(paste("'btn_reset_inputdata' was clicked",input$btn_reset_inputdata,"times..!\n"))
+    ptm <- proc.time()
     obj$inputdata <- NULL
     obj$code_read_and_modify <- c()
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
   })
   # reset errors while reading data
   observeEvent(input$btn_reset_inputerror, {
-    #cat(paste("'btn_reset_inputerror' was clicked",input$btn_reset_inputerror,"times..!\n"))
+    ptm <- proc.time()
     obj$last_error <- NULL
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
   })
   observeEvent(input$btn_reset_inputerror2, {
-    #cat(paste("'btn_reset_inputerror2' was clicked",input$btn_reset_inputerror,"times..!\n"))
+    ptm <- proc.time()
     obj$last_error <- NULL
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
   })
   # event to generate stratification variable!
   observeEvent(input$btn_create_stratavar, {
-    #cat(paste("'btn_create_stratavar' was clicked",input$btn_create_stratavar,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_generateStrata()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_moddata", selected = "show_microdata")
     updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_factor, {
-    #cat(paste("'btn_update_factor' was clicked",input$btn_update_factor,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_groupAndRename()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_moddata", selected = "show_microdata")
     updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   # event to use only a subset of the available microdata
   observeEvent(input$btn_sample_microdata, {
-    cat(paste("'btn_sample_microdata' was clicked",input$btn_sample_microdata,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_subsetMicrodata()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     updateSelectInput(session, "sel_moddata", selected = "show_microdata")
@@ -509,59 +538,74 @@ shinyServer(function(session, input, output) {
   })
   # event to set values to na in inputdata
   observeEvent(input$btn_set_to_na, {
-    #cat(paste("'btn_set_to_na' was clicked",input$btn_set_to_na,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_set_to_na()
     runEvalStrMicrodat_no_errorchecking(cmd=cmd, comment="## Set specific values to 'NA'")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_moddata", selected = "show_microdata")
     updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   # event to apply top-/bottomcoding
   observeEvent(input$btn_topbotcoding, {
-    #cat(paste("'btn_topbotcoding' was clicked",input$btn_topbotcoding,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_topBotCoding()
     runEvalStrMicrodat(cmd=cmd, comment="## Apply Top-/Bottom coding")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_moddata", selected = "show_microdata")
     updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   ### anonymization methods (categorical) ###
   # pram() with given transition-matrix
   observeEvent(input$btn_pram_expert, {
-    #cat(paste("'btn_pram_expert' was clicked",input$btn_pram_expert,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_pram_expert()
     runEvalStr(cmd=cmd, comment="## Postrandomization (using a transition matrix)")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # pram() with parameters 'pd' and 'alpha'
   observeEvent(input$btn_pram_nonexpert, {
-    #cat(paste("'btn_pram_nonexpert' was clicked",input$btn_pram_nonexpert,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_pram_nonexpert()
     runEvalStr(cmd=cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # kAnon()
   observeEvent(input$btn_kanon, {
-    #cat(paste("'btn_kanon' was clicked",input$btn_kanon,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_kAnon()
     runEvalStr(cmd=cmd, comment="## kAnonymity")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # suppress risky observations
   observeEvent(input$btn_supp_th, {
-    #cat(paste("'btn_supp_th' was clicked",input$btn_supp_th,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_suppThreshold()
     runEvalStr(cmd=cmd, comment="## Suppression of risky observations")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_recfac, {
+    ptm <- proc.time()
     cmd <- code_groupAndRename_keyvar()
     runEvalStr(cmd=cmd, comment=NULL)
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
   })
 
   ### anonymization methods (numerical) ###
   # microaggregation()
   observeEvent(input$btn_microagg, {
-    #cat(paste("'btn_microagg' was clicked",input$btn_microagg,"times..!\n"))
+    ptm <- proc.time()
     complete_cmd <- code_microaggregation()
     cmd <- complete_cmd$cmd
     cmd_reset1 <- complete_cmd$cmd_reset_strata$cmd1
@@ -580,48 +624,61 @@ shinyServer(function(session, input, output) {
         runEvalStr(cmd=cmd_reset2, comment="## Reset Stratification variable")
       }
     }
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # addNoise()
   observeEvent(input$btn_noise, {
-    #cat(paste("'btn_noise' was clicked",input$btn_noise,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_addNoise()
     runEvalStr(cmd=cmd, comment="## Adding stochastic noise")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
   # rankSwap()
   observeEvent(input$btn_rankswap, {
-    #cat(paste("'btn_rankswap' was clicked",input$btn_rankswap,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_rankSwap()
     runEvalStr(cmd=cmd, comment="## Performing rankSwapping")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
   })
 
   ### risk-measurements ###
   # ldiversity()
   observeEvent(input$btn_ldiv, {
-    #cat(paste("'btn_ldiv' was clicked",input$btn_ldiv,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_ldiv()
     runEvalStr(cmd=cmd, comment="## calculating l-diversity measure")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
   })
   # suda2()
   observeEvent(input$btn_suda2, {
-    #cat(paste("'btn_suda2' was clicked",input$btn_suda2,"times..!\n"))
+    ptm <- proc.time()
     cmd <- code_suda2()
     runEvalStr(cmd=cmd, comment="## calculating suda2 risk-measure")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
   })
 
   ## reproducibility ##
   #observeEvent(input$btn_exportProblem, {
-  #  #cat(paste("'btn_undo' was clicked",input$btn_undo,"times..!\n"))
+  #cat(paste("'btn_exportProblem' was clicked",input$btn_exportProblem,"times..!\n"))
+  #  ptm <- proc.time()
   #  cmd <- code_undo()
   #  runEvalStr(cmd=cmd, comment=NULL)
+  #  ptm <- proc.time()-ptm
+  #  obj$comptime <- obj$comptime+ptm[3]
   #  updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
   #  updateNavbarPage(session, "mainnav", selected="Anonymize")
   #})
 
   observeEvent(input$file_importProblem, {
-    #cat("input$file_importProblem (",input$file_importProblem$name,") has been pressed!\n")
+    ptm <- proc.time()
     code <- code_import_problem()
     eval(parse(text=code))
     if ("simpleError" %in% class(res)) {
@@ -645,6 +702,8 @@ shinyServer(function(session, input, output) {
       obj$inputdataB <- res$inputdataB
       obj$code_read_and_modify <- res$code_read_and_modify
       rm(res)
+      ptm <- proc.time()-ptm
+      obj$comptime <- obj$comptime+ptm[3]
       updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
       updateNavbarPage(session, "mainnav", selected="Anonymize")
     }

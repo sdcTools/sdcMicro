@@ -277,3 +277,4 @@ obj$code <- "require(sdcMicro)"
 obj$transmat <- NULL
 obj$last_warning <- NULL
 obj$last_error <- NULL
+obj$comptime <- 0
