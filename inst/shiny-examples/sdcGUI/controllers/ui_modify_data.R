@@ -145,14 +145,17 @@ output$ui_modify_create_stratvar <- renderUI({
   }
 
   list(
-    htmlTemplate("tpl_one_col.html", inp=h4("Create stratification variable")),
-    htmlTemplate("tpl_one_col.html", inp=helpText("Choose at least one variable. The values of the selected variables are chained together and you can use the new variable will be added to the dataset.")),
+    htmlTemplate("tpl_one_col.html", inp=h4("Create a stratification variable")),
+    htmlTemplate("tpl_one_col.html", inp=p("This method allows to",tags$i("chain together"),"values of two
+      or more variables which will be seperated by",code("_"),". You can also specify the variable name by typing
+      it into the text-field and which will be used to append the new variable to the micro data set.
+      This is useful if you want to create a new variable for e.g stratification purposes when creating a new sdc-problem.")),
     htmlTemplate("tpl_two_col.html", inp1=sel, inp2=txtval),
     htmlTemplate("tpl_one_col.html", inp=btn)
   )
 })
 
-# UI-output to create a stratification variable
+# UI-output to set specific values to NA
 output$ui_set_to_na <- renderUI({
   output$tab_inputdata_setna <- renderDataTable({
     a <- obj$inputdata
