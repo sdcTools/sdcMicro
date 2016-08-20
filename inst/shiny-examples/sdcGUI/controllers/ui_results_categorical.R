@@ -22,6 +22,7 @@ output$ui_rescat_riskinfo <- renderUI({
         "(",code(riskinfo$hier_exp_mp),"%) re-identifications given the anonymized data set. For the original data, we expected to have",
         code(riskinfo$hier_exp_o),"(",code(riskinfo$hier_exp_op),"%)) re-identifications.")))
     }
+    out
   })
 
   # table and slider observation with risk > than specified threshold
