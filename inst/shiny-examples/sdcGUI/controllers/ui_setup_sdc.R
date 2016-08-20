@@ -98,9 +98,10 @@ output$ui_sdcObj_create <- renderUI({
     htmlTemplate("tpl_three_col.html", inp1=h4("Choose key variables"), inp2=NULL, inp3=NULL))
 
   sel_kv <- selectInput("sel_kV", label=h5("Categorical key variables"), choices=possVars$kv, selected=input$sel_kV, multiple=TRUE, selectize=TRUE, width="100%")
-  help_kv <- helpText("Help text for selection of categorical key-variables")
+  help_kv <- helpText("These variables are base of the risk-scenario and the risk-calculations")
   sel_nv <- selectInput("sel_nV", label=h5("Numerical key variables"), choices=possVars$nv, selected=input$sel_nV, multiple=TRUE, selectize=TRUE, width="100%")
-  help_nv <- helpText("Help text for selection of numerical key-variables")
+  help_nv <- helpText("Here you can select important continuous-scaled variables. Some methods - such as",code("addNoise()"),"- can be applied automatically on these
+                      variables without specifically selecting them again.")
 
   if (is.null(input$sl_alpha)) {
     val_alpha <- 1
@@ -117,9 +118,10 @@ output$ui_sdcObj_create <- renderUI({
 
   out <- list(out, htmlTemplate("tpl_three_col.html", inp1=h4("Choose auxiliary variables"), inp2=NULL, inp3=NULL))
   sel_wv <- selectInput("sel_wV", label=NULL, choices=possVars$wv, selected=input$sel_wV, multiple=FALSE, selectize=TRUE, width="100%")
-  help_wv <- helpText("Help text for selection of weight variable")
+  help_wv <- helpText("If you have a variable containing sampling weights, please choose this variable")
   sel_cluster <- selectInput("sel_hhID", label=NULL, choices=possVars$hhid, selected=input$sel_hhID, multiple=FALSE, selectize=TRUE, width="100%")
-  help_cluster <- helpText("Help for selection of cluster variable (e.g. household ID)")
+  help_cluster <- helpText("If you have a clustering variable (e.g a householdId which groups persons into households) you can specify this variable here.
+    This allow to calculate hierarchical risk.measures.")
   sel_strata <- selectInput("sel_strataV", label=NULL, choices=possVars$strataV, selected=input$sel_strataV, multiple=FALSE, selectize=TRUE, width="100%")
   help_strata <- helpText("If you coose a variable here, some methods (e.g. localSuppression()) will be applied independently for each value of the selected variable.")
   out <- list(out,
@@ -129,10 +131,18 @@ output$ui_sdcObj_create <- renderUI({
 
   # do not include some variables in the sdcObj
   sel_rmv <- selectInput("sel_removeVars", label=h5("Remove Variables"), choices=possRemoveVars(), selected=input$sel_removeVars, multiple=TRUE, selectize=TRUE, width="100%")
+  help_rmv <- helpText("All variables listed here will not be available in the exported, anonymized data set.")
+
   sl_ranseed <- sliderInput("sl_ranseed", label=h5("Random Seed"), value=input$sl_ranseed, min=-10000, max=10000, step=1, width="100%")
+  help_ranseed <- helpText("Set an initial start-value for the random-seed generator.")
+
   rb_randomize <- radioButtons("rb_setup_randomizeorder", label=h5("Randomize Order of Observations"), choices=c("No"=FALSE,"Yes"=TRUE),
     width="100%", selected=input$rb_setup_randomizeorder, inline=TRUE)
-    out <- list(out, htmlTemplate("tpl_three_col.html", inp1=rb_randomize, inp2=sel_rmv, inp3=sl_ranseed))
+  help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
+
+  out <- list(out,
+    htmlTemplate("tpl_three_col.html", inp1=rb_randomize, inp2=sel_rmv, inp3=sl_ranseed),
+    htmlTemplate("tpl_three_col.html", inp1=help_randomize, inp2=help_rmv, inp3=help_ranseed))
 
   if ( length(input$sel_kV) > 0 ) {
     btn_setup <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
