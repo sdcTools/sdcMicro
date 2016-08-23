@@ -250,26 +250,25 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
       ind.problem  <- ind.problem[order(rk$rk[ind.problem],decreasing=TRUE)]
       for ( i in 1:length(ind.problem) ) {
         res <- cpp_calcSuppInds(mat, mat[ind.problem[i],])
-        if ( res$fk >= k ) {
-          break;
-        }
-        ind <- res$ids
-        if ( length(ind) > 0 ) {
-          colInd <- NULL
-          colIndsSorted <- keyVars[order(importanceI)]
-          while ( is.null(colInd) ) {
-            for ( cc in colIndsSorted ) {
-              z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
-              if ( length(z) > 0 ) {
-                colInd <- cc
-                break;
+        if ( res$fk < k ) {
+          ind <- res$ids
+          if ( length(ind) > 0 ) {
+            colInd <- NULL
+            colIndsSorted <- keyVars[order(importanceI)]
+            while ( is.null(colInd) ) {
+              for ( cc in colIndsSorted ) {
+                z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
+                if ( length(z) > 0 ) {
+                  colInd <- cc
+                  break;
+                }
               }
             }
+            x[[colInd]][ind.problem[i]] <- NA
+            mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
+          } else {
+            stop("Error\n")
           }
-          x[[colInd]][ind.problem[i]] <- NA
-          mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
-        } else {
-          stop("Error\n")
         }
       }
       ff <- freqCalc(x, keyVars=keyVars)
@@ -330,6 +329,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   # checks and preparations if we apply localSuppression on
   # subsets of key variables
   if ( !is.null(combs) ) {
+    combs <- as.integer(round(combs))
     if ( length(combs) != length(k) ) {
       # using the same k!
       k <- rep(k, length(combs))
@@ -632,7 +632,7 @@ definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=N
 
 setMethod(f='kAnon', signature=c("matrix"),
 definition=function(obj, keyVars, k=2, strataVars=NULL, importance=NULL, combs=NULL) {
-  localSuppression(as.data.frame(obj), keyVars=keyVars, strataVars=strataVars,
+  localSuppression(as.data.frame(obj), k=k, keyVars=keyVars, strataVars=strataVars,
     importance=importance, combs=combs)
 })
 
