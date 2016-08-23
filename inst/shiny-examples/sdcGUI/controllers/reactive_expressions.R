@@ -156,39 +156,6 @@ possvars_numericmethods <- reactive({
   #setdiff(numVars, c(names(tmp)[non_poss]))
 })
 
-
-# choices for dropdown-menus in Tab 'anonymize'
-res_choices_anon <- reactive({
-  if (is.null(input$sel_anonymize)) {
-    return(NULL)
-  }
-  if (!input$sel_anonymize %in% c("manage_sdcProb","cat_anon","cat_num")) {
-    return(NULL)
-  }
-  if (input$sel_anonymize=="manage_sdcProb") {
-    choices <- c(
-      "Show Summary"="sdcObj_summary",
-      "Add 'Ghost'-Variables"="sdcObj_addghostvars",
-      "Create new IDs"="sdcObj_randIds",
-      "Reset sdcProblem"="sdcObj_reset")
-  }
-  if (input$sel_anonymize=="cat_anon") {
-    choices <- c(
-      "Recoding"="recode",
-      "k-Anonymity"="kanon",
-      "Postrandomization (PRAM)"="pram",
-      "Supress values with high risks"="supp_threshold")
-  }
-  if (input$sel_anonymize=="cat_num") {
-    choices <- c(
-      "Apply Microaggregation"="microaggregation",
-      "Adding Noise to the data"="noise",
-      #"Shuffling the data"="shuffling",
-      "Apply Rank-Swapping"="rankswap")
-  }
-  choices
-})
-
 # returns list with choices for possible variables while setting up the sdcProblem
 sdcVars <- reactive({
   allVars <- colnames(obj[["inputdata"]])

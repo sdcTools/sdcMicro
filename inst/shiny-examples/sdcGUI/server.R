@@ -457,7 +457,8 @@ shinyServer(function(session, input, output) {
     obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # add ghost-vars to an existing sdcMicroObj
   observeEvent(input$btn_addGhostVars, {
@@ -466,7 +467,8 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Adding linked (ghost)-Variables")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # add new random IDs to an existing sdcMicroObj
   observeEvent(input$btn_addRandID, {
@@ -475,7 +477,8 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Adding a new randomized ID-variable")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # reset the sdcMicroObj
   observeEvent(input$btn_reset_sdc, {
@@ -484,7 +487,8 @@ shinyServer(function(session, input, output) {
     obj$code_anonymize <- c()
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # reset the inputdata by setting obj$inputdata to NULL
   observeEvent(input$btn_reset_inputdata, {
@@ -564,7 +568,8 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Postrandomization (using a transition matrix)")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # pram() with parameters 'pd' and 'alpha'
   observeEvent(input$btn_pram_nonexpert, {
@@ -573,7 +578,8 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # kAnon()
   observeEvent(input$btn_kanon, {
@@ -582,7 +588,8 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## kAnonymity")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # suppress risky observations
   observeEvent(input$btn_supp_th, {
@@ -591,7 +598,8 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Suppression of risky observations")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_recfac, {
@@ -626,7 +634,8 @@ shinyServer(function(session, input, output) {
     }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # addNoise()
   observeEvent(input$btn_noise, {
@@ -635,7 +644,8 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Adding stochastic noise")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # rankSwap()
   observeEvent(input$btn_rankswap, {
@@ -644,7 +654,8 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Performing rankSwapping")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_anonymize",selected="View/Analyse existing sdcProblem")
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
 
   ### risk-measurements ###

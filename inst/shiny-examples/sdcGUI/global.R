@@ -266,11 +266,11 @@ obj <- reactiveValues() # we work with this data!
 #obj$v1 <- sample(LETTERS[1:10], 100, replace=TRUE)
 #obj$v2 <- as.factor(sample(letters[1:8], 100, replace=TRUE))
 obj$sdcObj <- NULL
-#obj$sdcObj <- createSdcObj(testdata,
-#  keyVars=c('urbrur','roof','walls','water'),
-#  numVars=c('expend','income','savings'), w='sampling_weight')
-#obj$inputdata <- obj$inputdataB <- testdata
-obj$inputdata <- NULL
+obj$sdcObj <- createSdcObj(testdata,
+  keyVars=c('urbrur','roof','walls','water'),
+  numVars=c('expend','income','savings'), w='sampling_weight')
+obj$inputdata <- obj$inputdataB <- testdata
+#obj$inputdata <- NULL
 obj$code_read_and_modify <- c()
 obj$code_anonymize <- c()
 obj$code <- "require(sdcMicro)"
