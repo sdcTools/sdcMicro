@@ -1,5 +1,5 @@
 output$current_code <- renderText({
-  code_ges <- c(obj$code, obj$code_read_and_modify, obj$code_anonymize)
+  code_ges <- c(obj$code, obj$code_read_and_modify, obj$code_setup, obj$code_anonymize)
   paste0("<pre class='r'><code class='r' id='codeout'>",paste(highr:::hi_html(code_ges), collapse="\n"),"</code></pre>")
 })
 

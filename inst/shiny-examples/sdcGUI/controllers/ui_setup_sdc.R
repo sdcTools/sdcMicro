@@ -90,63 +90,101 @@ output$ui_sdcObj_reset <- renderUI({
   )
 })
 
-## create problem
-output$ui_sdcObj_create <- renderUI({
-  possVars <- sdcVars()
-  out <- list(
-    htmlTemplate("tpl_one_col.html", inp=h2("Setup SDC-Problem")),
-    htmlTemplate("tpl_three_col.html", inp1=h4("Choose key variables"), inp2=NULL, inp3=NULL))
-
-  sel_kv <- selectInput("sel_kV", label=h5("Categorical key variables"), choices=possVars$kv, selected=input$sel_kV, multiple=TRUE, selectize=TRUE, width="100%")
-  help_kv <- helpText("These variables are base of the risk-scenario and the risk-calculations")
-  sel_nv <- selectInput("sel_nV", label=h5("Numerical key variables"), choices=possVars$nv, selected=input$sel_nV, multiple=TRUE, selectize=TRUE, width="100%")
-  help_nv <- helpText("Here you can select important continuous-scaled variables. Some methods - such as",code("addNoise()"),"- can be applied automatically on these
-                      variables without specifically selecting them again.")
-
+## create the sdcMicroObj problem instance
+output$setupbtn <- renderUI({
+  fluidRow(column(6, offset=6, myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")))
+})
+output$setup_moreparams <- renderUI({
+  sl_ranseed <- sliderInput("sl_ranseed", label=h5("Random Seed"), value=input$sl_ranseed, min=-10000, max=10000, step=1, width="100%")
+  help_ranseed <- helpText("Set an initial start-value for the random-seed generator.")
+  rb_randomize <- radioButtons("rb_setup_randomizeorder", label=h5("Randomize Order of Observations"), choices=c("No"=FALSE,"Yes"=TRUE),
+    width="100%", selected=input$rb_setup_randomizeorder, inline=FALSE)
+  help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
   if (is.null(input$sl_alpha)) {
     val_alpha <- 1
   } else {
     val_alpha <- input$sl_alpha
   }
-
   sl_alpha <- sliderInput("sl_alpha", label=h5("Parameter 'alpha'"), value=val_alpha, min=0, max=1, step=0.01, width="100%")
   help_alpha <- helpText("The higher alpha, the more keys containing missing values will contribute to the calculation of 'fk' and 'Fk'")
-
-  out <- list(out,
-    htmlTemplate("tpl_three_col.html", inp1=sel_kv, inp2=sel_nv, inp3=sl_alpha),
-    htmlTemplate("tpl_three_col.html", inp1=help_kv, inp2=help_nv, inp3=help_alpha))
-
-  out <- list(out, htmlTemplate("tpl_three_col.html", inp1=h4("Choose auxiliary variables"), inp2=NULL, inp3=NULL))
-  sel_wv <- selectInput("sel_wV", label=NULL, choices=possVars$wv, selected=input$sel_wV, multiple=FALSE, selectize=TRUE, width="100%")
-  help_wv <- helpText("If you have a variable containing sampling weights, please choose this variable")
-  sel_cluster <- selectInput("sel_hhID", label=NULL, choices=possVars$hhid, selected=input$sel_hhID, multiple=FALSE, selectize=TRUE, width="100%")
-  help_cluster <- helpText("If you have a clustering variable (e.g a householdId which groups persons into households) you can specify this variable here.
-    This allow to calculate hierarchical risk.measures.")
-  sel_strata <- selectInput("sel_strataV", label=NULL, choices=possVars$strataV, selected=input$sel_strataV, multiple=FALSE, selectize=TRUE, width="100%")
-  help_strata <- helpText("If you coose a variable here, some methods (e.g. localSuppression()) will be applied independently for each value of the selected variable.")
-  out <- list(out,
-    htmlTemplate("tpl_three_col.html", inp1=h5("Weight variable"), inp2=h5("Cluster-ID"), inp3=h5("Strata Variable")),
-    htmlTemplate("tpl_three_col.html", inp1=sel_wv, inp2=sel_cluster, inp3=sel_strata),
-    htmlTemplate("tpl_three_col.html", inp1=help_wv, inp2=help_cluster, inp3=help_strata))
-
-  # do not include some variables in the sdcObj
-  sel_rmv <- selectInput("sel_removeVars", label=h5("Remove Variables"), choices=possRemoveVars(), selected=input$sel_removeVars, multiple=TRUE, selectize=TRUE, width="100%")
-  help_rmv <- helpText("All variables listed here will not be available in the exported, anonymized data set.")
-
-  sl_ranseed <- sliderInput("sl_ranseed", label=h5("Random Seed"), value=input$sl_ranseed, min=-10000, max=10000, step=1, width="100%")
-  help_ranseed <- helpText("Set an initial start-value for the random-seed generator.")
-
-  rb_randomize <- radioButtons("rb_setup_randomizeorder", label=h5("Randomize Order of Observations"), choices=c("No"=FALSE,"Yes"=TRUE),
-    width="100%", selected=input$rb_setup_randomizeorder, inline=TRUE)
-  help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
-
-  out <- list(out,
-    htmlTemplate("tpl_three_col.html", inp1=rb_randomize, inp2=sel_rmv, inp3=sl_ranseed),
-    htmlTemplate("tpl_three_col.html", inp1=help_randomize, inp2=help_rmv, inp3=help_ranseed))
-
-  if ( length(input$sel_kV) > 0 ) {
-    btn_setup <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
-    out <- list(out, htmlTemplate("tpl_one_col.html", inp=btn_setup))
-  }
+  out <- list(
+    htmlTemplate("tpl_three_col.html", inp1=sl_ranseed, inp2=rb_randomize, inp3=sl_alpha),
+    htmlTemplate("tpl_three_col.html", inp1=help_ranseed, inp2=help_randomize, inp3=help_alpha))
   out
 })
+
+output$ui_sdcObj_create <- renderUI({
+  input$btn_reset_sdc # dependency so that variable-types will get updated!
+  out <- list(
+    uiOutput("setupbtn"),
+    uiOutput("setup_moreparams"))
+
+  if (!is.null(obj$last_error)) {
+    out <- list(out, htmlTemplate("tpl_one_col.html", inp=verbatimTextOutput("ui_lasterror")))
+  }
+
+  isolate({
+    out <- list(out, fluidRow(
+      column(2, strong("Variable Name")),
+      column(1, strong("Data-Type")),
+      column(3, strong("Assign Key")),
+      column(1, strong("Weight")),
+      column(2, strong("Cluster-Id")),
+      column(2, strong("Stratification")),
+      column(1, strong("Delete"))
+    ))
+    vars <- allVars()
+    type <- dataTypes(); print(type)
+    for (i in 1:length(vars)) {
+      ch <- c("no","categorical", "numeric")
+      if (type[i] == "numeric" ) {
+        ch <- c("no","numeric")
+      }
+      if (type[i] %in% c("factor","character")) {
+        ch <- c("no","categorical")
+      }
+
+      lab_kv <- paste0("rb_keyVars_",i)
+      val_kv <- input[[lab_kv]]
+      if (is.null(val_kv)) {
+        val_kv <- ch[1]
+      }
+
+      lab_w <- paste0("cb_setup_weight",i)
+      val_w <- input[[lab_w]]
+      if (is.null(val_w)) {
+        val_w <- FALSE
+      }
+
+      lab_h <- paste0("cb_setup_household",i)
+      val_h <- input[[lab_h]]
+      if (is.null(val_h)) {
+        val_h <- FALSE
+      }
+
+      lab_s <- paste0("cb_setup_strata",i)
+      val_s <- input[[lab_s]]
+      if (is.null(val_s)) {
+        val_s <- FALSE
+      }
+
+      lab_d <- paste0("cb_setup_delete",i)
+      val_d <- input[[lab_d]]
+      if (is.null(val_d)) {
+        val_d <- FALSE
+      }
+
+      out <- list(out, fluidRow(
+        column(2, code(vars[i])),
+        column(1, type[i]),
+        column(3, radioButtons(paste0("rb_keyVars_",i), label=NULL, inline=TRUE, choices=ch, selected=val_kv)),
+        column(1, checkboxInput(lab_w, label=NULL, value=val_w)),
+        column(2, checkboxInput(lab_h, label=NULL, value=val_h)),
+        column(2, checkboxInput(lab_s, label=NULL, value=val_s)),
+        column(1, checkboxInput(lab_d, label=NULL, value=val_d))
+      ))
+    }
+  })
+  out
+})
+

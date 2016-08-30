@@ -25,6 +25,14 @@ allVars <- reactive({
   cn
 })
 
+dataTypes <- reactive({
+  cn <- colnames(obj[["inputdata"]])
+  cl <- sapply(1:ncol(obj$inputdata), function(x) {
+    class(obj$inputdata[[x]])
+  })
+  cl
+})
+
 # index of categorical key variables
 get_keyVars <- reactive({
   if (is.null(obj$sdcObj)) {
@@ -281,3 +289,99 @@ ui_custom_textInput <- function(id, label, placeholder="please enter a text") {
     renderUI({textInput(inputId=id, label=h5(label), value=sel, width="100%", placeholder=placeholder)})
   })
 }
+
+
+
+# at least one categorical key variable
+# max 1 weight-variable
+# max 1 household-id
+# check, if sdcProblem can be used, if not show error message!
+check_setup_btn <- reactive({
+  nc <- length(allVars())
+  if (!is.null(input$rb_keyVars_1)) {
+    res_kv <- sapply(1:nc, function(i) {
+      as.character(input[[paste0("rb_keyVars_",i)]])[1]
+    })
+
+    # at least one categorical key variable
+    ind_catkv <- which(res_kv=="categorical")
+    if (length(ind_catkv) < 1) {
+      return(-1) # at least one categorical key variable required
+    }
+
+    # sampling weights
+    res_w <- sapply(1:nc, function(i) {
+      input[[paste0("cb_setup_weight",i)]]
+    })
+    ind_w <- which(res_w==TRUE)
+    if (length(ind_w) > 1) {
+      return(-2) # more than one variable selected as weight-variable
+    }
+    # if selected, it cant be a categorical key variable
+    if (length(ind_w)==1) {
+      if (res_kv[ind_w]=="categorical") {
+        return(-3) # selected weight-variable must not be a categorical key variable
+      }
+      if (res_kv[ind_w]=="numerical") {
+        return(-4) # selected weight-variable must not be a numerical key variable
+      }
+    }
+    # household ids
+    res_h <- sapply(1:nc, function(i) {
+      input[[paste0("cb_setup_household",i)]]
+    })
+    ind_h <- which(res_h==TRUE)
+    if (length(ind_h) > 1) {
+      return(-5) # more than one variable selected as hhid-variable
+    }
+    # if selected, it cant be a key variable
+    if (length(ind_h)==1) {
+      if (res_kv[ind_h]=="categorical") {
+        return(-6) # selected hhid must not be a categorical key variable
+      }
+      if (res_kv[ind_h]=="numerical") {
+        return(-7) # selected hhid must not be a numerical key variable
+      }
+    }
+
+    # strata
+    res_s <- sapply(1:nc, function(i) {
+      input[[paste0("cb_setup_strata",i)]]
+    })
+    ind_s <- which(res_s==TRUE)
+    # any variables selected as stratas must not be used as key variables
+    if (length(ind_s)>0) {
+      if ("categorical" %in% res_kv[ind_s]) {
+        return(-8) # at least one selected stratification variable is also a categorical key-var
+      }
+      if ("numerical" %in% res_kv[ind_s]) {
+        return(-9) # at least one selected stratification variable is also a numerical key-var
+      }
+    }
+
+    # deleted variables
+    res_d <- sapply(1:nc, function(i) {
+      input[[paste0("cb_setup_delete",i)]]
+    })
+    ind_d <- which(res_d==TRUE)
+    if (length(ind_d)>0) {
+      if ("categorical" %in% res_kv[ind_d]) {
+        return(-10) # key variables cannot be deleted!
+      }
+      if ("numerical" %in% res_kv[ind_d]) {
+        return(-10) # key variables cannot be deleted!
+      }
+
+      used_vars <- sort(unique(c(ind_w, ind_h, ind_s)))
+      if (length(used_vars)>0) {
+        used_vars <- sort(unique(used_vars))
+        if (length(intersect(used_vars, ind_d)) > 0) {
+          return(-11) # variables used as weights, household_ids or strata must not be deleted
+        }
+      }
+    }
+  }
+  return(0)
+})
+
+
