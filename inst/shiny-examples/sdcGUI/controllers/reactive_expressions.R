@@ -313,6 +313,7 @@ check_setup_btn <- reactive({
     res_w <- sapply(1:nc, function(i) {
       input[[paste0("cb_setup_weight",i)]]
     })
+    res_w[sapply(res_w, is.null)] <- FALSE
     ind_w <- which(res_w==TRUE)
     if (length(ind_w) > 1) {
       return(-2) # more than one variable selected as weight-variable
@@ -359,6 +360,19 @@ check_setup_btn <- reactive({
       }
     }
 
+    # pram
+    res_p <- sapply(1:nc, function(i) {
+      input[[paste0("cb_setup_pram",i)]]
+    })
+    res_p[sapply(res_p, is.null)] <- FALSE
+    ind_p <- which(res_p==TRUE)
+    # any variables selected as pram must not be used as key variables
+    if (length(ind_p)>0) {
+      if ("numerical" %in% res_kv[ind_p]) {
+        return(-12) # at least one selected pram variable is also a numerical key-var
+      }
+    }
+
     # deleted variables
     res_d <- sapply(1:nc, function(i) {
       input[[paste0("cb_setup_delete",i)]]
@@ -372,11 +386,11 @@ check_setup_btn <- reactive({
         return(-10) # key variables cannot be deleted!
       }
 
-      used_vars <- sort(unique(c(ind_w, ind_h, ind_s)))
+      used_vars <- sort(unique(c(ind_w, ind_h, ind_s, ind_p)))
       if (length(used_vars)>0) {
         used_vars <- sort(unique(used_vars))
         if (length(intersect(used_vars, ind_d)) > 0) {
-          return(-11) # variables used as weights, household_ids or strata must not be deleted
+          return(-11) # variables used as weights, household_ids, pram or strata cannot not be deleted
         }
       }
     }

@@ -51,7 +51,7 @@ shinyServer(function(session, input, output) {
 
   # code to reset variables in the input data set
   code_resetmicrovar <- reactive({
-    cmd <- paste0("inputdata[[",dQuote(input$view_selvar),"]] <- inputdataB[[",dQuote(input$view_selvar),"]]")
+    cmd <- paste0("inputdata[[",dQuote(input$view_selvar1),"]] <- inputdataB[[",dQuote(input$view_selvar1),"]]")
     cmd
   })
 
@@ -223,6 +223,7 @@ shinyServer(function(session, input, output) {
     res_w <- sapply(1:nc, function(i) {
       input[[paste0("cb_setup_weight",i)]]
     })
+    res_w[sapply(res_w, is.null)] <- FALSE
     ind_w <- which(res_w==TRUE)
     if (length(ind_w)==1) {
       wV <- vars[ind_w]
@@ -239,6 +240,18 @@ shinyServer(function(session, input, output) {
       hhId <- vars[ind_h]
     } else {
       hhId <- NULL
+    }
+
+    # pram vars
+    res_p <- sapply(1:nc, function(i) {
+      input[[paste0("cb_setup_pram",i)]]
+    })
+    res_p[sapply(res_p, is.null)] <- FALSE
+    ind_p <- which(res_p==TRUE)
+    if (length(ind_p)>0) {
+      pV <- vars[ind_p]
+    } else {
+      pV <- NULL
     }
 
     # numeric key variables
@@ -298,6 +311,11 @@ shinyServer(function(session, input, output) {
       cmd <- paste0(cmd, ", \n\tstrataVar=",VecToRStr(strataVar, quoted=TRUE))
     } else {
       cmd <- paste0(cmd, ", \n\tstrataVar=NULL")
+    }
+    if (!is.null(pV)) {
+      cmd <- paste0(cmd, ", \n\tpramVars=",VecToRStr(pV, quoted=TRUE))
+    } else {
+      cmd <- paste0(cmd, ", \n\tpramVars=NULL")
     }
     if (!is.null(excludeVars)) {
       cmd <- paste0(cmd, ", \n\texcludeVars=",VecToRStr(excludeVars, quoted=TRUE))
@@ -570,6 +588,9 @@ shinyServer(function(session, input, output) {
       }
       if (erg==-11) {
         obj$last_error <- "Error: variables selected to contain weights, stratification or cluster ids must not be deleted!"
+      }
+      if (erg==-12) {
+        obj$last_error <- "Error: at least one selected pram variable is also a numerical key-variable"
       }
     }
   })

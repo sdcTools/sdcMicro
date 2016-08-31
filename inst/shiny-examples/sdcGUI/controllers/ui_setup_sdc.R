@@ -108,33 +108,32 @@ output$setup_moreparams <- renderUI({
   sl_alpha <- sliderInput("sl_alpha", label=h5("Parameter 'alpha'"), value=val_alpha, min=0, max=1, step=0.01, width="100%")
   help_alpha <- helpText("The higher alpha, the more keys containing missing values will contribute to the calculation of 'fk' and 'Fk'")
   out <- list(
-    htmlTemplate("tpl_three_col.html", inp1=sl_ranseed, inp2=rb_randomize, inp3=sl_alpha),
-    htmlTemplate("tpl_three_col.html", inp1=help_ranseed, inp2=help_randomize, inp3=help_alpha))
+    fluidRow(column(4, sl_ranseed), column(4, rb_randomize), column(4, sl_alpha)),
+    fluidRow(column(4, help_ranseed), column(4, help_randomize), column(4, help_alpha)))
   out
 })
 
-output$ui_sdcObj_create <- renderUI({
+output$ui_sdcObj_create1 <- renderUI({
   input$btn_reset_sdc # dependency so that variable-types will get updated!
-  out <- list(
-    uiOutput("setupbtn"),
-    uiOutput("setup_moreparams"))
-
+  out <- NULL
   if (!is.null(obj$last_error)) {
-    out <- list(out, htmlTemplate("tpl_one_col.html", inp=verbatimTextOutput("ui_lasterror")))
+    out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror"))))
   }
 
   isolate({
     out <- list(out, fluidRow(
       column(2, strong("Variable Name")),
-      column(1, strong("Data-Type")),
+      column(1, strong("Type")),
       column(3, strong("Assign Key")),
+      column(1, strong("Pram")),
       column(1, strong("Weight")),
-      column(2, strong("Cluster-Id")),
-      column(2, strong("Stratification")),
-      column(1, strong("Delete"))
+      column(1, strong("Cluster-Id")),
+      column(1, strong("Stratification")),
+      column(1, strong("Delete")),
+      column(1,"")
     ))
     vars <- allVars()
-    type <- dataTypes(); print(type)
+    type <- dataTypes()
     for (i in 1:length(vars)) {
       ch <- c("no","categorical", "numeric")
       if (type[i] == "numeric" ) {
@@ -150,24 +149,45 @@ output$ui_sdcObj_create <- renderUI({
         val_kv <- ch[1]
       }
 
+      # pram
+      lab_p <- paste0("cb_setup_pram",i)
+      val_p <- input[[lab_p]]
+      if (is.null(val_p)) {
+        val_p <- FALSE
+      }
+      if (type[i] %in% c("integer","numeric")) {
+        cb_p <- checkboxInput(lab_p, label=NULL, value=val_p)
+      } else {
+        cb_p <- NULL
+      }
+
+
+      # weight-variable
       lab_w <- paste0("cb_setup_weight",i)
       val_w <- input[[lab_w]]
       if (is.null(val_w)) {
         val_w <- FALSE
       }
-
+      if (type[i] %in% c("integer","numeric")) {
+        cb_w <- checkboxInput(lab_w, label=NULL, value=val_w)
+      } else {
+        cb_w <- NULL
+      }
+      # household-id
       lab_h <- paste0("cb_setup_household",i)
       val_h <- input[[lab_h]]
       if (is.null(val_h)) {
         val_h <- FALSE
       }
 
+      # strata-variable
       lab_s <- paste0("cb_setup_strata",i)
       val_s <- input[[lab_s]]
       if (is.null(val_s)) {
         val_s <- FALSE
       }
 
+      # delete variables
       lab_d <- paste0("cb_setup_delete",i)
       val_d <- input[[lab_d]]
       if (is.null(val_d)) {
@@ -178,13 +198,55 @@ output$ui_sdcObj_create <- renderUI({
         column(2, code(vars[i])),
         column(1, type[i]),
         column(3, radioButtons(paste0("rb_keyVars_",i), label=NULL, inline=TRUE, choices=ch, selected=val_kv)),
-        column(1, checkboxInput(lab_w, label=NULL, value=val_w)),
-        column(2, checkboxInput(lab_h, label=NULL, value=val_h)),
-        column(2, checkboxInput(lab_s, label=NULL, value=val_s)),
-        column(1, checkboxInput(lab_d, label=NULL, value=val_d))
+        column(1, cb_p),
+        column(1, cb_w),
+        column(1, checkboxInput(lab_h, label=NULL, value=val_h)),
+        column(1, checkboxInput(lab_s, label=NULL, value=val_s)),
+        column(1, checkboxInput(lab_d, label=NULL, value=val_d)),
+        column(1, "")
       ))
     }
   })
   out
 })
 
+
+output$ui_sdcObj_info <- renderUI({
+  output$ui_setup_plot_info <- renderPlot({
+    if (is.null(input$sel_infov)) {
+      return(NULL)
+    }
+    inp <- obj$inputdata[[input$sel_infov]]
+    if (is.integer(inp) & length(unique(inp))<=10) {
+      inp <- as.factor(inp)
+    }
+    plot(inp, main=NULL)
+  })
+  output$ui_setup_summary <- renderPrint({
+    if (is.null(input$sel_infov)) {
+      return(NULL)
+    }
+    inp <- obj$inputdata[[input$sel_infov]]
+    if (is.integer(inp) & length(unique(inp))<=10) {
+      inp <- as.factor(inp)
+    }
+    summary(inp)
+  })
+
+  sel_infov <- selectInput("sel_infov", label=NULL, choices=allVars(), selected=input$sel_infov, width="100%")
+  out <- list(
+    fluidRow(column(12, h4("Select Variable to show Information", align="center"), sel_infov)),
+    fluidRow(column(12, h4("Plot", align="center"))),
+    fluidRow(column(12, plotOutput("ui_setup_plot_info"))),
+    fluidRow(column(12, h4("Summary", align="center"))),
+    fluidRow(column(12, verbatimTextOutput("ui_setup_summary")))
+  )
+  out
+})
+
+output$ui_sdcObj_create <- renderUI({
+  fluidRow(
+    column(8, uiOutput("ui_sdcObj_create1"), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
+    column(4, uiOutput("ui_sdcObj_info"))
+  )
+})
