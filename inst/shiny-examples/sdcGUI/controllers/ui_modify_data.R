@@ -346,7 +346,7 @@ output$ui_view_var <- renderUI({
 
   out <- NULL
   if (is.null(obj$sdcObj)) {
-    btn <- myActionButton("btn_resetmicrovar",label=paste("Reset",input$view_selvar,"to original state"), "primary")
+    btn <- myActionButton("btn_resetmicrovar",label=paste("Reset",input$view_selvar1,"to original state"), "primary")
     out <- list(out, htmlTemplate("tpl_one_col.html", inp=btn))
   }
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h4("What should be displayed?"), inline=TRUE, width="100%")
