@@ -142,7 +142,7 @@ setMethod(f = "undolast", signature = c("sdcMicroObj"),
 definition = function(object) {
   if (is.null(object@prev)) {
     warnMsg <- "Can not undo. No previous state stored. (The input object is returned).\n"
-    obj <- addWarning(obj, warnMsg=warnMsg, method="undolast", variable=NA)
+    object <- addWarning(object, warnMsg=warnMsg, method="undolast", variable=NA)
     warning(warnMsg)
     return(object)
   }
