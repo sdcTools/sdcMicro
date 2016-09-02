@@ -198,16 +198,14 @@ shinyServer(function(session, input, output) {
     cmd_out$create_strata <- NULL
     cmd_out$setup_sdc <- NULL
 
-    vars <- allVars()
+    inp <- hot_to_r(input$setupTable)
+    vars <- inp$Name
     nc <- length(vars)
-    type <- dataTypes() # data-types
-    res_kv <- sapply(1:nc, function(i) {
-      as.character(input[[paste0("rb_keyVars_",i)]])[1]
-    })
-    ind_kv <- which(res_kv=="categorical")
+    type <- inp$Type
+
+    ind_kv <- which(inp$useAsKey=="categorical")
     kV <- vars[ind_kv]
     ii <- which(type[ind_kv]%in%c("character","integer"))
-
     if (length(ii)>0) {
       # recode to factor
       cmd_out$recode_to_factors <- list()
@@ -220,11 +218,7 @@ shinyServer(function(session, input, output) {
     }
 
     # sampling weights
-    res_w <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_weight",i)]]
-    })
-    res_w[sapply(res_w, is.null)] <- FALSE
-    ind_w <- which(res_w==TRUE)
+    ind_w <- which(inp$useAsWeight==TRUE)
     if (length(ind_w)==1) {
       wV <- vars[ind_w]
     } else {
@@ -232,10 +226,7 @@ shinyServer(function(session, input, output) {
     }
 
     # clusterID
-    res_h <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_household",i)]]
-    })
-    ind_h <- which(res_h==TRUE)
+    ind_h <- which(inp$useAsClusterID==TRUE)
     if (length(ind_h)==1) {
       hhId <- vars[ind_h]
     } else {
@@ -243,11 +234,7 @@ shinyServer(function(session, input, output) {
     }
 
     # pram vars
-    res_p <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_pram",i)]]
-    })
-    res_p[sapply(res_p, is.null)] <- FALSE
-    ind_p <- which(res_p==TRUE)
+    ind_p <- which(inp$useAsPram==TRUE)
     if (length(ind_p)>0) {
       pV <- vars[ind_p]
     } else {
@@ -255,18 +242,15 @@ shinyServer(function(session, input, output) {
     }
 
     # numeric key variables
-    ind_nv <- which(res_kv=="numeric")
-    if(length(ind_nv)>0) {
+    ind_nv <- which(inp$useAsKey=="numeric")
+    if (length(ind_nv)>0) {
       nV <- vars[ind_nv]
     } else {
       nV <- NULL
     }
 
     # exclude variables
-    res_d <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_delete",i)]]
-    })
-    ind_d <- which(res_d==TRUE)
+    ind_d <- which(inp$deleteVariable==TRUE)
     if (length(ind_d)>0) {
       excludeVars <- vars[ind_d]
     } else {
@@ -274,10 +258,7 @@ shinyServer(function(session, input, output) {
     }
 
     # create stratification variable if more than 1 variable is listed!
-    res_s <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_strata",i)]]
-    })
-    ind_s <- which(res_s==TRUE)
+    ind_s <- which(inp$useAsStrata==TRUE)
     if (length(ind_s)==0) {
       strataVar <- NULL
     } else if (length(ind_s)==1) {
@@ -446,6 +427,7 @@ shinyServer(function(session, input, output) {
   # create a new randomized ID
   code_undo <- reactive({
     cmd <- paste0("sdcObj <- undolast(sdcObj)")
+    attributes(cmd)$evalAsIs <- TRUE
     cmd
   })
   ### END CODE GENERATION EXPRESSIONS ####
@@ -532,67 +514,35 @@ shinyServer(function(session, input, output) {
   })
   # setup the sdcMicroObj
   observeEvent(input$btn_setup_sdc, {
-    erg <- check_setup_btn()
-    if (erg==0) {
-      obj$last_error <- NULL
-      cmd <- code_createSdcObj()
-      toF <- cmd$recode_to_factors
-      if (!is.null(toF)) {
-        for (i in 1:length(toF)) {
-          ptm <- proc.time()
-          runEvalStrMicrodat(cmd=toF[[i]], comment=NULL)
-          print(str(obj$inputdata))
-          ptm <- proc.time()-ptm
-          obj$comptime <- obj$comptime+ptm[3]
-        }
-      }
-
-      newS <- cmd$create_strata
-      if (!is.null(newS)) {
+    cmd <- code_createSdcObj()
+    toF <- cmd$recode_to_factors
+    if (!is.null(toF)) {
+      for (i in 1:length(toF)) {
         ptm <- proc.time()
-        runEvalStrMicrodat(cmd=newS, comment="## create stratification variable")
+        runEvalStrMicrodat(cmd=toF[[i]], comment=NULL)
+        print(str(obj$inputdata))
         ptm <- proc.time()-ptm
         obj$comptime <- obj$comptime+ptm[3]
       }
+    }
+
+    newS <- cmd$create_strata
+    if (!is.null(newS)) {
       ptm <- proc.time()
-      cmd <- cmd$setup_sdc
-      eval(parse(text=cmd))
-      cmd <- gsub("obj[$]sdcObj","sdcObj", cmd)
-      cmd <- gsub("obj[$]inputdata","inputdata",cmd)
-      obj$code_setup <- cmd
+      runEvalStrMicrodat(cmd=newS, comment="## create stratification variable")
       ptm <- proc.time()-ptm
       obj$comptime <- obj$comptime+ptm[3]
-      updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-      updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
-    } else {
-      if (erg==-1) {
-        obj$last_error <- "Error: at least one variable must be selected as categorical key variable!"
-      }
-      if (erg==-2) {
-        obj$last_error <- "Error: no more than 1 variable may be selected as weight-variable!"
-      }
-      if (erg %in% c(-3,-4)) {
-        obj$last_error <- "Error: Weight-variable must not be a categorical or numerical key variable!"
-      }
-      if (erg==-5) {
-        obj$last_error <- "Error: no more than 1 variable may be selected as variable containing cluster-ids!"
-      }
-      if (erg %in% c(-6,-7)) {
-        obj$last_error <- "Error: variable holding cluster-ids must not be a categorical or numerical key variable!"
-      }
-      if (erg %in% c(-8,-9)) {
-        obj$last_error <- "Error: at least one selected stratification variable is also a categorical or numerical key-variable"
-      }
-      if (erg==-10) {
-        obj$last_error <- "Error: categorical/numerical key variables must not be selected for deletion!"
-      }
-      if (erg==-11) {
-        obj$last_error <- "Error: variables selected to contain weights, stratification or cluster ids must not be deleted!"
-      }
-      if (erg==-12) {
-        obj$last_error <- "Error: at least one selected pram variable is also a numerical key-variable"
-      }
     }
+    ptm <- proc.time()
+    cmd <- cmd$setup_sdc
+    eval(parse(text=cmd))
+    cmd <- gsub("obj[$]sdcObj","sdcObj", cmd)
+    cmd <- gsub("obj[$]inputdata","inputdata",cmd)
+    obj$code_setup <- cmd
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
 
   # add ghost-vars to an existing sdcMicroObj
@@ -860,4 +810,9 @@ shinyServer(function(session, input, output) {
   lapply(href_to_setup, function(x) {
     eval(parse(text=x))
   })
+  # create links to microdata-upload page
+  lapply(href_to_microdata, function(x) {
+    eval(parse(text=x))
+  })
+
 })

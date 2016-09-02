@@ -1,3 +1,17 @@
+
+choices_import <- reactive({
+  if(is.null(obj$sdcObj)) {
+    return(c(
+      "View the current script"="script_view",
+      "Import a previously saved sdcProblem"="script_import"))
+  } else {
+    return(c(
+      "View the current script"="script_view",
+      "Import a previously saved sdcProblem"="script_import",
+      "Export/Save the current sdcProblem"="script_export"))
+  }
+})
+
 output$current_code <- renderText({
   code_ges <- c(obj$code, obj$code_read_and_modify, obj$code_setup, obj$code_anonymize)
   paste0("<pre class='r'><code class='r' id='codeout'>",paste(highr:::hi_html(code_ges), collapse="\n"),"</code></pre>")
@@ -5,24 +19,19 @@ output$current_code <- renderText({
 
 # GUI-output to view script
 output$ui_script_view <- renderUI({
-  out <- list(
-    htmlTemplate("tpl_one_col.html", inp=h4("View Script")),
-    htmlTemplate("tpl_one_col_code.html", inp=uiOutput("current_code"))
+  fluidRow(
+    column(12, h4("View the current generated script")),
+    column(12, uiOutput("current_code"))
   )
-  out
 })
 
 # GUI-output to export script
 output$ui_script_export <- renderUI({
   db <- downloadButton('exportProblem', 'Download current sdcProblem (and code) to disk')
-  out <- list(htmlTemplate("tpl_one_col.html", inp=h4("Export sdcProblem")))
-  if (!is.null(obj$sdcObj)) {
-    out <- list(out, htmlTemplate("tpl_one_col.html", inp=p("You can now download all relevant data and code for later re-use by clicking the button below.")))
-    out <- list(out, htmlTemplate("tpl_one_col.html", inp=db))
-  } else {
-    out <- list(out, htmlTemplate("tpl_one_col.html", inp=p("Currently, there is no",code("sdcProblem"),"defined")))
-  }
-  out
+  fluidRow(
+    column(12, h4("Export an existing sdcProblem", align="center")),
+    column(12, p("You can now download all relevant data and code for later re-use by clicking the button below.", align="center")),
+    column(12, p(db, align="center")))
 })
 
 output$exportProblem <- downloadHandler(
@@ -41,42 +50,50 @@ output$ui_script_import <- renderUI({
   cur_error <- lastError()
   btn <- myActionButton("btn_reset_inputerror2",label=("Try again!"), "primary")
   if (!is.null(lastError())) {
-    return(list(
-      htmlTemplate("tpl_one_col.html", inp=h4("Importing previously saved sdcProblem resulted in an error!")),
-      htmlTemplate("tpl_one_col.html", inp=verbatimTextOutput("ui_lasterror")),
-      htmlTemplate("tpl_one_col.html", inp=btn)))
+    return(fluidRow(
+      column(12, h4("Importing previously saved sdcProblem resulted in an error!", align="center")),
+      column(12, verbatimTextOutput("ui_lasterror")),
+      column(12, p(btn, align="center"))
+    ))
   }
-
-  out <- htmlTemplate("tpl_one_col.html", inp=h2("Import a previously exported sdcProblem"))
+  out <- fluidRow(column(12, h4("Import a previously exported sdcProblem", align="center")))
   if (!is.null(obj$sdcObj)) {
-    out <- list(out, htmlTemplate("tpl_one_col.html", inp=p("Take care, your current sdcProblem will be overwritten!")))
+    out <- list(out, fluidRow(column(12, p("Take care. When you upload a previously saved problem, this will overwrite any existing sdcProblem-instance!", align="center"))))
   }
-  fI <- fileInput("file_importProblem", h4("Select previously exported sdcProblem"), width="100%", accept=".rdata")
-  out <- list(out, htmlTemplate("tpl_one_col.html", inp=fI))
+  fI <- fileInput("file_importProblem", strong("Select previously exported sdcProblem"), width="100%", accept=".rdata")
+  out <- list(out, fluidRow(column(12, p(fI, align="center"))))
   out
+})
+
+output$ui_script_main <- renderUI({
+  if (!is.null(input$sel_script)) {
+    if (input$sel_script=="script_view") {
+      return(uiOutput("ui_script_view"))
+    }
+    if (input$sel_script=="script_import") {
+      return(uiOutput("ui_script_import"))
+    }
+    if (input$sel_script=="script_export") {
+      return(uiOutput("ui_script_export"))
+    }
+  }
+})
+
+output$ui_script_sidebar_left <- renderUI({
+  rb <- radioButtons("sel_script", label=h4("What do you want to do?", align="center"),
+  choices=choices_import(), selected=input$sel_script, width="100%")
+  fluidRow(column(12, rb))
 })
 
 output$ui_script <- renderUI({
-  btn <- selectInput("sel_script", label=h5("What do you want to do?"),
-    choices=c(
-      "View the current script"="script_view",
-      "Import a previously saved sdcProblem"="script_import",
-      "Export/Save the current sdcProblem"="script_export"),
-    selected=input$sel_script, width="100%")
-  out <- list(
-    htmlTemplate("tpl_one_col.html",inp=h2("Reproducibility")),
-    htmlTemplate("tpl_one_col.html",inp=btn)
-  )
-  if ( !is.null(input$sel_script) ) {
-    if ( input$sel_script=="script_view" ) {
-      out <- list(out, uiOutput("ui_script_view"))
-    }
-    if ( input$sel_script=="script_import" ) {
-      out <- list(out, uiOutput("ui_script_import"))
-    }
-    if ( input$sel_script=="script_export" ) {
-      out <- list(out, uiOutput("ui_script_export"))
-    }
+  if (is.null(obj$inputdata)) {
+    return(noInputData(uri="ui_script"))
+  } else {
+    out <- fluidRow(
+      column(3, uiOutput("ui_script_sidebar_left")),
+      column(6, uiOutput("ui_script_main")),
+      column(3, uiOutput("sb_info_script")))
   }
-  out
+  return(out)
 })
+

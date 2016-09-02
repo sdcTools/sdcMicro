@@ -4,7 +4,6 @@ library(ggthemes)
 library(sdcMicro)
 library(rhandsontable)
 library(haven)
-
 # required that 'dQuote()' works nicely when
 # outputting R-Code
 options(useFancyQuotes=FALSE)
@@ -21,7 +20,6 @@ runEvalStr <- function(cmd, comment=NULL) {
   }
 
   evalAsIs <- !is.null(attributes(cmd)$evalAsIs)
-
   # evaluate using tryCatchFn()
   if (evalAsIs) {
     cmdeval <- gsub("sdcObj","obj$sdcObj", cmd)
@@ -137,16 +135,20 @@ myActionButton <- function(inputId, label, btn.style="", css.class="") {
   tags$button(id=inputId, type="button", class=paste("btn action-button", btn.css.class, css.class, collapse=" "), label)
 }
 
+myErrBtn <- function(id, label, btn.style="danger") {
+  btn <- myActionButton(id,label=label, btn.style=btn.style)
+  return(fluidRow(column(12, div(btn, align="center"))))
+}
+
 msg_nodata <- function(tab_import=FALSE) {
   if ( tab_import ) {
     txt <- "Please select a dataset to upload"
   } else {
     txt <- "Please upload data in tab 'data'!"
   }
-  list(
-    htmlTemplate("tpl_one_col.html", inp=h2("No data available")),
-    htmlTemplate("tpl_one_col.html", inp=strong(txt))
-  )
+  fluidRow(
+    column(12, h2("No data available", align="center")),
+    column(12, strong(txt)))
 }
 
 # custom Summary-Function for numerical Variables
@@ -224,22 +226,22 @@ get_risk <- reactive({
   return(as.data.frame(obj$sdcObj@risk$individual))
 })
 
-noInputData <- reactive({
+noInputData <- function(prefix="btn_a_micro_", uri) {
   txt <- "Please go back to 'Data/Import' and choose a dataset or upload a file!"
-  list(
-    htmlTemplate("tpl_one_col.html", inp=h2("No input data available!")),
-    htmlTemplate("tpl_one_col.html", inp=strong(txt))
-  )
-})
+  btn <- myActionButton(paste0(prefix,uri),label=("Upload microdata"), "primary")
+  fluidRow(
+    column(12, h2("No input data available!", align="center")),
+    column(12, p(txt, align="center")),
+    column(12, div(btn, align="center")))
+}
 
 noSdcProblem <- function(prefix="btn_a_setup_", uri) {
   txt <- "Please go back to 'Anonymize/Setup SDC-Problem' and start with a scenario!"
   btn <- myActionButton(paste0(prefix,uri),label=("Create an SDC-Problem"), "primary")
-  list(
-    htmlTemplate("tpl_one_col.html", inp=h2("No sdcProblem was specified!")),
-    htmlTemplate("tpl_one_col.html", inp=p(txt)),
-    htmlTemplate("tpl_one_col.html", inp=btn)
-  )
+  fluidRow(
+    column(12, h2("No sdcProblem was specified!", align="center")),
+    column(12, p(txt, align="center")),
+    column(12, div(btn, align="center")))
 }
 
 # generate dynamic observers
@@ -252,7 +254,8 @@ genDynLinkObserver <- function(prefix="btn_a_setup_", verbose=FALSE, inputId="ma
   cmd <- paste0(cmd, "updateNavbarPage(session, inputId=",dQuote(inputId),", selected=",dQuote(selected),")});")
 }
 
-href_to_setup <- genDynLinkObserver(prefix="btn_a_setup_", verbose=TRUE, inputId="mainnav", selected="Setup SDC-Problem")
+href_to_setup <- genDynLinkObserver(prefix="btn_a_setup_", verbose=FALSE, inputId="mainnav", selected="Anonymize")
+href_to_microdata <- genDynLinkObserver(prefix="btn_a_micro_", verbose=FALSE, inputId="mainnav", selected="Microdata")
 
 #observeEvent(input$btn_a_setup, {
 #  cat(paste("'btn_a_setup' was clicked",input$btn_a_setup,"times..!\n"))

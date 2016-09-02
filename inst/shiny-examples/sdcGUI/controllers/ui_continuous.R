@@ -28,8 +28,12 @@ output$ui_microaggregation <- renderUI({
     rb_transf <- radioButtons("rb_microagg_transf", label=h4("Transformation"),
       choices=c("none","log","boxcox"), width="100%", selected=input$rb_microagg_transf, inline=TRUE)
     sl_nc <- isolate(sliderInput("sl_microagg_nc", label=h4("Number of clusters"), min=1, max=15, step=1, value=3, width="100%"))
-    out <- list(htmlTemplate("tpl_three_col.html", inp1=rb_clustermethod, inp2=rb_transf, inp3=sl_nc))
-    out
+
+    return(fluidRow(
+      column(4, rb_clustermethod),
+      column(4, rb_transf),
+      column(4, sl_nc)
+    ))
   })
 
   output$ui_microagg_strata <- ui_custom_selectInput(
@@ -50,14 +54,20 @@ output$ui_microaggregation <- renderUI({
   sel_microvars <- selectInput("sel_microagg_v", choices=possvars_numericmethods(),
     label=lab_microvars, selected=input$sel_microagg_v, width="100%", multiple=TRUE)
 
-  out <- list(
-    htmlTemplate("tpl_one_col.html", inp=h4("Microaggregation for numerical variables")),
-    htmlTemplate("tpl_one_col.html", inp=p("Many different algorithms to microaggregate (some) or all numeric key variables can be selected here. The most important
-      parameter is the",code("aggregation level"), "because it specifies how many observations are grouped together before replacing actual values with some kind of aggregate.")),
-    htmlTemplate("tpl_one_col.html", inp=p("By default, microaggregation is performed by strata (if a strata-variable has been selected in the creating of the sdc-Problem. However,
+  out <- fluidRow(
+    column(12, h4("Microaggregation for numerical variables", align="center")),
+    column(12, p("Many different algorithms to microaggregate (some) or all numeric key variables can be selected here. The most important
+      parameter is the",code("aggregation level"), "because it specifies how many observations are grouped together before replacing actual values with some kind of aggregate.", align="center")),
+    column(12, p("By default, microaggregation is performed by strata (if a strata-variable has been selected in the creating of the sdc-Problem. However,
       This can be circumvented by selecting",tags$i("Do not use any stratification variable"),"in the corresponding selection menu. In this place, also other variables may be selected
-      which will be used only for the microaggregation procedure as stratification variable.")),
-    htmlTemplate("tpl_three_col.html", inp1=sel_method, inp2=rb_clbased, inp3=uiOutput("ui_microagg_strata")))
+      which will be used only for the microaggregation procedure as stratification variable.", align="center")),
+    column(12, h4("Microaggregation for numerical variables", align="center")))
+
+  out <- list(out, fluidRow(
+    column(4, sel_method),
+    column(4, rb_clbased),
+    column(4, uiOutput("ui_microagg_strata"))
+  ))
 
   # simple, onedims, pca, mcdpca, pppca: --> aggr, measure, trim
   # single: --> aggr, measure, trim, varsort
@@ -65,7 +75,10 @@ output$ui_microaggregation <- renderUI({
   # rmd, mdav: aggr,
   if ( !is.null(input$sel_microagg_method) ) {
     sl1 <- sliderInput("sl_microagg_aggr", label=h4("Aggregation-Level"), min=1, max=15, step=1, value=3, width="100%")
-    out <- list(out, htmlTemplate("tpl_two_col.html", inp1=sl1, inp2=sel_microvars))
+
+    out <- list(out, fluidRow(
+      column(6, p(sl1, align="center")),
+      column(6, sel_microvars)))
 
     if (!input$sel_microagg_method %in% c("mdav","rmd")) {
       rb_measure <- radioButtons("sl_microagg_measure", label=h4("Aggregation Statistics"), choices=c("mean", "median", "trim", "onestep"),
@@ -75,9 +88,14 @@ output$ui_microaggregation <- renderUI({
       if (input$sel_microagg_method=="single") {
         sel_varsort <- selectInput("sel_microagg_varsort", label=h5("Select variable for sorting"),
           choices=get_allNumericVars_name(), selected=input$sel_microagg_varsort, width="100%")
-        out <- list(out, htmlTemplate("tpl_three_col.html", inp1=rb_measure, inp2=sl_trim, inp3=sel_varsort))
+        out <- list(out, fluidRow(
+          column(4, p(rb_measure, align="center")),
+          column(4, p(sl_trim, align="center")),
+          column(4, p(sel_varsort, align="center"))))
       } else {
-        out <- list(out, htmlTemplate("tpl_two_col.html", inp1=rb_measure, inp2=sl_trim))
+        out <- list(out, fluidRow(
+          column(6, p(rb_measure, align="center")),
+          column(6, p(sl_trim, align="center"))))
       }
       # cluster-based methods
       if (input$rb_microagg_cluster=="Yes") {
@@ -87,7 +105,7 @@ output$ui_microaggregation <- renderUI({
   }
   btn_microagg <- myActionButton("btn_microagg", label="Perform Microaggregation", "primary")
   if (has_numkeyvars() | length(input$sel_microagg_v)>0 ) {
-    out <- list(out, htmlTemplate("tpl_one_col.html", inp=btn_microagg))
+    out <- list(out, fluidRow(column(12, p(btn_microagg, align="center"))))
   }
   out
 })
@@ -110,13 +128,11 @@ output$ui_noise <- renderUI({
   # resetting to default values!
   # also we have different parameters for methods (noise, p, delta) that we
   # catch with a single slider
-
   if (!has_numkeyvars()) {
-    return(htmlTemplate("tpl_one_col.html", inp=list(
-      h4("The current sdcProblem contains no",code("numerical key variables"),
-      "but",code("addNoise()"),"can only be applied on such variables!",
-      "Please modify the",code("sdcProblem"),"in tab",code("Setup SDC-Problem."))
-    )))
+    return(fluidRow(
+      column(12, h4("The current sdcProblem contains no",code("numerical key variables")), align="center"),
+      column(12, p("However,",code("addNoise()"),"can only be applied on such variables!
+        Please modify the",code("sdcProblem"), align="center"))))
   }
 
   # ui for slider defining noise, p or delta
@@ -175,30 +191,37 @@ output$ui_noise <- renderUI({
     btn
   })
 
-  out <- list(
-    htmlTemplate("tpl_one_col.html", inp=h4("Adding stochastic noise")),
-    htmlTemplate("tpl_one_col.html", inp=p("Various methods for adding noise to perturb continuous scaled variables can be selected below. Please note, that even if a
+  out <- fluidRow(
+    column(12, h4("Adding stochastic noise", align="center")),
+    column(12, p("Various methods for adding noise to perturb continuous scaled variables can be selected below. Please note, that even if a
       stratification variable has been defined during the initialization of the sdc-Problem, this information will not be used in this case. So the noise will be applied on
-      the entire data set.")),
-    htmlTemplate("tpl_two_col.html", inp1=uiOutput("ui_noise_method"), inp2=uiOutput("ui_noise_slider"), inp3=NULL),
-    htmlTemplate("tpl_three_col.html", inp1=NULL, inp2=uiOutput("ui_noise_vars"), inp3=NULL))
-  out <- list(out, htmlTemplate("tpl_one_col.html", inp=uiOutput("ui_noise_btn")))
+      the entire data set.", align="center")))
+
+  out <- list(out, fluidRow(
+    column(6, uiOutput("ui_noise_method")),
+    column(6, uiOutput("ui_noise_slider"))))
+
+  out <- list(out, fluidRow(
+    column(3, ""),
+    column(6, uiOutput("ui_noise_vars")),
+    column(3, "")))
+
+  out <- list(out, fluidRow(column(12, uiOutput("ui_noise_btn"))))
   out
 })
 
 # GUI-output for shuffling()
 output$ui_shuffling <- renderUI({
-  htmlTemplate("tpl_one_col.html", inp=h4("Shuffling"))
+  fluidRow(column(12, h4("Shuffling", align="center")))
 })
 
 # GUI-output for rankSwap()
 output$ui_rankswap <- renderUI({
   if (!has_numkeyvars()) {
-    return(htmlTemplate("tpl_one_col.html", inp=list(
-      h4("The current sdcProblem contains no",code("numerical key variables"),
-         "but",code("rankSwap()"),"can only be applied on such variables!",
-         "Please modify the",code("sdcProblem"),"in tab",code("Setup SDC-Problem."))
-    )))
+    return(fluidRow(
+      column(12, h4("The current sdcProblem contains no",code("numerical key variables")), align="center"),
+      column(12, p("However,",code("rankSwap()"),"can only be applied on such variables!
+        Please modify the",code("sdcProblem"), align="center"))))
   }
 
   # ui for 'btn_rankswap
@@ -226,14 +249,25 @@ output$ui_rankswap <- renderUI({
   sl_rankswap_r0 <- isolate(sliderInput("sl_rankswap_r0", label=h4("Multivariate preservation factor"), min=0, max=1, step=0.01, value=0.95, width="100%"))
   sl_rankswap_p <- isolate(sliderInput("sl_rankswap_p", label=h4("Rank range as percentage of total sample size."), min=0, max=100, step=1, value=0, width="100%"))
 
-  out <- list(
-    htmlTemplate("tpl_one_col.html", inp=h4("Rank swapping")),
-    htmlTemplate("tpl_one_col.html", inp=p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
+
+  out <- fluidRow(
+    column(12, h4("Rank swapping", align="center")),
+    column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
       so that correlation structure of original variables are preserved and also some perturbation is applied. Please note, that even if a
       stratification variable has been defined during the initialization of the sdc-Problem, this information will not be used in this case. So the noise will be applied on
-      the entire data set.")),
-    htmlTemplate("tpl_three_col.html", inp1=uiOutput("ui_rankswap_vars"), inp2=sl_rankswap_bot, inp3=sl_rankswap_top),
-    htmlTemplate("tpl_three_col.html", inp1=sl_rankswap_k0, inp2=sl_rankswap_r0, inp3=sl_rankswap_p))
-  out <- list(out, htmlTemplate("tpl_one_col.html", inp=uiOutput("ui_rankswap_btn")))
+      the entire data set.", align="center")))
+
+  out <- list(out, fluidRow(
+    column(4, uiOutput("ui_rankswap_vars")),
+    column(4, p(sl_rankswap_bot, align="center")),
+    column(4, p(sl_rankswap_top, align="center"))))
+
+  out <- list(out, fluidRow(
+    column(4, sl_rankswap_k0),
+    column(4, p(sl_rankswap_r0, align="center")),
+    column(4, p(sl_rankswap_p, align="center"))))
+
+  out <- list(out, fluidRow(
+    column(12, uiOutput("ui_rankswap_btn"))))
   out
 })

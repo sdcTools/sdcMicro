@@ -1,10 +1,9 @@
 # message if no continous key-variables have been specified
 output$nonumkey_continous_results <- renderUI({
   if (!has_numkeyvars()) {
-    return(htmlTemplate("tpl_one_col.html", inp=list(
-      h4("The current sdcProblem contains no",code("numerical key variables"),
-         "thus no measures can be computed.")
-    )))
+    fluidRow(
+      column(12, h4("The current sdcProblem contains no",code("numerical key variables"),
+        "thus no measures can be computed.", align="center")))
   }
 })
 
@@ -13,7 +12,7 @@ output$ui_resnum_numrisk <- renderUI({
   if (!has_numkeyvars()) {
     return(uiOutput("nonumkey_continous_results"))
   }
-  return(htmlTemplate("tpl_one_col.html",inp=h4("Information about numerical risk")))
+  fluidRow(column(12, h4("Information about numerical risk", align="center")))
 })
 
 # display information about information-loss
@@ -21,7 +20,7 @@ output$ui_resnum_infoloss <- renderUI({
   if (!has_numkeyvars()) {
     return(uiOutput("nonumkey_continous_results"))
   }
-  return(htmlTemplate("tpl_one_col.html",inp=h4("Information about information loss")))
+  fluidRow(column(12, h4("Information about information loss", align="center")))
 })
 
 output$ui_numvar_numres <- renderUI({
@@ -94,16 +93,20 @@ output$ui_resnum_comparison <- renderUI({
     txt_cor <- paste0("The ",strong("correlation")," between original and modified variable is", code(vv),". The ",strong("standard deviation"),
     " of the original variable is ",code(round(sd(v_o),digits=3))," and the ",strong("standard deviation")," of the
     modified variable is ", code(round(sd(v_m),digits=3)),".")
-    htmlTemplate("tpl_one_col.html",inp=p(HTML(txt_cor)))
+    fluidRow(column(12, p(HTML(txt_cor), align="center")))
   })
   if (!has_numkeyvars()) {
     return(uiOutput("nonumkey_continous_results"))
   }
-  list(
-    htmlTemplate("tpl_two_col.html",inp1=uiOutput("ui_numvar_numres"), inp2=uiOutput("ui_catvar_numres")),
-    uiOutput("ui_numvar_cor"),
-    htmlTemplate("tpl_one_col.html",inp=h5("Original Values")),
-    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("ui_numvar_origtab")),
-    htmlTemplate("tpl_one_col.html",inp=h5("Modified Data")),
-    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("ui_numvar_modtab")))
+
+  res <- fluidRow(
+    column(6, uiOutput("ui_numvar_numres")),
+    column(6, uiOutput("ui_catvar_numres")))
+
+  res <- list(res, uiOutput("ui_numvar_cor"), fluidRow(
+    column(12, h5("Original Values", align="center")),
+    column(12, dataTableOutput("ui_numvar_origtab")),
+    column(12, h5("Modified Data", align="center")),
+    column(12, dataTableOutput("ui_numvar_modtab"))))
+  res
 })

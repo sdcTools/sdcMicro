@@ -9,18 +9,19 @@ output$ui_rescat_riskinfo <- renderUI({
   # Risk-measures
   output$ui_rescat_riskymeasures <- renderUI({
     riskinfo <- measure_riskComp()
-    out <- list(
-      htmlTemplate("tpl_one_col.html",inp=h4("Risk-measures")),
-      htmlTemplate("tpl_one_col.html",inp=p(code(riskinfo$s),"observations (",code(riskinfo$sorig),"in the original data) have a
-      higher risk than the benchmark value of", code(riskinfo$benchmark),".")),
-      htmlTemplate("tpl_one_col.html",inp=p("We expect",code(riskinfo$exp_reident_m),"re-identifications (",code(riskinfo$exp_reident_mp),"%) in the
-        anonymized data set. In the original dataset we expected",code(riskinfo$exp_reident_o),"(",code(riskinfo$exp_reident_op),"%) re-identifications.")))
+
+    out <- fluidRow(
+      column(12, h5("Risk-measures", align="center")),
+      column(12, p(code(riskinfo$s),"observations (",code(riskinfo$sorig),"in the original data) have a
+      higher risk than the benchmark value of", code(riskinfo$benchmark),".", align="center")),
+      column(12, p("We expect",code(riskinfo$exp_reident_m),"re-identifications (",code(riskinfo$exp_reident_mp),"%) in the
+        anonymized data set. In the original dataset we expected",code(riskinfo$exp_reident_o),"(",code(riskinfo$exp_reident_op),"%) re-identifications.", align="center")))
 
     if (riskinfo$hierrisk) {
-      out <- list(out,
-      htmlTemplate("tpl_one_col.html",inp=p("If",strong("hierarchical information"),"is taken into account, we expect to have",code(riskinfo$hier_exp_m),
-        "(",code(riskinfo$hier_exp_mp),"%) re-identifications given the anonymized data set. For the original data, we expected to have",
-        code(riskinfo$hier_exp_o),"(",code(riskinfo$hier_exp_op),"%)) re-identifications.")))
+      out <- list(out, fluidRow(
+        column(12, p("If",strong("hierarchical information"),"is taken into account, we expect to have",code(riskinfo$hier_exp_m),
+          "(",code(riskinfo$hier_exp_mp),"%) re-identifications given the anonymized data set. For the original data, we expected to have",
+          code(riskinfo$hier_exp_o),"(",code(riskinfo$hier_exp_op),"%)) re-identifications.", align="center"))))
     }
     out
   })
@@ -29,7 +30,7 @@ output$ui_rescat_riskinfo <- renderUI({
   output$ui_rescat_riskyobs <- renderUI({
     # slider for minimal risk
     output$riskyobs_slider <- renderUI({
-      sliderInput("sl_riskyobs", label=h5("Minimum Risk for observations to be shown in the Table below"), min=0, max=max(get_risk()$risk), value=0, width="100%")
+      sliderInput("sl_riskyobs", label=p("Minimum Risk for observations to be shown in the Table below"), min=0, max=max(get_risk()$risk), value=0, width="100%")
     })
 
     # table containing the corresponding observations
@@ -50,10 +51,10 @@ output$ui_rescat_riskinfo <- renderUI({
       df[df$indivRisk > input$sl_riskyobs,,drop=F]
     }, options = list(pageLength = 10, searching=FALSE))
 
-    return(list(
-      htmlTemplate("tpl_one_col.html",inp=h4("Display risky-observations in a Table")),
-      htmlTemplate("tpl_one_col.html",inp=uiOutput("riskyobs_slider")),
-      htmlTemplate("tpl_one_col.html",inp=dataTableOutput("tab_risk"))))
+    fluidRow(
+      column(12, h5("Display risky-observations in a Table", align="center")),
+      column(12, uiOutput("riskyobs_slider")),
+      column(12, dataTableOutput("tab_risk")))
   })
 
   # display a risk-plot
@@ -65,14 +66,15 @@ output$ui_rescat_riskinfo <- renderUI({
       rk <- get_risk()
       hist(rk$risk, xlab="Risks", main="Individual risks", col="lightgrey")
     })
-    return(list(
-      htmlTemplate("tpl_one_col.html",inp=h4("Plot of showing individual reidentification-risks")),
-      htmlTemplate("tpl_one_col.html",inp=plotOutput("plot_risk"))))
+    fluidRow(
+      column(12, h5("Plot showing distribution of individual reidentification-risks", align="center")),
+      column(12, plotOutput("plot_risk")))
   })
 
-  out <- list(
-    htmlTemplate("tpl_one_col.html", inp=h4("Information on Risks")),
-    htmlTemplate("tpl_one_col.html", inp=uiOutput("rb_riskselection")))
+
+  out <- fluidRow(
+    column(12, h4("Information on Risks", align="center")),
+    column(12, div(uiOutput("rb_riskselection"), align="center")))
   if (!is.null(input$rb_riskselection)) {
     if (input$rb_riskselection=="ui_rescat_riskymeasures") {
       out <- list(out, uiOutput("ui_rescat_riskymeasures"))
@@ -113,12 +115,12 @@ output$ui_rescat_recodes <- renderUI({
     out
   }, options = list(pageLength = 10, searching=FALSE))
 
-  return(list(
-    htmlTemplate("tpl_one_col.html",inp=h4("Display information loss based on Recodings of categorical key variables")),
-    htmlTemplate("tpl_one_col.html", inp=p("For each categorical key variable, the following key figures are computed:")),
-    htmlTemplate("tpl_one_col.html", inp=p("a) The number of categories in original and modified variables, b) The mean size
-      of groups in original and modified variables and c) The size of the smallest category/group in original and modified variables")),
-    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("tab_recodes"))))
+  fluidRow(
+    column(12, h4("Display information loss based on Recodings of categorical key variables", align="center")),
+    column(12, p("For each categorical key variable, the following key figures are computed:", align="center")),
+    column(12, p("a) The number of categories in original and modified variables, b) The mean size
+    of groups in original and modified variables and c) The size of the smallest category/group in original and modified variables.", align="center")),
+    column(12, dataTableOutput("tab_recodes")))
 })
 
 # display information on l-diversity risk-measure
@@ -184,13 +186,15 @@ output$ui_rescat_ldiv <- renderUI({
     xtmp
   })
 
-  res <- list(
-    htmlTemplate("tpl_one_col.html",inp=h4("l-Diversity risk-measure")),
-    htmlTemplate("tpl_two_col.html",inp1=uiOutput("ldiv_sensvar"), inp2=uiOutput("ldiv_recconst")),
-    htmlTemplate("tpl_one_col.html",inp=uiOutput("ldiv_btn")),
-    htmlTemplate("tpl_one_col.html",inp=verbatimTextOutput("ldiv_result")),
-    htmlTemplate("tpl_one_col.html",inp=dataTableOutput("ldiv_violating")))
-  res
+  res <- fluidRow(column(12, h4("l-Diversity risk-measure", align="center")))
+  res <- list(res, fluidRow(
+    column(6, uiOutput("ldiv_sensvar")),
+    column(6, uiOutput("ldiv_recconst"))
+  ))
+  res <- list(res, fluidRow(
+    column(12, uiOutput("ldiv_btn")),
+    column(12, verbatimTextOutput("ldiv_result")),
+    column(12, dataTableOutput("ldiv_violating"))))
 })
 
 # display suda2-risk measure
@@ -221,19 +225,17 @@ output$ui_rescat_suda2 <- renderUI({
 
   # suda2 can only be calculated for sdcProblems with >= 3 categorical key variables
   if (length(get_keyVars())<=2) {
-    return(list(
-      htmlTemplate("tpl_one_col.html",inp=h4("suda2 risk-measure")),
-      htmlTemplate("tpl_one_col.html",inp=p("Suda2 scores can only be computed for scenarios with",code(">= 3"),"categorical key variables!"))
+    return(fluidRow(
+      column(12, h4("suda2 risk-measure", align="center")),
+      column(12, p("Suda2 scores can only be computed for scenarios with",code(">= 3"),"categorical key variables!", align="center"))
     ))
   }
-  return(list(
-    htmlTemplate("tpl_one_col.html",inp=h4("suda2 risk-measure")),
-    htmlTemplate("tpl_two_col.html",inp1=uiOutput("suda2_disf"), inp2=uiOutput("suda2_btn")),
-    htmlTemplate("tpl_one_col.html",inp=verbatimTextOutput("suda2_result"))
-  ))
+  return(fluidRow(
+    column(12, h4("suda2 risk-measure", align="center")),
+    column(12, div(uiOutput("suda2_disf"), align="center")),
+    column(12, div(uiOutput("suda2_btn"), align="center")),
+    column(12, verbatimTextOutput("suda2_result"))))
 })
-
-
 
 # information on k-anonymity
 output$ui_rescat_violating_kanon <- renderUI({
@@ -253,8 +255,8 @@ output$ui_rescat_violating_kanon <- renderUI({
     } else {
       val <- input$k_val_violating
     }
-    sl <- sliderInput("k_val_violating",label=h4("Select value for 'k'"), value=val, min=1, max=50, step=1, width="100%")
-    htmlTemplate("tpl_three_col.html",inp1=NULL, inp2=sl, inp3=NULL)
+    sl <- sliderInput("k_val_violating",label=h5("Select value for 'k'"), value=val, min=1, max=50, step=1, width="100%")
+    fluidRow(column(12, div(sl, align="center")))
   })
 
   output$ui_kanon_result <- renderUI({
@@ -265,13 +267,14 @@ output$ui_rescat_violating_kanon <- renderUI({
     n1 <- sum(fk < input$k_val_violating)
     n2 <- paste0("(",formatC(100*(n1/length(fk)), format="f", digits=3),"%)")
     res <- h4(code(n1),"observations", code(n2),"violate ",input$k_val_violating,"-anonymity")
-    htmlTemplate("tpl_one_col.html", inp=res)
+    fluidRow(column(12, div(res, align="center")))
   })
 
   out <- list(
+    fluidRow(column(12, h4("Observe observations violating k-anonymity", align="center"))),
     uiOutput("ui_kanon_selection"),
     uiOutput("ui_kanon_result"),
-    htmlTemplate("tpl_one_col.html", inp=dataTableOutput("violating_obs_tab")))
+    fluidRow(column(12, dataTableOutput("violating_obs_tab"))))
   out
 })
 
@@ -312,9 +315,10 @@ output$ui_show_orig_or_modified <- renderUI({
 # mosaicplot of one or two categorical key-variables
 output$ui_rescat_mosaicplot <- renderUI({
   output$ui_mosaic_selection <- renderUI({
-    out <- htmlTemplate("tpl_three_col.html",
-      inp1=uiOutput("ui_catvar1"), inp2=uiOutput("ui_catvar2"), inp3=uiOutput("ui_show_orig_or_modified"))
-    out
+    fluidRow(
+      column(4, uiOutput("ui_catvar1")),
+      column(4, uiOutput("ui_catvar2")),
+      column(4, uiOutput("ui_show_orig_or_modified")))
   })
   output$mosaicplot <- renderPlot({
     if (is.null(input$sel_catvar1)) {
@@ -341,16 +345,17 @@ output$ui_rescat_mosaicplot <- renderUI({
   out <- list(
     uiOutput("ui_mosaic_selection"),
     uiOutput("ui_mosaic_result"),
-    htmlTemplate("tpl_one_col.html", inp=plotOutput("mosaicplot", height="600px")))
+    fluidRow(column(12, plotOutput("mosaicplot", height="600px"))))
   out
 })
 
 # bivariate tabulation of (modified) key variables
 output$ui_bivariate_tab <- renderUI({
   output$ui_biv_selection <- renderUI({
-    out <- htmlTemplate("tpl_three_col.html",
-      inp1=uiOutput("ui_catvar1"), inp2=uiOutput("ui_catvar2"), inp3=uiOutput("ui_show_orig_or_modified"))
-    out
+    fluidRow(
+      column(4, uiOutput("ui_catvar1")),
+      column(4, uiOutput("ui_catvar2")),
+      column(4, uiOutput("ui_show_orig_or_modified")))
   })
   output$biv_tab <- renderTable({
     if (is.null(input$sel_catvar1)) {
@@ -371,9 +376,13 @@ output$ui_bivariate_tab <- renderUI({
       tab <- addmargins(table(df[[vars[1]]], df[[vars[2]]]))
     }
   })
-  out <- list(
+  return(list(
     uiOutput("ui_biv_selection"),
-    htmlTemplate("tpl_three_col.html", inp1=NULL, inp2=tableOutput("biv_tab"), inp3=NULL))
-  out
+    fluidRow(column(12, div(tableOutput("biv_tab"), align="center")))))
 })
 
+output$ui_rescat_comparison <- renderUI({
+  fluidRow(
+    column(12, h4("Risk-Comparison based on categorical variables", align="center"))
+  )
+})

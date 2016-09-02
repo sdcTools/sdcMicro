@@ -8,11 +8,12 @@ output$ui_modify_recode_to_factor <- renderUI({
       }
       sl1 <- sliderInput("sl_number_breaks",label=NULL, value=3, min=2, max=10, step=1, width="100%")
       help_sl <- list("'3' splits the variable into 3 groups. The breaks for",code("cut()"), "are automatically computed.")
-      out <- list(
-        htmlTemplate("tpl_one_col.html", inp=h5("Breaks")),
-        htmlTemplate("tpl_one_col.html", inp=helpText(help_sl)),
-        htmlTemplate("tpl_one_col.html", inp=sl1))
-      out
+
+      return(fluidRow(
+        column(12, h5("Breaks", align="center")),
+        column(12, helpText(help_sl)),
+        column(12, p(sl1, align="center"))
+      ))
     })
   })
 
@@ -27,20 +28,22 @@ output$ui_modify_recode_to_factor <- renderUI({
         "Example input: 1,3,5,9 splits the variable in 3 groups:", br(),
         "(1,3],(3,5] and (5,9].", br(),
         "If you supply 1 number (e.g. 3), the variable will be split in 3 equal sized groups.")
-      out <- list(
-        htmlTemplate("tpl_one_col.html", inp=h5("Breaks")),
-        htmlTemplate("tpl_one_col.html", inp=helpText(help_br)),
-        htmlTemplate("tpl_one_col.html", inp=sel_br))
-      out
+      return(fluidRow(
+        column(12, h5("Breaks", align="center")),
+        column(12, helpText(help_br)),
+        column(12, p(sel_br, align="center"))
+      ))
     })
   })
 
   vv <- numVars()
-  if ( length(vv) == 0) {
-    return(htmlTemplate("tpl_one_col.html", inp=h4("No numeric variables available in the inputdata!")))
+  if (length(vv) == 0) {
+    return(fluidRow(
+      column(12, h4("No numeric variables available in the inputdata!", align="center"))
+    ))
   }
 
-  out <- htmlTemplate("tpl_one_col.html", inp=h4("Recode to Factor"))
+  out <- fluidRow(column(12, h4("Recode a numeric variable into a factor", align="center")))
 
   # list all numVars
   btn_rec <- NULL
@@ -50,16 +53,22 @@ output$ui_modify_recode_to_factor <- renderUI({
     selected=input$sel_custom_split, inline=TRUE, width="100%")
   help_sel2 <- "If you choose yes, you will have to choose custom break-points"
 
-  out <- list(out,
-    htmlTemplate("tpl_two_col.html", inp1=helpText(help_sel1), inp2=helpText(help_sel2)),
-    htmlTemplate("tpl_two_col.html", inp1=sel1, inp2=sel2)
-  )
+  out <- list(out, fluidRow(
+    column(6, helpText(help_sel1)),
+    column(6, helpText(help_sel2))))
+  out <- list(out, fluidRow(
+    column(6, p(sel1, align="center")),
+    column(6, p(sel2, align="center"))))
+
   cutalgo <- selectInput("sel_algo",label=h5("Select Algorithm"),
     choices=c("equidistant","logEqui","equalAmount","manual"), selected=input$sel_algo, width="100%")
   help_cutalgo <- list("You need to specify manual breakpoints!")
 
   if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
-    out <- list(out, htmlTemplate("tpl_three_col.html", inp1=NULL, inp2=cutalgo, inp3=NULL))
+    out <- list(out, fluidRow(
+      column(3, ""),
+      column(6, p(cutalgo, align="center")),
+      column(3, "")))
   }
 
   btn_rec <- myActionButton("btn_recode_to_factor",label=("Recode to factor"), "primary")
@@ -75,17 +84,17 @@ output$ui_modify_recode_to_factor <- renderUI({
       }
     }
     txt_lab <- "Labels are automatically generated, you can change them later once the factor has been generated!"
-    out <- list(out,
-      htmlTemplate("tpl_one_col.html", inp=h5("Note about factor-labels")),
-      htmlTemplate("tpl_one_col.html", inp=helpText(txt_lab)),
-      htmlTemplate("tpl_one_col.html", inp=btn_rec))
+    out <- list(out, fluidRow(
+      column(12, h5("Note about factor-labels", align="center")),
+      column(6, helpText(txt_lab)),
+      column(3, p(btn_rec, align="center"))))
   })
   out
 })
 
 # UI-output for modifying a factor-variable
 output$ui_modify_change_factor <- renderUI({
-  # plot of curretn factor
+  # plot of current factor
   output$plot_fac <- renderPlot({
     if ( is.null(input$sel_factor) ) {
       return(NULL)
@@ -105,28 +114,40 @@ output$ui_modify_change_factor <- renderUI({
   })
 
   vv <- facVars()
-  out <- htmlTemplate("tpl_one_col.html", inp=h4("Modify a Factor"))
-  if ( length(vv) > 0 ) {
-    selfac1 <- selectInput("sel_factor",label=NULL,
-      choices=vv, selected=input$sel_factor, width="100%")
-    cbgr <- checkboxGroupInput("cbg_factor",label=NULL, inline=FALSE,
-      choices=curFactorVals(), selected=input$cbg_factor, width="100%")
-    if ( is.null(input$cbg_factor) ) {
-      btnUp <- NULL
-      txtval <- NULL
-    } else {
-      btnUp <- myActionButton("btn_update_factor",label="Update factor", "primary")
-      txtval <- textInput("inp_newlevname",label=NULL,
-      value=paste0(input$cbg_factor, collapse="_"), width="100%")
-    }
-    out <- list(out,
-      htmlTemplate("tpl_three_col.html", inp1=h5("Choose factor variable"), inp2=h5("Levels"), inp3=h5("new Levelcode")),
-      htmlTemplate("tpl_three_col.html", inp1=selfac1, inp2=cbgr, inp3=txtval),
-      htmlTemplate("tpl_one_col.html", inp=btnUp),
-      htmlTemplate("tpl_one_col.html", inp=plotOutput("plot_fac")))
-  } else {
-    return(noInputData())
+  out <- fluidRow(column(12, h4("Modify an existing factor-variable", align="center")))
+  if (length(vv)==0) {
+    out <- list(out, fluidRow(
+      column(12, h5("Currently, there are no factor-variables available that could be recoded!", align="center"))
+    ))
+    return(out)
   }
+  selfac1 <- selectInput("sel_factor",label=NULL,
+    choices=vv, selected=input$sel_factor, width="100%")
+  cbgr <- checkboxGroupInput("cbg_factor",label=NULL, inline=FALSE,
+    choices=curFactorVals(), selected=input$cbg_factor, width="100%")
+  if (is.null(input$cbg_factor)) {
+    btnUp <- NULL
+    txtval <- NULL
+  } else {
+    btnUp <- myActionButton("btn_update_factor",label="Update factor", "primary")
+    txtval <- textInput("inp_newlevname",label=NULL,
+    value=paste0(input$cbg_factor, collapse="_"), width="100%")
+  }
+
+  out <- list(out, fluidRow(
+    column(4, h5("Choose factor variable", align="center")),
+    column(4, h5("Levels", align="center")),
+    column(4, h5("new Levelcode", align="center"))))
+
+  out <- list(out, fluidRow(
+    column(4, p(selfac1, align="center")),
+    column(4, p(cbgr, align="center")),
+    column(4, p(txtval, align="center"))))
+
+  out <- list(out, fluidRow(
+    column(12, p(btnUp, align="center")),
+    column(12, plotOutput("plot_fac"))))
+
   out
 })
 
@@ -144,15 +165,20 @@ output$ui_modify_create_stratvar <- renderUI({
     btn <- myActionButton("btn_create_stratavar",label=("Create stratification variable"), "primary")
   }
 
-  list(
-    htmlTemplate("tpl_one_col.html", inp=h4("Create a stratification variable")),
-    htmlTemplate("tpl_one_col.html", inp=p("This method allows to",tags$i("chain together"),"values of two
+  out <- fluidRow(
+    column(12, h4("Create a stratification variable", align="center")),
+    column(12, p("This method allows to",tags$i("chain together"),"values of two
       or more variables which will be seperated by",code("_"),". You can also specify the variable name by typing
       it into the text-field and which will be used to append the new variable to the micro data set.
-      This is useful if you want to create a new variable for e.g stratification purposes when creating a new sdc-problem.")),
-    htmlTemplate("tpl_two_col.html", inp1=sel, inp2=txtval),
-    htmlTemplate("tpl_one_col.html", inp=btn)
-  )
+      This is useful if you want to create a new variable for e.g stratification purposes when creating a new sdc pproblem.", align="center")))
+
+  out <- list(out, fluidRow(
+    column(6, p(sel, align="center")),
+    column(6, p(txtval, align="center"))))
+
+  out <- list(out, fluidRow(
+    column(6, p(btn, align="center"))))
+  out
 })
 
 # UI-output to set specific values to NA
@@ -172,10 +198,17 @@ output$ui_set_to_na <- renderUI({
     }
     myActionButton("btn_set_to_na",label=("Set values to NA"), "primary")
   })
-  list(
-    htmlTemplate("tpl_two_col.html", inp1=uiOutput("ui_nasuppid"),inp2=uiOutput("ui_nasuppvar")),
-    htmlTemplate("tpl_one_col.html", inp=uiOutput("ui_ansuppbtn")),
-    htmlTemplate("tpl_one_col.html", inp=dataTableOutput("tab_inputdata_setna")))
+
+  out <- fluidRow(column(12, h4("Specifically set cells to NA (missing)", align="center")))
+
+
+  out <- list(out, fluidRow(
+    column(6, uiOutput("ui_nasuppid")),
+    column(6, uiOutput("ui_nasuppvar"))))
+  out <- list(out, fluidRow(
+    column(12, uiOutput("ui_ansuppbtn")),
+    column(12, dataTableOutput("tab_inputdata_setna"))))
+  out
 })
 
 # UI-output for top/bottom-coding of numerical variables
@@ -210,11 +243,20 @@ output$ui_topbotcoding <- renderUI({
     }
   })
 
-  list(
-    htmlTemplate("tpl_one_col.html", inp=plotOutput("ui_topbot_plot")),
-    htmlTemplate("tpl_two_col.html", inp1=uiOutput("ui_topbotvar"),inp2=uiOutput("ui_topbotkind")),
-    htmlTemplate("tpl_two_col.html", inp1=uiOutput("ui_topbotval"), inp2=uiOutput("ui_topbot_replacement")),
-    htmlTemplate("tpl_one_col.html", inp=uiOutput("ui_topbot_btn")))
+  out <- fluidRow(
+    column(12, h4("Apply Top- or Bottom coding", align="center")),
+    column(12, plotOutput("ui_topbot_plot")))
+
+  out <- list(out, fluidRow(
+    column(6, uiOutput("ui_topbotvar")),
+    column(6, uiOutput("ui_topbotkind"))))
+
+  out <- list(out, fluidRow(
+    column(6, uiOutput("ui_topbotval")),
+    column(6, uiOutput("ui_topbot_replacement"))))
+
+  out <- list(out, fluidRow(column(12, uiOutput("ui_topbot_btn"))))
+  out
 })
 
 # UI-output to display a variable
@@ -339,42 +381,42 @@ output$ui_view_var <- renderUI({
   })
 
   if (!is.null(lastError())) {
-    out <- htmlTemplate("tpl_one_col.html", inp=h4("The following Error has occured!\n"))
-    out <- list(out, htmlTemplate("tpl_one_col.html", inp=code(lastError())))
-    return(out)
+    return(fluidRow(
+      column(12, h4("The following Error has occured!", align="center")),
+      column(12, code(lastError()))))
   }
 
-  out <- NULL
+  out <- fluidRow(column(12, h4("Analyze existing variables", align="center")))
   if (is.null(obj$sdcObj)) {
     btn <- myActionButton("btn_resetmicrovar",label=paste("Reset",input$view_selvar1,"to original state"), "primary")
-    out <- list(out, htmlTemplate("tpl_one_col.html", inp=btn))
+    out <- list(out, fluidRow(column(12, p(btn, align="center"))))
   }
-  rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h4("What should be displayed?"), inline=TRUE, width="100%")
-  out <- list(out, htmlTemplate("tpl_three_col.html", inp1=uiOutput("ui_selvar1"), inp2=uiOutput("ui_selvar2"), inp3=rb))
+  rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
+  out <- list(out, fluidRow(
+    column(4, uiOutput("ui_selvar1")),
+    column(4, uiOutput("ui_selvar2")),
+    column(4, p(rb, align="center"))))
 
   if (!is.null(input$view_rbchoice)) {
     if (input$view_rbchoice=="Plot") {
-      out <- list(out, htmlTemplate("tpl_one_col.html", inp=plotOutput("view_plot", height="500px")))
+      out <- list(out, fluidRow(column(12, plotOutput("view_plot", height="500px"))))
     }
     if (input$view_rbchoice=="Summary") {
       res_stats <- stats_summary()
       if (is.null(res_stats$tab1)) {
-        out <- list(out, htmlTemplate("tpl_one_col.html", inp=renderTable(res_stats$tab, include.rownames=TRUE)))
+        out <- list(out, fluidRow(column(12, renderTable(res_stats$tab, include.rownames=TRUE))))
       } else {
-        out <- list(out, htmlTemplate("tpl_one_col.html", inp=h5(HTML(paste("Correlation between",code(res_stats$vars[1]),"and",code(res_stats$vars[2]),":",code(res_stats$vcor))))))
-        out <- list(out, htmlTemplate("tpl_one_col.html", inp=h5(HTML(paste("Summary of Variable",code(res_stats$vars[1]))))))
-        out <- list(out, htmlTemplate("tpl_one_col.html", inp=renderTable(res_stats$tab1, include.rownames=FALSE)))
-        out <- list(out, htmlTemplate("tpl_one_col.html", inp=h5(HTML(paste("Summary of Variable",code(res_stats$vars[2]))))))
-        out <- list(out, htmlTemplate("tpl_one_col.html", inp=renderTable(res_stats$tab2, include.rownames=FALSE)))
+        out <- list(out, fluidRow(
+          column(12, h5(HTML(paste("Correlation between",code(res_stats$vars[1]),"and",code(res_stats$vars[2]),":",code(res_stats$vcor))), align="center")),
+          column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[1]))), align="center")),
+          column(12, renderTable(res_stats$tab1, include.rownames=FALSE)),
+          column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[2]))), align="center")),
+          column(12, renderTable(res_stats$tab2, include.rownames=FALSE))))
       }
     }
   }
   out
 })
-
-# UI-output to allow to undo all modifications
-#output$ui_reset_vars <- renderUI({
-#})
 
 # UI-output to display and reset currently available microdata
 output$ui_show_microdata <- renderUI({
@@ -382,12 +424,12 @@ output$ui_show_microdata <- renderUI({
     obj$inputdata
   }, options = list(scrollX=TRUE, engthMenu=list(c(5, 15, 50, -1), c('5', '15', '50', 'All')), pageLength=10))
   btn <- myActionButton("btn_reset_inputdata",label=("Reset inputdata"), "danger")
-  out <- list(
-    htmlTemplate("tpl_one_col.html", inp=h4("Current Microdata")),
-    htmlTemplate("tpl_one_col.html", inp=helpText("These data may be used to set up the sdcObj which can be anonymized!")),
-    htmlTemplate("tpl_one_col.html", inp=btn),
-    htmlTemplate("tpl_one_col.html", inp=dataTableOutput("tab_inputdata")))
-  out
+
+  return(fluidRow(
+    column(12, h4("Current Microdata", align="center")),
+    column(12, helpText("These data may be used to set up the sdcObj which can be anonymized!")),
+    column(12, p(btn, align="center")),
+    column(12, dataTableOutput("tab_inputdata"))))
 })
 
 # UI-output to use only a subset of the available microdata
@@ -427,48 +469,20 @@ output$ui_sample_microdata <- renderUI({
   }
 
   btn <- myActionButton("btn_sample_microdata", label="Apply subsetting of the microdata", btn.style="primary")
-  out <- list(
-    htmlTemplate("tpl_two_col.html", inp1=sel1, inp2=sl1),
-    htmlTemplate("tpl_one_col.html", inp=btn)
-    )
-  return(out)
+
+  out <- fluidRow(
+    column(12, h4("Use only a subset of the dataset", align="center")),
+    column(12, p("You can restrict the microdataset that is used in the following anonymization procedure. This
+      will reduce computation time of the algorithms", align="center")))
+  out <- list(out, fluidRow(
+    column(6, p(sel1, align="center")),
+    column(6, p(sl1, align="center"))))
+  out <- list(out, fluidRow(column(12, p(btn, align="center"))))
+  out
 })
 
-output$ui_modify_data <- renderUI({
-  out <- htmlTemplate("tpl_one_col.html",inp=h2("Modify/Recode Data"))
-
-  if ( is.null(obj$inputdata) ) {
-    return(list(out, noInputData()))
-  }
-
-  choices_modifications <- reactive({
-    cc <- c(
-      "Display/Reset Microdata"="show_microdata",
-      "Explore variables"="view_var",
-      "Use only a subset of the available microdata"="sample_microdata",
-      "Convert numeric variables to factors"="recode_to_factor",
-      "Modify an existing factor-variable"="modify_factor",
-      "Create a stratification variable"="createstratvar",
-      "Set specific values in a variable to NA"="set_to_na",
-      "Apply Top-/Bottom Coding"="topbotcoding")
-    if (!is.null(obj$sdcObj)) {
-      cc <- cc[1:2]
-    }
-    return(cc)
-  })
-
-  btn <- selectInput("sel_moddata", label=h5("What do you want to do?"),
-    #choices=c(
-    #  "Display/Reset Microdata"="show_microdata",
-    #  "View/Analyse a variable"="view_var",
-    #  "Convert numeric variables to factors"="recode_to_factor",
-    #  "Modify an existing factor-variable"="modify_factor",
-    #  "Create a stratification variable"="createstratvar",
-    #  "Set specific values in a variable to NA"="set_to_na",
-    #  "Apply Top-/Bottom Coding"="topbotcoding"),
-    choices=choices_modifications(),
-      selected=input$sel_moddata, width="100%")
-  out <- list(out, htmlTemplate("tpl_one_col.html",inp=btn))
+output$ui_modify_data_main <- renderUI({
+  out <- NULL
   if (!is.null(input$sel_moddata)) {
     if (input$sel_moddata=="show_microdata") {
       out <- list(out, uiOutput("ui_show_microdata"))
@@ -498,3 +512,33 @@ output$ui_modify_data <- renderUI({
   out
 })
 
+output$ui_modify_data_sidebar_left <- renderUI({
+  choices_modifications <- reactive({
+    cc <- c(
+      "Display/Reset Microdata"="show_microdata",
+      "Explore/Reset variables"="view_var",
+      "Use only a subset of the available microdata"="sample_microdata",
+      "Convert numeric variables to factors"="recode_to_factor",
+      "Modify an existing factor-variable"="modify_factor",
+      "Create a stratification variable"="createstratvar",
+      "Set specific values in a variable to NA"="set_to_na",
+      "Apply Top-/Bottom Coding"="topbotcoding")
+    if (!is.null(obj$sdcObj)) {
+      cc <- cc[1:2]
+    }
+    return(cc)
+  })
+
+  rb <- radioButtons("sel_moddata", label=h5("What do you want to do?"),
+    choices=choices_modifications(),
+    selected=input$sel_moddata, width="100%")
+  fluidRow(
+    column(12, p(rb, align="center"))
+  )
+})
+
+output$ui_modify_data <- renderUI({
+  fluidRow(
+    column(3, uiOutput("ui_modify_data_sidebar_left")),
+    column(9, uiOutput("ui_modify_data_main")))
+})

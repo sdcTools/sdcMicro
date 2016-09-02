@@ -87,11 +87,6 @@ output$ui_anonymize_sidebar_left <- renderUI({
   list(uiOutput("ui_sel_anonymize"), uiOutput("ui_sel_sdcresults"))
 })
 
-## right sidebar
-output$ui_anonymize_sidebar_right <- renderUI({
-  list(h4("KeyVarInfo"), p("..."), h4("Risk measure"),p("..."))
-})
-
 # center column
 output$ui_main_anon <- renderUI({
   if (is.null(input$sel_sdcresults)) {
@@ -139,12 +134,8 @@ output$ui_main_anon <- renderUI({
 })
 
 output$ui_anonymize <- renderUI({
-  if ( is.null(obj$inputdata) ) {
-    return(noInputData())
-  }
-  possVars <- sdcVars()
-  if (length(setdiff(possVars$kv, "")) == 0) {
-    return(uiOutput("noCatVars"))
+  if (is.null(obj$inputdata)) {
+    return(noInputData(uri="ui_anonymize"))
   }
 
   if (is.null(obj$sdcObj)) {
@@ -153,9 +144,9 @@ output$ui_anonymize <- renderUI({
     out <- NULL
     out <- list(out,
       fluidRow(
-        column(3, uiOutput("ui_anonymize_sidebar_left")),
-        column(6, uiOutput("ui_main_anon")),
-        column(3, uiOutput("ui_anonymize_sidebar_right")))
+        column(2, uiOutput("ui_anonymize_sidebar_left")),
+        column(7, uiOutput("ui_main_anon")),
+        column(3, uiOutput("sb_info_anonymize")))
     )
   }
   return(out)

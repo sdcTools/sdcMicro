@@ -81,6 +81,21 @@ get_numVars_names <- reactive({
   return(colnames(get_origData())[get_numVars()])
 })
 
+# index of pram variables
+get_pramVars <- reactive({
+  if (is.null(obj$sdcObj)) {
+    return(NULL)
+  }
+  return(obj$sdcObj@pramVars)
+})
+# get pram variables by names
+get_pramVars_names <- reactive({
+  if (is.null(obj$sdcObj)) {
+    return(NULL)
+  }
+  return(colnames(get_origData())[get_pramVars()])
+})
+
 get_strataVar <- reactive({
   if (is.null(obj$sdcObj)) {
     return(NULL)
@@ -165,27 +180,27 @@ possvars_numericmethods <- reactive({
 })
 
 # returns list with choices for possible variables while setting up the sdcProblem
-sdcVars <- reactive({
-  allVars <- colnames(obj[["inputdata"]])
-  out <- list()
-  out$kv <- c("",setdiff(facVars(), c(input$sel_nV,input$sel_wV,input$sel_hhID,input$sel_strataV)))
-  out$nv <- c("",setdiff(numVars(), c(input$sel_kV,input$sel_wV,input$sel_hhID,input$sel_strataV)))
-  out$wv <- c("(do not use sampling weights)"="none",setdiff(numVars(), c(input$sel_kV,input$sel_nV,input$sel_hhID,input$sel_strataV)))
-  out$hhid <- c("(do not use household-identification variable)"="none",setdiff(allVars(), c(input$sel_kV,input$sel_nV,input$sel_wV,input$sel_strataV)))
-  out$strataV <- c("(do not use stratification variable)"="none",setdiff(facVars(), c(input$sel_kV,input$sel_nV,input$sel_wV,input$sel_hhID)))
-  out
-})
+# sdcVars <- reactive({
+#   allVars <- colnames(obj[["inputdata"]])
+#   out <- list()
+#   out$kv <- c("",setdiff(facVars(), c(input$sel_nV,input$sel_wV,input$sel_hhID,input$sel_strataV)))
+#   out$nv <- c("",setdiff(numVars(), c(input$sel_kV,input$sel_wV,input$sel_hhID,input$sel_strataV)))
+#   out$wv <- c("(do not use sampling weights)"="none",setdiff(numVars(), c(input$sel_kV,input$sel_nV,input$sel_hhID,input$sel_strataV)))
+#   out$hhid <- c("(do not use household-identification variable)"="none",setdiff(allVars(), c(input$sel_kV,input$sel_nV,input$sel_wV,input$sel_strataV)))
+#   out$strataV <- c("(do not use stratification variable)"="none",setdiff(facVars(), c(input$sel_kV,input$sel_nV,input$sel_wV,input$sel_hhID)))
+#   out
+# })
 
 # calculates all variables that might be removed
 # all variables that are not listed as key variables, strata, weights,..
-possRemoveVars <- reactive({
-  if (is.null(input$sel_kV)) {
-    return(NULL)
-  }
-  allVars <- colnames(obj[["inputdata"]])
-  exVars <- unique(c(input$sel_kV, input$sel_nV, input$sel_wV, input$sel_hhID, input$sel_strataV))
-  setdiff(allVars, exVars)
-})
+# possRemoveVars <- reactive({
+#   if (is.null(input$sel_kV)) {
+#     return(NULL)
+#   }
+#   allVars <- colnames(obj[["inputdata"]])
+#   exVars <- unique(c(input$sel_kV, input$sel_nV, input$sel_wV, input$sel_hhID, input$sel_strataV))
+#   setdiff(allVars, exVars)
+# })
 
 # calculates the variables that might be used as ghost-vars
 possGhostVars <- reactive({
@@ -291,111 +306,34 @@ ui_custom_textInput <- function(id, label, placeholder="please enter a text") {
 }
 
 
+## information on current sdcProblem used in sidebars
+infodat <- reactive({
+  # important variables
+  kV <- get_keyVars_names()
+  df <- data.frame(Variable=kV, type="keyVar")
 
-# at least one categorical key variable
-# max 1 weight-variable
-# max 1 household-id
-# check, if sdcProblem can be used, if not show error message!
-check_setup_btn <- reactive({
-  nc <- length(allVars())
-  if (!is.null(input$rb_keyVars_1)) {
-    res_kv <- sapply(1:nc, function(i) {
-      as.character(input[[paste0("rb_keyVars_",i)]])[1]
-    })
-
-    # at least one categorical key variable
-    ind_catkv <- which(res_kv=="categorical")
-    if (length(ind_catkv) < 1) {
-      return(-1) # at least one categorical key variable required
-    }
-
-    # sampling weights
-    res_w <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_weight",i)]]
-    })
-    res_w[sapply(res_w, is.null)] <- FALSE
-    ind_w <- which(res_w==TRUE)
-    if (length(ind_w) > 1) {
-      return(-2) # more than one variable selected as weight-variable
-    }
-    # if selected, it cant be a categorical key variable
-    if (length(ind_w)==1) {
-      if (res_kv[ind_w]=="categorical") {
-        return(-3) # selected weight-variable must not be a categorical key variable
-      }
-      if (res_kv[ind_w]=="numerical") {
-        return(-4) # selected weight-variable must not be a numerical key variable
-      }
-    }
-    # household ids
-    res_h <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_household",i)]]
-    })
-    ind_h <- which(res_h==TRUE)
-    if (length(ind_h) > 1) {
-      return(-5) # more than one variable selected as hhid-variable
-    }
-    # if selected, it cant be a key variable
-    if (length(ind_h)==1) {
-      if (res_kv[ind_h]=="categorical") {
-        return(-6) # selected hhid must not be a categorical key variable
-      }
-      if (res_kv[ind_h]=="numerical") {
-        return(-7) # selected hhid must not be a numerical key variable
-      }
-    }
-
-    # strata
-    res_s <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_strata",i)]]
-    })
-    ind_s <- which(res_s==TRUE)
-    # any variables selected as stratas must not be used as key variables
-    if (length(ind_s)>0) {
-      if ("categorical" %in% res_kv[ind_s]) {
-        return(-8) # at least one selected stratification variable is also a categorical key-var
-      }
-      if ("numerical" %in% res_kv[ind_s]) {
-        return(-9) # at least one selected stratification variable is also a numerical key-var
-      }
-    }
-
-    # pram
-    res_p <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_pram",i)]]
-    })
-    res_p[sapply(res_p, is.null)] <- FALSE
-    ind_p <- which(res_p==TRUE)
-    # any variables selected as pram must not be used as key variables
-    if (length(ind_p)>0) {
-      if ("numerical" %in% res_kv[ind_p]) {
-        return(-12) # at least one selected pram variable is also a numerical key-var
-      }
-    }
-
-    # deleted variables
-    res_d <- sapply(1:nc, function(i) {
-      input[[paste0("cb_setup_delete",i)]]
-    })
-    ind_d <- which(res_d==TRUE)
-    if (length(ind_d)>0) {
-      if ("categorical" %in% res_kv[ind_d]) {
-        return(-10) # key variables cannot be deleted!
-      }
-      if ("numerical" %in% res_kv[ind_d]) {
-        return(-10) # key variables cannot be deleted!
-      }
-
-      used_vars <- sort(unique(c(ind_w, ind_h, ind_s, ind_p)))
-      if (length(used_vars)>0) {
-        used_vars <- sort(unique(used_vars))
-        if (length(intersect(used_vars, ind_d)) > 0) {
-          return(-11) # variables used as weights, household_ids, pram or strata cannot not be deleted
-        }
-      }
-    }
+  nV <- get_numVars_names()
+  if (length(nV)>0) {
+    df <- rbind(df, data.frame(Variable=nV, type="numVar"))
   }
-  return(0)
+  wV <- get_weightVar_name()
+  if (length(wV)>0) {
+    df <- rbind(df, data.frame(Variable=wV, type="weightVar"))
+  }
+  sV <- get_strataVar_names()
+  if (length(sV)>0) {
+    df <- rbind(df, data.frame(Variable=sV, type="strataVar"))
+  }
+
+  pV <- get_pramVars_names()
+  if (length(pV)>0) {
+    df <- rbind(df, data.frame(Variable=pV, type="pramVar"))
+  }
+
+  # params
+  res <- obj$sdcObj@options
+  res$randomizeRecords <- as.character(res$randomizeRecords)
+  params <- data.frame(Parameter=c("alpha","RandomSeed","RandomizeOrder"),
+    Value=c(res$alpha,res$seed,res$randomizeRecords))
+  list(df=df, params=params)
 })
-
-
