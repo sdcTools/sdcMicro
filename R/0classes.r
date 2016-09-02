@@ -16,6 +16,7 @@
 #' @import 'shiny'
 #' @import 'rhandsontable'
 #' @import 'ggthemes'
+#' @import 'DT'
 #' @importFrom 'sets' 'set_power'
 #' @importFrom 'rmarkdown' 'render'
 #' @importFrom 'graphics' 'axis'

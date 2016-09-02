@@ -36,7 +36,8 @@ Imports:
     shiny,
     haven,
     ggthemes,
-    rhandsontable
+    rhandsontable,
+    DT
 License: GPL-2
 URL: https://github.com/alexkowa/sdcMicro
 Collate:

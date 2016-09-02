@@ -4,6 +4,7 @@ library(ggthemes)
 library(sdcMicro)
 library(rhandsontable)
 library(haven)
+library(DT)
 # required that 'dQuote()' works nicely when
 # outputting R-Code
 options(useFancyQuotes=FALSE)
