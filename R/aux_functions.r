@@ -111,10 +111,13 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
   randomizeRecords=FALSE, alpha=1) {
 
   obj <- new("sdcMicroObj")
+  options <- list()
   if (!is.null(seed) && is.numeric(seed)) {
     ss <- round(seed)
     set.seed(ss)
-    obj@options$seed <- ss
+    options$seed <- ss
+  } else {
+    options$seed <- NA
   }
 
   if (!is.data.frame(dat)) {
@@ -124,6 +127,7 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
     dat <- dat[sample(1:nrow(dat)),]
     rownames(dat)
   }
+  options$randomizeRecords <- randomizeRecords
   obj <- set.sdcMicroObj(obj, type="origData", input=list(dat))
 
   usedVars <- c(standardizeInput(obj, keyVars),
@@ -224,12 +228,7 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
     sensibleVarInd <- standardizeInput(obj, sensibleVar)
     obj <- set.sdcMicroObj(obj, type="sensibleVar", input=list(sensibleVarInd))
   }
-  if (!is.null(options)) {
-    options$alpha <- alpha
-  } else {
-    options <- list()
-    options$alpha <- alpha
-  }
+  options$alpha <- alpha
   obj <- set.sdcMicroObj(obj, type="options", input=list(options))
 
   obj <- measure_risk(obj)
