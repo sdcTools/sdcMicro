@@ -332,8 +332,14 @@ infodat <- reactive({
 
   # params
   res <- obj$sdcObj@options
-  res$randomizeRecords <- as.character(res$randomizeRecords)
+  #res$randomizeRecords <- as.character(res$randomizeRecords)
   params <- data.frame(Parameter=c("alpha","RandomSeed","RandomizeOrder"),
     Value=c(res$alpha,res$seed,res$randomizeRecords))
+  params$Value <- as.character(params$Value)
+  if (res$randomizeRecords) {
+    params$Value[2] <- "TRUE"
+  } else {
+    params$Value[2] <- "FALSE"
+  }
   list(df=df, params=params)
 })
