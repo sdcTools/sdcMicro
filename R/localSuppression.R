@@ -100,7 +100,7 @@
 #' print(ls)
 #' plot(ls, showTotalSupps=TRUE)
 #' }
-setGeneric("localSuppression", function(obj, k = 2, importance = NULL, combs=NULL, ...) {
+setGeneric("localSuppression", function(obj, k=2, importance=NULL, combs=NULL, ...) {
   standardGeneric("localSuppression")
 })
 
@@ -152,13 +152,13 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
 })
 
 setMethod(f='localSuppression', signature=c("data.frame"),
-definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL) {
+definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=NULL) {
   localSuppressionWORK(x=obj, keyVars=keyVars, k=k, strataVars=strataVars,
     importance=importance, combs=combs)
 })
 
 setMethod(f='localSuppression', signature=c("matrix"),
-definition=function(obj, keyVars, k=2, strataVars=NULL, importance=NULL, combs=NULL) {
+definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=NULL) {
   localSuppressionWORK(x=as.data.frame(obj), keyVars=keyVars, k=k, strataVars=strataVars,
     importance=importance, combs=combs)
 })
@@ -610,12 +610,7 @@ plot.localSuppression <- function(x, ...) {
   p
 }
 
-#' @export
-kAnon <- function(obj, k = 2, importance = NULL, combs=NULL, ...) {
-  localSuppression(obj, k=k, importance=importance, combs=combs, ...)
-}
-
-setGeneric("kAnon", function(obj, k = 2, importance = NULL, combs=NULL, ...) {
+setGeneric("kAnon", function(obj, k=2, importance=NULL, combs=NULL, ...) {
   standardGeneric("kAnon")
 })
 
@@ -625,13 +620,13 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
 })
 
 setMethod(f='kAnon', signature=c("data.frame"),
-definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL) {
+definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=NULL) {
   localSuppression(obj, k=k, keyVars=keyVars, strataVars=strataVars,
     importance=importance, combs=combs)
 })
 
 setMethod(f='kAnon', signature=c("matrix"),
-definition=function(obj, keyVars, k=2, strataVars=NULL, importance=NULL, combs=NULL) {
+definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=NULL) {
   localSuppression(as.data.frame(obj), k=k, keyVars=keyVars, strataVars=strataVars,
     importance=importance, combs=combs)
 })
