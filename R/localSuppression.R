@@ -100,7 +100,7 @@
 #' print(ls)
 #' plot(ls, showTotalSupps=TRUE)
 #' }
-setGeneric("localSuppression", function(obj, k = 2, importance = NULL, combs=NULL, ...) {
+setGeneric("localSuppression", function(obj, k=2, importance=NULL, combs=NULL, ...) {
   standardGeneric("localSuppression")
 })
 
@@ -158,7 +158,7 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
 #' @rdname localSuppression
 #' @export
 setMethod(f='localSuppression', signature=c("data.frame"),
-definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL, alpha=1) {
+definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=NULL, alpha=1) {
   localSuppressionWORK(x=obj, keyVars=keyVars, k=k, strataVars=strataVars,
     importance=importance, combs=combs, alpha=1)
 })
@@ -612,11 +612,11 @@ plot.localSuppression <- function(x, ...) {
 
 #' @rdname localSuppression
 #' @export
-kAnon <- function(obj, k = 2, importance = NULL, combs=NULL, ...) {
+kAnon <- function(obj, k=2, importance=NULL, combs=NULL, ...) {
   localSuppression(obj, k=k, importance=importance, combs=combs, ...)
 }
 
-setGeneric("kAnon", function(obj, k = 2, importance = NULL, combs=NULL, ...) {
+setGeneric("kAnon", function(obj, k=2, importance=NULL, combs=NULL, ...) {
   standardGeneric("kAnon")
 })
 
@@ -630,7 +630,7 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
 #' @rdname localSuppression
 #' @export
 setMethod(f='kAnon', signature=c("data.frame"),
-definition=function(obj, k=2, keyVars, strataVars=NULL, importance=NULL, combs=NULL) {
+definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=NULL, alpha=1) {
   localSuppression(obj, k=k, keyVars=keyVars, strataVars=strataVars,
-    importance=importance, combs=combs)
+    importance=importance, combs=combs, alpha=alpha)
 })
