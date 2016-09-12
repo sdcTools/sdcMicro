@@ -125,7 +125,7 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
   }
   if (randomizeRecords==TRUE) {
     dat <- dat[sample(1:nrow(dat)),]
-    rownames(dat)
+    rownames(dat) <- NULL
   }
   options$randomizeRecords <- randomizeRecords
   obj <- set.sdcMicroObj(obj, type="origData", input=list(dat))
@@ -356,6 +356,8 @@ setMethod(f = "calcRisks", signature = c("sdcMicroObj"), definition = function(o
 #' the unchanged original variables
 #' @param ignoreStrataVar If manipulated StrataVariables should be returned or
 #' the unchanged original variables
+#' @param randomizeRecords (logical) if \code{TRUE}, the order of observations of the output data set
+#' will be randomized.
 #' @return a data frame
 #' @section Methods: \describe{
 #' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
@@ -373,13 +375,13 @@ setMethod(f = "calcRisks", signature = c("sdcMicroObj"), definition = function(o
 #' dataM <- extractManipData(sdc)
 #'
 setGeneric("extractManipData", function(obj, ignoreKeyVars = FALSE, ignorePramVars = FALSE,
-  ignoreNumVars = FALSE, ignoreGhostVars = FALSE, ignoreStrataVar = FALSE) {
+  ignoreNumVars = FALSE, ignoreGhostVars = FALSE, ignoreStrataVar = FALSE, randomizeRecords=FALSE) {
   standardGeneric("extractManipData")
 })
 
 setMethod(f = "extractManipData", signature = c("sdcMicroObj"), definition = function(obj,
   ignoreKeyVars = FALSE, ignorePramVars = FALSE, ignoreNumVars = FALSE,
-  ignoreGhostVars = FALSE, ignoreStrataVar = FALSE) {
+  ignoreGhostVars = FALSE, ignoreStrataVar = FALSE, randomizeRecords=FALSE) {
   o <- get.sdcMicroObj(obj, type="origData")
   k <- get.sdcMicroObj(obj, type="manipKeyVars")
   p <- get.sdcMicroObj(obj, type="manipPramVars")
@@ -401,6 +403,10 @@ setMethod(f = "extractManipData", signature = c("sdcMicroObj"), definition = fun
     for (i in 1:length(colnames(k))) {
       o[, colnames(k)[i]] <- as.factor(o[, colnames(k)[i]])
     }
+  }
+  if (randomizeRecords==TRUE) {
+    o <- o[sample(1:nrow(o)),]
+    rownames(o) <- NULL
   }
   return(o)
 })

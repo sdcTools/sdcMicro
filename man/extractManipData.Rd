@@ -8,7 +8,8 @@
 \title{Remove certain variables from the data set inside a sdc object.}
 \usage{
 extractManipData(obj, ignoreKeyVars = FALSE, ignorePramVars = FALSE,
-  ignoreNumVars = FALSE, ignoreGhostVars = FALSE, ignoreStrataVar = FALSE)
+  ignoreNumVars = FALSE, ignoreGhostVars = FALSE, ignoreStrataVar = FALSE,
+  randomizeRecords = FALSE)
 }
 \arguments{
 \item{obj}{object of class \code{\link{sdcMicroObj-class}}}
@@ -27,6 +28,9 @@ the unchanged original variables}
 
 \item{ignoreStrataVar}{If manipulated StrataVariables should be returned or
 the unchanged original variables}
+
+\item{randomizeRecords}{(logical) if \code{TRUE}, the order of observations of the output data set
+will be randomized.}
 }
 \value{
 a data frame
