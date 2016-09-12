@@ -92,11 +92,17 @@ output$ui_sdcObj_randIds <- renderUI({
 
 ## reset Problem
 output$ui_sdcObj_reset <- renderUI({
-  btn_reset <- myActionButton("btn_reset_sdc",label=("Reset SDC Problem"), "danger")
-  fluidRow(
+  if (obj$reset_sdc1>0) {
+    # show real reset button!
+    btn_reset <- myActionButton("btn_reset_sdc",label=("By clicking, you really delete the current SDC Problem"), "danger")
+  } else {
+    btn_reset <- myActionButton("btn_reset_sdc1",label=("Reset SDC Problem"), "warning")
+  }
+  out <- fluidRow(
     column(12, h4("Reset the existing Problem", align="center")),
     column(12, p("By clicking the button below, you can start from scratch!", align="center")),
     column(12, p(btn_reset, align="center")))
+  out
 })
 
 ## create the sdcMicroObj problem instance
@@ -104,122 +110,126 @@ setup_data <- reactive({
   if (is.null(obj$inputdata)) {
     return(NULL)
   }
+  vars <- allVars()
   df <- data.frame(
-    Name=allVars(),
+    "Variable Name"=vars,
     Type=dataTypes(),
-    useAsKey="do not use variable as key",
-    useAsPram=FALSE,
-    useAsWeight=FALSE,
-    useAsClusterID=FALSE,
-    useAsStrata=FALSE,
-    deleteVariable=FALSE
+    Key=shinyInput(radioButtons, length(vars), 'setup_key_', choices=c("No", "Cat.","Cont."), width="100%"),
+    Pram=shinyInput(checkboxInput, length(vars), 'setup_pram_', value=FALSE, width="100%"),
+    Weight=shinyInput(checkboxInput, length(vars), 'setup_weight_', value=FALSE, width="100%"),
+    "Cluster ID"=shinyInput(checkboxInput, length(vars), 'setup_cluster_', value=FALSE, width="100%"),
+    Strata=shinyInput(checkboxInput, length(vars), 'setup_strata_', value=FALSE, width="100%"),
+    Remove=shinyInput(checkboxInput, length(vars), 'setup_remove_', value=FALSE, width="100%")
   )
   rownames(df) <- NULL
   df
 })
 
-# show the interactive table
-output$setupTable <- renderRHandsontable({
+output$setupTable <- DT::renderDataTable({
   inp <- setup_data()
   if (is.null(inp)) {
     return(NULL)
   }
-  rhandsontable(inp, useTypes=TRUE, contextMenu=FALSE, overflow="visible") %>%
-    hot_col(col="useAsKey", type = "dropdown", source = c("do not use variable as key","categorical","numeric"), halign="center") %>%
-    hot_col(col="Name", readOnly=TRUE) %>%
-    hot_col(col="Type", readOnly=TRUE) %>%
-    hot_col(col="useAsPram", halign="htCenter") %>%
-    hot_col(col="useAsWeight", halign="htCenter") %>%
-    hot_col(col="useAsClusterID", halign="htCenter") %>%
-    hot_col(col="useAsStrata", halign="htCenter") %>%
-    hot_col(col="deleteVariable", halign="htCenter")
-})
+  inp
+}, server = FALSE, escape = FALSE, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed', options = list(
+  searching=FALSE, paging=FALSE, ordering=FALSE, bInfo = FALSE,
+  preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
+  drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
+))
+
 
 # show the setup-button or an error-message
 output$setupbtn <- renderUI({
-  if (is.null(input$setupTable)) {
+  if (is.null(input$setup_key_1)) {
     return(NULL)
   }
-  # checks
-  inp <- hot_to_r(input$setupTable)
+
+  n <- length(allVars())
+  types <- dataTypes()
+  useAsKeys <- shinyValue("setup_key_", n)
+  useAsPram <- shinyValue("setup_pram_", n)
+  useAsWeight <- shinyValue("setup_weight_", n)
+  useAsClusterID <- shinyValue("setup_cluster_", n)
+  deleteVariable <- shinyValue("setup_remove_", n)
+  useAsStrata <- shinyValue("setup_strata_", n)
 
   ## key-variables
   # no categorical key variable
-  if (sum(inp$useAsKey=="categorical")==0) {
+  if (sum(useAsKeys=="Cat.")==0) {
     return(myErrBtn("tmp", label="Error: No categorical key-variables selected"))
   }
   # some selected categorical key-variables are numeric or character
-  ii <- which(inp$useAsKey=="categorical" & inp$Type%in%c("numeric","character"))
+  ii <- which(useAsKeys=="Cat." & types%in%c("numeric","character"))
   if (length(ii)>0) {
     return(myErrBtn("tmp", label="Error: Selected categorical key-variables are of type 'numeric' or 'character'"))
   }
   # some selected numerical key-variables are factor or character
-  ii <- which(inp$useAsKey=="numeric" & inp$Type%in%c("factor","character"))
+  ii <- which(useAsKeys=="Cont." & types%in%c("factor","character"))
   if (length(ii)>0) {
     return(myErrBtn("tmp", label="Error: Selected continous key-variables are of type 'factor' or 'character'"))
   }
 
   ## pram
-  ii <- which(inp$useAsPram)
+  ii <- which(useAsPram)
   if (length(ii)>0) {
     # selected pram vars must not be key-vars
-    if (any(inp$useAsKey[ii] %in% c("categorical","numerical"))) {
+    if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
       return(myErrBtn("tmp", label="Error: Selected pram-variables are also key-variables"))
     }
-    if (any(inp$useAsWeight[ii] == TRUE)) {
+    if (any(useAsWeight[ii] == TRUE)) {
       return(myErrBtn("tmp", label="Error: Selected pram-variable is also the weight variable"))
     }
-    if (any(inp$useAsClusterID[ii] == TRUE)) {
+    if (any(useAsClusterID[ii] == TRUE)) {
       return(myErrBtn("tmp", label="Error: Selected pram-variable is also the cluster-id variable"))
     }
   }
 
   ## weight-variables
-  ii <- which(inp$useAsWeight==TRUE)
+  ii <- which(useAsWeight==TRUE)
   # more than one weight-variable
   if (length(ii)>1) {
     return(myErrBtn("tmp", label="Error: More than one weight-variable selected"))
   }
   if (length(ii)==1) {
     # weights can't be any-key variables
-    if (inp$useAsKey[ii]!="do not use variable as key") {
+    if (useAsKeys[ii]!="No") {
       return(myErrBtn("tmp", label="Error: Weight variable cannot be selected as (numerical) key-variable"))
     }
     # weight-variables must be numeric
-    if (!inp$Type[ii] %in% c("numeric","integer")) {
+    if (!types[ii] %in% c("numeric","integer")) {
       return(myErrBtn("tmp", label="Error: Weight variable must be of type 'numeric' or 'integer'"))
     }
   }
 
   ## cluster-ids
-  ii <- which(inp$useAsClusterID==TRUE)
+  ii <- which(useAsClusterID==TRUE)
   # more than one cluster-ids
   if (length(ii)>1) {
     return(myErrBtn("tmp", label="Error: More than one cluster-id variable selected"))
   }
   if (length(ii)==1) {
     # cluster-ids can't be any-key variables
-    if (inp$useAsKey[ii]!="do not use variable as key") {
+    if (useAsKeys[ii]!="No") {
       return(myErrBtn("tmp", label="Error: Cluster-id variable cannot be selected as key-variable"))
     }
   }
 
   ## delete-variables must not be selected as anything else
-  ii <- which(inp$deleteVariable==TRUE)
+  ii <- which(deleteVariable==TRUE)
   if (length(ii)>0) {
-    if (any(inp$useAsKey[ii] %in% c("categorical","numerical"))) {
+    if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be key-variables"))
     }
-    if (any(inp$useAsPram[ii]==TRUE)) {
+    if (any(useAsPram[ii]==TRUE)) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be pram-variables"))
     }
-    if (any(inp$useAsWeight[ii]==TRUE)) {
+    if (any(useAsWeight[ii]==TRUE)) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the weight-variable"))
     }
-    if (any(inp$useAsClusterID[ii]==TRUE)) {
+    if (any(useAsClusterID[ii]==TRUE)) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the cluster-id variable"))
     }
-    if (any(inp$useAsStrata[ii]==TRUE)) {
+    if (any(useAsStrata[ii]==TRUE)) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be strata-variables"))
     }
   }
@@ -229,21 +239,16 @@ output$setupbtn <- renderUI({
 
 # show additional parameters
 output$setup_moreparams <- renderUI({
-  sl_ranseed <- sliderInput("sl_ranseed", label=h5("Random Seed"), value=input$sl_ranseed, min=-10000, max=10000, step=1, width="100%")
-  help_ranseed <- helpText("Set an initial start-value for the random-seed generator.")
-  rb_randomize <- radioButtons("rb_setup_randomizeorder", label=h5("Randomize Order of Observations"), choices=c("No"=FALSE,"Yes"=TRUE),
-    width="100%", selected=input$rb_setup_randomizeorder, inline=FALSE)
-  help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
   if (is.null(input$sl_alpha)) {
     val_alpha <- 1
   } else {
     val_alpha <- input$sl_alpha
   }
-  sl_alpha <- sliderInput("sl_alpha", label=h5("Parameter 'alpha'"), value=val_alpha, min=0, max=1, step=0.01, width="100%")
+  sl_alpha <- sliderInput("sl_alpha", label=h5("Parameter 'alpha'"), value=val_alpha, min=0, max=1, step=0.01, width="50%")
   help_alpha <- helpText("The higher alpha, the more keys containing missing values will contribute to the calculation of 'fk' and 'Fk'")
-  out <- list(
-    fluidRow(column(4, sl_ranseed), column(4, rb_randomize), column(4, sl_alpha)),
-    fluidRow(column(4, help_ranseed), column(4, help_randomize), column(4, help_alpha)))
+  out <- list(fluidRow(
+    column(12, sl_alpha, align="center"),
+    column(12, help_alpha, align="center")))
   out
 })
 
@@ -255,7 +260,7 @@ output$ui_sdcObj_create1 <- renderUI({
   }
   out <- list(out,
     fluidRow(column(12, h4("Setup an sdc-Problem", align="center"))),
-    fluidRow(column(12, rHandsontableOutput("setupTable", height="100%"))))
+    fluidRow(column(12, DT::dataTableOutput("setupTable", height="100%"))))
   out
 })
 
@@ -268,7 +273,12 @@ output$ui_sdcObj_info <- renderUI({
     if (is.integer(inp) & length(unique(inp))<=10) {
       inp <- as.factor(inp)
     }
-    plot(inp, main=NULL)
+
+    if (is.factor(inp)) {
+      plot(inp, main=NULL)
+    } else {
+      hist(inp, main=NULL)
+    }
   })
   output$ui_setup_summary <- renderPrint({
     if (is.null(input$sel_infov)) {
@@ -293,8 +303,9 @@ output$ui_sdcObj_info <- renderUI({
 })
 
 output$ui_sdcObj_create <- renderUI({
-  fluidRow(
-    column(8, uiOutput("ui_sdcObj_create1"), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
+  out <- fluidRow(
+    column(8, div(style='padding-right : 15px;height: 300px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
     column(4, uiOutput("ui_sdcObj_info"))
   )
+  out
 })

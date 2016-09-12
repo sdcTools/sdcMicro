@@ -234,7 +234,7 @@ possGhostVars <- reactive({
 
 # the (anonymized) dataset that will be written to a file
 exportData <- reactive({
-  extractManipData(obj$sdcObj)
+  extractManipData(obj$sdcObj, randomizeRecords=input$rb_export_randomizeorder)
 })
 
 
@@ -310,6 +310,9 @@ ui_custom_textInput <- function(id, label, placeholder="please enter a text") {
 infodat <- reactive({
   # important variables
   kV <- get_keyVars_names()
+  if (length(kV)==0 ) {
+    return(NULL)
+  }
   df <- data.frame(Variable=kV, type="keyVar")
 
   nV <- get_numVars_names()
@@ -334,12 +337,7 @@ infodat <- reactive({
   res <- obj$sdcObj@options
   #res$randomizeRecords <- as.character(res$randomizeRecords)
   params <- data.frame(Parameter=c("alpha","RandomSeed","RandomizeOrder"),
-    Value=c(res$alpha,res$seed,res$randomizeRecords))
+    Value=c(res$alpha,res$seed,"FALSE"))
   params$Value <- as.character(params$Value)
-  if (res$randomizeRecords) {
-    params$Value[2] <- "TRUE"
-  } else {
-    params$Value[2] <- "FALSE"
-  }
   list(df=df, params=params)
 })

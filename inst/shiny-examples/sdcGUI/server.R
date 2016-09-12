@@ -5,6 +5,23 @@ shinyServer(function(session, input, output) {
     source(file.path("controllers", file), local=TRUE)
   }
 
+  # dynamically generate inputs (currently used in setup-sdcProblem)
+  shinyInput <- function(FUN, len, id, ...) {
+    inputs = character(len)
+    for (i in seq_len(len)) {
+      inputs[i] = as.character(FUN(paste0(id, i), label = NULL, ...))
+    }
+    inputs
+  }
+
+  # obtain the values of inputs
+  shinyValue <- function(id, len) {
+    unlist(lapply(seq_len(len), function(i) {
+      value = input[[paste0(id, i)]]
+      if (is.null(value)) NA else value
+    }))
+  }
+
   # reactive expression, we use this to change the output of output$sdcObj_exists in controllers/ui_setup_sdc.R
   lastWarning <- reactive({
     return(obj$last_warning)
@@ -198,12 +215,17 @@ shinyServer(function(session, input, output) {
     cmd_out$create_strata <- NULL
     cmd_out$setup_sdc <- NULL
 
-    inp <- hot_to_r(input$setupTable)
-    vars <- inp$Name
+    vars <- allVars()
     nc <- length(vars)
-    type <- inp$Type
+    type <- dataTypes()
+    useAsKey <- shinyValue("setup_key_", nc)
+    useAsPram <- shinyValue("setup_pram_", nc)
+    useAsWeight <- shinyValue("setup_weight_", nc)
+    useAsClusterID <- shinyValue("setup_cluster_", nc)
+    deleteVariable <- shinyValue("setup_remove_", nc)
+    useAsStrata <- shinyValue("setup_strata_", nc)
 
-    ind_kv <- which(inp$useAsKey=="categorical")
+    ind_kv <- which(useAsKey=="Cat.")
     kV <- vars[ind_kv]
     ii <- which(type[ind_kv]%in%c("character","integer"))
     if (length(ii)>0) {
@@ -218,7 +240,7 @@ shinyServer(function(session, input, output) {
     }
 
     # sampling weights
-    ind_w <- which(inp$useAsWeight==TRUE)
+    ind_w <- which(useAsWeight==TRUE)
     if (length(ind_w)==1) {
       wV <- vars[ind_w]
     } else {
@@ -226,7 +248,7 @@ shinyServer(function(session, input, output) {
     }
 
     # clusterID
-    ind_h <- which(inp$useAsClusterID==TRUE)
+    ind_h <- which(useAsClusterID==TRUE)
     if (length(ind_h)==1) {
       hhId <- vars[ind_h]
     } else {
@@ -234,7 +256,7 @@ shinyServer(function(session, input, output) {
     }
 
     # pram vars
-    ind_p <- which(inp$useAsPram==TRUE)
+    ind_p <- which(useAsPram==TRUE)
     if (length(ind_p)>0) {
       pV <- vars[ind_p]
     } else {
@@ -242,7 +264,7 @@ shinyServer(function(session, input, output) {
     }
 
     # numeric key variables
-    ind_nv <- which(inp$useAsKey=="numeric")
+    ind_nv <- which(useAsKey=="Cont.")
     if (length(ind_nv)>0) {
       nV <- vars[ind_nv]
     } else {
@@ -250,7 +272,7 @@ shinyServer(function(session, input, output) {
     }
 
     # exclude variables
-    ind_d <- which(inp$deleteVariable==TRUE)
+    ind_d <- which(deleteVariable==TRUE)
     if (length(ind_d)>0) {
       excludeVars <- vars[ind_d]
     } else {
@@ -258,7 +280,7 @@ shinyServer(function(session, input, output) {
     }
 
     # create stratification variable if more than 1 variable is listed!
-    ind_s <- which(inp$useAsStrata==TRUE)
+    ind_s <- which(useAsStrata==TRUE)
     if (length(ind_s)==0) {
       strataVar <- NULL
     } else if (length(ind_s)==1) {
@@ -303,17 +325,10 @@ shinyServer(function(session, input, output) {
     } else {
       cmd <- paste0(cmd, ", \n\texcludeVars=NULL")
     }
-    cmd <- paste0(cmd, ", \n\tseed=",input$sl_ranseed)
-
-    if (input$rb_setup_randomizeorder) {
-      cmd <- paste0(cmd, ", \n\trandomizeRecords=TRUE")
-    } else {
-      cmd <- paste0(cmd, ", \n\trandomizeRecords=FALSE")
-    }
-
+    cmd <- paste0(cmd, ", \n\tseed=",sample(-1000:1000, 1))
+    cmd <- paste0(cmd, ", \n\trandomizeRecords=FALSE")
     cmd <- paste0(cmd, ", \n\talpha=",VecToRStr(input$sl_alpha, quoted=FALSE))
     cmd <- paste0(cmd,")")
-
     cmd_out$setup_sdc <- cmd
     cmd_out
   })
@@ -566,6 +581,9 @@ shinyServer(function(session, input, output) {
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # reset the sdcMicroObj
+  observeEvent(input$btn_reset_sdc1, {
+    obj$reset_sdc1 <- 1
+  })
   observeEvent(input$btn_reset_sdc, {
     ptm <- proc.time()
     obj$sdcObj <- NULL
@@ -573,6 +591,7 @@ shinyServer(function(session, input, output) {
     obj$code_setup <- c()
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    obj$reset_sdc1 <- 0
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })

@@ -283,3 +283,4 @@ obj$transmat <- NULL
 obj$last_warning <- NULL
 obj$last_error <- NULL
 obj$comptime <- 0
+obj$reset_sdc1 <- 0
