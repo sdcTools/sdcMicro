@@ -325,7 +325,7 @@ shinyServer(function(session, input, output) {
     } else {
       cmd <- paste0(cmd, ", \n\texcludeVars=NULL")
     }
-    cmd <- paste0(cmd, ", \n\tseed=",sample(-1000:1000, 1))
+    cmd <- paste0(cmd, ", \n\tseed=",input$sl_seed)
     cmd <- paste0(cmd, ", \n\trandomizeRecords=FALSE")
     cmd <- paste0(cmd, ", \n\talpha=",VecToRStr(input$sl_alpha, quoted=FALSE))
     cmd <- paste0(cmd,")")
