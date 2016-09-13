@@ -3,22 +3,12 @@
 \docType{methods}
 \name{topBotCoding}
 \alias{topBotCoding}
-\alias{topBotCoding,data.frame-method}
-\alias{topBotCoding,numeric-method}
-\alias{topBotCoding,sdcMicroObj-method}
-\alias{topBotCoding-methods}
 \title{Top and Bottom Coding}
 \usage{
 topBotCoding(obj, value, replacement, kind = "top", column = NULL)
-
-\S4method{topBotCoding}{data.frame}(obj, value, replacement, kind = "top",
-  column = column)
-
-\S4method{topBotCoding}{numeric}(obj, value, replacement, kind = "top")
 }
 \arguments{
-\item{obj}{vector or one-dimensional matrix or data.frame or object of class
-\code{\link{sdcMicroObj-class}}}
+\item{obj}{a numeric vector, a \code{data.frame} or a \code{\link{sdcMicroObj-class}}-object}
 
 \item{value}{limit, from where it should be top- or bottom-coded}
 
@@ -41,7 +31,6 @@ Extreme values larger or lower than \code{value} are replaced by a different val
 top-/bottom coding of factors is no longer possible as of sdcMicro >=4.7.0
 }
 \examples{
-
 data(free1)
 res <- topBotCoding(free1[,"DEBTS"], value=9000, replacement=9100, kind="top")
 max(res)
@@ -57,7 +46,6 @@ sdc <- createSdcObj(testdata2, keyVars=c('urbrur','roof','walls','water','electc
            numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- topBotCoding(sdc, value=500000, replacement=1000, column="income")
 testdataout <- extractManipData(sdc)
-
 }
 \author{
 Matthias Templ and Bernhard Meindl

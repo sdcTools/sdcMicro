@@ -3,23 +3,11 @@
 \docType{methods}
 \name{microaggregation}
 \alias{microaggregation}
-\alias{microaggregation,data.frame-method}
-\alias{microaggregation,sdcMicroObj-method}
-\alias{microaggregation-methods}
 \title{Microaggregation}
 \usage{
 microaggregation(obj, variables = NULL, aggr = 3, strata_variables = NULL,
   method = "mdav", weights = NULL, nc = 8, clustermethod = "clara",
   measure = "mean", trim = 0, varsort = 1, transf = "log")
-
-\S4method{microaggregation}{sdcMicroObj}(obj, variables = NULL, aggr = 3,
-  method = "mdav", nc = 8, clustermethod = "clara", measure = "mean",
-  trim = 0, varsort = 1, transf = "log")
-
-\S4method{microaggregation}{data.frame}(obj, variables = NULL, aggr = 3,
-  strata_variables = NULL, method = "mdav", weights = NULL, nc = 8,
-  clustermethod = "clara", measure = "mean", trim = 0, varsort = 1,
-  transf = "log")
 }
 \arguments{
 \item{obj}{either an object of class \code{\link{sdcMicroObj-class}} or a \code{data.frame}}
@@ -117,7 +105,6 @@ benchmark, i.e. replies the question how much better is a sorting of the
 data before aggregation.
 }
 \examples{
-
 data(Tarragona)
 m1 <- microaggregation(Tarragona, method='onedims', aggr=3)
 ## summary(m1)

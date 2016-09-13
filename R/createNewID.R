@@ -3,23 +3,24 @@
 #' This is useful if the record IDs consist, for example, of a geo identifier and the household line number.
 #' This method can be used to create new, random IDs that cannot be reconstructed.
 #'
-#' @param obj an object of class \code{sdcMicroObj}
+#' @param obj an \code{\link{sdcMicroObj-class}}-object
 #' @param newID a character specifiying the desired variable name of the new ID
 #' @param withinVar if not \code{NULL} a character vector specifying a variable (e.g an existing household ID) which
 #' will be used when calculating the new IDs. If specified, the same IDs will be assigned to the same values of the given variable.
 #'
-#' @return an object of class \code{sdcMicroObj} with updated slot \code{origData}
+#' @return an \code{\link{sdcMicroObj-class}}-object with updated slot \code{origData}
 #'
 #' @export
-#' @docType methods
 #' @rdname createNewID
-setGeneric("createNewID", function(obj, newID, withinVar) {
-  standardGeneric("createNewID")
+createNewID <- function(obj, newID, withinVar) {
+  createNewIDX(obj=obj, newID=newID, withinVar=withinVar)
+}
+
+setGeneric("createNewIDX", function(obj, newID, withinVar) {
+  standardGeneric("createNewIDX")
 })
 
-#' @rdname createNewID
-#' @export
-setMethod(f="createNewID", signature=c("sdcMicroObj", "character", "characterOrNULL"),
+setMethod(f="createNewIDX", signature=c("sdcMicroObj", "character", "characterOrNULL"),
 definition=function(obj, newID, withinVar=NULL) {
   tmpOrder <- xx <- NULL
   origData <- get.sdcMicroObj(obj, "origData")

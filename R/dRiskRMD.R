@@ -36,10 +36,8 @@
 #' conclude that this observation is ``save''.
 #'
 #' @name dRiskRMD
-#' @aliases dRiskRMD-methods dRiskRMD,data.frame-method dRiskRMD,matrix-method
-#' dRiskRMD,sdcMicroObj-method dRiskRMD
 #' @docType methods
-#' @param obj original data or object of class \code{\link{sdcMicroObj-class}}
+#' @param obj an \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}
 #' @param ... see possible arguments below
 #' \itemize{
 #' \item{}{xm masked data}
@@ -55,10 +53,6 @@
 #' \item{wrisk2}{RMDID2 measure}
 #' \item{indexRisk1}{index of observations with high risk according to risk1 measure}
 #' \item{indexRisk2}{index of observations with high risk according to wrisk2 measure}
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"data.frame\")")}{}
-#' \item{list("signature(obj = \"matrix\")")}{}
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
 #' @author Matthias Templ
 #' @seealso \code{\link{dRisk}}
 #' @references Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New
@@ -73,7 +67,6 @@
 #' @keywords manip
 #' @export
 #' @examples
-#'
 #' data(Tarragona)
 #' x <- Tarragona[, 5:7]
 #' y <- addNoise(x)$xm
@@ -87,13 +80,15 @@
 #' ## this is already made internally:
 #' ## sdc <- dRiskRMD(sdc)
 #' ## and already stored in sdc
-#'
-setGeneric("dRiskRMD", function(obj, ...) {
-  standardGeneric("dRiskRMD")
+dRiskRMD <- function(obj, ...) {
+  dRiskRMDX(obj=obj, ...)
+}
+setGeneric("dRiskRMDX", function(obj, ...) {
+  standardGeneric("dRiskRMDX")
 })
 
-setMethod(f = "dRiskRMD", signature = c("sdcMicroObj"),
-definition = function(obj, ...) {
+setMethod(f="dRiskRMDX", signature=c("sdcMicroObj"),
+definition=function(obj, ...) {
   numVars <- get.sdcMicroObj(obj, type = "numVars")
   x <- get.sdcMicroObj(obj, type = "origData")[, numVars, drop = F]
   xm <- get.sdcMicroObj(obj, type = "manipNumVars")
@@ -107,11 +102,7 @@ definition = function(obj, ...) {
   obj
 })
 
-setMethod(f = "dRiskRMD", signature = c("data.frame"),
-definition = function(obj, ...) {
-  dRiskRMDWORK(x = obj, ...)
-})
-setMethod(f = "dRiskRMD", signature = c("matrix"),
+setMethod(f="dRiskRMDX", signature=c("data.frame"),
 definition = function(obj, ...) {
   dRiskRMDWORK(x = obj, ...)
 })

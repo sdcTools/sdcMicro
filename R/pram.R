@@ -6,8 +6,6 @@
 #' transition matrix.
 #'
 #' @name pram
-#' @aliases pram-methods pram,data.frame-method
-#' pram,vector-method pram,sdcMicroObj-method pram
 #' @docType methods
 #' @param obj Input data. Allowed input data are objects of class
 #' \code{data.frame}, \code{factor} or \code{\link{sdcMicroObj-class}}.
@@ -39,7 +37,7 @@
 #' @author Alexander Kowarik, Matthias Templ, Bernhard Meindl
 #' @references \url{http://www.gnu.org/software/glpk}
 #'
-#' \url{http://www.ccsr.ac.uk/sars/guide/2001/pram.pdf}
+#' \url{http://goo.gl/sC2qOJ}
 #' @keywords manip
 #' @export
 #' @note Deprecated method 'pram_strata'is no longer available
@@ -127,13 +125,16 @@
 #' print(sdc, type="pram")
 #' # we can also have a look at the transitions
 #' get.sdcMicroObj(sdc, "pram")$transitions
-setGeneric("pram", function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
-  standardGeneric("pram")
+
+pram <- function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
+  pramX(obj=obj, variables=variables, strata_variables=strata_variables, pd=pd, alpha=alpha)
+}
+
+setGeneric("pramX", function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
+  standardGeneric("pramX")
 })
 
-#' @rdname pram
-#' @export
-setMethod(f="pram", signature=c("sdcMicroObj"),
+setMethod(f="pramX", signature=c("sdcMicroObj"),
 definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
   pramVars <- get.sdcMicroObj(obj, type="pramVars")
   if (length(pramVars) == 0 && is.null(variables)) {
@@ -253,10 +254,7 @@ definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.
   obj
 })
 
-
-#' @rdname pram
-#' @export
-setMethod(f="pram", signature=c(obj="data.frame"),
+setMethod(f="pramX", signature=c(obj="data.frame"),
 definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
   levList <- lapply(obj[,variables,drop=FALSE], levels)
   params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
@@ -265,9 +263,7 @@ definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.
   res
 })
 
-#' @rdname pram
-#' @export
-setMethod(f="pram", signature=c(obj="factor"),
+setMethod(f="pramX", signature=c(obj="factor"),
 definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
   if (!is.null(strata_variables)) {
     xx <- data.frame(x=obj, strata=strata_variables, stringsAsFactors=FALSE)

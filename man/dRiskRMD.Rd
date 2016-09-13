@@ -3,16 +3,12 @@
 \docType{methods}
 \name{dRiskRMD}
 \alias{dRiskRMD}
-\alias{dRiskRMD,data.frame-method}
-\alias{dRiskRMD,matrix-method}
-\alias{dRiskRMD,sdcMicroObj-method}
-\alias{dRiskRMD-methods}
 \title{RMD based disclosure risk}
 \usage{
 dRiskRMD(obj, ...)
 }
 \arguments{
-\item{obj}{original data or object of class \code{\link{sdcMicroObj-class}}}
+\item{obj}{an \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}
 
 \item{...}{see possible arguments below
 \itemize{
@@ -69,14 +65,7 @@ RSDID) to such an unsafe observation from the masked data, using Euclidean
 distances.  If more than $m$ points are in such a small interval, we
 conclude that this observation is ``save''.
 }
-\section{Methods}{
- \describe{
-\item{list("signature(obj = \"data.frame\")")}{}
-\item{list("signature(obj = \"matrix\")")}{}
-\item{list("signature(obj = \"sdcMicroObj\")")}{}}
-}
 \examples{
-
 data(Tarragona)
 x <- Tarragona[, 5:7]
 y <- addNoise(x)$xm
@@ -90,7 +79,6 @@ sdc <- createSdcObj(testdata2,
 ## this is already made internally:
 ## sdc <- dRiskRMD(sdc)
 ## and already stored in sdc
-
 }
 \author{
 Matthias Templ

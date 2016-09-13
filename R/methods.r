@@ -1,45 +1,27 @@
-#' @rdname sdcMicroObj-class
+#' get.sdcMicroObj
+#'
+#' extract information from \code{\link{sdcMicroObj-class}}-objects depending on argument \code{type}
+#'
+#' @param object a \code{\link{sdcMicroObj-class}}-object
+#' @param type a character vector of length 1 defining what to calculate|return|modify. Allowed types are are
+#' all slotNames of \code{obj}.
+#' @return a slot of a \code{\link{sdcMicroObj-class}}-object depending on argument \code{type}
 #' @export
-#' @note internal function
-setGeneric("get.sdcMicroObj", function(object, type) {
-  standardGeneric("get.sdcMicroObj")
+#' @examples
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sl <- slotNames(sdc)
+#' res <- sapply(sl, function(x) get.sdcMicroObj(sdc, type=x))
+#' str(res)
+get.sdcMicroObj <- function(object, type) {
+  get.sdcMicroObjX(object=object, type=type)
+}
+setGeneric("get.sdcMicroObjX", function(object, type) {
+  standardGeneric("get.sdcMicroObjX")
 })
-
-#' modify \code{sdcMicroObj}-objects depending on argument \code{type}
-#'
-#' @param type a character vector of length 1 defining what to calculate|return|modify. Allowed types are:}
-#' \itemize{
-#' \item origData: set slot 'origData' of argument \code{object}
-#' @param input a list depending on argument \code{type}.}
-#' \itemize{
-#' \item type==dataOrig: a list containing original microdata
-#'
-#' @return an object of class \code{sdcMicroObj}
-#'
-#' @export
-#' @rdname sdcMicroObj-class
-setGeneric("set.sdcMicroObj", function(object, type, input) {
-  standardGeneric("set.sdcMicroObj")
-})
-
-#' undo last changes to \code{sdcMicroObj}-objects if possible
-#' note that this will only work if the user makes use of the prev slot or uses the sdcMicroObj functions
-#'
-#' @param object an object of class \code{sdcMicroObj}
-#'
-#' @return an object of class \code{sdcMicroObj}
-#'
-#' @export
-#' @docType methods
-#' @rdname sdcMicroObj-class
-setGeneric("undolast", function(object) {
-  standardGeneric("undolast")
-})
-
-#' @aliases get.sdcMicroObj,sdcMicroObj,character-method
-#' @rdname sdcMicroObj-class
-setMethod(f = "get.sdcMicroObj", signature = c("sdcMicroObj", "character"),
-definition = function(object, type) {
+setMethod(f="get.sdcMicroObjX", signature = c("sdcMicroObj", "character"),
+definition=function(object, type) {
   if (!type %in% slotNames(object)) {
     stop("get.sdcMicroObj:: argument 'type' is not valid!\n")
   }
@@ -49,16 +31,62 @@ definition = function(object, type) {
   return(slot(object, type))
 })
 
-#' @aliases set.sdcMicroObj,sdcMicroObj,character,listOrNULL-method
-#' @rdname sdcMicroObj-class
-setMethod(f = "set.sdcMicroObj", signature = c("sdcMicroObj", "character", "listOrNULL"),
-definition = function(object, type, input) {
+#' set.sdcMicroObj
+#'
+#' modify \code{\link{sdcMicroObj-class}}-objects depending on argument \code{type}
+#'
+#' @param object a \code{\link{sdcMicroObj-class}}-object
+#' @param type a character vector of length 1 defining what to calculate|return|modify. Allowed types are listed below
+#' and the slot with the corresponding name will be replaced by the content of \code{input.}
+#' \itemize{
+#' \item \code{origData: }
+#' \item \code{keyVars: }
+#' \item \code{pramVars: }
+#' \item \code{numVars: }
+#' \item \code{weightVar: }
+#' \item \code{hhId: }
+#' \item \code{strataVar: }
+#' \item \code{sensibleVar: }
+#' \item \code{manipPramVars: }
+#' \item \code{manipNumVars: }
+#' \item \code{manipGhostVars: }
+#' \item \code{manipStrataVar: }
+#' \item \code{risk: }
+#' \item \code{utility: }
+#' \item \code{pram: }
+#' \item \code{localSuppression: }
+#' \item \code{options: }
+#' \item \code{prev: }
+#' \item \code{set: }
+#' \item \code{additionalResults: }
+#' \item \code{deletedVars: }}
+#' @param input a list depending on argument \code{type}. The content of the list must
+#' match the allowed data-type of the slot in the \code{\link{sdcMicroObj-class}}-object
+#' that should be replaced.
+#' @return a \code{\link{sdcMicroObj-class}}-object
+#' @export
+#' @examples
+#' sdc <- createSdcObj(testdata2,
+#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' ind_pram <- match(c("sex"), colnames(testdata2))
+#' get.sdcMicroObj(sdc, type="pramVars")
+#' sdc <- set.sdcMicroObj(sdc, type="pramVars", input=list(ind_pram))
+#' get.sdcMicroObj(sdc, type="pramVars")
+set.sdcMicroObj <- function(object, type, input) {
+  set.sdcMicroObjX(object=object, type=type, input=input)
+}
+
+setGeneric("set.sdcMicroObjX", function(object, type, input) {
+  standardGeneric("set.sdcMicroObjX")
+})
+setMethod(f="set.sdcMicroObjX", signature=c("sdcMicroObj", "character", "listOrNULL"),
+definition=function(object, type, input) {
   if (!type %in% c("origData", "keyVars", "pramVars", "numVars", "ghostVars", "weightVar", "hhId", "strataVar",
     "sensibleVar", "manipPramVars", "manipKeyVars", "manipNumVars", "manipGhostVars", "manipStrataVar", "risk",
     "utility", "pram", "localSuppression", "options", "prev", "set", "additionalResults", "deletedVars")) {
     stop("set.sdcMicroObj:: check argument 'type'!\n")
   }
-
   if (type == "origData")
     object@origData <- input[[1]]
   if (type == "keyVars")
@@ -113,6 +141,32 @@ definition = function(object, type, input) {
   return(object)
 })
 
+#' undo last changes to \code{sdcMicroObj}-objects if possible
+#' note that this will only work if the user makes use of the prev slot or uses the sdcMicroObj functions
+#'
+#' @param object a \code{\link{sdcMicroObj-class}} object
+#'
+#' @return a \code{\link{sdcMicroObj-class}} object
+#' @export
+#' @docType methods
+#' @rdname sdcMicroObj-class
+undolast <- function(object) {
+  undolastX(object=object)
+}
+
+setGeneric("undolastX", function(object) {
+  standardGeneric("undolastX")
+})
+setMethod(f="undolastX", signature=c("sdcMicroObj"), definition=function(object) {
+  if (is.null(object@prev)) {
+    warnMsg <- "Can not undo. No previous state stored. (The input object is returned).\n"
+    object <- addWarning(object, warnMsg=warnMsg, method="undolast", variable=NA)
+    warning(warnMsg)
+    return(object)
+  }
+  return(object@prev)
+})
+
 setGeneric("calc.sdcMicroObj", function(object, type, ...) {
   standardGeneric("calc.sdcMicroObj")
 })
@@ -136,19 +190,6 @@ definition = function(object, type, ...) {
     return(length(which(fk <= k)))
   }
 })
-
-#' @rdname sdcMicroObj-class
-setMethod(f = "undolast", signature = c("sdcMicroObj"),
-definition = function(object) {
-  if (is.null(object@prev)) {
-    warnMsg <- "Can not undo. No previous state stored. (The input object is returned).\n"
-    object <- addWarning(object, warnMsg=warnMsg, method="undolast", variable=NA)
-    warning(warnMsg)
-    return(object)
-  }
-  return(object@prev)
-})
-
 
 #' \code{strataVar<-} allows to modify the variable which is used if anonymization limitation
 #' techniques are applied independent for each characteristic of the defined strata.

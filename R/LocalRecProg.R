@@ -8,12 +8,9 @@
 #' Variables. To achieve bigger category sizes (k-anoymity), one can form new
 #' categories based on the recoding result and repeatedly apply this algorithm.
 #'
-#'
 #' @name LocalRecProg
-#' @aliases LocalRecProg-methods LocalRecProg,data.frame-method
-#' LocalRecProg,matrix-method LocalRecProg,sdcMicroObj-method LocalRecProg
 #' @docType methods
-#' @param obj Input data or object of class sdcMicroObj
+#' @param obj a \code{data.frame} or a \code{\link{sdcMicroObj-class}}-object
 #' @param ancestors Names of ancestors of the cateorical variables
 #' @param ancestor_setting For each ancestor the corresponding categorical variable
 #' @param k_level Level for k-anonymity
@@ -29,14 +26,13 @@
 #' @return dataframe with original variables and the supressed variables
 #' (suffix _lr). / the modified \code{\link{sdcMicroObj-class}}
 #' @section Methods: \describe{
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' \item{list("signature(obj=\"sdcMicroObj\")")}{}}
 #' @author Alexander Kowarik, Bernd Prantner, IHSN C++ source, Akimichi Takemura
 #' @references
-#' \url{http://www.stat.t.u-tokyo.ac.jp/~takemura/papers/localrec.pdf}
+#' \url{http://goo.gl/D9QAfa}
 #' @keywords manip
 #' @export
 #' @examples
-#'
 #' # LocalRecProg
 #' data(testdata2)
 #' r1=LocalRecProg(testdata2,
@@ -58,68 +54,64 @@
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- LocalRecProg(sdc)
-#'
-setGeneric("LocalRecProg", function(obj, ancestors = NULL, ancestor_setting = NULL, k_level = 2,
-  FindLowestK = TRUE, weight = NULL, lowMemory = FALSE, missingValue = NA, ...) {
-  standardGeneric("LocalRecProg")
+LocalRecProg <- function(obj, ancestors=NULL, ancestor_setting=NULL, k_level=2,
+  FindLowestK=TRUE, weight=NULL, lowMemory=FALSE, missingValue=NA, ...) {
+  LocalRecProgX(obj=obj, ancestors=ancestors, ancestor_setting=ancestor_setting, k_level=k_level,
+    FindLowestK=FindLowestK, weight=weight, lowMemory=lowMemory, missingValue=missingValue, ...)
+}
+
+setGeneric("LocalRecProgX", function(obj, ancestors=NULL, ancestor_setting=NULL, k_level=2,
+  FindLowestK=TRUE, weight=NULL, lowMemory=FALSE, missingValue=NA, ...) {
+  standardGeneric("LocalRecProgX")
 })
 
-setMethod(f = "LocalRecProg", signature = c("sdcMicroObj"),
-definition = function(obj, ancestors = NULL, ancestor_setting = NULL, k_level = 2,
-  FindLowestK = TRUE, weight = NULL, lowMemory = FALSE, missingValue = NA, ...) {
+setMethod(f="LocalRecProgX", signature=c("sdcMicroObj"),
+definition=function(obj, ancestors=NULL, ancestor_setting=NULL, k_level=2,
+  FindLowestK=TRUE, weight=NULL, lowMemory=FALSE, missingValue=NA, ...) {
 
-  keyVars <- get.sdcMicroObj(obj, type = "manipKeyVars")
+  keyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
   manipData <- keyVars
   keyVarIndices <- colnames(manipData)
-  numVars <- get.sdcMicroObj(obj, type = "manipNumVars")
+  numVars <- get.sdcMicroObj(obj, type="manipNumVars")
   if (!is.null(numVars)) {
     manipData <- cbind(manipData, numVars)
     numVarIndices <- colnames(numVars)
   } else numVarIndices <- NULL
-  kVlr <- paste(colnames(manipData), "_lr", sep = "")
+  kVlr <- paste(colnames(manipData), "_lr", sep="")
   kV <- colnames(manipData)
   if (!is.null(ancestors)) {
     if (!all(ancestors %in% colnames(manipData))) {
-      origData <- get.sdcMicroObj(obj, type = "origData")
+      origData <- get.sdcMicroObj(obj, type="origData")
       manipData <- cbind(manipData, origData[, ancestors[!ancestors %in% colnames(manipData)]])
     }
   }
-  res <- LocalRecProgWORK(manipData, keyVarIndices, numerical = numVarIndices, ancestors = ancestors,
-    ancestor_setting = ancestor_setting, k_level = k_level, FindLowestK = FindLowestK,
-    weight = weight, lowMemory = lowMemory, missingValue = missingValue)
+  res <- LocalRecProgWORK(manipData, keyVarIndices, numerical=numVarIndices, ancestors=ancestors,
+    ancestor_setting=ancestor_setting, k_level=k_level, FindLowestK=FindLowestK,
+    weight=weight, lowMemory=lowMemory, missingValue=missingValue)
 
   newData <- res[, kVlr]
   colnames(newData) <- kV
   obj <- nextSdcObj(obj)
-  obj <- set.sdcMicroObj(obj, type = "manipKeyVars", input = list(newData[, keyVarIndices]))
+  obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(newData[, keyVarIndices]))
   if (!is.null(numVarIndices)) {
-    obj <- set.sdcMicroObj(obj, type = "manipNumVars", input = list(newData[, numVarIndices]))
+    obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(newData[, numVarIndices]))
   }
   obj <- calcRisks(obj)
   obj
 })
 
-setMethod(f = "LocalRecProg", signature = c("data.frame"),
-definition = function(obj, ancestors = NULL, ancestor_setting = NULL, k_level = 2,
-  FindLowestK = TRUE, weight = NULL, lowMemory = FALSE, missingValue = NA, categorical, numerical = NULL) {
+setMethod(f="LocalRecProgX", signature=c("data.frame"),
+definition=function(obj, ancestors=NULL, ancestor_setting=NULL, k_level=2,
+  FindLowestK=TRUE, weight=NULL, lowMemory=FALSE, missingValue=NA, categorical, numerical=NULL) {
 
-  LocalRecProgWORK(data = obj, categorical = categorical, numerical = numerical, ancestors = ancestors,
-    ancestor_setting = ancestor_setting, k_level = k_level, FindLowestK = FindLowestK,
-    weight = weight, lowMemory = lowMemory, missingValue = missingValue)
+  LocalRecProgWORK(data=obj, categorical=categorical, numerical=numerical, ancestors=ancestors,
+    ancestor_setting=ancestor_setting, k_level=k_level, FindLowestK=FindLowestK,
+    weight=weight, lowMemory=lowMemory, missingValue=missingValue)
 })
 
-setMethod(f = "LocalRecProg", signature = c("matrix"),
-definition = function(obj, ancestors = NULL, ancestor_setting = NULL, k_level = 2,
-  FindLowestK = TRUE, weight = NULL, lowMemory = FALSE, missingValue = NA, categorical, numerical = NULL) {
-
-  LocalRecProgWORK(data = obj, categorical = categorical, numerical = numerical, ancestors = ancestors,
-    ancestor_setting = ancestor_setting, k_level = k_level, FindLowestK = FindLowestK,
-    weight = weight, lowMemory = lowMemory, missingValue = missingValue)
-})
-
-LocalRecProgWORK <- function(data, categorical, numerical = NULL, ancestors = NULL, ancestor_setting = NULL,
-  k_level = 2, FindLowestK = TRUE, weight = NULL, lowMemory = FALSE, missingValue = NA) {
-  range = TRUE
+LocalRecProgWORK <- function(data, categorical, numerical=NULL, ancestors=NULL, ancestor_setting=NULL,
+  k_level=2, FindLowestK=TRUE, weight=NULL, lowMemory=FALSE, missingValue=NA) {
+  range=TRUE
   if (!is.null(ancestors) && !is.null(ancestor_setting)) {
     s1 <- which(categorical %in% ancestor_setting) - 1
     s2 <- c()
@@ -138,10 +130,10 @@ LocalRecProgWORK <- function(data, categorical, numerical = NULL, ancestors = NU
     stop("Length of weights must equal number of categorical variables plus number of numerical variables!\n")
   weight <- cbind(weight, c(rep(1, length(categorical)), rep(0, length(numerical))))
 
-  dataX <- as.matrix(data[, c(categorical, numerical, ancestors), drop = FALSE])
+  dataX <- as.matrix(data[, c(categorical, numerical, ancestors), drop=FALSE])
 
   res <- .Call("LocalRecProg", dataX, k_level, FindLowestK, ancestor_settings, weight, range,
     FALSE, lowMemory, missingValue)
-  colnames(res$Res) <- paste(c(categorical, numerical), "_lr", sep = "")
+  colnames(res$Res) <- paste(c(categorical, numerical), "_lr", sep="")
   cbind(data[, c(categorical, numerical)], res$Res)
 }

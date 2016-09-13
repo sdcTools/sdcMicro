@@ -3,23 +3,10 @@
 \docType{methods}
 \name{shuffle}
 \alias{shuffle}
-\alias{shuffle,data.frame-method}
-\alias{shuffle,matrix-method}
-\alias{shuffle,sdcMicroObj-method}
-\alias{shuffle-methods}
 \title{Shuffling and EGADP}
 \usage{
 shuffle(obj, form, method = "ds", weights = NULL, covmethod = "spearman",
   regmethod = "lm", gadp = TRUE)
-
-\S4method{shuffle}{sdcMicroObj}(obj, form, method = "ds", weights = NULL,
-  covmethod = "spearman", regmethod = "lm", gadp = TRUE)
-
-\S4method{shuffle}{data.frame}(obj, form, method = "ds", weights = NULL,
-  covmethod = "spearman", regmethod = "lm", gadp = TRUE)
-
-\S4method{shuffle}{matrix}(obj, form, method = "ds", weights = NULL,
-  covmethod = "spearman", regmethod = "lm", gadp = TRUE)
 }
 \arguments{
 \item{obj}{An object of class sdcMicroObj or a data.frame including the
@@ -84,7 +71,6 @@ covariance and correlation estimations in the whole gadp and shuffling
 function.
 }
 \examples{
-
 data(Prestige,package="car")
 form <- formula(income + education ~ women + prestige + type, data=Prestige)
 sh <- shuffle(obj=Prestige,form)
@@ -102,7 +88,6 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- shuffle(sdc, method=c('ds'),regmethod= c('lm'), covmethod=c('spearman'),
 		form=savings+expend ~ urbrur+walls)
-
 }
 \author{
 Matthias Templ, Alexander Kowarik, Bernhard Meindl

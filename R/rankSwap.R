@@ -13,10 +13,8 @@
 #' positive).
 #'
 #' @name rankSwap
-#' @aliases rankSwap-methods rankSwap,data.frame-method rankSwap,matrix-method
-#' rankSwap,sdcMicroObj-method rankSwap
 #' @docType methods
-#' @param obj object of class sdcMicroObj or matrix or data frame
+#' @param obj a \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}
 #' @param variables names or index of variables for that rank swapping is
 #' applied.  For an object of class \code{\link{sdcMicroObj-class}}, all numeric key variables are
 #' selected if variables=NULL.
@@ -68,14 +66,15 @@
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- rankSwap(sdc)
-setGeneric("rankSwap", function(obj, variables=NULL, TopPercent=5, BottomPercent=5,
+rankSwap <- function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=-1, R0=0.95, P=0, missing=NA, seed=NULL) {
+  rankSwapX(obj=obj, variables=variables, TopPercent=TopPercent, BottomPercent=BottomPercent, K0=K0, R0=R0, P=P, missing=missing, seed=seed)
+}
+setGeneric("rankSwapX", function(obj, variables=NULL, TopPercent=5, BottomPercent=5,
   K0=-1, R0=0.95, P=0, missing=NA, seed=NULL) {
-  standardGeneric("rankSwap")
+  standardGeneric("rankSwapX")
 })
 
-#' @rdname rankSwap
-#' @export
-setMethod(f="rankSwap", signature=c("sdcMicroObj"),
+setMethod(f="rankSwapX", signature=c("sdcMicroObj"),
 definition=function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=-1,
   R0=0.95, P=0, missing=NA, seed=NULL) {
 
@@ -95,9 +94,7 @@ definition=function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=-1,
   obj
 })
 
-#' @rdname rankSwap
-#' @export
-setMethod(f="rankSwap", signature=c("data.frame"),
+setMethod(f="rankSwapX", signature=c("data.frame"),
 definition=function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=-1,
   R0=0.95, P=0, missing=NA, seed=NULL) {
 

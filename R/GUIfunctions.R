@@ -3,7 +3,6 @@
 #' For strata defined by multiple variables (e.g. sex,age,country) one combined
 #' variable is generated.
 #'
-#'
 #' @param df a data.frame
 #' @param stratavars character vector with variable name
 #' @param name name of the newly generated variable
@@ -19,9 +18,9 @@
 generateStrata <- function(df, stratavars, name) {
   strata <- rep("", nrow(df))
   for (i in seq_along(stratavars)) {
-    strata <- paste(strata, df[, stratavars[i]], sep = "")
+    strata <- paste(strata, df[, stratavars[i]], sep="")
     if (length(stratavars) > i) {
-      strata <- paste(strata, "-", sep = "")
+      strata <- paste(strata, "-", sep="")
     }
   }
   df <- cbind(df, strata)
@@ -36,31 +35,29 @@ generateStrata <- function(df, stratavars, name) {
 #'
 #'
 #' @name removeDirectID
-#' @aliases removeDirectID removeDirectID-methods
-#' removeDirectID,sdcMicroObj-method
 #' @docType methods
 #' @param obj object of class \code{\link{sdcMicroObj-class}}
 #' @param var name of the variable(s) to be remove
 #' @return the modified \code{\link{sdcMicroObj-class}}
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
 #' @author Alexander Kowarik
 #' @keywords methods
 #' @export
 #' @examples
-#'
 #' ## for objects of class sdcMicro:
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata, keyVars=c('urbrur','roof'),
 #'  numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- removeDirectID(sdc, var="age")
-#'
-setGeneric("removeDirectID", function(obj, var) {
-  standardGeneric("removeDirectID")
+removeDirectID <- function(obj, var) {
+  removeDirectIDX(obj=obj, var=var)
+}
+
+setGeneric("removeDirectIDX", function(obj, var) {
+  standardGeneric("removeDirectIDX")
 })
 
-setMethod(f = "removeDirectID", signature = c("sdcMicroObj"),
-definition = function(obj, var) {
+setMethod(f="removeDirectIDX", signature=c("sdcMicroObj"),
+definition=function(obj, var) {
   kV <- colnames(obj@origData)[get.sdcMicroObj(obj, "keyVars")]
   nV <- colnames(obj@origData)[get.sdcMicroObj(obj, "numVars")]
   wV <- colnames(obj@origData)[get.sdcMicroObj(obj, "weightVar")]
@@ -81,7 +78,7 @@ definition = function(obj, var) {
   o <- obj@origData
   if (any(!var %in% colnames(o)))
     stop("direct identifier variable not found on data set")
-  o <- o[, !colnames(o) %in% var, drop = FALSE]
+  o <- o[, !colnames(o) %in% var, drop=FALSE]
   obj <- nextSdcObj(obj)
   obj@deletedVars <- c(obj@deletedVars, var)
   obj@origData <- o
@@ -93,20 +90,14 @@ definition = function(obj, var) {
 #'
 #' Change the scale of a variable
 #'
-#'
 #' @name varToFactor
-#' @aliases varToFactor varToNumeric varToFactor-methods varToNumeric-methods
-#' varToFactor,sdcMicroObj-method varToNumeric,sdcMicroObj-method
 #' @docType methods
 #' @param obj object of class \code{\link{sdcMicroObj-class}}
 #' @param var name of the keyVariable to change
 #' @return the modified \code{\link{sdcMicroObj-class}}
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
 #' @keywords methods
 #' @export
 #' @examples
-#'
 #' ## for objects of class sdcMicro:
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata2,
@@ -114,14 +105,15 @@ definition = function(obj, var) {
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- varToFactor(sdc, var="urbrur")
 #'
-setGeneric("varToFactor", function(obj, var) {
-  standardGeneric("varToFactor")
+varToFactor <- function(obj, var) {
+  varToFactorX(obj=obj, var=var)
+}
+setGeneric("varToFactorX", function(obj, var) {
+  standardGeneric("varToFactorX")
 })
 
-#' @rdname varToFactor
-#' @export
-setMethod(f = "varToFactor", signature = c("sdcMicroObj"),
-definition = function(obj, var) {
+setMethod(f="varToFactorX", signature=c("sdcMicroObj"),
+definition=function(obj, var) {
   x <- get.sdcMicroObj(obj, type="manipKeyVars")
   x2 <- varToFactor(x, var=var)
   obj <- nextSdcObj(obj)
@@ -129,9 +121,7 @@ definition = function(obj, var) {
   obj
 })
 
-#' @rdname varToFactor
-#' @export
-setMethod(f="varToFactor", signature=c("data.frame"),
+setMethod(f="varToFactorX", signature=c("data.frame"),
 definition=function(obj, var) {
   if ( length(var)!=1) {
     stop("More than 1 variable specified in 'var'!\n")
@@ -144,21 +134,26 @@ definition=function(obj, var) {
   obj
 })
 
+
 #' @export
-setGeneric("varToNumeric", function(obj, var) {
-  standardGeneric("varToNumeric")
+#' @rdname varToFactor
+varToNumeric <- function(obj, var) {
+  varToNumericX(obj=obj, var=var)
+}
+
+setGeneric("varToNumericX", function(obj, var) {
+  standardGeneric("varToNumericX")
 })
 
-setMethod(f = "varToNumeric", signature = c("sdcMicroObj"),
-definition = function(obj, var) {
-  x <- get.sdcMicroObj(obj, type = "manipKeyVars")
+setMethod(f="varToNumericX", signature=c("sdcMicroObj"),
+definition=function(obj, var) {
+  x <- get.sdcMicroObj(obj, type="manipKeyVars")
   obj <- nextSdcObj(obj)
   suppressWarnings(tmpvar <- as.numeric(as.character(x[, var])))
   x[, var] <- tmpvar
-  obj <- set.sdcMicroObj(obj, type = "manipKeyVars", input = list(as.data.frame(x)))
+  obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(as.data.frame(x)))
   obj
 })
-
 
 #' Join levels of a variables in an object of class
 #' \code{\link{sdcMicroObj-class}} or \code{factor} or \code{data.frame}
@@ -174,22 +169,12 @@ definition = function(obj, var) {
 #' levels.
 #'
 #' @name groupAndRename
-#' @aliases groupAndRename groupAndRename,data.frame-method,
-#' groupAndRename,factor-method,groupAndRename,sdcMicroObj-method
 #' @docType methods
 #' @param obj object of class \code{\link{sdcMicroObj-class}}
 #' @param var name of the keyVariable to change
 #' @param before vector of levels before recoding
 #' @param after vector of levels after recoding
 #' @return the modified \code{\link{sdcMicroObj-class}}
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{
-#' This method transform a factor variable with some levels into a new factor
-#' variable with less levels. The user must make sure that all levels of the
-#' original variable are listed in argument 'before' and that the number of
-#' elements in argument 'after' (the new levels) have the same length. This
-#' means that there should be a one to one mapping from any level of the
-#' original factor to a level in the recoded variable. } }
 #' @keywords methods
 #' @author Bernhard Meindl
 #' @export
@@ -201,13 +186,15 @@ definition = function(obj, var) {
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- groupAndRename(sdc, var="urbrur", before=c("1","2"), after=c("1"))
-setGeneric("groupAndRename", function(obj, var, before, after) {
-  standardGeneric("groupAndRename")
+groupAndRename <- function(obj, var, before, after) {
+  groupAndRenameX(obj=obj, var=var, before=before, after=after)
+}
+
+setGeneric("groupAndRenameX", function(obj, var, before, after) {
+  standardGeneric("groupAndRenameX")
 })
 
-#' @rdname groupAndRename
-#' @export
-setMethod(f="groupAndRename", signature=c("factor"),
+setMethod(f="groupAndRenameX", signature=c("factor"),
 definition=function(obj, var, before, after) {
   if (!all(before %in% levels(obj))) {
     stop("some elements of 'before' are not valid levels in variable 'var'!\n")
@@ -221,9 +208,7 @@ definition=function(obj, var, before, after) {
   obj
 })
 
-#' @rdname groupAndRename
-#' @export
-setMethod(f="groupAndRename", signature=c("data.frame"),
+setMethod(f="groupAndRenameX", signature=c("data.frame"),
 definition=function(obj, var, before, after) {
   if (length(var) != 1) {
     stop("length of input 'var' != 1!\n")
@@ -239,9 +224,7 @@ definition=function(obj, var, before, after) {
   obj
 })
 
-#' @rdname groupAndRename
-#' @export
-setMethod(f="groupAndRename", signature=c("sdcMicroObj"),
+setMethod(f="groupAndRenameX", signature=c("sdcMicroObj"),
 definition=function(obj, var, before, after) {
   x <- get.sdcMicroObj(obj, type="manipKeyVars")
   x <- groupAndRename(x, var=var, before=before, after=after)

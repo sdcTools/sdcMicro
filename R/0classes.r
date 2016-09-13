@@ -315,11 +315,8 @@ setClassUnion("sdcmicroOrNULL", c("NULL"))
 #' Class to save all information about the SDC process
 #'
 #' @name sdcMicroObj-class
-#' @aliases sdcMicroObj-class get.sdcMicroObj nextSdcObj set.sdcMicroObj
-#' undolast get.sdcMicroObj,sdcMicroObj,character-method
-#' set.sdcMicroObj,sdcMicroObj,character,listOrNULL-method
-#' undolast,sdcMicroObj-method show show,sdcMicroObj-method
-#' nextSdcObj,sdcMicroObj-method, createSdcObj
+#' @aliases sdcMicroObj-class
+#' createSdcObj
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new("sdcMicroObj", ...)}.

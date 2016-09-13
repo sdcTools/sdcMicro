@@ -3,10 +3,6 @@
 \docType{methods}
 \name{modRisk}
 \alias{modRisk}
-\alias{modRisk,data.frame-method}
-\alias{modRisk,matrix-method}
-\alias{modRisk,sdcMicroObj-method}
-\alias{modRisk-methods}
 \title{Global risk using log-linear models.}
 \usage{
 modRisk(obj, method = "default", weights, formulaM, bound = Inf, ...)
@@ -64,7 +60,6 @@ fit the frequency counts. The obtained parameters are used to estimate a
 global risk, defined in Skinner and Holmes (1998).
 }
 \examples{
-
 ## data.frame method
 data(testdata2)
 form <- ~sex+water+roof
@@ -82,7 +77,6 @@ sdc <- createSdcObj(testdata2,
  numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- modRisk(sdc,form=~sex+water+roof)
 slot(sdc, "risk")$model
-
 }
 \author{
 Matthias Templ, Marius Totter, Bernhard Meindl

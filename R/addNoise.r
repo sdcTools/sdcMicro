@@ -19,10 +19,7 @@
 #' calculated by the MCD estimator.
 #'
 #' @name addNoise
-#' @aliases addNoise addNoise-methods addNoise,data.frame-method
-#' addNoise,sdcMicroObj-method
-#' @docType methods
-#' @param obj either a data frame, matrix or a \code{\link{sdcMicroObj-class}} that should be perturbed
+#' @param obj either a \code{data.frame} or a \code{\link{sdcMicroObj-class}} that should be perturbed
 #' @param variables vector with names of variables that should be perturbed
 #' @param noise amount of noise (in percentages)
 #' @param method choose between \sQuote{additive}, \sQuote{correlated},
@@ -86,14 +83,16 @@
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- addNoise(sdc)
-#'
-setGeneric("addNoise", function(obj, variables=NULL, noise=150, method="additive", ...) {
-  standardGeneric("addNoise")
+
+addNoise <- function(obj, variables=NULL, noise=150, method="additive", ...) {
+  addNoiseX(obj=obj, variables=variables, noise=noise, method=method, ...)
+}
+
+setGeneric("addNoiseX", function(obj, variables=NULL, noise=150, method="additive", ...) {
+  standardGeneric("addNoiseX")
 })
 
-#' @rdname addNoise
-#' @export
-setMethod(f="addNoise", signature=c("sdcMicroObj"),
+setMethod(f="addNoiseX", signature=c("sdcMicroObj"),
 definition=function(obj, variables, noise=150, method="additive", ...) {
   x <- get.sdcMicroObj(obj, type="manipNumVars")
   if (missing(variables) | is.null(variables)) {
@@ -116,9 +115,7 @@ definition=function(obj, variables, noise=150, method="additive", ...) {
   obj
 })
 
-#' @rdname addNoise
-#' @export
-setMethod(f="addNoise", signature=c("data.frame"),
+setMethod(f="addNoiseX", signature=c("data.frame"),
 definition=function(obj, variables, noise=150, method="additive", ...) {
   if (missing(variables)|is.null(variables)) {
     variables <- 1:ncol(obj)

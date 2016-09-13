@@ -3,19 +3,14 @@
 \docType{methods}
 \name{LLmodGlobalRisk}
 \alias{LLmodGlobalRisk}
-\alias{LLmodGlobalRisk,ANY-method}
-\alias{LLmodGlobalRisk,data.frame-method}
-\alias{LLmodGlobalRisk,matrix-method}
-\alias{LLmodGlobalRisk,sdcMicroObj-method}
-\alias{LLmodGlobalRisk-methods}
 \title{Global risk using log-linear models.}
 \usage{
 LLmodGlobalRisk(obj, method = "IPF", inclProb = NULL, form = NULL,
   modOutput = FALSE)
 }
 \arguments{
-\item{obj}{An object of class sdcMicroObj or a numeric matrix or data frame
-containing the categorical key variables.}
+\item{obj}{\code{\link{sdcMicroObj-class}}-object or a \code{data.frame} containing
+the categorical key variables.}
 
 \item{method}{At this time, only iterative proportional fitting
 (\dQuote{IPF}) can be used.}

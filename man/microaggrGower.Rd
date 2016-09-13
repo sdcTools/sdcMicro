@@ -4,9 +4,6 @@
 \name{sampleCat}
 \alias{maxCat}
 \alias{microaggrGower}
-\alias{microaggrGower,data.frame-method}
-\alias{microaggrGower,sdcMicroObj-method}
-\alias{microaggrGower-methods}
 \alias{sampleCat}
 \title{Microaggregation for numerical and categorical key variables based on a
 distance similar to the GOWER DISTANCE}
@@ -22,7 +19,7 @@ microaggrGower(obj, variables = NULL, aggr = 3, dist_var = NULL,
 \arguments{
 \item{x}{a factor vector}
 
-\item{obj}{an object of class sdcMicroObj or a data frame}
+\item{obj}{\code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}
 
 \item{variables}{character vector with names of variables to be aggregated
 (Default for sdcMicroObj is all keyVariables and all numeric key variables)}
@@ -85,7 +82,6 @@ sdc <- createSdcObj(testdata,
   numVars=c('expend','income','savings'), w='sampling_weight')
 
 sdc <- microaggrGower(sdc)
-
 }
 \author{
 Alexander Kowarik

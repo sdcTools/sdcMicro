@@ -6,7 +6,6 @@
 #' keyVar) are suppressed.
 #'
 #' @name localSupp
-#' @aliases localSupp-methods localSupp,ANY-method localSupp,sdcMicroObj-method localSupp
 #' @docType methods
 #' @param obj object of class \code{\link{freqCalc}} or \code{\link{sdcMicroObj-class}}.
 #' @param threshold threshold for individual risk
@@ -49,13 +48,15 @@
 #' sdc <- localSupp(sdc, keyVar='urbrur', threshold=0.045)
 #' print(sdc, type="ls")
 #'
-setGeneric("localSupp", function(obj, threshold = 0.15, keyVar) {
-  standardGeneric("localSupp")
+localSupp <- function(obj, threshold=0.15, keyVar) {
+  localSuppX(obj=obj, threshold=threshold, keyVar=keyVar)
+}
+
+setGeneric("localSuppX", function(obj, threshold = 0.15, keyVar) {
+  standardGeneric("localSuppX")
 })
 
-#' @rdname localSupp
-#' @export
-setMethod(f="localSupp", signature=c(obj="sdcMicroObj"),
+setMethod(f="localSuppX", signature=c(obj="sdcMicroObj"),
 definition = function(obj, threshold=0.15, keyVar) {
   manipData <- get.sdcMicroObj(obj, type="manipKeyVars")
   rk <- get.sdcMicroObj(obj, type="risk")$individual[, 1]
@@ -105,10 +106,7 @@ definition = function(obj, threshold=0.15, keyVar) {
   obj
 })
 
-
-#' @rdname localSupp
-#' @export
-setMethod(f="localSupp", signature=c("ANY"),
+setMethod(f="localSuppX", signature=c("ANY"),
 definition = function(obj, threshold=0.15, keyVar) {
   if (!class(obj)=="freqCalc") {
     stop("'obj' must be of class 'freqCalc'\n")
@@ -128,10 +126,8 @@ definition = function(obj, threshold=0.15, keyVar) {
   cat(res$newSupps,"observations has individual risks >=",threshold,"and were suppressed!\n")
   inpdf <- obj$freqCalc
   inpdf[,obj$keyVars] <- res$xAnon
-
   freqCalc(inpdf, keyVars=obj$keyVars, w=obj$w)
 })
-
 
 localSuppWORK <- function(x, rk, keyVar, threshold) {
   na_before <- as.data.table(t(apply(x, 2, function(x) {

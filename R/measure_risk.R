@@ -45,10 +45,9 @@
 #' @param obj Object of class \code{\link{sdcMicroObj-class}}
 #' @param x Output of measure_risk() or ldiversity()
 #' @param ... see arguments below
-#' @param keyVars names (or indices) of categorical key variables (for data-frame method)
 #' \itemize{
 #' \item{data}{Input data, a data.frame.}
-#' \item{keyVars}{Names of categorical key variables}
+#' \item{keyVars}{names (or indices) of categorical key variables (for data-frame method)}
 #' \item{w}{name of variable containing sample weights}
 #' \item{hid}{name of the clustering variable, e.g. the household ID}
 #' \item{max_global_risk}{Maximal global risk for threshold computation}
@@ -126,32 +125,34 @@
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' ## already interally applied and availabe in object sdc:
 #' ## sdc <- measure_risk(sdc)
-setGeneric("measure_risk", function(obj, ...) {
-  standardGeneric("measure_risk")
+measure_risk <- function(obj, ...) {
+  measure_riskX(obj=obj, ...)
+}
+
+setGeneric("measure_riskX", function(obj, ...) {
+  standardGeneric("measure_riskX")
 })
 
-#' @rdname measure_risk
-#' @export
-setMethod(f = "measure_risk", signature = c("sdcMicroObj"),
-  definition = function(obj, ...) {
-  origData <- get.sdcMicroObj(obj, type = "origData")
+setMethod(f="measure_riskX", signature=c("sdcMicroObj"),
+  definition=function(obj, ...) {
+  origData <- get.sdcMicroObj(obj, type="origData")
 
-  manipData <- get.sdcMicroObj(obj, type = "manipKeyVars")
+  manipData <- get.sdcMicroObj(obj, type="manipKeyVars")
   keyVars <- c(1:length(manipData))
-  w <- get.sdcMicroObj(obj, type = "weightVar")
+  w <- get.sdcMicroObj(obj, type="weightVar")
   if (length(w) > 0) {
     manipData <- cbind(manipData, origData[, w])
     w <- length(manipData)
   } else w <- NULL
-  hhId <- get.sdcMicroObj(obj, type = "hhId")
+  hhId <- get.sdcMicroObj(obj, type="hhId")
   if (length(hhId) > 0) {
     manipData <- cbind(manipData, origData[, hhId])
     hhId <- length(manipData)
   } else hhId <- NULL
 
   alpha <- get.sdcMicroObj(obj, type="options")$alpha
-  res <- measure_riskWORK(manipData, keyVars, w = w, hid = hhId, alpha=alpha, ...)
-  risk <- get.sdcMicroObj(obj, type = "risk")
+  res <- measure_riskWORK(manipData, keyVars, w=w, hid=hhId, alpha=alpha, ...)
+  risk <- get.sdcMicroObj(obj, type="risk")
   risk$global <- list()
   risk$global$risk <- res$global_risk
   risk$global$risk_ER <- res$global_risk_ER
@@ -165,24 +166,22 @@ setMethod(f = "measure_risk", signature = c("sdcMicroObj"),
   }
   risk$individual <- res$Res
 
-  obj <- set.sdcMicroObj(obj, type = "risk", input = list(risk))
+  obj <- set.sdcMicroObj(obj, type="risk", input=list(risk))
   obj
 })
 
-#' @rdname measure_risk
-#' @export
-setMethod(f = "measure_risk", signature = c("data.frame"),
-definition = function(obj, ...) {
+setMethod(f="measure_riskX", signature=c("data.frame"),
+definition=function(obj, ...) {
   params <- list(...)
   if (!is.null(params$alpha)) {
     alpha <- params$alpha
   } else {
     alpha <- 1
   }
-  measure_riskWORK(data = obj, alpha=alpha, ...)
+  measure_riskWORK(data=obj, alpha=alpha, ...)
 })
 
-measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL, max_global_risk = 0.01, fast_hier = TRUE, alpha) {
+measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_global_risk=0.01, fast_hier=TRUE, alpha) {
   if (!is.data.frame(data)) {
     data <- as.data.frame(data)
   }
@@ -201,16 +200,16 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
         weight_variable <- colnames(data)[weight_variable] else stop("Weight variable not found!")
     }
   }
-  TFcharacter <- lapply(data[, keyVars, drop = FALSE], class) %in% "character"
+  TFcharacter <- lapply(data[, keyVars, drop=FALSE], class) %in% "character"
   if (any(TFcharacter)) {
     for (kvi in which(TFcharacter)) {
       data[, keyVars[kvi]] <- as.factor(data[, keyVars[kvi]])
     }
   }
 
-  f <- freqCalc(data, keyVars = keyVars, w = w, alpha=alpha)
-  ir <- indivRisk(f, survey = !is.null(w))
-  Res <- matrix(NA, ncol = 3, nrow = nrow(data))
+  f <- freqCalc(data, keyVars=keyVars, w=w, alpha=alpha)
+  ir <- indivRisk(f, survey=!is.null(w))
+  Res <- matrix(NA, ncol=3, nrow=nrow(data))
   Res[, 1] <- ir$rk
   Res[, 2] <- ir$fk
   Res[, 3] <- f$Fk
@@ -220,7 +219,7 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
     weighted <- 1
   }
   n_key_vars <- length(variables)
-  dataX <- data[, c(variables), drop = FALSE]
+  dataX <- data[, c(variables), drop=FALSE]
   for (i in 1:ncol(dataX)) {
     if (!is.numeric(dataX[, i])) {
       dataX[, i] <- as.numeric(dataX[, i])
@@ -231,17 +230,17 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
   }
   dataX <- as.matrix(dataX)
   ind <- do.call(order, data.frame(dataX))
-  dataX <- dataX[ind, , drop = FALSE]
+  dataX <- dataX[ind, , drop=FALSE]
   ind <- order(c(1:nrow(dataX))[ind])
   # res <- .Call('measure_risk',dataX,weighted,n_key_vars,2,-99,missing)#
   res <- list()
   res$Res <- Res
   colnames(res$Res) <- c("risk", "fk", "Fk")
-  res$global_risk_ER <- sum(ir$rk, na.rm = TRUE)
+  res$global_risk_ER <- sum(ir$rk, na.rm=TRUE)
   res$global_risk <- res$global_risk_ER/nrow(res$Res)
   res$global_risk_pct <- res$global_risk * 100
 
-  ind <- order(res$Res[, 1], decreasing = TRUE)
+  ind <- order(res$Res[, 1], decreasing=TRUE)
   if (max_global_risk >= 1 || max_global_risk <= 0) {
     stop("max_global_risk argument must be between 0 and 1!")
   }
@@ -262,20 +261,20 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
         dataX[, i] <- as.numeric(dataX[, i])
     }
     dataX <- as.matrix(dataX)
-    maxHH <- max(table(dataX[, 1]), na.rm = TRUE)
+    maxHH <- max(table(dataX[, 1]), na.rm=TRUE)
     if (fast_hier) {
       # warning('The households are too large for a fast computation of the hierachical risk.\n
       # (Use the parameter forceHier to perform the computation anyway)')
-      reshier <- by(dataX[, 2], dataX[, 1], function(x) 1 - prod(1 - x), simplify = TRUE)
+      reshier <- by(dataX[, 2], dataX[, 1], function(x) 1 - prod(1 - x), simplify=TRUE)
       reshier <- data.frame(cbind(reshier, unique(dataX[, 1])))
-      colnames(reshier) = c("reshier", "hhid")
+      colnames(reshier)=c("reshier", "hhid")
       dataX <- data.frame(dataX[, 1])
-      colnames(dataX) = c("hhid")
-      datX <- merge(dataX, reshier, all.x = TRUE)
+      colnames(dataX)=c("hhid")
+      datX <- merge(dataX, reshier, all.x=TRUE)
 
       res$Res <- cbind(res$Res, datX$reshier[ind])
-      res[["hier_risk_ER"]] <- sum(res$Res[, 4], na.rm = TRUE)
-      res[["hier_risk"]] <- sum(res$Res[, 4], na.rm = TRUE)/nrow(res$Res)
+      res[["hier_risk_ER"]] <- sum(res$Res[, 4], na.rm=TRUE)
+      res[["hier_risk"]] <- sum(res$Res[, 4], na.rm=TRUE)/nrow(res$Res)
       res[["hier_risk_pct"]] <- res[["hier_risk"]] * 100
     } else {
       resh <- .Call("measure_hierachical", dataX)
@@ -295,15 +294,16 @@ measure_riskWORK <- function(data, keyVars, w = NULL, missing = -999, hid = NULL
 #' @param missing a integer value to be used as missing value in the C++ routine
 #' @param ldiv_index indices (or names) of the variables used for l-diversity
 #' @param l_recurs_c l-Diversity Constant
-#' @note internal function
-setGeneric("ldiversity", function(obj, ldiv_index=NULL, l_recurs_c = 2, missing = -999, ...) {
-  standardGeneric("ldiversity")
+ldiversity <- function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-999, ...) {
+  ldiversityX(obj=obj, ldiv_index=ldiv_index, l_recurs_c=l_recurs_c, missing=missing, ...)
+}
+
+setGeneric("ldiversityX", function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-999, ...) {
+  standardGeneric("ldiversityX")
 })
 
-#' @rdname measure_risk
-#' @export
-setMethod(f = "ldiversity", signature = c("sdcMicroObj"),
-definition = function(obj, ldiv_index=NULL, l_recurs_c = 2, missing = -999) {
+setMethod(f="ldiversityX", signature=c("sdcMicroObj"),
+definition=function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-999) {
   o <- obj@origData
   k <- obj@manipKeyVars
   n <- obj@manipNumVars
@@ -327,18 +327,16 @@ definition = function(obj, ldiv_index=NULL, l_recurs_c = 2, missing = -999) {
   if (!is.null(s))
     o$sdcGUI_strataVar <- s
   kV <- colnames(obj@origData)[get.sdcMicroObj(obj, "keyVars")]
-  obj@risk$ldiversity <- ldiversityWORK(data = o, keyVars = kV, l_recurs_c = l_recurs_c, ldiv_index = ldiv_index, missing = missing)
+  obj@risk$ldiversity <- ldiversityWORK(data=o, keyVars=kV, l_recurs_c=l_recurs_c, ldiv_index=ldiv_index, missing=missing)
   return(obj)
 })
 
-#' @rdname measure_risk
-#' @export
-setMethod(f = "ldiversity", signature = c("data.frame"),
-definition = function(obj, keyVars, ldiv_index, l_recurs_c = 2, missing = -999) {
-  ldiversityWORK(data = obj, keyVars = keyVars, ldiv_index = ldiv_index, l_recurs_c = l_recurs_c, missing = missing)
+setMethod(f="ldiversityX", signature=c("data.frame"),
+definition=function(obj, keyVars, ldiv_index, l_recurs_c=2, missing=-999) {
+  ldiversityWORK(data=obj, keyVars=keyVars, ldiv_index=ldiv_index, l_recurs_c=l_recurs_c, missing=missing)
 })
 
-ldiversityWORK <- function(data, keyVars, ldiv_index, missing = -999, l_recurs_c = 2) {
+ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2) {
   variables <- keyVars
   if ((is.null(variables) || !variables %in% colnames(data)) && is.character(variables))
     stop("Please define valid key variables") else if (is.numeric(variables)) {
@@ -358,17 +356,17 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing = -999, l_recurs_c
   } else ldiv_var <- character(0)
 
   n_key_vars <- length(variables)
-  dataX <- data[, c(variables, ldiv_var), drop = FALSE]
+  dataX <- data[, c(variables, ldiv_var), drop=FALSE]
   for (i in 1:ncol(dataX)) {
     if (!is.numeric(dataX[, i]))
       dataX[, i] <- as.numeric(dataX[, i])
   }
   dataX <- as.matrix(dataX)
   ind <- do.call(order, data.frame(dataX))
-  dataX <- dataX[ind, , drop = FALSE]
+  dataX <- dataX[ind, , drop=FALSE]
   ind <- order(c(1:nrow(dataX))[ind])
   if (is.null(ldiv_index))
-    ldiv_index = -99
+    ldiv_index=-99
   if (length(ldiv_index) > 5)
     stop("Maximal number of sensitivity variables is 5")
   res <- .Call("measure_risk", dataX, 0, n_key_vars, l_recurs_c, ldiv_index, missing)
@@ -377,13 +375,13 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing = -999, l_recurs_c
   if (all(ldiv_index != -99)) {
     res$Mat_Risk <- res$Mat_Risk[ind, ]
     names(res)[names(res) == "Mat_Risk"] <- "ldiversity"
-    colnames(res$ldiversity) <- c(paste(rep(ldiv_var, each = 3), rep(c("Distinct_Ldiversity",
-      "Entropy_Ldiversity", "Recursive_Ldiversity"), length(ldiv_index)), sep = "_"),
+    colnames(res$ldiversity) <- c(paste(rep(ldiv_var, each=3), rep(c("Distinct_Ldiversity",
+      "Entropy_Ldiversity", "Recursive_Ldiversity"), length(ldiv_index)), sep="_"),
       "MultiEntropy_Ldiversity", "MultiRecursive_Ldiversity")
   } else {
     res <- res[names(res) != "Mat_Risk"]
   }
-  ind <- order(res$Res[, 1], decreasing = TRUE)
+  ind <- order(res$Res[, 1], decreasing=TRUE)
   res <- res$ldiversity
   class(res) <- "ldiversity"
   invisible(res)

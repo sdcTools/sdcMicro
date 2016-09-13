@@ -3,20 +3,9 @@
 \docType{methods}
 \name{globalRecode}
 \alias{globalRecode}
-\alias{globalRecode,ANY-method}
-\alias{globalRecode,data.frame-method}
-\alias{globalRecode,numeric-method}
-\alias{globalRecode,sdcMicroObj-method}
-\alias{globalRecode-methods}
 \title{Global Recoding}
 \usage{
 globalRecode(obj, ...)
-
-\S4method{globalRecode}{sdcMicroObj}(obj, column, ...)
-
-\S4method{globalRecode}{data.frame}(obj, column, ...)
-
-\S4method{globalRecode}{numeric}(obj, ...)
 }
 \arguments{
 \item{obj}{a numeric vector, a \code{data.frame} or an object of class
@@ -24,7 +13,9 @@ globalRecode(obj, ...)
 
 \item{...}{see possible arguments below
 \itemize{
-\item{column: }{which keyVar should be changed}
+\item{column: }{which keyVar should be changed. Character vector of length 1 specifying the variable name that
+should be recoded (required if \code{obj} is a \code{data.frame} or
+an object of class \code{\link{sdcMicroObj-class}}.}
 \item{breaks: }{either a numeric vector of cut points or number giving the
 number of intervals which x is to be cut into.}
 \item{labels: }{labels for the levels of the resulting category. By default,
@@ -37,17 +28,13 @@ simple integer codes are returned instead of a factor.}
 \item \dQuote{equalAmount:} for intervalls with approxiomately the same amount
 of observations
 }}}}
-
-\item{column}{character vector of length 1 specifying the variable name that
-should be recoded (required if \code{obj} is a \code{data.frame} or
-an object of class \code{\link{sdcMicroObj-class}}.}
 }
 \value{
 the modified \code{\link{sdcMicroObj-class}} or a factor, unless labels = FALSE
 which results in the mere integer level codes.
 }
 \description{
-Global recoding
+Global recoding of variables
 }
 \details{
 If a labels parameter is specified, its values are used to name the factor

@@ -3,9 +3,6 @@
 \docType{methods}
 \name{addGhostVars}
 \alias{addGhostVars}
-\alias{addGhostVars,sdcMicroObj,character,character-method}
-\alias{addGhostVars,sdcMicroObj-method}
-\alias{addGhostVars-methods}
 \title{addGhostVars}
 \usage{
 addGhostVars(obj, keyVar, ghostVars)

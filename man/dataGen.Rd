@@ -3,16 +3,12 @@
 \docType{methods}
 \name{dataGen}
 \alias{dataGen}
-\alias{dataGen,data.frame-method}
-\alias{dataGen,matrix-method}
-\alias{dataGen,sdcMicroObj-method}
-\alias{dataGen-methods}
 \title{Fast generation of synthetic data}
 \usage{
 dataGen(obj, ...)
 }
 \arguments{
-\item{obj}{data.frame or matix}
+\item{obj}{an \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}
 
 \item{...}{see possible arguments below
 \itemize{
@@ -34,14 +30,7 @@ approxiomately the same covariance as the original data can be generated
 without reflecting the distribution of real complex data, which are, in
 general, not follows a multivariate normal distribution.
 }
-\section{Methods}{
- \describe{
-\item{list("signature(obj = \"data.frame\")")}{}
-\item{list("signature(obj = \"matrix\")")}{}
-\item{list("signature(obj = \"sdcMicroObj\")")}{}}
-}
 \examples{
-
 data(mtcars)
 cov(mtcars[,4:6])
 cov(dataGen(mtcars[,4:6]))
@@ -54,7 +43,6 @@ sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- dataGen(sdc)
-
 }
 \author{
 Matthias Templ

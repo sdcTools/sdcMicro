@@ -3,20 +3,13 @@
 \docType{methods}
 \name{varToFactor}
 \alias{varToFactor}
-\alias{varToFactor,data.frame-method}
-\alias{varToFactor,sdcMicroObj-method}
-\alias{varToFactor-methods}
 \alias{varToNumeric}
-\alias{varToNumeric,sdcMicroObj-method}
-\alias{varToNumeric-methods}
 \title{Change the a keyVariable of an object of class \code{\link{sdcMicroObj-class}} from Numeric to
 Factor or from Factor to Numeric}
 \usage{
 varToFactor(obj, var)
 
-\S4method{varToFactor}{sdcMicroObj}(obj, var)
-
-\S4method{varToFactor}{data.frame}(obj, var)
+varToNumeric(obj, var)
 }
 \arguments{
 \item{obj}{object of class \code{\link{sdcMicroObj-class}}}
@@ -29,12 +22,7 @@ the modified \code{\link{sdcMicroObj-class}}
 \description{
 Change the scale of a variable
 }
-\section{Methods}{
- \describe{
-\item{list("signature(obj = \"sdcMicroObj\")")}{}}
-}
 \examples{
-
 ## for objects of class sdcMicro:
 data(testdata2)
 sdc <- createSdcObj(testdata2,

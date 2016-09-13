@@ -3,17 +3,12 @@
 \docType{methods}
 \name{mafast}
 \alias{mafast}
-\alias{mafast,ANY-method}
-\alias{mafast,data.frame-method}
-\alias{mafast,matrix-method}
-\alias{mafast,sdcMicroObj-method}
-\alias{mafast-methods}
 \title{Fast and Simple Microaggregation}
 \usage{
 mafast(obj, variables = NULL, by = NULL, aggr = 3, measure = mean)
 }
 \arguments{
-\item{obj}{either an object of class sdcMicroObj or a data frame or matrix}
+\item{obj}{either a \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}
 
 \item{variables}{variables to microaggregate. If obj is of class sdcMicroObj
 the numerical key variables are chosen per default.}
@@ -36,15 +31,7 @@ is returned.
 Function to perform a fast and simple (primitive) method of
 microaggregation. (for large datasets)
 }
-\section{Methods}{
- \describe{
-\item{list("signature(obj = \"ANY\")")}{}
-\item{list("signature(obj = \"data.frame\")")}{}
-\item{list("signature(obj = \"matrix\")")}{}
-\item{list("signature(obj = \"sdcMicroObj\")")}{}}
-}
 \examples{
-
 data(Tarragona)
 m1 <- mafast(Tarragona, variables=c("GROSS.PROFIT","OPERATING.PROFIT","SALES"),aggr=3)
 data(testdata)

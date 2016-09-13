@@ -1,22 +1,19 @@
 #' Global Recoding
 #'
-#' Global recoding
+#' Global recoding of variables
 #'
 #' If a labels parameter is specified, its values are used to name the factor
 #' levels.  If none is specified, the factor level labels are constructed.
 #'
 #' @name globalRecode
-#' @aliases globalRecode-methods globalRecode,ANY-method
-#' globalRecode,sdcMicroObj-method globalRecode
 #' @docType methods
 #' @param obj a numeric vector, a \code{data.frame} or an object of class
 #' \code{\link{sdcMicroObj-class}}
-#' @param column character vector of length 1 specifying the variable name that
-#' should be recoded (required if \code{obj} is a \code{data.frame} or
-#' an object of class \code{\link{sdcMicroObj-class}}.
 #' @param ... see possible arguments below
 #' \itemize{
-#' \item{column: }{which keyVar should be changed}
+#' \item{column: }{which keyVar should be changed. Character vector of length 1 specifying the variable name that
+#' should be recoded (required if \code{obj} is a \code{data.frame} or
+#' an object of class \code{\link{sdcMicroObj-class}}.}
 #' \item{breaks: }{either a numeric vector of cut points or number giving the
 #' number of intervals which x is to be cut into.}
 #' \item{labels: }{labels for the levels of the resulting category. By default,
@@ -60,13 +57,14 @@
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- globalRecode(sdc, column="water", breaks=3)
 #' table(get.sdcMicroObj(sdc, type="manipKeyVars")$water)
-setGeneric("globalRecode", function(obj, ...) {
-  standardGeneric("globalRecode")
+globalRecode <- function(obj, ...) {
+  globalRecodeX(obj=obj, ...)
+}
+setGeneric("globalRecodeX", function(obj, ...) {
+  standardGeneric("globalRecodeX")
 })
 
-#' @rdname globalRecode
-#' @export
-setMethod(f="globalRecode", signature = c("sdcMicroObj"),
+setMethod(f="globalRecodeX", signature = c("sdcMicroObj"),
 definition=function(obj, column, ...) {
   x <- get.sdcMicroObj(obj, type="manipKeyVars")
   x <- globalRecode(x, column=column, ... )
@@ -76,9 +74,7 @@ definition=function(obj, column, ...) {
   obj
 })
 
-#' @rdname globalRecode
-#' @export
-setMethod(f="globalRecode", signature=c("data.frame"),
+setMethod(f="globalRecodeX", signature=c("data.frame"),
 definition = function(obj, column, ...) {
   if (!column %in% colnames(obj)) {
     stop("The variable specified in 'column' is not a valid key-variable!\n")
@@ -90,10 +86,7 @@ definition = function(obj, column, ...) {
   obj
 })
 
-
-#' @rdname globalRecode
-#' @export
-setMethod(f="globalRecode", signature=c("numeric"),
+setMethod(f="globalRecodeX", signature=c("numeric"),
 definition = function(obj, ...) {
   globalRecodeWORK(x=obj, ...)
 })

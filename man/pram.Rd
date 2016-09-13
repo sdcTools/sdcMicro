@@ -3,24 +3,10 @@
 \docType{methods}
 \name{pram}
 \alias{pram}
-\alias{pram,data.frame-method}
-\alias{pram,factor-method}
-\alias{pram,sdcMicroObj-method}
-\alias{pram,vector-method}
-\alias{pram-methods}
 \title{Post Randomization}
 \usage{
 pram(obj, variables = NULL, strata_variables = NULL, pd = 0.8,
   alpha = 0.5)
-
-\S4method{pram}{sdcMicroObj}(obj, variables = NULL, strata_variables = NULL,
-  pd = 0.8, alpha = 0.5)
-
-\S4method{pram}{data.frame}(obj, variables = NULL, strata_variables = NULL,
-  pd = 0.8, alpha = 0.5)
-
-\S4method{pram}{factor}(obj, variables = NULL, strata_variables = NULL,
-  pd = 0.8, alpha = 0.5)
 }
 \arguments{
 \item{obj}{Input data. Allowed input data are objects of class
@@ -158,7 +144,7 @@ Alexander Kowarik, Matthias Templ, Bernhard Meindl
 \references{
 \url{http://www.gnu.org/software/glpk}
 
-\url{http://www.ccsr.ac.uk/sars/guide/2001/pram.pdf}
+\url{http://goo.gl/sC2qOJ}
 }
 \keyword{manip}
 

@@ -3,8 +3,6 @@
 \docType{methods}
 \name{removeDirectID}
 \alias{removeDirectID}
-\alias{removeDirectID,sdcMicroObj-method}
-\alias{removeDirectID-methods}
 \title{Remove certain variables from the data set inside a sdc object.}
 \usage{
 removeDirectID(obj, var)
@@ -21,18 +19,12 @@ the modified \code{\link{sdcMicroObj-class}}
 Delete variables without changing anything else in the sdcObject (writing
 NAs).
 }
-\section{Methods}{
- \describe{
-\item{list("signature(obj = \"sdcMicroObj\")")}{}}
-}
 \examples{
-
 ## for objects of class sdcMicro:
 data(testdata2)
 sdc <- createSdcObj(testdata, keyVars=c('urbrur','roof'),
  numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- removeDirectID(sdc, var="age")
-
 }
 \author{
 Alexander Kowarik

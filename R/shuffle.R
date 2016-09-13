@@ -18,8 +18,6 @@
 #' applied.
 #'
 #' @name shuffle
-#' @aliases shuffle shuffle-methods shuffle,data.frame-method
-#' shuffle,matrix-method shuffle,sdcMicroObj-method
 #' @docType methods
 #' @param obj An object of class sdcMicroObj or a data.frame including the
 #' data.
@@ -69,7 +67,6 @@
 #' @rdname shuffle
 #' @export
 #' @examples
-#'
 #' data(Prestige,package="car")
 #' form <- formula(income + education ~ women + prestige + type, data=Prestige)
 #' sh <- shuffle(obj=Prestige,form)
@@ -87,22 +84,24 @@
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- shuffle(sdc, method=c('ds'),regmethod= c('lm'), covmethod=c('spearman'),
 #' 		form=savings+expend ~ urbrur+walls)
-#'
-setGeneric("shuffle", function(obj, form, method = "ds", weights = NULL,
-  covmethod = "spearman", regmethod = "lm", gadp = TRUE) {
-  standardGeneric("shuffle")
+
+shuffle <- function(obj, form, method="ds", weights=NULL, covmethod="spearman", regmethod="lm", gadp=TRUE) {
+  shuffleX(obj=obj, form=form, method=method, weights=weights, covmethod=covmethod, regmethod=regmethod, gadp=gadp)
+}
+
+setGeneric("shuffleX", function(obj, form, method="ds", weights=NULL,
+  covmethod="spearman", regmethod="lm", gadp=TRUE) {
+  standardGeneric("shuffleX")
 })
 
-#' @rdname shuffle
-#' @export
-setMethod(f = "shuffle", signature = c("sdcMicroObj"),
-  definition = function(obj, form, method = "ds", weights = NULL,
-    covmethod = "spearman", regmethod = "lm", gadp = TRUE) {
+setMethod(f="shuffleX", signature=c("sdcMicroObj"),
+  definition=function(obj, form, method="ds", weights=NULL,
+    covmethod="spearman", regmethod="lm", gadp=TRUE) {
 
-  xn <- get.sdcMicroObj(obj, type = "manipNumVars")
-  xp <- get.sdcMicroObj(obj, type = "manipPramVars")
-  xk <- get.sdcMicroObj(obj, type = "manipKeyVars")
-  xs <- get.sdcMicroObj(obj, type = "manipStrataVar")
+  xn <- get.sdcMicroObj(obj, type="manipNumVars")
+  xp <- get.sdcMicroObj(obj, type="manipPramVars")
+  xk <- get.sdcMicroObj(obj, type="manipKeyVars")
+  xs <- get.sdcMicroObj(obj, type="manipStrataVar")
   vars <- gsub(" ", "", unlist(strsplit(as.character(form)[[2]], "\\+")))
   pred <- gsub(" ", "", unlist(strsplit(as.character(form)[[3]], "\\+")))
 
@@ -115,16 +114,16 @@ setMethod(f = "shuffle", signature = c("sdcMicroObj"),
   }
   x <- x[, colnames(x) %in% c(pred, vars)]
   if (any(!(pred %in% colnames(x)))) {
-    xo <- get.sdcMicroObj(obj, type = "origData")
-    xo <- xo[, colnames(xo) %in% pred[!(pred %in% colnames(x))], drop = FALSE]
+    xo <- get.sdcMicroObj(obj, type="origData")
+    xo <- xo[, colnames(xo) %in% pred[!(pred %in% colnames(x))], drop=FALSE]
     x <- cbind(x, xo)
   }
   if (any(!vars %in% colnames(x))) {
-    stop(paste("Variables:", paste(vars[!vars %in% colnames(x)], collapse = ","), "not found"))
+    stop(paste("Variables:", paste(vars[!vars %in% colnames(x)], collapse=","), "not found"))
   }
 
-  res <- shuffleWORK(data = x, form = form, method = method, weights = weights, covmethod = covmethod,
-    regmethod = regmethod, gadp = gadp)
+  res <- shuffleWORK(data=x, form=form, method=method, weights=weights, covmethod=covmethod,
+    regmethod=regmethod, gadp=gadp)
   if (any(!vars %in% colnames(xn)))
     stop("All response variable have to be numeric!")
   if (any(vars %in% colnames(xn))) {
@@ -132,49 +131,37 @@ setMethod(f = "shuffle", signature = c("sdcMicroObj"),
   }
   obj <- nextSdcObj(obj)
 
-  obj <- set.sdcMicroObj(obj, type = "manipNumVars", input = list(as.data.frame(xn)))
+  obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(xn)))
   obj <- dRisk(obj)
   obj <- dUtility(obj)
   obj
 })
 
-#' @rdname shuffle
-#' @export
-setMethod(f = "shuffle", signature = c("data.frame"),
-definition = function(obj, form, method = "ds", weights = NULL,
-  covmethod = "spearman", regmethod = "lm", gadp = TRUE) {
+setMethod(f="shuffleX", signature=c("data.frame"),
+definition=function(obj, form, method="ds", weights=NULL,
+  covmethod="spearman", regmethod="lm", gadp=TRUE) {
 
-  shuffleWORK(data = obj, form = form, method = method, weights = weights,
-    covmethod = covmethod, regmethod = regmethod, gadp = gadp)
+  shuffleWORK(data=obj, form=form, method=method, weights=weights,
+    covmethod=covmethod, regmethod=regmethod, gadp=gadp)
 })
 
-#' @rdname shuffle
-#' @export
-setMethod(f = "shuffle", signature = c("matrix"),
-definition = function(obj, form, method = "ds", weights = NULL,
-  covmethod = "spearman", regmethod = "lm", gadp = TRUE) {
-
-  shuffleWORK(data = obj, form = form, method = method, weights = weights,
-    covmethod = covmethod, regmethod = regmethod, gadp = gadp)
-})
-
-shuffleWORK <- function(data, form, method = "ds", weights = NULL, covmethod = "spearman",
-  regmethod = "lm", gadp = TRUE) {
+shuffleWORK <- function(data, form, method="ds", weights=NULL, covmethod="spearman",
+  regmethod="lm", gadp=TRUE) {
   ## S ... nonconfidential variables (numerical and/or categorical) (predictors) X ...
   ## confidential variables (numerical) (responses) multivariate regression of confidential
   ## variables against non-confidential currentlty no support for missings covmethod:
-  cv <- function(x, type = "spearman") {
-    switch(type, spearman = cov(x, method = "spearman"), pearson = cov(x, method = "pearson"),
-      mcd = covMcd(x, cor = TRUE)$cov)
+  cv <- function(x, type="spearman") {
+    switch(type, spearman=cov(x, method="spearman"), pearson=cov(x, method="pearson"),
+      mcd=covMcd(x, cor=TRUE)$cov)
   }
-  cr <- function(x, type = "spearman") {
-    switch(type, spearman = cor(x, method = "spearman"), pearson = cor(x, method = "pearson"),
-      mcd = covMcd(x, cor = TRUE)$cor)
+  cr <- function(x, type="spearman") {
+    switch(type, spearman=cor(x, method="spearman"), pearson=cor(x, method="pearson"),
+      mcd=covMcd(x, cor=TRUE)$cor)
   }
 
-  reverseMap <- function(x, y, ties = "average") {
-    x[order(rank(x, ties.method = ties))] <- x[order(rank(y, ties.method = ties))]
-    y[order(rank(y, ties.method = ties))] <- x[order(rank(x, ties.method = ties))]
+  reverseMap <- function(x, y, ties="average") {
+    x[order(rank(x, ties.method=ties))] <- x[order(rank(y, ties.method=ties))]
+    y[order(rank(y, ties.method=ties))] <- x[order(rank(x, ties.method=ties))]
     y
   }
   missingid <- list()
@@ -187,28 +174,28 @@ shuffleWORK <- function(data, form, method = "ds", weights = NULL, covmethod = "
       missingid[[i]] <- indna
       ## Imputation with any valid value from the data set
       if (length(indna) > 0)
-        data[indna, i] <- data[sample(indnotna, length(indna), replace = TRUE), i]
+        data[indna, i] <- data[sample(indnotna, length(indna), replace=TRUE), i]
     }
   }
   # data <- na.omit(data)
-  predictors <- model.matrix(form, data = as.data.frame(data))
-  predictors <- predictors[, 2:ncol(predictors), drop = FALSE]
+  predictors <- model.matrix(form, data=as.data.frame(data))
+  predictors <- predictors[, 2:ncol(predictors), drop=FALSE]
   formR <- formula(paste(" ~ ", strsplit(as.character(form), "~")[[2]]))
-  responses <- model.matrix(formR, data = as.data.frame(data))
+  responses <- model.matrix(formR, data=as.data.frame(data))
   responses <- responses[, 2:ncol(responses)]
   if (dim(data.frame(responses))[2] < 2)
     stop("The method needs at least 2 confidential numeric variables")
-  egadp <- function(responses1, predictors1, covmethod = "spearman", regmethod = "lm") {
+  egadp <- function(responses1, predictors1, covmethod="spearman", regmethod="lm") {
     if (regmethod == "lm") {
       responses1[responses1 == Inf] <- 1
       predictors1[predictors1 == Inf] <- 1
-      result <- lm(responses1 ~ predictors1, weights = weights)
+      result <- lm(responses1 ~ predictors1, weights=weights)
       reg <- result$resid
       fitted <- result$fitted
     } else if (regmethod == "MM") {
-      reg <- fitted <- matrix(, ncol = ncol(responses1), nrow = nrow(responses1))
+      reg <- fitted <- matrix(, ncol=ncol(responses1), nrow=nrow(responses1))
       for (i in 1:ncol(responses1)) {
-        result <- rlm(responses1[, i] ~ predictors1, method = "MM", weights = weights)
+        result <- rlm(responses1[, i] ~ predictors1, method="MM", weights=weights)
         reg[, i] <- result$resid
         fitted[, i] <- result$fitted
       }
@@ -218,7 +205,7 @@ shuffleWORK <- function(data, form, method = "ds", weights = NULL, covmethod = "
     ## covariance of the residuals
     cvs <- cv(reg, covmethod)
     ## generate independent random variates V
-    V <- mvrnorm(n = nrow(data), mu = colMeans(responses1), Sigma = cv(responses1, covmethod))
+    V <- mvrnorm(n=nrow(data), mu=colMeans(responses1), Sigma=cv(responses1, covmethod))
     ## regress V on S and X
     Vres <- lm(V ~ cbind(predictors1, responses1))
     ## compute covariance of residuals again
@@ -243,28 +230,28 @@ shuffleWORK <- function(data, form, method = "ds", weights = NULL, covmethod = "
   if (method == "ds_cov") {
     mat <- cbind(responses, predictors)
     sig <- cr(mat, covmethod)
-    ranks <- apply(mat, 2, rank, ties.method = "average")
+    ranks <- apply(mat, 2, rank, ties.method="average")
     perc <- apply(ranks, 2, function(x) (x - 0.5)/length(x))
     indResp <- 1:ncol(responses)
     indPred <- (ncol(responses) + 1):(ncol(responses) + ncol(predictors))
     normInvers <- apply(perc, c(2), function(x) qnorm(x))
-    responses1 <- normInvers[, indResp, drop = FALSE]
-    predictors1 <- normInvers[, indPred, drop = FALSE]
+    responses1 <- normInvers[, indResp, drop=FALSE]
+    predictors1 <- normInvers[, indPred, drop=FALSE]
     Ystar <- predictors %*% t(cov(responses1, predictors1) %*% solve(cov(predictors1)))
     Sigma <- cov(responses1) - cov(responses1, predictors1) %*% solve(cov(predictors1)) %*%
       cov(predictors1, responses1)
-    e <- mvrnorm(nrow(responses), Sigma = Sigma, mu = rep(0, ncol(responses)))
+    e <- mvrnorm(nrow(responses), Sigma=Sigma, mu=rep(0, ncol(responses)))
     Ystar <- Ystar + e
   }
   if (method == "ds") {
     mat <- cbind(responses, predictors)
     # sig <- cr(mat, covmethod)
-    ranks <- apply(mat, 2, rank, ties.method = "average")
+    ranks <- apply(mat, 2, rank, ties.method="average")
     perc <- apply(ranks, 2, function(x) (x - 0.5)/length(x))
     normInvers <- apply(perc, c(2), function(x) qnorm(x))
     indResp <- 1:ncol(responses)
     indPred <- (ncol(responses) + 1):(ncol(responses) + ncol(predictors))
-    pmc <- 2 * sin((pi * cr(mat, type = covmethod))/6)  #(where pi = 22/7).
+    pmc <- 2 * sin((pi * cr(mat, type=covmethod))/6)  #(where pi=22/7).
     pxs <- pmc[indResp, indPred]
     pxx <- pmc[indResp, indResp]
     psx <- pmc[indPred, indResp]
@@ -274,7 +261,7 @@ shuffleWORK <- function(data, form, method = "ds", weights = NULL, covmethod = "
     predictors1 <- normInvers[, indPred]
     Ystar1 <- predictors1 %*% t(pxs %*% pssinv)
     Sigma <- pxx - pxs %*% pssinv %*% psx
-    e1 <- mvrnorm(nrow(responses), Sigma = Sigma, mu = rep(0, ncol(responses)))
+    e1 <- mvrnorm(nrow(responses), Sigma=Sigma, mu=rep(0, ncol(responses)))
     Ystar <- Ystar1 + e1
   }
   if (method == "ds2") {
@@ -290,7 +277,7 @@ shuffleWORK <- function(data, form, method = "ds", weights = NULL, covmethod = "
     ## compute x*,s*
     normInvers <- apply(perc, c(2), qnorm)
     ## compute pmc:
-    pmc <- 2 * sin((pi * cor(mat, method = covmethod))/6)  #(where pi = 22/7).
+    pmc <- 2 * sin((pi * cor(mat, method=covmethod))/6)  #(where pi=22/7).
 
     Ystar <- egadp(normInvers[, 1:ncol(responses)], normInvers[, (ncol(responses) + 1):(ncol(responses) +
       ncol(predictors))], covmethod, regmethod)
@@ -299,7 +286,7 @@ shuffleWORK <- function(data, form, method = "ds", weights = NULL, covmethod = "
     ### Shuffling: compute rank correlations of the entire data set
     sig <- cr(cbind(responses, predictors), covmethod)
     ## using a multivariate normal copula
-    newxs <- mvrnorm(nrow(data), mu = c(colMeans(responses), colMeans(predictors)), Sigma = cv(cbind(responses,
+    newxs <- mvrnorm(nrow(data), mu=c(colMeans(responses), colMeans(predictors)), Sigma=cv(cbind(responses,
       predictors), covmethod))
     sigstar <- cr(newxs, covmethod)
     Ystar <- egadp(newxs[, 1:ncol(responses)], newxs[, (ncol(responses) + 1):(ncol(responses) +
@@ -321,7 +308,7 @@ shuffleWORK <- function(data, form, method = "ds", weights = NULL, covmethod = "
   # apply(responses, 2, sort, index.return=TRUE) for(i in 1:ncol(responses)){
   # Ystar[sy[[i]]$ix,i] <- responses[sx[[i]]$ix,i] } }
   if (gadp == TRUE && (method != "ds_cob" || method != "ds"))
-    gadpres <- egadp(responses, predictors, covmethod, regmethod) else gadpres = NULL
+    gadpres <- egadp(responses, predictors, covmethod, regmethod) else gadpres=NULL
   shuffled <- Ystar
   resp <- responses
   for (i in 1:ncol(responses)) {
@@ -341,7 +328,7 @@ shuffleWORK <- function(data, form, method = "ds", weights = NULL, covmethod = "
       }
     }
   }
-  res <- list(shuffled = shuffled, perturbed = Ystar, egapd = gadpres)
+  res <- list(shuffled=shuffled, perturbed=Ystar, egapd=gadpres)
   return(res)
   # pdf('model4.pdf') par(mfrow=c(2,2), cex.main=0.7) plot(mat[,c(1,3)], main=paste('x1
   # against s1\n', form[3])) points(x=Ystar[,1], y=mat[,3], col='blue', pch=2)

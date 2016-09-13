@@ -374,9 +374,8 @@ definition=function(obj, internal, title, outdir) {
 #' anonymization process.
 #'
 #' @name report
-#' @aliases report-methods report report,sdcMicroObj-method
 #' @docType methods
-#' @param obj an object of class \code{\link{sdcMicroObj-class}} or 'reportObj'
+#' @param obj an object of class \code{\link{sdcMicroObj-class}} or \code{reportObj}
 #' @param outdir output folder
 #' @param filename output filename
 #' @param format HTML, TEXT or LATEX
@@ -387,7 +386,6 @@ definition=function(obj, internal, title, outdir) {
 #' @keywords methods
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata2,
@@ -395,13 +393,15 @@ definition=function(obj, internal, title, outdir) {
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' report(sdc)
 #' }
-#'
-setGeneric("report", function(obj, outdir=getwd(), filename="SDC-Report",
+report <- function(obj, outdir=getwd(), filename="SDC-Report", format="HTML", title="SDC-Report", internal=FALSE) {
+  reportX(obj=obj, outdir=outdir, filename=filename, format=format, title=title, internal=internal)
+}
+setGeneric("reportX", function(obj, outdir=getwd(), filename="SDC-Report",
   format="HTML", title="SDC-Report", internal=FALSE) {
-  standardGeneric("report")
+  standardGeneric("reportX")
 })
 
-setMethod(f="report", signature=c("sdcMicroObj"),
+setMethod(f="reportX", signature=c("sdcMicroObj"),
 definition=function(obj, outdir=getwd(), filename="SDC-Report",
   format="HTML", title="SDC-Report", internal=FALSE) {
 

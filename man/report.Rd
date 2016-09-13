@@ -3,15 +3,13 @@
 \docType{methods}
 \name{report}
 \alias{report}
-\alias{report,sdcMicroObj-method}
-\alias{report-methods}
 \title{Generate a HTML/LATEX output from an sdcMicroObj}
 \usage{
 report(obj, outdir = getwd(), filename = "SDC-Report", format = "HTML",
   title = "SDC-Report", internal = FALSE)
 }
 \arguments{
-\item{obj}{an object of class \code{\link{sdcMicroObj-class}} or 'reportObj'}
+\item{obj}{an object of class \code{\link{sdcMicroObj-class}} or \code{reportObj}}
 
 \item{outdir}{output folder}
 
@@ -33,7 +31,6 @@ pdf-report for your sdcMicro object that contains useful summaries about the
 anonymization process.
 }
 \examples{
-
 \dontrun{
 data(testdata2)
 sdc <- createSdcObj(testdata2,
@@ -41,7 +38,6 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 report(sdc)
 }
-
 }
 \author{
 Matthias Templ, Bernhard Meindl

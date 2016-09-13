@@ -9,10 +9,8 @@
 #' the risk of the corresponding observation.
 #'
 #' @name suda2
-#' @aliases suda2-methods suda2,data.frame-method suda2,matrix-method
-#' suda2,sdcMicroObj-method suda2
 #' @docType methods
-#' @param obj object of class \code{data.frame} or object of class \code{\link{sdcMicroObj-class}}
+#' @param obj object of class \code{data.frame} or a \code{\link{sdcMicroObj-class}}-object
 #' @param ... see arguments below
 #' \itemize{
 #' \item{\code{variables}: }{Categorical (key) variables. Either the column names or and
@@ -64,7 +62,6 @@
 #' @rdname suda2
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' data(testdata2)
 #' data_suda2 <- suda2(testdata2,variables=c("urbrur","roof","walls","water","sex"))
@@ -79,15 +76,15 @@
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- suda2(sdc)
 #' }
-#'
-setGeneric("suda2", function(obj, ...) {
-  standardGeneric("suda2")
+suda2 <- function(obj, ...) {
+  suda2X(obj=obj, ...)
+}
+
+setGeneric("suda2X", function(obj, ...) {
+  standardGeneric("suda2X")
 })
 
-#' @rdname suda2
-#' @export
-setMethod(f = "suda2", signature = c("sdcMicroObj"),
-definition = function(obj, ...) {
+setMethod(f="suda2X", signature=c("sdcMicroObj"), definition=function(obj, ...) {
   manipData <- get.sdcMicroObj(obj, type = "manipKeyVars")
   keyVars <- colnames(manipData)
 
@@ -98,10 +95,7 @@ definition = function(obj, ...) {
   obj
 })
 
-#' @rdname suda2
-#' @export
-setMethod(f = "suda2", signature = c("data.frame"),
-definition = function(obj, ...) {
+setMethod(f="suda2X", signature=c("data.frame"), definition = function(obj, ...) {
   suda2WORK(data = obj, ...)
 })
 

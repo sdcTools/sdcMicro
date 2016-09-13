@@ -49,8 +49,6 @@
 #' data before aggregation.
 #'
 #' @name microaggregation
-#' @aliases microaggregation-methods microaggregation,data.frame-method
-#' microaggregation,sdcMicroObj-method microaggregation
 #' @docType methods
 #' @param obj either an object of class \code{\link{sdcMicroObj-class}} or a \code{data.frame}
 #' @param variables variables to microaggregate. For \code{NULL}: If obj is of class
@@ -116,7 +114,6 @@
 #' @rdname microaggregation
 #' @export
 #' @examples
-#'
 #' data(Tarragona)
 #' m1 <- microaggregation(Tarragona, method='onedims', aggr=3)
 #' ## summary(m1)
@@ -136,15 +133,22 @@
 #' ## with stratification by 'relat'
 #' strataVar(sdc) <- "relat"
 #' sdc <- microaggregation(sdc, variables=c("savings"))
-setGeneric("microaggregation", function(obj, variables=NULL, aggr=3, strata_variables=NULL,
+
+microaggregation <- function(obj, variables=NULL, aggr=3, strata_variables=NULL,
   method="mdav", weights=NULL, nc=8, clustermethod="clara",
   measure="mean", trim=0, varsort=1, transf="log") {
-  standardGeneric("microaggregation")
+  microaggregationX(obj=obj, variables=variables, aggr=aggr, strata_variables=strata_variables,
+    method=method, weights=weights, nc=nc, clustermethod=clustermethod,
+    measure=measure, trim=trim, varsort=varsort, transf=transf)
+}
+
+setGeneric("microaggregationX", function(obj, variables=NULL, aggr=3, strata_variables=NULL,
+  method="mdav", weights=NULL, nc=8, clustermethod="clara",
+  measure="mean", trim=0, varsort=1, transf="log") {
+  standardGeneric("microaggregationX")
 })
 
-#' @rdname microaggregation
-#' @export
-setMethod(f="microaggregation", signature=c("sdcMicroObj"), definition=function(obj,
+setMethod(f="microaggregationX", signature=c("sdcMicroObj"), definition=function(obj,
   variables=NULL, aggr=3, method="mdav", nc=8, clustermethod="clara",
   measure="mean", trim=0, varsort=1, transf="log") {
 
@@ -177,9 +181,7 @@ setMethod(f="microaggregation", signature=c("sdcMicroObj"), definition=function(
   obj
 })
 
-#' @rdname microaggregation
-#' @export
-setMethod(f="microaggregation", signature=c("data.frame"), definition=function(obj,
+setMethod(f="microaggregationX", signature=c("data.frame"), definition=function(obj,
   variables=NULL, aggr=3, strata_variables=NULL, method="mdav", weights=NULL,
   nc=8, clustermethod="clara", measure="mean", trim=0, varsort=1,
   transf="log") {

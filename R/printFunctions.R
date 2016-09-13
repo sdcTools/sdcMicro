@@ -3,14 +3,33 @@ prettyF <- function(inp, digits=3) {
   formatC(as.numeric(inp), format="f", digits=digits)
 }
 
-#' @rdname print.sdcMicroObj
+#' Freq
+#'
+#' Extract sample frequency counts (fk) or estimated population frequency counts (Fk)
+#'
+#' @param obj an \code{\link{sdcMicroObj-class}}-object
+#' @param type either \code{'fk'} or \code{'FK'}
+#'
+#' @return a vector containing sample frequencies or weighted frequencies
 #' @export
-setGeneric("freq", function(obj, type = "fk") {
-  standardGeneric("freq")
+#' @examples
+#' data(testdata)
+#' sdc <- createSdcObj(testdata,
+#'   keyVars=c('urbrur','roof','walls','relat','sex'),
+#'   pramVars=c('water','electcon'),
+#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' head(freq(sdc, type="fk"))
+#' head(freq(sdc, type="Fk"))
+freq <- function(obj, type="fk") {
+  freqX(obj, type=type)
+}
+
+setGeneric("freqX", function(obj, type="fk") {
+  standardGeneric("freqX")
 })
 
-setMethod(f = "freq", signature = c("sdcMicroObj"),
-definition = function(obj, type = "fk") {
+setMethod(f="freqX", signature=c("sdcMicroObj"),
+definition = function(obj, type="fk") {
   if (type == "fk")
     ret <- obj@risk$individual[, 2] else if (type == "Fk")
     ret <- obj@risk$individual[, 3] else stop(paste("type=", type, "is unknown."))
@@ -31,11 +50,9 @@ definition = function(obj, type = "fk") {
 #' frequencies and "Fk": weighted frequencies.
 #'
 #' @name print.sdcMicroObj
-#' @aliases print-methods freq-methods print,sdcMicroObj-method
-#' freq,sdcMicroObj-method freq print
+#' @aliases print,sdcMicroObj-method
 #' @docType methods
 #' @param x An object of class \code{\link{sdcMicroObj-class}}
-#' @param obj An object of class \code{\link{sdcMicroObj-class}}
 #' @param type Selection of the content to be returned or printed-
 #' @param ... the type argument for the print method, currently supported are:
 #' \itemize{
@@ -52,14 +69,11 @@ definition = function(obj, type = "fk") {
 #' @keywords classes
 #' @export
 #' @examples
-#'
 #' data(testdata)
 #' sdc <- createSdcObj(testdata,
 #'   keyVars=c('urbrur','roof','walls','relat','sex'),
 #'   pramVars=c('water','electcon'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
-#' fk=freq(sdc)
-#' Fk=freq(sdc,type="Fk")
 #' print(sdc)
 #' print(sdc,type="general")
 #' print(sdc,type="ls")
@@ -68,7 +82,6 @@ definition = function(obj, type = "fk") {
 #' print(sdc,type="numrisk")
 #' print(sdc,type="pram")
 #' print(sdc,type="kAnon")
-#'
 setMethod(f = "print", signature = c("sdcMicroObj"),
 definition = function(x, type = "kAnon", ...) {
   if ( !type %in% c("kAnon","ls","pram","recode","risk","numrisk","general") ) {

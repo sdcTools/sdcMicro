@@ -5,11 +5,8 @@
 #' Extreme values larger or lower than \code{value} are replaced by a different value (\code{replacement} in order to reduce the disclosure risk.
 #'
 #' @name topBotCoding
-#' @aliases topBotCoding-methods topBotCoding,numeric-method topBotCoding,data.frame-method
-#' topBotCoding,sdcMicroObj-method topBotCoding
 #' @docType methods
-#' @param obj vector or one-dimensional matrix or data.frame or object of class
-#' \code{\link{sdcMicroObj-class}}
+#' @param obj a numeric vector, a \code{data.frame} or a \code{\link{sdcMicroObj-class}}-object
 #' @param value limit, from where it should be top- or bottom-coded
 #' @param replacement replacement value.
 #' @param kind top or bottom
@@ -21,7 +18,6 @@
 #' @note top-/bottom coding of factors is no longer possible as of sdcMicro >=4.7.0
 #' @export
 #' @examples
-#'
 #' data(free1)
 #' res <- topBotCoding(free1[,"DEBTS"], value=9000, replacement=9100, kind="top")
 #' max(res)
@@ -37,9 +33,15 @@
 #'            numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- topBotCoding(sdc, value=500000, replacement=1000, column="income")
 #' testdataout <- extractManipData(sdc)
-#'
-setGeneric('topBotCoding', function(obj, value, replacement, kind="top", column=NULL) {standardGeneric('topBotCoding')})
-setMethod(f='topBotCoding', signature=c('sdcMicroObj'),
+topBotCoding <- function(obj, value, replacement, kind="top", column=NULL) {
+  topBotCodingX(obj=obj, value=value, replacement=replacement, kind=kind, column=column)
+}
+
+setGeneric('topBotCodingX', function(obj, value, replacement, kind="top", column=NULL) {
+  standardGeneric('topBotCodingX')
+})
+
+setMethod(f='topBotCodingX', signature=c('sdcMicroObj'),
 definition=function(obj, value, replacement, kind="top", column=NULL) {
   manipNumVars <- get.sdcMicroObj(obj, type="manipNumVars")
   manipKeyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
@@ -76,9 +78,7 @@ definition=function(obj, value, replacement, kind="top", column=NULL) {
   invisible(obj)
 })
 
-#' @rdname topBotCoding
-#' @export
-setMethod(f='topBotCoding', signature=c("data.frame"),
+setMethod(f='topBotCodingX', signature=c("data.frame"),
 definition=function(obj, value, replacement, kind="top", column=column) {
   if (length(column)!=1) {
     stop("length of argument 'column' > 1\n")
@@ -92,9 +92,7 @@ definition=function(obj, value, replacement, kind="top", column=column) {
   obj
 })
 
-#' @rdname topBotCoding
-#' @export
-setMethod(f='topBotCoding', signature=c("numeric"),
+setMethod(f='topBotCodingX', signature=c("numeric"),
 definition=function(obj, value, replacement, kind="top") {
   topBotCodingWORK(x=obj,value, replacement, kind=kind)
 })

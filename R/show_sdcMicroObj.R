@@ -1,4 +1,11 @@
-setMethod(f = "show", signature = "sdcMicroObj",
+#' Show
+#'
+#' show a sdcMicro object
+#' @param object an sdcmicro obj
+#'
+#' @return a sdcMicro object
+#' @export
+setMethod(f="show", signature="sdcMicroObj",
 definition = function(object) {
   print(object, type="general")
 

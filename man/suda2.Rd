@@ -3,20 +3,12 @@
 \docType{methods}
 \name{suda2}
 \alias{suda2}
-\alias{suda2,data.frame-method}
-\alias{suda2,matrix-method}
-\alias{suda2,sdcMicroObj-method}
-\alias{suda2-methods}
 \title{Suda2: Detecting Special Uniques}
 \usage{
 suda2(obj, ...)
-
-\S4method{suda2}{sdcMicroObj}(obj, ...)
-
-\S4method{suda2}{data.frame}(obj, ...)
 }
 \arguments{
-\item{obj}{object of class \code{data.frame} or object of class \code{\link{sdcMicroObj-class}}}
+\item{obj}{object of class \code{data.frame} or a \code{\link{sdcMicroObj-class}}-object}
 
 \item{...}{see arguments below
 \itemize{
@@ -60,7 +52,6 @@ The lower the amount of variables needed to receive uniqueness, the higher
 the risk of the corresponding observation.
 }
 \examples{
-
 \dontrun{
 data(testdata2)
 data_suda2 <- suda2(testdata2,variables=c("urbrur","roof","walls","water","sex"))
@@ -75,7 +66,6 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- suda2(sdc)
 }
-
 }
 \author{
 Alexander Kowarik and Bernhard Meindl (based on the C++ code from the Organisation For

@@ -15,7 +15,7 @@
 #' at the examples provided.
 #'
 #' @rdname localSuppression
-#' @param obj an object of class sdcMicroObj or a data frame or matrix
+#' @param obj a \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}
 #' @param k threshold for k-anonymity
 #' @param importance numeric vector of numbers between 1 and n (n=length of
 #' vector keyVars).  This vector represents the "importance" of variables that
@@ -30,20 +30,19 @@
 #' subsets by specifying k as a vector. If k has only one element, the same value
 #' of k will be used for all subgroups.
 #' @param ... see arguments below
-#' @param keyVars names (or indices) of categorical key variables (for data-frame method)
-#' @param strataVars name (or index) of variable which is used for stratification purposes, used
+#' \itemize{
+#' \item{keyVars: }{names (or indices) of categorical key variables (for data-frame method)}
+#' \item{strataVars: }{name (or index) of variable which is used for stratification purposes, used
 #' in the data.frame method. This means that k-anonymity is provided within each category
-#' of the specified variable.
-#' @param alpha numeric value between 0 and 1 specifying how much keys that
+#' of the specified variable.}
+#' \item{alpha: }{numeric value between 0 and 1 specifying how much keys that
 #' contain missing values (\code{NAs}) should contribute to the calculation
 #' of \code{fk} and \code{Fk}. For the default value of \code{1}, nothing changes with
 #' respect to the implementation in prior versions. Each \emph{wildcard-match} would
 #' be counted while for \code{alpha=0} keys with missing values would be basically ignored.
-#' Used in the data-frame method only.
-#' \itemize{
-#' \item{keyVars}{numeric vector specifying indices of (categorical) key-variables}
-#' \item{strataVars}{numeric vector specifying indices of variables that should be used
-#' for stratification within 'obj'}}
+#' Used in the data-frame method only because in the method for \code{\link{sdcMicroObj-class}}-objects,
+#' this value is extracted from slot \code{options}.}
+#' }
 #' @return Manipulated data set with suppressions that has k-anonymity with
 #' respect to specified key-variables or the manipulated data stored in the
 #' \code{\link{sdcMicroObj-class}}.
@@ -60,7 +59,6 @@
 #' localS <- localSuppression(francdat, keyVar=c(4,5,6))
 #' localS
 #' plot(localS)
-#'
 #' \dontrun{
 #' ## for objects of class sdcMicro, no stratification
 #' data(testdata2)
@@ -100,14 +98,14 @@
 #' print(ls)
 #' plot(ls, showTotalSupps=TRUE)
 #' }
-setGeneric("localSuppression", function(obj, k=2, importance=NULL, combs=NULL, ...) {
-  standardGeneric("localSuppression")
+localSuppression <- function(obj, k=2, importance=NULL, combs=NULL, ...) {
+  localSuppressionX(obj=obj, k=k, importance=importance, combs=combs, ...)
+}
+setGeneric("localSuppressionX", function(obj, k=2, importance=NULL, combs=NULL, ...) {
+  standardGeneric("localSuppressionX")
 })
 
-
-#' @rdname localSuppression
-#' @export
-setMethod(f='localSuppression', signature=c('sdcMicroObj'),
+setMethod(f='localSuppressionX', signature=c('sdcMicroObj'),
 definition=function(obj, k=2, importance=NULL, combs=NULL) {
   ### get data from manipKeyVars
   df <- as.data.frame(get.sdcMicroObj(obj, type="manipKeyVars"))
@@ -155,9 +153,7 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
   obj
 })
 
-#' @rdname localSuppression
-#' @export
-setMethod(f='localSuppression', signature=c("data.frame"),
+setMethod(f='localSuppressionX', signature=c("data.frame"),
 definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=NULL, alpha=1) {
   localSuppressionWORK(x=obj, keyVars=keyVars, k=k, strataVars=strataVars,
     importance=importance, combs=combs, alpha=1)
@@ -615,22 +611,3 @@ plot.localSuppression <- function(x, ...) {
 kAnon <- function(obj, k=2, importance=NULL, combs=NULL, ...) {
   localSuppression(obj, k=k, importance=importance, combs=combs, ...)
 }
-
-setGeneric("kAnon", function(obj, k=2, importance=NULL, combs=NULL, ...) {
-  standardGeneric("kAnon")
-})
-
-#' @rdname localSuppression
-#' @export
-setMethod(f='kAnon', signature=c('sdcMicroObj'),
-definition=function(obj, k=2, importance=NULL, combs=NULL) {
-  localSuppression(obj, k=k, importance=importance, combs=combs)
-})
-
-#' @rdname localSuppression
-#' @export
-setMethod(f='kAnon', signature=c("data.frame"),
-definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=NULL, alpha=1) {
-  localSuppression(obj, k=k, keyVars=keyVars, strataVars=strataVars,
-    importance=importance, combs=combs, alpha=alpha)
-})

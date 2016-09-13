@@ -3,16 +3,9 @@
 \docType{methods}
 \name{localSupp}
 \alias{localSupp}
-\alias{localSupp,ANY-method}
-\alias{localSupp,sdcMicroObj-method}
-\alias{localSupp-methods}
 \title{Local Suppression}
 \usage{
 localSupp(obj, threshold = 0.15, keyVar)
-
-\S4method{localSupp}{sdcMicroObj}(obj, threshold = 0.15, keyVar)
-
-\S4method{localSupp}{ANY}(obj, threshold = 0.15, keyVar)
 }
 \arguments{
 \item{obj}{object of class \code{\link{freqCalc}} or \code{\link{sdcMicroObj-class}}.}

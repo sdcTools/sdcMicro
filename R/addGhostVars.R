@@ -4,7 +4,6 @@
 #' suppressions of the key-variable being also applied on the corresponding 'ghost'-variables.
 #'
 #' @name addGhostVars
-#' @aliases addGhostVars-methods addGhostVars,sdcMicroObj-method addGhostVars,sdcMicroObj,character,character-method addGhostVars
 #' @docType methods
 #' @param obj an object of class \code{\link{sdcMicroObj-class}}
 #' @param keyVar character-vector of length 1 refering to a categorical key variable within \code{obj}.
@@ -23,12 +22,15 @@
 #' sdc <- addGhostVars(sdc, keyVar="urbrur", ghostVars=c("hhcivil"))
 #' ## we want to link the anonymization status of key variabe 'roof' to 'represent'
 #' sdc <- addGhostVars(sdc, keyVar="roof", ghostVars=c("represent"))
-setGeneric("addGhostVars", function(obj, keyVar, ghostVars) {
-  standardGeneric("addGhostVars")
+addGhostVars <- function(obj, keyVar, ghostVars) {
+  addGhostVarsX(obj, keyVar, ghostVars)
+}
+
+setGeneric("addGhostVarsX", function(obj, keyVar, ghostVars) {
+  standardGeneric("addGhostVarsX")
 })
 
-#' @export
-setMethod(f="addGhostVars", signature=c(obj="sdcMicroObj", keyVar="character", ghostVars="character"),
+setMethod(f="addGhostVarsX", signature=c(obj="sdcMicroObj", keyVar="character", ghostVars="character"),
 definition = function(obj, keyVar, ghostVars) {
   cn <- colnames(get.sdcMicroObj(obj, type="origData"))
   kv <- cn[get.sdcMicroObj(obj, type="keyVars")]

@@ -3,10 +3,6 @@
 \docType{methods}
 \name{LocalRecProg}
 \alias{LocalRecProg}
-\alias{LocalRecProg,data.frame-method}
-\alias{LocalRecProg,matrix-method}
-\alias{LocalRecProg,sdcMicroObj-method}
-\alias{LocalRecProg-methods}
 \title{Local recoding via Edmond's maximum weighted matching algorithm}
 \usage{
 LocalRecProg(obj, ancestors = NULL, ancestor_setting = NULL, k_level = 2,
@@ -14,7 +10,7 @@ LocalRecProg(obj, ancestors = NULL, ancestor_setting = NULL, k_level = 2,
   missingValue = NA, ...)
 }
 \arguments{
-\item{obj}{Input data or object of class sdcMicroObj}
+\item{obj}{a \code{data.frame} or a \code{\link{sdcMicroObj-class}}-object}
 
 \item{ancestors}{Names of ancestors of the cateorical variables}
 
@@ -52,10 +48,9 @@ categories based on the recoding result and repeatedly apply this algorithm.
 }
 \section{Methods}{
  \describe{
-\item{list("signature(obj = \"sdcMicroObj\")")}{}}
+\item{list("signature(obj=\"sdcMicroObj\")")}{}}
 }
 \examples{
-
 # LocalRecProg
 data(testdata2)
 r1=LocalRecProg(testdata2,
@@ -77,13 +72,12 @@ sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- LocalRecProg(sdc)
-
 }
 \author{
 Alexander Kowarik, Bernd Prantner, IHSN C++ source, Akimichi Takemura
 }
 \references{
-\url{http://www.stat.t.u-tokyo.ac.jp/~takemura/papers/localrec.pdf}
+\url{http://goo.gl/D9QAfa}
 }
 \keyword{manip}
 

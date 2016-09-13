@@ -3,25 +3,13 @@
 \docType{methods}
 \name{rankSwap}
 \alias{rankSwap}
-\alias{rankSwap,data.frame-method}
-\alias{rankSwap,matrix-method}
-\alias{rankSwap,sdcMicroObj-method}
-\alias{rankSwap-methods}
 \title{Rank Swapping}
 \usage{
 rankSwap(obj, variables = NULL, TopPercent = 5, BottomPercent = 5,
   K0 = -1, R0 = 0.95, P = 0, missing = NA, seed = NULL)
-
-\S4method{rankSwap}{sdcMicroObj}(obj, variables = NULL, TopPercent = 5,
-  BottomPercent = 5, K0 = -1, R0 = 0.95, P = 0, missing = NA,
-  seed = NULL)
-
-\S4method{rankSwap}{data.frame}(obj, variables = NULL, TopPercent = 5,
-  BottomPercent = 5, K0 = -1, R0 = 0.95, P = 0, missing = NA,
-  seed = NULL)
 }
 \arguments{
-\item{obj}{object of class sdcMicroObj or matrix or data frame}
+\item{obj}{a \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}
 
 \item{variables}{names or index of variables for that rank swapping is
 applied.  For an object of class \code{\link{sdcMicroObj-class}}, all numeric key variables are

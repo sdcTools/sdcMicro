@@ -3,19 +3,10 @@
 \docType{class}
 \name{sdcMicroObj-class}
 \alias{createSdcObj}
-\alias{get.sdcMicroObj}
-\alias{get.sdcMicroObj,sdcMicroObj,character-method}
-\alias{nextSdcObj}
-\alias{nextSdcObj,sdcMicroObj-method,}
 \alias{sdcMicroObj-class}
-\alias{set.sdcMicroObj}
-\alias{set.sdcMicroObj,sdcMicroObj,character,listOrNULL-method}
-\alias{show}
-\alias{show,sdcMicroObj-method}
 \alias{strataVar<-}
 \alias{strataVar<-,sdcMicroObj,characterOrNULL-method}
 \alias{undolast}
-\alias{undolast,sdcMicroObj-method}
 \title{Class \code{"sdcMicroObj"}}
 \usage{
 createSdcObj(dat, keyVars, numVars = NULL, pramVars = NULL,
@@ -23,18 +14,7 @@ createSdcObj(dat, keyVars, numVars = NULL, pramVars = NULL,
   sensibleVar = NULL, excludeVars = NULL, options = NULL, seed = NULL,
   randomizeRecords = FALSE, alpha = 1)
 
-get.sdcMicroObj(object, type)
-
-set.sdcMicroObj(object, type, input)
-
 undolast(object)
-
-\S4method{get.sdcMicroObj}{sdcMicroObj,character}(object, type)
-
-\S4method{set.sdcMicroObj}{sdcMicroObj,character,listOrNULL}(object, type,
-  input)
-
-\S4method{undolast}{sdcMicroObj}(object)
 
 strataVar(object) <- value
 
@@ -81,38 +61,23 @@ will be randomized.}
 \item{alpha}{numeric between 0 and 1 specifying the fraction on how much keys containing \code{NAs} should
 contribute to the frequency calculation which is also crucial for risk-estimation.}
 
-\item{object}{an object of class \code{sdcMicroObj}}
-
-\item{type}{a character vector of length 1 defining what to calculate|return|modify. Allowed types are:}
-\itemize{
-\item origData: set slot 'origData' of argument \code{object}}
-
-\item{input}{a list depending on argument \code{type}.}
-\itemize{
-\item type==dataOrig: a list containing original microdata}
+\item{object}{a \code{\link{sdcMicroObj-class}} object}
 
 \item{value}{\code{NULL} or a character vector of length 1 specifying a valid variable name}
 }
 \value{
-an object of class \code{sdcMicroObj}
-
-an object of class \code{sdcMicroObj}
+a \code{\link{sdcMicroObj-class}} object
 
 an object of class \code{sdcMicroObj} with modified slot \code{@strataVar}
 }
 \description{
 Class to save all information about the SDC process
 
-modify \code{sdcMicroObj}-objects depending on argument \code{type}
-
 undo last changes to \code{sdcMicroObj}-objects if possible
 note that this will only work if the user makes use of the prev slot or uses the sdcMicroObj functions
 
 \code{strataVar<-} allows to modify the variable which is used if anonymization limitation
 techniques are applied independent for each characteristic of the defined strata.
-}
-\note{
-internal function
 }
 \section{Objects from the Class}{
  Objects can be created by calls of the form

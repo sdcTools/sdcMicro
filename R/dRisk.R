@@ -9,27 +9,19 @@
 #' interval.
 #'
 #' @name dRisk
-#' @aliases dRisk-methods dRisk,data.frame-method dRisk,matrix-method
-#' dRisk,sdcMicroObj-method dRisk
-#' @docType methods
-#' @param obj original data or object of class \code{\link{sdcMicroObj-class}}
+#' @param obj a \code{data.frame} or object of class \code{\link{sdcMicroObj-class}}
 #' @param ... possible arguments are:
 #' \itemize{
 #' \item {xm}{perturbed data}
 #' \item {k}{percentage of the standard deviation}}
 #' @return The disclosure risk or/and the modified \code{\link{sdcMicroObj-class}}
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"data.frame\")")}{}
-#' \item{list("signature(obj = \"matrix\")")}{}
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
 #' @author Matthias Templ
-#' @seealso \code{\link{dUtility}}, \code{\link{dUtility}}
+#' @seealso \code{\link{dUtility}}
 #' @references see method SDID in
 #' \url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf}
 #' @keywords manip
 #' @export
 #' @examples
-#'
 #' data(free1)
 #' free1 <- as.data.frame(free1)
 #' m1 <- microaggregation(free1[, 31:34], method="onedims", aggr=3)
@@ -46,12 +38,15 @@
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' ## this is already made internally: sdc <- dRisk(sdc)
 #' ## and already stored in sdc
-#'
-setGeneric("dRisk", function(obj, ...) {
-  standardGeneric("dRisk")
+dRisk <- function(obj, ...) {
+  dRiskX(obj, ...)
+}
+
+setGeneric("dRiskX", function(obj, ...) {
+  standardGeneric("dRiskX")
 })
 
-setMethod(f = "dRisk", signature = c("sdcMicroObj"),
+setMethod(f = "dRiskX", signature = c("sdcMicroObj"),
 definition = function(obj, ...) {
   numVars <- get.sdcMicroObj(obj, type = "numVars")
   x <- get.sdcMicroObj(obj, type = "origData")[, numVars, drop = F]
@@ -62,11 +57,7 @@ definition = function(obj, ...) {
   obj
 })
 
-setMethod(f = "dRisk", signature = c("data.frame"), definition = function(obj, ...) {
-  dRiskWORK(x = obj, ...)
-})
-
-setMethod(f = "dRisk", signature = c("matrix"), definition = function(obj, ...) {
+setMethod(f = "dRiskX", signature = c("data.frame"), definition = function(obj, ...) {
   dRiskWORK(x = obj, ...)
 })
 

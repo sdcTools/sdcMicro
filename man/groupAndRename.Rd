@@ -3,21 +3,10 @@
 \docType{methods}
 \name{groupAndRename}
 \alias{groupAndRename}
-\alias{groupAndRename,data.frame-method}
-\alias{groupAndRename,data.frame-method,}
-\alias{groupAndRename,factor-method}
-\alias{groupAndRename,factor-method,groupAndRename,sdcMicroObj-method}
-\alias{groupAndRename,sdcMicroObj-method}
 \title{Join levels of a variables in an object of class
 \code{\link{sdcMicroObj-class}} or \code{factor} or \code{data.frame}}
 \usage{
 groupAndRename(obj, var, before, after)
-
-\S4method{groupAndRename}{factor}(obj, var, before, after)
-
-\S4method{groupAndRename}{data.frame}(obj, var, before, after)
-
-\S4method{groupAndRename}{sdcMicroObj}(obj, var, before, after)
 }
 \arguments{
 \item{obj}{object of class \code{\link{sdcMicroObj-class}}}
@@ -42,16 +31,6 @@ a modified column specified by \code{var}.
 
 If the input is of class \code{factor}, the result is a \code{factor} with different
 levels.
-}
-\section{Methods}{
- \describe{
-\item{list("signature(obj = \"sdcMicroObj\")")}{
-This method transform a factor variable with some levels into a new factor
-variable with less levels. The user must make sure that all levels of the
-original variable are listed in argument 'before' and that the number of
-elements in argument 'after' (the new levels) have the same length. This
-means that there should be a one to one mapping from any level of the
-original factor to a level in the recoded variable. } }
 }
 \examples{
 ## for objects of class sdcMicro:

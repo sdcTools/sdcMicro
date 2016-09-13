@@ -19,7 +19,7 @@ standardizeInput <- function(obj, v) {
       stop("please specify valid column-indices!\n")
     }
   } else if (is.character(v)) {
-    m <- match(v, colnames(get.sdcMicroObj(obj, type = "origData")))
+    m <- match(v, colnames(get.sdcMicroObj(obj, type="origData")))
     if (!any(is.na(m))) {
       return(m)
     } else {
@@ -260,12 +260,24 @@ deletePrevSave <- function(obj, m) {
   return(obj)
 }
 
-setGeneric("nextSdcObj", function(obj) {
-  standardGeneric("nextSdcObj")
+
+#' nextSdcObj
+#'
+#' internal function used to provide the undo-functionality.
+#'
+#' @param obj a \code{\link{sdcMicroObj-class}} object
+#' @return a modified \code{\link{sdcMicroObj-class}} object
+#' @export
+#' @docType methods
+nextSdcObj <- function(obj) {
+  nextSdcObjX(obj)
+}
+setGeneric("nextSdcObjX", function(obj) {
+  standardGeneric("nextSdcObjX")
 })
 
-setMethod(f = "nextSdcObj", signature = c("sdcMicroObj"), definition = function(obj) {
-  options <- get.sdcMicroObj(obj, type = "options")
+setMethod(f="nextSdcObjX", signature=c("sdcMicroObj"), definition=function(obj) {
+  options <- get.sdcMicroObj(obj, type="options")
   if (("noUndo" %in% options)) {
     return(obj)
   }
@@ -276,10 +288,10 @@ setMethod(f = "nextSdcObj", signature = c("sdcMicroObj"), definition = function(
     return(obj)
   }
   if (length(grep("maxUndo", options)) > 0)
-    maxUndo <- as.numeric(substr(options[grep("maxUndo", options)], 9, stop = nchar(options[grep("maxUndo",
-      options)], type = "width"))) else maxUndo <- 1
+    maxUndo <- as.numeric(substr(options[grep("maxUndo", options)], 9, stop=nchar(options[grep("maxUndo",
+      options)], type="width"))) else maxUndo <- 1
   obj <- deletePrevSave(obj, maxUndo)
-  obj <- set.sdcMicroObj(obj, type = "prev", input = list(obj))
+  obj <- set.sdcMicroObj(obj, type="prev", input=list(obj))
   return(obj)
 })
 
@@ -294,29 +306,27 @@ setMethod(f = "nextSdcObj", signature = c("sdcMicroObj"), definition = function(
 #' an sdc method is applied.
 #'
 #' @name calcRisks
-#' @aliases calcRisks-methods calcRisks calcRisks,sdcMicroObj-method
-#' @docType methods
 #' @param obj an object of class \code{\link{sdcMicroObj-class}}
 #' @param ... no arguments at the moment
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
 #' @seealso \code{\link{sdcMicroObj-class}}
-#' @keywords methods
 #' @export
 #' @examples
-#'
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata2,
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- calcRisks(sdc)
 #'
-setGeneric("calcRisks", function(obj, ...) {
-  standardGeneric("calcRisks")
+calcRisks <- function(obj, ...) {
+  calcRisksX(obj=obj, ...)
+}
+
+setGeneric("calcRisksX", function(obj, ...) {
+  standardGeneric("calcRisksX")
 })
 
-setMethod(f = "calcRisks", signature = c("sdcMicroObj"), definition = function(obj, ...) {
-  risk <- get.sdcMicroObj(obj, type = "risk")
+setMethod(f="calcRisksX", signature=c("sdcMicroObj"), definition=function(obj, ...) {
+  risk <- get.sdcMicroObj(obj, type="risk")
   modelSet <- (!is.null(risk$model))
   suda2Set <- (!is.null(risk$suda2))
   obj <- measure_risk(obj)
@@ -325,12 +335,12 @@ setMethod(f = "calcRisks", signature = c("sdcMicroObj"), definition = function(o
     if (!is.null(risk$model$inclProb)) {
       inclProb <- risk$model$inclProb
     }
-    obj <- LLmodGlobalRisk(obj, inclProb = inclProb)
+    obj <- LLmodGlobalRisk(obj, inclProb=inclProb)
   }
   if (suda2Set) {
     obj <- suda2(obj)
   }
-  if (length(get.sdcMicroObj(obj, type = "manipNumVars")) > 0) {
+  if (length(get.sdcMicroObj(obj, type="manipNumVars")) > 0) {
     obj <- dRisk(obj)
   }
   obj
@@ -340,32 +350,24 @@ setMethod(f = "calcRisks", signature = c("sdcMicroObj"), definition = function(o
 #'
 #' Extract the manipulated data from an object of class \code{\link{sdcMicroObj-class}}
 #'
-#'
 #' @name extractManipData
-#' @aliases extractManipData extractManipData-methods
-#' extractManipData,sdcMicroObj-method
-#' @docType methods
 #' @param obj object of class \code{\link{sdcMicroObj-class}}
 #' @param ignoreKeyVars If manipulated KeyVariables should be returned or the
 #' unchanged original variables
-#' @param ignorePramVars If manipulated PramVariables should be returned or the
+#' @param ignorePramVars if manipulated PramVariables should be returned or the
 #' unchanged original variables
-#' @param ignoreNumVars If manipulated NumericVariables should be returned or
+#' @param ignoreNumVars if manipulated NumericVariables should be returned or
 #' the unchanged original variables
-#' @param ignoreGhostVars If manipulated Ghost (linked) Variables should be returned or
+#' @param ignoreGhostVars if manipulated Ghost (linked) Variables should be returned or
 #' the unchanged original variables
-#' @param ignoreStrataVar If manipulated StrataVariables should be returned or
+#' @param ignoreStrataVar if manipulated StrataVariables should be returned or
 #' the unchanged original variables
 #' @param randomizeRecords (logical) if \code{TRUE}, the order of observations of the output data set
 #' will be randomized.
-#' @return a data frame
-#' @section Methods: \describe{
-#' \item{list("signature(obj = \"sdcMicroObj\")")}{}}
+#' @return a \code{data.frame} containing the anonymized data set
 #' @author Alexander Kowarik, Bernhard Meindl
-#' @keywords methods
 #' @export
 #' @examples
-#'
 #' ## for objects of class sdcMicro:
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata,
@@ -373,15 +375,19 @@ setMethod(f = "calcRisks", signature = c("sdcMicroObj"), definition = function(o
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- removeDirectID(sdc, var="age")
 #' dataM <- extractManipData(sdc)
-#'
-setGeneric("extractManipData", function(obj, ignoreKeyVars = FALSE, ignorePramVars = FALSE,
-  ignoreNumVars = FALSE, ignoreGhostVars = FALSE, ignoreStrataVar = FALSE, randomizeRecords=FALSE) {
-  standardGeneric("extractManipData")
+extractManipData <- function(obj, ignoreKeyVars=FALSE, ignorePramVars=FALSE, ignoreNumVars=FALSE, ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords=FALSE) {
+  extractManipDataX(obj, ignoreKeyVars=ignoreKeyVars, ignorePramVars=ignorePramVars, ignoreNumVars=ignoreNumVars,
+    ignoreGhostVars=ignoreGhostVars, ignoreStrataVar=ignoreStrataVar, randomizeRecords=randomizeRecords)
+}
+
+setGeneric("extractManipDataX", function(obj, ignoreKeyVars=FALSE, ignorePramVars=FALSE,
+  ignoreNumVars=FALSE, ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords=FALSE) {
+  standardGeneric("extractManipDataX")
 })
 
-setMethod(f = "extractManipData", signature = c("sdcMicroObj"), definition = function(obj,
-  ignoreKeyVars = FALSE, ignorePramVars = FALSE, ignoreNumVars = FALSE,
-  ignoreGhostVars = FALSE, ignoreStrataVar = FALSE, randomizeRecords=FALSE) {
+setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function(obj,
+  ignoreKeyVars=FALSE, ignorePramVars=FALSE, ignoreNumVars=FALSE,
+  ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords=FALSE) {
   o <- get.sdcMicroObj(obj, type="origData")
   k <- get.sdcMicroObj(obj, type="manipKeyVars")
   p <- get.sdcMicroObj(obj, type="manipPramVars")
@@ -410,7 +416,6 @@ setMethod(f = "extractManipData", signature = c("sdcMicroObj"), definition = fun
   }
   return(o)
 })
-
 
 addWarning <- function(obj, warnMsg, method, variable=NA) {
   if (!class(obj)=="sdcMicroObj") {
