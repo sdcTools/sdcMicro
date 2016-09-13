@@ -74,17 +74,14 @@
 #' @param varsort variable for sorting, if method=single
 #' @param transf transformation for data x
 #' @return If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
-#' slots are filled, like manipNumVars, risk and utility.  If \sQuote{obj} was
-#' of class \dQuote{data.frame} or \dQuote{matrix} an object of class
-#' \dQuote{micro} with following entities is returned:
+#' slots are filled, like manipNumVars, risk and utility. If \sQuote{obj} was
+#' of class \dQuote{data.frame}, an object of class \dQuote{micro} with following entities is returned:
 #' \itemize{
-#' \item{\code{mx}: }{the aggregated data}
 #' \item{\code{x}: }{original data}
+#' \item{\code{mx}: }{the microaggregated dataset}
 #' \item{\code{method}: }{method}
 #' \item{\code{aggr}: }{aggregation level}
-#' \item{\code{measure}: }{ proximity measure for aggregation}
-#' \item{\code{fot}: }{ correction factor, necessary if totals calculated and n divided by aggr
-#' is not an integer.}}
+#' \item{\code{measure}: }{proximity measure for aggregation}}
 #' @author Matthias Templ, Bernhard Meindl
 #'
 #' For method \dQuote{mdav}: This work is being supported by the International
@@ -103,11 +100,11 @@
 #' Risk Measures for Continuous Microdata Masking}, Lecture Notes in Computer
 #' Science, Privacy in Statistical Databases, vol. 5262, pp. 113-126, 2008.
 #'
-#' Templ, M.  \emph{Statistical Disclosure Control for Microdata Using the
+#' Templ, M. \emph{Statistical Disclosure Control for Microdata Using the
 #' R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number 2, pp.
 #' 67-85, 2008.  \url{http://www.tdp.cat/issues/abs.a004a08.php}
 #'
-#' Templ, M.  \emph{New Developments in Statistical Disclosure Control and
+#' Templ, M. \emph{New Developments in Statistical Disclosure Control and
 #' Imputation: Robust Statistics Applied to Official Statistics},
 #' Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 #' 264 pages.
@@ -482,7 +479,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
       x[order(x[, i]), i]
     })
     xxx <- sapply(1:i, function(i) {
-      rank(x[, i], ties.method="min")
+      rank(x[, i], ties.method="first")
     })
     index <- indexMicro(xx, aggr)
     m <- means(x=xx, index=index, measure=measure, trim=trim)
@@ -807,7 +804,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
   res$blowxm <- res$blowxm[1:nrow(xall), ]
   class(res) <- "micro"
   res$mx <- res$blowxm
-  resv <- c("mx", "x", "method", "aggr", "measure", "fot")
+  resv <- c("x", "mx", "method", "aggr", "measure")
   res1 <- list()
   for (v in resv) {
     res1[[v]] <- res[[v]]
@@ -818,7 +815,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
 
 #' Print method for objects from class micro
 #'
-#' Print method for objects from class micro.
+#' printing an object of class \code{micro}
 #'
 #' @param x object from class micro
 #' @param \dots Additional arguments passed through.
