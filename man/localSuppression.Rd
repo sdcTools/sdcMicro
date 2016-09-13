@@ -15,15 +15,15 @@ localSuppression(obj, k = 2, importance = NULL, combs = NULL, ...)
 \S4method{localSuppression}{sdcMicroObj}(obj, k = 2, importance = NULL,
   combs = NULL)
 
-\S4method{localSuppression}{data.frame}(obj, k = 2, keyVars,
-  strataVars = NULL, importance = NULL, combs = NULL, alpha = 1)
+\S4method{localSuppression}{data.frame}(obj, k = 2, importance = NULL,
+  combs = NULL, keyVars, strataVars = NULL, alpha = 1)
 
 kAnon(obj, k = 2, importance = NULL, combs = NULL, ...)
 
 \S4method{kAnon}{sdcMicroObj}(obj, k = 2, importance = NULL, combs = NULL)
 
-\S4method{kAnon}{data.frame}(obj, k = 2, keyVars, strataVars = NULL,
-  importance = NULL, combs = NULL)
+\S4method{kAnon}{data.frame}(obj, k = 2, importance = NULL, combs = NULL,
+  keyVars, strataVars = NULL, alpha = 1)
 }
 \arguments{
 \item{obj}{an object of class sdcMicroObj or a data frame or matrix}
