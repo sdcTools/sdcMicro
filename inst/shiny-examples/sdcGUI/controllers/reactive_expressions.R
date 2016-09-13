@@ -234,6 +234,12 @@ possGhostVars <- reactive({
 
 # the (anonymized) dataset that will be written to a file
 exportData <- reactive({
+  if (is.null(input$rb_export_randomizeorder)) {
+    return(NULL)
+  }
+  if (is.null(obj$sdcObj)) {
+    return(NULL)
+  }
   extractManipData(obj$sdcObj, randomizeRecords=input$rb_export_randomizeorder)
 })
 
