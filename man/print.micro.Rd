@@ -16,7 +16,7 @@ information about method and aggregation level from objects of class
 micro.
 }
 \description{
-Print method for objects from class micro.
+printing an object of class \code{micro}
 }
 \examples{
 
