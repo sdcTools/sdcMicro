@@ -92,7 +92,7 @@ output$ui_rescat_riskinfo <- renderUI({
 # display information on recodings
 output$ui_rescat_recodes <- renderUI({
   # calculate recoding information-loss measures
-  output$tab_recodes <- renderDataTable({
+  output$tab_recodes <- DT::renderDataTable({
     if (is.null(obj$sdcObj)) {
       return(NULL)
     }
@@ -113,7 +113,7 @@ output$ui_rescat_recodes <- renderUI({
           min.size.orig=res_o[[i]][3], min.size.mod=res_m[[i]][3]))
     }
     out
-  }, options = list(pageLength = 10, searching=FALSE))
+  }, options = list(scrollX=TRUE, pageLength = 10, searching=FALSE))
 
   fluidRow(
     column(12, h4("Display information loss based on Recodings of categorical key variables", align="center")),
@@ -184,7 +184,7 @@ output$ui_rescat_ldiv <- renderUI({
     colnames(xtmp)[ncol(ldiv)+1] <- "fk"
     xtmp <- xtmp[order(xtmp[,1]),]
     xtmp
-  })
+  }, options=list(scrollX=TRUE))
 
   res <- fluidRow(column(12, h4("l-Diversity risk-measure", align="center")))
   res <- list(res, fluidRow(

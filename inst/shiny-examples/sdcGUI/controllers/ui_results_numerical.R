@@ -40,7 +40,7 @@ output$ui_catvar_numres <- renderUI({
 
 # display comparison (before-after) about numeric variables
 output$ui_resnum_comparison <- renderUI({
-  output$ui_numvar_modtab <- renderDataTable({
+  output$ui_numvar_modtab <- DT::renderDataTable({
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
     }
@@ -59,8 +59,8 @@ output$ui_resnum_comparison <- renderUI({
       tab_m <- as.data.frame(t(summaryfn(df_m[[input$sel_res_numvar1]])))
     }
     tab_m
-  }, options=list(searching=FALSE, paging=FALSE))
-  output$ui_numvar_origtab <- renderDataTable({
+  }, options=list(scrollX=TRUE, searching=FALSE, paging=FALSE))
+  output$ui_numvar_origtab <- DT::renderDataTable({
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
     }
@@ -79,7 +79,7 @@ output$ui_resnum_comparison <- renderUI({
       tab_o <- as.data.frame(t(summaryfn(df_o[[input$sel_res_numvar1]])))
     }
     tab_o
-  }, options=list(searching=FALSE, paging=FALSE))
+  }, options=list(scrollX=TRUE, searching=FALSE, paging=FALSE))
   output$ui_numvar_cor <- renderUI({
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
