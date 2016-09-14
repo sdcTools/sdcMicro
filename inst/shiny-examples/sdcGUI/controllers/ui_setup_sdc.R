@@ -137,7 +137,6 @@ output$setupTable <- DT::renderDataTable({
   drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
 ))
 
-
 # show the setup-button or an error-message
 output$setupbtn <- renderUI({
   if (is.null(input$setup_key_1)) {
@@ -239,24 +238,13 @@ output$setupbtn <- renderUI({
 
 # show additional parameters
 output$setup_moreparams <- renderUI({
-  if (is.null(input$sl_alpha)) {
-    val_alpha <- 1
-  } else {
-    val_alpha <- input$sl_alpha
-  }
-  sl_alpha <- sliderInput("sl_alpha", label=h5("Parameter 'alpha'"), value=val_alpha, min=0, max=1, step=0.01, width="50%")
+  sl_alpha <- sliderInput("sl_alpha", label=h5("Parameter 'alpha'"), value=1, min=0, max=1, step=0.01, width="90%")
   help_alpha <- helpText("The higher alpha, the more keys containing missing values will contribute to the calculation of 'fk' and 'Fk'")
-  if (is.null(input$sl_seed)) {
-    val_seed <- sample(-1000:1000, 1)
-  } else {
-    val_seed <- input$sl_seed
-  }
-  sl_seed <- sliderInput("sl_seed", label=h5("Parameter 'seed'"), value=val_seed, min=-1000, max=1000, step=1, width="50%")
+  sl_seed <- sliderInput("sl_seed", label=h5("Parameter 'seed'"), value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
   help_seed <- helpText("Select an initial (integer) value for the random seed generator")
-
-  out <- list(fluidRow(
-    column(6, sl_alpha, align="center"), column(6, sl_seed, align="center"),
-    column(6, help_alpha, align="center"), column(6, help_seed, align="center")))
+  out <- list(
+    fluidRow(column(6, sl_alpha, align="center"), column(6, sl_seed, align="center")),
+    fluidRow(column(6, help_alpha, align="center"), column(6, help_seed, align="center")))
   out
 })
 
