@@ -283,7 +283,7 @@ definition = function(x, type = "kAnon", ...) {
       txt_r <- paste0(txt_r, "\tIL1: ",il1,"\n")
       txt_r <- paste0(txt_r, "\tDifference of Eigenvalues: ",diff_eigen,"%\n")
     } else {
-      txt_r <- paste0(txt_r, "Disclosure risk is currently between [0.00%; ",risk_up,"]\n\n")
+      txt_r <- paste0(txt_r, "Disclosure risk is currently between [0.00%; ",risk_up,"%]\n\n")
       txt_r <- paste0(txt_r, "Current Information Loss:\n")
       txt_r <- paste0(txt_r, "\tIL1: ",il1,"\n")
       txt_r <- paste0(txt_r, "\tDifference of Eigenvalues: ",diff_eigen,"%\n")
