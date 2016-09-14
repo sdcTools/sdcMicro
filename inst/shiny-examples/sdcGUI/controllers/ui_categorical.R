@@ -283,13 +283,13 @@ output$ui_kAnon <- renderUI({
 
   # so that the slider-value is not changed while updating the importance vector
   output$ui_kanon_k <- renderUI({
-    if (is.null(input$sl_kanon_k)) {
-      val <- 3
-    } else {
-      val <- input$sl_kanon_k
-    }
+    #if (is.null(input$sl_kanon_k)) {
+    #  val <- 3
+    #} else {
+    #  val <- input$sl_kanon_k
+    #}
     sl <- sliderInput("sl_kanon_k", label=h5("Please specify the k-Anonymity parameter"),
-      min=2, max=50, value=val, step=1, width="100%")
+      min=2, max=50, value=3, step=1, width="100%")
     fluidRow(column(4, ""), column(4, p(sl, align="center")), column(4, ""))
   })
 
@@ -367,7 +367,7 @@ output$ui_kAnon <- renderUI({
   btn <- NULL
   impvec <- kAnon_impvec()
   pp <- kAnon_comb_params()
-  if (!kAnon_useImportance() | (all(impvec!="") & length(pp$use)>0)) {
+  if (!kAnon_useImportance() | (all(impvec!="") & (is.null(pp) | length(pp$use)>0))) {
     btn <- myActionButton("btn_kanon", label="Establish k-Anonymity", "primary")
   }
   out <- list(out, fluidRow(column(12, p(btn, align="center"))))
