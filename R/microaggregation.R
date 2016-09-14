@@ -805,7 +805,8 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
   res$blowxm <- res$blowxm[order(as.numeric(rownames(res$blowxm))), ]
   res$blowxm <- res$blowxm[1:nrow(xall), ]
   class(res) <- "micro"
-  res$mx <- res$blowxm
+  res$mx <- as.data.frame(res$blowxm)
+  colnames(res$mx) <- variables
   resv <- c("x", "mx", "method", "aggr", "measure")
   res1 <- list()
   for (v in resv) {
