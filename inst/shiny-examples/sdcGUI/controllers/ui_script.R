@@ -88,7 +88,11 @@ output$ui_script_sidebar_left <- renderUI({
 output$ui_script <- renderUI({
   if (is.null(obj$inputdata)) {
     return(noInputData(uri="ui_script"))
-  } else {
+  } else if (is.null(obj$sdcObj)) {
+    out <- fluidRow(
+      column(3, uiOutput("ui_script_sidebar_left")),
+      column(9, uiOutput("ui_script_main")))
+    } else {
     out <- fluidRow(
       column(3, uiOutput("ui_script_sidebar_left")),
       column(6, uiOutput("ui_script_main")),
