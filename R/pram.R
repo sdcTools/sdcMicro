@@ -163,8 +163,8 @@ definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.
 
   if (length(kVar) > 0) {
     warnMsg <- "If pram is applied on key variables, the k-anonymity and risk assessment are not useful anymore.\n"
-    warning(warnMsg)
     obj <- addWarning(obj, warnMsg=warnMsg, method="pram", variable=kVar[1])
+    warning(warnMsg)
     manipData <- manipKeyVars[, kVar, drop=FALSE]
   }
   if (length(pVar) > 0) {
