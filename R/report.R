@@ -382,6 +382,7 @@ definition=function(obj, internal, title, outdir) {
 #' @param title Title for the report
 #' @param internal TRUE/FALSE, if TRUE a detailled internal report is produced,
 #' else a non-disclosive overview
+#' @param verbose TRUE/FALSE, if TRUE, some additional information is printed.
 #' @author Matthias Templ, Bernhard Meindl
 #' @keywords methods
 #' @export
@@ -393,17 +394,17 @@ definition=function(obj, internal, title, outdir) {
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' report(sdc)
 #' }
-report <- function(obj, outdir=getwd(), filename="SDC-Report", format="HTML", title="SDC-Report", internal=FALSE) {
-  reportX(obj=obj, outdir=outdir, filename=filename, format=format, title=title, internal=internal)
+report <- function(obj, outdir=getwd(), filename="SDC-Report", format="HTML", title="SDC-Report", internal=FALSE, verbose=FALSE) {
+  reportX(obj=obj, outdir=outdir, filename=filename, format=format, title=title, internal=internal, verbose=verbose)
 }
 setGeneric("reportX", function(obj, outdir=getwd(), filename="SDC-Report",
-  format="HTML", title="SDC-Report", internal=FALSE) {
+  format="HTML", title="SDC-Report", internal=FALSE, verbose=FALSE) {
   standardGeneric("reportX")
 })
 
 setMethod(f="reportX", signature=c("sdcMicroObj"),
 definition=function(obj, outdir=getwd(), filename="SDC-Report",
-  format="HTML", title="SDC-Report", internal=FALSE) {
+  format="HTML", title="SDC-Report", internal=FALSE, verbose=FALSE) {
 
   if (!format %in% c("HTML", "LATEX","TEXT")) {
     stop("possible values for 'type' are 'HTML','LATEX' and 'TEXT'!\n")
@@ -433,11 +434,13 @@ definition=function(obj, outdir=getwd(), filename="SDC-Report",
     }, finally=TRUE)
   }
 
-  if (internal) {
-    txt <- paste0("An internal (extensive) report was successfully generated.\n")
-  } else {
-    txt <- paste0("An short report was successfully generated.\n")
+  if (verbose) {
+    if (internal) {
+      txt <- paste0("An internal (extensive) report was successfully generated.\n")
+    } else {
+      txt <- paste0("An short report was successfully generated.\n")
+    }
+    txt <- paste0(txt, "It was saved in '", outdir,"/",filename,"'.\n")
+    cat(txt)
   }
-  txt <- paste0(txt, "It was saved in '", outdir,"/",filename,"'.\n")
-  cat(txt)
 })
