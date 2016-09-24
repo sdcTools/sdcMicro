@@ -106,20 +106,21 @@ output$ui_export_main <- renderUI({
     },
     content=function(file) {
       internal <- ifelse(input$rb_simple_report=="internal", TRUE, FALSE)
-      pout <- tempdir()
+      pout <- getwd()
       if (internal) {
         tmpF <- paste0("sdcReport_internal",format(Sys.time(), "%Y%m%d_%H%M"))
       } else {
-        tmpF <- paste0("sdcRepor_external",format(Sys.time(), "%Y%m%d_%H%M"))
+        tmpF <- paste0("sdcReport_external",format(Sys.time(), "%Y%m%d_%H%M"))
       }
-      report(obj$sdcObj, outdir=pout, filename=tmpF,
+      curObj <- sdcObj()
+      report(curObj, outdir=pout, filename=tmpF,
       format="HTML", title="SDC-Report", internal=internal)
       file.copy(paste0(pout,"/",tmpF,".html"), file)
     }
   )
 
   out <- NULL
-  if ( is.null(obj$sdcObj) ) {
+  if (is.null(sdcObj())) {
     return(list(out, noSdcProblem(uri="ui_export_data")))
   }
 
@@ -142,12 +143,11 @@ output$ui_export_sidebar_left <- renderUI({
 })
 
 output$ui_export <- renderUI({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(noSdcProblem(uri="ui_export_data"))
   }
   return(fluidRow(
     column(2, uiOutput("ui_export_sidebar_left")),
-    column(7, uiOutput("ui_export_main")),
-    column(3, uiOutput("sb_info_export"))))
+    column(10, uiOutput("ui_export_main"))))
 })
 
