@@ -16,10 +16,10 @@ definition = function(object) {
   if (length(object@numVars) > 0) {
     print(object, type="numrisk")
   }
-  if ( !is.null(object@pram) ) {
+  if (!is.null(object@pram)) {
     print(object, type="pram")
   }
-  if ( !is.null(object@localSuppression) ) {
+  if (!is.null(object@localSuppression)) {
     print(object, type="ls")
   }
 })
