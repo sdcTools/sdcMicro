@@ -35,7 +35,7 @@ output$ui_rescat_riskinfo <- renderUI({
 
     # table containing the corresponding observations
     output$tab_risk <- renderDataTable({
-      if (is.null(obj$sdcObj)) {
+      if (is.null(sdcObj())) {
         return(NULL)
       }
       if (is.null(input$sl_riskyobs)) {
@@ -60,7 +60,7 @@ output$ui_rescat_riskinfo <- renderUI({
   # display a risk-plot
   output$ui_rescat_riskplot <- renderUI({
     output$plot_risk <- renderPlot({
-      if (is.null(obj$sdcObj)) {
+      if (is.null(sdcObj())) {
         return(NULL)
       }
       rk <- get_risk()
@@ -93,7 +93,7 @@ output$ui_rescat_riskinfo <- renderUI({
 output$ui_rescat_recodes <- renderUI({
   # calculate recoding information-loss measures
   output$tab_recodes <- DT::renderDataTable({
-    if (is.null(obj$sdcObj)) {
+    if (is.null(sdcObj())) {
       return(NULL)
     }
 
@@ -150,7 +150,8 @@ output$ui_rescat_ldiv <- renderUI({
     if (is.null(input$ldiv_sensvar) || length(input$ldiv_sensvar)==0) {
       return(NULL)
     }
-    res <- obj$sdcObj@risk$ldiversity
+    curObj <- sdcObj()
+    res <- curObj@risk$ldiversity
     if (is.null(res)) {
       return(NULL)
     }
@@ -158,7 +159,8 @@ output$ui_rescat_ldiv <- renderUI({
   })
   #  data table showing violating obs
   output$ldiv_violating <- renderDataTable({
-    risk <- obj$sdcObj@risk
+    curObj <- sdcObj()
+    risk <- curObj@risk
     ldiv <- risk$ldiversity
     if (is.null(input$ldiv_sensvar) || length(input$ldiv_sensvar)==0 || is.null(ldiv)) {
       return(NULL)
@@ -216,7 +218,8 @@ output$ui_rescat_suda2 <- renderUI({
   })
   # suda2-results
   output$suda2_result <- renderPrint({
-    res <- obj$sdcObj@risk$suda2
+    curObj <- sdcObj()
+    res <- curObj@risk$suda2
     if (is.null(input$suda2_disf) || is.null(res)) {
       return(NULL)
     }
