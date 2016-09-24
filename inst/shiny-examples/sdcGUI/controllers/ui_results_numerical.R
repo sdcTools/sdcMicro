@@ -47,7 +47,7 @@ output$ui_resnum_comparison <- renderUI({
     if (length(input$sel_res_numvar1)==0) {
       return(NULL)
     }
-    df_m <- extractManipData(obj$sdcObj)
+    df_m <- extractManipData(sdcObj())
     if (input$sel_res_catvar1!="none") {
       tab_m <- tapply(df_m[[input$sel_res_numvar1]], df_m[[input$sel_res_catvar1]], summaryfn)
       tab_m <- do.call("rbind", tab_m)
@@ -88,7 +88,7 @@ output$ui_resnum_comparison <- renderUI({
       return(NULL)
     }
     v_o <- get_origData()[[input$sel_res_numvar1]]
-    v_m <- extractManipData(obj$sdcObj)[[input$sel_res_numvar1]]
+    v_m <- extractManipData(sdcObj())[[input$sel_res_numvar1]]
     vv <- round(cor(v_o, v_m), digits=3)
     txt_cor <- paste0("The ",strong("correlation")," between original and modified variable is", code(vv),". The ",strong("standard deviation"),
     " of the original variable is ",code(round(sd(v_o),digits=3))," and the ",strong("standard deviation")," of the
