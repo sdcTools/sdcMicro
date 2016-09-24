@@ -90,7 +90,7 @@ output$ui_results_sidebar_left <- renderUI({
 })
 
 output$ui_results <- renderUI({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(noSdcProblem(uri="ui_results"))
   } else {
     out <- fluidRow(
