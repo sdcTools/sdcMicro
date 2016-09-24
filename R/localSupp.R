@@ -58,6 +58,8 @@ setGeneric("localSuppX", function(obj, threshold = 0.15, keyVar) {
 
 setMethod(f="localSuppX", signature=c(obj="sdcMicroObj"),
 definition = function(obj, threshold=0.15, keyVar) {
+  obj <- nextSdcObj(obj)
+
   manipData <- get.sdcMicroObj(obj, type="manipKeyVars")
   rk <- get.sdcMicroObj(obj, type="risk")$individual[, 1]
 
@@ -76,7 +78,6 @@ definition = function(obj, threshold=0.15, keyVar) {
   ls <- localSuppWORK(x=manipData, rk=rk, keyVar=keyVar, threshold=threshold)
 
   # create final output
-  obj <- nextSdcObj(obj)
   obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(ls$xAnon))
   ls$xAnon <- NULL
   class(ls) <- unclass("list")
@@ -84,11 +85,11 @@ definition = function(obj, threshold=0.15, keyVar) {
 
   # transfer suppression patterns if ghostVars is specified
   ghostVars <- get.sdcMicroObj(obj, type="ghostVars")
-  if ( !is.null(ghostVars) ) {
+  if (!is.null(ghostVars)) {
     manipData <- get.sdcMicroObj(obj, type="manipKeyVars")
     manipGhostVars <- get.sdcMicroObj(obj, type="manipGhostVars")
     cn <- colnames(get.sdcMicroObj(obj, type="origData"))
-    for ( i in seq_along(ghostVars) ) {
+    for (i in seq_along(ghostVars)) {
       # index of keyVar within manipData
       kV <- match(cn[ghostVars[[i]][[1]]], colnames(manipData))
       isna <- is.na(manipData[[kV]])
@@ -96,7 +97,7 @@ definition = function(obj, threshold=0.15, keyVar) {
       # get indices of linked variables within ghostVars and
       # transfer suppression pattern
       vv <- match(cn[ghostVars[[i]][[2]]], colnames(manipGhostVars))
-      for ( j in 1:length(vv) ) {
+      for (j in 1:length(vv)) {
         manipGhostVars[[vv[j]]][isna] <- NA
       }
     }
