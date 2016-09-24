@@ -118,7 +118,7 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
 ## Author: Alexander Kowarik and Bernhard Meindl
 sffc <- function(dt, keyVars) {
   .I <- idvarextraforsffc <- NULL
-  dt[, idvarextraforsffc:=.I]
+  dt$idvarextraforsffc <- 1:nrow(dt)
   setkeyv(dt, keyVars)
   erg <- vector()
   cmd <- paste("erg <- dt[,list(Fk=sum(weight),fk=.N),by=key(dt)]")
@@ -143,7 +143,7 @@ sffcNA <- function(dt, keyVars, alpha) {
   }
 
   # Compute fk for observations without any NA
-  dt[, idvarextraforsffc:=.I]  #unique id for easy outputting
+  dt$idvarextraforsffc <- 1:nrow(dt) #unique id for easy outputting
   # Split data set in data set with NAs and without
   cmd <- paste0("datwona <- dt[", paste0("!is.na(", keyVars, ")", collapse="&"),"]")
   eval(parse(text=cmd))
