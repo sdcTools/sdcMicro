@@ -362,12 +362,12 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
   calcTransitionMatrix <- function(xvec, pd, alpha=NULL) {
     levs <- levels(xvec)
     L <- length(levs)
-    if ( is.matrix(pd) ) {
+    if (is.matrix(pd)) {
       # checks
-      if ( nrow(pd) != L | ncol(pd) != L ) {
+      if (nrow(pd) != L | ncol(pd) != L) {
         stop("dimensions of transition-matrix do not match!\n")
       }
-      if ( any(abs(rowSums(pd)-1) > .Machine$double.eps) ) {
+      if (any(abs(rowSums(pd)-1) > .Machine$double.eps)) {
         stop("rowSums of transition-matrix do not always equal 1!\n")
       }
       if (!identical(rownames(pd), levs)) {
@@ -386,7 +386,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
       P[i, ] <- tri[i]
     }
     diag(P) <- pds
-    p <- table(xvec)/sum(as.numeric(xvec))
+    p <- table(xvec)/sum(as.numeric(na.omit(xvec)))
     Qest <- P
     for (k in seq(L)) {
       s <- sum(p * P[, k])
@@ -463,10 +463,10 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
 
     # calculate or check and use transition-matrix
     Rs <- calcTransitionMatrix(xvec=data[[v]], pd=pd[[i]], alpha=alpha[[i]])
-    #out$params[[length(out$params)+1]] <- list(Rs=Rs, pd=pd[[i]], alpha=alpha[[i]])
-    for ( si in ll ) {
-      res <- do.pram(x=data[tmpfactor_for_pram==si][[v]], Rs=Rs)$xpramed
-      cmd <- paste0("data[tmpfactor_for_pram==",shQuote(si),",",v,"_pram:=res]")
+    for (si in ll) {
+      ii <- which(data$tmpfactor_for_pram==si & !is.na(data[[v]]))
+      res <- do.pram(x=data[ii][[v]], Rs=Rs)$xpramed
+      cmd <- paste0("data[ii,",v,"_pram:=res]")
       eval(parse(text=cmd))
     }
 
@@ -481,17 +481,17 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     transitions[[length(transitions)+1]] <- result
 
     # frequency-comparison
-    to <- table(dat_o)
-    tp <- table(dat_p)
+    to <- table(dat_o, useNA="always")
+    tp <- table(dat_p, useNA="always")
     compdat <- matrix(NA, nrow=2, ncol=+1+length(to))
     compdat[1,-1] <- to
     compdat[2,-1] <- tp
     compdat[,1] <- c("Original Frequencies","Frequencies after Perturbation")
     compdat <- as.data.table(compdat)
-    setnames(compdat, c(v, names(to)))
+    cn <- c(v, names(to))
+    cn[length(cn)] <- "NA"
+    setnames(compdat, cn)
     comparedata[[length(comparedata)+1]] <- compdat
-
-
   }
   data[,tmpfactor_for_pram:=NULL]
   data[,idvarpram:=NULL]
