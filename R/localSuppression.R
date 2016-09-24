@@ -107,6 +107,7 @@ setGeneric("localSuppressionX", function(obj, k=2, importance=NULL, combs=NULL, 
 
 setMethod(f='localSuppressionX', signature=c('sdcMicroObj'),
 definition=function(obj, k=2, importance=NULL, combs=NULL) {
+  obj <- nextSdcObj(obj)
   ### get data from manipKeyVars
   df <- as.data.frame(get.sdcMicroObj(obj, type="manipKeyVars"))
   strataVars <- get.sdcMicroObj(obj, "strataVar")
@@ -123,7 +124,6 @@ definition=function(obj, k=2, importance=NULL, combs=NULL) {
     k=k, combs=combs, importance=importance, alpha=alpha)
 
   # create final output
-  obj <- nextSdcObj(obj)
   obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(ls$xAnon))
   ls$xAnon <- NULL
   class(ls) <- unclass("list")
@@ -273,7 +273,6 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
         runInd <- FALSE
       }
     }
-
     # 5) the last step is to merge the smaller k-anonymized data set back to the
     # original data set with initial NAs introduced again
     if (nrow(erg)>0) {
@@ -353,8 +352,8 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   # calculate number of suppressions for each keyVar
   # before trying to achieve k-anonymity
   NABefore <- is.na(x)
-  NAinKey <- x[,lapply(.SD, function(x) sum(is.na(x))), .SDcols=keyVars]
-  totalNABefore <- sum(NAinKey)
+  NAinKey <- x[,lapply(.SD, function(x) sum(is.na(x))), .SDcols=keyVars, by=strataVars]
+  totalNABefore <- sum(x[,lapply(.SD, function(x) sum(is.na(x))), .SDcols=keyVars])
 
   # performing the k-Anon algorithm
   # no stratification required
@@ -456,8 +455,19 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     xAnon[,sortid:=NULL]
     totalSupps <- sum(supps[nrow(supps),])
   }
+
+  # totalSupps after kAnon
+  if (!is.null(strataVars)) {
+    ss <- NAinKey[,lapply(.SD, function(x) sum(x)), .SDcols=setdiff(names(NAinKey), strataVars)]
+    NAinKey <- rbind(NAinKey,ss,fill=TRUE)
+    NAinKey[[strataVars]] <- NULL
+    NAinKey <- as.data.frame(NAinKey)
+    rownames(NAinKey) <- rownames(NAinKey)
+  }
+  total_supps <- as.data.frame(as.data.frame(supps)+as.data.frame(NAinKey))
+  totalSupps <- tail(rowSums(total_supps),1)
   res <- list(xAnon=as.data.frame(xAnon), supps=supps,
-    totalSupps=totalSupps, newSupps=totalSupps-totalNABefore, anonymity=TRUE, keyVars=keyVars,
+    totalSupps=total_supps, newSupps=totalSupps-totalNABefore, anonymity=TRUE, keyVars=keyVars,
     strataVars=strataVars, importance=importance, k=k, threshold=NA, combs=combs)
   class(res) <- "localSuppression"
   invisible(res)
@@ -481,8 +491,12 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
 #' l1
 #'
 print.localSuppression <- function(x, ...) {
+  byStrata <- ifelse(nrow(x$totalSupps)==1, FALSE, TRUE)
+  totSupps <- tail(rowSums(x$totalSupps),1)
+  addSupps <- tail(rowSums(x$supps),1)
+
   pp <- "\n-----------------------\n"
-  pp <- paste0(pp, "Total Suppressions in the key variables: ", x$totalSupps,"\n\n")
+  pp <- paste0(pp, "Total number of suppressions in the key variables: ", totSupps," (new: ",addSupps,")\n\n")
   if (!is.na(x$threshold)) {
     pp <- paste0(pp, "Number of suppressions by key-variables:\n\n")
     cat(pp)
@@ -496,15 +510,18 @@ print.localSuppression <- function(x, ...) {
     return(invisible(NULL))
   }
 
-  byStrata <- !is.null(x$strataVars)
   if (byStrata) {
-    pp <- paste0(pp, "Number of suppressions by key-variables and strata:\n\n")
+    pp <- paste0(pp, "Number of suppressions by key-variables and strata:\n(in parenthesis, the total number suppressions is shown)\n\n")
   } else {
-    pp <- paste0(pp, "Number of suppressions by key-variables:\n\n")
+    pp <- paste0(pp, "Number of suppressions by key-variables:\n(in parenthesis, the total number suppressions is shown)\n\n")
+  }
+
+  dt <- x$supps
+  for (i in 1:ncol(dt)) {
+    dt[[i]] <- paste0(dt[[i]], " (",x$totalSupps[[i]],")")
   }
   cat(pp)
-
-    print(x$supps)
+  print(dt)
 
   if (byStrata==TRUE) {
     if (all(x$anonymity)) {
