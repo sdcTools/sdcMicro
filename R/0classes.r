@@ -457,11 +457,14 @@ setClass(Class = "sdcMicroObj",
     prev = NULL,
     deletedVars = NULL),
   validity = function(object) {
-    if ( !is.null(object@manipKeyVars) && ncol(object@manipKeyVars) != length(object@keyVars) ) {
+    if (!is.null(object@manipKeyVars) && ncol(object@manipKeyVars) != length(object@keyVars)) {
       stop("wrong dimension of slot 'manipKeyVars'!\n")
     }
-    if ( !is.null(object@manipNumVars) && ncol(object@manipNumVars) != length(object@numVars) ) {
+    if (!is.null(object@manipNumVars) && ncol(object@manipNumVars) != length(object@numVars)) {
       stop("wrong dimension of slot 'manipNumVars'!\n")
+    }
+    if (!is.null(object@strataVar) && object@strataVar %in% object@keyVars) {
+      stop("stratification variable cant be a categorical key variable!\n")
     }
     return(TRUE)
   })
