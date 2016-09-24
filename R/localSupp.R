@@ -131,21 +131,23 @@ definition = function(obj, threshold=0.15, keyVar) {
 })
 
 localSuppWORK <- function(x, rk, keyVar, threshold) {
-  na_before <- as.data.table(t(apply(x, 2, function(x) {
-    sum(is.na(x))
-  })))
+  x <- as.data.table(x)
+
+  na_before <- x[,lapply(.SD, function(x) { sum(is.na(x))})]
 
   TF <- rk > threshold
   if (any(TF)) {
-    x[which(TF), keyVar] <- NA
+    x[[keyVar]][which(TF)] <- NA
   }
+  supps_total <- x[,lapply(.SD, function(x) { sum(is.na(x))})]
 
-  supps <- as.data.table(t(apply(x, 2, function(x) { sum(is.na(x))})))
   importance <- rep(NA, ncol(x))
   importance[match(keyVar, colnames(x))] <- ncol(x)
   importance[is.na(importance)] <- sample(1:(ncol(x)-1))
+
+  supps <- supps_total-na_before
   res <- list(xAnon=as.data.frame(x), supps=supps,
-    totalSupps=sum(supps), newSupps=sum(supps)-sum(na_before), anonymity=NA, keyVars=colnames(x),
+    totalSupps=supps_total, newSupps=sum(supps_total)-sum(na_before), anonymity=NA, keyVars=colnames(x),
     strataVars=NULL, importance=importance, k=NA, threshold=threshold, combs=NULL)
   class(res) <- "localSuppression"
   res
