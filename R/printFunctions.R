@@ -322,26 +322,37 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
   }
 
   if (type=="numrisk") {
+    if (length(obj@numVars)==0) {
+      return(NULL)
+    }
     risk <- obj@risk
     utility <- obj@utility
 
     txt_r <- paste0("Numerical key variables: ", paste(cn[x@numVars], collapse = ", "), "\n\n")
     risk_up <- prettyF(round(100 * risk$numeric, 2),2)
-    il1 <- prettyF(round(utility$il1, 2),2)
-    diff_eigen <- prettyF(round(utility$eigen * 100, 2))
+
+    if (!is.null(utility)) {
+      il1 <- prettyF(round(utility$il1, 2),2)
+      diff_eigen <- prettyF(round(utility$eigen * 100, 2))
+    } else {
+      il1 <- diff_eigen <- NA
+    }
 
     if (TFchange) {
       txt_r <- paste0(txt_r, "Disclosure risk (~100.00% in original data):\n")
       txt_r <- paste0(txt_r, tabsp,"modified data: [0.00%; ",risk_up,"%]\n\n")
-
-      txt_r <- paste0(txt_r, "Current Information Loss in modified data (0.00% in original data):\n")
-      txt_r <- paste0(txt_r, tabsp, "IL1: ",il1,"\n")
-      txt_r <- paste0(txt_r, tabsp, "Difference of Eigenvalues: ",diff_eigen,"%\n")
+      if (!is.null(utility)) {
+        txt_r <- paste0(txt_r, "Current Information Loss in modified data (0.00% in original data):\n")
+        txt_r <- paste0(txt_r, tabsp, "IL1: ",il1,"\n")
+        txt_r <- paste0(txt_r, tabsp, "Difference of Eigenvalues: ",diff_eigen,"%\n")
+      }
     } else {
       txt_r <- paste0(txt_r, "Disclosure risk is currently between [0.00%; ",risk_up,"%]\n\n")
-      txt_r <- paste0(txt_r, "Current Information Loss:\n")
-      txt_r <- paste0(txt_r, tabsp, "- IL1: ",il1,"\n")
-      txt_r <- paste0(txt_r, tabsp, "- Difference of Eigenvalues: ",diff_eigen,"%\n")
+      if (!is.null(utility)) {
+        txt_r <- paste0(txt_r, "Current Information Loss:\n")
+        txt_r <- paste0(txt_r, tabsp, "- IL1: ",il1,"\n")
+        txt_r <- paste0(txt_r, tabsp, "- Difference of Eigenvalues: ",diff_eigen,"%\n")
+      }
     }
     txt_r <- paste0(txt_r, hr, "\n\n")
     if (docat) {
