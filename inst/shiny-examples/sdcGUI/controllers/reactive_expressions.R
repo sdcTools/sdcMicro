@@ -1,3 +1,34 @@
+# return sdcObj
+sdcObj <- reactive({
+  if (is.null(obj$sdcObj)) {
+    return(NULL)
+  }
+  obj$sdcObj
+})
+
+comptime <- reactive({
+  z <- as.difftime(obj$comptime, units="secs")
+
+  if (obj$comptime <60) {
+    return(paste(round(as.numeric(z, units="secs"), digits=2),"seconds"))
+  } else {
+    return(paste(round(as.numeric(z, units="mins"), digits=2),"minutes"))
+  }
+})
+
+
+anonPerformed <- reactive({
+  res <- obj$anon_performed
+  if (is.null(res)) {
+    return(NULL)
+  }
+  if (length(res)==0) {
+    return(NULL)
+  }
+  res
+})
+
+
 # all numeric variables in inputdata
 numVars <- reactive({
   tmp <- obj$inputdata
@@ -35,7 +66,7 @@ dataTypes <- reactive({
 
 # index of categorical key variables
 get_keyVars <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(obj$sdcObj@keyVars)
@@ -43,7 +74,7 @@ get_keyVars <- reactive({
 
 # categorical key variables by names
 get_keyVars_names <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(colnames(get_origData())[get_keyVars()])
@@ -51,7 +82,7 @@ get_keyVars_names <- reactive({
 
 # index of weight-variable
 get_weightVar <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(obj$sdcObj@weightVar)
@@ -59,7 +90,7 @@ get_weightVar <- reactive({
 
 # weightVar by name
 get_weightVar_name <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(colnames(get_origData())[get_weightVar()])
@@ -67,7 +98,7 @@ get_weightVar_name <- reactive({
 
 # index of numerical key variables
 get_numVars <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(obj$sdcObj@numVars)
@@ -75,7 +106,7 @@ get_numVars <- reactive({
 
 # get numerical key-variables by names
 get_numVars_names <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(colnames(get_origData())[get_numVars()])
@@ -83,28 +114,28 @@ get_numVars_names <- reactive({
 
 # index of pram variables
 get_pramVars <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(obj$sdcObj@pramVars)
 })
 # get pram variables by names
 get_pramVars_names <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(colnames(get_origData())[get_pramVars()])
 })
 
 get_strataVar <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(get.sdcMicroObj(obj$sdcObj, "strataVar"))
 })
 # strataVar by name
 get_strataVar_names <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   sv <- get_strataVar()
@@ -116,21 +147,21 @@ get_strataVar_names <- reactive({
 
 # original data
 get_origData <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(obj$sdcObj@origData)
 })
 
 get_manipKeyVars <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(obj$sdcObj@manipKeyVars)
 })
 
 get_manipNumVars <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(obj$sdcObj@manipNumVars)
@@ -138,7 +169,7 @@ get_manipNumVars <- reactive({
 
 # risks
 get_risk <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   return(as.data.frame(obj$sdcObj@risk$individual))
@@ -146,7 +177,7 @@ get_risk <- reactive({
 
 # all numeric/integer variables
 get_allNumericVars_name <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   tmp <- get.sdcMicroObj(obj$sdcObj, type="origData")
@@ -156,10 +187,9 @@ get_allNumericVars_name <- reactive({
 # possible variables for microaggregation and addNoise,...
 # excluding sampling weights, strata-variables, ghostVars,..
 possvars_numericmethods <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
-
   get_numVars_names()
 
   # all numeric variables
@@ -204,7 +234,7 @@ possvars_numericmethods <- reactive({
 
 # calculates the variables that might be used as ghost-vars
 possGhostVars <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   out <- list(kv=c(), gv=c())
@@ -246,7 +276,7 @@ exportData <- reactive({
 
 # compute some risk-measures
 measure_riskComp <- reactive({
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(NULL)
   }
 
