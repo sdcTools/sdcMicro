@@ -1,6 +1,6 @@
 
 choices_import <- reactive({
-  if(is.null(obj$sdcObj)) {
+  if(is.null(sdcObj())) {
     return(c(
       "View the current script"="script_view",
       "Import a previously saved sdcProblem"="script_import"))
@@ -57,10 +57,10 @@ output$ui_script_import <- renderUI({
     ))
   }
   out <- fluidRow(column(12, h4("Import a previously exported sdcProblem", align="center")))
-  if (!is.null(obj$sdcObj)) {
-    out <- list(out, fluidRow(column(12, p("Take care. When you upload a previously saved problem, this will overwrite any existing sdcProblem-instance!", align="center"))))
+  if (!is.null(sdcObj())) {
+    out <- list(out, fluidRow(column(12, p("The file must be an",code(".rdata"),"File. Please note that uploading a previously saved problem, will overwrite any existing current sdcProblem-instance!", align="center"))))
   }
-  fI <- fileInput("file_importProblem", strong("Select previously exported sdcProblem"), width="100%", accept=".rdata")
+  fI <- fileInput("file_importProblem", strong("Select previously exported sdcProblem (.rdata)"), width="100%", accept=".rdata")
   out <- list(out, fluidRow(column(12, p(fI, align="center"))))
   out
 })
@@ -88,15 +88,10 @@ output$ui_script_sidebar_left <- renderUI({
 output$ui_script <- renderUI({
   if (is.null(obj$inputdata)) {
     return(noInputData(uri="ui_script"))
-  } else if (is.null(obj$sdcObj)) {
+  } else {
     out <- fluidRow(
       column(3, uiOutput("ui_script_sidebar_left")),
       column(9, uiOutput("ui_script_main")))
-    } else {
-    out <- fluidRow(
-      column(3, uiOutput("ui_script_sidebar_left")),
-      column(6, uiOutput("ui_script_main")),
-      column(3, uiOutput("sb_info_script")))
   }
   return(out)
 })
