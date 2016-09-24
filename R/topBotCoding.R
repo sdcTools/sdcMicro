@@ -43,6 +43,7 @@ setGeneric('topBotCodingX', function(obj, value, replacement, kind="top", column
 
 setMethod(f='topBotCodingX', signature=c('sdcMicroObj'),
 definition=function(obj, value, replacement, kind="top", column=NULL) {
+  obj <- nextSdcObj(obj)
   manipNumVars <- get.sdcMicroObj(obj, type="manipNumVars")
   manipKeyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
   o <- get.sdcMicroObj(obj, type="origData")
@@ -52,7 +53,6 @@ definition=function(obj, value, replacement, kind="top", column=NULL) {
   if (!column %in% colnames(o)) {
     stop("variable specified in 'column' can not be found!\n")
   }
-  obj <- nextSdcObj(obj)
   if(column%in%colnames(manipNumVars)){
     x <- manipNumVars[,column]
     manipNumVars[,column] <- topBotCoding(x, value=value,replacement=replacement,kind=kind)
