@@ -136,6 +136,7 @@ setGeneric("pramX", function(obj, variables=NULL, strata_variables=NULL, pd=0.8,
 
 setMethod(f="pramX", signature=c("sdcMicroObj"),
 definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
+  obj <- nextSdcObj(obj)
   pramVars <- get.sdcMicroObj(obj, type="pramVars")
   if (length(pramVars) == 0 && is.null(variables)) {
     stop("Error: slot pramVars is NULL and argument 'variables' was not specified!\nDefine one of them to use pram on these variables\n")
@@ -207,7 +208,7 @@ definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.
   levList <- lapply(manipData[,pramVars,drop=FALSE], levels)
   params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
   res_pram <- pramWORK(data=manipData, variables=pramVars,
-                       strata_variables=strataVars, params=params)
+    strata_variables=strataVars, params=params)
 
   if ( is.null(pp)) {
     pram_inp <- list()
@@ -225,7 +226,6 @@ definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.
   obj <- set.sdcMicroObj(obj, type="pram", input=list(pram_inp))
 
   manipData[, pramVars] <- res_pram[, paste0(pramVars, "_pram"), drop=FALSE]
-  obj <- nextSdcObj(obj)
 
   if (length(pVar) > 0) {
     manipPramVars[, pVar] <- manipData[, pVar]
