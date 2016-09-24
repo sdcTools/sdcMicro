@@ -272,13 +272,13 @@ tryCatchFn <- function(expr) {
 #' @export
 readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=TRUE, ...) {
   if (type=="sas") {
-    res <- tryCatchFn(read_sas(b7dat=path))
+    res <- tryCatchFn(read_sas(data_file=path))
   }
   if (type=="spss") {
-    res <- tryCatchFn(read_spss(path=path))
+    res <- tryCatchFn(read_spss(file=path))
   }
   if (type=="stata") {
-    res <- tryCatchFn(read_dta(path=path))
+    res <- tryCatchFn(read_dta(file=path))
   }
   if (type=="R") {
     res <- tryCatchFn(get(load(file=path)))
