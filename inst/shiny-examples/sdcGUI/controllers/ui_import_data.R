@@ -89,9 +89,9 @@ output$ui_import_data_main <- renderUI({
 
 output$ui_import_data_sidebar_left <- renderUI({
   dat_type <- radioButtons("dat_type", label=NULL,
-    choices=c("Choose data.frame"="rdf","R-Dataset"="R",
-      "SPSS-File"="spss","SAS-File"="sas","Comma-seperated File"="csv",
-      "STATA-File"="stata"), selected=input$dat_type, width="100%")
+    choices=c("Use testdata/internal data"="rdf","R-Dataset (.rdata)"="R",
+      "SPSS-File (.sav)"="spss","SAS-File (.sasb7dat)"="sas","Comma-seperated File (.csv)"="csv",
+      "STATA-File (.dta)"="stata"), selected=input$dat_type, width="100%")
   fluidRow(
     column(12, h4("Select data source")),
     column(12, p(dat_type, align="center")))
