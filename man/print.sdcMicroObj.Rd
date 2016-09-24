@@ -6,12 +6,14 @@
 \alias{print.sdcMicroObj}
 \title{Print and Extractor Functions for objects of class \code{\link{sdcMicroObj-class}}}
 \usage{
-\S4method{print}{sdcMicroObj}(x, type = "kAnon", ...)
+\S4method{print}{sdcMicroObj}(x, type = "kAnon", docat = TRUE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{\link{sdcMicroObj-class}}}
 
-\item{type}{Selection of the content to be returned or printed-}
+\item{type}{Selection of the content to be returned or printed}
+
+\item{docat}{logical, if TRUE (default) the results will be actually printed}
 
 \item{...}{the type argument for the print method, currently supported are:
 \itemize{
@@ -44,14 +46,16 @@ sdc <- createSdcObj(testdata,
   keyVars=c('urbrur','roof','walls','relat','sex'),
   pramVars=c('water','electcon'),
   numVars=c('expend','income','savings'), w='sampling_weight')
+sdc <- microaggregation(sdc, method="mdav", aggr=3)
 print(sdc)
-print(sdc,type="general")
-print(sdc,type="ls")
-print(sdc,type="recode")
-print(sdc,type="risk")
-print(sdc,type="numrisk")
-print(sdc,type="pram")
-print(sdc,type="kAnon")
+print(sdc, type="general")
+print(sdc, type="ls")
+print(sdc, type="recode")
+print(sdc, type="risk")
+print(sdc, type="numrisk")
+print(sdc, type="pram")
+print(sdc, type="kAnon")
+print(sdc, type="comp_numvars")
 }
 \author{
 Alexander Kowarik, Matthias Templ, Bernhard Meindl

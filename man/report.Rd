@@ -6,7 +6,7 @@
 \title{Generate a HTML/LATEX output from an sdcMicroObj}
 \usage{
 report(obj, outdir = getwd(), filename = "SDC-Report", format = "HTML",
-  title = "SDC-Report", internal = FALSE)
+  title = "SDC-Report", internal = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{obj}{an object of class \code{\link{sdcMicroObj-class}} or \code{reportObj}}
@@ -21,6 +21,8 @@ report(obj, outdir = getwd(), filename = "SDC-Report", format = "HTML",
 
 \item{internal}{TRUE/FALSE, if TRUE a detailled internal report is produced,
 else a non-disclosive overview}
+
+\item{verbose}{TRUE/FALSE, if TRUE, some additional information is printed.}
 }
 \description{
 Summary statistics of the original and the perturbed data set
