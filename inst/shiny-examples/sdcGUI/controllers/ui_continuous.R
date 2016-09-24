@@ -1,9 +1,64 @@
 # returns TRUE if numeric key-variables exist in obj$sdcObj
 has_numkeyvars <- reactive({
-  if (is.null(obj$sdcObj)) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  length(get.sdcMicroObj(obj$sdcObj, type="numVars"))>0
+  length(get.sdcMicroObj(curObj, type="numVars"))>0
+})
+
+# UI-output for top/bottom-coding of numerical variables
+output$ui_topbotcoding_num <- renderUI({
+  output$ui_topbot_plot_num <- renderPlot({
+    if (is.null(input$sel_topbot_var_num) ) {
+      return(NULL)
+    }
+    vv <- obj$inputdata[[input$sel_topbot_var_num]]
+    boxplot(obj$inputdata[[input$sel_topbot_var_num]], main=input$sel_topbot_var_num,
+            xlab=input$sel_topbot_var_num, col="#DADFE1")
+  })
+  output$ui_topbot_params_num <- renderUI({
+    sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), multiple=FALSE, label="Select variable")
+    sel_kind <- selectInput("sel_topbot_kind_num", choices=c("top","bottom"), multiple=FALSE, label="Apply Top- or Bottom-Coding?")
+    txt_val <- textInput("num_topbot_val_num", label="Value", placeholder="Please enter a number")
+    txt_replace <- textInput("num_topbot_replacement_num", label="Replacement Value", placeholder="Please enter a number")
+    out <- fluidRow(column(6, sel_var), column(6, sel_kind))
+    out <- list(out, fluidRow(column(6, txt_val), column(6, txt_replace)))
+    out
+  })
+  output$ui_topbot_btn_num <- renderUI({
+    num1 <- suppressWarnings(as.numeric(input$num_topbot_val_num))
+    num2 <- suppressWarnings(as.numeric(input$num_topbot_replacement_num))
+    if (is.null(input$sel_topbot_var_num)) {
+      return(NULL)
+    }
+    if (is.na(num1) || is.na(num2)) {
+      return(NULL)
+    }
+    if (is.null(num1) || is.null(num2)) {
+      return(NULL)
+    }
+    if (is.numeric(num1) & is.numeric(num2)) {
+      if (input$sel_topbot_kind_num=="top") {
+        n <- sum(obj$inputdata[[input$sel_topbot_var_num]] >= num1)
+      } else {
+        n <- sum(obj$inputdata[[input$sel_topbot_var_num]] <= num1)
+      }
+      return(fluidRow(
+        column(12, p("A total of",code(n),"values will be replaced!"), align="center"),
+        column(12, myActionButton("btn_topbotcoding_num",label=("Apply Top/Bottom-Coding"), "primary"), align="center")
+      ))
+    } else {
+      return(NULL)
+    }
+  })
+
+  out <- fluidRow(
+    column(12, h4("Apply Top- or Bottom coding", align="center")),
+    column(12, plotOutput("ui_topbot_plot_num")))
+  out <- list(out, uiOutput("ui_topbot_params_num"))
+  out <- list(out, uiOutput("ui_topbot_btn_num"))
+  out
 })
 
 # GUI-output for microaggregation()
@@ -115,11 +170,8 @@ output$ui_noise <- renderUI({
   # returns possible methods for addNoise()
   # 'correlated' needs at least two columns=variables
   choices_noise <- reactive({
-    #if (is.null(input$sel_anon_continuous)) {
-    #  return(NULL)
-    #}
     m <- c("additive","correlated2","restr","ROMM","outdect")
-    if (length(input$sel_noise_v) >=2 | length(get.sdcMicroObj(obj$sdcObj, type="numVars")) >= 2) {
+    if (length(input$sel_noise_v) >=2 | length(get.sdcMicroObj(sdcObj(), type="numVars")) >= 2) {
       m <- c(m, "correlated")
     }
     m

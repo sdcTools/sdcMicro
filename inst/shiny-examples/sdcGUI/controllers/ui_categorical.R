@@ -24,7 +24,11 @@ output$ui_recode <- renderUI({
     if ( is.null(input$sel_recfac) ) {
       return(NULL)
     }
-    barplot(table(get_manipKeyVars()[[input$sel_recfac]]))
+    df <- table(get_manipKeyVars()[[input$sel_recfac]], useNA="always")
+    dn <- dimnames(df)[[1]]
+    dn[length(dn)] <- "NA"
+    dimnames(df)[[1]] <- dn
+    barplot(df)
   })
 
   # current categorical key variables
@@ -32,7 +36,7 @@ output$ui_recode <- renderUI({
   # we always have at least one categorical key-variable!
   selfac1 <- selectInput("sel_recfac",label=NULL,
     choices=kv, selected=input$sel_recfac, width="100%")
-  cbgr <- checkboxGroupInput("cbg_recfac",label=NULL, inline=FALSE,
+  cbgr <- selectInput("cbg_recfac",label=NULL, multiple=TRUE, selectize = FALSE,
     choices=curRecFacVals(), selected=input$cbg_recfac, width="100%")
   if ( is.null(input$cbg_recfac) ) {
     btnUp <- NULL
@@ -45,8 +49,8 @@ output$ui_recode <- renderUI({
 
   out <- list(out, fluidRow(
     column(4, h5("Choose factor variable", align="center")),
-    column(4, h5("Levels", align="center")),
-    column(4, h5("new Levelcode", align="center"))))
+    column(4, h5("Select Levels to recode/combine", align="center")),
+    column(4, h5("New label for recoded values", align="center"))))
   out <- list(out, fluidRow(
     column(4, selfac1),
     column(4, cbgr),
@@ -88,7 +92,8 @@ output$ui_pram <- renderUI({
 
   # UI-output for postrandomization (expert)
   output$ui_expert_pram <- renderUI({
-    pramvars <- facVars()
+    curObj <- sdcObj()
+    pramvars <- setdiff(facVars(), curObj@pram$summary$variable)
     if ( length(pramvars) > 0 ) {
       sel_pramvars <- selectInput("sel_pramvars_expert", choices=pramvars, label=NULL,
         selected=input$sel_pramvars_expert, width="100%", multiple=FALSE)
@@ -111,7 +116,8 @@ output$ui_pram <- renderUI({
 
   # UI-output for postrandomization (non-expert)
   output$ui_nonexpert_pram <- renderUI({
-    pramvars <- facVars()
+    curObj <- sdcObj()
+    pramvars <- setdiff(facVars(), curObj@pram$summary$variable)
     sel_pramvars <- selectInput("sel_pramvars_nonexpert", choices=pramvars, label=NULL,
       selected=input$sel_pramvars_nonexpert, width="100%", multiple=TRUE)
 
@@ -283,11 +289,6 @@ output$ui_kAnon <- renderUI({
 
   # so that the slider-value is not changed while updating the importance vector
   output$ui_kanon_k <- renderUI({
-    #if (is.null(input$sl_kanon_k)) {
-    #  val <- 3
-    #} else {
-    #  val <- input$sl_kanon_k
-    #}
     sl <- sliderInput("sl_kanon_k", label=h5("Please specify the k-Anonymity parameter"),
       min=2, max=50, value=3, step=1, width="100%")
     fluidRow(column(4, ""), column(4, p(sl, align="center")), column(4, ""))
@@ -394,7 +395,8 @@ output$ui_supp_threshold <- renderUI({
       return(NULL)
     }
     risks <- get_risk()
-    nn <- paste(colnames(obj$sdcObj@origData)[obj$sdcObj@keyVars], collapse=" x ")
+    curObj <- sdcObj()
+    nn <- paste(colnames(curObj@origData)[curObj@keyVars], collapse=" x ")
     hist(risks$risk, xlab="Individual Risks", ylab="Frequency", main=nn, col="#DADFE1")
     abline(v=input$sl_supp_threshold, lwd=2, col="#F9690E")
   })

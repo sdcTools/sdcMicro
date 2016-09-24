@@ -109,11 +109,19 @@ shinyServer(function(session, input, output) {
 
   # set values to na in inputdata
   code_set_to_na <- reactive({
-    cmd <- paste0("inputdata[",input$num_na_suppid,",",VecToRStr(input$sel_na_suppvar),"] <- NA")
+    if (input$set_to_na_type=="id") {
+      cmd <- paste0("inputdata[",input$num_na_suppid,",",VecToRStr(input$sel_na_suppvar),"] <- NA")
+    } else {
+      if (is.numeric(obj$inputdata[[input$sel_na_suppvar]])) {
+        cmd <- paste0("inputdata[inputdata$",input$sel_na_suppvar,"==",input$num_na_suppid,", ",shQuote(input$sel_na_suppvar),"] <- NA")
+      } else {
+        cmd <- paste0("inputdata[inputdata$",input$sel_na_suppvar,"==",shQuote(input$num_na_suppid),", ",shQuote(input$sel_na_suppvar),"] <- NA")
+      }
+    }
     cmd
   })
 
-  # code for top/bottom coding
+  # code for top/bottom coding for microdata
   code_topBotCoding <- reactive({
     cmd <- paste0("inputdata <- topBotCoding(inputdata, column=",dQuote(input$sel_topbot_var))
     cmd <- paste0(cmd, ", value=",as.numeric(input$num_topbot_val))
@@ -339,6 +347,15 @@ shinyServer(function(session, input, output) {
     cmd
   })
 
+  # code for top-bottom coding on sdcMicroObj
+  code_topBotCoding_num <- reactive({
+    cmd <- paste0("sdcObj <- topBotCoding(obj=sdcObj, column=",dQuote(input$sel_topbot_var_num))
+    cmd <- paste0(cmd, ", value=",as.numeric(input$num_topbot_val_num))
+    cmd <- paste0(cmd, ", replacement=",as.numeric(input$num_topbot_replacement_num))
+    cmd <- paste0(cmd, ", kind=",dQuote(input$sel_topbot_kind_num),")")
+    cmd
+  })
+
   # code for microaggregation()
   code_microaggregation <- reactive({
     m_method <- input$sel_microagg_method
@@ -443,6 +460,7 @@ shinyServer(function(session, input, output) {
   code_undo <- reactive({
     cmd <- paste0("sdcObj <- undolast(sdcObj)")
     attributes(cmd)$evalAsIs <- TRUE
+    obj$anon_performed <- head(obj$anon_performed, -1)
     cmd
   })
   ### END CODE GENERATION EXPRESSIONS ####
@@ -450,6 +468,7 @@ shinyServer(function(session, input, output) {
   ### EVENTS ###
   # read data if fileInput() has been triggered
   observeEvent(input$file1, {
+    obj$microfilename <- input$file1$name
     ptm <- proc.time()
     code <- code_readMicrodata()
     eval(parse(text=code))
@@ -488,6 +507,7 @@ shinyServer(function(session, input, output) {
     obj$sdcObj <- NULL # start fresh
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    obj$microfilename <- input$sel_choose_df
   })
   # reset variables in inputdataset to their original values
   observeEvent(input$btn_resetmicrovar, {
@@ -522,7 +542,6 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()
     cmd <- code_globalRecodeMicrodata()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
-    obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_moddata",selected="View/Analyse a variable")
@@ -535,7 +554,6 @@ shinyServer(function(session, input, output) {
       for (i in 1:length(toF)) {
         ptm <- proc.time()
         runEvalStrMicrodat(cmd=toF[[i]], comment=NULL)
-        print(str(obj$inputdata))
         ptm <- proc.time()-ptm
         obj$comptime <- obj$comptime+ptm[3]
       }
@@ -595,7 +613,11 @@ shinyServer(function(session, input, output) {
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
+
   # reset the inputdata by setting obj$inputdata to NULL
+  observeEvent(input$btn_reset_inputdata1, {
+    obj$reset_inputdata1 <- 1
+  })
   observeEvent(input$btn_reset_inputdata, {
     #cat(paste("'btn_reset_inputdata' was clicked",input$btn_reset_inputdata,"times..!\n"))
     ptm <- proc.time()
@@ -603,6 +625,7 @@ shinyServer(function(session, input, output) {
     obj$code_read_and_modify <- c()
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    obj$reset_inputdata1 <- 0
   })
   # reset errors while reading data
   observeEvent(input$btn_reset_inputerror, {
@@ -657,42 +680,71 @@ shinyServer(function(session, input, output) {
   })
   # event to apply top-/bottomcoding
   observeEvent(input$btn_topbotcoding, {
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="performing topBotCoding() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     cmd <- code_topBotCoding()
     runEvalStrMicrodat(cmd=cmd, comment="## Apply Top-/Bottom coding")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    progress$set(message="performing topBotCoding() (this might take a long time)...", value = 1)
     updateSelectInput(session, "sel_moddata", selected = "show_microdata")
     updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   ### anonymization methods (categorical) ###
   # pram() with given transition-matrix
   observeEvent(input$btn_pram_expert, {
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="performing pram() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     cmd <- code_pram_expert()
     runEvalStr(cmd=cmd, comment="## Postrandomization (using a transition matrix)")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    progress$set(message="performing pram() (this might take a long time)...", value = 1)
+    if (is.null(lastError())) {
+      obj$lastaction <- paste("Postrandomization of variable(s):", paste(input$sel_pramvars_expert, collapse=', '))
+      obj$anon_performed <- c(obj$anon_performed, "Postrandomization of categorical variables (expert use)")
+    }
+    #updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    #updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # pram() with parameters 'pd' and 'alpha'
   observeEvent(input$btn_pram_nonexpert, {
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="performing pram() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     cmd <- code_pram_nonexpert()
     runEvalStr(cmd=cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    progress$set(message="performing pram() (this might take a long time)...", value = 1)
+
+    if (is.null(lastError())) {
+      obj$lastaction <- paste("Postrandomization of variable(s):", paste(input$sel_pramvars_nonexpert, collapse=', '))
+      obj$anon_performed <- c(obj$anon_performed, "Postrandomization of categorical variables")
+    }
+    #updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    #updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # kAnon()
   observeEvent(input$btn_kanon, {
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="performing kAnon() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     cmd <- code_kAnon()
     runEvalStr(cmd=cmd, comment="## kAnonymity")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    progress$set(message="performing kAnon() (this might take a long time)...", value = 1)
+    if (is.null(lastError())) {
+      obj$lastaction <- "Establishing k-Anonymity"
+      obj$anon_performed <- c(obj$anon_performed, "Establishing k-anonymity")
+    }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
@@ -703,6 +755,10 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Suppression of risky observations")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    if (is.null(lastError())) {
+      obj$lastaction <- paste("Supress risky records by threshold in variable", dQuote(input$sel_supp_th_var))
+      obj$anon_performed <- c(obj$anon_performed, "Suppressing high-risk values")
+    }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
@@ -713,11 +769,38 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment=NULL)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    if (is.null(lastError())) {
+      obj$lastaction <- paste("Recoding of key-variable:", dQuote(input$sel_recfac),"\n")
+      obj$anon_performed <- c(obj$anon_performed, "Recoding of categorical key-variables")
+    }
   })
 
   ### anonymization methods (numerical) ###
+  observeEvent(input$btn_topbotcoding_num, {
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="performing topBotCoding() (this might take a long time)...", value = 0)
+    ptm <- proc.time()
+    cmd <- code_topBotCoding_num()
+    runEvalStr(cmd=cmd, comment="## Performing top/bottom-coding")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
+
+    if (is.null(lastError())) {
+      obj$lastaction <- paste("Performing top-bottom coding to variable(s)", shQuote(input$sel_topbot_var_num))
+      obj$anon_performed <- c(obj$anon_performed, "Top-/Bottom coding of numeric variables")
+    }
+    progress$set(message="performing topBotCoding() (this might take a long time)...", value = 1)
+    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+  })
+
   # microaggregation()
   observeEvent(input$btn_microagg, {
+    # Create a Progress object and close it on exit
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="performing Microaggregation (this might take a long time)...", value = 0)
     ptm <- proc.time()
     complete_cmd <- code_microaggregation()
     cmd <- complete_cmd$cmd
@@ -739,26 +822,60 @@ shinyServer(function(session, input, output) {
     }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    progress$set(message="performing Microaggregation (this might take a long time)...", value = 1)
+    if (is.null(lastError())) {
+      if (is.null(input$sel_microagg_v)) {
+        obj$lastaction <- paste("Microaggregation of variable(s)", paste(get_numVars_names(), collapse=', '))
+      } else {
+        obj$lastaction <- paste("Microaggregation of variable(s)", paste(input$sel_microagg_v, collapse=', '))
+      }
+      obj$anon_performed <- c(obj$anon_performed, "Microaggregation of numeric variables")
+    }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # addNoise()
   observeEvent(input$btn_noise, {
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="performing addNoise() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     cmd <- code_addNoise()
     runEvalStr(cmd=cmd, comment="## Adding stochastic noise")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    if (is.null(lastError())) {
+      if (is.null(input$sel_noise_v)) {
+        obj$lastaction <- paste("Adding noise to variable(s)", paste(get_numVars_names(), collapse=', '))
+      } else {
+        obj$lastaction <- paste("Adding noise to variable(s)", paste(input$sel_noise_v, collapse=', '))
+      }
+      obj$anon_performed <- c(obj$anon_performed, "Adding stochastic noise to numeric variables")
+    }
+    progress$set(message="performing addNoise() (this might take a long time)...", value = 1)
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # rankSwap()
   observeEvent(input$btn_rankswap, {
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="performing rankSwap() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     cmd <- code_rankSwap()
     runEvalStr(cmd=cmd, comment="## Performing rankSwapping")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+
+    if (is.null(lastError())) {
+      if (is.null(input$sel_rankswap_v)) {
+        obj$lastaction <- paste("Performing rank-swapping to variable(s)", paste(get_numVars_names(), collapse=', '))
+      } else {
+        obj$lastaction <- paste("Performing rank-swapping to variable(s)", paste(input$sel_rankswap_v, collapse=', '))
+      }
+      obj$anon_performed <- c(obj$anon_performed, "Rank-swapping of numeric variables")
+    }
+    progress$set(message="performing rankSwap() (this might take a long time)...", value = 1)
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
@@ -799,29 +916,29 @@ shinyServer(function(session, input, output) {
     eval(parse(text=code))
     if ("simpleError" %in% class(res)) {
       obj$last_error <- res$message
-      return(NULL)
+      updateNavbarPage(session, "mainnav", selected="Reproducibility")
+      #return(NULL)
       # an error has occured -> warn the user!
     } else {
       if (!"sdcMicro_GUI_export" %in% class(res)) {
         obj$last_error <- "data read into the system was not of class 'sdcMicro_GUI_export'"
-        obj$inputdata <- NULL
-        obj$code_read <- NULL
-        return(NULL)
+        updateNavbarPage(session, "mainnav", selected="Reproducibility")
+        #return(NULL)
+      } else {
+        obj$last_error <- NULL
+        obj$inputdata <- res$inputdata
+        obj$last_warning <- res$last_warning
+        obj$code <- res$code
+        obj$sdcObj <- res$sdcObj
+        obj$code_anonymize <- res$code_anonymize
+        obj$transmat <- res$transmat
+        obj$inputdataB <- res$inputdataB
+        obj$code_read_and_modify <- res$code_read_and_modify
+        rm(res)
+        ptm <- proc.time()-ptm
+        obj$comptime <- obj$comptime+ptm[3]
+        updateNavbarPage(session, "mainnav", selected="Anonymize")
       }
-      obj$last_error <- NULL
-      obj$inputdata <- res$inputdata
-      obj$last_warning <- res$last_warning
-      obj$code <- res$code
-      obj$sdcObj <- res$sdcObj
-      obj$code_anonymize <- res$code_anonymize
-      obj$transmat <- res$transmat
-      obj$inputdataB <- res$inputdataB
-      obj$code_read_and_modify <- res$code_read_and_modify
-      rm(res)
-      ptm <- proc.time()-ptm
-      obj$comptime <- obj$comptime+ptm[3]
-      updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
-      updateNavbarPage(session, "mainnav", selected="Anonymize")
     }
   })
 
@@ -833,5 +950,4 @@ shinyServer(function(session, input, output) {
   lapply(href_to_microdata, function(x) {
     eval(parse(text=x))
   })
-
 })

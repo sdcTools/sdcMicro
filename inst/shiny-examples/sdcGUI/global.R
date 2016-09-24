@@ -35,6 +35,7 @@ runEvalStr <- function(cmd, comment=NULL) {
     }
   }
   evalstr <- paste0("res <- sdcMicro:::tryCatchFn({",cmdeval,"})")
+  #cat(evalstr,"\n")
   eval(parse(text=evalstr))
   if (!"simpleError" %in% class(res)) {
     obj$last_error <- NULL
@@ -66,10 +67,11 @@ runEvalStrMicrodat_no_errorchecking <- function(cmd, comment=NULL) {
   # evaluate using tryCatchFn()
   cmdeval <- gsub("inputdata","obj$inputdata", cmd)
   eval(parse(text=cmdeval))
+
   if (!is.null(comment)) {
     cmd <- paste0(comment,"\n",cmd)
   }
-  #obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
+  obj$code_read_and_modify <- c(obj$code_read_and_modify, cmd)
 }
 
 # runEvaluationString and update Objects for microdata-modifications
@@ -161,9 +163,7 @@ summaryfn <- function(x) {
       quantile(x, c(0.75,0.95), na.rm=TRUE), max(x, na.rm=TRUE))
     names(vv) <- c("Min", "Q5","Q25","Median","Mean","Q75","Q95","Max")
   } else {
-    vv <- as.data.frame.table(table(x))
-    #vv <- as.integer(tt)
-    #names(vv) <- dimnames(tt)[[1]]
+    vv <- as.data.frame.table(addmargins(table(x, useNA = "always")))
   }
   vv
 }
@@ -172,6 +172,7 @@ summaryfn <- function(x) {
 data(testdata)
 data(testdata2)
 testdata$urbrur <- factor(testdata$urbrur)
+testdata$urbrur[sample(1:nrow(testdata), 10)] <- NA
 testdata$roof <- factor(testdata$roof)
 testdata$walls <- factor(testdata$walls)
 testdata$sex <- factor(testdata$sex)
@@ -269,12 +270,13 @@ obj <- reactiveValues() # we work with this data!
 #obj$sdcObj <- sample(1:10, 100, replace=TRUE)
 #obj$v1 <- sample(LETTERS[1:10], 100, replace=TRUE)
 #obj$v2 <- as.factor(sample(letters[1:8], 100, replace=TRUE))
+#testdata$myfac <- factor(sample(1:100, nrow(testdata), replace=TRUE))
+obj$inputdata <- obj$inputdataB <- testdata
+#obj$inputdata <- NULL
 obj$sdcObj <- NULL
 #obj$sdcObj <- createSdcObj(testdata,
 #  keyVars=c('urbrur','roof','walls','water'),
-#  numVars=c('expend','income','savings'), w='sampling_weight')
-obj$inputdata <- obj$inputdataB <- testdata
-#obj$inputdata <- NULL
+#  numVars=c('expend','income','savings'), strataVar="sex", w='sampling_weight')
 obj$code_read_and_modify <- c()
 obj$code_setup <- c()
 obj$code_anonymize <- c()
@@ -284,3 +286,7 @@ obj$last_warning <- NULL
 obj$last_error <- NULL
 obj$comptime <- 0
 obj$reset_sdc1 <- 0
+obj$reset_inputdata1 <- 0
+obj$microfilename <- NULL # name of uploaded file
+obj$lastaction <- NULL
+obj$anon_performed <- NULL # what has been applied?

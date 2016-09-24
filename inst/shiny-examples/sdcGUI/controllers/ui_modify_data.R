@@ -47,7 +47,7 @@ output$ui_modify_recode_to_factor <- renderUI({
 
   # list all numVars
   btn_rec <- NULL
-  sel1 <- selectInput("sel_num",label=h5("Choose numeric variable"), choices=vv, selected=input$sel_num, width="100%")
+  sel1 <- selectInput("sel_num",label=h5("Choose numeric variable"), choices=vv, selected=input$sel_num)
   help_sel1 <- "Which variable do you want to convert into a factor-variable?"
   sel2 <- radioButtons("sel_custom_split",label=h5("Custom Breaks"), choices=c("no","yes"),
     selected=input$sel_custom_split, inline=TRUE, width="100%")
@@ -66,9 +66,8 @@ output$ui_modify_recode_to_factor <- renderUI({
 
   if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
     out <- list(out, fluidRow(
-      column(3, ""),
-      column(6, p(cutalgo, align="center")),
-      column(3, "")))
+      column(3, p(cutalgo, align="center")),
+      column(6, "")))
   }
 
   btn_rec <- myActionButton("btn_recode_to_factor",label=("Recode to factor"), "primary")
@@ -78,16 +77,17 @@ output$ui_modify_recode_to_factor <- renderUI({
         out <- list(out, uiOutput("ui_globalRecode_auto"))
       } else {
         out <- list(out, uiOutput("ui_globalRecode_custom"))
-      }
-      if ((is.null(input$txt_custom_breaks) || input$txt_custom_breaks=="") & is.null(input$sl_number_breaks)) {
-        btn_rec <- NULL
+        print(input$txt_custom_breaks)
+        if ((is.null(input$txt_custom_breaks) || input$txt_custom_breaks=="")) {
+          btn_rec <- NULL
+        }
       }
     }
     txt_lab <- "Labels are automatically generated, you can change them later once the factor has been generated!"
     out <- list(out, fluidRow(
-      column(12, h5("Note about factor-labels", align="center")),
-      column(6, helpText(txt_lab)),
-      column(3, p(btn_rec, align="center"))))
+      column(12, h5("Note about factor-labels"), align="center"),
+      column(12, helpText(txt_lab), align="center"),
+      column(12, btn_rec, align="center")))
   })
   out
 })
@@ -183,12 +183,41 @@ output$ui_modify_create_stratvar <- renderUI({
 
 # UI-output to set specific values to NA
 output$ui_set_to_na <- renderUI({
+  output$ui_nasupptype <- renderUI({
+    radioButtons("set_to_na_type", label=h5("How do you want to select the Observations where you want to set values to missing?"),
+      choices=c("By Id"="id", "By rule"="rule"), selected=input$set_to_na_type, inline=TRUE)
+  })
   output$tab_inputdata_setna <- renderDataTable({
     a <- obj$inputdata
     cbind(id=1:nrow(a),a)
-  }, options = list(scrollX=TRUE, lengthMenu=list(c(5, 15, 50, -1), c('5', '15', '50', 'All')), pageLength=10))
-  output$ui_nasuppid <- ui_custom_numericInput(id="num_na_suppid", label="In which ID do you want to suppress values?", min=1, max=nrow(obj$inputdata))
-  output$ui_nasuppvar <- ui_custom_selectInput(choices=allVars(), id="sel_na_suppvar", multiple=TRUE, label="Select Variable for Suppression")
+  },
+    options = list(scrollX=TRUE, searching=FALSE, paging=TRUE, ordering=FALSE, bInfo=FALSE))
+
+  output$ui_nasuppvar <- renderUI({
+    if (is.null(input$set_to_na_type)) {
+      return(NULL)
+    }
+    multiple <- FALSE
+    if (input$set_to_na_type=="id") {
+      multiple <- TRUE
+    }
+    res <- selectInput("sel_na_suppvar", choices=allVars(), multiple=multiple, label="Select Variable for Suppression")
+    return(res)
+  })
+
+  output$ui_nasuppid <- renderUI({
+    if (is.null(input$sel_na_suppvar)) {
+      return(NULL)
+    }
+    if (input$set_to_na_type=="id") {
+      res <- numericInput("num_na_suppid", label="In which ID do you want to suppress values?", value=1, min=1, max=nrow(obj$inputdata))
+    } else {
+      res <- selectInput("num_na_suppid", label="Which value in this variable would you like to set to NA", multiple=FALSE, choices=sort(unique(obj$inputdata[[input$sel_na_suppvar]])))
+    }
+    return(res)
+  })
+
+
   output$ui_ansuppbtn <- renderUI({
     if (is.null(input$sel_na_suppvar) || length(input$sel_na_suppvar)==0) {
       return(NULL)
@@ -199,15 +228,16 @@ output$ui_set_to_na <- renderUI({
     myActionButton("btn_set_to_na",label=("Set values to NA"), "primary")
   })
 
-  out <- fluidRow(column(12, h4("Specifically set cells to NA (missing)", align="center")))
-
+  out <- fluidRow(
+    column(12, h4("Set cells to NA (missing)", align="center")),
+    column(12, uiOutput("ui_nasupptype")))
 
   out <- list(out, fluidRow(
-    column(6, uiOutput("ui_nasuppid")),
-    column(6, uiOutput("ui_nasuppvar"))))
+    column(6, uiOutput("ui_nasuppvar"), align="center"),
+    column(6, uiOutput("ui_nasuppid"), align="center")))
   out <- list(out, fluidRow(
-    column(12, uiOutput("ui_ansuppbtn")),
-    column(12, dataTableOutput("tab_inputdata_setna"))))
+    column(12, uiOutput("ui_ansuppbtn"), align="center"),
+    column(12, dataTableOutput("tab_inputdata_setna"), align="center")))
   out
 })
 
@@ -239,7 +269,17 @@ output$ui_topbotcoding <- renderUI({
       return(NULL)
     }
     if (is.numeric(num1) & is.numeric(num2)) {
-      return(myActionButton("btn_topbotcoding",label=("Apply Top/Bottom-Coding"), "primary"))
+      if (input$sel_topbot_kind=="top") {
+        n <- sum(obj$inputdata[[input$sel_topbot_var]] >= num1)
+      } else {
+        n <- sum(obj$inputdata[[input$sel_topbot_var]] <= num1)
+      }
+      return(fluidRow(
+        column(12, p("A total of",code(n),"values will be replaced!"), align="center"),
+        column(12, myActionButton("btn_topbotcoding",label=("Apply Top/Bottom-Coding"), "primary"), align="center")
+      ))
+    } else {
+      return(NULL)
     }
   })
 
@@ -255,7 +295,7 @@ output$ui_topbotcoding <- renderUI({
     column(6, uiOutput("ui_topbotval")),
     column(6, uiOutput("ui_topbot_replacement"))))
 
-  out <- list(out, fluidRow(column(12, uiOutput("ui_topbot_btn"))))
+  out <- list(out, uiOutput("ui_topbot_btn"))
   out
 })
 
@@ -312,9 +352,8 @@ output$ui_view_var <- renderUI({
     } else {
       # 2 factors
       if (cl1 & cl2) {
-        out <- list(tab=table(df[[1]], df[[2]], useNA="always"), var=c(input$view_selvar1,input$view_selvar2))
-        dimnames(out$tab)[[1]][length(dimnames(out$tab)[[1]])] <- "NA"
-        dimnames(out$tab)[[2]][length(dimnames(out$tab)[[2]])] <- "NA"
+        out <- list(tab=as.data.frame.table(addmargins(table(df[[1]], df[[2]], useNA="always"))), var=c(input$view_selvar1,input$view_selvar2))
+        colnames(out$tab) <- c(out$var, "Frequency")
       } else if (cl1 & !cl2) {
         out <- tapply(df[[2]], df[[1]], summaryfn)
         out <- do.call("rbind", out)
@@ -387,8 +426,8 @@ output$ui_view_var <- renderUI({
   }
 
   out <- fluidRow(column(12, h4("Analyze existing variables", align="center")))
-  if (is.null(obj$sdcObj)) {
-    btn <- myActionButton("btn_resetmicrovar",label=paste("Reset",input$view_selvar1,"to original state"), "primary")
+  if (is.null(sdcObj())) {
+    btn <- myActionButton("btn_resetmicrovar",label=paste("Reset",input$view_selvar1,"to original state"), "primary", css.class="btn-xs")
     out <- list(out, fluidRow(column(12, p(btn, align="center"))))
   }
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
@@ -404,14 +443,14 @@ output$ui_view_var <- renderUI({
     if (input$view_rbchoice=="Summary") {
       res_stats <- stats_summary()
       if (is.null(res_stats$tab1)) {
-        out <- list(out, fluidRow(column(12, renderTable(res_stats$tab, include.rownames=TRUE))))
+        out <- list(out, fluidRow(column(12, renderTable(res_stats$tab, include.rownames=FALSE), align="center")))
       } else {
         out <- list(out, fluidRow(
           column(12, h5(HTML(paste("Correlation between",code(res_stats$vars[1]),"and",code(res_stats$vars[2]),":",code(res_stats$vcor))), align="center")),
           column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[1]))), align="center")),
-          column(12, renderTable(res_stats$tab1, include.rownames=FALSE)),
+          column(12, renderTable(res_stats$tab1, include.rownames=FALSE), align="center"),
           column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[2]))), align="center")),
-          column(12, renderTable(res_stats$tab2, include.rownames=FALSE))))
+          column(12, renderTable(res_stats$tab2, include.rownames=FALSE), align="center")))
       }
     }
   }
@@ -423,11 +462,17 @@ output$ui_show_microdata <- renderUI({
   output$tab_inputdata <- renderDataTable({
     obj$inputdata
   }, options = list(scrollX=TRUE, engthMenu=list(c(5, 15, 50, -1), c('5', '15', '50', 'All')), pageLength=10))
-  btn <- myActionButton("btn_reset_inputdata",label=("Reset inputdata"), "danger")
+  if (obj$reset_inputdata1>0) {
+    # show real reset button!
+    btn <- myActionButton("btn_reset_inputdata",label=("By clicking, you really delete the current inputdata"), "danger", css.class="btn-xs")
+  } else {
+    btn <- myActionButton("btn_reset_inputdata1",label=("Reset inputdata"), "warning", css.class="btn-xs")
+  }
 
   return(fluidRow(
-    column(12, h4("Current Microdata", align="center")),
-    column(12, helpText("These data may be used to set up the sdcObj which can be anonymized!")),
+    column(12, h4(paste("Microdata in use:",shQuote(obj$microfilename))), align="center"),
+    column(12, p("The dataset has",code(nrow(obj$inputdata)),"observations in",code(ncol(obj$inputdata)),"variables and can be used to set up the",code("sdcMicroObj"),
+      "that can be anonymized."), align="center"),
     column(12, p(btn, align="center")),
     column(12, dataTableOutput("tab_inputdata"))))
 })
@@ -458,9 +503,6 @@ output$ui_sample_microdata <- renderUI({
     if (input$sel_sdcP_sample_type=="size_n") {
       sl_from <- 1
       sl_to <- nrow(obj$inputdata)
-    }
-    if (!is.null(input$sel_sdcP_sample_n)) {
-      sl_val <- input$sel_sdcP_sample_n
     }
     sl1 <- sliderInput("sel_sdcP_sample_n", label=h5("Choose your 'n'"),
       value=sl_val, min=sl_from, max=sl_to, step=1, width="100%")
@@ -523,7 +565,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
       "Create a stratification variable"="createstratvar",
       "Set specific values in a variable to NA"="set_to_na",
       "Apply Top-/Bottom Coding"="topbotcoding")
-    if (!is.null(obj$sdcObj)) {
+    if (!is.null(sdcObj())) {
       cc <- cc[1:2]
     }
     return(cc)

@@ -3,8 +3,7 @@ choices_anon_manage <- reactive({
   choices <- c(
     "Show Summary"="sdcObj_summary",
     "Add 'Ghost'-Variables"="sdcObj_addghostvars",
-    "Create new IDs"="sdcObj_randIds",
-    "Reset sdcProblem"="sdcObj_reset")
+    "Create new IDs"="sdcObj_randIds")
   return(choices)
 })
 choices_anon_cat <- reactive({
@@ -17,6 +16,7 @@ choices_anon_cat <- reactive({
 })
 choices_anon_num <- reactive({
   choices <- c(
+    "Top-/Bottom Coding"="topbot_num",
     "Apply Microaggregation"="microaggregation",
     "Adding Noise to the data"="noise",
     #"Shuffling the data"="shuffling",
@@ -83,8 +83,25 @@ output$ui_sel_sdcresults <- renderUI({
 })
 
 ## left sidebar
+output$ui_sdcObj_reset <- renderUI({
+  if (obj$reset_sdc1>0) {
+    # show real reset button!
+    btn_reset <- myActionButton("btn_reset_sdc",label=("Really?"), "danger",  css.class="btn-xs")
+  } else {
+    btn_reset <- myActionButton("btn_reset_sdc1",label=("Click here to start from scratch"), "warning", css.class="btn-xs")
+  }
+  btn_reset
+})
+
+output$ui_reset <- renderUI({
+  fluidRow(
+    column(12, h5("Reset the Problem")),
+    column(12, uiOutput("ui_sdcObj_reset"))
+  )
+})
+
 output$ui_anonymize_sidebar_left <- renderUI({
-  list(uiOutput("ui_sel_anonymize"), uiOutput("ui_sel_sdcresults"))
+  list(uiOutput("ui_reset"), uiOutput("ui_sel_anonymize"), uiOutput("ui_sel_sdcresults"))
 })
 
 # center column
@@ -119,6 +136,9 @@ output$ui_main_anon <- renderUI({
     return(uiOutput("ui_supp_threshold"))
   }
   ## numerical methods
+  if (input$sel_sdcresults=="topbot_num") {
+    return(uiOutput("ui_topbotcoding_num"))
+  }
   if (input$sel_sdcresults=="noise") {
     return(uiOutput("ui_noise"))
   }
@@ -138,16 +158,19 @@ output$ui_anonymize <- renderUI({
     return(noInputData(uri="ui_anonymize"))
   }
 
-  if (is.null(obj$sdcObj)) {
+  if (is.null(sdcObj())) {
     return(uiOutput("ui_sdcObj_create"))
   } else {
-    out <- NULL
-    out <- list(out,
-      fluidRow(
+    if(is.null(input$sel_sdcresults) || input$sel_sdcresults=="sdcObj_summary") {
+      out <- list(fluidRow(
+        column(2, uiOutput("ui_anonymize_sidebar_left")),
+        column(10, uiOutput("ui_main_anon"))))
+    } else {
+      out <- list(fluidRow(
         column(2, uiOutput("ui_anonymize_sidebar_left")),
         column(7, uiOutput("ui_main_anon")),
-        column(3, uiOutput("sb_info_anonymize")))
-    )
+        column(3, uiOutput("sb_info_anonymize"))))
+    }
   }
   return(out)
 })

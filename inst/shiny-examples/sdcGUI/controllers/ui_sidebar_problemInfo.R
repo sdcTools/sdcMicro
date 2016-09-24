@@ -1,27 +1,35 @@
-output$tabinfo_sb_results <- output$tabinfo_sb_anonymize <- output$tabinfo_sb_script <- output$tabinfo_sb_export <- renderDataTable({
+output$tabinfo_sb_results <- output$tabinfo_sb_anonymize <- renderUI({
   inp <- infodat()$df
   if (is.null(inp)) {
     return(NULL)
   }
-  inp
-}, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
-  options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo = FALSE)
-)
 
-output$tabparam_sb_results <- output$tabparam_sb_anonymize <- output$tabparam_sb_script <-
-  output$tabparam_sb_export <- renderDataTable({
+  fluidRow(
+    column(12, h4("Important Variables"), align="center"),
+    column(12, renderDataTable({
+      inp
+    }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
+  )
+})
+
+output$tabparam_sb_results <- output$tabparam_sb_anonymize <- renderUI({
   inp <- infodat()$params
   if (is.null(inp)) {
     return(NULL)
   }
-  inp
-}, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
-options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo = FALSE)
-)
+  fluidRow(
+    column(12, h4("Additional Parameters"), align="center"),
+    column(12, renderDataTable({
+      inp
+    }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
+  )
+})
 
 # violating k-anon
-output$risk_sb_results <- output$risk_sb_anonymize <- output$risk_sb_script <- output$risk_sb_export <- renderDataTable({
-  if (is.null(obj$sdcObj)) {
+output$risk_sb_results <- output$risk_sb_anonymize <- renderUI({
+  if (is.null(sdcObj())) {
     return(NULL)
   }
   risks <- get_risk()
@@ -35,74 +43,109 @@ output$risk_sb_results <- output$risk_sb_anonymize <- output$risk_sb_script <- o
   df <- data.table(
     Measures=c("2-anonymity","3-anonymity","5-anonymity"),
     Value=c(v1,v2,v3))
-  df
-  }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
-  options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo = FALSE)
-)
+
+  fluidRow(
+    column(12, h4("Risk (k-Anonymity)"), align="center"),
+    column(12, renderDataTable({
+      df
+    }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
+  )
+})
+
+# numrisk
+output$numrisk_sb_results <- output$numrisk_sb_anonymize <- renderUI({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(invisible(NULL))
+  }
+  x <- print(curObj, type="numrisk", docat=FALSE)
+  if (is.null(x)) {
+    return(invisible(NULL))
+  }
+  dt <- data.table(data=c("orig","modified"), risk_min=paste0(c("100.00",x$risk_up),"%"), risk_max=paste0(c("100.00","100.00"),"%"))
+
+  fluidRow(
+    column(12, h4("Numeric Risk"), align="center"),
+    column(12, renderDataTable({
+      dt
+    }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)))
+  )
+})
+
 # information loss
-output$loss_sb_results <- output$loss_sb_anonymize <- output$loss_sb_script <- output$loss_sb_export <- renderDataTable({
-  if (is.null(obj$sdcObj)) {
+output$loss_sb_results <- output$loss_sb_anonymize <- renderUI({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
 
-  utility <- get.sdcMicroObj(obj$sdcObj, type="utility")
+  utility <- get.sdcMicroObj(curObj, type="utility")
+  if (is.null(utility)) {
+    return(invisible(NULL))
+  }
   il1 <- formatC(utility$il1, format="f", digits=2)
   diff_eigen <- formatC(utility$eigen*100, format="f", digits=2)
 
-  out <- data.frame(
+  df <- data.frame(
     Measure=c("IL1","Difference of Eigenvalues"),
     Values=c(il1, diff_eigen))
-  }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
-options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo = FALSE)
-)
 
+  fluidRow(
+    column(12, h4("Information Loss"), align="center"),
+    column(12, renderDataTable({
+      df
+    }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)),align="center")
+  )
+})
 
-## 4 sidebars required, id's in shiny must be unique per page/tab
+# postrandomization loss
+output$pram_sb_results <- output$pram_sb_anonymize <- renderUI({
+  curObj <- sdcObj()
+  pI <- curObj@pram
+  if (is.null(pI)) {
+    return(NULL)
+  }
+
+  out <- fluidRow(column(12, h4("Post-Randomization"), align="center"))
+
+  # check warnings!
+  wn <- curObj@additionalResults$sdcMicro_warnings
+  if (!is.null(wn) && "pram" %in% wn$method) {
+    out <- list(out, fluidRow(column(12, p("Note: Pram was applied on at least one categorical
+        key-variable. Risk-measures and k-anonymity assessment are not useful anymore!", align="center"))))
+  }
+  out <- list(out, fluidRow(
+    column(12, renderDataTable({
+      pI$summary
+    }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
+  ))
+})
+
+## 2 sidebars required, id's in shiny must be unique per page/tab
+# sidebar for results-page
 output$sb_info_results <- renderUI({
-  return(fluidRow(
-    column(12, h4("Important Variables", align="center")),
-    column(12, dataTableOutput("tabinfo_sb_results")),
-    column(12, h4("Additional Parameters", align="center")),
-    column(12, dataTableOutput("tabparam_sb_results")),
-    column(12, h4("Risk", align="center")),
-    column(12, dataTableOutput("risk_sb_results")),
-    column(12, h4("Current Information Loss", align="center")),
-    column(12, dataTableOutput("loss_sb_results"))
-  ))
+  out <- list(
+    uiOutput("tabinfo_sb_results"),
+    uiOutput("tabparam_sb_results"),
+    uiOutput("risk_sb_results"),
+    uiOutput("numrisk_sb_results"),
+    uiOutput("loss_sb_results"),
+    uiOutput("pram_sb_results"))
+  out
 })
+
+# sidebar for anonymize-page
 output$sb_info_anonymize <- renderUI({
-  return(fluidRow(
-    column(12, h4("Important Variables", align="center")),
-    column(12, dataTableOutput("tabinfo_sb_anonymize")),
-    column(12, h4("Additional Parameters", align="center")),
-    column(12, dataTableOutput("tabparam_sb_anonymize")),
-    column(12, h4("Risk", align="center")),
-    column(12, dataTableOutput("risk_sb_anonymize")),
-    column(12, h4("Current Information Loss", align="center")),
-    column(12, dataTableOutput("loss_sb_anonymize"))
-  ))
-})
-output$sb_info_script <- renderUI({
-  return(fluidRow(
-    column(12, h4("Important Variables", align="center")),
-    column(12, dataTableOutput("tabinfo_sb_script")),
-    column(12, h4("Additional Parameters", align="center")),
-    column(12, dataTableOutput("tabparam_sb_script")),
-    column(12, h4("Risk", align="center")),
-    column(12, dataTableOutput("risk_sb_script")),
-    column(12, h4("Current Information Loss", align="center")),
-    column(12, dataTableOutput("loss_sb_script"))
-  ))
-})
-output$sb_info_export <- renderUI({
-  return(fluidRow(
-    column(12, h4("Important Variables", align="center")),
-    column(12, dataTableOutput("tabinfo_sb_export")),
-    column(12, h4("Additional Parameters", align="center")),
-    column(12, dataTableOutput("tabparam_sb_export")),
-    column(12, h4("Risk", align="center")),
-    column(12, dataTableOutput("risk_sb_export")),
-    column(12, h4("Current Information Loss", align="center")),
-    column(12, dataTableOutput("loss_sb_export"))
-  ))
+  out <- list(
+    uiOutput("tabinfo_sb_anonymize"),
+    uiOutput("tabparam_sb_anonymize"),
+    uiOutput("risk_sb_anonymize"),
+    uiOutput("numrisk_sb_anonymize"),
+    uiOutput("loss_sb_anonymize"),
+    uiOutput("pram_sb_anonymize"))
+  out
 })

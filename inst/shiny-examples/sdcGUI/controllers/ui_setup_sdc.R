@@ -8,22 +8,196 @@ output$noCatVars <- renderUI({
   )
 })
 
+## reset buttons
+
 ## show summary
 output$ui_sdcObj_summary <- renderUI({
-  output$sdcInfo <- renderPrint({
-    show(obj$sdcObj)
-  })
-  comptime <- reactive({
-    z <- as.difftime(obj$comptime, units="secs")
-
-    if (obj$comptime <60) {
-      return(paste(round(as.numeric(z, units="secs"), digits=2),"seconds"))
-    } else {
-      return(paste(round(as.numeric(z, units="mins"), digits=2),"minutes"))
+  output$show_info_general <- renderUI({
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(invisible(NULL))
     }
+    x <- print(curObj, type="general", docat=FALSE)
+    out <- fluidRow(
+      column(12, h4("Important variables and information"), align="center"),
+      column(12, p("The dataset consists of", code(x$dims[1]),"and",code(x$dims[2]),"variables."), align="center"),
+      column(12, list("Categorical key variables:", lapply(x$keyVars, function(x) {code(x)})), align="center"))
+
+    if (length(x$numVars)>0) {
+      out <- list(out, fluidRow(
+        column(12, list("Numerical key variables", lapply(x$numVars, function(x) {code(x)})), align="center")))
+    }
+    if (length(x$weightVar)>0) {
+      out <- list(out, fluidRow(
+        column(12, list("Sampling-Weights:", lapply(x$weightVar, function(x) {code(x)})), align="center")))
+    }
+    if (length(x$strataVar)>0) {
+      out <- list(out, fluidRow(
+        column(12, list("Numerical key variables", lapply(x$strataVar, function(x) {code(x)})), align="center")))
+    }
+    if (length(x$delVars)>0) {
+      out <- list(out, fluidRow(
+        column(12, list("Deleted Variables", lapply(x$delVars, function(x) {code(x)})), align="center")))
+    }
+    gV <- x$ghostVars
+    if (length(gV)>0) {
+      out <- list(out, fluidRow(column(12, list(tags$br(),"ghostVariable(s) exist!"), align="center")))
+      for (i in 1:length(gV)) {
+        out <- list(out, fluidRow(
+          column(12, list("Variable(s)", lapply(gV[[i]][[2]], function(x) {
+            code(x)}),"are linked to key-variable", code(gV[[i]][[1]])), align="center")))
+      }
+    }
+    out <- list(out, fluidRow(
+      column(12, h4("Computation time"), align="center"),
+      column(12, p("The current computation time was ~",code(comptime()),".", align="center"))))
+    out
   })
+  output$show_info_recodes <- renderUI({
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(invisible(NULL))
+    }
+    x <- print(curObj, type="recode", docat=FALSE)
+    if (is.null(x)) {
+      return(invisible(NULL))
+    }
+    txt <-"Reported is the number, mean size and size of the smallest category for recoded variables.
+      In parenthesis, the same statistics are shown for the unmodified data. Note: NA (missings) are counted as seperate categories!"
+    dt <- data.table(
+      "keyVar"=x$keyVars,
+      "Number of categories"=paste(x$categories$orig, x$categories$mod),
+      "Mean size"=paste(x$meansize$orig, x$meansize$mod),
+      "Size of smallest"=paste(x$minsize$orig, x$minsize$mod))
+    out <- fluidRow(
+      column(12, h4("Information on categorical key-variables"), align="center"),
+      column(12, p(txt), align="center"),
+      column(12, renderTable(dt), align="center"))
+    out
+  })
+  output$show_info_kanon <- renderUI({
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(invisible(NULL))
+    }
+    x <- print(curObj, type="kAnon", docat=FALSE)
+    txt <- "Below the number of observations violating k-Anonymity is shown for the original data and
+    the current dataset"
+    dt <- data.table(
+      "Typ"=paste0(c(2,3,5),"-anonymity"),
+      "Current data"=c(paste0(x[["2anon"]]$mod," (",x[["2anon"]]$mod_p,"%)"),
+          paste0(x[["3anon"]]$mod," (",x[["3anon"]]$mod_p,"%)"),
+          paste0(x[["5anon"]]$mod," (",x[["5anon"]]$mod_p,"%)")),
+      "Original data"=c(paste0(x[["2anon"]]$orig," (",x[["2anon"]]$orig_p,"%)"),
+          paste0(x[["3anon"]]$orig," (",x[["3anon"]]$orig_p,"%)"),
+          paste0(x[["5anon"]]$orig," (",x[["5anon"]]$orig_p,"%)")))
+    out <- fluidRow(
+      column(12, h4("Information on k-Anonymity"), align="center"),
+      column(12, p(txt), align="center"),
+      column(12, renderTable(dt), align="center"))
+    out
+  })
+  output$show_info_risk <- renderUI({
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(invisible(NULL))
+    }
+    x <- print(curObj, type="numrisk", docat=FALSE)
+    if (is.null(x)) { # no numeric key vars
+      return(invisible(NULL))
+    }
+    out <- fluidRow(
+      column(12, h4("Information on Risk for numerical key-variables"), align="center"),
+      column(12, p("The disclosure risk is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),".
+      In the original data the risk is assumed to be between",code("0%"),"and",code("100%"),"."), align="center"),
+      column(12, h4("Information-Loss"), align="center"),
+      column(12, p("Measure",strong("IL1"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
+    )
+    out
+  })
+  output$show_info_localsuppression <- renderUI({
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(invisible(NULL))
+    }
+    x <- print(curObj, type="ls", docat=FALSE)
+    if (is.null(x)) {
+      return(NULL)
+    }
+    if(!is.na(x$threshold)) {
+      meth <- "localSupp()"
+      txt <- NULL
+    } else {
+      meth <- "kAnon()"
+      if (length(x$strataVars)>0) {
+        txt <- "Note: k-anonymity was applied per strata!"
+      } else {
+        txt <- NULL
+      }
+    }
+
+    dt <- data.table(keyVar=x$supps$KeyVar)
+    dt[,v1:=paste0(x$supps[[2]]," (",x$supps[[3]],"%)")]
+    dt[,v2:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
+    setnames(dt, c("Key Variable", paste("Additional Supps due to last run of",meth), "Total Suppressions"))
+    out <- list(fluidRow(
+      column(12, h4("Information on Local Suppression"), align="center"),
+      column(12, p(txt), align="center"),
+      column(12, renderTable(dt), align="center")))
+  })
+  output$show_info_pram <- renderUI({
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(invisible(NULL))
+    }
+    x <- print(curObj, type="pram", docat=FALSE)
+    if (is.null(x)) {
+      return(NULL)
+    }
+    out <- fluidRow(column(12, h4("Postrandomization"), align="center"))
+    dt <- x$pram_summary
+    for (i in 1:nrow(dt)) {
+      out <- list(out, fluidRow(
+        column(12, p("Variable",code(dt$variable[i])), align="center"),
+        column(12, tags$i("final transition matrix"), align="center"),
+        column(12, renderTable(x$params[[i]]$Rs), align="center")))
+    }
+    out <- list(out, fluidRow(
+      column(12, p("Summary of changed observations due to postrandomization"), align="center"),
+      column(12, renderTable(dt), align="center")))
+    out
+  })
+  output$show_info_comp_numvars <- renderUI({
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(invisible(NULL))
+    }
+    x <- print(curObj, type="comp_numvars", docat=FALSE)
+    if (is.null(x) || length(x$results)==0) {
+      return(NULL)
+    }
+    dt <- rbindlist(x$results)
+    dt <- cbind(data.table(Variable=rep(x$numVars, each=2)), dt)
+    out <- fluidRow(column(12, h4("Compare numVars"), align="center"))
+    out <- list(out, fluidRow(
+      column(12, renderTable(dt), align="center")
+    ))
+    out
+  })
+  output$anonMethods <- renderUI({
+    anon_methods <- anonPerformed()
+    if (is.null(anon_methods)) {
+      return(invisible(NULL))
+    } else {
+      out <- fluidRow(
+        column(12, h4("Anonymization steps"),align="center"),
+        column(12, lapply(anon_methods, function(x) {code(x)}),align="center"))
+    }
+    out
+  })
+
   cur_warning <- lastWarning()
-  out <- fluidRow(column(12, h4("Summary of the current SDC-Problem", align="center")))
+  out <- NULL
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
       column(12, h4("Application of the last method resulted in the following error!", align="center")),
@@ -34,11 +208,15 @@ output$ui_sdcObj_summary <- renderUI({
       column(12, inp=h4("Application of the last method resulted in the following warning!", align="center")),
       column(12, inp=verbatimTextOutput("ui_lastwarning"))))
   }
-
   out <- list(out, fluidRow(
-    column(12, p("The current computation time was ~",code(comptime()),".", align="center")),
-    column(12, verbatimTextOutput("sdcInfo"))
-  ))
+    column(12, uiOutput("show_info_general")),
+    column(12, uiOutput("show_info_recodes")),
+    column(12, uiOutput("show_info_kanon")),
+    column(12, uiOutput("show_info_pram")),
+    column(12, uiOutput("show_info_localsuppression")),
+    column(12, uiOutput("show_info_comp_numvars")),
+    column(12, uiOutput("show_info_risk")),
+    column(12, uiOutput("anonMethods"))))
   out
 })
 
@@ -90,23 +268,7 @@ output$ui_sdcObj_randIds <- renderUI({
   out
 })
 
-## reset Problem
-output$ui_sdcObj_reset <- renderUI({
-  if (obj$reset_sdc1>0) {
-    # show real reset button!
-    btn_reset <- myActionButton("btn_reset_sdc",label=("By clicking, you really delete the current SDC Problem"), "danger")
-  } else {
-    btn_reset <- myActionButton("btn_reset_sdc1",label=("Reset SDC Problem"), "warning")
-  }
-  out <- fluidRow(
-    column(12, h4("Reset the existing Problem", align="center")),
-    column(12, p("By clicking the button below, you can start from scratch!", align="center")),
-    column(12, p(btn_reset, align="center")))
-  out
-})
-
-## create the sdcMicroObj problem instance
-setup_data <- reactive({
+output$setupTable <- DT::renderDataTable({
   if (is.null(obj$inputdata)) {
     return(NULL)
   }
@@ -114,25 +276,22 @@ setup_data <- reactive({
   df <- data.frame(
     "Variable Name"=vars,
     Type=dataTypes(),
-    Key=shinyInput(radioButtons, length(vars), 'setup_key_', choices=c("No", "Cat.","Cont."), width="100%"),
-    Pram=shinyInput(checkboxInput, length(vars), 'setup_pram_', value=FALSE, width="100%"),
-    Weight=shinyInput(checkboxInput, length(vars), 'setup_weight_', value=FALSE, width="100%"),
-    "Cluster ID"=shinyInput(checkboxInput, length(vars), 'setup_cluster_', value=FALSE, width="100%"),
-    Strata=shinyInput(checkboxInput, length(vars), 'setup_strata_', value=FALSE, width="100%"),
-    Remove=shinyInput(checkboxInput, length(vars), 'setup_remove_', value=FALSE, width="100%")
+    Key=shinyInput(radioButtons, length(vars), 'setup_key_', choices=c("No", "Cat.","Cont.")),
+    Pram=shinyInput(checkboxInput, length(vars), 'setup_pram_', value=FALSE, width="20px"),
+    Weight=shinyInput(checkboxInput, length(vars), 'setup_weight_', value=FALSE, width="20px"),
+    "Cluster ID"=shinyInput(checkboxInput, length(vars), 'setup_cluster_', value=FALSE, width="20px"),
+    Strata=shinyInput(checkboxInput, length(vars), 'setup_strata_', value=FALSE, width="20px"),
+    Remove=shinyInput(checkboxInput, length(vars), 'setup_remove_', value=FALSE, width="20px")
   )
+  df$nrCodes <- sapply(obj$inputdata, function(x) { length(unique(x))} )
+  df$nrNA <- sapply(obj$inputdata, function(x) { sum(is.na(x))} )
   rownames(df) <- NULL
   df
-})
-
-output$setupTable <- DT::renderDataTable({
-  inp <- setup_data()
-  if (is.null(inp)) {
-    return(NULL)
-  }
-  inp
 }, server = FALSE, escape = FALSE, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed', options = list(
   searching=FALSE, paging=FALSE, ordering=FALSE, bInfo = FALSE,
+  autoWidth=FALSE,
+  columnDefs=list(list(width='150px', targets = c(0:2))),
+  columnDefs=list(list(width='20px', targets=c(3:9))),
   preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
   drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
 ))
@@ -142,7 +301,6 @@ output$setupbtn <- renderUI({
   if (is.null(input$setup_key_1)) {
     return(NULL)
   }
-
   n <- length(allVars())
   types <- dataTypes()
   useAsKeys <- shinyValue("setup_key_", n)
@@ -260,48 +418,46 @@ output$ui_sdcObj_create1 <- renderUI({
   out
 })
 
+# initialize with default value!
+cur_infovar <- reactive({
+  if (is.null(input$sel_infov)) {
+    colnames(obj$inputdata)[1]
+  } else {
+    input$sel_infov
+  }
+})
 output$ui_sdcObj_info <- renderUI({
-  output$ui_setup_plot_info <- renderPlot({
-    if (is.null(input$sel_infov)) {
-      return(NULL)
-    }
-    inp <- obj$inputdata[[input$sel_infov]]
+  # dependency on select-variable
+  input$sel_infov
+  isolate({
+    inp <- obj$inputdata[[cur_infovar()]]
     if (is.integer(inp) & length(unique(inp))<=10) {
       inp <- as.factor(inp)
-    }
-
-    if (is.factor(inp)) {
-      plot(inp, main=NULL)
+      ui_nrLevs <- p("Number of levels:",code(length(levels(inp))))
     } else {
-      hist(inp, main=NULL)
+      ui_nrLevs <- p("Number unique observations:",code(length(unique(inp))))
     }
-  })
-  output$ui_setup_summary <- renderPrint({
-    if (is.null(input$sel_infov)) {
-      return(NULL)
-    }
-    inp <- obj$inputdata[[input$sel_infov]]
-    if (is.integer(inp) & length(unique(inp))<=10) {
-      inp <- as.factor(inp)
-    }
-    summary(inp)
-  })
 
-  sel_infov <- selectInput("sel_infov", label=NULL, choices=allVars(), selected=input$sel_infov, width="100%")
-  out <- list(
-    fluidRow(column(12, h4("Select Variable to show Information", align="center"), sel_infov)),
-    fluidRow(column(12, h4("Plot", align="center"))),
-    fluidRow(column(12, plotOutput("ui_setup_plot_info"))),
-    fluidRow(column(12, h4("Summary", align="center"))),
-    fluidRow(column(12, verbatimTextOutput("ui_setup_summary")))
-  )
-  out
+    out <- NULL
+    if (is.factor(inp)) {
+      out <- list(out, fluidRow(
+        column(12, renderPlot(plot(inp, main=NULL)), align="center")))
+    } else {
+      out <- list(out, fluidRow(
+        column(12, renderPlot(hist(inp, main=NULL)), align="center")))
+    }
+    out <- list(out, fluidRow(
+      column(12, ui_nrLevs, align="center"),
+      column(12, renderPrint(summary(inp)))))
+    out
+  })
 })
 
 output$ui_sdcObj_create <- renderUI({
+  sel_infov <- selectInput("sel_infov", label=h4("Select Variable to show Information"), choices=allVars(), selected=input$sel_infov, width="100%")
   out <- fluidRow(
-    column(8, div(style='padding-right : 15px;height: 300px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
-    column(4, uiOutput("ui_sdcObj_info"))
+    column(8, div(style='padding-right : 15px;height: 350px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
+    column(4, sel_infov, uiOutput("ui_sdcObj_info"), align="center")
   )
   out
 })
