@@ -28,8 +28,6 @@
 #' @section Methods: \describe{
 #' \item{list("signature(obj=\"sdcMicroObj\")")}{}}
 #' @author Alexander Kowarik, Bernd Prantner, IHSN C++ source, Akimichi Takemura
-#' @references
-#' \url{http://goo.gl/D9QAfa}
 #' @keywords manip
 #' @export
 #' @examples

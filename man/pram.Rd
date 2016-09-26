@@ -143,8 +143,6 @@ Alexander Kowarik, Matthias Templ, Bernhard Meindl
 }
 \references{
 \url{http://www.gnu.org/software/glpk}
-
-\url{http://goo.gl/sC2qOJ}
 }
 \keyword{manip}
 

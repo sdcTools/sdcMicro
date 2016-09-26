@@ -36,8 +36,6 @@
 #' original and post-randomized variables (with suffix "_pram").
 #' @author Alexander Kowarik, Matthias Templ, Bernhard Meindl
 #' @references \url{http://www.gnu.org/software/glpk}
-#'
-#' \url{http://goo.gl/sC2qOJ}
 #' @keywords manip
 #' @export
 #' @note Deprecated method 'pram_strata'is no longer available

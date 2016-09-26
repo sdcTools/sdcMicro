@@ -76,8 +76,5 @@ sdc <- LocalRecProg(sdc)
 \author{
 Alexander Kowarik, Bernd Prantner, IHSN C++ source, Akimichi Takemura
 }
-\references{
-\url{http://goo.gl/D9QAfa}
-}
 \keyword{manip}
 
