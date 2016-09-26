@@ -321,6 +321,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   # checks and preparations if we apply localSuppression on
   # subsets of key variables
   if (!is.null(combs)) {
+    combs <- as.integer(combs)
     if (length(combs) != length(k)) {
       # using the same k!
       k <- rep(k, length(combs))
