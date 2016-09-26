@@ -1,4 +1,7 @@
 output$ui_about <- renderUI({
+  if (values$starting) {
+    return(NULL)
+  }
   txt <- list("Some information about",code("sdcMicro"),"and how to use this
     graphical interface.")
 

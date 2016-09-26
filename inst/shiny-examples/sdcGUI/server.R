@@ -4,6 +4,10 @@ shinyServer(function(session, input, output) {
   for (file in list.files("controllers")) {
     source(file.path("controllers", file), local=TRUE)
   }
+  values <- reactiveValues(starting = TRUE)
+  session$onFlushed(function() {
+    values$starting <- FALSE
+  })
 
   # dynamically generate inputs (currently used in setup-sdcProblem)
   shinyInput <- function(FUN, len, id, ...) {
