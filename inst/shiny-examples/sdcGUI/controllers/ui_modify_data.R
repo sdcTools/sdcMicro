@@ -123,7 +123,7 @@ output$ui_modify_change_factor <- renderUI({
   }
   selfac1 <- selectInput("sel_factor",label=NULL,
     choices=vv, selected=input$sel_factor, width="100%")
-  cbgr <- checkboxGroupInput("cbg_factor",label=NULL, inline=FALSE,
+  cbgr <- selectInput("cbg_factor",label=NULL, multiple=TRUE, selectize=FALSE,
     choices=curFactorVals(), selected=input$cbg_factor, width="100%")
   if (is.null(input$cbg_factor)) {
     btnUp <- NULL
@@ -136,8 +136,8 @@ output$ui_modify_change_factor <- renderUI({
 
   out <- list(out, fluidRow(
     column(4, h5("Choose factor variable", align="center")),
-    column(4, h5("Levels", align="center")),
-    column(4, h5("new Levelcode", align="center"))))
+    column(4, h5("Select Levels to recode/combine", align="center")),
+    column(4, h5("New label for recoded values", align="center"))))
 
   out <- list(out, fluidRow(
     column(4, p(selfac1, align="center")),
@@ -147,7 +147,6 @@ output$ui_modify_change_factor <- renderUI({
   out <- list(out, fluidRow(
     column(12, p(btnUp, align="center")),
     column(12, plotOutput("plot_fac"))))
-
   out
 })
 

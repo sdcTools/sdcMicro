@@ -38,7 +38,7 @@ output$ui_recode <- renderUI({
     choices=kv, selected=input$sel_recfac, width="100%")
   cbgr <- selectInput("cbg_recfac",label=NULL, multiple=TRUE, selectize = FALSE,
     choices=curRecFacVals(), selected=input$cbg_recfac, width="100%")
-  if ( is.null(input$cbg_recfac) ) {
+  if (is.null(input$cbg_recfac)) {
     btnUp <- NULL
     txtval <- NULL
   } else {
@@ -58,12 +58,6 @@ output$ui_recode <- renderUI({
   out <- list(out, fluidRow(
     column(12, p(btnUp, align="center")),
     column(12, plotOutput("plot_facRec"))))
-
-  btn <- NULL
-  if (!is.null(input$sel_supp_th_var)) {
-    btn <- myActionButton("btn_supp_th", label="Recode Variable", "primary")
-  }
-  out <- list(out, fluidRow(column(12, p(btn, align="center"))))
   out
 })
 
