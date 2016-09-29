@@ -343,7 +343,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   # calculate importance if specified
   if (is.null(importance)) {
     xx <- x[,lapply(.SD, function(y) { length(table(y))}), .SDcols=keyVars]
-    importance <- match(xx, sort(xx, decreasing=FALSE))
+    importance <- match(names(xx), names(sort(xx, decreasing=FALSE)))
   } else {
     if (length(setdiff(sort(importance), 1:length(keyVars))) > 0) {
       stop("importance vector needs to be discrete numbers between 1 and the number of key-variables!\n")
