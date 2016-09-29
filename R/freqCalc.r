@@ -28,7 +28,7 @@
 #' \item{Fk}{estimated frequency in the population}
 #' \item{n1}{number of observations with fk=1}
 #' \item{n2}{number of observations with fk=2}
-#' @author Bernhard Meindl and Matthias Templ
+#' @author Bernhard Meindl
 #' @seealso \code{\link{indivRisk}}, \code{\link{measure_risk}}
 #' @references look e.g. in \url{http://neon.vb.cbs.nl/casc/Deliv/12d1.pdf}
 #' Templ, M.  \emph{Statistical Disclosure Control for Microdata Using the
@@ -70,6 +70,7 @@
 #' data.frame(fka=f3a$fk, fkb=f3b$fk, fkc=f3c$fk)
 #' data.frame(Fka=f3a$Fk, Fkb=f3b$Fk, Fkc=f3c$Fk)
 freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
+  . <- Fk <- fk <- id <- keyid <- na_ids <- sortidforfreqcalc <- sortvar <- weight <- NULL
   xxxxx_tmpweight_xxxxx <- NULL
   if (alpha <0 | alpha>1) {
     stop("parameter 'alpha' needs to be >0 0 and <= 1!\n")
@@ -95,183 +96,131 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
     w_n <- "xxxxx_tmpweight_xxxxx"
   }
   dt <- xdt[,c(keyVars_n,w_n), with=FALSE]
+  # factors must be converted to numeric
+  dt <- dt[,lapply(.SD, as.numeric)]
   # weight-column is always 'weight'
   cn  <- names(dt)
   cn[length(cn)] <- "weight"
   setnames(dt, cn)
 
+  dt[,sortidforfreqcalc:=.I]
+  setkeyv(dt, keyVars_n)
+
+  agg <- dt[,.(fk=.N, Fk=sum(weight)), by=key(dt)]
   TFna <- dt[,any(sapply(.SD,function(x)any(is.na(x)))),.SDcols=keyVars_n]
-  if (TFna) {
-    z <- sffcNA(dt, keyVars_n, alpha)
-  } else {
-    z <- sffc(dt, keyVars_n)
+  if (!TFna) {
+    setkeyv(agg, keyVars_n)
+    setkeyv(dt, keyVars_n)
+    agg <- agg[dt]
+    setkey(agg, sortidforfreqcalc)
+
+    z <- list(freqCalc=x, keyVars=keyVars, w=w, fk=agg$fk, Fk=agg$Fk,
+      n1=sum(agg$fk==1, na.rm=TRUE), n2=sum(agg$fk==2, na.rm=TRUE), alpha=alpha)
+    class(z) <- "freqCalc"
+    return(z)
   }
-  z$freqCalc <- x
-  z$w <- w
-  z$keyVars <- keyVars
-  z$alpha <- alpha
+
+  agg[,fk:=as.numeric(fk)]
+  agg[,Fk:=as.numeric(Fk)]
+
+  # split in complete and non-complete
+  dat_without_na <- na.omit(agg, cols=keyVars_n)
+  dat_with_na <- na.omit(agg, cols=keyVars_n, invert=TRUE)
+
+  nr_kv <- length(keyVars_n)
+  naind <- dat_with_na[,lapply(.SD, function(x) {
+    !is.na(x)
+  }), .SDcols=keyVars_n]
+
+  # Idea: compute unique combinations of NA-positions in keys and add an id for this
+  # we can use this information later when sorting the dataset without NAs
+  un <- unique(naind)
+  sortKeys <- lapply(1:nrow(un), function(x) {
+    keyVars_n[unlist(un[x])]
+  })
+  ii <- which(rowSums(un)==0)
+  if (length(ii)>0) {
+    sortKeys[[ii]] <- keyVars_n
+  }
+
+  un[,keyid:=.I]
+  naind[,sortvar:=.I]
+  naind <- merge(naind, un, by=keyVars_n)
+
+  # we need to resort so that later in the look we can use 'keyid' to set the key
+  # for the complete dataset
+  dat_with_na <- dat_with_na[naind$sortvar]
+  dat_with_na[,tmpid:=.I]
+  conditions <- rep("", nrow(dat_with_na))
+  for (z in keyVars_n) {
+    tmpid <- na.omit(dat_with_na, cols=z)[,tmpid]
+    c1 <- paste0("(",z,"==",dat_with_na[[z]][tmpid],"| is.na(",z,"))")
+    conditions[tmpid] <- paste0(conditions[tmpid],"&",c1)
+  }
+  conditions <- paste0(conditions,"&id!=",1:nrow(dat_with_na))
+  conditions <- substr(conditions,2,nchar(conditions))
+
+  dat_with_na[,tmpid:=NULL]
+
+  # initialize some values
+  dat_without_na[,id:=.I]
+  dat_with_na[,id:=.I]
+
+  # initialize fk|Fk and add_fks|add_Fks for na and non-na datasets with original values or 0
+  fks_na <- dat_with_na[,fk]
+  Fks_na <- dat_with_na[,Fk]
+  add_fks_na <- add_Fks_na <- rep(0, nrow(dat_with_na))
+
+  fks_nona <- dat_without_na[,fk]
+  Fks_nona <- dat_without_na[,Fk]
+  add_fks_nona <- add_Fks_nona <- rep(0, nrow(dat_without_na))
+
+  for (i in 1:nrow(dat_with_na)) {
+    cmd1 <- paste0("na_ids <- dat_with_na[", conditions[i],", id]")
+    eval(parse(text=cmd1))
+
+    if (i==1 || (naind[i,keyid] != naind[i-1,keyid])) {
+      cur_sortVars <- sortKeys[[naind[i,keyid]]]
+      setkeyv(dat_without_na, cur_sortVars)
+    }
+
+    ids_complete <- dat_without_na[as.list(dat_with_na[i, cur_sortVars, with=F]),id]
+    if (is.na(ids_complete)[1]) {
+      ids_complete <- 1:nrow(dat_without_na)
+    }
+
+    # update dataset containing NA's
+    # na.rm=TRUE fixes case, when we do not have complete keys!
+    add_fks_na[i] <- add_fks_na[i] + sum(fks_na[na_ids])*alpha + sum(fks_nona[ids_complete], na.rm=TRUE)
+    add_Fks_na[i] <- add_Fks_na[i] + sum(Fks_na[na_ids])*alpha + sum(Fks_nona[ids_complete], na.rm=TRUE)
+
+    # update 'complete' dataset
+    add_fks_nona[ids_complete] <- add_fks_nona[ids_complete] + fks_na[i]*alpha
+    add_Fks_nona[ids_complete] <- add_Fks_nona[ids_complete] + Fks_na[i]*alpha
+  }
+  setkeyv(dat_without_na, keyVars_n)
+  dat_without_na[,fk:=fk+add_fks_nona]
+  dat_without_na[,Fk:=Fk+add_Fks_nona]
+  dat_with_na[,fk:=fk+add_fks_na]
+  dat_with_na[,Fk:=Fk+add_Fks_na]
+  agg <- rbind(dat_without_na, dat_with_na)
+  setkeyv(agg, keyVars_n)
+  setkeyv(dt, keyVars_n)
+  agg <- agg[dt]
+  setkey(agg, sortidforfreqcalc)
+
+  # allNA-keys
+  ii <- which(rowSums(is.na(agg[,keyVars_n, with=FALSE]))==nr_kv)
+  if (length(ii)>0) {
+    naonly_fk <- nrow(agg)
+    naonly_Fk <- agg[,sum(weight)]
+    agg[ii, c("fk","Fk"):=list(naonly_fk, naonly_Fk)]
+  }
+
+  z <- list(freqCalc=x, keyVars=keyVars, w=w, fk=agg$fk, Fk=agg$Fk,
+    n1=sum(agg$fk==1, na.rm=TRUE), n2=sum(agg$fk==2, na.rm=TRUE), alpha=alpha)
   class(z) <- "freqCalc"
-  invisible(z)
-}
-
-## data.table based frequency calculation without any NA in keyVariables A
-## Author: Alexander Kowarik and Bernhard Meindl
-sffc <- function(dt, keyVars) {
-  .I <- idvarextraforsffc <- NULL
-  dt$idvarextraforsffc <- 1:nrow(dt)
-  setkeyv(dt, keyVars)
-  erg <- vector()
-  cmd <- paste("erg <- dt[,list(Fk=sum(weight),fk=.N),by=key(dt)]")
-  eval(parse(text=cmd))
-  erg <- merge(erg, dt)
-  setkey(erg, idvarextraforsffc)
-
-  res <- list(freqCalc=dt, keyVars=keyVars, w="weight", fk=as.integer(erg$fk),
-    Fk=as.numeric(erg$Fk), n1=sum(erg$fk==1, na.rm=TRUE), n2=sum(erg$fk==2, na.rm=TRUE))
-  invisible(res)
-}
-
-## data.table based frequency calculation with NA in keyVariables
-## Author: Alexander Kowarik and Bernhard Meindl
-sffcNA <- function(dt, keyVars, alpha) {
-  ergna4 <- idvarextraforsffc <- .I <- datwona <- fkneu <- fk <- ergna <- plusNA <- jjjj <- NULL
-  datwonlyna <- Fk <- Fkneu <- sFk <- plusSUMNA <- sfk <- matchedObsW <- matchedObs <- ind <- J <- NULL
-  for (k in keyVars) {
-    # all keyVars should be numeric, (no factors)
-    if (!is.numeric(dt[[k]]))
-      dt[[k]] <- as.numeric(dt[[k]])
-  }
-
-  # Compute fk for observations without any NA
-  dt$idvarextraforsffc <- 1:nrow(dt) #unique id for easy outputting
-  # Split data set in data set with NAs and without
-  cmd <- paste0("datwona <- dt[", paste0("!is.na(", keyVars, ")", collapse="&"),"]")
-  eval(parse(text=cmd))
-  cmd <- paste0("datwonlyna <- dt[", paste0("is.na(", keyVars, ")", collapse="&"),"]")
-  eval(parse(text=cmd))
-  cmd <- paste0("datwna <- dt[(", paste("is.na(", keyVars, ")", collapse="|"),
-    ")&(", paste0("!is.na(", keyVars, ")", collapse="|"), ")]")
-  eval(parse(text=cmd))
-
-  setkeyv(datwona, keyVars)
-  setkeyv(datwna, keyVars)
-
-  erg <- vector()
-  # erg contains the 'first' fk for all observations without any NAs
-  cmd <- paste0("erg <- datwona[,list(fk=as.numeric(.N),Fk=as.numeric(sum(weight))),by=key(datwona)]")
-  eval(parse(text=cmd))
-  allCombKeysVars <- as.list(set_power(keyVars))  ## build the power set of all keyVars
-  allCombKeysVars <- allCombKeysVars[-c(1, length(allCombKeysVars))]  ##delete the empty set and the full set
-
-  ##TODO: What to do with observations where all key variables are missing?!
-  allNAexist <- ifelse(nrow(datwonlyna) > 0, TRUE, FALSE)
-
-  # First forloop updates fk for observations without any NA
-  # matched$ind: relative to allCombKeyVars
-  matched <- data.table(ind=1, indM=1, matchedObs=1, matchedObsW=1)[-1]
-  erg[,fkneu:=fk]
-  erg[,Fkneu:=Fk]
-  cmd <- paste("ergna2 <- datwna[", paste0("is.na(", keyVars, ")", collapse="&"),
-    ",list(plusNA=.N,plusSUMNA=sum(weight)),by=key(datwna)]")
-  eval(parse(text=cmd))
-  for (i in seq_along(allCombKeysVars)) {
-    nakeyVars <- unlist(as.list(allCombKeysVars[[i]]))
-    notnakeyVars <- keyVars[!keyVars %in% nakeyVars]
-    cmd <- paste("ergna <- datwna[", paste0("is.na(", nakeyVars, ")", collapse="&"),
-      "&", paste0("!is.na(", notnakeyVars, ")", collapse="&"),
-      ",list(plusNA=.N,plusSUMNA=sum(weight)),by=key(datwna)]")
-    eval(parse(text=cmd))
-    if (nrow(ergna) > 0) {
-      indM <- nrow(ergna2) + 1
-      ergna2 <- rbind(ergna2, ergna)
-      indM <- indM:nrow(ergna2)
-      setkeyv(erg, notnakeyVars)
-      setkeyv(ergna, notnakeyVars)
-      cmd <- paste("erg <- merge(erg,ergna[,list(", paste(c(notnakeyVars, "plusNA","plusSUMNA"), collapse=","), ")],all.x=TRUE)")
-      eval(parse(text=cmd))
-      ergD <- erg[!is.na(plusNA), ]
-      cmd <- paste("ergD <- ergD[,list(sum(fk,na.rm=TRUE),sum(Fk,na.rm=TRUE)),by=list(",paste0(notnakeyVars, collapse=","), ")]")
-      eval(parse(text=cmd))
-      setnames(ergD, ncol(ergD), "sFk")
-      setnames(ergD, ncol(ergD)-1, "sfk")
-      ergna2[, `:=`(jjjj, .I)]
-      ergD <- merge(ergna2[indM, ], ergD, all.x=TRUE, by=notnakeyVars)
-      ergD[is.na(sfk), sfk:=0L]
-      ergD[is.na(sFk), sFk:=0L]
-      setkey(ergD, "jjjj")
-      ergna2[, jjjj:=NULL]
-      tmpX <- data.table(ind=i, indM=indM, matchedObs=ergD$sfk, matchedObsW=ergD$sFk)
-      matched <- rbind(matched, tmpX)
-      erg[!is.na(plusNA), `:=`(c("fkneu", "Fkneu"), list(fkneu+(plusNA*alpha), Fkneu+(plusSUMNA*alpha)))]
-      # 1 and #2 should be the same, but maybe #2 is better for checkign?!
-      erg[, `:=`(c("plusNA", "plusSUMNA"), NULL)]
-    }
-  }
-
-  # Second part computes fk for observations with NA (only based on non-NA-obs)
-  ergna2[, indM:=.I]
-  setkey(ergna2, "indM")
-  setkey(matched, "indM")
-  ergna2 <- merge(ergna2, matched, all.x=TRUE)
-  ergna2[, `:=`(c("fk", "Fk"), list(plusNA + matchedObs, plusSUMNA + matchedObsW))]
-  ergna2[, `:=`(c("matchedObs", "indM", "ind", "matchedObsW"), NULL)]
-  setkey(matched, "ind")
-  indtmp <- NULL
-
-  ## End Sec Part Third Part computes fk for NA observations
-  for (i in matched[J(unique(ind)), "ind", with=FALSE, mult="first"]$ind) {
-    nakeyVars <- unlist(as.list(allCombKeysVars[[i]]))
-    notnakeyVars <- keyVars[!keyVars %in% nakeyVars]
-    indtmp <- matched[J(i), "indM", with=FALSE]$indM
-    ergna3 <- ergna2[-indtmp]
-    if (nrow(ergna3) > 0) {
-      for (j in indtmp) {
-        cmd <- paste0("ergna4 <- ergna3[", paste0("(", notnakeyVars, "==ergna2[j,",
-        notnakeyVars, "]|is.na(", notnakeyVars, "))", collapse="&"), ",list(sum(plusNA),sum(plusSUMNA))]")
-        eval(parse(text=cmd))
-        if (nrow(ergna4) > 0) {
-          # scaling fk and Fk by parameter 'alpha'
-          ergna2[j, `:=`(c("fk", "Fk"), list(fk + ergna4$V1*alpha, Fk + ergna4$V2*alpha))]
-        }
-      }
-    }
-  }
-  ergna2[, `:=`(c("plusNA", "plusSUMNA"), NULL)]
-  setkeyv(erg, keyVars)
-  erg[, `:=`(c("fk", "Fk"), list(fkneu, Fkneu))]
-  erg[, `:=`(c("fkneu", "Fkneu"), NULL)]
-  erg <- merge(erg, datwona)
-  setkeyv(ergna2, keyVars)
-  for (k in keyVars) {
-    cmd <- paste0("ergna2[is.na(", k, "),", k, ":=999777666L]")
-    eval(parse(text=cmd))
-    cmd <- paste0("datwna[is.na(", k, "),", k, ":=999777666L]")
-    eval(parse(text=cmd))
-  }
-  setkeyv(datwna, keyVars)
-  setkeyv(ergna2, keyVars)
-  datwna <- merge(datwna, ergna2)
-
-  for (k in keyVars) {
-    cmd <- paste0("datwna[", k, "==999777666,", k, ":=NA]")
-    eval(parse(text=cmd))
-  }
-  if (allNAexist) {
-    # if all keyVariables are missing
-    fknaonly <- nrow(datwonlyna)
-    Fknaonly <- sum(datwonlyna$weight)
-    datwonlyna[, `:=`(c("fk", "Fk"), list(nrow(dt), sum(dt$weight)))]
-    setkeyv(datwonlyna, keyVars)
-    datwna[, `:=`(c("fk", "Fk"), list(fk + fknaonly*alpha, Fk + Fknaonly*alpha))]
-    erg[, `:=`(c("fk", "Fk"), list(fk + fknaonly*alpha, Fk + Fknaonly*alpha))]
-    erg <- rbind(datwonlyna[, j=colnames(erg), with=FALSE], datwna[, j=colnames(erg), with=FALSE], erg)
-  } else {
-    erg <- rbind(datwna[, j=colnames(erg), with=FALSE], erg)
-  }
-  setkey(erg, "idvarextraforsffc")
-  res <- list(freqCalc=erg, keyVars=keyVars, w="weight", fk=erg$fk,
-    Fk=as.numeric(erg$Fk), n1=sum(erg$fk==1, na.rm=TRUE), n2=sum(erg$fk==2, na.rm=TRUE))
-  invisible(res)
+  z
 }
 
 #' Print method for objects from class freqCalc.

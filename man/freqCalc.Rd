@@ -68,7 +68,7 @@ data.frame(fka=f3a$fk, fkb=f3b$fk, fkc=f3c$fk)
 data.frame(Fka=f3a$Fk, Fkb=f3b$Fk, Fkc=f3c$Fk)
 }
 \author{
-Bernhard Meindl and Matthias Templ
+Bernhard Meindl
 }
 \references{
 look e.g. in \url{http://neon.vb.cbs.nl/casc/Deliv/12d1.pdf}
