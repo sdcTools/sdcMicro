@@ -365,20 +365,18 @@ definition=function(obj, internal, title, outdir) {
   return(repObj)
 })
 
-#' Generate a HTML/LATEX output from an sdcMicroObj
+#' Generate an Html-report from an sdcMicroObj
 #'
 #' Summary statistics of the original and the perturbed data set
 #'
-#' The application of this function provides you with a html, text or
-#' pdf-report for your sdcMicro object that contains useful summaries about the
-#' anonymization process.
+#' The application of this function provides you with a html-report for your
+#' sdcMicro object that contains useful summaries about the anonymization process.
 #'
 #' @name report
 #' @docType methods
 #' @param obj an object of class \code{\link{sdcMicroObj-class}} or \code{reportObj}
 #' @param outdir output folder
 #' @param filename output filename
-#' @param format HTML, TEXT or LATEX
 #' @param title Title for the report
 #' @param internal TRUE/FALSE, if TRUE a detailled internal report is produced,
 #' else a non-disclosive overview
@@ -394,45 +392,23 @@ definition=function(obj, internal, title, outdir) {
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' report(sdc)
 #' }
-report <- function(obj, outdir=getwd(), filename="SDC-Report", format="HTML", title="SDC-Report", internal=FALSE, verbose=FALSE) {
-  reportX(obj=obj, outdir=outdir, filename=filename, format=format, title=title, internal=internal, verbose=verbose)
+report <- function(obj, outdir=getwd(), filename="SDC-Report", title="SDC-Report", internal=FALSE, verbose=FALSE) {
+  reportX(obj=obj, outdir=outdir, filename=filename, title=title, internal=internal, verbose=verbose)
 }
 setGeneric("reportX", function(obj, outdir=getwd(), filename="SDC-Report",
-  format="HTML", title="SDC-Report", internal=FALSE, verbose=FALSE) {
+  title="SDC-Report", internal=FALSE, verbose=FALSE) {
   standardGeneric("reportX")
 })
 
 setMethod(f="reportX", signature=c("sdcMicroObj"),
 definition=function(obj, outdir=getwd(), filename="SDC-Report",
-  format="HTML", title="SDC-Report", internal=FALSE, verbose=FALSE) {
+  title="SDC-Report", internal=FALSE, verbose=FALSE) {
 
-  if (!format %in% c("HTML", "LATEX","TEXT")) {
-    stop("possible values for 'type' are 'HTML','LATEX' and 'TEXT'!\n")
-  }
-
-  if (format=="TEXT") {
-    msg <- "Please note for sdcMicro > 4.5.0 this option has changed.\n"
-    msg <- paste0(msg, "You will get receive an html-output!\n")
-    message(msg)
-  }
-
-  if (format %in% c("HTML","TEXT")) {
-    filename <- paste(filename, ".html", sep="")
-  }
-  if (format == "LATEX") {
-    filename <- paste(filename, ".pdf", sep="")
-  }
+  filename <- paste(filename, ".html", sep="")
 
   repObj <- calcReportData(obj, internal=internal, title=title, outdir=outdir)
   fTemplate <- system.file("templates", "report-template.rmd", package="sdcMicro")
-  if (format == "HTML") {
-    render(fTemplate, quiet=TRUE,output_format="html_document", output_dir=outdir, output_file=filename)
-  }
-  if (format == "LATEX") {
-    tryCatch(render(fTemplate, quiet=TRUE,output_format="pdf_document", output_dir=outdir, output_file=filename), error=function(e) {
-      cat("It was not possible to produce a pdf-output. Please generate the report using format='HTML'\n")
-    }, finally=TRUE)
-  }
+  render(fTemplate, quiet=TRUE, output_dir=outdir, output_file=filename)
 
   if (verbose) {
     if (internal) {

@@ -3,9 +3,9 @@
 \docType{methods}
 \name{report}
 \alias{report}
-\title{Generate a HTML/LATEX output from an sdcMicroObj}
+\title{Generate an Html-report from an sdcMicroObj}
 \usage{
-report(obj, outdir = getwd(), filename = "SDC-Report", format = "HTML",
+report(obj, outdir = getwd(), filename = "SDC-Report",
   title = "SDC-Report", internal = FALSE, verbose = FALSE)
 }
 \arguments{
@@ -14,8 +14,6 @@ report(obj, outdir = getwd(), filename = "SDC-Report", format = "HTML",
 \item{outdir}{output folder}
 
 \item{filename}{output filename}
-
-\item{format}{HTML, TEXT or LATEX}
 
 \item{title}{Title for the report}
 
@@ -28,9 +26,8 @@ else a non-disclosive overview}
 Summary statistics of the original and the perturbed data set
 }
 \details{
-The application of this function provides you with a html, text or
-pdf-report for your sdcMicro object that contains useful summaries about the
-anonymization process.
+The application of this function provides you with a html-report for your
+sdcMicro object that contains useful summaries about the anonymization process.
 }
 \examples{
 \dontrun{

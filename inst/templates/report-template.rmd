@@ -1,13 +1,14 @@
 ---
 output:
-  html_document:
-    mathjax: null
-    theme: united
-    highlight: tango
-    css: report.css
-  pdf_document:
-    fig_width: 5
-    fig_height: 5
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+params: 
+    set_title: "My Title!"
+---
+
+---
+title: `r get.reportObj(repObj, "title")`
 ---
 
 ```{r, echo=F}
@@ -25,8 +26,6 @@ diffBP <- function(inp) {
 }
 ```
 
-# `r get.reportObj(repObj, "title")`
-
 ```{r, eval=TRUE, echo=FALSE}
 modifications <- get.reportObj(repObj, "modifications") 
 ```
@@ -34,7 +33,6 @@ modifications <- get.reportObj(repObj, "modifications")
 ```{r, echo=FALSE, results="asis"}
 nrObs <- get.reportObj(repObj, "nrObs")
 impFile <- get.reportObj(repObj, "impFile")
-
 delVars <- get.reportObj(repObj, "delVars")
 
 cat(paste0("## Input Data\n"))
@@ -236,13 +234,12 @@ if ( !is.null(sI) ) {
 ```
 
 # Disclaimer
-**R**-Packages **sdcMicro** and **sdcMicroGUI** are actively developed and maintained by
+**R**-Package [**sdcMicro**](https://cran.r-project.org/web/packages/sdcMicro/) is actively developed and maintained by
 [**www.statistik.at**](http://www.statistik.at "Statistics Austria") and [**www.data-analysis.at**](http://www.data-analysis.at "www.data-analysis.at").
 
 Please use the issue-tracker on *github* to report any issues:
 
 - [**Issue-Tracker for sdcMicro**](https://github.com/alexkowa/sdcMicro/issues)
-- [**Issue-Tracker for sdcMicroGUI**](https://github.com/alexkowa/sdcMicroGUI/issues)
 
 --------------------------------------
 This report was generated on `r format(Sys.time(), "%a, %d/%m/%Y at %H:%M:%S")`.

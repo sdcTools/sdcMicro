@@ -37,7 +37,8 @@ Imports:
     haven,
     ggthemes,
     rhandsontable,
-    DT
+    DT,
+    prettydoc
 License: GPL-2
 URL: https://github.com/alexkowa/sdcMicro
 Collate:
