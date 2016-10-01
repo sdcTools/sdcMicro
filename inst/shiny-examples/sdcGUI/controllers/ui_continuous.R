@@ -44,8 +44,10 @@ output$ui_topbotcoding_num <- renderUI({
       } else {
         n <- sum(obj$inputdata[[input$sel_topbot_var_num]] <= num1)
       }
+      N <- nrow(obj$inputdata)
+      p <- formatC(100*(n/N), format="f", digits=2)
       return(fluidRow(
-        column(12, p("A total of",code(n),"values will be replaced!"), align="center"),
+        column(12, p(code(n),"(out of",code(N),") values will be replaced! This are",code(p),"percent of the data."), align="center"),
         column(12, myActionButton("btn_topbotcoding_num",label=("Apply Top/Bottom-Coding"), "primary"), align="center")
       ))
     } else {
