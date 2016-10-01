@@ -428,7 +428,7 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
     if (length(numvars) == 0) {
       return(invisible(NULL))
     }
-    nv_o <- orig[, numvars]
+    nv_o <- orig[, numvars, drop=F]
     nv_m <- get.sdcMicroObj(x, "manipNumVars")
     if (docat) {
       cat("Compare original and modified numeric key variables\n\n")
