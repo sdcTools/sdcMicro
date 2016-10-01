@@ -104,6 +104,9 @@ output$loss_sb_results <- output$loss_sb_anonymize <- renderUI({
 # postrandomization loss
 output$pram_sb_results <- output$pram_sb_anonymize <- renderUI({
   curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NULL)
+  }
   pI <- curObj@pram
   if (is.null(pI)) {
     return(NULL)
