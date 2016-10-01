@@ -143,6 +143,15 @@ myErrBtn <- function(id, label, btn.style="danger") {
   return(fluidRow(column(12, div(btn, align="center"))))
 }
 
+# does not immediately react to user input
+customTextInput <- function(inputId, label, value = "") {
+  tagList(
+    singleton(tags$head(tags$script(src = "js/customTextInputBinding.js"))),
+    tags$label(label, `for` = inputId),
+    tags$input(id = inputId, type = "text", value = value, class = "returnTextInput")
+  )
+}
+
 msg_nodata <- function(tab_import=FALSE) {
   if ( tab_import ) {
     txt <- "Please select a dataset to upload"

@@ -109,10 +109,10 @@ shinyServer(function(session, input, output) {
   code_globalRecodeMicrodata <- reactive({
     if (input$sel_custom_split=="no") {
       cmd <- paste0("inputdata <- varToFactor(obj=inputdata")
-      cmd <- paste0(cmd, ", var=",dQuote(input$sel_num),")")
+      cmd <- paste0(cmd, ", var=",VecToRStr(input$sel_num_glrec, quoted=TRUE),")")
     } else {
       cmd <- paste0("inputdata <- globalRecode(obj=inputdata")
-      cmd <- paste0(cmd, ", column=",dQuote(input$sel_num))
+      cmd <- paste0(cmd, ", column=",dQuote(input$rb_num_glrec))
       if (input$sel_algo=="manual") {
         cmd <- paste0(cmd, ", breaks=",VecToRStr(input$txt_custom_breaks, quoted=FALSE))
       } else {
@@ -535,7 +535,7 @@ shinyServer(function(session, input, output) {
     obj$code_read_and_modify <- c(obj$code_read_and_modify,cmd)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_moddata",selected="View/Analyse a variable")
+    updateSelectInput(session, "sel_moddata",selected="view_var")
   })
   # undo-button
   observeEvent(input$btn_undo, {
@@ -561,7 +561,14 @@ shinyServer(function(session, input, output) {
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_moddata",selected="View/Analyse a variable")
+
+    # Reset Input
+    updateSelectInput(session, "sel_custom_split", selected="no")
+    updateSelectInput(session, "sel_algo", selected="equidistant")
+    updateTextInput(session, "txt_custom_breaks", value = "")
+
+    # Switch to overview-page
+    updateSelectInput(session, "sel_moddata",selected="view_var")
   })
   # setup the sdcMicroObj
   observeEvent(input$btn_setup_sdc, {

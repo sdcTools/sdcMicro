@@ -1,39 +1,111 @@
 # UI-output for recoding a variable to a factor
 output$ui_modify_recode_to_factor <- renderUI({
-  # automatically generated breakpoints
-  output$ui_globalRecode_auto <- renderUI({
-    isolate({
-      if (is.null(input$sel_algo)){
-        return(NULL)
-      }
-      sl1 <- sliderInput("sl_number_breaks",label=NULL, value=3, min=2, max=10, step=1, width="100%")
-      help_sl <- list("'3' splits the variable into 3 groups. The breaks for",code("cut()"), "are automatically computed.")
 
-      return(fluidRow(
-        column(12, h5("Breaks", align="center")),
-        column(12, helpText(help_sl)),
-        column(12, p(sl1, align="center"))
-      ))
-    })
+  get_current_custom_vars <- reactive({
+    if (is.null(input$sel_custom_split)) {
+      return(NULL)
+    }
+    if (input$sel_custom_split=="no") {
+      return(NULL)
+    } else {
+      return(input$rb_num_glrec)
+    }
   })
 
-  # custom breaks
+  summary_globalrec <- reactive({
+    vv <- get_current_custom_vars()
+    if (is.null(vv)) {
+      return(NULL)
+    }
+    out <- as.data.frame(table(obj$inputdata[[vv]], useNA="always"))
+    colnames(out) <- c("Value", "Frequency")
+    out$Frequency <- as.integer(out$Frequency)
+    out
+  })
+
+  output$ui_globalRecode_auto <- renderUI({
+    if (is.null(input$sel_algo)){
+      return(NULL)
+    }
+    sl1 <- numericInput("sl_number_breaks",label=h5("Specify the number of breaks"), value=3, min=2, max=10, step=1)
+    sl1
+  })
+  output$ui_globalRecode_manual <- renderUI({
+    if (is.null(input$sel_algo)){
+      return(NULL)
+    }
+    sel_br <- customTextInput("txt_custom_breaks",label=h5("Specify the custom breaks"), value=input$txt_custom_breaks)
+    help_br <- helpText(
+      "Example input: 1,3,5,9 splits the variable into the 3 groups (1,3],(3,5] and (5,9].", br(),
+      "If you supply 1 number (e.g. 3), the variable will be split in 3 equal sized groups.")
+    list(sel_br, tags$br(), help_br)
+  })
   output$ui_globalRecode_custom <- renderUI({
-    isolate({
-      if (is.null(input$sel_algo)){
-        return(NULL)
+    if (!is.null(input$sel_algo) && input$sel_algo!="manual") {
+      out <- fluidRow(
+        column(6, uiOutput("ui_globalRecode_cutalgo"), align="center"),
+        column(6, uiOutput("ui_globalRecode_auto"), align="center"))
+    } else {
+      out <- fluidRow(
+        column(6, uiOutput("ui_globalRecode_cutalgo"), align="center"),
+        column(6, uiOutput("ui_globalRecode_manual"), align="center"))
+    }
+    out
+  })
+  output$ui_globalRecode_var <- renderUI({
+    mult <- FALSE
+    if (!is.null(input$sel_custom_split) && input$sel_custom_split=="no") {
+      selectInput("sel_num_glrec",label=h5("Choose numeric variable"), choices=vv, selected=input$sel_num_glrec, multiple=TRUE)
+    } else {
+      radioButtons("rb_num_glrec",label=h5("Choose numeric variable"), choices=vv, selected=input$rb_num_glrec)
+    }
+  })
+  output$ui_globalRecode_split <- renderUI({
+    radioButtons("sel_custom_split",label=h5("Custom Breaks"), choices=c("no","yes"),
+      selected=input$sel_custom_split, inline=TRUE, width="100%")
+  })
+  output$ui_globalRecode_cutalgo <- renderUI({
+    selectInput("sel_algo",label=h5("Select Algorithm"),
+      choices=c("equidistant","logEqui","equalAmount","manual"), selected=input$sel_algo)
+  })
+  output$ui_globalRecode_btn <- renderUI({
+    if (is.null(input$sel_custom_split)) {
+      return(NULL)
+    }
+    btn_rec <- myActionButton("btn_recode_to_factor",label=("Recode to factor"), "primary")
+    if (input$sel_custom_split=="no") {
+      return(btn_rec)
+    } else {
+      if (!is.null(input$sel_algo) && input$sel_algo!="manual") {
+        return(btn_rec)
+      } else {
+        inp <- input$txt_custom_breaks
+        if (is.null(inp) || inp=="") {
+          return(NULL)
+        }
+        res <- suppressWarnings(as.numeric(unlist(strsplit(inp, ","))))
+        if (sum(is.na(res))>0) {
+          return(fluidRow(
+            column(12, myActionButton("btn_recode_to_factor_notworking",label=("Error: Please check your input (non-numeric?)"), "danger"), align="center")
+          ))
+        } else if (length(res)==1 & res > nrow(obj$inputdata)) {
+          return(fluidRow(
+            column(12, myActionButton("btn_recode_to_factor_notworking",label=("Error: The number of groups is too large!"), "danger"), align="center")
+          ))
+        } else {
+          return(btn_rec)
+        }
       }
-      sel_br <- textInput("txt_custom_breaks",label=NULL, value=input$txt_custom_breaks,width="100%")
-      help_br <- list(
-        "Example input: 1,3,5,9 splits the variable in 3 groups:", br(),
-        "(1,3],(3,5] and (5,9].", br(),
-        "If you supply 1 number (e.g. 3), the variable will be split in 3 equal sized groups.")
-      return(fluidRow(
-        column(12, h5("Breaks", align="center")),
-        column(12, helpText(help_br)),
-        column(12, p(sel_br, align="center"))
-      ))
-    })
+    }
+  })
+
+  output$ui_globalRecode_summary <- renderUI({
+    ss <- summary_globalrec()
+    if (is.null(ss)) {
+      return(NULL)
+    }
+    out <- fluidRow(column(12, renderTable(ss, row.names=FALSE), align="center"))
+    out
   })
 
   vv <- numVars()
@@ -43,52 +115,25 @@ output$ui_modify_recode_to_factor <- renderUI({
     ))
   }
 
-  out <- fluidRow(column(12, h4("Recode a numeric variable into a factor", align="center")))
+  out <- fluidRow(
+    column(12, h4("Recode a numeric variable into a factor", align="center"),
+    column(12, p("You can now choose a variable of class 'numeric' and convert it into a variable of type 'factor'. If
+      you do not want to use custom breaks, the variable is transformed without any changes into a factor variable and all unique values
+      of the variable will also be factor levels. By using custom-breaks, you need to either specify the number of new categories or
+      define the cut-points manually."), align="center"),
+    column(12, p("Please note that factor labels are automatically generated. You can change them later once the factor has been generated!"), align="center")))
 
   # list all numVars
   btn_rec <- NULL
-  sel1 <- selectInput("sel_num",label=h5("Choose numeric variable"), choices=vv, selected=input$sel_num)
-  help_sel1 <- "Which variable do you want to convert into a factor-variable?"
-  sel2 <- radioButtons("sel_custom_split",label=h5("Custom Breaks"), choices=c("no","yes"),
-    selected=input$sel_custom_split, inline=TRUE, width="100%")
-  help_sel2 <- "If you choose yes, you will have to choose custom break-points"
-
   out <- list(out, fluidRow(
-    column(6, helpText(help_sel1)),
-    column(6, helpText(help_sel2))))
-  out <- list(out, fluidRow(
-    column(6, p(sel1, align="center")),
-    column(6, p(sel2, align="center"))))
-
-  cutalgo <- selectInput("sel_algo",label=h5("Select Algorithm"),
-    choices=c("equidistant","logEqui","equalAmount","manual"), selected=input$sel_algo, width="100%")
-  help_cutalgo <- list("You need to specify manual breakpoints!")
-
-  if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
-    out <- list(out, fluidRow(
-      column(3, p(cutalgo, align="center")),
-      column(6, "")))
-  }
-
-  btn_rec <- myActionButton("btn_recode_to_factor",label=("Recode to factor"), "primary")
-  isolate({
+    column(6, uiOutput("ui_globalRecode_var"), align="center"),
+    column(6, uiOutput("ui_globalRecode_split"), align="center")))
     if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
-      if (!is.null(input$sel_algo) && input$sel_algo!="manual") {
-        out <- list(out, uiOutput("ui_globalRecode_auto"))
-      } else {
-        out <- list(out, uiOutput("ui_globalRecode_custom"))
-        print(input$txt_custom_breaks)
-        if ((is.null(input$txt_custom_breaks) || input$txt_custom_breaks=="")) {
-          btn_rec <- NULL
-        }
-      }
+      out <- list(out, uiOutput("ui_globalRecode_custom"))
     }
-    txt_lab <- "Labels are automatically generated, you can change them later once the factor has been generated!"
-    out <- list(out, fluidRow(
-      column(12, h5("Note about factor-labels"), align="center"),
-      column(12, helpText(txt_lab), align="center"),
-      column(12, btn_rec, align="center")))
-  })
+  out <- list(out, uiOutput("ui_globalRecode_summary"))
+  out <- list(out, fluidRow(
+    column(12, uiOutput("ui_globalRecode_btn"), align="center")))
   out
 })
 
