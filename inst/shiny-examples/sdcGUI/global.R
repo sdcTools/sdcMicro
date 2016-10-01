@@ -164,6 +164,8 @@ summaryfn <- function(x) {
     names(vv) <- c("Min", "Q5","Q25","Median","Mean","Q75","Q95","Max")
   } else {
     vv <- as.data.frame.table(addmargins(table(x, useNA = "always")))
+    vv$Freq <- as.integer(vv$Freq)
+    vv$Perc <- formatC(100*(vv$Freq/length(x)), format="f", digits=2)
   }
   vv
 }

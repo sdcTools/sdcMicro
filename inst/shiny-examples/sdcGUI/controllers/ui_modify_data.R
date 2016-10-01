@@ -340,11 +340,10 @@ output$ui_view_var <- renderUI({
       colnames(df) <- input$view_selvar1
       cl1 <- class(df[[1]]) %in% c("factor", "character")
     }
-
     if (is.null(input$view_selvar2) || input$view_selvar2=="none") {
       if (cl1) {
         out <- list(tab=summaryfn(obj$inputdata[[input$view_selvar1]]))
-        colnames(out$tab) <- c(input$view_selvar1, "Frequency")
+        colnames(out$tab) <- c(input$view_selvar1, "Frequency", "Percentage")
       } else {
         out <- list(tab=as.data.frame(t(summaryfn(obj$inputdata[[input$view_selvar1]]))))
       }
@@ -353,6 +352,8 @@ output$ui_view_var <- renderUI({
       if (cl1 & cl2) {
         out <- list(tab=as.data.frame.table(addmargins(table(df[[1]], df[[2]], useNA="always"))), var=c(input$view_selvar1,input$view_selvar2))
         colnames(out$tab) <- c(out$var, "Frequency")
+        out$tab$Frequency <- as.integer(out$tab$Frequency)
+        out$tab$Percentage <- formatC(100*(out$tab$Frequency/nrow(df)), format="f", digits=2)
       } else if (cl1 & !cl2) {
         out <- tapply(df[[2]], df[[1]], summaryfn)
         out <- do.call("rbind", out)
@@ -377,9 +378,12 @@ output$ui_view_var <- renderUI({
         out <- list(vars=c(input$view_selvar1,input$view_selvar2),tab1=tab1, tab2=tab2, vcor=vcor)
       }
     }
+    nainfo <- data.frame(variable=c(input$view_selvar1,input$view_selvar2))
+    nainfo$nr_na <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
+    nainfo$perc_na <- formatC(100*(nainfo$nr_na/nrow(df)), format="f", digits=2)
+    out$nainfo <- nainfo
     out
   })
-
   output$view_plot <- renderPlot({
     if (is.null(input$view_selvar1) ) {
       return(NULL)
@@ -418,6 +422,15 @@ output$ui_view_var <- renderUI({
     }
   })
 
+  output$natxt <- renderUI({
+    nainfo <- stats_summary()$nainfo
+    out <- list("Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.")
+    if (nainfo$variable[2]!="none") {
+      out <- list(out, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.")
+    }
+    return(out)
+  })
+
   if (!is.null(lastError())) {
     return(fluidRow(
       column(12, h4("The following Error has occured!", align="center")),
@@ -451,6 +464,7 @@ output$ui_view_var <- renderUI({
           column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[2]))), align="center")),
           column(12, renderTable(res_stats$tab2, include.rownames=FALSE), align="center")))
       }
+      out <- list(out, fluidRow(column(12, uiOutput("natxt"), align="center")))
     }
   }
   out
