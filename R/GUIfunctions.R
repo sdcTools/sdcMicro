@@ -123,13 +123,15 @@ definition=function(obj, var) {
 
 setMethod(f="varToFactorX", signature=c("data.frame"),
 definition=function(obj, var) {
-  if ( length(var)!=1) {
-    stop("More than 1 variable specified in 'var'!\n")
+  #if ( length(var)!=1) {
+  #  stop("More than 1 variable specified in 'var'!\n")
+  #}
+  if (!all(var %in% colnames(obj))) {
+    stop("at least one variable specified in 'var' is not available in 'obj'!\n")
   }
-  if ( !var %in% colnames(obj)) {
-    stop("variable specified in 'var' not available in 'obj'!\n")
+  for (vv in var) {
+    obj[[vv]] <- as.factor(obj[[vv]])
   }
-  obj[[var]] <- as.factor(obj[[var]])
   obj
   obj
 })
