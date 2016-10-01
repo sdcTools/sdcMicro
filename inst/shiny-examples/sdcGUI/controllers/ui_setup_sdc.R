@@ -433,10 +433,8 @@ output$ui_sdcObj_info <- renderUI({
     inp <- obj$inputdata[[cur_infovar()]]
     if (is.integer(inp) & length(unique(inp))<=10) {
       inp <- as.factor(inp)
-      ui_nrLevs <- p("Number of levels:",code(length(levels(inp))))
-    } else {
-      ui_nrLevs <- p("Number unique observations:",code(length(unique(inp))))
     }
+    ui_nrLevs <- p("Number of levels including NA:",code(length(table(inp,useNA="always"))))
 
     out <- NULL
     if (is.factor(inp)) {
