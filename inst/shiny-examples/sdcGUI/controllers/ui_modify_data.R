@@ -285,64 +285,6 @@ output$ui_set_to_na <- renderUI({
   out
 })
 
-# UI-output for top/bottom-coding of numerical variables
-output$ui_topbotcoding <- renderUI({
-  output$ui_topbot_plot <- renderPlot({
-    if (is.null(input$sel_topbot_var) ) {
-      return(NULL)
-    }
-    vv <- obj$inputdata[[input$sel_topbot_var]]
-    boxplot(obj$inputdata[[input$sel_topbot_var]], main=input$sel_topbot_var, xlab=input$sel_topbot_var, col="#DADFE1")
-  })
-
-  output$ui_topbotvar <- ui_custom_selectInput(choices=numVars(), id="sel_topbot_var", multiple=FALSE, label="Select variable")
-  output$ui_topbotkind <- ui_custom_selectInput(choices=c("top","bottom"), id="sel_topbot_kind", multiple=FALSE, label="Apply Top- or Bottom-Coding?")
-  output$ui_topbotval <- ui_custom_textInput(id="num_topbot_val", label="Value", placeholder="Please enter a number")
-  output$ui_topbot_replacement <- ui_custom_textInput(id="num_topbot_replacement", label="Replacement Value", placeholder="Please enter a number")
-
-  output$ui_topbot_btn <- renderUI({
-    num1 <- suppressWarnings(as.numeric(input$num_topbot_val))
-    num2 <- suppressWarnings(as.numeric(input$num_topbot_replacement))
-    if (is.null(input$sel_topbot_var)) {
-      return(NULL)
-    }
-    if (is.na(num1) || is.na(num2)) {
-      return(NULL)
-    }
-    if (is.null(num1) || is.null(num2)) {
-      return(NULL)
-    }
-    if (is.numeric(num1) & is.numeric(num2)) {
-      if (input$sel_topbot_kind=="top") {
-        n <- sum(obj$inputdata[[input$sel_topbot_var]] >= num1)
-      } else {
-        n <- sum(obj$inputdata[[input$sel_topbot_var]] <= num1)
-      }
-      return(fluidRow(
-        column(12, p("A total of",code(n),"values will be replaced!"), align="center"),
-        column(12, myActionButton("btn_topbotcoding",label=("Apply Top/Bottom-Coding"), "primary"), align="center")
-      ))
-    } else {
-      return(NULL)
-    }
-  })
-
-  out <- fluidRow(
-    column(12, h4("Apply Top- or Bottom coding", align="center")),
-    column(12, plotOutput("ui_topbot_plot")))
-
-  out <- list(out, fluidRow(
-    column(6, uiOutput("ui_topbotvar")),
-    column(6, uiOutput("ui_topbotkind"))))
-
-  out <- list(out, fluidRow(
-    column(6, uiOutput("ui_topbotval")),
-    column(6, uiOutput("ui_topbot_replacement"))))
-
-  out <- list(out, uiOutput("ui_topbot_btn"))
-  out
-})
-
 # UI-output to display a variable
 # users can choose a summary or a plot which depends
 # on the class of the variable
@@ -612,9 +554,6 @@ output$ui_modify_data_main <- renderUI({
     if (input$sel_moddata=="createstratvar") {
       out <- list(out, uiOutput("ui_modify_create_stratvar"))
     }
-    if (input$sel_moddata=="topbotcoding") {
-      out <- list(out, uiOutput("ui_topbotcoding"))
-    }
   }
   out
 })
@@ -628,8 +567,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
       "Convert numeric variables to factors"="recode_to_factor",
       "Modify an existing factor-variable"="modify_factor",
       "Create a stratification variable"="createstratvar",
-      "Set specific values in a variable to NA"="set_to_na",
-      "Apply Top-/Bottom Coding"="topbotcoding")
+      "Set specific values in a variable to NA"="set_to_na")
     if (!is.null(sdcObj())) {
       cc <- cc[1:2]
     }

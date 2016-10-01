@@ -138,15 +138,6 @@ shinyServer(function(session, input, output) {
     cmd
   })
 
-  # code for top/bottom coding for microdata
-  code_topBotCoding <- reactive({
-    cmd <- paste0("inputdata <- topBotCoding(inputdata, column=",dQuote(input$sel_topbot_var))
-    cmd <- paste0(cmd, ", value=",as.numeric(input$num_topbot_val))
-    cmd <- paste0(cmd, ", replacement=",as.numeric(input$num_topbot_replacement))
-    cmd <- paste0(cmd, ", kind=",dQuote(input$sel_topbot_kind),")")
-    cmd
-  })
-
   # 2: anonymization methods
   # add linked (ghost)-vars to sdcMicroObj
   code_addGhostvars <- reactive({
@@ -699,20 +690,6 @@ shinyServer(function(session, input, output) {
     runEvalStrMicrodat_no_errorchecking(cmd=cmd, comment="## Set specific values to 'NA'")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
-    updateNavbarPage(session, "mainnav", selected="Microdata")
-  })
-  # event to apply top-/bottomcoding
-  observeEvent(input$btn_topbotcoding, {
-    progress <- shiny::Progress$new()
-    on.exit(progress$close())
-    progress$set(message="performing topBotCoding() (this might take a long time)...", value = 0)
-    ptm <- proc.time()
-    cmd <- code_topBotCoding()
-    runEvalStrMicrodat(cmd=cmd, comment="## Apply Top-/Bottom coding")
-    ptm <- proc.time()-ptm
-    obj$comptime <- obj$comptime+ptm[3]
-    progress$set(message="performing topBotCoding() (this might take a long time)...", value = 1)
     updateSelectInput(session, "sel_moddata", selected = "show_microdata")
     updateNavbarPage(session, "mainnav", selected="Microdata")
   })
