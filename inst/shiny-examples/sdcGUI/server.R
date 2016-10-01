@@ -132,7 +132,7 @@ shinyServer(function(session, input, output) {
       if (is.numeric(obj$inputdata[[input$sel_na_suppvar]])) {
         cmd <- paste0("inputdata[inputdata$",input$sel_na_suppvar,"==",input$num_na_suppid,", ",shQuote(input$sel_na_suppvar),"] <- NA")
       } else {
-        cmd <- paste0("inputdata[inputdata$",input$sel_na_suppvar,"==",shQuote(input$num_na_suppid),", ",shQuote(input$sel_na_suppvar),"] <- NA")
+        cmd <- paste0("inputdata[which(inputdata$",input$sel_na_suppvar," ==",shQuote(input$num_na_suppid),"), ",shQuote(input$sel_na_suppvar),"] <- NA")
       }
     }
     cmd
