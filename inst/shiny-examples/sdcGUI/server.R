@@ -9,6 +9,19 @@ shinyServer(function(session, input, output) {
     values$starting <- FALSE
   })
 
+  autoInvalidate <- reactiveTimer(25000)
+  # after 25 seconds, the reactive-values used to display the
+  # confirm-buttons for resetting the sdcObj and the microdata
+  # are resetted
+  # The output$functions are updating every 15 seconds to check,
+  # if something has changed
+  observe({
+    autoInvalidate()
+    obj$reset_inputdata1 <- 0
+    obj$reset_sdc1 <- 0
+  })
+
+
   # dynamically generate inputs (currently used in setup-sdcProblem)
   shinyInput <- function(FUN, len, id, ...) {
     inputs = character(len)

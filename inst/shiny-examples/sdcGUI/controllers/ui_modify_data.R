@@ -461,19 +461,26 @@ output$ui_show_microdata <- renderUI({
   output$tab_inputdata <- renderDataTable({
     obj$inputdata
   }, options = list(scrollX=TRUE, engthMenu=list(c(5, 15, 50, -1), c('5', '15', '50', 'All')), pageLength=10))
-  if (obj$reset_inputdata1>0) {
-    # show real reset button!
-    btn <- myActionButton("btn_reset_inputdata",label=("By clicking, you really delete the current inputdata"), "danger", css.class="btn-xs")
-  } else {
-    btn <- myActionButton("btn_reset_inputdata1",label=("Reset inputdata"), "warning", css.class="btn-xs")
-  }
 
-  return(fluidRow(
+  output$btn_inputdata <- renderUI({
+    invalidateLater(15000)
+    if (obj$reset_inputdata1>0) {
+      # show real reset button!
+      btn <- myActionButton("btn_reset_inputdata",label=("By clicking, you really delete the current inputdata"), "danger", css.class="btn-xs")
+    } else {
+      btn <- myActionButton("btn_reset_inputdata1",label=("Reset inputdata"), "warning", css.class="btn-xs")
+    }
+    fluidRow(column(12, p(btn, align="center")))
+  })
+
+  out <- fluidRow(
     column(12, h4(paste("Microdata in use:",shQuote(obj$microfilename))), align="center"),
     column(12, p("The dataset has",code(nrow(obj$inputdata)),"observations in",code(ncol(obj$inputdata)),"variables and can be used to set up the",code("sdcMicroObj"),
-      "that can be anonymized."), align="center"),
-    column(12, p(btn, align="center")),
+      "that can be anonymized."), align="center"))
+  out <- list(out, uiOutput("btn_inputdata"))
+  out <- list(out, fluidRow(
     column(12, dataTableOutput("tab_inputdata"))))
+  return(out)
 })
 
 # UI-output to use only a subset of the available microdata
