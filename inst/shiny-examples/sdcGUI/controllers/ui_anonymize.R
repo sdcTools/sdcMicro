@@ -15,13 +15,18 @@ choices_anon_cat <- reactive({
   return(choices)
 })
 choices_anon_num <- reactive({
-  choices <- c(
-    "Top-/Bottom Coding"="topbot_num",
-    "Apply Microaggregation"="microaggregation",
-    "Adding Noise to the data"="noise",
-    #"Shuffling the data"="shuffling",
-    "Apply Rank-Swapping"="rankswap")
-  return(choices)
+  if (length(get_numVars()>0)) {
+    return(c(
+      "Top-/Bottom Coding"="topbot_num",
+      "Apply Microaggregation"="microaggregation",
+      "Adding Noise to the data"="noise",
+      #"Shuffling the data"="shuffling",
+      "Apply Rank-Swapping"="rankswap"))
+  }
+  if (length(numVars())>0) {
+    return(c("Top-/Bottom Coding"="topbot_num"))
+  }
+  return(NULL)
 })
 res_choices_anon <- reactive({
   if (is.null(input$sel_anonymize)) {
@@ -42,17 +47,19 @@ res_choices_anon <- reactive({
   choices
 })
 choices_anonymize <- reactive({
+  choices <- c(
+    "View/Analyse existing sdcProblem"="manage_sdcProb",
+    "Anonymize categorical variables"="cat_anon",
+    "Anonymize numerical variables"="cat_num")
   if (length(get_numVars())>0) {
-    choices <- c(
-      "View/Analyse existing sdcProblem"="manage_sdcProb",
-      "Anonymize categorical variables"="cat_anon",
-      "Anonymize numerical variables"="cat_num")
+    return(choices)
   } else {
-    choices <- c(
-      "View/Analyse existing sdcProblem"="manage_sdcProb",
-      "Anonymize categorical variables"="cat_anon")
+    if (length(numVars())>0) {
+      return(choices)
+    } else {
+      return(choices[1:2])
+    }
   }
-  choices
 })
 output$ui_sel_anonymize <- renderUI({
   choices <- choices_anonymize()
