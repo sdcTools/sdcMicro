@@ -431,37 +431,32 @@ output$ui_view_var <- renderUI({
   }
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
   out <- list(out, fluidRow(
-    column(4, uiOutput("ui_selvar1")),
-    column(4, uiOutput("ui_selvar2")),
-    column(4, p(rb, align="center"))))
+    column(6, uiOutput("ui_selvar1")),
+    column(6, uiOutput("ui_selvar2"))))
 
-  if (!is.null(input$view_rbchoice)) {
-    if (input$view_rbchoice=="Plot") {
-      out <- list(out, fluidRow(column(12, plotOutput("view_plot", height="500px"))))
-    }
-    if (input$view_rbchoice=="Summary") {
-      res_stats <- stats_summary()
-      if (is.null(res_stats$tab1)) {
-        out <- list(out, fluidRow(column(12, renderTable(res_stats$tab, include.rownames=FALSE), align="center")))
-      } else {
-        out <- list(out, fluidRow(
-          column(12, h5(HTML(paste("Correlation between",code(res_stats$vars[1]),"and",code(res_stats$vars[2]),":",code(res_stats$vcor))), align="center")),
-          column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[1]))), align="center")),
-          column(12, renderTable(res_stats$tab1, include.rownames=FALSE), align="center"),
-          column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[2]))), align="center")),
-          column(12, renderTable(res_stats$tab2, include.rownames=FALSE), align="center")))
-      }
-      out <- list(out, fluidRow(column(12, uiOutput("natxt"), align="center")))
-    }
+  out <- list(out, fluidRow(
+    column(12, plotOutput("view_plot", height="500px"))
+  ))
+  res_stats <- stats_summary()
+  if (is.null(res_stats$tab1)) {
+    out <- list(out, fluidRow(column(12, renderTable(res_stats$tab, include.rownames=FALSE), align="center")))
+  } else {
+    out <- list(out, fluidRow(
+      column(12, h5(HTML(paste("Correlation between",code(res_stats$vars[1]),"and",code(res_stats$vars[2]),":",code(res_stats$vcor))), align="center")),
+      column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[1]))), align="center")),
+      column(12, renderTable(res_stats$tab1, include.rownames=FALSE), align="center"),
+      column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[2]))), align="center")),
+      column(12, renderTable(res_stats$tab2, include.rownames=FALSE), align="center")))
   }
+  out <- list(out, fluidRow(column(12, uiOutput("natxt"), align="center")))
   out
 })
 
 # UI-output to display and reset currently available microdata
 output$ui_show_microdata <- renderUI({
-  output$tab_inputdata <- renderDataTable({
+  output$tab_inputdata <- DT::renderDataTable({
     obj$inputdata
-  }, options = list(scrollX=TRUE, engthMenu=list(c(5, 15, 50, -1), c('5', '15', '50', 'All')), pageLength=10))
+  }, options = list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=25), filter="top", rownames=FALSE)
 
   output$btn_inputdata <- renderUI({
     invalidateLater(15000)

@@ -13,9 +13,9 @@ output$ui_export_report <- renderUI({
 
 # UI-Output for exporting the (anonymized) data
 output$ui_export_data <- renderUI({
-  output$dt_exportData <- renderDataTable({
+  output$dt_exportData <- DT::renderDataTable({
     exportData()
-  }, options=list(scrollX=TRUE, lengthMenu=c(5, 25, 50), pageLength=5))
+  }, options=list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=20), rownames=FALSE)
 
   # specific (gui)-options for csv-export
   output$ui_export_csv <- renderUI({
