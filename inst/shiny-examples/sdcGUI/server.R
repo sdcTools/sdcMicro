@@ -746,8 +746,6 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- "Establishing k-Anonymity"
       obj$anon_performed <- c(obj$anon_performed, "Establishing k-anonymity")
     }
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # suppress risky observations
   observeEvent(input$btn_supp_th, {
