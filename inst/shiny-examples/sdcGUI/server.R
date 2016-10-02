@@ -21,7 +21,6 @@ shinyServer(function(session, input, output) {
     obj$reset_sdc1 <- 0
   })
 
-
   # dynamically generate inputs (currently used in setup-sdcProblem)
   shinyInput <- function(FUN, len, id, ...) {
     inputs = character(len)
@@ -30,6 +29,25 @@ shinyServer(function(session, input, output) {
     }
     inputs
   }
+
+  observe({
+    curObj <- sdcObj()
+    if (!is.null(curObj)) {
+      pramInfo <- curObj@pram
+      x <- print(curObj, type="pram", docat=FALSE)
+
+      if (!is.null(x)) {
+        dt <- x$pram_summary
+        for (i in 1:nrow(dt)){
+          local({
+            my_i <- i
+            tablename <- paste0("transmat_pram_", my_i)
+            output[[tablename]] <- renderTable({x$params[[my_i]]$Rs})
+          })
+        }
+      }
+    }
+  })
 
   # obtain the values of inputs
   shinyValue <- function(id, len) {
@@ -166,13 +184,13 @@ shinyServer(function(session, input, output) {
     matstr <- VecToRStr(v, quoted=FALSE)
     cmd <- paste0("mat <- matrix(",matstr,",ncol=",ncol(obj$transmat),"); ")
     cmd <- paste0(cmd,"rownames(mat) <- colnames(mat) <- ", VecToRStr(rn, quoted=TRUE),";\n")
-    cmd <- paste0(cmd,"sdcObj <- pram(sdcObj, variables=",dQuote(input$sel_pramvars_expert),", pd=mat)")
+    cmd <- paste0(cmd,"sdcObj <- pram(sdcObj, variables=",dQuote(input$sel_pramvars),", pd=mat)")
     cmd
   })
 
   # code for non-expert pram-application
   code_pram_nonexpert <- reactive({
-    cmd <- paste0("sdcObj <- pram(sdcObj, variables=",VecToRStr(input$sel_pramvars_nonexpert,quoted=TRUE))
+    cmd <- paste0("sdcObj <- pram(sdcObj, variables=",VecToRStr(input$sel_pramvars, quoted=TRUE))
     cmd <- paste0(cmd,", pd=",input$sl_pd)
     cmd <- paste0(cmd,", alpha=",input$sl_alpha,")")
     cmd

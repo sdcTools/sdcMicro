@@ -160,7 +160,7 @@ output$ui_sdcObj_summary <- renderUI({
       out <- list(out, fluidRow(
         column(12, p("Variable",code(dt$variable[i])), align="center"),
         column(12, tags$i("final transition matrix"), align="center"),
-        column(12, renderTable(x$params[[i]]$Rs), align="center")))
+        column(12, uiOutput(paste0("transmat_pram_",i)), align="center")))
     }
     out <- list(out, fluidRow(
       column(12, p("Summary of changed observations due to postrandomization"), align="center"),

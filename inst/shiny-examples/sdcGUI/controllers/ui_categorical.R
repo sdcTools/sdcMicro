@@ -63,98 +63,144 @@ output$ui_recode <- renderUI({
 
 # UI-output for postrandomization
 output$ui_pram <- renderUI({
-  # Transitionmatrix for PRAM
-  output$transmat <- renderRHandsontable({
-    if (is.null(input$sel_pramvars_expert) || length(input$sel_pramvars_expert)!=1) {
-      return(NULL)
-    }
-
-    if ( is.null(input$transmat)) {
-      v <- get_origData()[[input$sel_pramvars_expert]]
-      ll <- levels(v)
-      m <- diag(length(ll))
-      rownames(m) <- ll
-      colnames(m) <- ll
-      obj$transmat <- m
-    } else {
+  # update obj$transmat if table has been changed
+  observe({
+    if(!is.null(input$transmat)) {
       obj$transmat <- hot_to_r(input$transmat)
     }
-    m <- obj$transmat
-    m <- rhandsontable(m) %>% hot_context_menu(allowRowEdit=FALSE, allowColEdit=FALSE)
+  })
+
+  # Fire event when selected pram-variable changes
+  # initialize transition-matrix with 0.9 in diagonals
+  # because with 1 some error with rhandsontable is available.
+  observeEvent(input$sel_pramvars, {
+    if (!is.null(input$sel_pramvars) && length(input$sel_pramvars)==1) {
+      v <- get_origData()[[input$sel_pramvars]]
+      ll <- levels(v)
+      m <- diag(length(ll))
+      diag(m) <- 0.90
+      rownames(m) <- colnames(m) <- ll
+      obj$transmat <- m
+    }
+  })
+
+  # Transitionmatrix for PRAM
+  output$transmat <- renderRHandsontable({
+    if (is.null(input$sel_pramvars) || length(input$sel_pramvars)!=1) {
+      return(NULL)
+    }
+    # hot_col(1:ncol(obj$transmat), type="numeric", format="0.00")
+    m <- rhandsontable(obj$transmat) #%>% hot_context_menu(allowRowEdit=FALSE, allowColEdit=FALSE)
     m
   })
 
-  # UI-output for postrandomization (expert)
-  output$ui_expert_pram <- renderUI({
+  output$ui_pram_params <- renderUI({
     curObj <- sdcObj()
-    pramvars <- setdiff(facVars(), curObj@pram$summary$variable)
-    if ( length(pramvars) > 0 ) {
-      sel_pramvars <- selectInput("sel_pramvars_expert", choices=pramvars, label=NULL,
-        selected=input$sel_pramvars_expert, width="100%", multiple=FALSE)
-      out <- fluidRow(
-        column(12, h5("Select variables for PRAM", align="center")),
-        column(12, p(sel_pramvars, align="center")))
-      if (!is.null(input$sel_pramvars_expert)) {
-        btn_submit <- myActionButton("btn_pram_expert", label="Postrandomize", btn="primary")
-        out <- list(out, fluidRow(
-          column(12, p(rHandsontableOutput("transmat", width="100%"), align="center")),
-          column(12, p(btn_submit, align="center"))))
-      }
-    } else {
-      out <- fluidRow(
-        column(12, inp=h5("No Factor-Variables available in the data!", align="center"))
-      )
+    if (is.null(curObj)) {
+      return(NULL)
     }
-    out
-  })
-
-  # UI-output for postrandomization (non-expert)
-  output$ui_nonexpert_pram <- renderUI({
-    curObj <- sdcObj()
     pramvars <- setdiff(facVars(), curObj@pram$summary$variable)
-    sel_pramvars <- selectInput("sel_pramvars_nonexpert", choices=pramvars, label=NULL,
-      selected=input$sel_pramvars_nonexpert, width="100%", multiple=TRUE)
+
+    if (length(pramvars)==0) {
+      return(fluidRow(
+        column(12, h4("Postrandomization of categorical variables", align="center")),
+        column(12, h5("No Factor-Variables available in the data or all possible variables already have been post-randomized!", align="center"))
+      ))
+    }
+
+    rb_expert <- radioButtons("rb_expert_pram", label=h5("Use expert settings"),
+      choices=c(FALSE, TRUE), selected=input$rb_expert_pram, inline=TRUE)
+
+    if (is.null(input$rb_expert_pram) || input$rb_expert_pram==FALSE) {
+      sel_pramvar <- selectInput("sel_pramvars", choices=pramvars, label=h5("Select variable(s) for PRAM"),
+        selected=input$sel_pramvars, width="100%", multiple=TRUE)
+    } else {
+      sel_pramvar <- selectInput("sel_pramvars", choices=pramvars, label=h5("Select variable for PRAM"),
+        selected=input$sel_pramvars, width="100%", multiple=FALSE)
+    }
 
     out <- fluidRow(
-      column(12, h5("Select variables for PRAM", align="center")),
-      column(12, p(sel_pramvars, align="center")))
+      column(12, h4("Postrandomization of categorical variables", align="center")),
+      column(12, p("The algorithm randomly changes the values of selected variables in some records according
+      to an invariant probability transition matrix (in non-expert mode) or a custom-defined transition matrix (in expert mode).", align="center")),
+      column(12, p("In non-expert mode, two parameters (",code("pd"),"and",code("alpha"),") must be specified.",
+        code("pd"),"refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this
+      value is chosen, the more likely it is that a value stays the same and is not going to be changed.",code("alpha"),"allows to add some
+      perturbation to the calculated transition matrix. The lower this number is, the less perturbed the matrix will get. In
+      expert mode, the user can freely specify a transition matrix which will be used for the post-randomization of a single variable. However, the
+      requirement is that all row sums of the specified matrix sum up to 1!", align="center")),
+      column(12, p("Please also note that if you have specified a stratification variable when creating the",code("sdcMicroObj"),"postrandomization
+      is performed independently on all data-subsets specified by the stratification variable!", align="center")))
 
-    if ( !is.null(input$sel_pramvars_nonexpert) ) {
+    out <- list(out, fluidRow(
+      column(6, rb_expert, align="center"),
+      column(6, sel_pramvar, align="center")))
+
+    if (is.null(input$rb_expert_pram) || input$rb_expert_pram==FALSE) {
       sl1 <- sliderInput("sl_pd", min=0.01, max=1.00, step=0.01, value=0.8, label=h5("Choose value for 'pd'"), width="100%")
       sl2 <- sliderInput("sl_alpha", min=0.01, max=1.00, step=0.01, value=0.5,label=h5("Choose value for 'alpha'"), width="100%")
       btn_submit <- myActionButton("btn_pram_nonexpert", label="Postrandomize", btn="primary")
       out <- list(out, fluidRow(
-        column(6, sl1), column(6, sl2)))
+        column(6, sl1, align="center"),
+        column(6, sl2, align="center")))
       out <- list(out, fluidRow(
-        column(12, p(btn_submit, align="center"))))
+        column(12, btn_submit, align="center")))
+    } else {
+      if (is.null(obj$transmat)) {
+        btn_submit <- NULL
+      } else {
+        btn_submit <- myActionButton("btn_pram_expert", label="Postrandomize", btn="primary")
+        if (!all(rowSums(obj$transmat)==1)) {
+          btn_submit <- myActionButton("btn_pram_expert_notworking", label="Error: Not all row-sums of the transition matrix equal 1", btn="danger")
+        }
+      }
+
+      out <- list(out, fluidRow(
+        column(12, rHandsontableOutput("transmat", width="100%")),
+        column(12, btn_submit, align="center")))
     }
     out
+    # if (input$rb_expert_pram==TRUE) {
+    #   if (length(pramvars) > 0) {
+    #     btn_submit <- myActionButton("btn_pram_expert", label="Postrandomize", btn="primary")
+    #     if (!all(rowSums(obj$transmat)==1)) {
+    #       btn_submit <- myActionButton("btn_pram_expert_notworking", label="Error: Not all row-sums of the transition matrix equal 1", btn="danger")
+    #     }
+    #     out <- list(out, fluidRow(
+    #       column(12, rHandsontableOutput("transmat", width="100%")),
+    #       column(12, btn_submit, align="center")))
+    #     return(out)
+    #   }
+    # } else {
+    #   sl1 <- sliderInput("sl_pd", min=0.01, max=1.00, step=0.01, value=0.8, label=h5("Choose value for 'pd'"), width="100%")
+    #   sl2 <- sliderInput("sl_alpha", min=0.01, max=1.00, step=0.01, value=0.5,label=h5("Choose value for 'alpha'"), width="100%")
+    #   btn_submit <- myActionButton("btn_pram_nonexpert", label="Postrandomize", btn="primary")
+    #   out <- list(out, fluidRow(
+    #     column(6, sl1, align="center"),
+    #     column(6, sl2, align="center")))
+    #   out <- list(out, fluidRow(
+    #     column(12, btn_submit, align="center")))
+    #   return(out)
+    # }
   })
 
-  out <- fluidRow(
-    column(12, h4("Postrandomization of categorical variables", align="center")),
-    column(12, p("The algorithm randomly changes the values of selected variables in some records according
-      to an invariant probability transition matrix (in non-expert mode) or a custom-defined transition matrix (in expert mode).", align="center")),
-    column(12, p("In non-expert mode, two parameters (",code("pd"),"and",code("alpha"),") must be specified.",
-      code("pd"),"refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this
-      value is chosen, the more likely it is that a value stays the same and is not going to be changed.",code("alpha"),"allows to add some
-      perturbation to the calculated transition matrix. The lower this number is, the less perturbed the matrix will get. In
-      expert mode, the user can freely specify a transition matrix which will be used for the post-randomization of a single variable.", align="center")),
-    column(12, p("Please also note that if you have specified a stratification variable when creating the",code("sdcMicroObj"),"postrandomization
-      is performed independently on all data-subsets specified by the stratification variable!", align="center")))
+  #out <- fluidRow(
+  #  column(12, h4("Postrandomization of categorical variables", align="center")),
+  #  column(12, p("The algorithm randomly changes the values of selected variables in some records according
+  #    to an invariant probability transition matrix (in non-expert mode) or a custom-defined transition matrix (in expert mode).", align="center")),
+  #  column(12, p("In non-expert mode, two parameters (",code("pd"),"and",code("alpha"),") must be specified.",
+  #    code("pd"),"refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this
+  #    value is chosen, the more likely it is that a value stays the same and is not going to be changed.",code("alpha"),"allows to add some
+  #    perturbation to the calculated transition matrix. The lower this number is, the less perturbed the matrix will get. In
+  #    expert mode, the user can freely specify a transition matrix which will be used for the post-randomization of a single variable. However, the
+  #    requirement is that all row sums of the specified matrix sum up to 1!", align="center")),
+  #  column(12, p("Please also note that if you have specified a stratification variable when creating the",code("sdcMicroObj"),"postrandomization
+  #    is performed independently on all data-subsets specified by the stratification variable!", align="center")))
 
-  btn_expert <- checkboxInput("cbx_expert_pram", label=strong("Use expert settings"),
-    value=input$cbx_expert_pram, width="100%")
-
-  out <- list(out, fluidRow(column(12, p(btn_expert, align="center"))))
-
-  if (!is.null(input$cbx_expert_pram)) {
-    if (input$cbx_expert_pram==TRUE) {
-      out <- list(out, uiOutput("ui_expert_pram"))
-    } else {
-      out <- list(out, uiOutput("ui_nonexpert_pram"))
-    }
-  }
+  #out <- list(out, fluidRow(
+  #  column(6, uiOutput("pram_useExpert"), align="center"),
+  #  column(6, uiOutput("pram_var"), align="center")))
+  out <- list(uiOutput("ui_pram_params"))
   out
 })
 
