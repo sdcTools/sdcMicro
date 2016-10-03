@@ -8,8 +8,6 @@ output$noCatVars <- renderUI({
   )
 })
 
-## reset buttons
-
 ## show summary
 output$ui_sdcObj_summary <- renderUI({
   output$show_info_general <- renderUI({
@@ -34,6 +32,10 @@ output$ui_sdcObj_summary <- renderUI({
     if (length(x$strataVar)>0) {
       out <- list(out, fluidRow(
         column(12, list("Numerical key variables", lapply(x$strataVar, function(x) {code(x)})), align="center")))
+    }
+    if (length(x$householdId)>0) {
+      out <- list(out, fluidRow(
+        column(12, list("Household/Cluster variable:", lapply(x$householdId, function(x) {code(x)})), align="center")))
     }
     if (length(x$delVars)>0) {
       out <- list(out, fluidRow(

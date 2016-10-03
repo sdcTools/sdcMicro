@@ -396,6 +396,10 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
     if (length(sV) > 0) {
       txt <- paste0(txt, tabsp, "--> Strata variable(s): ", paste(cn[sV], collapse = ", "), "\n")
     }
+    hhV <- get.sdcMicroObj(x, "hhId")
+    if (length(hhV) > 0) {
+      txt <- paste0(txt, tabsp, "--> Cluster/Household-Id variable: ", cn[hhV], "\n")
+    }
     gV <- get.sdcMicroObj(x, "ghostVars")
     if (length(gV) > 0) {
       txt <- paste0(txt, tabsp, "--> Ghost variable(s) exist\n")
@@ -418,6 +422,7 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
       "numVars"=cn[nV],
       "weightVar"=cn[wV],
       "strataVar"=cn[sV],
+      "householdId"=cn[hhV],
       "ghostVars"=gV
     )))
   }
