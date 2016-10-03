@@ -701,8 +701,8 @@ shinyServer(function(session, input, output) {
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
-    updateNavbarPage(session, "mainnav", selected="Microdata")
+    #updateSelectInput(session, "sel_moddata", selected = "show_microdata")
+    #updateNavbarPage(session, "mainnav", selected="Microdata")
   })
   # event to use only a subset of the available microdata
   observeEvent(input$btn_sample_microdata, {
