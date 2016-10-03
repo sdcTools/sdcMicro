@@ -103,7 +103,7 @@ shinyServer(function(session, input, output) {
 
   # code to reset variables in the input data set
   code_resetmicrovar <- reactive({
-    cmd <- paste0("inputdata[[",dQuote(input$view_selvar1),"]] <- inputdataB[[",dQuote(input$view_selvar1),"]]")
+    cmd <- paste0("inputdata[, ",VecToRStr(input$sel_reset_microvars, quoted=TRUE),"] <- inputdataB[,",VecToRStr(input$sel_reset_microvars, quoted=TRUE),"]")
     cmd
   })
 

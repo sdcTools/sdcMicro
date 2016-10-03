@@ -313,7 +313,7 @@ output$ui_selvar2 <- renderUI({
 
 output$ui_view_var <- renderUI({
   stats_summary <- reactive({
-    if (is.null(input$view_selvar1) ) {
+    if (is.null(input$view_selvar2) ) {
       return(NULL)
     }
 
@@ -411,8 +411,11 @@ output$ui_view_var <- renderUI({
 
   output$natxt <- renderUI({
     nainfo <- stats_summary()$nainfo
+    if (is.null(nainfo)) {
+      return(NULL)
+    }
     out <- list("Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.")
-    if (nainfo$variable[2]!="none") {
+    if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
       out <- list(out, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.")
     }
     return(out)
@@ -425,10 +428,6 @@ output$ui_view_var <- renderUI({
   }
 
   out <- fluidRow(column(12, h4("Analyze existing variables", align="center")))
-  if (is.null(sdcObj())) {
-    btn <- myActionButton("btn_resetmicrovar",label=paste("Reset",input$view_selvar1,"to original state"), "primary", css.class="btn-xs")
-    out <- list(out, fluidRow(column(12, p(btn, align="center"))))
-  }
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_selvar1")),
@@ -450,6 +449,28 @@ output$ui_view_var <- renderUI({
   }
   out <- list(out, fluidRow(column(12, uiOutput("natxt"), align="center")))
   out
+})
+
+output$ui_reset_var <- renderUI({
+  if (is.null(obj$inputdata)) {
+    return(NULL)
+  }
+
+  sel_reset <- selectInput("sel_reset_microvars", label=h5("Choose variable(s) to reset"),
+    choices=names(obj$inputdata), multiple=TRUE, selected=input$sel_reset_microvars)
+
+  if (is.null(input$sel_reset_microvars) || length(input$sel_reset_microvars)==0) {
+    btn_reset <- NULL
+  } else {
+    btn_reset <- myActionButton("btn_resetmicrovar",label="Reset selected variable(s) to their original state", "primary", css.class="btn-xs")
+  }
+  list(
+    fluidRow(
+      column(12, h4("Reset variables"), align="center"),
+      column(12, p("In this screen you can reset variable(s) in the imported microdata set. That means any prior modification steps will be undone."), align="center"),
+      column(12, sel_reset, align="center"),
+      column(12, btn_reset, align="center")
+    ))
 })
 
 # UI-output to display and reset currently available microdata
@@ -537,6 +558,9 @@ output$ui_modify_data_main <- renderUI({
     if (input$sel_moddata=="view_var") {
       out <- list(out, uiOutput("ui_view_var"))
     }
+    if (input$sel_moddata=="reset_var") {
+      out <- list(out, uiOutput("ui_reset_var"))
+    }
     if (input$sel_moddata=="set_to_na") {
       out <- list(out, uiOutput("ui_set_to_na"))
     }
@@ -557,7 +581,8 @@ output$ui_modify_data_sidebar_left <- renderUI({
   choices_modifications <- reactive({
     cc <- c(
       "Display/Reset Microdata"="show_microdata",
-      "Explore/Reset variables"="view_var",
+      "Explore variables"="view_var",
+      "Reset variables"="reset_var",
       "Use only a subset of the available microdata"="sample_microdata",
       "Convert numeric variables to factors"="recode_to_factor",
       "Modify an existing factor-variable"="modify_factor",
