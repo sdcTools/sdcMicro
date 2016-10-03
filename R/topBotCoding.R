@@ -46,6 +46,7 @@ definition=function(obj, value, replacement, kind="top", column=NULL) {
   obj <- nextSdcObj(obj)
   manipNumVars <- get.sdcMicroObj(obj, type="manipNumVars")
   manipKeyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
+  manipPramVars <- get.sdcMicroObj(obj, type="manipPramVars")
   o <- get.sdcMicroObj(obj, type="origData")
   if (length(column)!=1) {
     stop("length of argument 'column' > 1\n")
@@ -70,7 +71,7 @@ definition=function(obj, value, replacement, kind="top", column=NULL) {
     obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))
     obj <- measure_risk(obj)
   } else if(column%in%colnames(o)){
-    message("topBotCoding on variable which is neither a categorical nor a numeric key variable.")
+    #message("topBotCoding on variable which is neither a categorical nor a numeric key variable.")
     x <- o[[column]]
     o[[column]] <- topBotCoding(x, value=value,replacement=replacement,kind=kind)
     obj <- set.sdcMicroObj(obj, type="origData", input=list(o))
