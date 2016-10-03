@@ -189,9 +189,10 @@ output$ui_sdcObj_summary <- renderUI({
     if (is.null(anon_methods)) {
       return(invisible(NULL))
     } else {
-      out <- fluidRow(
-        column(12, h4("Anonymization steps"),align="center"),
-        column(12, lapply(anon_methods, function(x) {code(x)}),align="center"))
+      out <- fluidRow(column(12, h4("Anonymization steps"),align="center"))
+      for (i in 1:length(anon_methods)) {
+        out <- list(out, fluidRow(column(12, code(anon_methods[i]),align="center")))
+      }
     }
     out
   })

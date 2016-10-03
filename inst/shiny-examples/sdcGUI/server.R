@@ -640,6 +640,7 @@ shinyServer(function(session, input, output) {
     obj$sdcObj <- NULL
     obj$code_anonymize <- c()
     obj$code_setup <- c()
+    obj$anon_performed <- NULL
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     obj$reset_sdc1 <- 0
