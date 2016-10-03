@@ -240,7 +240,7 @@ output$ui_sdcObj_summary <- renderUI({
 
 ## add Ghost-Vars
 output$ui_sdcObj_addghostvars <- renderUI({
-  btn_ghosts <- myActionButton("btn_addGhostVars",label=("add 'Ghost'-variables"), "primary")
+  btn_ghosts <- myActionButton("btn_addGhostVars",label=("add 'Ghost'-variables"), "primary", css.class="btn-xs")
   res <- possGhostVars()
   gv1 <- selectInput("sel_gv1", label=h5("Select key-Variable"), choices=res$kv, selected=input$sel_gv1, width="100%")
   gv2 <- selectInput("sel_gv2", label=h5("Select ghost-variables"), choices=res$gv, selected=input$sel_gv2,multiple=TRUE, width="100%")
@@ -251,11 +251,11 @@ output$ui_sdcObj_addghostvars <- renderUI({
   }
   out <- fluidRow(column(12, h4("Add 'Ghost-Vars' to the existing Problem", align="center")))
   out <- list(out, fluidRow(
-    column(6, p(gv1, align="center")),
-    column(6, p(gv2, align="center"))
+    column(6, gv1, align="center"),
+    column(6, gv2, align="center")
   ))
   if (!is.null(input$sel_gv2) && length(input$sel_gv2)>0) {
-    out <- list(out, fluidRow(column(12, p(btn_ghosts, align="center"))))
+    out <- list(out, fluidRow(column(12, btn_ghosts, align="center")))
   }
   out
 })
@@ -263,25 +263,25 @@ output$ui_sdcObj_addghostvars <- renderUI({
 ## add new random ID-variable
 output$ui_sdcObj_randIds <- renderUI({
   output$randid_newid <- renderUI({
-    textInput("txt_randid_newid", label=h5("Choose a suitable name of the new ID-variable"), width="100%")
+    textInput("txt_randid_newid", label=h5("Choose a suitable name of the new ID-variable"))
   })
   output$randid_withinvar <- renderUI({
     selectInput("sel_randid_withinvar", label=h5("If used, the ID will be the same for equal values of the selected variable"),
-      choices=c("none",allVars()), selected=input$sel_randid_withinvar, multiple=FALSE, width="100%")
+      choices=c("none",allVars()), selected=input$sel_randid_withinvar, multiple=FALSE)
   })
   output$randid_btn <- renderUI({
     if (is.null(input$txt_randid_newid) || input$txt_randid_newid=="") {
       return(NULL)
     }
-    myActionButton("btn_addRandID",label=("add a new random ID-variable"), "primary")
+    myActionButton("btn_addRandID",label=("add a new random ID-variable"), "primary", css.class="btn-xs")
   })
   out <- fluidRow(column(12, h4("Add a new random ID variable to the the existing Problem", align="center")))
   out <- list(out, fluidRow(
-    column(6, uiOutput("randid_newid")),
-    column(6, uiOutput("randid_withinvar"))
+    column(6, uiOutput("randid_newid"), align="center"),
+    column(6, uiOutput("randid_withinvar"), align="center")
   ))
   out <- list(out, fluidRow(
-    column(12, uiOutput("randid_btn"))
+    column(12, uiOutput("randid_btn"), align="center")
   ))
   out
 })

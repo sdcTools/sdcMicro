@@ -22,6 +22,7 @@ setGeneric("createNewIDX", function(obj, newID, withinVar) {
 
 setMethod(f="createNewIDX", signature=c("sdcMicroObj", "character", "characterOrNULL"),
 definition=function(obj, newID, withinVar=NULL) {
+  obj <- nextSdcObj(obj)
   tmpOrder <- xx <- NULL
   origData <- get.sdcMicroObj(obj, "origData")
   cn <- colnames(origData)

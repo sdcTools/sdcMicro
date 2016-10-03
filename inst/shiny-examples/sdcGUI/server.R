@@ -618,6 +618,11 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Adding linked (ghost)-Variables")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+
+    if (is.null(lastError())) {
+      obj$lastaction <- "Added Ghost-variables"
+      obj$anon_performed <- c(obj$anon_performed, "Added Ghost-variables")
+    }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
@@ -628,6 +633,11 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=cmd, comment="## Adding a new randomized ID-variable")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+
+    if (is.null(lastError())) {
+      obj$lastaction <- paste("Create new ID-variable:", input$txt_randid_newid)
+      obj$anon_performed <- c(obj$anon_performed, "Create a new random ID-variable")
+    }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
