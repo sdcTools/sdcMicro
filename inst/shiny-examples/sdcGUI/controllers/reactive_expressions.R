@@ -270,7 +270,7 @@ exportData <- reactive({
   if (is.null(obj$sdcObj)) {
     return(NULL)
   }
-  extractManipData(obj$sdcObj, randomizeRecords=input$rb_export_randomizeorder)
+  extractManipData(obj$sdcObj, randomizeRecords=input$sel_export_randomizeorder)
 })
 
 

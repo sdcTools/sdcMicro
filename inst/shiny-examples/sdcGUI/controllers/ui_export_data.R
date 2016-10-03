@@ -59,12 +59,31 @@ output$ui_export_data <- renderUI({
     if (input$dat_exp_type == "dta") {
       out <- list(out, uiOutput("ui_export_stata"))
     }
-    rb_randomize <- radioButtons("rb_export_randomizeorder", label=h5("Randomize Order of Observations"), choices=c("No"=FALSE,"Yes"=TRUE),
-      width="100%", selected=input$rb_export_randomizeorder, inline=FALSE)
+
+    output$sel_randomize_export <- renderUI({
+      curObj <- sdcObj()
+      if (is.null(curObj)) {
+        return(NULL)
+      }
+      lab <- "Randomize Order of Observations"
+      choices <- c("Do not randomize"="no","Perform random swapping of IDs"="simple",
+        "Randomize by cluster/household id"="byHH", "Randomize within cluster/household id"="withinHH")
+      if (!is.null(curObj@hhId)) {
+        sel_randomize <- selectInput("sel_export_randomizeorder", label=h5(lab), choices=choices,
+          selected=input$sel_export_randomizeorder)
+      } else {
+        sel_randomize <- selectInput("sel_export_randomizeorder", label=h5(lab), choices=choices[1:2],
+          selected=input$sel_export_randomizeorder)
+      }
+      sel_randomize
+    })
+
+
+
     help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
 
     out <- list(out, fluidRow(
-      column(12, rb_randomize, align="center"),
+      column(12, uiOutput("sel_randomize_export"), align="center"),
       column(12, help_randomize, align="center")
     ))
 
@@ -96,7 +115,7 @@ output$ui_export_main <- renderUI({
         write.table(dat, file=file, col.names=as.logical(input$export_csv_header),
           sep=input$export_csv_sep, dec=input$export_csv_dec)
       }
-      cmd <- paste0("## return anonymized microdata\nextractManipData(sdcObj, randomizeRecords=",input$rb_export_randomizeorder,")")
+      cmd <- paste0("## return anonymized microdata\nextractManipData(sdcObj, randomizeRecords=",shQuote(input$sel_export_randomizeorder),")")
       obj$code_anonymize <- c(obj$code_anonymize, cmd)
     }
   )

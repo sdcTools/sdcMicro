@@ -362,8 +362,16 @@ setMethod(f="calcRisksX", signature=c("sdcMicroObj"), definition=function(obj, .
 #' the unchanged original variables
 #' @param ignoreStrataVar if manipulated StrataVariables should be returned or
 #' the unchanged original variables
-#' @param randomizeRecords (logical) if \code{TRUE}, the order of observations of the output data set
-#' will be randomized.
+#' @param randomizeRecords (logical) specifies, if the output records should be randomized. The following
+#' options are possible:
+#' \itemize{
+#' \item {'no'}{default, no randomization takes place}
+#' \item {'simple'}{records are just randomly swapped.}
+#' \item {'byHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset. If
+#' slot 'hhId' is \code{NULL}, the records or the dataset are randomly changed.}
+#' \item {'withinHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset and
+#' additionally, the order of records within the clusters are also randomly changed. If slot 'hhId' is \code{NULL}, the records or the dataset are
+#' randomly changed.}}
 #' @return a \code{data.frame} containing the anonymized data set
 #' @author Alexander Kowarik, Bernhard Meindl
 #' @export
@@ -375,19 +383,23 @@ setMethod(f="calcRisksX", signature=c("sdcMicroObj"), definition=function(obj, .
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- removeDirectID(sdc, var="age")
 #' dataM <- extractManipData(sdc)
-extractManipData <- function(obj, ignoreKeyVars=FALSE, ignorePramVars=FALSE, ignoreNumVars=FALSE, ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords=FALSE) {
+extractManipData <- function(obj, ignoreKeyVars=FALSE, ignorePramVars=FALSE, ignoreNumVars=FALSE, ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords="no") {
   extractManipDataX(obj, ignoreKeyVars=ignoreKeyVars, ignorePramVars=ignorePramVars, ignoreNumVars=ignoreNumVars,
     ignoreGhostVars=ignoreGhostVars, ignoreStrataVar=ignoreStrataVar, randomizeRecords=randomizeRecords)
 }
 
 setGeneric("extractManipDataX", function(obj, ignoreKeyVars=FALSE, ignorePramVars=FALSE,
-  ignoreNumVars=FALSE, ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords=FALSE) {
+  ignoreNumVars=FALSE, ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords="no") {
   standardGeneric("extractManipDataX")
 })
 
 setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function(obj,
   ignoreKeyVars=FALSE, ignorePramVars=FALSE, ignoreNumVars=FALSE,
-  ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords=FALSE) {
+  ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords="no") {
+  hhid <- clusterid <- newid <- N <- id <- NULL
+  if (!randomizeRecords %in% c("no","simple","byHH", "withinHH")) {
+    stop("invalid value in argument 'randomizeRecords'\n")
+  }
   o <- get.sdcMicroObj(obj, type="origData")
   k <- get.sdcMicroObj(obj, type="manipKeyVars")
   p <- get.sdcMicroObj(obj, type="manipPramVars")
@@ -410,8 +422,41 @@ setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function
       o[, colnames(k)[i]] <- as.factor(o[, colnames(k)[i]])
     }
   }
-  if (randomizeRecords==TRUE) {
-    o <- o[sample(1:nrow(o)),]
+
+  if (randomizeRecords!="no") {
+    hhId <- get.sdcMicroObj(obj, "hhId")
+    if (is.null(hhId) | randomizeRecords=="simple") {
+      # just simple randomization
+      o <- o[sample(1:nrow(o)),]
+    } else {
+      tmp <- data.table(id=1:nrow(o), clusterid=o[[hhid]])
+      setkey(tmp, clusterid)
+
+      if (randomizeRecords=="withinHH") {
+        tmp <- tmp[,lapply(.SD, function(x) {
+          if(length(x)==1) { return(x)} else { return(sample(x))}
+        }), by=key(tmp), .SDcols="id"]
+      }
+      neworder <- tmp[,.N, by=key(tmp)]
+      neworder[,clusterid:=sample(clusterid)]
+      neworder[,newid:=.I]
+      neworder[,N:=NULL]
+      tmp <- tmp[neworder]
+
+      if (randomizeRecords=="byHH") {
+        setkey(tmp, newid, id)
+      }
+      if (randomizeRecords=="withinHH") {
+        setkey(tmp, newid)
+      }
+      o <- o[tmp$id,]
+
+      # randomize order of clusters
+      if (randomizeRecords=="byHH") {
+        setkey(tmp, newid, id)
+        o <- o[tmp$id,]
+      }
+    }
     rownames(o) <- NULL
   }
   return(o)

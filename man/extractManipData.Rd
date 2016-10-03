@@ -6,7 +6,7 @@
 \usage{
 extractManipData(obj, ignoreKeyVars = FALSE, ignorePramVars = FALSE,
   ignoreNumVars = FALSE, ignoreGhostVars = FALSE, ignoreStrataVar = FALSE,
-  randomizeRecords = FALSE)
+  randomizeRecords = "no")
 }
 \arguments{
 \item{obj}{object of class \code{\link{sdcMicroObj-class}}}
@@ -26,8 +26,16 @@ the unchanged original variables}
 \item{ignoreStrataVar}{if manipulated StrataVariables should be returned or
 the unchanged original variables}
 
-\item{randomizeRecords}{(logical) if \code{TRUE}, the order of observations of the output data set
-will be randomized.}
+\item{randomizeRecords}{(logical) specifies, if the output records should be randomized. The following
+options are possible:
+\itemize{
+\item {'no'}{default, no randomization takes place}
+\item {'simple'}{records are just randomly swapped.}
+\item {'byHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset. If
+slot 'hhId' is \code{NULL}, the records or the dataset are randomly changed.}
+\item {'withinHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset and
+additionally, the order of records within the clusters are also randomly changed. If slot 'hhId' is \code{NULL}, the records or the dataset are
+randomly changed.}}}
 }
 \value{
 a \code{data.frame} containing the anonymized data set
