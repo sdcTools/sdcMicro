@@ -97,6 +97,22 @@ output$ui_sdcObj_summary <- renderUI({
       column(12, renderTable(dt), align="center"))
     out
   })
+  output$show_info_catrisk <- renderUI({
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(invisible(NULL))
+    }
+    x <- print(curObj, type="risk", docat=FALSE)
+    reident <- x[[1]]$reident
+    riskyobs <- x[[1]]$riskyObs
+    out <- fluidRow(
+      column(12, h4("Risk-measures for categorical variables"), align="center"),
+      column(12, p("We expect",code(as.integer(reident$mod)),"(",code(paste0(reident$mod_p,"%")),") Re-identifications in the population. In the original
+        data, we expected to have",code(as.integer(reident$orig)),"(",code(paste0(reident$orig_p,"%")),") Re-identifications."), align="center"),
+      column(12, p("Currently there are",code(as.integer(riskyobs$mod)),"observations that have a higher risk that the main part of the data. In the
+        original data this number was",code(as.integer(riskyobs$orig)),"."), align="center"))
+    out
+  })
   output$show_info_risk <- renderUI({
     curObj <- sdcObj()
     if (is.null(curObj)) {
@@ -212,6 +228,7 @@ output$ui_sdcObj_summary <- renderUI({
   out <- list(out, fluidRow(
     column(12, uiOutput("show_info_general")),
     column(12, uiOutput("show_info_recodes")),
+    column(12, uiOutput("show_info_catrisk")),
     column(12, uiOutput("show_info_kanon")),
     column(12, uiOutput("show_info_pram")),
     column(12, uiOutput("show_info_localsuppression")),
