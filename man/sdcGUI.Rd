@@ -4,11 +4,13 @@
 \alias{sdcGUI}
 \title{sdcGUI}
 \usage{
-sdcGUI(maxRequestSize = 50)
+sdcGUI(maxRequestSize = 50, debug = FALSE)
 }
 \arguments{
 \item{maxRequestSize}{(numeric) number defining the maximum allowed filesize (in megabytes)
 for uploaded files, defaults to 50MB}
+
+\item{debug}{logical if \code{TRUE}, set shiny-debugging options}
 }
 \value{
 starts the interactive graphical user interface which may be used to perform the
