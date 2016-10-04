@@ -282,11 +282,6 @@ output$ui_kAnon <- renderUI({
     res
   })
 
-  #output$ui_kanon_useCombs <- ui_custom_radioButtonInput(
-  #  choices=c("No","Yes"),
-  #  id="rb_kanon_useCombs",
-  #  label="Apply k-Anonymity to subsets of key-variables?")
-
   # dynamically generate ui for importance vectors
   output$ui_kanon_importanceInputs <- renderUI({
     poss <- possVals_importance()
@@ -334,38 +329,37 @@ output$ui_kAnon <- renderUI({
     fluidRow(column(4, ""), column(4, p(sl, align="center")), column(4, ""))
   })
 
-  output$ui_kanon_k_combs <- renderUI({
-    out <- NULL
-    # number of key-Variables
+  genkAnon_byGroup <- reactive({
     nrKeyVars <- length(get_keyVars())
-
-    isolate({
-      rbs <- lapply(1:nrKeyVars, function(i) {
-        id <- paste0("rb_kanon_usecombs_", i)
-        radioButtons(id, label=h5(paste("Apply k-Anon to all subsets of",i,"key variables?")),
-          selected=input[[id]], width="100%", inline=TRUE, choices=c("Yes", "No"))
-      })
-
-      sls <- lapply(1:nrKeyVars, function(i) {
-        id <- paste0("sl_kanon_combs_", i)
-        sliderInput(id, label=h5(paste("k-Anonymity-parameter for", i, "combs")),
-          val=input[[id]], width="100%",min=2, max=50, step=1)
-      })
+    sls <- lapply(1:nrKeyVars, function(i) {
+      id <- paste0("sl_kanon_combs_", i)
+      sliderInput(id, label=h5(paste("k-Anonymity-parameter for", i, "combs")),
+        value=input[[id]], width="100%",min=2, max=50, step=1)
     })
+    rbs <- lapply(1:nrKeyVars, function(i) {
+      id <- paste0("rb_kanon_usecombs_", i)
+      radioButtons(id, label=h5(paste("Apply k-Anon to all subsets of",i,"key variables?")),
+        selected=input[[id]], width="100%", inline=TRUE, choices=c("Yes", "No"))
+    })
+    list(rbs=rbs, sls=sls)
+  })
 
-    for (i in 1:nrKeyVars) {
-      out <- list(out, fluidRow(
-        column(6, rbs[[i]]),
-        column(6, sls[[i]])))
-    }
-    out
+  output$ui_kanon_k_combs <- renderUI({
+    isolate({
+      xx <- genkAnon_byGroup()
+      out <- NULL
+      for (i in 1:length(xx$rbs)) {
+        out <- list(out, fluidRow(
+          column(6, xx$rbs[[i]], align="center"),
+          column(6, xx$sls[[i]], align="center")))
+      }
+      out
+    })
   })
 
   output$ui_kanon_combs <- renderUI({
     out <- fluidRow(
-      column(3, ""),
-      column(6, uiOutput("ui_kanon_useCombs")),
-      column(3, "")
+      column(12, uiOutput("ui_kanon_useCombs"), align="center")
     )
     if (!is.null(input$rb_kanon_useCombs)) {
       if (input$rb_kanon_useCombs=="Yes") {
