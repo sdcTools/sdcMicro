@@ -25,9 +25,7 @@ sdcGUI <- function(maxRequestSize=50, debug=FALSE) {
     stop("Could not find example directory. Try re-installing `sdcMicro`.", call.=FALSE)
   }
   options(shiny.maxRequestSize=ceiling(maxRequestSize)*1024^2)
-  if (debug) {
-    options(shiny.fullstacktrace=TRUE)
-    options(shiny.trace=TRUE)
-  }
+  options(shiny.fullstacktrace=debug)
+  options(shiny.trace=debug)
   shiny::runApp(appDir, display.mode="normal", launch.browser=TRUE)
 }
