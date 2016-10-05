@@ -2,10 +2,6 @@ output$ui_results_main <- renderUI({
   out <- NULL
   if (!is.null(input$sel_results)) {
     ## Categorical (defined in controller/ui_results_categorical.R)
-    if (input$sel_results=="comparison_cat") {
-      out <- list(out, uiOutput("ui_rescat_comparison"))
-    }
-
     if (input$sel_results=="riskinfo") {
       out <- list(out, uiOutput("ui_rescat_riskinfo"))
     }
@@ -52,7 +48,6 @@ output$ui_results_sidebar_left <- renderUI({
     }
     if (input$rb_results_type=="res_risk") {
       choices <- c(
-        "Compare Risks"="comparison_cat",
         "Information of Risks"="riskinfo",
         "Suda2 risk-measure"="suda2",
         "l-Diversity risk-measure"="ldiv")

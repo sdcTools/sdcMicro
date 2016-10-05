@@ -71,7 +71,6 @@ output$ui_rescat_riskinfo <- renderUI({
       column(12, plotOutput("plot_risk")))
   })
 
-
   out <- fluidRow(
     column(12, h4("Information on Risks", align="center")),
     column(12, div(uiOutput("rb_riskselection"), align="center")))
@@ -382,10 +381,4 @@ output$ui_bivariate_tab <- renderUI({
   return(list(
     uiOutput("ui_biv_selection"),
     fluidRow(column(12, div(tableOutput("biv_tab"), align="center")))))
-})
-
-output$ui_rescat_comparison <- renderUI({
-  fluidRow(
-    column(12, h4("Risk-Comparison based on categorical variables", align="center"))
-  )
 })

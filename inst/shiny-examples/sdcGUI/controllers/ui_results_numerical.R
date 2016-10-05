@@ -12,7 +12,19 @@ output$ui_resnum_numrisk <- renderUI({
   if (!has_numkeyvars()) {
     return(uiOutput("nonumkey_continous_results"))
   }
-  fluidRow(column(12, h4("Information about numerical risk", align="center")))
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(invisible(NULL))
+  }
+  x <- print(curObj, type="numrisk", docat=FALSE)
+  if (is.null(x)) { # no numeric key vars
+    return(invisible(NULL))
+  }
+  out <- fluidRow(
+    column(12, h4("Information on Risk for numerical key-variables"), align="center"),
+    column(12, p("The disclosure risk in the anonymized dataset is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),"."), align="center"),
+    column(12, p("In the original data the risk is assumed to be between",code("0%"),"and",code("100%"),"."), align="center"))
+  out
 })
 
 # display information about information-loss
@@ -20,7 +32,16 @@ output$ui_resnum_infoloss <- renderUI({
   if (!has_numkeyvars()) {
     return(uiOutput("nonumkey_continous_results"))
   }
-  fluidRow(column(12, h4("Information about information loss", align="center")))
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NULL)
+  }
+  x <- print(curObj, type="numrisk", docat=FALSE)
+  out <- fluidRow(
+    column(12, h4("Information-Loss criteria based on numerical key-variables"), align="center"),
+    column(12, p("Measure",strong("IL1"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
+  )
+  out
 })
 
 output$ui_numvar_numres <- renderUI({
