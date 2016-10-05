@@ -211,9 +211,10 @@ shinyServer(function(session, input, output) {
       cmd <- paste0(cmd,", combs=",VecToRStr(params$use, quoted=FALSE))
       k <- params$k
     } else {
+      cmd <- paste0(cmd, ", combs=NULL")
       k <- input$sl_kanon_k
     }
-    cmd <- paste0(cmd, ", combs=NULL, k=",VecToRStr(k, quoted=FALSE),")")
+    cmd <- paste0(cmd, ", k=",VecToRStr(k, quoted=FALSE),")")
     cmd
   })
 
