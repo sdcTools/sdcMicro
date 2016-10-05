@@ -608,6 +608,20 @@ shinyServer(function(session, input, output) {
     obj$code_setup <- cmd
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+
+    # create slider-outputs for k-Anon by group
+    # this is required because otherwise these sliders would always be updating
+    nrKeyVars <- isolate(length(get_keyVars()))
+    obj$sls <- lapply(1:nrKeyVars, function(i) {
+      id <- paste0("sl_kanon_combs_", i)
+      sliderInput(id, label=h5(paste("k-Anonymity-parameter for", i, "combs")),
+        value=input[[id]], width="100%", min=2, max=50, step=1)
+    })
+    obj$rbs <- lapply(1:nrKeyVars, function(i) {
+      id <- paste0("rb_kanon_usecombs_", i)
+      radioButtons(id, label=h5(paste("Apply k-Anon to all subsets of",i,"key variables?")),
+        selected=input[[id]], width="100%", inline=TRUE, choices=c("Yes", "No"))
+    })
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })

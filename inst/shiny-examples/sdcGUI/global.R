@@ -301,3 +301,4 @@ obj$reset_inputdata1 <- 0
 obj$microfilename <- NULL # name of uploaded file
 obj$lastaction <- NULL
 obj$anon_performed <- NULL # what has been applied?
+obj$rbs <- obj$sls <- NULL

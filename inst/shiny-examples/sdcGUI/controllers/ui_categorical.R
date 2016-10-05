@@ -284,6 +284,13 @@ output$ui_kAnon <- renderUI({
 
   # dynamically generate ui for importance vectors
   output$ui_kanon_importanceInputs <- renderUI({
+    if (is.null(input$rb_show_importance)) {
+      return(NULL)
+    }
+    if (input$rb_show_importance=="No") {
+      return(NULL)
+    }
+
     poss <- possVals_importance()
     kV <- colnames(get_origData())[get_keyVars()]
     n <- length(kV)
@@ -322,53 +329,36 @@ output$ui_kAnon <- renderUI({
     out
   })
 
-  # so that the slider-value is not changed while updating the importance vector
-  output$ui_kanon_k <- renderUI({
-    sl <- sliderInput("sl_kanon_k", label=h5("Please specify the k-Anonymity parameter"),
-      min=2, max=50, value=3, step=1, width="100%")
-    fluidRow(column(4, ""), column(4, p(sl, align="center")), column(4, ""))
-  })
-
-  genkAnon_byGroup <- reactive({
-    nrKeyVars <- length(get_keyVars())
-    sls <- lapply(1:nrKeyVars, function(i) {
-      id <- paste0("sl_kanon_combs_", i)
-      sliderInput(id, label=h5(paste("k-Anonymity-parameter for", i, "combs")),
-        value=input[[id]], width="100%",min=2, max=50, step=1)
-    })
-    rbs <- lapply(1:nrKeyVars, function(i) {
-      id <- paste0("rb_kanon_usecombs_", i)
-      radioButtons(id, label=h5(paste("Apply k-Anon to all subsets of",i,"key variables?")),
-        selected=input[[id]], width="100%", inline=TRUE, choices=c("Yes", "No"))
-    })
-    list(rbs=rbs, sls=sls)
-  })
-
-  output$ui_kanon_k_combs <- renderUI({
-    isolate({
-      xx <- genkAnon_byGroup()
-      out <- NULL
-      for (i in 1:length(xx$rbs)) {
-        out <- list(out, fluidRow(
-          column(6, xx$rbs[[i]], align="center"),
-          column(6, xx$sls[[i]], align="center")))
-      }
-      out
-    })
-  })
-
   output$ui_kanon_combs <- renderUI({
-    out <- fluidRow(
-      column(12, uiOutput("ui_kanon_useCombs"), align="center")
-    )
-    if (!is.null(input$rb_kanon_useCombs)) {
-      if (input$rb_kanon_useCombs=="Yes") {
-        out <- list(out, uiOutput("ui_kanon_k_combs"))
-      } else {
-        out <- list(out, uiOutput("ui_kanon_k"))
+    if (is.null(input$rb_kanon_useCombs)) {
+      return(NULL)
+    }
+    out <- NULL
+    if (input$rb_kanon_useCombs=="Yes") {
+      nrKeyVars <- length(get_keyVars())
+      out <- NULL
+      # these inputs are defined when the sdcProblem is created!
+      for (i in 1:nrKeyVars) {
+        out <- list(out, fluidRow(
+          column(6, obj$rbs[[i]], align="center"),
+          column(6, obj$sls[[i]], align="center")))
       }
+    } else {
+      sl <- sliderInput("sl_kanon_k", label=h5("Please specify the k-Anonymity parameter"),
+        min=2, max=50, value=3, step=1, width="100%")
+      out <- fluidRow(column(12, sl, align="center"))
     }
     out
+  })
+
+  output$kanon_btn <- renderUI({
+    btn <- NULL
+    impvec <- isolate(kAnon_impvec())
+    pp <- kAnon_comb_params()
+    if (!kAnon_useImportance() | (all(impvec!="") & (is.null(pp) | length(pp$use)>0))) {
+      btn <- myActionButton("btn_kanon", label="Establish k-Anonymity", "primary")
+    }
+    return(fluidRow(column(12, btn, align="center")))
   })
 
   out <- fluidRow(
@@ -384,28 +374,16 @@ output$ui_kAnon <- renderUI({
   )
 
   rb1 <- radioButtons(inputId="rb_show_importance", label=h5(paste("Do you want to modify importance of key-variables for suppression?")),
-    selected=input[["rb_show_importance"]], width="100%", inline=TRUE, choices=c("No", "Yes"))
-  out <- list(out, fluidRow(
-    column(3, ""), column(6, p(rb1, align="center")), column(3, "")))
+    selected=input$rb_show_importance, width="100%", inline=TRUE, choices=c("No", "Yes"))
+  out <- list(out, fluidRow(column(12, rb1, align="center")))
 
-  if (!is.null(input$rb_show_importance) && input$rb_show_importance=="Yes") {
-    out <- list(out, uiOutput("ui_kanon_importanceInputs"))
-  }
+  out <- list(out, uiOutput("ui_kanon_importanceInputs")) # might be NULL
 
   # show combs-ui?
   rb2 <- radioButtons("rb_kanon_useCombs", choices=c("No","Yes"), width="100%", inline=TRUE,
-    selected=input[["rb_kanon_useCombs"]],label=h5("Apply k-Anonymity to subsets of key-variables?"))
-  out <- list(out, fluidRow(
-    column(3, ""), column(6, p(rb2, align="center")), column(3, "")))
-  out <- list(out, uiOutput("ui_kanon_combs"))
-
-  btn <- NULL
-  impvec <- kAnon_impvec()
-  pp <- kAnon_comb_params()
-  if (!kAnon_useImportance() | (all(impvec!="") & (is.null(pp) | length(pp$use)>0))) {
-    btn <- myActionButton("btn_kanon", label="Establish k-Anonymity", "primary")
-  }
-  out <- list(out, fluidRow(column(12, p(btn, align="center"))))
+    selected=input$rb_kanon_useCombs, label=h5("Apply k-Anonymity to subsets of key-variables?"))
+  out <- list(out, fluidRow(column(12, rb2, align="center")))
+  out <- list(out, uiOutput("ui_kanon_combs"), uiOutput("kanon_btn"))
   out
 })
 
