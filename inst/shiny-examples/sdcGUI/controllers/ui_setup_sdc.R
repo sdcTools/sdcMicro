@@ -474,7 +474,7 @@ output$ui_sdcObj_info <- renderUI({
 output$ui_sdcObj_create <- renderUI({
   sel_infov <- selectInput("sel_infov", label=h4("Select Variable to show Information"), choices=allVars(), selected=input$sel_infov, width="100%")
   out <- fluidRow(
-    column(8, div(style='padding-right : 15px;height: 350px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
+    column(8, div(style='padding-right : 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
     column(4, sel_infov, uiOutput("ui_sdcObj_info"), align="center")
   )
   out
