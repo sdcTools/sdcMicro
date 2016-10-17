@@ -392,13 +392,8 @@ output$ui_supp_threshold <- renderUI({
   # so that the slider-value is not changed while updating the importance vector
   output$ui_supp_th <- renderUI({
     up <- round(max(get_risk()$risk),3)+0.005
-    if (is.null(input$sl_supp_threshold)) {
-      val <- 0.01
-    } else {
-      val <- input$sl_supp_threshold
-    }
     sl <- sliderInput("sl_supp_threshold", label=h5("Individual Risk Threshold"),
-      min=0, max=up, value=val, step=0.001, width="100%")
+      min=0, max=up, value=0, step=0.001, width="100%")
     sl
   })
   # risk-plot
@@ -414,20 +409,21 @@ output$ui_supp_threshold <- renderUI({
   })
   # number of risky observations that would be suppressed
   nr_riskyobs <- reactive({
-    if (is.null(input$sl_supp_threshold)) {
-      return(NULL)
-    }
+    req(input$sl_supp_threshold)
     nr_risk <- sum(get_risk()$risk>=input$sl_supp_threshold)
     nr_risk
   })
   # key-variable
   output$ui_supp_th_var <- renderUI({
-    if (is.null(input$sl_supp_threshold)) {
-      return(NULL)
-    }
+    req(input$sl_supp_threshold)
     selectInput("sel_supp_th_var", label=h5("Select Key-Variable for Suppression"), choices=get_keyVars_names(), selected=input$sel_supp_th_var, width="100%")
   })
 
+  output$ui_supp_th_btn <- renderUI({
+    req(input$sel_supp_th_var)
+    btn <- myActionButton("btn_supp_th", label=paste("Supress",nr_riskyobs(),"values with high risk in", dQuote(input$sel_supp_th_var)), "primary")
+    btn
+  })
 
   out <- fluidRow(
     column(12, h4("Supress above given threshold", align="center")),
@@ -440,12 +436,7 @@ output$ui_supp_threshold <- renderUI({
     column(6, uiOutput("ui_supp_th_var"))))
   out <- list(out, fluidRow(
     column(12, plotOutput("ui_supp_riskplot"))))
-
-  btn <- NULL
-  if (!is.null(input$sel_supp_th_var)) {
-    btn <- myActionButton("btn_supp_th", label=paste("Supress",nr_riskyobs(),"values with high risk in", dQuote(input$sel_supp_th_var)), "primary")
-  }
   out <- list(out, fluidRow(
-    column(12, p(btn, align="center"))))
+    column(12, uiOutput("ui_supp_th_btn"), align="center")))
   out
 })
