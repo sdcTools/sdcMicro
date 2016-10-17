@@ -42,11 +42,11 @@ output$ui_export_data <- renderUI({
     selected=input$dat_exp_type, width="100%", inline=TRUE)
 
   out <- fluidRow(
-    column(12, h4("Export the anonymized microdata", align="center")),
+    column(12, h4("Export the anonymized microdata"), align="center"),
     column(12, strong("Analyze the data", align="center")),
     column(12, dataTableOutput("dt_exportData")),
     column(12, strong("Select file-format", align="center")),
-    column(12, p(rb_exptype, align="center"))
+    column(12, rb_exptype, align="center")
   )
 
   if (!is.null(input$dat_exp_type)) {
@@ -77,9 +77,6 @@ output$ui_export_data <- renderUI({
       }
       sel_randomize
     })
-
-
-
     help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
 
     out <- list(out, fluidRow(
@@ -88,7 +85,7 @@ output$ui_export_data <- renderUI({
     ))
 
     db <- downloadButton('downloadData', 'Download the anonymized dataset')
-    out <- list(out, fluidRow(column(12, p(db, align="center"))))
+    out <- list(out, fluidRow(column(12, db, align="center")))
   }
   out
 })

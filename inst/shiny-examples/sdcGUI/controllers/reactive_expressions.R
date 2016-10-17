@@ -6,6 +6,14 @@ sdcObj <- reactive({
   obj$sdcObj
 })
 
+
+inputdata <- reactive({
+  if(is.null(obj$inputdata)) {
+    return(NULL)
+  }
+  return(obj$inputdata)
+})
+
 comptime <- reactive({
   z <- as.difftime(obj$comptime, units="secs")
 
@@ -264,13 +272,14 @@ possGhostVars <- reactive({
 
 # the (anonymized) dataset that will be written to a file
 exportData <- reactive({
-  if (is.null(input$rb_export_randomizeorder)) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  if (is.null(obj$sdcObj)) {
+  if (is.null(input$sel_export_randomizeorder)) {
     return(NULL)
   }
-  extractManipData(obj$sdcObj, randomizeRecords=input$sel_export_randomizeorder)
+  extractManipData(curObj, randomizeRecords=input$sel_export_randomizeorder)
 })
 
 
