@@ -132,8 +132,7 @@ output$ui_export_main <- renderUI({
         tmpF <- paste0("sdcReport_external",format(Sys.time(), "%Y%m%d_%H%M"))
       }
       curObj <- sdcObj()
-      report(curObj, outdir=pout, filename=tmpF,
-      format="HTML", title="SDC-Report", internal=internal)
+      report(curObj, outdir=pout, filename=tmpF, title="SDC-Report", internal=internal)
       file.copy(paste0(pout,"/",tmpF,".html"), file)
     }
   )
