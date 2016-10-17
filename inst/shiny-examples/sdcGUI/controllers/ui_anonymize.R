@@ -1,19 +1,19 @@
 # choices for dropdown-menus in Tab 'anonymize'
-choices_anon_manage <- reactive({
+choices_anon_manage <- function(){
   choices <- c(
     "Show Summary"="sdcObj_summary",
     "Add 'Ghost'-Variables"="sdcObj_addghostvars",
     "Create new IDs"="sdcObj_randIds")
   return(choices)
-})
-choices_anon_cat <- reactive({
+}
+choices_anon_cat <- function() {
   choices <- c(
     "Recoding"="recode",
     "k-Anonymity"="kanon",
     "Postrandomization (PRAM)"="pram",
     "Supress values with high risks"="supp_threshold")
   return(choices)
-})
+}
 choices_anon_num <- reactive({
   if (length(get_numVars()>0)) {
     return(c(
@@ -72,10 +72,8 @@ output$ui_sel_anonymize <- renderUI({
     choices=choices,selected=sel, width="100%")
 })
 output$ui_sel_sdcresults <- renderUI({
+  req(input$sel_anonymize)
   cc <- res_choices_anon()
-  if (is.null(cc)) {
-    return(NULL)
-  }
   if (is.null(input$sel_sdcresults)) {
     sel <- cc[1]
   } else {
