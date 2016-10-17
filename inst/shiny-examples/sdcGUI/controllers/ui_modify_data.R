@@ -185,12 +185,11 @@ output$ui_modify_change_factor <- renderUI({
     column(4, h5("New label for recoded values", align="center"))))
 
   out <- list(out, fluidRow(
-    column(4, p(selfac1, align="center")),
-    column(4, p(cbgr, align="center")),
-    column(4, p(txtval, align="center"))))
-
+    column(4, selfac1, align="center"),
+    column(4, cbgr, align="center"),
+    column(4, txtval, align="center")))
   out <- list(out, fluidRow(
-    column(12, p(btnUp, align="center")),
+    column(12, btnUp, align="center"),
     column(12, plotOutput("plot_fac"))))
   out
 })
