@@ -10,12 +10,14 @@ has_numkeyvars <- reactive({
 # UI-output for top/bottom-coding of numerical variables
 output$ui_topbotcoding_num <- renderUI({
   output$ui_topbot_plot_num <- renderPlot({
-    if (is.null(input$sel_topbot_var_num) ) {
-      return(NULL)
+    req(input$sel_topbot_var_num)
+    curObj <- sdcObj()
+    if (input$sel_topbot_var_num %in% get_numVars_names()) {
+      vv <- curObj@manipNumVars[[input$sel_topbot_var_num]]
+    } else {
+      vv <- curObj@origData[[input$sel_topbot_var_num]]
     }
-    vv <- obj$inputdata[[input$sel_topbot_var_num]]
-    boxplot(obj$inputdata[[input$sel_topbot_var_num]], main=input$sel_topbot_var_num,
-            xlab=input$sel_topbot_var_num, col="#DADFE1")
+    boxplot(vv, main=input$sel_topbot_var_num, xlab=input$sel_topbot_var_num, col="#DADFE1")
   })
   output$ui_topbot_params_num <- renderUI({
     sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), multiple=FALSE, label="Select variable")
@@ -27,11 +29,10 @@ output$ui_topbotcoding_num <- renderUI({
     out
   })
   output$ui_topbot_btn_num <- renderUI({
+    req(input$sel_topbot_var_num)
+    curObj <- sdcObj()
     num1 <- suppressWarnings(as.numeric(input$num_topbot_val_num))
     num2 <- suppressWarnings(as.numeric(input$num_topbot_replacement_num))
-    if (is.null(input$sel_topbot_var_num)) {
-      return(NULL)
-    }
     if (is.na(num1) || is.na(num2)) {
       return(NULL)
     }
@@ -39,12 +40,17 @@ output$ui_topbotcoding_num <- renderUI({
       return(NULL)
     }
     if (is.numeric(num1) & is.numeric(num2)) {
-      if (input$sel_topbot_kind_num=="top") {
-        n <- sum(obj$inputdata[[input$sel_topbot_var_num]] >= num1)
+      if (input$sel_topbot_var_num %in% get_numVars_names()) {
+        vv <- curObj@manipNumVars[[input$sel_topbot_var_num]]
       } else {
-        n <- sum(obj$inputdata[[input$sel_topbot_var_num]] <= num1)
+        vv <- curObj@origData[[input$sel_topbot_var_num]]
       }
-      N <- nrow(obj$inputdata)
+      if (input$sel_topbot_kind_num=="top") {
+        n <- sum(vv >= num1, na.rm=TRUE)
+      } else {
+        n <- sum(vv <= num1, na.rm=TRUE)
+      }
+      N <- length(na.omit(vv))
       p <- formatC(100*(n/N), format="f", digits=2)
       return(fluidRow(
         column(12, p(code(n),"(out of",code(N),") values will be replaced! This are",code(p),"percent of the data."), align="center"),
