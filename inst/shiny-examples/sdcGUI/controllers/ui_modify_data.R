@@ -98,7 +98,6 @@ output$ui_modify_recode_to_factor <- renderUI({
       }
     }
   })
-
   output$ui_globalRecode_summary <- renderUI({
     ss <- summary_globalrec()
     if (is.null(ss)) {
@@ -123,17 +122,20 @@ output$ui_modify_recode_to_factor <- renderUI({
       define the cut-points manually."), align="center"),
     column(12, p("Please note that factor labels are automatically generated. You can change them later once the factor has been generated!"), align="center")))
 
-  # list all numVars
-  btn_rec <- NULL
-  out <- list(out, fluidRow(
-    column(6, uiOutput("ui_globalRecode_var"), align="center"),
-    column(6, uiOutput("ui_globalRecode_split"), align="center")))
-    if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
-      out <- list(out, uiOutput("ui_globalRecode_custom"))
-    }
-  out <- list(out, uiOutput("ui_globalRecode_summary"))
-  out <- list(out, fluidRow(
-    column(12, uiOutput("ui_globalRecode_btn"), align="center")))
+  if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
+    out <- list(out, fluidRow(
+      column(4, uiOutput("ui_globalRecode_var"), align="center"),
+      column(4, uiOutput("ui_globalRecode_btn"), align="center"),
+      column(4, uiOutput("ui_globalRecode_split"), align="center")))
+    out <- list(out, uiOutput("ui_globalRecode_custom"), uiOutput("ui_globalRecode_summary"))
+  } else {
+    out <- list(out, fluidRow(
+      column(6, uiOutput("ui_globalRecode_var"), align="center"),
+      column(6, uiOutput("ui_globalRecode_split"), align="center")))
+    out <- list(out, uiOutput("ui_globalRecode_summary"))
+    out <- list(out, fluidRow(
+      column(12, uiOutput("ui_globalRecode_btn"), align="center")))
+  }
   out
 })
 
