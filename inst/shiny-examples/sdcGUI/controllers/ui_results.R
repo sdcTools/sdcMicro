@@ -61,7 +61,7 @@ output$ui_results_sidebar_left <- renderUI({
     }
     if (input$rb_results_type=="res_numrisk") {
       choices <- c(
-        "Compare Risks"="comparison",
+        "Compare summary statistics"="comparison",
         "Disclosure Risk"="numrisk",
         "Information Loss"="infoloss")
     }
