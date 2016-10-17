@@ -18,7 +18,7 @@ output$ui_sdcObj_summary <- renderUI({
     x <- print(curObj, type="general", docat=FALSE)
     out <- fluidRow(
       column(12, h4("Important variables and information"), align="center"),
-      column(12, p("The dataset consists of", code(x$dims[1]),"and",code(x$dims[2]),"variables."), align="center"),
+      column(12, p("The dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), align="center"),
       column(12, list("Categorical key variables:", lapply(x$keyVars, function(x) {code(x)})), align="center"))
 
     if (length(x$numVars)>0) {
@@ -43,7 +43,7 @@ output$ui_sdcObj_summary <- renderUI({
     }
     gV <- x$ghostVars
     if (length(gV)>0) {
-      out <- list(out, fluidRow(column(12, list(tags$br(),"ghostVariable(s) exist!"), align="center")))
+      out <- list(out, fluidRow(column(12, list(tags$br(),"Selected ghost varibles (linked variables)"), align="center")))
       for (i in 1:length(gV)) {
         out <- list(out, fluidRow(
           column(12, list("Variable(s)", lapply(gV[[i]][[2]], function(x) {
@@ -86,7 +86,7 @@ output$ui_sdcObj_summary <- renderUI({
     txt <- "Below the number of observations violating k-Anonymity is shown for the original data and
     the current dataset"
     dt <- data.table(
-      "Typ"=paste0(c(2,3,5),"-anonymity"),
+      "k-anonimity"=paste0(c(2,3,5),"-anonymity"),
       "Current data"=c(paste0(x[["2anon"]]$mod," (",x[["2anon"]]$mod_p,"%)"),
           paste0(x[["3anon"]]$mod," (",x[["3anon"]]$mod_p,"%)"),
           paste0(x[["5anon"]]$mod," (",x[["5anon"]]$mod_p,"%)")),
