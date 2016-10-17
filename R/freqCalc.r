@@ -186,7 +186,7 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
 
     ids_complete <- dat_without_na[as.list(dat_with_na[i, cur_sortVars, with=F]),id]
     if (is.na(ids_complete)[1]) {
-      ids_complete <- 1:nrow(dat_without_na)
+      ids_complete <- NULL
     }
 
     # update dataset containing NA's
