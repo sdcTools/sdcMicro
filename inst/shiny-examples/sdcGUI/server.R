@@ -781,6 +781,8 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- paste("Postrandomization of variable(s):", paste(input$sel_pramvars_expert, collapse=', '))
       obj$anon_performed <- c(obj$anon_performed, "Postrandomization of categorical variables (expert use)")
     }
+
+    updateRadioButtons(session, "rb_expert_pram", choices=c(FALSE, TRUE), inline=TRUE)
     #updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     #updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
