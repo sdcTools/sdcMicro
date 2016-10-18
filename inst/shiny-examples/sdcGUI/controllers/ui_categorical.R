@@ -243,8 +243,9 @@ kAnon_comb_params <- reactive({
 
 # does the user specify a custom importance-vector?
 kAnon_useImportance <- reactive({
+  req(input$rb_show_importance)
   res <- FALSE
-  if (!is.null(input$rb_show_importance) && input$rb_show_importance=="Yes") {
+  if (input$rb_show_importance=="Yes") {
     res <- TRUE
   }
   res
@@ -284,9 +285,7 @@ output$ui_kAnon <- renderUI({
 
   # dynamically generate ui for importance vectors
   output$ui_kanon_importanceInputs <- renderUI({
-    if (is.null(input$rb_show_importance)) {
-      return(NULL)
-    }
+    req(input$rb_show_importance)
     if (input$rb_show_importance=="No") {
       return(NULL)
     }
@@ -330,9 +329,7 @@ output$ui_kAnon <- renderUI({
   })
 
   output$ui_kanon_combs <- renderUI({
-    if (is.null(input$rb_kanon_useCombs)) {
-      return(NULL)
-    }
+    req(input$rb_kanon_useCombs)
     out <- NULL
     if (input$rb_kanon_useCombs=="Yes") {
       nrKeyVars <- length(get_keyVars())
