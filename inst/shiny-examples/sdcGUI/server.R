@@ -253,12 +253,13 @@ shinyServer(function(session, input, output) {
     vars <- allVars()
     nc <- length(vars)
     type <- dataTypes()
-    useAsKey <- shinyValue("setup_key_", nc)
-    useAsPram <- shinyValue("setup_pram_", nc)
-    useAsWeight <- shinyValue("setup_weight_", nc)
-    useAsClusterID <- shinyValue("setup_cluster_", nc)
-    deleteVariable <- shinyValue("setup_remove_", nc)
-    useAsStrata <- shinyValue("setup_strata_", nc)
+    vv <- obj$setupval_inc
+    useAsKey <- shinyValue(paste0("setup_key_",vv,"_"), nc)
+    useAsPram <- shinyValue(paste0("setup_pram_",vv,"_"), nc)
+    useAsWeight <- shinyValue(paste0("setup_weight_",vv,"_"), nc)
+    useAsClusterID <- shinyValue(paste0("setup_cluster_",vv,"_"), nc)
+    deleteVariable <- shinyValue(paste0("setup_remove_",vv,"_"), nc)
+    useAsStrata <- shinyValue(paste0("setup_strata_",vv,"_"), nc)
 
     ind_kv <- which(useAsKey=="Cat.")
     kV <- vars[ind_kv]
