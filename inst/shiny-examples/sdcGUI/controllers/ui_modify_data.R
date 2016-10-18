@@ -53,6 +53,7 @@ output$ui_modify_recode_to_factor <- renderUI({
     out
   })
   output$ui_globalRecode_var <- renderUI({
+    req(input$sel_custom_split)
     mult <- FALSE
     if (!is.null(input$sel_custom_split) && input$sel_custom_split=="no") {
       selectInput("sel_num_glrec",label=h5("Choose numeric variable"), choices=vv, selected=input$sel_num_glrec, multiple=TRUE)
@@ -289,98 +290,120 @@ output$ui_set_to_na <- renderUI({
 # UI-output to display a variable
 # users can choose a summary or a plot which depends
 # on the class of the variable
-output$ui_selvar1 <- renderUI({
-  allV <- allVars()
-  ii <- which(allV==input$view_selvar2)
-  if (length(ii)==1) {
-    allV <- allV[-c(ii)]
-  }
-  selectInput("view_selvar1", choices=allV, selected=input$view_selvar1,
-    label=h5("Choose a variable"), multiple=FALSE, width="100%")
-})
-output$ui_selvar2 <- renderUI({
-  if (is.null(input$view_selvar1)) {
-    return(NULL)
-  }
-  allV <- allVars()
-  ii <- which(allV==input$view_selvar1)
-  if (length(ii)==1) {
-    allV <- allV[-c(ii)]
-  }
-  cc <- c("none",allV)
-  selectInput("view_selvar2", choices=cc, selected=input$view_selvar2,
-    label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
-})
-
 output$ui_view_var <- renderUI({
-  stats_summary <- reactive({
-    if (is.null(input$view_selvar2) ) {
+  output$ui_selvar1 <- renderUI({
+    selectInput("view_selvar1", choices=allVars(), label=h5("Choose a variable"), multiple=FALSE, width="100%")
+  })
+  output$ui_selvar2 <- renderUI({
+    selectInput("view_selvar2", choices=c("none", allVars()), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
+  })
+  observeEvent(input$view_selvar1, {
+    vv <- allVars()
+    ii <- which(input$view_selvar1==vv)
+    if (length(ii)>0) {
+      vv <- c("none",vv[-c(ii)])
+      updateSelectInput(session, inputId="view_selvar2", choices=vv, selected=input$view_selvar2)
+    }
+  })
+  observeEvent(input$view_selvar2, {
+    vv <- allVars()
+    ii <- which(input$view_selvar2==vv)
+    if (length(ii)>0) {
+      vv <- vv[-c(ii)]
+      updateSelectInput(session, inputId="view_selvar1", choices=vv, selected=input$view_selvar1)
+    }
+  })
+
+  output$view_summary <- renderUI({
+    req(input$view_selvar1, input$view_selvar2)
+    inputdata <- inputdata()
+    if(is.null(inputdata)) {
       return(NULL)
     }
 
-    if (!is.null(input$view_selvar2) && input$view_selvar2!="none") {
-      df <- data.frame(obj$inputdata[[input$view_selvar1]], obj$inputdata[[input$view_selvar2]])
-      colnames(df) <- c(input$view_selvar1,input$view_selvar2)
+    v1 <- input$view_selvar1
+    v2 <- input$view_selvar2
+    if (is.null(v1)) {
+      return(NULL)
+    }
+
+    if (!is.null(v2) && v2!="none") {
+      df <- data.frame(inputdata[[v1]], inputdata[[v2]])
+      colnames(df) <- c(v1, v2)
       cl1 <- class(df[[1]]) %in% c("factor", "character")
       cl2 <- class(df[[2]]) %in% c("factor", "character")
     } else {
-      df <- data.frame(obj$inputdata[[input$view_selvar1]])
-      colnames(df) <- input$view_selvar1
+      df <- data.frame(inputdata[[v1]])
+      colnames(df) <- v1
       cl1 <- class(df[[1]]) %in% c("factor", "character")
     }
-    if (is.null(input$view_selvar2) || input$view_selvar2=="none") {
+    if (!is.null(v2) && v2=="none") {
       if (cl1) {
-        out <- list(tab=summaryfn(obj$inputdata[[input$view_selvar1]]))
-        colnames(out$tab) <- c(input$view_selvar1, "Frequency", "Percentage")
+        res <- list(tab=summaryfn(inputdata[[v1]]))
+        colnames(res$tab) <- c(v1, "Frequency", "Percentage")
       } else {
-        out <- list(tab=as.data.frame(t(summaryfn(obj$inputdata[[input$view_selvar1]]))))
+        res <- list(tab=as.data.frame(t(summaryfn(inputdata[[v1]]))))
       }
     } else {
       # 2 factors
       if (cl1 & cl2) {
-        out <- list(tab=as.data.frame.table(addmargins(table(df[[1]], df[[2]], useNA="always"))), var=c(input$view_selvar1,input$view_selvar2))
-        colnames(out$tab) <- c(out$var, "Frequency")
-        out$tab$Frequency <- as.integer(out$tab$Frequency)
-        out$tab$Percentage <- formatC(100*(out$tab$Frequency/nrow(df)), format="f", digits=2)
+        res <- list(tab=as.data.frame.table(addmargins(table(df[[1]], df[[2]], useNA="always"))), var=c(v1, v2))
+        colnames(res$tab) <- c(res$var, "Frequency")
+        res$tab$Frequency <- as.integer(res$tab$Frequency)
+        res$tab$Percentage <- formatC(100*(res$tab$Frequency/nrow(df)), format="f", digits=2)
       } else if (cl1 & !cl2) {
-        out <- tapply(df[[2]], df[[1]], summaryfn)
-        out <- do.call("rbind", out)
-        bb <- data.frame(f=rownames(out))
-        colnames(bb) <- input$view_selvar1
-        out <- cbind(bb, out)
-        rownames(out) <- NULL
-        out <- list(tab=out)
+        res <- tapply(df[[2]], df[[1]], summaryfn)
+        res <- do.call("rbind", res)
+        bb <- data.frame(f=rownames(res))
+        colnames(bb) <- v1
+        res <- cbind(bb, res)
+        rownames(res) <- NULL
+        res <- list(tab=res)
       } else if (!cl1 & cl2) {
-        out <- tapply(df[[1]], df[[2]], summaryfn)
-        out <- do.call("rbind", out)
-        bb <- data.frame(f=rownames(out))
-        colnames(bb) <- input$view_selvar2
-        out <- cbind(bb, out)
-        rownames(out) <- NULL
-        out <- list(tab=out)
+        res <- tapply(df[[1]], df[[2]], summaryfn)
+        res <- do.call("rbind", res)
+        bb <- data.frame(f=rownames(res))
+        colnames(bb) <- v2
+        res <- cbind(bb, res)
+        rownames(res) <- NULL
+        res <- list(tab=res)
       } else {
         # two numeric variables
         tab1 <- as.data.frame(t(summaryfn(df[[1]])))
         tab2 <- as.data.frame(t(summaryfn(df[[2]])))
         vcor <- round(cor(df[[1]], df[[2]]),3)
-        out <- list(vars=c(input$view_selvar1,input$view_selvar2),tab1=tab1, tab2=tab2, vcor=vcor)
+        res <- list(vars=c(v1,v2),tab1=tab1, tab2=tab2, vcor=vcor)
       }
     }
-    nainfo <- data.frame(variable=c(input$view_selvar1,input$view_selvar2))
+
+    out <- NULL
+    if (is.null(res$tab1)) {
+      out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), align="center")))
+    } else {
+      out <- list(out, fluidRow(
+        column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))), align="center")),
+        column(12, h5(HTML(paste("Summary of Variable",code(res$vars[1]))), align="center")),
+        column(12, renderTable(res$tab1, include.rownames=FALSE), align="center"),
+        column(12, h5(HTML(paste("Summary of Variable",code(res$vars[2]))), align="center")),
+        column(12, renderTable(res$tab2, include.rownames=FALSE), align="center")))
+    }
+
+    nainfo <- data.frame(variable=c(v1, v2))
     nainfo$nr_na <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
     nainfo$perc_na <- formatC(100*(nainfo$nr_na/nrow(df)), format="f", digits=2)
-    out$nainfo <- nainfo
+    out <- list(out,
+      fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.", align="center")))
+    if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
+      out <- list(out,
+        fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.", align="center")))
+    }
     out
   })
   output$view_plot <- renderPlot({
-    if (is.null(input$view_selvar1) ) {
-      return(NULL)
-    }
-    if (is.null(input$view_selvar2) ) {
-      return(NULL)
-    }
+    inputdata <- inputdata()
+    req(input$view_selvar1, input$view_selvar2)
 
-    vv1 <- obj$inputdata[[input$view_selvar1]]
+    vv1 <- inputdata[[input$view_selvar1]]
     if (input$view_selvar2=="none") {
       if (is.factor(vv1) | is.character(vv1)) {
         tt <- table(vv1, useNA="always")
@@ -390,7 +413,7 @@ output$ui_view_var <- renderUI({
         hist(vv1, main=NULL, xlab=input$view_selvar1, col="#DADFE1")
       }
     } else {
-      vv2 <- obj$inputdata[[input$view_selvar2]]
+      vv2 <- inputdata[[input$view_selvar2]]
       cl1 <- class(vv1) %in% c("factor", "character")
       cl2 <- class(vv2) %in% c("factor", "character")
       df <- data.frame(vv1, vv2)
@@ -410,18 +433,6 @@ output$ui_view_var <- renderUI({
     }
   })
 
-  output$natxt <- renderUI({
-    nainfo <- stats_summary()$nainfo
-    if (is.null(nainfo)) {
-      return(NULL)
-    }
-    out <- list("Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.")
-    if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
-      out <- list(out, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.")
-    }
-    return(out)
-  })
-
   if (!is.null(lastError())) {
     return(fluidRow(
       column(12, h4("The following Error has occured!", align="center")),
@@ -430,6 +441,7 @@ output$ui_view_var <- renderUI({
 
   out <- fluidRow(column(12, h4("Analyze existing variables", align="center")))
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
+
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_selvar1")),
     column(6, uiOutput("ui_selvar2"))))
@@ -437,18 +449,7 @@ output$ui_view_var <- renderUI({
   out <- list(out, fluidRow(
     column(12, plotOutput("view_plot", height="500px"))
   ))
-  res_stats <- stats_summary()
-  if (is.null(res_stats$tab1)) {
-    out <- list(out, fluidRow(column(12, renderTable(res_stats$tab, include.rownames=FALSE), align="center")))
-  } else {
-    out <- list(out, fluidRow(
-      column(12, h5(HTML(paste("Correlation between",code(res_stats$vars[1]),"and",code(res_stats$vars[2]),":",code(res_stats$vcor))), align="center")),
-      column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[1]))), align="center")),
-      column(12, renderTable(res_stats$tab1, include.rownames=FALSE), align="center"),
-      column(12, h5(HTML(paste("Summary of Variable",code(res_stats$vars[2]))), align="center")),
-      column(12, renderTable(res_stats$tab2, include.rownames=FALSE), align="center")))
-  }
-  out <- list(out, fluidRow(column(12, uiOutput("natxt"), align="center")))
+  out <- list(out, uiOutput("view_summary"))
   out
 })
 

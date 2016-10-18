@@ -578,8 +578,19 @@ shinyServer(function(session, input, output) {
     updateTextInput(session, "txt_custom_breaks", value = "")
 
     # Switch to overview-page
-    updateSelectInput(session, "sel_moddata",selected="view_var")
+    updateSelectInput(session, inputId="sel_moddata", selected="view_var")
+
+    # Todo: check why this doesn't work.
+    #if (input$sel_custom_split=="no") {
+    #  vv <- input$sel_num_glrec[1]
+    #} else {
+    #  vv <- input$rb_num_glrec
+    #}
+    #allV <- allVars()
+    #updateSelectInput(session, inputId="view_selvar2", choices=c("none", allV), selected="none")
+    #updateSelectInput(session, inputId="view_selvar1", choices=allV, selected=vv)
   })
+
   # setup the sdcMicroObj
   observeEvent(input$btn_setup_sdc, {
     cmd <- code_createSdcObj()
