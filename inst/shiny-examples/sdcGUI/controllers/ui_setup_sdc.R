@@ -203,7 +203,7 @@ output$ui_sdcObj_summary <- renderUI({
     out
   })
   output$anonMethods <- renderUI({
-    anon_methods <- anonPerformed()
+    anon_methods <- unique(anonPerformed())
     if (is.null(anon_methods)) {
       return(invisible(NULL))
     } else {
