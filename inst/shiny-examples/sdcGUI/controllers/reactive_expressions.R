@@ -14,6 +14,16 @@ inputdata <- reactive({
   return(obj$inputdata)
 })
 
+# increment reactive variable 'setupval_inc' by one once
+# obj$inputdata has changed
+# this is required for the setupTable to be refreshed because
+# all inputBindings also have 'setupval_inc' in their id
+observeEvent(obj$inputdata, {
+  if (!is.null(obj$inputdata)) {
+    obj$setupval_inc <- obj$setupval_inc + 1
+  }
+})
+
 comptime <- reactive({
   z <- as.difftime(obj$comptime, units="secs")
 
