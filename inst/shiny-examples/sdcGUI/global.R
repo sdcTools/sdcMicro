@@ -282,6 +282,9 @@ obj <- reactiveValues() # we work with this data!
 #obj$v1 <- sample(LETTERS[1:10], 100, replace=TRUE)
 #obj$v2 <- as.factor(sample(letters[1:8], 100, replace=TRUE))
 #testdata$myfac <- factor(sample(1:100, nrow(testdata), replace=TRUE))
+
+testdata$urbrur <-  as.numeric(testdata$urbrur)
+
 obj$inputdata <- obj$inputdataB <- testdata
 #obj$inputdata <- NULL
 obj$sdcObj <- NULL
@@ -302,3 +305,4 @@ obj$microfilename <- NULL # name of uploaded file
 obj$lastaction <- NULL
 obj$anon_performed <- NULL # what has been applied?
 obj$rbs <- obj$sls <- NULL
+obj$setupval_inc <- 0

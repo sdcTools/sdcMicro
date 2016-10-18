@@ -288,47 +288,63 @@ output$ui_sdcObj_randIds <- renderUI({
   out
 })
 
-output$setupTable <- DT::renderDataTable({
-  if (is.null(obj$inputdata)) {
+
+sdcData <- reactive({
+  inputdata <- inputdata()
+  if (is.null(inputdata)) {
     return(NULL)
   }
   vars <- allVars()
+
+  vv <- obj$setupval_inc
   df <- data.frame(
     "Variable Name"=vars,
     Type=dataTypes(),
-    Key=shinyInput(radioButtons, length(vars), 'setup_key_', choices=c("No", "Cat.","Cont.")),
-    Pram=shinyInput(checkboxInput, length(vars), 'setup_pram_', value=FALSE, width="20px"),
-    Weight=shinyInput(checkboxInput, length(vars), 'setup_weight_', value=FALSE, width="20px"),
-    "Cluster ID"=shinyInput(checkboxInput, length(vars), 'setup_cluster_', value=FALSE, width="20px"),
-    Strata=shinyInput(checkboxInput, length(vars), 'setup_strata_', value=FALSE, width="20px"),
-    Remove=shinyInput(checkboxInput, length(vars), 'setup_remove_', value=FALSE, width="20px")
+    Key=shinyInput(radioButtons, length(vars), paste0("setup_key_",vv,"_"), choices=c("No", "Cat.","Cont."), inline=TRUE),
+    Pram=shinyInput(checkboxInput, length(vars), paste0("setup_pram_",vv,"_"), value=FALSE, width="20px"),
+    Weight=shinyInput(checkboxInput, length(vars), paste0("setup_weight_",vv,"_"), value=FALSE, width="20px"),
+    "Cluster ID"=shinyInput(checkboxInput, length(vars), paste0("setup_cluster_",vv,"_"), value=FALSE, width="20px"),
+    Strata=shinyInput(checkboxInput, length(vars), paste0("setup_strata_",vv,"_"), value=FALSE, width="20px"),
+    Remove=shinyInput(checkboxInput, length(vars), paste0("setup_remove_",vv,"_"), value=FALSE, width="20px")
   )
-  df$nrCodes <- sapply(obj$inputdata, function(x) { length(unique(x))} )
-  df$nrNA <- sapply(obj$inputdata, function(x) { sum(is.na(x))} )
+  df$nrCodes <- sapply(inputdata, function(x) { length(unique(x))} )
+  df$nrNA <- sapply(inputdata, function(x) { sum(is.na(x))} )
   rownames(df) <- NULL
   df
-}, server = FALSE, escape = FALSE, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed', options = list(
-  searching=FALSE, paging=FALSE, ordering=FALSE, bInfo = FALSE,
-  autoWidth=FALSE,
-  columnDefs=list(list(width='150px', targets = c(0:2))),
-  columnDefs=list(list(width='20px', targets=c(3:9))),
+})
+
+
+output$setupTable <- DT::renderDataTable({
+  sdcData()
+}, server=FALSE, escape=FALSE, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+options = list(
+  searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE, autoWidth=FALSE,
+  columnDefs=list(list(width='160px', targets = c(0:2))),
+  columnDefs=list(list(width='25px', targets=c(3:9))),
   preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
   drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
 ))
 
+#proxy = dataTableProxy('setupTable')
+#observe({
+#  cat("observe tablechange!\n")
+#  replaceData(proxy, sdcData())
+#})
+
 # show the setup-button or an error-message
 output$setupbtn <- renderUI({
-  if (is.null(input$setup_key_1)) {
+  vv <- obj$setupval_inc
+  if (is.null(input[[paste0("setup_key_",vv,"_1")]])) {
     return(NULL)
   }
   n <- length(allVars())
   types <- dataTypes()
-  useAsKeys <- shinyValue("setup_key_", n)
-  useAsPram <- shinyValue("setup_pram_", n)
-  useAsWeight <- shinyValue("setup_weight_", n)
-  useAsClusterID <- shinyValue("setup_cluster_", n)
-  deleteVariable <- shinyValue("setup_remove_", n)
-  useAsStrata <- shinyValue("setup_strata_", n)
+  useAsKeys <- shinyValue(paste0("setup_key_",vv,"_"), n)
+  useAsPram <- shinyValue(paste0("setup_pram_",vv,"_"), n)
+  useAsWeight <- shinyValue(paste0("setup_weight_",vv,"_"), n)
+  useAsClusterID <- shinyValue(paste0("setup_cluster_",vv,"_"), n)
+  deleteVariable <- shinyValue(paste0("setup_remove_",vv,"_"), n)
+  useAsStrata <- shinyValue(paste0("setup_strata_",vv,"_"), n)
 
   ## key-variables
   # no categorical key variable
@@ -440,17 +456,22 @@ output$ui_sdcObj_create1 <- renderUI({
 
 # initialize with default value!
 cur_infovar <- reactive({
-  if (is.null(input$sel_infov)) {
-    colnames(obj$inputdata)[1]
-  } else {
-    input$sel_infov
-  }
+  inputdata <- inputdata()
+  input$sel_infov
+  isolate({
+    if (is.null(input$sel_infov)) {
+      colnames(inputdata)[1]
+    } else {
+      input$sel_infov
+    }
+  })
 })
 output$ui_sdcObj_info <- renderUI({
   # dependency on select-variable
   input$sel_infov
+  inputdata <- inputdata()
   isolate({
-    inp <- obj$inputdata[[cur_infovar()]]
+    inp <- inputdata[[cur_infovar()]]
     if (is.integer(inp) & length(unique(inp))<=10) {
       inp <- as.factor(inp)
     }
