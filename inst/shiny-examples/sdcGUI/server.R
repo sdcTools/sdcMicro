@@ -599,10 +599,8 @@ shinyServer(function(session, input, output) {
   })
   # recode to factor
   observeEvent(input$btn_recode_to_numeric, {
-    cat("btn input$btn_recode_to_numeric pressed!\n")
     ptm <- proc.time()
     cmd <- code_globalRecodeMicrodataToNum()
-    cat(cmd,"\n")
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
