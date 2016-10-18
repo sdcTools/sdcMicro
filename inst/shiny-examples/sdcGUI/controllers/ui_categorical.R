@@ -119,7 +119,19 @@ output$ui_pram <- renderUI({
         selected=input$sel_pramvars, width="100%", multiple=FALSE)
     }
 
-    out <- fluidRow(
+    out <- NULL
+    if (!is.null(lastError())) {
+      out <- list(out, fluidRow(
+        column(12, h4("Application of the last method resulted in the following error!", align="center")),
+        column(12, verbatimTextOutput("ui_lasterror"))))
+    }
+    if (!is.null(lastWarning())) {
+      out <- list(out, fluidRow(
+        column(12, inp=h4("Application of the last method resulted in the following warning!", align="center")),
+        column(12, inp=verbatimTextOutput("ui_lastwarning"))))
+    }
+
+    out <- list(out, fluidRow(
       column(12, h4("Postrandomization of categorical variables", align="center")),
       column(12, p("The algorithm randomly changes the values of selected variables in some records according
       to an invariant probability transition matrix (in non-expert mode) or a custom-defined transition matrix (in expert mode).", align="center")),
@@ -130,7 +142,7 @@ output$ui_pram <- renderUI({
       expert mode, the user can freely specify a transition matrix which will be used for the post-randomization of a single variable. However, the
       requirement is that all row sums of the specified matrix sum up to 1!", align="center")),
       column(12, p("Please also note that if you have specified a stratification variable when creating the",code("sdcMicroObj"),"postrandomization
-      is performed independently on all data-subsets specified by the stratification variable!", align="center")))
+      is performed independently on all data-subsets specified by the stratification variable!", align="center"))))
 
     out <- list(out, fluidRow(
       column(6, rb_expert, align="center"),
