@@ -114,9 +114,9 @@ setGeneric("varToFactorX", function(obj, var) {
 
 setMethod(f="varToFactorX", signature=c("sdcMicroObj"),
 definition=function(obj, var) {
+  obj <- nextSdcObj(obj)
   x <- get.sdcMicroObj(obj, type="manipKeyVars")
   x2 <- varToFactor(x, var=var)
-  obj <- nextSdcObj(obj)
   obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(as.data.frame(x2)))
   obj
 })
@@ -149,11 +149,22 @@ setGeneric("varToNumericX", function(obj, var) {
 
 setMethod(f="varToNumericX", signature=c("sdcMicroObj"),
 definition=function(obj, var) {
-  x <- get.sdcMicroObj(obj, type="manipKeyVars")
   obj <- nextSdcObj(obj)
+  x <- get.sdcMicroObj(obj, type="manipKeyVars")
   suppressWarnings(tmpvar <- as.numeric(as.character(x[, var])))
-  x[, var] <- tmpvar
-  obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(as.data.frame(x)))
+  x2 <- varToNumeric(x, var=var)
+  obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(as.data.frame(x2)))
+  obj
+})
+
+setMethod(f="varToNumericX", signature=c("data.frame"),
+definition=function(obj, var) {
+  if (!all(var %in% colnames(obj))) {
+    stop("at least one variable specified in 'var' is not available in 'obj'!\n")
+  }
+  for (vv in var) {
+    obj[[vv]] <- as.numeric(obj[[vv]])
+  }
   obj
 })
 
