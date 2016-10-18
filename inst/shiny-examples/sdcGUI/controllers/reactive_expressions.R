@@ -34,7 +34,7 @@ comptime <- reactive({
   }
 })
 
-
+# which anonymization steps have been applied?
 anonPerformed <- reactive({
   res <- obj$anon_performed
   if (is.null(res)) {
@@ -46,17 +46,31 @@ anonPerformed <- reactive({
   res
 })
 
-
 # all numeric variables in inputdata
 numVars <- reactive({
-  tmp <- obj$inputdata
-  names(tmp)[sapply(tmp, class)%in% c("numeric","integer")]
+  inp <- inputdata()
+  if (is.null(inp)) {
+    return(NULL)
+  }
+  names(inp)[sapply(inp, class)%in% c("numeric","integer")]
 })
 
 # all factor variables in inputdata
 facVars <- reactive({
-  tmp <- obj$inputdata
-  names(tmp)[sapply(tmp, class) == c("factor")]
+  inp <- inputdata()
+  if (is.null(inp)) {
+    return(NULL)
+  }
+  names(inp)[sapply(inp, class) == c("factor")]
+})
+
+# all character variables in inputata
+charVars <- reactive({
+  inp <- inputdata()
+  if (is.null(inp)) {
+    return(NULL)
+  }
+  names(inp)[sapply(inp, class) == c("character")]
 })
 
 # all possible stratification variables
@@ -66,9 +80,13 @@ possStrataVars <- reactive({
 
 # all variables available in the input data set
 allVars <- reactive({
-  cn <- colnames(obj[["inputdata"]])
-  cl <- sapply(1:ncol(obj$inputdata), function(x) {
-    class(obj$inputdata[[x]])
+  inp <- inputdata()
+  if (is.null(inp)) {
+    return(NULL)
+  }
+  cn <- colnames(inp)
+  cl <- sapply(1:ncol(inp), function(x) {
+    class(inp[[x]])
   })
   names(cn) <- paste0(cn," (",cl,")")
   cn

@@ -141,6 +141,12 @@ shinyServer(function(session, input, output) {
     }
     cmd
   })
+  # creating numeric variables from factors or character variables
+  code_globalRecodeMicrodataToNum <- reactive({
+    cmd <- paste0("inputdata <- varToNumeric(obj=inputdata")
+    cmd <- paste0(cmd, ", var=",VecToRStr(input$sel_to_num_var, quoted=TRUE),")")
+    cmd
+  })
 
   # set values to na in inputdata
   code_set_to_na <- reactive({
@@ -591,7 +597,19 @@ shinyServer(function(session, input, output) {
     #updateSelectInput(session, inputId="view_selvar2", choices=c("none", allV), selected="none")
     #updateSelectInput(session, inputId="view_selvar1", choices=allV, selected=vv)
   })
+  # recode to factor
+  observeEvent(input$btn_recode_to_numeric, {
+    cat("btn input$btn_recode_to_numeric pressed!\n")
+    ptm <- proc.time()
+    cmd <- code_globalRecodeMicrodataToNum()
+    cat(cmd,"\n")
+    runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
 
+    # Switch to overview-page
+    updateSelectInput(session, inputId="sel_moddata", selected="view_var")
+  })
   # setup the sdcMicroObj
   observeEvent(input$btn_setup_sdc, {
     cmd <- code_createSdcObj()

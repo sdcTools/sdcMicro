@@ -1,6 +1,32 @@
+# UI-output for recoding a variable to a numeric variable
+output$ui_modify_recode_to_numeric <- renderUI({
+  output$ui_to_num_var <- renderUI({
+    selectInput("sel_to_num_var",label=h5("Choose variable"), choices=vv, width="50%", selected=input$sel_to_num_var, multiple=TRUE)
+  })
+  output$ui_to_num_btn <- renderUI({
+    req(input$sel_to_num_var)
+    if (length(input$sel_to_num_var)>0) {
+      return(myActionButton("btn_recode_to_numeric",label=("Recode to numeric"), "primary"))
+    }
+  })
+
+  vv <- c(charVars(), facVars())
+  if (length(vv) == 0) {
+    return(fluidRow(
+      column(12, h4("No character/factor variables available in the inputdata!", align="center"))
+    ))
+  }
+  out <- fluidRow(
+    column(12, h4("Recode a character/factor variable(s) into a numeric variable"), align="center"),
+    column(12, p("You can now choose a variable of class 'character' or 'factor' and convert it into a variable of type 'numeric'"), align="center"))
+  out <- list(out, fluidRow(
+    column(12, uiOutput("ui_to_num_var"), align="center"),
+    column(12, uiOutput("ui_to_num_btn"), align="center")))
+  out
+})
+
 # UI-output for recoding a variable to a factor
 output$ui_modify_recode_to_factor <- renderUI({
-
   get_current_custom_vars <- reactive({
     if (is.null(input$sel_custom_split)) {
       return(NULL)
@@ -11,7 +37,6 @@ output$ui_modify_recode_to_factor <- renderUI({
       return(input$rb_num_glrec)
     }
   })
-
   summary_globalrec <- reactive({
     vv <- get_current_custom_vars()
     if (is.null(vv)) {
@@ -22,7 +47,6 @@ output$ui_modify_recode_to_factor <- renderUI({
     out$Frequency <- as.integer(out$Frequency)
     out
   })
-
   output$ui_globalRecode_auto <- renderUI({
     if (is.null(input$sel_algo)){
       return(NULL)
@@ -477,9 +501,16 @@ output$ui_reset_var <- renderUI({
 
 # UI-output to display and reset currently available microdata
 output$ui_show_microdata <- renderUI({
+  my_data_dt = reactive({
+    datatable(inputdata(),
+    rownames = FALSE,
+    selection="none",
+    options = list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=25))
+  })
+  #, options = list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=25), filter="top", rownames=FALSE
   output$tab_inputdata <- DT::renderDataTable({
-    obj$inputdata
-  }, options = list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=25), filter="top", rownames=FALSE)
+    my_data_dt()
+  })
 
   output$btn_inputdata <- renderUI({
     invalidateLater(15000)
@@ -569,6 +600,9 @@ output$ui_modify_data_main <- renderUI({
     if (input$sel_moddata=="recode_to_factor") {
       out <- list(out, uiOutput("ui_modify_recode_to_factor"))
     }
+    if (input$sel_moddata=="recode_to_numeric") {
+      out <- list(out, uiOutput("ui_modify_recode_to_numeric"))
+    }
     if (input$sel_moddata=="modify_factor") {
       out <- list(out, uiOutput("ui_modify_change_factor"))
     }
@@ -587,6 +621,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
       "Reset variables"="reset_var",
       "Use only a subset of the available microdata"="sample_microdata",
       "Convert numeric variables to factors"="recode_to_factor",
+      "Convert variables to numeric"="recode_to_numeric",
       "Modify an existing factor-variable"="modify_factor",
       "Create a stratification variable"="createstratvar",
       "Set specific values in a variable to NA"="set_to_na")
