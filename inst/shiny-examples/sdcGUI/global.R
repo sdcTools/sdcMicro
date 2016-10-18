@@ -285,8 +285,8 @@ obj <- reactiveValues() # we work with this data!
 
 testdata$urbrur <-  as.numeric(testdata$urbrur)
 
-obj$inputdata <- obj$inputdataB <- testdata
-#obj$inputdata <- NULL
+#obj$inputdata <- obj$inputdataB <- testdata
+obj$inputdata <- NULL
 obj$sdcObj <- NULL
 #obj$sdcObj <- createSdcObj(testdata,
 #  keyVars=c('urbrur','roof','walls','water'),
