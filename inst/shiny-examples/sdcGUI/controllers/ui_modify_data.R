@@ -316,11 +316,16 @@ output$ui_set_to_na <- renderUI({
 # on the class of the variable
 output$ui_view_var <- renderUI({
   output$ui_selvar1 <- renderUI({
-    selectInput("view_selvar1", choices=allVars(), label=h5("Choose a variable"), multiple=FALSE, width="100%")
+    selectInput("view_selvar1", choices=allVars(), label=h5("Choose a variable"), multiple=FALSE, selected=obj$inp_sel_viewvar1, width="100%")
+  })
+  # This is required so that usual changes of the dropdown-select are also reflected in the reactive variable obj$inp_sel_viewvar1
+  observeEvent(input$view_selvar1, {
+    obj$inp_sel_viewvar1 <- input$view_selvar1
   })
   output$ui_selvar2 <- renderUI({
     selectInput("view_selvar2", choices=c("none", allVars()), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
   })
+
   observeEvent(input$view_selvar1, {
     vv <- allVars()
     ii <- which(input$view_selvar1==vv)

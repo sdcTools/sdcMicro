@@ -584,18 +584,15 @@ shinyServer(function(session, input, output) {
     updateSelectInput(session, "sel_algo", selected="equidistant")
     updateTextInput(session, "txt_custom_breaks", value = "")
 
+    # change reactive var so that overview-page shows the correct variable
+    if (input$sel_custom_split=="no") {
+      vv <- input$sel_num_glrec[1]
+    } else {
+      vv <- input$rb_num_glrec
+    }
+    obj$inp_sel_viewvar1 <- vv
     # Switch to overview-page
     updateSelectInput(session, inputId="sel_moddata", selected="view_var")
-
-    # Todo: check why this doesn't work.
-    #if (input$sel_custom_split=="no") {
-    #  vv <- input$sel_num_glrec[1]
-    #} else {
-    #  vv <- input$rb_num_glrec
-    #}
-    #allV <- allVars()
-    #updateSelectInput(session, inputId="view_selvar2", choices=c("none", allV), selected="none")
-    #updateSelectInput(session, inputId="view_selvar1", choices=allV, selected=vv)
   })
   # recode to factor
   observeEvent(input$btn_recode_to_numeric, {
@@ -604,6 +601,9 @@ shinyServer(function(session, input, output) {
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+
+    # change reactive var so that overview-page shows the correct variable
+    obj$inp_sel_viewvar1 <- input$sel_to_num_var[1]
 
     # Switch to overview-page
     updateSelectInput(session, inputId="sel_moddata", selected="view_var")

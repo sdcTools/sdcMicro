@@ -306,3 +306,4 @@ obj$lastaction <- NULL
 obj$anon_performed <- NULL # what has been applied?
 obj$rbs <- obj$sls <- NULL
 obj$setupval_inc <- 0
+obj$inp_sel_viewvar1 <- NULL
