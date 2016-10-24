@@ -168,7 +168,9 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("sdcObj <- addGhostVars(sdcObj")
     cmd <- paste0(cmd, ", keyVar=",dQuote(input$sel_gv1))
     cmd <- paste0(cmd, ", ghostVars=",VecToRStr(input$sel_gv2, quoted=TRUE),")")
-    cmd
+
+    txt_action <- paste0("Linked ", VecToRStr_txt(input$sel_gv2), " to ", dQuote(input$sel_gv1), " as ghost variable")
+    return(list(cmd=cmd, txt_action=txt_action))
   })
 
   # create a new randomized ID
@@ -206,22 +208,28 @@ shinyServer(function(session, input, output) {
   code_kAnon <- reactive({
     cmd <- paste0("sdcObj <- kAnon(sdcObj")
     if (kAnon_useImportance()) {
-      cmd <- paste0(cmd,", importance=",VecToRStr(kAnon_impvec(),quoted=FALSE))
+      cur_importance <- kAnon_impvec()
     } else {
       # default: 1:n
-      cmd <- paste0(cmd,", importance=",VecToRStr(1:length(get_keyVars()),quoted=FALSE))
+      cur_importance <- 1:length(get_keyVars())
     }
+    cmd <- paste0(cmd,", importance=",VecToRStr(cur_importance, quoted=FALSE))
 
     if (input$rb_kanon_useCombs=="Yes") {
       params <- kAnon_comb_params()
       cmd <- paste0(cmd,", combs=",VecToRStr(params$use, quoted=FALSE))
       k <- params$k
+      txt_action <- NULL
+      for (i in 1:length(k)) {
+        txt_action <- paste0(txt_action, "Establishing ",k[i],"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[as.numeric(cur_importance)]),") for all ",params$use[i],"-combinations of key-variables.\n\n")
+      }
     } else {
       cmd <- paste0(cmd, ", combs=NULL")
       k <- input$sl_kanon_k
+      txt_action <- paste0("Establishing ",k,"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[as.numeric(cur_importance)]),")")
     }
     cmd <- paste0(cmd, ", k=",VecToRStr(k, quoted=FALSE),")")
-    cmd
+    return(list(cmd=cmd, txt_action=txt_action))
   })
 
   # code to group or a key variable (factor)
@@ -230,7 +238,8 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", var=",dQuote(input$sel_recfac))
     cmd <- paste0(cmd, ", before=",VecToRStr(input$cbg_recfac, quoted=TRUE))
     cmd <- paste0(cmd, ", after=",VecToRStr(input$inp_newlevname_rec, quoted=TRUE),")")
-    cmd
+    txt_action <- paste0("Recoded ",dQuote(input$sel_recfac),": ", VecToRStr_txt(input$cbg_recfac)," to ",VecToRStr_txt(input$inp_newlevname_rec))
+    return(list(cmd=cmd, txt_action=txt_action))
   })
 
   # code for local suppression with threshold
@@ -373,12 +382,6 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd,")")
     cmd_out$setup_sdc <- cmd
     cmd_out
-  })
-
-  # code to add ghost-vars to existing key variables
-  code_addGhostVars <- reactive({
-    cmd <- paste0("sdcObj <- addGhostVars(obj=sdcObj, keyVar=",dQuote(input$sel_gv1),", ghostVars=c(",dQuote(paste(input$sel_gv2, collapse='","')), "))")
-    cmd
   })
 
   # code for top-bottom coding on sdcMicroObj
@@ -657,14 +660,14 @@ shinyServer(function(session, input, output) {
   # add ghost-vars to an existing sdcMicroObj
   observeEvent(input$btn_addGhostVars, {
     ptm <- proc.time()
-    cmd <- code_addGhostvars()
-    runEvalStr(cmd=cmd, comment="## Adding linked (ghost)-Variables")
+    res <- code_addGhostvars()
+    runEvalStr(cmd=res$cmd, comment="## Adding linked (ghost)-Variables")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
 
     if (is.null(lastError())) {
-      obj$lastaction <- "Added Ghost-variables"
-      obj$anon_performed <- c(obj$anon_performed, "Added Ghost-variables")
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
@@ -811,14 +814,14 @@ shinyServer(function(session, input, output) {
     on.exit(progress$close())
     progress$set(message="performing kAnon() (this might take a long time)...", value = 0)
     ptm <- proc.time()
-    cmd <- code_kAnon()
-    runEvalStr(cmd=cmd, comment="## kAnonymity")
+    res <- code_kAnon()
+    runEvalStr(cmd=res$cmd, comment="## kAnonymity")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing kAnon() (this might take a long time)...", value = 1)
     if (is.null(lastError())) {
-      obj$lastaction <- "Establishing k-Anonymity"
-      obj$anon_performed <- c(obj$anon_performed, "Establishing k-anonymity")
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
   })
   # suppress risky observations
@@ -838,13 +841,13 @@ shinyServer(function(session, input, output) {
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_recfac, {
     ptm <- proc.time()
-    cmd <- code_groupAndRename_keyvar()
-    runEvalStr(cmd=cmd, comment=NULL)
+    res <- code_groupAndRename_keyvar()
+    runEvalStr(cmd=res$cmd, comment=NULL)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     if (is.null(lastError())) {
-      obj$lastaction <- paste("Recoding of key-variable:", dQuote(input$sel_recfac),"\n")
-      obj$anon_performed <- c(obj$anon_performed, "Recoding of categorical key-variables")
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
   })
 

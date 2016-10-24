@@ -129,6 +129,11 @@ VecToRStr <- function(v, quoted=TRUE) {
   }
 }
 
+VecToRStr_txt <- function(v) {
+  paste0('"',paste(v, collapse='", "'),'"')
+}
+
+
 myActionButton <- function(inputId, label, btn.style="", css.class="") {
   if ( btn.style %in% c("primary","info","success","warning","danger","inverse","link")) {
     btn.css.class <- paste("btn", btn.style, sep="-")

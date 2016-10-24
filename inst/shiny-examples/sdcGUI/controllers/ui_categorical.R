@@ -362,7 +362,7 @@ output$ui_kAnon <- renderUI({
 
   output$kanon_btn <- renderUI({
     btn <- NULL
-    impvec <- isolate(kAnon_impvec())
+    impvec <- kAnon_impvec()
     pp <- kAnon_comb_params()
     if (!kAnon_useImportance() | (all(impvec!="") & (is.null(pp) | length(pp$use)>0))) {
       btn <- myActionButton("btn_kanon", label="Establish k-Anonymity", "primary")
