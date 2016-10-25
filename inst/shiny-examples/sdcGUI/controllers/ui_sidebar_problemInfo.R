@@ -104,7 +104,8 @@ output$loss_sb_anonymize <- renderUI({
 
   df <- data.frame(
     Measure=c("IL1","Difference of Eigenvalues"),
-    Values=c(il1, diff_eigen))
+    orig=c(0.00, 0.00),
+    modified=c(il1, diff_eigen))
 
   fluidRow(
     column(12, h4("Information Loss"), align="center"),
