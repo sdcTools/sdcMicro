@@ -449,7 +449,7 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
         }
       } else {
         summary_o <- summary(nv_o[,i])
-        summary_m <- summary(nv_m[,i])
+        summary_m <- summary(as.numeric(nv_m[,i]))
         val_cor <- cor(nv_o[,i], nv_m[,i], use="pairwise.complete.obs")
         dt <- as.data.table(rbind(c("orig",as.numeric(summary_o)), c("modified",as.numeric(summary_m))))
         setnames(dt, c("Type",names(summary_o)))
