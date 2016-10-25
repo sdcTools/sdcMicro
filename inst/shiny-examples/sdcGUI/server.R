@@ -120,7 +120,20 @@ shinyServer(function(session, input, output) {
   code_subsetMicrodata <- reactive({
     cmd <- paste0("inputdata <- sdcMicro:::subsetMicrodata(obj=inputdata, type=",dQuote(input$sel_sdcP_sample_type))
     cmd <- paste0(cmd, ", n=",input$sel_sdcP_sample_n,")")
-    cmd
+
+    if (input$sel_sdcP_sample_type=="n_perc") {
+      comment <- paste0("## Reduce dataset size - Select n percent of the original dataset")
+    }
+    if (input$sel_sdcP_sample_type=="first_n") {
+      comment <- paste0("## Reduce dataset size - Select first n observations of the original dataset")
+    }
+    if (input$sel_sdcP_sample_type=="every_n") {
+      comment <- paste0("## Reduce dataset size - Select every n-th observations of the original dataset")
+    }
+    if (input$sel_sdcP_sample_type=="size_n") {
+      comment <- paste0("## Reduce dataset size - Selectn randomly drawn observations from the original dataset")
+    }
+    return(list(cmd=cmd, comment=comment))
   })
 
   # creating factors from numeric variables for input data
@@ -128,6 +141,7 @@ shinyServer(function(session, input, output) {
     if (input$sel_custom_split=="no") {
       cmd <- paste0("inputdata <- varToFactor(obj=inputdata")
       cmd <- paste0(cmd, ", var=",VecToRStr(input$sel_num_glrec, quoted=TRUE),")")
+      comment <- "## Convert a numeric variable to factor with user-specified breaks"
     } else {
       cmd <- paste0("inputdata <- globalRecode(obj=inputdata")
       cmd <- paste0(cmd, ", column=",dQuote(input$rb_num_glrec))
@@ -138,14 +152,16 @@ shinyServer(function(session, input, output) {
         cmd <- paste0(cmd, ", method=",dQuote(input$sel_algo))
       }
       cmd <- paste0(cmd,")")
+      comment <- "## Convert a numeric variable to factor with user-specified breaks"
     }
-    cmd
+    return(list(cmd=cmd, comment=comment))
   })
   # creating numeric variables from factors or character variables
   code_globalRecodeMicrodataToNum <- reactive({
     cmd <- paste0("inputdata <- varToNumeric(obj=inputdata")
     cmd <- paste0(cmd, ", var=",VecToRStr(input$sel_to_num_var, quoted=TRUE),")")
-    cmd
+    comment <- "## Convert a string or factor variable to numeric"
+    return(list(cmd=cmd, comment=comment))
   })
 
   # set values to na in inputdata
@@ -193,7 +209,9 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("mat <- matrix(",matstr,",ncol=",ncol(obj$transmat),"); ")
     cmd <- paste0(cmd,"rownames(mat) <- colnames(mat) <- ", VecToRStr(rn, quoted=TRUE),";\n")
     cmd <- paste0(cmd,"sdcObj <- pram(sdcObj, variables=",dQuote(input$sel_pramvars),", pd=mat)")
-    cmd
+
+    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars), " with invariant transition matrix (see above)\n")
+    return(list(cmd=cmd, txt_action=txt_action))
   })
 
   # code for non-expert pram-application
@@ -201,7 +219,10 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("sdcObj <- pram(sdcObj, variables=",VecToRStr(input$sel_pramvars, quoted=TRUE))
     cmd <- paste0(cmd,", pd=",input$sl_pd)
     cmd <- paste0(cmd,", alpha=",input$sl_alpha,")")
-    cmd
+
+    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars), " with invariant transition matrix (see above)")
+    txt_action <- paste0(txt_action, " (parameters pd=", input$sl_pd," and alpha=", input$sl_alpha,")\n")
+    return(list(cmd=cmd, txt_action=txt_action))
   })
 
   # code for k-Anonymity
@@ -247,7 +268,8 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("sdcObj <- localSupp(sdcObj")
     cmd <- paste0(cmd,", threshold=",input$sl_supp_threshold)
     cmd <- paste0(cmd,", keyVar=",dQuote(input$sel_supp_th_var),")")
-    cmd
+    txt_action <- paste0("Suppress values in variable ",dQuote(input$sel_supp_th_var)," with individual risk above the threshold of ", input$sl_supp_threshold, "\n")
+    return(list(cmd=cmd, txt_action=txt_action))
   })
 
   # code to generate a stratification-variable
@@ -255,7 +277,9 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("inputdata <- generateStrata(df=inputdata")
     cmd <- paste0(cmd, ", stratavars=",VecToRStr(input$sel_allvars_strata, quoted=TRUE))
     cmd <- paste0(cmd,", name=",dQuote(input$inp_vname_strata),")")
-    cmd
+
+    comment <- "## Generate a new strata variable based on other variables"
+    return(list(cmd=cmd, comment=comment))
   })
 
   # code to generate an sdcMicroObj
@@ -390,7 +414,10 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", value=",as.numeric(input$num_topbot_val_num))
     cmd <- paste0(cmd, ", replacement=",as.numeric(input$num_topbot_replacement_num))
     cmd <- paste0(cmd, ", kind=",dQuote(input$sel_topbot_kind_num),")")
-    cmd
+
+    txt_action <- paste0(input$sel_topbot_kind_num,"-coding of variable ",dQuote(input$sel_topbot_var_num), " ")
+    txt_action <- paste0(txt_action, "at level ", as.numeric(input$num_topbot_val_num), " (replacement value=", as.numeric(input$num_topbot_replacement_num),")\n")
+    return(list(cmd=cmd, txt_action=txt_action))
   })
 
   # code for microaggregation()
@@ -410,11 +437,16 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("sdcObj <- microaggregation(obj=sdcObj")
     if (is.null(input$sel_microagg_v)) {
       cmd <- paste0(cmd, ", variables=NULL")
+      txt_action <- paste0("Microaggregation of numeric variable(s) ",VecToRStr_txt(get_numVars_names()))
     } else {
       cmd <- paste0(cmd, ", variables=",VecToRStr(input$sel_microagg_v, quoted=TRUE))
+      txt_action <- paste0("Microaggregation of numeric variable(s) ",VecToRStr_txt(input$sel_microagg_v))
     }
     cmd <- paste0(cmd, ", aggr=",input$sl_microagg_aggr)
     cmd <- paste0(cmd, ", method=",dQuote(m_method))
+
+    txt_action <- paste0(txt_action, " (method=",dQuote(m_method)," and size=",input$sl_microagg_aggr,")\n")
+
     if (!m_method %in% c("mdav","rmd")) {
       cmd <- paste0(cmd, ", measure=",dQuote(input$sl_microagg_measure))
       cmd <- paste0(cmd, ", trim=",input$sl_microagg_trim)
@@ -432,7 +464,7 @@ shinyServer(function(session, input, output) {
       cmd <- paste0(cmd, ", nc=",input$sl_microagg_nc)
     }
     cmd <- paste0(cmd,")")
-    list(cmd=cmd, cmd_reset_strata=cmd_reset_strata)
+    return(list(cmd=cmd, txt_action=txt_action, cmd_reset_strata=cmd_reset_strata))
   })
 
   # code for microaggregation()
@@ -441,22 +473,31 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("sdcObj <- addNoise(obj=sdcObj")
     if (is.null(input$sel_noise_v)) {
       cmd <- paste0(cmd, ", variables=NULL")
+      txt_action <- paste0("Adding stochastic noise to variable(s) ",VecToRStr_txt(get_numVars_names()))
     } else {
       cmd <- paste0(cmd, ", variables=",VecToRStr(input$sel_noise_v, quoted=TRUE))
+      txt_action <- paste0("Adding stochastic noise to variable(s) ",VecToRStr_txt(input$sel_noise_v))
     }
+
+    txt_action <- paste0(txt_action, " (method=",dQuote(n_method)," ")
 
     if (n_method =="correlated2") {
       cmd <- paste0(cmd, ", delta=",VecToRStr(input$sl_noise_noise, quoted=FALSE))
       cmd <- paste0(cmd, ", noise=NA, p=NA")
+      txt_action <- paste0(txt_action, " and delta=",input$sl_noise_noise,")\n")
+
     } else if (n_method=="ROMM") {
       cmd <- paste0(cmd, ", p=",VecToRStr(input$sl_noise_noise, quoted=FALSE))
       cmd <- paste0(cmd, ", noise=NA, delta=NA")
+      txt_action <- paste0(txt_action, " and p=",input$sl_noise_noise,")\n")
     } else {
       cmd <- paste0(cmd, ", noise=",VecToRStr(input$sl_noise_noise, quoted=FALSE))
       cmd <- paste0(cmd, ", p=NA, delta=NA")
+      txt_action <- paste0(txt_action, " and noise=",input$sl_noise_noise,")\n")
+
     }
     cmd <- paste0(cmd, ", method=",dQuote(n_method),")")
-    cmd
+    return(list(cmd=cmd, txt_action=txt_action))
   })
 
   # code for rankSwap()
@@ -464,8 +505,10 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("sdcObj <- rankSwap(obj=sdcObj")
     if (is.null(input$sel_rankswap_v)) {
       cmd <- paste0(cmd, ", variables=NULL")
+      txt_action <- paste0("Rank swapping of variable(s) ",VecToRStr_txt(get_numVars_names()))
     } else {
       cmd <- paste0(cmd, ", variables=",VecToRStr(input$sel_rankswap_v, quoted=TRUE))
+      txt_action <- paste0("Rank swapping of variable(s) ",VecToRStr_txt(input$sel_rankswap_v))
     }
     cmd <- paste0(cmd, ", TopPercent=",input$sl_rankswap_top)
     cmd <- paste0(cmd, ", BottomPercent=",input$sl_rankswap_bot)
@@ -473,7 +516,10 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", R0=",input$sl_rankswap_r0)
     cmd <- paste0(cmd, ", P=",input$sl_rankswap_p)
     cmd <- paste0(cmd, ", missing=NA, seed=NULL)")
-    cmd
+
+    txt_action <- paste0(txt_action, " (parameters: TopPercent=",input$sl_rankswap_top,", BottomPercent=", input$sl_rankswap_bot)
+    txt_action <- paste0(txt_action, ", K0=",input$sl_rankswap_k0,", R0=", input$sl_rankswap_r0, ")\n")
+    return(list(cmd=cmd, txt_action=txt_action))
   })
 
   # code for l-diversity
@@ -528,7 +574,7 @@ shinyServer(function(session, input, output) {
       code_out <- gsub("res", "inputdata", code_out)
       obj$code_read_and_modify <- code_out
       obj$inputdataB <- obj$inputdata
-      obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata")
+      obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
       obj$sdcObj <- NULL # start fresh
       ptm <- proc.time()-ptm
       obj$comptime <- obj$comptime+ptm[3]
@@ -539,7 +585,7 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()
     cmd <- code_useRObj()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
-    obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata")
+    obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
     obj$inputdataB <- obj$inputdata
     obj$sdcObj <- NULL # start fresh
     ptm <- proc.time()-ptm
@@ -552,7 +598,7 @@ shinyServer(function(session, input, output) {
     cmd <- code_resetmicrovar()
     evalcmd <- gsub("inputdata","obj$inputdata", cmd)
     eval(parse(text=evalcmd))
-    obj$code_read_and_modify <- c(obj$code_read_and_modify,cmd)
+    obj$code_read_and_modify <- c(obj$code_read_and_modify,cmd,"\n")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_moddata",selected="view_var")
@@ -577,8 +623,8 @@ shinyServer(function(session, input, output) {
   # recode to factor
   observeEvent(input$btn_recode_to_factor, {
     ptm <- proc.time()
-    cmd <- code_globalRecodeMicrodata()
-    runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    res <- code_globalRecodeMicrodata()
+    runEvalStrMicrodat(cmd=res$cmd, comment=res$comment)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
 
@@ -600,8 +646,8 @@ shinyServer(function(session, input, output) {
   # recode to factor
   observeEvent(input$btn_recode_to_numeric, {
     ptm <- proc.time()
-    cmd <- code_globalRecodeMicrodataToNum()
-    runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    res <- code_globalRecodeMicrodataToNum()
+    runEvalStrMicrodat(cmd=res$cmd, comment=res$comment)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
 
@@ -636,7 +682,7 @@ shinyServer(function(session, input, output) {
     eval(parse(text=cmd))
     cmd <- gsub("obj[$]sdcObj","sdcObj", cmd)
     cmd <- gsub("obj[$]inputdata","inputdata",cmd)
-    obj$code_setup <- cmd
+    obj$code_setup <- paste0("## Set up sdcMicro object\n",cmd,"\n")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
 
@@ -733,8 +779,8 @@ shinyServer(function(session, input, output) {
   # event to generate stratification variable!
   observeEvent(input$btn_create_stratavar, {
     ptm <- proc.time()
-    cmd <- code_generateStrata()
-    runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    res <- code_generateStrata()
+    runEvalStrMicrodat(cmd=res$cmd, comment=res$comment)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     updateSelectInput(session, "sel_moddata", selected = "show_microdata")
@@ -744,7 +790,7 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_update_factor, {
     ptm <- proc.time()
     cmd <- code_groupAndRename()
-    runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    runEvalStrMicrodat(cmd=cmd, comment="## Modify an existing factor variable")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     #updateSelectInput(session, "sel_moddata", selected = "show_microdata")
@@ -753,8 +799,8 @@ shinyServer(function(session, input, output) {
   # event to use only a subset of the available microdata
   observeEvent(input$btn_sample_microdata, {
     ptm <- proc.time()
-    cmd <- code_subsetMicrodata()
-    runEvalStrMicrodat(cmd=cmd, comment=NULL)
+    res <- code_subsetMicrodata()
+    runEvalStrMicrodat(cmd=res$cmd, comment=res$comment)
     updateSelectInput(session, "sel_moddata", selected = "show_microdata")
     updateNavbarPage(session, "mainnav", selected="Microdata")
   })
@@ -775,14 +821,14 @@ shinyServer(function(session, input, output) {
     on.exit(progress$close())
     progress$set(message="performing pram() (this might take a long time)...", value = 0)
     ptm <- proc.time()
-    cmd <- code_pram_expert()
-    runEvalStr(cmd=cmd, comment="## Postrandomization (using a transition matrix)")
+    res <- code_pram_expert()
+    runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a transition matrix)")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing pram() (this might take a long time)...", value = 1)
     if (is.null(lastError())) {
-      obj$lastaction <- paste("Postrandomization of variable(s):", paste(input$sel_pramvars_expert, collapse=', '))
-      obj$anon_performed <- c(obj$anon_performed, "Postrandomization of categorical variables (expert use)")
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
 
     updateRadioButtons(session, "rb_expert_pram", choices=c(FALSE, TRUE), inline=TRUE)
@@ -795,15 +841,15 @@ shinyServer(function(session, input, output) {
     on.exit(progress$close())
     progress$set(message="performing pram() (this might take a long time)...", value = 0)
     ptm <- proc.time()
-    cmd <- code_pram_nonexpert()
-    runEvalStr(cmd=cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
+    res <- code_pram_nonexpert()
+    runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing pram() (this might take a long time)...", value = 1)
 
     if (is.null(lastError())) {
-      obj$lastaction <- paste("Postrandomization of variable(s):", paste(input$sel_pramvars_nonexpert, collapse=', '))
-      obj$anon_performed <- c(obj$anon_performed, "Postrandomization of categorical variables")
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     #updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     #updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
@@ -815,7 +861,7 @@ shinyServer(function(session, input, output) {
     progress$set(message="performing kAnon() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     res <- code_kAnon()
-    runEvalStr(cmd=res$cmd, comment="## kAnonymity")
+    runEvalStr(cmd=res$cmd, comment="## Local suppression to obtain k-anonymity")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing kAnon() (this might take a long time)...", value = 1)
@@ -827,13 +873,13 @@ shinyServer(function(session, input, output) {
   # suppress risky observations
   observeEvent(input$btn_supp_th, {
     ptm <- proc.time()
-    cmd <- code_suppThreshold()
-    runEvalStr(cmd=cmd, comment="## Suppression of risky observations")
+    res <- code_suppThreshold()
+    runEvalStr(cmd=res$cmd, comment="## Suppression of risky observations above threshold in specified variable")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     if (is.null(lastError())) {
-      obj$lastaction <- paste("Supress risky records by threshold in variable", dQuote(input$sel_supp_th_var))
-      obj$anon_performed <- c(obj$anon_performed, "Suppressing high-risk values")
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
@@ -842,7 +888,7 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_update_recfac, {
     ptm <- proc.time()
     res <- code_groupAndRename_keyvar()
-    runEvalStr(cmd=res$cmd, comment=NULL)
+    runEvalStr(cmd=res$cmd, comment="## Recode variable")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     if (is.null(lastError())) {
@@ -857,14 +903,14 @@ shinyServer(function(session, input, output) {
     on.exit(progress$close())
     progress$set(message="performing topBotCoding() (this might take a long time)...", value = 0)
     ptm <- proc.time()
-    cmd <- code_topBotCoding_num()
-    runEvalStr(cmd=cmd, comment="## Performing top/bottom-coding")
+    res <- code_topBotCoding_num()
+    runEvalStr(cmd=res$cmd, comment="## Performing top/bottom-coding")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
 
     if (is.null(lastError())) {
-      obj$lastaction <- paste("Performing top-bottom coding to variable(s)", shQuote(input$sel_topbot_var_num))
-      obj$anon_performed <- c(obj$anon_performed, "Top-/Bottom coding of numeric variables")
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     progress$set(message="performing topBotCoding() (this might take a long time)...", value = 1)
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
@@ -900,12 +946,8 @@ shinyServer(function(session, input, output) {
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing Microaggregation (this might take a long time)...", value = 1)
     if (is.null(lastError())) {
-      if (is.null(input$sel_microagg_v)) {
-        obj$lastaction <- paste("Microaggregation of variable(s)", paste(get_numVars_names(), collapse=', '))
-      } else {
-        obj$lastaction <- paste("Microaggregation of variable(s)", paste(input$sel_microagg_v, collapse=', '))
-      }
-      obj$anon_performed <- c(obj$anon_performed, "Microaggregation of numeric variables")
+      obj$lastaction <- complete_cmd$txt_action
+      obj$anon_performed <- c(obj$anon_performed, complete_cmd$txt_action)
     }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
@@ -916,17 +958,13 @@ shinyServer(function(session, input, output) {
     on.exit(progress$close())
     progress$set(message="performing addNoise() (this might take a long time)...", value = 0)
     ptm <- proc.time()
-    cmd <- code_addNoise()
-    runEvalStr(cmd=cmd, comment="## Adding stochastic noise")
+    res <- code_addNoise()
+    runEvalStr(cmd=res$cmd, comment="## Adding stochastic noise")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     if (is.null(lastError())) {
-      if (is.null(input$sel_noise_v)) {
-        obj$lastaction <- paste("Adding noise to variable(s)", paste(get_numVars_names(), collapse=', '))
-      } else {
-        obj$lastaction <- paste("Adding noise to variable(s)", paste(input$sel_noise_v, collapse=', '))
-      }
-      obj$anon_performed <- c(obj$anon_performed, "Adding stochastic noise to numeric variables")
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     progress$set(message="performing addNoise() (this might take a long time)...", value = 1)
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
@@ -938,18 +976,14 @@ shinyServer(function(session, input, output) {
     on.exit(progress$close())
     progress$set(message="performing rankSwap() (this might take a long time)...", value = 0)
     ptm <- proc.time()
-    cmd <- code_rankSwap()
-    runEvalStr(cmd=cmd, comment="## Performing rankSwapping")
+    res <- code_rankSwap()
+    runEvalStr(cmd=res$cmd, comment="## Performing rankSwapping")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
 
     if (is.null(lastError())) {
-      if (is.null(input$sel_rankswap_v)) {
-        obj$lastaction <- paste("Performing rank-swapping to variable(s)", paste(get_numVars_names(), collapse=', '))
-      } else {
-        obj$lastaction <- paste("Performing rank-swapping to variable(s)", paste(input$sel_rankswap_v, collapse=', '))
-      }
-      obj$anon_performed <- c(obj$anon_performed, "Rank-swapping of numeric variables")
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     progress$set(message="performing rankSwap() (this might take a long time)...", value = 1)
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
