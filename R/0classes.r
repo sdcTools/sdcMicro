@@ -296,9 +296,12 @@
 #' @importFrom 'utils' 'flush.console'
 #' @importFrom 'utils' 'tail'
 #' @importFrom 'utils' 'read.table'
+#' @importFrom 'utils' 'write.table'
 #' @importFrom haven read_spss
 #' @importFrom haven read_dta
 #' @importFrom haven read_sas
+#' @importFrom haven write_sav
+#' @importFrom haven write_dta
 #' @importFrom haven as_factor
 #' @importFrom prettydoc html_pretty
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))
