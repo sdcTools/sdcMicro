@@ -28,7 +28,7 @@ output$tabparam_sb_results <- output$tabparam_sb_anonymize <- renderUI({
 })
 
 # violating k-anon
-output$risk_sb_results <- output$risk_sb_anonymize <- renderUI({
+output$risk_sb_anonymize <- renderUI({
   if (is.null(sdcObj())) {
     return(NULL)
   }
@@ -54,7 +54,7 @@ output$risk_sb_results <- output$risk_sb_anonymize <- renderUI({
 })
 
 # numrisk
-output$numrisk_sb_results <- output$numrisk_sb_anonymize <- renderUI({
+output$numrisk_sb_anonymize <- renderUI({
   curObj <- sdcObj()
   if (is.null(curObj)) {
     return(invisible(NULL))
@@ -75,7 +75,7 @@ output$numrisk_sb_results <- output$numrisk_sb_anonymize <- renderUI({
 })
 
 # information loss
-output$loss_sb_results <- output$loss_sb_anonymize <- renderUI({
+output$loss_sb_anonymize <- renderUI({
   curObj <- sdcObj()
   if (is.null(curObj)) {
     return(NULL)
@@ -102,7 +102,7 @@ output$loss_sb_results <- output$loss_sb_anonymize <- renderUI({
 })
 
 # postrandomization loss
-output$pram_sb_results <- output$pram_sb_anonymize <- renderUI({
+output$pram_sb_anonymize <- renderUI({
   curObj <- sdcObj()
   if (is.null(curObj)) {
     return(NULL)
@@ -128,16 +128,31 @@ output$pram_sb_results <- output$pram_sb_anonymize <- renderUI({
   ))
 })
 
+# anonymization-methods applied
+output$anonmeth_sb_risk <- renderUI({
+  curMethods <- obj$anon_performed
+  if (is.null(curMethods)) {
+    return(NULL)
+  }
+
+  res <- tags$ul(
+    lapply( 1:length(curMethods), function(x) {
+      tags$li(curMethods[x])
+    }
+  ))
+  out <- fluidRow(column(12, h4("Anonymization Steps"), align="center"))
+  out <- list(out, fluidRow(column(12, res)))
+  return(out)
+})
+
+
 ## 2 sidebars required, id's in shiny must be unique per page/tab
 # sidebar for results-page
 output$sb_info_results <- renderUI({
   out <- list(
     uiOutput("tabinfo_sb_results"),
     uiOutput("tabparam_sb_results"),
-    uiOutput("risk_sb_results"),
-    uiOutput("numrisk_sb_results"),
-    uiOutput("loss_sb_results"),
-    uiOutput("pram_sb_results"))
+    uiOutput("anonmeth_sb_risk"))
   out
 })
 
