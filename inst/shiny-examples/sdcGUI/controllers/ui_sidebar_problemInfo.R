@@ -29,9 +29,12 @@ output$tabparam_sb_results <- output$tabparam_sb_anonymize <- renderUI({
 
 # violating k-anon
 output$risk_sb_anonymize <- renderUI({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
+
+  # current
   risks <- get_risk()
   obs <- nrow(risks)
   n2 <- sum(risks$fk<2)
@@ -40,9 +43,20 @@ output$risk_sb_anonymize <- renderUI({
   v1 <- paste0(n2," (",formatC(100*(n2/obs), format="f", digits=2),"%)")
   v2 <- paste0(n3," (",formatC(100*(n3/obs), format="f", digits=2),"%)")
   v3 <- paste0(n5," (",formatC(100*(n5/obs), format="f", digits=2),"%)")
+
+  # original
+  origrisks <- curObj@originalRisk$individual
+  n2_o <- sum(origrisks[,2]<2)
+  n3_o <- sum(origrisks[,2]<3)
+  n5_o <- sum(origrisks[,2]<5)
+  v1_o <- paste0(n2_o," (",formatC(100*(n2_o/obs), format="f", digits=2),"%)")
+  v2_o <- paste0(n3_o," (",formatC(100*(n3_o/obs), format="f", digits=2),"%)")
+  v3_o <- paste0(n5_o," (",formatC(100*(n5_o/obs), format="f", digits=2),"%)")
+
   df <- data.table(
     Measures=c("2-anonymity","3-anonymity","5-anonymity"),
-    Value=c(v1,v2,v3))
+    orig=c(v1_o, v2_o, v3_o),
+    modified=c(v1,v2,v3))
 
   fluidRow(
     column(12, h4("Risk (k-Anonymity)"), align="center"),
