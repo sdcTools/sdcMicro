@@ -13,6 +13,9 @@ output$ui_recode <- renderUI({
     if (is.null(input$sel_recfac) ) {
       return(NULL)
     }
+    if (is.null(sdcObj())) {
+      return(NULL)
+    }
     ff <- get_manipKeyVars()[[input$sel_recfac]]
     ll <- as.list(levels(ff))
     names(ll) <- paste(ll, "(",table(ff),"obs)")

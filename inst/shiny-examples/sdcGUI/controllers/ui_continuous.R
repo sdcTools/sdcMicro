@@ -12,6 +12,9 @@ output$ui_topbotcoding_num <- renderUI({
   output$ui_topbot_plot_num <- renderPlot({
     req(input$sel_topbot_var_num)
     curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(NULL)
+    }
     if (input$sel_topbot_var_num %in% get_numVars_names()) {
       vv <- curObj@manipNumVars[[input$sel_topbot_var_num]]
     } else {
@@ -31,6 +34,9 @@ output$ui_topbotcoding_num <- renderUI({
   output$ui_topbot_btn_num <- renderUI({
     req(input$sel_topbot_var_num)
     curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(NULL)
+    }
     num1 <- suppressWarnings(as.numeric(input$num_topbot_val_num))
     num2 <- suppressWarnings(as.numeric(input$num_topbot_replacement_num))
     if (is.na(num1) || is.na(num2)) {
