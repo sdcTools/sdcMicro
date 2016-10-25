@@ -98,6 +98,9 @@ output$ui_export_main <- renderUI({
     },
     content=function(file) {
       type <- input$dat_exp_type
+      cmd <- paste0("writeSafeFile(obj=sdcObj, format=",shQuote(type), ", randomizeRecords=",shQuote(input$sel_export_randomizeorder))
+      cmd <- paste0(cmd, ", fileOut=",shQuote(file))
+
       dat <- exportData()
       if (type=="rdata") {
         save(dat, file=file)
@@ -111,8 +114,12 @@ output$ui_export_main <- renderUI({
       if (type=="csv") {
         write.table(dat, file=file, col.names=as.logical(input$export_csv_header),
           sep=input$export_csv_sep, dec=input$export_csv_dec)
+        cmd <- paste0(cmd, ", col.names=",as.logical(input$export_csv_header))
+        cmd <- paste0(cmd, ", sep=",shQuote(input$export_csv_sep))
+        cmd <- paste0(cmd, ", dec=",shQuote(input$export_csv_dec))
       }
-      cmd <- paste0("## return anonymized microdata\nextractManipData(sdcObj, randomizeRecords=",shQuote(input$sel_export_randomizeorder),")")
+      cmd <- paste0("## export anonymized data file\n",cmd,")\n")
+      #cmd <- paste0("## return anonymized microdata\nextractManipData(sdcObj, randomizeRecords=",shQuote(input$sel_export_randomizeorder),")")
       obj$code_anonymize <- c(obj$code_anonymize, cmd)
     }
   )
@@ -124,13 +131,19 @@ output$ui_export_main <- renderUI({
       internal <- ifelse(input$rb_simple_report=="internal", TRUE, FALSE)
       pout <- getwd()
       if (internal) {
-        tmpF <- paste0("sdcReport_internal",format(Sys.time(), "%Y%m%d_%H%M"))
+        tmpF <- paste0("sdcReport_internal_",format(Sys.time(), "%Y%m%d_%H%M"))
       } else {
-        tmpF <- paste0("sdcReport_external",format(Sys.time(), "%Y%m%d_%H%M"))
+        tmpF <- paste0("sdcReport_external_",format(Sys.time(), "%Y%m%d_%H%M"))
       }
       curObj <- sdcObj()
       report(curObj, outdir=pout, filename=tmpF, title="SDC-Report", internal=internal)
+
       file.copy(paste0(pout,"/",tmpF,".html"), file)
+
+      cmd <- paste0("report(sdcObj, outdir=",shQuote(pout),", filename=",shQuote(tmpF), ", title=",shQuote("SDC-Report"))
+      cmd <- paste0(cmd, ", internal=",internal,")")
+      cmd <- paste0("## Create Report\n",cmd,"\n")
+      obj$code_anonymize <- c(obj$code_anonymize, cmd)
     }
   )
 
