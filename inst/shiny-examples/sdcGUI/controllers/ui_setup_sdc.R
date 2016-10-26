@@ -1,7 +1,7 @@
 # Message, if inputdata were loaded but no categorical variables are available
 # at least one categorical variable is required to setup the sdc-problem
 output$noCatVars <- renderUI({
-  txt <- "Please go back to Tab 'Microdata' and create at least one factor-variable!"
+  txt <- "Please go back to Tab 'Microdata' and create at least one factor variable!"
   fluidRow(
     column(12, h4("No categorical variables available!", align="center")),
     column(12, p(txt, align="center"))
@@ -27,7 +27,7 @@ output$ui_sdcObj_summary <- renderUI({
     }
     if (length(x$weightVar)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Sampling-Weights:", lapply(x$weightVar, function(x) {code(x)})), align="center")))
+        column(12, list("Sampling weights:", lapply(x$weightVar, function(x) {code(x)})), align="center")))
     }
     if (length(x$strataVar)>0) {
       out <- list(out, fluidRow(
@@ -35,11 +35,11 @@ output$ui_sdcObj_summary <- renderUI({
     }
     if (length(x$householdId)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Household/Cluster variable:", lapply(x$householdId, function(x) {code(x)})), align="center")))
+        column(12, list("Household/cluster variable:", lapply(x$householdId, function(x) {code(x)})), align="center")))
     }
     if (length(x$delVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Deleted Variables", lapply(x$delVars, function(x) {code(x)})), align="center")))
+        column(12, list("Deleted variables", lapply(x$delVars, function(x) {code(x)})), align="center")))
     }
     gV <- x$ghostVars
     if (length(gV)>0) {
@@ -47,7 +47,7 @@ output$ui_sdcObj_summary <- renderUI({
       for (i in 1:length(gV)) {
         out <- list(out, fluidRow(
           column(12, list("Variable(s)", lapply(gV[[i]][[2]], function(x) {
-            code(x)}),"are linked to key-variable", code(gV[[i]][[1]])), align="center")))
+            code(x)}),"are linked to key variable", code(gV[[i]][[1]])), align="center")))
       }
     }
     out <- list(out, fluidRow(
@@ -65,14 +65,14 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     txt <-"Reported is the number, mean size and size of the smallest category for recoded variables.
-      In parenthesis, the same statistics are shown for the unmodified data. Note: NA (missings) are counted as seperate categories!"
+      In parenthesis, the same statistics are shown for the unmodified data. Note: NA (missings) are counted as separate categories!"
     dt <- data.table(
       "keyVar"=x$keyVars,
       "Number of categories"=paste(x$categories$orig, x$categories$mod),
       "Mean size"=paste(x$meansize$orig, x$meansize$mod),
       "Size of smallest"=paste(x$minsize$orig, x$minsize$mod))
     out <- fluidRow(
-      column(12, h4("Information on categorical key-variables"), align="center"),
+      column(12, h4("Information on categorical key variables"), align="center"),
       column(12, p(txt), align="center"),
       column(12, renderTable(dt), align="center"))
     out
@@ -125,10 +125,10 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     out <- fluidRow(
-      column(12, h4("Information on Risk for numerical key-variables"), align="center"),
+      column(12, h4("Information on risk for numerical key variables"), align="center"),
       column(12, p("The disclosure risk is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),".
       In the original data the risk is assumed to be between",code("0%"),"and",code("100%"),"."), align="center"),
-      column(12, h4("Information-Loss"), align="center"),
+      column(12, h4("Information loss"), align="center"),
       column(12, p("Measure",strong("IL1"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
     )
     out
@@ -159,7 +159,7 @@ output$ui_sdcObj_summary <- renderUI({
     dt[,v2:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
     setnames(dt, c("Key Variable", paste("Additional Supps due to last run of",meth), "Total Suppressions"))
     out <- list(fluidRow(
-      column(12, h4("Information on Local Suppression"), align="center"),
+      column(12, h4("Information on local suppression"), align="center"),
       column(12, p(txt), align="center"),
       column(12, renderTable(dt), align="center")))
   })
@@ -349,17 +349,17 @@ output$setupbtn <- renderUI({
   ## key-variables
   # no categorical key variable
   if (sum(useAsKeys=="Cat.")==0) {
-    return(myErrBtn("tmp", label="Error: No categorical key-variables selected"))
+    return(myErrBtn("tmp", label="Error: No categorical key variables selected"))
   }
   # some selected categorical key-variables are numeric or character
   ii <- which(useAsKeys=="Cat." & types%in%c("numeric","character"))
   if (length(ii)>0) {
-    return(myErrBtn("tmp", label="Error: Selected categorical key-variables are of type 'numeric' or 'character'"))
+    return(myErrBtn("tmp", label="Error: Selected categorical key variables are of type 'numeric' or 'character'"))
   }
   # some selected numerical key-variables are factor or character
   ii <- which(useAsKeys=="Cont." & types%in%c("factor","character"))
   if (length(ii)>0) {
-    return(myErrBtn("tmp", label="Error: Selected continous key-variables are of type 'factor' or 'character'"))
+    return(myErrBtn("tmp", label="Error: Selected continous key variables are of type 'factor' or 'character'"))
   }
 
   ## pram
@@ -367,13 +367,13 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     # selected pram vars must not be key-vars
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
-      return(myErrBtn("tmp", label="Error: Selected pram-variables are also key-variables"))
+      return(myErrBtn("tmp", label="Error: Selected pram variables are also key-variables"))
     }
     if (any(useAsWeight[ii] == TRUE)) {
-      return(myErrBtn("tmp", label="Error: Selected pram-variable is also the weight variable"))
+      return(myErrBtn("tmp", label="Error: Selected pram variable is also the weight variable"))
     }
     if (any(useAsClusterID[ii] == TRUE)) {
-      return(myErrBtn("tmp", label="Error: Selected pram-variable is also the cluster-id variable"))
+      return(myErrBtn("tmp", label="Error: Selected pram variable is also the cluster-id variable"))
     }
   }
 
@@ -381,7 +381,7 @@ output$setupbtn <- renderUI({
   ii <- which(useAsWeight==TRUE)
   # more than one weight-variable
   if (length(ii)>1) {
-    return(myErrBtn("tmp", label="Error: More than one weight-variable selected"))
+    return(myErrBtn("tmp", label="Error: More than one weight variable selected"))
   }
   if (length(ii)==1) {
     # weights can't be any-key variables
@@ -403,7 +403,7 @@ output$setupbtn <- renderUI({
   if (length(ii)==1) {
     # cluster-ids can't be any-key variables
     if (useAsKeys[ii]!="No") {
-      return(myErrBtn("tmp", label="Error: Cluster-id variable cannot be selected as key-variable"))
+      return(myErrBtn("tmp", label="Error: Cluster-id variable cannot be selected as key variable"))
     }
   }
 
@@ -411,19 +411,19 @@ output$setupbtn <- renderUI({
   ii <- which(deleteVariable==TRUE)
   if (length(ii)>0) {
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be key-variables"))
+      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be key variables"))
     }
     if (any(useAsPram[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be pram-variables"))
+      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be pram variables"))
     }
     if (any(useAsWeight[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the weight-variable"))
+      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the weight variable"))
     }
     if (any(useAsClusterID[ii]==TRUE)) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the cluster-id variable"))
     }
     if (any(useAsStrata[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be strata-variables"))
+      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be strata variables"))
     }
   }
   btn <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
@@ -493,7 +493,7 @@ output$ui_sdcObj_info <- renderUI({
 })
 
 output$ui_sdcObj_create <- renderUI({
-  sel_infov <- selectInput("sel_infov", label=h4("Select Variable to show Information"), choices=allVars(), selected=input$sel_infov, width="100%")
+  sel_infov <- selectInput("sel_infov", label=h4("Select variable to show information"), choices=allVars(), selected=input$sel_infov, width="100%")
   out <- fluidRow(
     column(8, div(style='padding-right : 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
     column(4, sel_infov, uiOutput("ui_sdcObj_info"), align="center")

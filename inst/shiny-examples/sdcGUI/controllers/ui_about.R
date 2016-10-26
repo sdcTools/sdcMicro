@@ -5,6 +5,6 @@ output$ui_about <- renderUI({
     column(12, h4("Help"), align="center"),
     column(12, p("Link to GUI-Tutorial"), align="center"),
     column(12, p("Link to GUI-Tutorial"), align="center"),
-    column(12, p("If you already have a Problem that was exported from the GUI, you can upload it in Tab",code("Reproducibility"),"."), align="center")
+    column(12, p("If you already have an sdcProblem that was exported from the GUI, you can upload it in Tab",code("Reproducibility"),"."), align="center")
   )
 })
