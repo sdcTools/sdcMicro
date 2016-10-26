@@ -2,7 +2,7 @@
 output$ui_recode <- renderUI({
   out <- fluidRow(
     column(12, h4("Recode categorical key variables", align="center")),
-    column(12, p("To reduce risks it is often useful to combine multiple chararacteristics of categorical key variables into
+    column(12, p("To reduce risk, it is often useful to combine multiple chararacteristics of categorical key variables into
       a new, combined category. You need to select a categorical key variable and then choose two or more levels which you want to combine. Once this
       has been done, a new label for the new category can be assigned. If you are ready, you just need to press the button.", align="center")),
     column(12, p("Note: If you only select one level, you still can press the button and update the key variable. In this case you can rename
@@ -416,7 +416,7 @@ output$ui_supp_threshold <- renderUI({
     risks <- get_risk()
     curObj <- sdcObj()
     nn <- paste(colnames(curObj@origData)[curObj@keyVars], collapse=" x ")
-    hist(risks$risk, xlab="Individual Risks", ylab="Frequency", main=nn, col="#DADFE1")
+    hist(risks$risk, xlab="Individual Risk", ylab="Frequency", main=nn, col="#DADFE1")
     abline(v=input$sl_supp_threshold, lwd=2, col="#F9690E")
   })
   # number of risky observations that would be suppressed
@@ -433,12 +433,12 @@ output$ui_supp_threshold <- renderUI({
 
   output$ui_supp_th_btn <- renderUI({
     req(input$sel_supp_th_var)
-    btn <- myActionButton("btn_supp_th", label=paste("Supress",nr_riskyobs(),"values with high risk in", dQuote(input$sel_supp_th_var)), "primary")
+    btn <- myActionButton("btn_supp_th", label=paste("Suppress",nr_riskyobs(),"values with high risk in", dQuote(input$sel_supp_th_var)), "primary")
     btn
   })
 
   out <- fluidRow(
-    column(12, h4("Supress above given threshold", align="center")),
+    column(12, h4("Suppress above given threshold", align="center")),
     column(12, p("This is a relatively easy method which allows to suppress or rather set to",code("NA"),"values in selected key-variables
       in observations that have a individual risk higher than the selected risk-threshold. Please note that this method does not take into account a possibly
       specified stratification variable.", align="center")))
