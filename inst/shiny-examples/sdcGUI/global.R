@@ -133,6 +133,17 @@ VecToRStr_txt <- function(v) {
   paste0('"',paste(v, collapse='", "'),'"')
 }
 
+# filed file names keeping original name of uploaded file
+fixUploadedFilesNames <- function(x) {
+  if (is.null(x)) {
+    return()
+  }
+  oldNames = x$datapath
+  newNames = file.path(dirname(x$datapath), x$name)
+  file.rename(from=oldNames, to=newNames)
+  x$datapath <- newNames
+  x
+}
 
 myActionButton <- function(inputId, label, btn.style="", css.class="") {
   if ( btn.style %in% c("primary","info","success","warning","danger","inverse","link")) {

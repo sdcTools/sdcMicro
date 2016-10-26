@@ -82,8 +82,9 @@ shinyServer(function(session, input, output) {
 
   # read microdata
   code_readMicrodata <- reactive({
+    file1 <- fixUploadedFilesNames(input$file1)
     cmd <- paste0("res <- readMicrodata(")
-    cmd <- paste0(cmd, "path=",dQuote(normalizePath(input$file1$datapath,winslash = "/")))
+    cmd <- paste0(cmd, "path=",dQuote(normalizePath(file1$datapath,winslash = "/")))
     cmd <- paste0(cmd, ", type=",dQuote(input$dat_type))
     cmd <- paste0(cmd, ", convertCharToFac=",input$rb_convert_c_to_f)
     cmd <- paste0(cmd, ", drop_all_missings=",input$rb_drop_all_missings)
@@ -97,7 +98,8 @@ shinyServer(function(session, input, output) {
 
   # code to import previously saved sdcProblem
   code_import_problem <- reactive({
-    cmd <- paste0("res <- importProblem(path=",dQuote(normalizePath(input$file_importProblem$datapath,winslash = "/")),")")
+    file_importProblem <- fixUploadedFilesNames(input$file_importProblem)
+    cmd <- paste0("res <- importProblem(path=",dQuote(normalizePath(file_importProblem$datapath,winslash = "/")),")")
     cmd
   })
 
