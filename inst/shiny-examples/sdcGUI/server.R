@@ -699,7 +699,7 @@ shinyServer(function(session, input, output) {
     obj$rbs <- lapply(1:nrKeyVars, function(i) {
       id <- paste0("rb_kanon_usecombs_", i)
       radioButtons(id, label=h5(paste("Apply k-Anon to all subsets of",i,"key variables?")),
-        selected=input[[id]], width="100%", inline=TRUE, choices=c("Yes", "No"))
+        selected=input[[id]], width="100%", inline=TRUE, choices=c("No", "Yes"))
     })
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")

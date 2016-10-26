@@ -367,9 +367,13 @@ output$ui_kAnon <- renderUI({
     btn <- NULL
     impvec <- kAnon_impvec()
     pp <- kAnon_comb_params()
-    if (!kAnon_useImportance() | (all(impvec!="") & (is.null(pp) | length(pp$use)>0))) {
-      btn <- myActionButton("btn_kanon", label="Establish k-Anonymity", "primary")
+    if (!is.null(pp) && length(pp$use)==0) {
+      return(NULL)
     }
+    if (kAnon_useImportance() && any(impvec=="")) {
+      return(NULL)
+    }
+    btn <- myActionButton("btn_kanon", label="Establish k-Anonymity", "primary")
     return(fluidRow(column(12, btn, align="center")))
   })
 
