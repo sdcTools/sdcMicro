@@ -24,7 +24,7 @@ output$ui_topbotcoding_num <- renderUI({
   })
   output$ui_topbot_params_num <- renderUI({
     sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), multiple=FALSE, label="Select variable")
-    sel_kind <- selectInput("sel_topbot_kind_num", choices=c("top","bottom"), multiple=FALSE, label="Apply Top- or Bottom-Coding?")
+    sel_kind <- selectInput("sel_topbot_kind_num", choices=c("top","bottom"), multiple=FALSE, label="Apply Top/Bottom-Coding?")
     txt_val <- textInput("num_topbot_val_num", label="Value", placeholder="Please enter a number")
     txt_replace <- textInput("num_topbot_replacement_num", label="Replacement Value", placeholder="Please enter a number")
     out <- fluidRow(column(6, sel_var), column(6, sel_kind))
@@ -59,7 +59,7 @@ output$ui_topbotcoding_num <- renderUI({
       N <- length(na.omit(vv))
       p <- formatC(100*(n/N), format="f", digits=2)
       return(fluidRow(
-        column(12, p(code(n),"(out of",code(N),") values will be replaced! This are",code(p),"percent of the data."), align="center"),
+        column(12, p(code(n),"(out of",code(N),") values will be replaced! This equals",code(p),"percent of the data."), align="center"),
         column(12, myActionButton("btn_topbotcoding_num",label=("Apply Top/Bottom-Coding"), "primary"), align="center")
       ))
     } else {
@@ -68,7 +68,7 @@ output$ui_topbotcoding_num <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Apply Top- or Bottom coding", align="center")),
+    column(12, h4("Apply Top/Bottom-Coding", align="center")),
     column(12, plotOutput("ui_topbot_plot_num")))
   out <- list(out, uiOutput("ui_topbot_params_num"))
   out <- list(out, uiOutput("ui_topbot_btn_num"))
@@ -227,7 +227,7 @@ output$ui_noise <- renderUI({
   output$ui_noise_method <- renderUI({
     input$sel_noise_method
     isolate({
-      sel_method <- selectInput("sel_noise_method", label=h5("Select the Algorithm"),
+      sel_method <- selectInput("sel_noise_method", label=h5("Select the algorithm"),
         choices=choices_noise(),
         selected=input$sel_noise_method, width="100%")
       sel_method
@@ -238,7 +238,7 @@ output$ui_noise <- renderUI({
   output$ui_noise_vars <- renderUI({
     input$sel_noise_method
     isolate({
-      lab <- h5("Select Variables")
+      lab <- h5("Select variables")
       if (has_numkeyvars()) {
         lab <- list(lab, p("If empty, all numerical key variables will be used!"))
       }
@@ -258,7 +258,7 @@ output$ui_noise <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Adding stochastic noise", align="center")),
+    column(12, h4("Adding Stochastic Noise", align="center")),
     column(12, p("Various methods for adding noise to perturb continuous scaled variables can be selected below. Please note, that even if a
       stratification variable has been defined during the initialization of the sdc-Problem, this information will not be used in this case. So the noise will be applied on
       the entire data set.", align="center")))
@@ -317,7 +317,7 @@ output$ui_rankswap <- renderUI({
 
 
   out <- fluidRow(
-    column(12, h4("Rank swapping", align="center")),
+    column(12, h4("Rank Swapping", align="center")),
     column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
       so that correlation structure of original variables are preserved and also some perturbation is applied. Please note, that even if a
       stratification variable has been defined during the initialization of the sdc-Problem, this information will not be used in this case. So the noise will be applied on
