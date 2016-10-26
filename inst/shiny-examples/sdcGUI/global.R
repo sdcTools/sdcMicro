@@ -292,8 +292,21 @@ href_to_microdata <- genDynLinkObserver(prefix="btn_a_micro_", verbose=FALSE, in
 #})
 
 
+#check_packageStatus <- function(pkg="sdcMicro") {
+#  xx <- readLines(paste0("https://cran.r-project.org/web/packages/",pkg,"/index.html"), n=40)
+#  cranV <- gsub("<(td|\\/td)>","",xx[grep("Version", xx)+1])
+#  isOk <- FALSE
+#  if (packageVersion("sdcMicro")==cranV) {
+#    isOk <- TRUE
+#  }
+#  return(list(isOk=isOk, cranV=cranV))
+#}
+
 permPfad <- reactiveValues()
 obj <- reactiveValues() # we work with this data!
+
+#obj$pkg_status <- check_packageStatus(pkg="sdcMicro")
+
 #obj$sdcObj <- sample(1:10, 100, replace=TRUE)
 #obj$v1 <- sample(LETTERS[1:10], 100, replace=TRUE)
 #obj$v2 <- as.factor(sample(letters[1:8], 100, replace=TRUE))
