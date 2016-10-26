@@ -193,28 +193,24 @@ output$ui_modify_change_factor <- renderUI({
     ))
     return(out)
   }
-  selfac1 <- selectInput("sel_factor",label=NULL,
-    choices=vv, selected=input$sel_factor, width="100%")
-  cbgr <- selectInput("cbg_factor",label=NULL, multiple=TRUE, selectize=FALSE,
-    choices=curFactorVals(), selected=input$cbg_factor, width="100%")
+  selfac1 <- selectInput("sel_factor",label=h5("Choose factor variable"),
+    choices=vv, selected=input$sel_factor)
+  cbgr <- selectInput("cbg_factor",label=h5("Select Levels to recode/combine"),
+        multiple=TRUE, selectize=TRUE, choices=curFactorVals(), selected=input$cbg_factor, width="100%")
   if (is.null(input$cbg_factor)) {
     btnUp <- NULL
     txtval <- NULL
   } else {
     btnUp <- myActionButton("btn_update_factor",label="Update factor", "primary")
-    txtval <- textInput("inp_newlevname",label=NULL,
+    txtval <- textInput("inp_newlevname",label=h5("New label for recoded values"),
     value=paste0(input$cbg_factor, collapse="_"), width="100%")
   }
 
   out <- list(out, fluidRow(
-    column(4, h5("Choose factor variable", align="center")),
-    column(4, h5("Select Levels to recode/combine", align="center")),
-    column(4, h5("New label for recoded values", align="center"))))
+    column(12, selfac1, align="center"),
+    column(6, cbgr, align="center"),
+    column(6, txtval, align="center")))
 
-  out <- list(out, fluidRow(
-    column(4, selfac1, align="center"),
-    column(4, cbgr, align="center"),
-    column(4, txtval, align="center")))
   out <- list(out, fluidRow(
     column(12, btnUp, align="center"),
     column(12, plotOutput("plot_fac"))))
