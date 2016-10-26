@@ -915,8 +915,8 @@ shinyServer(function(session, input, output) {
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     progress$set(message="performing topBotCoding() (this might take a long time)...", value = 1)
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    #updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
+    #updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
 
   # microaggregation()

@@ -323,3 +323,4 @@ obj$anon_performed <- NULL # what has been applied?
 obj$rbs <- obj$sls <- NULL
 obj$setupval_inc <- 0
 obj$inp_sel_viewvar1 <- NULL
+obj$inp_sel_topbot_var_num <- NULL # used in ui_continuous / top-bottom coding

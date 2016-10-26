@@ -11,25 +11,34 @@ has_numkeyvars <- reactive({
 output$ui_topbotcoding_num <- renderUI({
   output$ui_topbot_plot_num <- renderPlot({
     req(input$sel_topbot_var_num)
+
+    curV <- obj$inp_sel_topbot_var_num
+    if (is.null(curV)) {
+      return(NULL)
+    }
     curObj <- sdcObj()
     if (is.null(curObj)) {
       return(NULL)
     }
-    if (input$sel_topbot_var_num %in% get_numVars_names()) {
-      vv <- curObj@manipNumVars[[input$sel_topbot_var_num]]
+
+    if (curV %in% get_numVars_names()) {
+      vv <- curObj@manipNumVars[[curV]]
     } else {
-      vv <- curObj@origData[[input$sel_topbot_var_num]]
+      vv <- curObj@origData[[curV]]
     }
     boxplot(vv, main=input$sel_topbot_var_num, xlab=input$sel_topbot_var_num, col="#DADFE1")
   })
   output$ui_topbot_params_num <- renderUI({
-    sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), multiple=FALSE, label="Select variable")
+    sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), selected=obj$inp_sel_topbot_var_num, multiple=FALSE, label="Select variable")
     sel_kind <- selectInput("sel_topbot_kind_num", choices=c("top","bottom"), multiple=FALSE, label="Apply Top- or Bottom-Coding?")
     txt_val <- textInput("num_topbot_val_num", label="Value", placeholder="Please enter a number")
     txt_replace <- textInput("num_topbot_replacement_num", label="Replacement Value", placeholder="Please enter a number")
     out <- fluidRow(column(6, sel_var), column(6, sel_kind))
     out <- list(out, fluidRow(column(6, txt_val), column(6, txt_replace)))
     out
+  })
+  observeEvent(input$sel_topbot_var_num,{
+    obj$inp_sel_topbot_var_num <- input$sel_topbot_var_num
   })
   output$ui_topbot_btn_num <- renderUI({
     req(input$sel_topbot_var_num)
