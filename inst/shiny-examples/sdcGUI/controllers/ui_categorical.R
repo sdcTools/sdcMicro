@@ -5,7 +5,7 @@ output$ui_recode <- renderUI({
     column(12, p("To reduce risks it is often useful to combine multiple chararacteristics of categorical key variables into
       a new, combined category. You need to select a categorical key variable and then choose two or more levels which you want to combine. Once this
       has been done, a new label for the new category can be assigned. If you are ready, you just need to press the button.", align="center")),
-    column(12, p("Note: If you only select one level, you still can press the Button and update the key variable. In this case you can rename
+    column(12, p("Note: If you only select one level, you still can press the button and update the key variable. In this case you can rename
       the the selected value.", align="center")))
 
   # current factor-levels
@@ -52,7 +52,7 @@ output$ui_recode <- renderUI({
 
   out <- list(out, fluidRow(
     column(4, h5("Choose factor variable", align="center")),
-    column(4, h5("Select Levels to recode/combine", align="center")),
+    column(4, h5("Select levels to recode/combine", align="center")),
     column(4, h5("New label for recoded values", align="center"))))
   out <- list(out, fluidRow(
     column(4, selfac1),
@@ -107,7 +107,7 @@ output$ui_pram <- renderUI({
     if (length(pramvars)==0) {
       return(fluidRow(
         column(12, h4("Postrandomization of categorical variables", align="center")),
-        column(12, h5("No Factor-Variables available in the data or all possible variables already have been post-randomized!", align="center"))
+        column(12, h5("No factor variables available in the data, or all possible variables already have been post-randomized!", align="center"))
       ))
     }
 
