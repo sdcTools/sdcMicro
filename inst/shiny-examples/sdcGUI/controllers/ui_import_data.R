@@ -77,6 +77,10 @@ output$ui_import_data_main <- renderUI({
         column(6, p(rb1, align="center")),
         column(6, p(rb2, align="center"))))
 
+      out <- list(out, fluidRow(
+        column(12, p("Note: the selected file file is loaded immediately. Set options before selecting the file."), align="center")
+      ))
+
       fI <- fileInput("file1", h5(paste0("Select File (allowed types are '",paste0(allowed, collapse="'"),"')")),
         width="100%", accept=allowed)
       out <- list(out, fluidRow(column(12, p(fI, align="center"))))
