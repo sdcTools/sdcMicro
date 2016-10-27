@@ -1,3 +1,30 @@
+#' Creates a household level file from a dataset with a household structure. 
+#' 
+#' It removes individual level variables and selects one record per household based on a household ID. The function can also be used for other hierachical structures.
+#'
+#' @param dat a data.frame with the full dataset
+#' @param hhId name of the household (cluster) ID
+#' @param hhVars character vector with names of all household level variables
+
+#' @return a data.frame with only household level variables and one record per household
+#' @author Thijs Benschop
+#' @export
+#' 
+#' @examples
+#' 
+#' x <- testdata
+#' x_hh <- selectHouseholdData(x, "ori_hid", c("urbrur", "roof",  "walls", "water", "electcon", "sampling_weight"))
+#' 
+selectHouseholdData <- function(dat, hhId, hhVars) {
+  # Keep only one observation per household
+  res <- dat[which(!duplicated(dat[,hhId])),]
+  
+  # Drop all variables that are not at the household level
+  res <- res[,c(hhID, hhVars)] 
+  
+  return(res)
+}
+
 #' Generate one strata variable from multiple factors
 #'
 #' For strata defined by multiple variables (e.g. sex,age,country) one combined
