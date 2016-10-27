@@ -555,8 +555,12 @@ shinyServer(function(session, input, output) {
   observeEvent(input$file1, {
     obj$microfilename <- input$file1$name
     ptm <- proc.time()
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="reading in microdata (this might take a long time)...", value = 0)
     code <- code_readMicrodata()
     eval(parse(text=code))
+    progress$set(message="reading in microdata (this might take a long time)...", value = 1)
     if ("simpleError" %in% class(res)) {
       obj$last_error <- res$message
       obj$inputdata <- NULL
