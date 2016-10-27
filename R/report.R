@@ -404,11 +404,18 @@ setMethod(f="reportX", signature=c("sdcMicroObj"),
 definition=function(obj, outdir=getwd(), filename="SDC-Report",
   title="SDC-Report", internal=FALSE, verbose=FALSE) {
 
-  filename <- paste(filename, ".html", sep="")
-
+  filename <- paste0(filename, ".html")
   repObj <- calcReportData(obj, internal=internal, title=title, outdir=outdir)
-  fTemplate <- system.file("templates", "report-template.rmd", package="sdcMicro")
-  render(fTemplate, quiet=TRUE, output_dir=outdir, output_file=filename)
+  fOut <- paste0(outdir,"/",filename)
+  if (pandoc_available()) {
+    fTemplate <- system.file("templates", "report-template.rmd", package="sdcMicro")
+    render(fTemplate, quiet=TRUE, output_dir=outdir, output_file=filename)
+  } else {
+    myCustomTitle <- get.reportObj(repObj, "title")
+    fTemplate <- system.file("templates", "report-template-simple.rmd", package="sdcMicro")
+    knit2html(input=fTemplate, output=fOut, quiet=TRUE, force_v1=TRUE)
+    file.remove(paste0(outdir,"/report-template-simple.md"))
+  }
 
   if (verbose) {
     if (internal) {
@@ -416,7 +423,7 @@ definition=function(obj, outdir=getwd(), filename="SDC-Report",
     } else {
       txt <- paste0("An short report was successfully generated.\n")
     }
-    txt <- paste0(txt, "It was saved in '", outdir,"/",filename,"'.\n")
+    txt <- paste0(txt, "It was saved in '", fOut,"'.\n")
     cat(txt)
   }
 })

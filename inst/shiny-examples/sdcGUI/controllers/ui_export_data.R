@@ -6,9 +6,9 @@ output$ui_export_report <- renderUI({
   db <- downloadButton('downloadReport', 'Download the Report')
 
   fluidRow(
-    column(12, h4("Export the anonymization report", align="center")),
-    column(12, p(rb1, align="center")),
-    column(12, p(db, align="center")))
+    column(12, h4("Export the anonymization report"), align="center"),
+    column(12, rb1, align="center"),
+    column(12, db, align="center"))
 })
 
 # UI-Output for exporting the (anonymized) data
