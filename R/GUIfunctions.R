@@ -1,28 +1,58 @@
-#' Creates a household level file from a dataset with a household structure. 
-#' 
+#' Creates a household level file from a dataset with a household structure.
+#'
 #' It removes individual level variables and selects one record per household based on a household ID. The function can also be used for other hierachical structures.
 #'
 #' @param dat a data.frame with the full dataset
-#' @param hhId name of the household (cluster) ID
+#' @param hhId name of the variable with the household (cluster) ID
 #' @param hhVars character vector with names of all household level variables
-
+#' @param weightVar name of the variable with the sampling weights
+#' @param weightType HH or IND specifying whether weightVar is the household-level or individual-level weight.
+#' If the weights are at the individual level, the weights are aggregated by averaging over all individuals
+#' within the household (cluster) and dividing by the number of individuals in the cluster.
 #' @return a data.frame with only household level variables and one record per household
 #' @author Thijs Benschop
 #' @export
-#' 
+#'
 #' @examples
-#' 
+#'
 #' x <- testdata
-#' x_hh <- selectHouseholdData(x, "ori_hid", c("urbrur", "roof",  "walls", "water", "electcon", "sampling_weight"))
-#' 
-selectHouseholdData <- function(dat, hhId, hhVars) {
-  # Keep only one observation per household
-  res <- dat[which(!duplicated(dat[,hhId])),]
+#' x_hh <- selectHouseholdData(x, "ori_hid", c("urbrur", "roof",  "walls", "water", "electcon", "sampling_weight"), weightVar = "sampling_weight", weightType = "IND")
+#'
+selectHouseholdData <- function(dat, hhId, hhVars, weightVar = NULL, weightType = "HH") {
+  # Check whether specified variables are available in the data
+  if (any(!(hhVars %in% colnames(dat))))
+    stop("Some selected household variables aren't available in the data. \n Respecify hhVars.")
+  if (!(hhId %in% colnames(dat)))
+    stop("The selected household ID isn't available in the data. \n Respecify hhId")
+  if (!is.null(weightVar))
+    if (!(weightVar %in% colnames(dat)))
+      stop("The selected weight variable isn't available in the data. \n Respecify weightVar")
   
-  # Drop all variables that are not at the household level
-  res <- res[,c(hhID, hhVars)] 
-  
-  return(res)
+  # Check whether weightVar is also in hhVars, if so remove from hhVars
+  if (!is.null(weightVar))
+    if (weightVar %in% hhVars)
+      hhVars <- hhVars[-which(hhVars == weightVar)]
+    
+    # Remove any records with missing household ID (these cannot be matched later on in the process)
+    res <- dat[complete.cases(dat[,hhId]), ]
+    
+    # If the sampling weights are at the individual level, aggregate by averaging over all individuals
+    # within the household (cluster) and dividing by the number of individuals in the cluster.
+    if(weightType == "IND"){
+      if (is.null(weightVar))
+        stop("You didn't specify a weight variable. \n Specify weightVar")
+      
+      # Compute household level weight (average over individual weights in cluster divided by the number of individuals in cluster)
+      res[,weightVar] <- sapply(res[,hhId], FUN = function(x) {sum(res[res[,hhId] == x, weightVar]) / (length(res[res[,hhId] == x, weightVar])^2)})
+    }
+    
+    # Keep only one observation per household
+    res <- res[which(!duplicated(res[,hhId])),]
+    
+    # Drop all variables that are not at the household level
+    res <- res[,c(hhId, hhVars, weightVar)]
+    
+    return(res)
 }
 
 #' Generate one strata variable from multiple factors
