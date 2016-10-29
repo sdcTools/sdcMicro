@@ -1,17 +1,59 @@
 # UI-Output for exporting the report
+output$ui_export_report_btn <- renderUI({
+  req(input$rb_simple_report, input$report_path)
+  if (!dir.exists(input$report_path)) {
+    return(myActionButton("myRepDownload_xxx", "Error: The specified directory does not exist!", btn.style="danger"))
+  }
+  if (file.access(input$report_path, mode=2)!=0) {
+    return(myActionButton("myRepDownload_xxx", "Error: The specified directory is not writeable!", btn.style="danger"))
+  }
+  return(myActionButton("myRepDownload", "Save the report", btn.style="primary"))
+})
+
 output$ui_export_report <- renderUI({
   rb1 <- radioButtons("rb_simple_report", strong("Type of Report"),
     choices=c("internal (detailed)"="internal", "external (short overview)"="external"),
     inline=TRUE, selected=input$rb_simple_report)
-  db <- downloadButton('downloadReport', 'Download the Report')
+  pp <- textInput("report_path", label=h5("Enter a directory where you want to write the file to"),
+    placeholder=paste("e.g:",getwd()), width="75%", value=obj$report_path)
+  out <- fluidRow(
+    column(12, h4("Export the anonymization report"), align="center"))
 
-  fluidRow(
-    column(12, h4("Export the anonymization report"), align="center"),
+  if (!is.null(lastError())) {
+    out <- list(out, fluidRow(
+      column(12, h4("Trying to generate a report returned the following error!", align="center")),
+      column(12, verbatimTextOutput("ui_lasterror"))))
+  }
+  out <- list(out, fluidRow(
+    column(12, p("You can choose to create either an internal (detailed) or an external (non-detailed) report."), align="center")))
+
+  out <- list(out, fluidRow(
     column(12, rb1, align="center"),
-    column(12, db, align="center"))
+    column(12, pp, align="center"),
+    column(12, uiOutput("ui_export_report_btn"), align="center")))
+
+  if (!is.null(obj$lastreport)) {
+    out <- list(out, fluidRow(
+      column(12, tags$br(), p("Information: the last report you created was saved in", code(obj$lastreport)), align="center")))
+  }
+  out
+})
+
+observeEvent(input$report_path, {
+  obj$report_path <- input$report_path
 })
 
 # UI-Output for exporting the (anonymized) data
+output$ui_export_data_btn <- renderUI({
+  req(input$dat_exp_type, input$sel_export_randomizeorder, input$dataexport_path)
+  if (!dir.exists(input$dataexport_path)) {
+    return(myActionButton("btn_export_anon_data_xxx", "Error: The specified directory does not exist!", btn.style="danger"))
+  }
+  if (file.access(input$dataexport_path, mode=2)!=0) {
+    return(myActionButton("btn_export_anon_data_xxx", "Error: The specified directory is not writeable!", btn.style="danger"))
+  }
+  return(myActionButton("btn_export_anon_data", "Save the anonymized dataset", btn.style="primary"))
+})
 output$ui_export_data <- renderUI({
   output$dt_exportData <- DT::renderDataTable({
     exportData()
@@ -35,19 +77,25 @@ output$ui_export_data <- renderUI({
     txt <- list("The file will be written using", code("write_dta()"), "from package", code("haven"),".")
     fluidRow(column(12, p(txt, align="center")))
   })
-
   rb_exptype <- radioButtons("dat_exp_type", label=NULL,
     choices=c("R-Dataset"="rdata","SPSS-File"="sav",
       "Comma-seperated File"="csv", "STATA-File"="dta"),
     selected=input$dat_exp_type, width="100%", inline=TRUE)
 
   out <- fluidRow(
-    column(12, h4("Export the anonymized microdata"), align="center"),
+    column(12, h4("Export the anonymized microdata"), align="center"))
+
+  if (!is.null(lastError())) {
+    out <- list(out, fluidRow(
+      column(12, h4("Trying to export the anonymized data resulted in the following error!", align="center")),
+      column(12, verbatimTextOutput("ui_lasterror"))))
+  }
+  out <- list(out, fluidRow(
     column(12, strong("Analyze the data", align="center")),
     column(12, dataTableOutput("dt_exportData")),
     column(12, strong("Select file-format", align="center")),
     column(12, rb_exptype, align="center")
-  )
+  ))
 
   if (!is.null(input$dat_exp_type)) {
     if (input$dat_exp_type == "csv") {
@@ -78,75 +126,32 @@ output$ui_export_data <- renderUI({
       sel_randomize
     })
     help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
-
+    pp <- textInput("dataexport_path", label=h5("Enter a directory in which you want to save the anonymized file"),
+        placeholder=paste("e.g:",getwd()), width="75%", value=obj$dataexport_path)
     out <- list(out, fluidRow(
-      column(12, uiOutput("sel_randomize_export"), align="center"),
-      column(12, help_randomize, align="center")
+      column(6, uiOutput("sel_randomize_export"), align="center"),
+      column(6, pp, align="center")))
+    out <- list(out, fluidRow(
+      column(6, help_randomize, align="center"),
+      column(6, NULL, align="center")
     ))
+    out <- list(out, fluidRow(column(12, uiOutput("ui_export_data_btn"), align="center")))
 
-    db <- downloadButton('downloadData', 'Download the anonymized dataset')
-    out <- list(out, fluidRow(column(12, db, align="center")))
+    if (!is.null(obj$lastdataexport)) {
+      out <- list(out, fluidRow(
+        column(12, tags$br(), p("Information: the last data you have exported was saved as", code(obj$lastdataexport)), align="center")))
+    }
   }
   out
 })
 
+# update reactive variable
+observeEvent(input$dataexport_path, {
+  obj$dataexport_path <- input$dataexport_path
+})
+
 # UI-Output for Tab 'Export Data'
 output$ui_export_main <- renderUI({
-  output$downloadData <- downloadHandler(
-    filename=function() {
-      paste0("anon_data_",format(Sys.time(), "%Y%m%d_%H%M"),".",input$dat_exp_type)
-    },
-    content=function(file) {
-      type <- input$dat_exp_type
-      cmd <- paste0("writeSafeFile(obj=sdcObj, format=",shQuote(type), ", randomizeRecords=",shQuote(input$sel_export_randomizeorder))
-      cmd <- paste0(cmd, ", fileOut=",shQuote(file))
-
-      dat <- exportData()
-      if (type=="rdata") {
-        save(dat, file=file)
-      }
-      if (type=="sav") {
-        write_sav(data=dat, path=file)
-      }
-      if (type=="dta") {
-        write_dta(data=dat, path=file)
-      }
-      if (type=="csv") {
-        write.table(dat, file=file, col.names=as.logical(input$export_csv_header),
-          sep=input$export_csv_sep, dec=input$export_csv_dec)
-        cmd <- paste0(cmd, ", col.names=",as.logical(input$export_csv_header))
-        cmd <- paste0(cmd, ", sep=",shQuote(input$export_csv_sep))
-        cmd <- paste0(cmd, ", dec=",shQuote(input$export_csv_dec))
-      }
-      cmd <- paste0("## export anonymized data file\n",cmd,")\n")
-      #cmd <- paste0("## return anonymized microdata\nextractManipData(sdcObj, randomizeRecords=",shQuote(input$sel_export_randomizeorder),")")
-      obj$code_anonymize <- c(obj$code_anonymize, cmd)
-    }
-  )
-  output$downloadReport <- downloadHandler(
-    filename=function() {
-      paste0("report_",format(Sys.time(), "%Y%m%d_%H%M"),".html")
-    },
-    content=function(file) {
-      internal <- ifelse(input$rb_simple_report=="internal", TRUE, FALSE)
-      pout <- getwd()
-      if (internal) {
-        tmpF <- paste0("sdcReport_internal_",format(Sys.time(), "%Y%m%d_%H%M"))
-      } else {
-        tmpF <- paste0("sdcReport_external_",format(Sys.time(), "%Y%m%d_%H%M"))
-      }
-      curObj <- sdcObj()
-      report(curObj, outdir=pout, filename=tmpF, title="SDC-Report", internal=internal)
-
-      file.copy(paste0(pout,"/",tmpF,".html"), file)
-
-      cmd <- paste0("report(sdcObj, outdir=",shQuote(pout),", filename=",shQuote(tmpF), ", title=",shQuote("SDC-Report"))
-      cmd <- paste0(cmd, ", internal=",internal,")")
-      cmd <- paste0("## Create Report\n",cmd,"\n")
-      obj$code_anonymize <- c(obj$code_anonymize, cmd)
-    }
-  )
-
   out <- NULL
   if (is.null(sdcObj())) {
     return(list(out, noSdcProblem(uri="ui_export_data")))
@@ -178,4 +183,3 @@ output$ui_export <- renderUI({
     column(2, uiOutput("ui_export_sidebar_left")),
     column(10, uiOutput("ui_export_main"))))
 })
-

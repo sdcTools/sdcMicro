@@ -548,6 +548,32 @@ shinyServer(function(session, input, output) {
     obj$anon_performed <- head(obj$anon_performed, -1)
     cmd
   })
+
+  # create an sdc report
+  code_report <- reactive({
+    input$myRepDownload # required for timestamp!
+    internal <- ifelse(input$rb_simple_report=="internal", TRUE, FALSE)
+    if (internal) {
+      tmpF <- paste0("sdcReport_internal",format(Sys.time(), "%Y%m%d_%H%M"))
+    } else {
+      tmpF <- paste0("sdcReport_external",format(Sys.time(), "%Y%m%d_%H%M"))
+    }
+    cmd <- paste0("report(obj=sdcObj, outdir=",dQuote(input$report_path),", filename=",dQuote(tmpF),', title="SDC-Report", internal=',internal,")")
+    attributes(cmd)$evalAsIs <- TRUE
+    return(list(cmd=cmd, path=input$report_path, fout=tmpF))
+  })
+
+  # export/save the anonymized file
+  code_export_anondata <- reactive({
+    input$btn_export_anon_data # required for timestamp!
+    fout <- paste0("exportedData_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".",input$dat_exp_type)
+    fout <- file.path(input$dataexport_path, fout)
+    cmd <- paste0("writeSafeFile(obj=sdcObj, format=",dQuote(input$dat_exp_type), ", randomizeRecords=",dQuote(input$sel_export_randomizeorder))
+    cmd <- paste0(cmd,", fileOut=",dQuote(fout),")\n")
+    attributes(cmd)$evalAsIs <- TRUE
+    return(list(cmd=cmd, path=input$dataexport_path, fout=fout))
+    cmd
+  })
   ### END CODE GENERATION EXPRESSIONS ####
 
   ### EVENTS ###
@@ -619,6 +645,7 @@ shinyServer(function(session, input, output) {
     updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
     updateNavbarPage(session, "mainnav", selected="Anonymize")
   })
+
   # export data
   observeEvent(input$b_export, {
     ptm <- proc.time()
@@ -708,7 +735,6 @@ shinyServer(function(session, input, output) {
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
-
   # add ghost-vars to an existing sdcMicroObj
   observeEvent(input$btn_addGhostVars, {
     ptm <- proc.time()
@@ -755,7 +781,6 @@ shinyServer(function(session, input, output) {
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
-
   # reset the inputdata by setting obj$inputdata to NULL
   observeEvent(input$btn_reset_inputdata1, {
     obj$reset_inputdata1 <- 1
@@ -904,6 +929,7 @@ shinyServer(function(session, input, output) {
   })
 
   ### anonymization methods (numerical) ###
+  # topBotCoding()
   observeEvent(input$btn_topbotcoding_num, {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
@@ -913,7 +939,6 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=res$cmd, comment="## Performing top/bottom-coding")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-
     if (is.null(lastError())) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
@@ -922,7 +947,6 @@ shinyServer(function(session, input, output) {
     #updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     #updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
-
   # microaggregation()
   observeEvent(input$btn_microagg, {
     # Create a Progress object and close it on exit
@@ -1013,6 +1037,26 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
   })
+
+  # create sdc-report
+  observeEvent(input$myRepDownload, {
+    ptm <- proc.time()
+    res <- code_report()
+    runEvalStr(cmd=res$cmd, comment="## creating a sdc-report")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
+    obj$lastreport <- paste0(file.path(res$path, res$fout),".html")
+  })
+
+  observeEvent(input$btn_export_anon_data, {
+    ptm <- proc.time()
+    res <- code_export_anondata()
+    runEvalStr(cmd=res$cmd, comment="## export anonymized data file and save to disk")
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
+    obj$lastdataexport <- paste0(file.path(res$path, res$fout))
+  })
+
 
   ## reproducibility ##
   #observeEvent(input$btn_exportProblem, {
