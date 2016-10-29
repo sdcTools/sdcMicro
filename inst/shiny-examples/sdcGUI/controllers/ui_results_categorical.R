@@ -308,46 +308,45 @@ output$ui_catvar2 <- renderUI({
   }
   selectInput("sel_catvar2",label="Variable 2", choices=kv, selected=sel, width="100%")
 })
-output$ui_show_orig_or_modified <- renderUI({
-  cc <- c("original data"="orig", "modified data"="modified")
-  radioButtons("rb_orig_or_modified",label=h5("What do you want to use?"),
-    choices=cc, selected=input$rb_orig_or_modified, width="100%", inline=TRUE)
-})
 
 # mosaicplot of one or two categorical key-variables
 output$ui_rescat_mosaicplot <- renderUI({
   output$ui_mosaic_selection <- renderUI({
     fluidRow(
-      column(4, uiOutput("ui_catvar1")),
-      column(4, uiOutput("ui_catvar2")),
-      column(4, uiOutput("ui_show_orig_or_modified")))
+      column(6, uiOutput("ui_catvar1"), align="center"),
+      column(6, uiOutput("ui_catvar2"), align="center"))
   })
-  output$mosaicplot <- renderPlot({
-    if (is.null(input$sel_catvar1)) {
-      return(NULL)
-    }
-    if (is.null(input$rb_orig_or_modified)) {
-      return(NULL)
-    }
-    if (input$rb_orig_or_modified=="orig") {
-      df <- get_origData()
-    } else {
-      df <- get_manipKeyVars()
-    }
+  output$mosaicplot_o <- renderPlot({
+    req(input$sel_catvar1)
+    df <- get_origData()
     vars <- c(input$sel_catvar1, input$sel_catvar2)
-
     if (input$sel_catvar2=="none") {
       barplot(table(df[[vars[1]]]))
     } else {
       n <- length(unique(df[[vars[1]]]))
       cols <- colorRampPalette(c("#DADFE1", "#1E824C"), alpha=TRUE)(n)
-      mosaicplot(as.formula(paste("~",paste(vars,collapse="+"),sep="")),data=df,main="", color=cols)
+      mosaicplot(as.formula(paste("~",paste(vars,collapse="+"),sep="")), data=df, main="", color=cols)
+    }
+  })
+  output$mosaicplot_m <- renderPlot({
+    req(input$sel_catvar1)
+    df <- get_manipKeyVars()
+    vars <- c(input$sel_catvar1, input$sel_catvar2)
+    if (input$sel_catvar2=="none") {
+      barplot(table(df[[vars[1]]]))
+    } else {
+      n <- length(unique(df[[vars[1]]]))
+      cols <- colorRampPalette(c("#DADFE1", "#1E824C"), alpha=TRUE)(n)
+      mosaicplot(as.formula(paste("~",paste(vars,collapse="+"),sep="")), data=df, main="", color=cols)
     }
   })
   out <- list(
+    fluidRow(column(12, h4("Graphical representation of original and modified data"), align="center")),
     uiOutput("ui_mosaic_selection"),
-    uiOutput("ui_mosaic_result"),
-    fluidRow(column(12, plotOutput("mosaicplot", height="600px"))))
+    fluidRow(column(12, h4("Original data"), align="center")),
+    fluidRow(column(12, plotOutput("mosaicplot_o", height="600px"))),
+    fluidRow(column(12, h4("Modified data"), align="center")),
+    fluidRow(column(12, plotOutput("mosaicplot_m", height="600px"))))
   out
 })
 
@@ -355,30 +354,50 @@ output$ui_rescat_mosaicplot <- renderUI({
 output$ui_bivariate_tab <- renderUI({
   output$ui_biv_selection <- renderUI({
     fluidRow(
-      column(4, uiOutput("ui_catvar1")),
-      column(4, uiOutput("ui_catvar2")),
-      column(4, uiOutput("ui_show_orig_or_modified")))
+      column(6, uiOutput("ui_catvar1"), align="center"),
+      column(6, uiOutput("ui_catvar2"), align="center"))
   })
-  output$biv_tab <- renderTable({
-    if (is.null(input$sel_catvar1)) {
-      return(NULL)
-    }
-    if (is.null(input$rb_orig_or_modified)) {
-      return(NULL)
-    }
-    if (input$rb_orig_or_modified=="orig") {
-      df <- get_origData()
-    } else {
-      df <- get_manipKeyVars()
-    }
+  output$biv_tab_o <- renderTable({
+    req(input$sel_catvar1)
+    df <- get_origData()
     vars <- c(input$sel_catvar1, input$sel_catvar2)
     if (vars[2]=="none") {
-      tab <- addmargins(table(df[[vars[1]]]))
+      tab <- addmargins(table(df[[vars[1]]], useNA="always"))
     } else {
-      tab <- addmargins(table(df[[vars[1]]], df[[vars[2]]]))
+      tab <- addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA="always"))
     }
+    tab <- as.data.frame.table(tab)
+    tab$Freq <- as.integer(tab$Freq)
+    if (ncol(tab)==2) {
+      colnames(tab) <- c(vars[1], "Freq")
+    } else {
+      colnames(tab) <- c(vars, "Freq")
+    }
+    tab
+  })
+  output$biv_tab_m <- renderTable({
+    req(input$sel_catvar1)
+    df <- get_manipKeyVars()
+    vars <- c(input$sel_catvar1, input$sel_catvar2)
+    if (vars[2]=="none") {
+      tab <- addmargins(table(df[[vars[1]]], useNA="always"))
+    } else {
+      tab <- addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA="always"))
+    }
+    tab <- as.data.frame.table(tab)
+    tab$Freq <- as.integer(tab$Freq)
+    if (ncol(tab)==2) {
+      colnames(tab) <- c(vars[1], "Freq")
+    } else {
+      colnames(tab) <- c(vars, "Freq")
+    }
+    tab
   })
   return(list(
+    fluidRow(column(12, h4("Tabular representation of original and modified data"), align="center")),
     uiOutput("ui_biv_selection"),
-    fluidRow(column(12, div(tableOutput("biv_tab"), align="center")))))
+    fluidRow(column(12, h4("Original data"), align="center")),
+    fluidRow(column(12, div(tableOutput("biv_tab_o"), align="center"))),
+    fluidRow(column(12, h4("Modified data"), align="center")),
+    fluidRow(column(12, div(tableOutput("biv_tab_m"), align="center")))))
 })
