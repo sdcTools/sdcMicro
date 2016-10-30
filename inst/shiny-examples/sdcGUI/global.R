@@ -5,6 +5,7 @@ library(sdcMicro)
 library(rhandsontable)
 library(haven)
 library(DT)
+library(shinyBS)
 # required that 'dQuote()' works nicely when
 # outputting R-Code
 options(useFancyQuotes=FALSE)
