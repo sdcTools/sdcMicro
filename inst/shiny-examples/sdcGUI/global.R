@@ -312,14 +312,14 @@ obj <- reactiveValues() # we work with this data!
 #obj$v2 <- as.factor(sample(letters[1:8], 100, replace=TRUE))
 #testdata$myfac <- factor(sample(1:100, nrow(testdata), replace=TRUE))
 
-testdata$urbrur <-  as.numeric(testdata$urbrur)
+#testdata$urbrur <-  as.numeric(testdata$urbrur)
 
-obj$inputdata <- obj$inputdataB <- testdata
-#obj$inputdata <- NULL
-#obj$sdcObj <- NULL
-obj$sdcObj <- createSdcObj(testdata,
-  keyVars=c('urbrur','roof','walls','water'),
-  numVars=c('expend','income','savings'), strataVar="sex", w='sampling_weight')
+#obj$inputdata <- obj$inputdataB <- testdata
+obj$inputdata <- NULL
+obj$sdcObj <- NULL
+#obj$sdcObj <- createSdcObj(testdata,
+#  keyVars=c('urbrur','roof','walls','water'),
+#  numVars=c('expend','income','savings'), strataVar="sex", w='sampling_weight')
 obj$code_read_and_modify <- c()
 obj$code_setup <- c()
 obj$code_anonymize <- c()
