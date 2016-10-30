@@ -35,6 +35,11 @@ output$ui_export_report <- renderUI({
   if (!is.null(obj$lastreport)) {
     out <- list(out, fluidRow(
       column(12, tags$br(), p("Information: the last report you created was saved in", code(obj$lastreport)), align="center")))
+    if (!rmarkdown::pandoc_available()) {
+      out <- list(out, fluidRow(
+      column(12, tags$br(), p("Note: The report was saved as a simple html-file with no stylesheet attached,
+        because no current installation of",code(dQuote(pandoc)),"could be found."), align="center")))
+    }
   }
   out
 })
