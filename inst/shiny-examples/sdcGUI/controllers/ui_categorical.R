@@ -10,10 +10,9 @@ output$ui_recode <- renderUI({
 
   # current factor-levels
   curRecFacVals <- reactive({
-    if (is.null(input$sel_recfac) ) {
-      return(NULL)
-    }
-    if (is.null(sdcObj())) {
+    req(input$sel_recfac)
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
       return(NULL)
     }
     ff <- get_manipKeyVars()[[input$sel_recfac]]
@@ -24,7 +23,7 @@ output$ui_recode <- renderUI({
 
   # plot of current factor
   output$plot_facRec <- renderPlot({
-    if ( is.null(input$sel_recfac) ) {
+    if (is.null(input$sel_recfac)) {
       return(NULL)
     }
     df <- table(get_manipKeyVars()[[input$sel_recfac]], useNA="always")
@@ -34,32 +33,36 @@ output$ui_recode <- renderUI({
     barplot(df)
   })
 
-  # current categorical key variables
-  kv <- get_keyVars_names()
-  # we always have at least one categorical key-variable!
-  selfac1 <- selectInput("sel_recfac",label=NULL,
-    choices=kv, selected=input$sel_recfac, width="100%")
-  cbgr <- selectInput("cbg_recfac",label=NULL, multiple=TRUE, selectize = FALSE,
-    choices=curRecFacVals(), selected=input$cbg_recfac, width="100%")
-  if (is.null(input$cbg_recfac)) {
-    btnUp <- NULL
-    txtval <- NULL
-  } else {
-    btnUp <- myActionButton("btn_update_recfac",label="Update key variable", "primary")
+  output$recfac_selfac1 <- renderUI({
+    # current categorical key variables
+    kv <- get_keyVars_names()
+    # we always have at least one categorical key-variable!
+    selfac1 <- selectInput("sel_recfac",label=NULL, choices=kv, selected=input$sel_recfac, width="100%")
+    selfac1
+  })
+  output$recfac_cbgr <- renderUI({
+    cbgr <- selectInput("cbg_recfac",label=NULL, multiple=TRUE, selectize=FALSE,
+      choices=curRecFacVals(), selected=input$cbg_recfac, width="100%")
+  })
+  output$recfac_btn <- renderUI({
+    req(input$cbg_recfac)
+    myActionButton("btn_update_recfac",label="Update key variable", "primary")
+  })
+  output$recfac_txtval <- renderUI({
+    req(input$cbg_recfac)
     txtval <- textInput("inp_newlevname_rec",label=NULL,
       value=paste0(input$cbg_recfac, collapse="_"), width="100%")
-  }
-
+  })
   out <- list(out, fluidRow(
     column(4, h5("Choose factor variable", align="center")),
     column(4, h5("Select levels to recode/combine", align="center")),
     column(4, h5("New label for recoded values", align="center"))))
   out <- list(out, fluidRow(
-    column(4, selfac1),
-    column(4, cbgr),
-    column(4, txtval)))
+    column(4, uiOutput("recfac_selfac1")),
+    column(4, uiOutput("recfac_cbgr")),
+    column(4, uiOutput("recfac_txtval"))))
   out <- list(out, fluidRow(
-    column(12, p(btnUp, align="center")),
+    column(12, uiOutput("recfac_btn"), align="center"),
     column(12, plotOutput("plot_facRec"))))
   out
 })
