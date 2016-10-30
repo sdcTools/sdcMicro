@@ -114,10 +114,11 @@ output$ui_microaggregation <- renderUI({
     ))
   })
 
-  output$ui_microagg_strata <- ui_custom_selectInput(
-    choices=c("Use existing stratification-variable"="usedefault",
-              "Do not use any stratification variable"="none",possStrataVars()),
-    id="sel_microagg_strata", label="Stratification variable", multiple=FALSE)
+  # stratification variable for PRAM
+  output$ui_microagg_strata <- renderUI({
+    selectInput("sel_microagg_strata", label=h5("Do you want to apply the method for each group defined by the selected variable?"),
+        choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%", selected=input$sel_microagg_strata)
+  })
 
   rb_clbased <- radioButtons("rb_microagg_cluster", label=h5("Do you want to use a cluster-based method?"),
     choices=c("No","Yes"), selected=input$rb_microagg_cluster, inline=TRUE, width="100%")

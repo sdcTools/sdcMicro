@@ -304,7 +304,6 @@ sdcData <- reactive({
     Pram=shinyInput(checkboxInput, length(vars), paste0("setup_pram_",vv,"_"), value=FALSE, width="20px"),
     Weight=shinyInput(checkboxInput, length(vars), paste0("setup_weight_",vv,"_"), value=FALSE, width="20px"),
     "Cluster ID"=shinyInput(checkboxInput, length(vars), paste0("setup_cluster_",vv,"_"), value=FALSE, width="20px"),
-    Strata=shinyInput(checkboxInput, length(vars), paste0("setup_strata_",vv,"_"), value=FALSE, width="20px"),
     Remove=shinyInput(checkboxInput, length(vars), paste0("setup_remove_",vv,"_"), value=FALSE, width="20px")
   )
   df$nrCodes <- sapply(inputdata, function(x) { length(unique(x))} )
@@ -320,7 +319,7 @@ output$setupTable <- DT::renderDataTable({
 options = list(
   searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE, autoWidth=FALSE,
   columnDefs=list(list(width='160px', targets = c(0:2))),
-  columnDefs=list(list(width='25px', targets=c(3:9))),
+  columnDefs=list(list(width='25px', targets=c(3:8))),
   preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
   drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
 ))
@@ -344,7 +343,6 @@ output$setupbtn <- renderUI({
   useAsWeight <- shinyValue(paste0("setup_weight_",vv,"_"), n)
   useAsClusterID <- shinyValue(paste0("setup_cluster_",vv,"_"), n)
   deleteVariable <- shinyValue(paste0("setup_remove_",vv,"_"), n)
-  useAsStrata <- shinyValue(paste0("setup_strata_",vv,"_"), n)
 
   ## key-variables
   # no categorical key variable
@@ -421,9 +419,6 @@ output$setupbtn <- renderUI({
     }
     if (any(useAsClusterID[ii]==TRUE)) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the cluster-id variable"))
-    }
-    if (any(useAsStrata[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be strata variables"))
     }
   }
   btn <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")

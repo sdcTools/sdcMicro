@@ -92,10 +92,19 @@ allVars <- reactive({
   cn
 })
 
+# all variables in the sdcProblem (after variables have been possibly deleted)
+allVarsP <- reactive({
+  colnames(get_origData())
+})
+
 dataTypes <- reactive({
-  cn <- colnames(obj[["inputdata"]])
-  cl <- sapply(1:ncol(obj$inputdata), function(x) {
-    class(obj$inputdata[[x]])
+  inputdata <- inputdata()
+  if (is.null(inputdata)) {
+    return(NULL)
+  }
+  cn <- colnames(inputdata)
+  cl <- sapply(1:ncol(inputdata), function(x) {
+    class(inputdata[[x]])
   })
   cl
 })
@@ -181,6 +190,11 @@ get_strataVar_names <- reactive({
   return(colnames(get_origData())[sv])
 })
 
+# all possible stratification variables
+poss_strataVarP <- reactive({
+  setdiff(allVarsP(), c(get_keyVars_names(), get_weightVar_name(), get_pramVars_names(), get_numVars_names()))
+})
+
 # original data
 get_origData <- reactive({
   if (is.null(sdcObj())) {
@@ -227,22 +241,6 @@ possvars_numericmethods <- reactive({
     return(NULL)
   }
   get_numVars_names()
-
-  # all numeric variables
-  #numVars <- get_allNumericVars_name()
-
-  # sampling weights should never be microaggregated
-  #tmp <- get.sdcMicroObj(obj$sdcObj, type="origData")
-  #kV <- get.sdcMicroObj(obj$sdcObj, type="keyVars")
-  #wV <- get.sdcMicroObj(obj$sdcObj, type="weightVar")
-  #hhId <- get.sdcMicroObj(obj$sdcObj, type="hhId")
-  #strataVar <- get.sdcMicroObj(obj$sdcObj, type="strataVar")
-  #ghostVars <- get.sdcMicroObj(obj$sdcObj, type="ghostVars")
-  #ghostVars <- unlist(lapply(ghostVars, function(x) {
-  #  x[[2]]
-  #}))
-  #non_poss <- c(kV,wV,hhId,strataVar,ghostVars)
-  #setdiff(numVars, c(names(tmp)[non_poss]))
 })
 
 # returns list with choices for possible variables while setting up the sdcProblem

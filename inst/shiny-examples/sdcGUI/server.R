@@ -205,6 +205,14 @@ shinyServer(function(session, input, output) {
 
   # code for expert pram-application
   code_pram_expert <- reactive({
+    if (input$pram_strataV!="no stratification") {
+      res <- code_reset_strata(new_strataV=input$pram_strataV, ex_strataV=NULL)
+      cmd_strata1 <- res$cmd1
+      cmd_strata2 <- res$cmd2
+    } else {
+      cmd_strata1 <- cmd_strata2 <- NA
+    }
+
     v <- as.vector(as.matrix(obj$transmat))
     rn <- rownames(obj$transmat)
     matstr <- VecToRStr(v, quoted=FALSE)
@@ -213,22 +221,38 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd,"sdcObj <- pram(sdcObj, variables=",dQuote(input$sel_pramvars),", pd=mat)")
 
     txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars), " with invariant transition matrix (see above)\n")
-    return(list(cmd=cmd, txt_action=txt_action))
+    return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
   # code for non-expert pram-application
   code_pram_nonexpert <- reactive({
+    if (input$pram_strataV!="no stratification") {
+      res <- code_reset_strata(new_strataV=input$pram_strataV, ex_strataV=NULL)
+      cmd_strata1 <- res$cmd1
+      cmd_strata2 <- res$cmd2
+    } else {
+      cmd_strata1 <- cmd_strata2 <- NA
+    }
+
     cmd <- paste0("sdcObj <- pram(sdcObj, variables=",VecToRStr(input$sel_pramvars, quoted=TRUE))
     cmd <- paste0(cmd,", pd=",input$sl_pd)
     cmd <- paste0(cmd,", alpha=",input$sl_alpha,")")
 
     txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars), " with invariant transition matrix (see above)")
     txt_action <- paste0(txt_action, " (parameters pd=", input$sl_pd," and alpha=", input$sl_alpha,")\n")
-    return(list(cmd=cmd, txt_action=txt_action))
+    return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
   # code for k-Anonymity
   code_kAnon <- reactive({
+    if (input$kanon_strataV!="no stratification") {
+      res <- code_reset_strata(new_strataV=input$kanon_strataV, ex_strataV=NULL)
+      cmd_strata1 <- res$cmd1
+      cmd_strata2 <- res$cmd2
+    } else {
+      cmd_strata1 <- cmd_strata2 <- NA
+    }
+
     cmd <- paste0("sdcObj <- kAnon(sdcObj")
     if (kAnon_useImportance()) {
       cur_importance <- kAnon_impvec()
@@ -252,7 +276,7 @@ shinyServer(function(session, input, output) {
       txt_action <- paste0("Establishing ",k,"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[as.numeric(cur_importance)]),")")
     }
     cmd <- paste0(cmd, ", k=",VecToRStr(k, quoted=FALSE),")")
-    return(list(cmd=cmd, txt_action=txt_action))
+    return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
   # code to group or a key variable (factor)
@@ -300,7 +324,6 @@ shinyServer(function(session, input, output) {
     useAsWeight <- shinyValue(paste0("setup_weight_",vv,"_"), nc)
     useAsClusterID <- shinyValue(paste0("setup_cluster_",vv,"_"), nc)
     deleteVariable <- shinyValue(paste0("setup_remove_",vv,"_"), nc)
-    useAsStrata <- shinyValue(paste0("setup_strata_",vv,"_"), nc)
 
     ind_kv <- which(useAsKey=="Cat.")
     kV <- vars[ind_kv]
@@ -357,19 +380,7 @@ shinyServer(function(session, input, output) {
     }
 
     # create stratification variable if more than 1 variable is listed!
-    ind_s <- which(useAsStrata==TRUE)
-    if (length(ind_s)==0) {
-      strataVar <- NULL
-    } else if (length(ind_s)==1) {
-      strataVar <- vars[ind_s]
-    } else {
-      strataVar <- paste0(vars[ind_s], collapse="_")
-      cmd_genStrata <- paste0("inputdata <- generateStrata(df=inputdata")
-      cmd_genStrata <- paste0(cmd_genStrata, ", stratavars=",VecToRStr(vars[ind_s], quoted=TRUE))
-      cmd_genStrata <- paste0(cmd_genStrata,", name=",dQuote(strataVar),")")
-      cmd_out$create_strata <- cmd_genStrata
-    }
-
+    strataVar <- NULL
     cmd <- paste0("obj$sdcObj <- createSdcObj(dat=obj$inputdata,")
     cmd <- paste0(cmd, "\n\tkeyVars=",VecToRStr(kV, quoted=TRUE))
     if (!is.null(nV)) {
@@ -426,15 +437,12 @@ shinyServer(function(session, input, output) {
   code_microaggregation <- reactive({
     m_method <- input$sel_microagg_method
     cmd <- NULL
-    cmd_reset_strata <- list(cmd1=NA, cmd2=NA)
-    if (input$sel_microagg_strata!="usedefault") {
-      exStrata <- get_strataVar_names()
-      if (input$sel_microagg_strata=="none") {
-        cmd_reset_strata <- code_reset_strata(new_strataV=NULL, ex_strataV=exStrata)
-      } else {
-        cmd_reset_strata <- code_reset_strata(new_strataV=input$sel_microagg_strata,
-          ex_strataV=exStrata)
-      }
+    if (input$sel_microagg_strata!="no stratification") {
+      res <- code_reset_strata(new_strataV=input$sel_microagg_strata, ex_strataV=NULL)
+      cmd_strata1 <- res$cmd1
+      cmd_strata2 <- res$cmd2
+    } else {
+      cmd_strata1 <- cmd_strata2 <- NA
     }
     cmd <- paste0("sdcObj <- microaggregation(obj=sdcObj")
     if (is.null(input$sel_microagg_v)) {
@@ -466,7 +474,7 @@ shinyServer(function(session, input, output) {
       cmd <- paste0(cmd, ", nc=",input$sl_microagg_nc)
     }
     cmd <- paste0(cmd,")")
-    return(list(cmd=cmd, txt_action=txt_action, cmd_reset_strata=cmd_reset_strata))
+    return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
   # code for microaggregation()
@@ -853,7 +861,21 @@ shinyServer(function(session, input, output) {
     progress$set(message="performing pram() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     res <- code_pram_expert()
-    runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a transition matrix)")
+
+    # temporarily set strata-variable
+    if (!is.na(res$cmd_strata1)) {
+      cmd1 <- res$cmd_strata1
+      attributes(cmd1)$evalAsIs <- TRUE
+      runEvalStr(cmd=cmd1, comment="## set stratification variable")
+    }
+    if (is.null(lastError())) {
+      runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a transition matrix)")
+      cmd2 <- res$cmd_strata2
+      if (!is.na(cmd2)) {
+        attributes(cmd2)$evalAsIs <- TRUE
+        runEvalStr(cmd=cmd2, comment="## reset stratification variable")
+      }
+    }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing pram() (this might take a long time)...", value = 1)
@@ -861,10 +883,7 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
-
     updateRadioButtons(session, "rb_expert_pram", choices=c(FALSE, TRUE), inline=TRUE)
-    #updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    #updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # pram() with parameters 'pd' and 'alpha'
   observeEvent(input$btn_pram_nonexpert, {
@@ -873,7 +892,20 @@ shinyServer(function(session, input, output) {
     progress$set(message="performing pram() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     res <- code_pram_nonexpert()
-    runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
+    # temporarily set strata-variable
+    if (!is.na(res$cmd_strata1)) {
+      cmd1 <- res$cmd_strata1
+      attributes(cmd1)$evalAsIs <- TRUE
+      runEvalStr(cmd=cmd1, comment="## set stratification variable")
+    }
+    if (is.null(lastError())) {
+      runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
+      cmd2 <- res$cmd_strata2
+      if (!is.na(cmd2)) {
+        attributes(cmd2)$evalAsIs <- TRUE
+        runEvalStr(cmd=cmd2, comment="## reset stratification variable")
+      }
+    }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing pram() (this might take a long time)...", value = 1)
@@ -882,8 +914,6 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
-    #updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    #updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # kAnon()
   observeEvent(input$btn_kanon, {
@@ -892,7 +922,20 @@ shinyServer(function(session, input, output) {
     progress$set(message="performing kAnon() (this might take a long time)...", value = 0)
     ptm <- proc.time()
     res <- code_kAnon()
-    runEvalStr(cmd=res$cmd, comment="## Local suppression to obtain k-anonymity")
+    # temporarily set strata-variable
+    if (!is.na(res$cmd_strata1)) {
+      cmd1 <- res$cmd_strata1
+      attributes(cmd1)$evalAsIs <- TRUE
+      runEvalStr(cmd=cmd1, comment="## set stratification variable")
+    }
+    if (is.null(lastError())) {
+      runEvalStr(cmd=res$cmd, comment="## Local suppression to obtain k-anonymity")
+      cmd2 <- res$cmd_strata2
+      if (!is.na(cmd2)) {
+        attributes(cmd2)$evalAsIs <- TRUE
+        runEvalStr(cmd=cmd2, comment="## reset stratification variable")
+      }
+    }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing kAnon() (this might take a long time)...", value = 1)
@@ -954,30 +997,27 @@ shinyServer(function(session, input, output) {
     on.exit(progress$close())
     progress$set(message="performing Microaggregation (this might take a long time)...", value = 0)
     ptm <- proc.time()
-    complete_cmd <- code_microaggregation()
-    cmd <- complete_cmd$cmd
-    cmd_reset1 <- complete_cmd$cmd_reset_strata$cmd1
-    cmd_reset2 <- complete_cmd$cmd_reset_strata$cmd2
-
-    # temporarily reset strata-variable
-    if (!is.na(cmd_reset1)) {
-      attributes(cmd_reset1)$evalAsIs <- TRUE
-      runEvalStr(cmd=cmd_reset1, comment="## Temporarily reset Stratification variable")
+    res <- code_microaggregation()
+    # temporarily set strata-variable
+    if (!is.na(res$cmd_strata1)) {
+      cmd1 <- res$cmd_strata1
+      attributes(cmd1)$evalAsIs <- TRUE
+      runEvalStr(cmd=cmd1, comment="## set stratification variable")
     }
     if (is.null(lastError())) {
-      runEvalStr(cmd=cmd, comment="## Microaggregation")
-      # reset strata-variable back to original
-      if (!is.na(cmd_reset2)) {
-        attributes(cmd_reset2)$evalAsIs <- TRUE
-        runEvalStr(cmd=cmd_reset2, comment="## Reset Stratification variable")
+      runEvalStr(cmd=res$cmd, comment="## Microaggregation")
+      cmd2 <- res$cmd_strata2
+      if (!is.na(cmd2)) {
+        attributes(cmd2)$evalAsIs <- TRUE
+        runEvalStr(cmd=cmd2, comment="## reset stratification variable")
       }
     }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing Microaggregation (this might take a long time)...", value = 1)
     if (is.null(lastError())) {
-      obj$lastaction <- complete_cmd$txt_action
-      obj$anon_performed <- c(obj$anon_performed, complete_cmd$txt_action)
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")

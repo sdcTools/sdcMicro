@@ -100,6 +100,14 @@ output$ui_pram <- renderUI({
     m
   })
 
+  # stratification variable for PRAM
+  output$pram_strata <- renderUI({
+    req(input$sel_pramvars)
+
+    selectInput("pram_strataV", label=h5("Do you want to apply the method for each group defined by the selected variable?"),
+      choices=c("no stratification", setdiff(poss_strataVarP(), input$sel_pramvars)), multiple=FALSE, width="50%")
+  })
+
   output$ui_pram_params <- renderUI({
     curObj <- sdcObj()
     if (is.null(curObj)) {
@@ -149,6 +157,10 @@ output$ui_pram <- renderUI({
       requirement is that all row sums of the specified matrix sum up to 1!", align="center")),
       column(12, p("Please also note that if you have specified a stratification variable when creating the",code("sdcMicroObj"),"postrandomization
       is performed independently on all data-subsets specified by the stratification variable!", align="center"))))
+
+    out <- list(out, fluidRow(
+      column(12, uiOutput("pram_strata"), align="center")
+    ))
 
     out <- list(out, fluidRow(
       column(6, rb_expert, align="center"),
@@ -380,6 +392,11 @@ output$ui_kAnon <- renderUI({
     return(fluidRow(column(12, btn, align="center")))
   })
 
+  output$kanon_strata <- renderUI({
+    selectInput("kanon_strataV", label=h5("Do you want to apply the method for each group defined by the selected variable?"),
+      choices=c("no stratification", poss_strataVarP()), multiple=FALSE)
+  })
+
   out <- fluidRow(
     column(12, h4("Establish k-anonymity", align="center")),
     column(12, p("k-Anonymity will be established by suppressing or rather setting to",code(NA),"some values in the categorical key variables.
@@ -391,6 +408,8 @@ output$ui_kAnon <- renderUI({
     column(12, p("Please also note that if you have specified a stratification variable when creating the",code("sdcMicroObj"),"k-anonymity is established
       for all the data-subsets specified by the stratification variable!", align="center"))
   )
+
+  out <- list(out, fluidRow(column(12, uiOutput("kanon_strata"), align="center")))
 
   rb1 <- radioButtons(inputId="rb_show_importance", label=h5(paste("Do you want to modify importance of key-variables for suppression?")),
     selected=input$rb_show_importance, width="100%", inline=TRUE, choices=c("No", "Yes"))
