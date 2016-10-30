@@ -31,7 +31,7 @@ output$ui_sdcObj_summary <- renderUI({
     }
     if (length(x$strataVar)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Numerical key variables", lapply(x$strataVar, function(x) {code(x)})), align="center")))
+        column(12, list("Stratification variable", lapply(x$strataVar, function(x) {code(x)})), align="center")))
     }
     if (length(x$householdId)>0) {
       out <- list(out, fluidRow(
