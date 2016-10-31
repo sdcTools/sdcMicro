@@ -109,10 +109,10 @@ output$ui_sdcObj_summary <- renderUI({
     riskyobs <- x[[1]]$riskyObs
     out <- fluidRow(
       column(12, h4("Risk-measures for categorical variables"), align="center"),
-      column(12, p("We expect",code(as.integer(reident$mod)),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population. In the original
-        data, we expected to have",code(as.integer(reident$orig)),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
-      column(12, p("Currently there are",code(as.integer(riskyobs$mod)),"observations that have a higher risk that the main part of the data. In the
-        original data this number was",code(as.integer(riskyobs$orig)),"."), align="center"))
+      column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population. In the original
+        data, we expected to have",code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
+      column(12, p("Currently there are",code(riskyobs$mod),"observations that have a higher risk that the main part of the data. In the
+        original data this number was",code(riskyobs$orig),"."), align="center"))
     out
   })
   output$show_info_risk <- renderUI({
