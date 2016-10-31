@@ -30,8 +30,10 @@ output$ui_about <- renderUI({
       column(12, p("Link to GUI-Tutorial"), align="center"),
       column(12, p("If you already have an sdcProblem that was exported from the GUI, you can upload it in Tab",code("Reproducibility"),"."), align="center")
   ))
+
+  btn1 <- bsButton("help_about", label="", icon=icon("question"), style = "primary", size="extra-small", type="action", block = FALSE, disabled = FALSE, value = FALSE)
   out <- list(out, fluidRow(
-    column(12, actionButton("help_about", "", icon=icon("question")), align="center"),
+    column(12, btn1, align="center"),
     bsTooltip("help_about", title="show some additional information", placement="bottom", trigger="hover", options = NULL)
   ))
   out
