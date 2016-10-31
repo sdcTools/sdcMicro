@@ -582,6 +582,16 @@ shinyServer(function(session, input, output) {
     return(list(cmd=cmd, path=input$dataexport_path, fout=fout))
     cmd
   })
+
+  code_export_sdcproblem <- reactive({
+    input$btn_exportProblem # required for timestamp!
+    fout <- paste0("sdcProblem_GUI_export",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
+    fout <- file.path(input$path_export_problem, fout)
+    cmd <- paste0("save(prob, file=",dQuote(fout), ", compress=TRUE)")
+    attributes(cmd)$evalAsIs <- TRUE
+    return(list(cmd=cmd, path=input$path_export_problem, fout=fout))
+    cmd
+  })
   ### END CODE GENERATION EXPRESSIONS ####
 
   ### EVENTS ###
@@ -1094,9 +1104,24 @@ shinyServer(function(session, input, output) {
     runEvalStr(cmd=res$cmd, comment="## export anonymized data file and save to disk")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    obj$lastdataexport <- paste0(file.path(res$path, res$fout))
+    obj$lastdataexport <- res$fout
   })
 
+  observeEvent(input$btn_exportProblem, {
+    ptm <- proc.time()
+    res <- code_export_sdcproblem()
+    prob <- reactiveValuesToList(obj, all.names=FALSE)
+    class(prob) <- "sdcMicro_GUI_export"
+    erg <- try(eval(parse(text=res$cmd)))
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
+    if (class(erg)!="try-error") {
+      obj$lastproblemexport <- res$fout
+      obj$last_error <- NULL
+    } else {
+      obj$last_error <- erg
+    }
+  })
 
   ## reproducibility ##
   #observeEvent(input$btn_exportProblem, {

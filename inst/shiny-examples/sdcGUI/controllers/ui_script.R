@@ -26,24 +26,44 @@ output$ui_script_view <- renderUI({
 })
 
 # GUI-output to export script
-output$ui_script_export <- renderUI({
-  db <- downloadButton('exportProblem', 'Download current sdcProblem (and code) to disk')
-  fluidRow(
-    column(12, h4("Export an existing sdcProblem", align="center")),
-    column(12, p("You can now download all relevant data and code for later re-use by clicking the button below.", align="center")),
-    column(12, p(db, align="center")))
+output$exportProblem_btn <- renderUI({
+  req(input$path_export_problem)
+  if (!dir.exists(input$path_export_problem)) {
+    return(myActionButton("btn_exportProblem_xxx", "Error: The specified directory does not exist!", btn.style="danger"))
+  }
+  if (file.access(input$path_export_problem, mode=2)!=0) {
+    return(myActionButton("btn_exportProblem_xxx", "Error: The specified directory is not writeable!", btn.style="danger"))
+  }
+  return(myActionButton("btn_exportProblem", "Save the current problem", btn.style="primary"))
 })
 
-output$exportProblem <- downloadHandler(
-  filename=function() {
-    paste0("sdcProblem_GUI_export",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
-  },
-  content=function(file) {
-    prob <- reactiveValuesToList(obj, all.names=FALSE)
-    class(prob) <- "sdcMicro_GUI_export"
-    save(prob, file=file, compress=TRUE)
+observeEvent(input$report_path, {
+  obj$path_export_problem <- input$path_export_problem
+})
+output$ui_script_export <- renderUI({
+  pp <- textInput("path_export_problem", label=h5("Enter a directory where you want to write the file to"),
+    placeholder=paste("e.g:",getwd()), width="75%", value=obj$path_export_problem)
+
+  out <- fluidRow(column(12, h4("Export an existing sdcProblem", align="center")))
+
+  if (!is.null(lastError())) {
+    out <- list(out, fluidRow(
+      column(12, h4("Trying to export the current problem instance resulted in the following error!", align="center")),
+      column(12, verbatimTextOutput("ui_lasterror"))))
   }
-)
+
+  out <- list(out, fluidRow(
+    column(12, p("You can save all relevant data and code for later re-use by clicking the button below.", align="center")),
+    column(12, p("Note: This feature is GUI-only and cannot be reproduced from the command-line version.", align="center")),
+    column(12, pp, align="center"),
+    column(12, uiOutput("exportProblem_btn"), align="center")))
+
+  if (!is.null(obj$lastproblemexport)) {
+    out <- list(out, fluidRow(
+      column(12, tags$br(), p("Information: the last data you have exported was saved as", code(obj$lastproblemexport)), align="center")))
+  }
+  out
+})
 
 # GUI-output to import previously saved sdcProblem
 output$ui_script_import <- renderUI({

@@ -312,13 +312,13 @@ obj <- reactiveValues() # we work with this data!
 #obj$v2 <- as.factor(sample(letters[1:8], 100, replace=TRUE))
 #testdata$myfac <- factor(sample(1:100, nrow(testdata), replace=TRUE))
 
-#testdata$urbrur <-  as.numeric(testdata$urbrur)
+testdata$urbrur <-  as.numeric(testdata$urbrur)
 
-#obj$inputdata <- obj$inputdataB <- testdata
-obj$inputdata <- NULL
+obj$inputdata <- obj$inputdataB <- testdata
+#obj$inputdata <- NULL
 obj$sdcObj <- NULL
 #obj$sdcObj <- createSdcObj(testdata,
-#  keyVars=c('urbrur','roof','walls','water'),
+#  keyVars=c('roof','walls','water'),
 #  numVars=c('expend','income','savings'), strataVar="sex", w='sampling_weight')
 obj$code_read_and_modify <- c()
 obj$code_setup <- c()
@@ -340,3 +340,8 @@ obj$report_path <- NULL # required for text-input in export sdcReport
 obj$lastreport <- NULL # required to show the last saved report
 obj$dataexport_path <- NULL # required for text-input in export anonymized file
 obj$lastdataexport <- NULL # required to show the last saved exported data
+obj$path_export_problem <- NULL # required for text-input in export sdcProblem
+obj$lastproblemexport <- NULL # required to show the last exported sdcproblem
+
+obj$path_export_problem1 <- NULL # required for text-input in export sdcProblem
+obj$lastproblemexport1 <- NULL # required to show the last exported sdcproblem
