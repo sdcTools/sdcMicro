@@ -331,7 +331,7 @@ NULL
 #' @name testdata
 #' @aliases testdata testdata2
 #' @docType data
-#' @format A data frame with 4580 observations on the following 14 variables.
+#' @format A data frame with 4580 observations on the following 15 variables.
 #' \describe{
 #' \item{urbrur}{a numeric vector}
 #' \item{roof}{a numeric vector}
@@ -346,7 +346,8 @@ NULL
 #' \item{income}{a numeric vector}
 #' \item{savings}{a numeric vector}
 #' \item{ori_hid}{a numeric vector}
-#' \item{sampling_weight}{a numeric vector}}
+#' \item{sampling_weight}{a numeric vector}
+#' \item{household_weights}{a numeric vector}}
 #' A data frame with 93 observations on the following 19 variables.
 #' \describe{
 #' \item{urbrur}{a numeric vector}
