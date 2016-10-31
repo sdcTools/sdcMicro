@@ -102,7 +102,12 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("res <- importProblem(path=",dQuote(normalizePath(file_importProblem$datapath,winslash = "/")),")")
     cmd
   })
-
+  # code to import previously saved sdcProblem
+  code_import_problem1 <- reactive({
+    file_importProblem <- fixUploadedFilesNames(input$file_importProblem1)
+    cmd <- paste0("res <- importProblem(path=",dQuote(normalizePath(file_importProblem$datapath,winslash = "/")),")")
+    cmd
+  })
   # code to reset variables in the input data set
   code_resetmicrovar <- reactive({
     cmd <- paste0("inputdata[, ",VecToRStr(input$sel_reset_microvars, quoted=TRUE),"] <- inputdataB[,",VecToRStr(input$sel_reset_microvars, quoted=TRUE),"]")
@@ -582,7 +587,7 @@ shinyServer(function(session, input, output) {
     return(list(cmd=cmd, path=input$dataexport_path, fout=fout))
     cmd
   })
-
+  # for use in reproducibility-page
   code_export_sdcproblem <- reactive({
     input$btn_exportProblem # required for timestamp!
     fout <- paste0("sdcProblem_GUI_export",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
@@ -590,6 +595,16 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("save(prob, file=",dQuote(fout), ", compress=TRUE)")
     attributes(cmd)$evalAsIs <- TRUE
     return(list(cmd=cmd, path=input$path_export_problem, fout=fout))
+    cmd
+  })
+  # for use in undo-page
+  code_export_sdcproblem1 <- reactive({
+    input$btn_exportProblem1 # required for timestamp!
+    fout <- paste0("sdcProblem_GUI_export",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
+    fout <- file.path(input$path_export_problem1, fout)
+    cmd <- paste0("save(prob, file=",dQuote(fout), ", compress=TRUE)")
+    attributes(cmd)$evalAsIs <- TRUE
+    return(list(cmd=cmd, path=input$path_export_problem1, fout=fout))
     cmd
   })
   ### END CODE GENERATION EXPRESSIONS ####
@@ -820,6 +835,13 @@ shinyServer(function(session, input, output) {
     obj$comptime <- obj$comptime+ptm[3]
   })
   observeEvent(input$btn_reset_inputerror2, {
+    ptm <- proc.time()
+    obj$last_error <- NULL
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
+  })
+
+  observeEvent(input$btn_reset_inputerror3, {
     ptm <- proc.time()
     obj$last_error <- NULL
     ptm <- proc.time()-ptm
@@ -1123,6 +1145,22 @@ shinyServer(function(session, input, output) {
     }
   })
 
+  observeEvent(input$btn_exportProblem1, {
+    ptm <- proc.time()
+    res <- code_export_sdcproblem1()
+    prob <- reactiveValuesToList(obj, all.names=FALSE)
+    class(prob) <- "sdcMicro_GUI_export"
+    erg <- try(eval(parse(text=res$cmd)))
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
+    if (class(erg)!="try-error") {
+      obj$lastproblemexport1 <- res$fout
+      obj$last_error <- NULL
+    } else {
+      obj$last_error <- erg
+    }
+  })
+
   ## reproducibility ##
   #observeEvent(input$btn_exportProblem, {
   #cat(paste("'btn_exportProblem' was clicked",input$btn_exportProblem,"times..!\n"))
@@ -1150,18 +1188,33 @@ shinyServer(function(session, input, output) {
         updateNavbarPage(session, "mainnav", selected="Reproducibility")
         #return(NULL)
       } else {
+        for (nn in names(res)) {
+          obj[[nn]] <- res[[nn]]
+        }
         obj$last_error <- NULL
-        obj$inputdata <- res$inputdata
-        obj$last_warning <- res$last_warning
-        obj$code <- res$code
-        obj$sdcObj <- res$sdcObj
-        obj$code_anonymize <- res$code_anonymize
-        obj$transmat <- res$transmat
-        obj$inputdataB <- res$inputdataB
-        obj$code_read_and_modify <- res$code_read_and_modify
+        updateNavbarPage(session, "mainnav", selected="Anonymize")
+      }
+    }
+  })
+
+  # for use in undo-page
+  observeEvent(input$file_importProblem1, {
+    ptm <- proc.time()
+    code <- code_import_problem1()
+    eval(parse(text=code))
+    if ("simpleError" %in% class(res)) {
+      obj$last_error <- res$message
+      updateNavbarPage(session, "mainnav", selected="Undo")
+    } else {
+      if (!"sdcMicro_GUI_export" %in% class(res)) {
+        obj$last_error <- "data read into the system was not of class 'sdcMicro_GUI_export'"
+        updateNavbarPage(session, "mainnav", selected="Undo")
+      } else {
+        for (nn in names(res)) {
+          obj[[nn]] <- res[[nn]]
+        }
+        obj$last_error <- NULL
         rm(res)
-        ptm <- proc.time()-ptm
-        obj$comptime <- obj$comptime+ptm[3]
         updateNavbarPage(session, "mainnav", selected="Anonymize")
       }
     }
