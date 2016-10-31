@@ -345,3 +345,6 @@ obj$path_export_problem <- NULL # required for text-input in export sdcProblem
 obj$lastproblemexport <- NULL # required to show the last exported sdcproblem
 obj$path_export_problem1 <- NULL # required for text-input in export sdcProblem (undo-page)
 obj$lastproblemexport1 <- NULL # required to show the last exported sdcproblem (undo-page)
+obj$hhdata <- NULL # household-file data required for merging
+obj$hhdata_applied <- FALSE # TRUE, if mergeHouseholdData() has been applied
+obj$hhdata_selected <- FALSE # TRUE, if selectHouseholdData() has been applied

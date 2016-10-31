@@ -2,106 +2,89 @@
 #'
 #' It removes individual level variables and selects one record per household based on a household ID. The function can also be used for other hierachical structures.
 #'
+#' @note It is of great importance that users select a variable with containing information on household-ids and weights in \code{hhVars}.
+#'
 #' @param dat a data.frame with the full dataset
 #' @param hhId name of the variable with the household (cluster) ID
 #' @param hhVars character vector with names of all household level variables
-#' @param weightVarHH name of the variable with the sampling weights at the household level
 #' @return a data.frame with only household level variables and one record per household
-#' @author Thijs Benschop
+#' @author Thijs Benschop and Bernhard Meindl
 #' @export
-#'
 #' @examples
-#'
-#' x <- testdata
-#' x_hh <- selectHouseholdData(x, "ori_hid", c("urbrur", "roof",  "walls", "water", "electcon", "household_weights"), weightVarHH = "household_weights")
-#'
-selectHouseholdData <- function(dat, hhId, hhVars, weightVarHH = NULL) {
+#' ## ori-hid: household-ids; household_weights: sampling weights for households
+#' x_hh <- selectHouseholdData(dat=testdata, hhId="ori_hid",
+#'   hhVars=c("urbrur", "roof",  "walls", "water", "electcon", "household_weights"))
+selectHouseholdData <- function(dat, hhId, hhVars) {
   # Check whether specified variables are available in the data
-  if (any(!(hhVars %in% colnames(dat))))
-    stop("Some selected household variables aren't available in the data. \n Respecify hhVars.")
-  if (!(hhId %in% colnames(dat)))
-    stop("The selected household ID isn't available in the data. \n Respecify hhId")
-  if (!is.null(weightVarHH))
-    if (!(weightVarHH %in% colnames(dat)))
-      stop("The selected weight variable isn't available in the data. \n Respecify weightVarHH")
- 
-  # Check whether weightVarHH is also in hhVars, if so remove from hhVars
-  if (!is.null(weightVarHH))
-    if (weightVarHH %in% hhVars)
-      hhVars <- hhVars[-which(hhVars == weightVarHH)]
-   
+  if (!all(hhVars %in% colnames(dat))) {
+    stop("Some selected household variables aren't available in the data.\nRespecify hhVars\n")
+  }
+  if (!hhId %in% colnames(dat)) {
+    stop("The selected household ID isn't available in the data.\nRespecify hhId\n")
+  }
   # Remove any records with missing household ID (these cannot be matched later on in the process)
   res <- dat[complete.cases(dat[,hhId]), ]
- 
-  # Check whether weightVarHH differs across households
-  if (!is.null(weightVarHH))
-    if (!all(sapply(res[,hhId], FUN = function(x) {length(unique(res[res[,hhId] == x, weightVarHH])) == 1}), na.rm = T))
-      stop("The weights in the specified weight variable vary within households. Please specify a true houshold weight.")
- 
+
   # Keep only one observation per household
   res <- res[which(!duplicated(res[,hhId])),]
- 
+
   # Drop all variables that are not at the household level
-  res <- res[,c(hhId, hhVars, weightVarHH)]
- 
-  return(res)
+  res <- res[,c(hhId, hhVars), drop=FALSE]
+  invisible(res)
 }
 
-#' Replaces the raw household-level data with the anonymized household-level data in the ful dataset
+#' Replaces the raw household-level data with the anonymized household-level data in the full dataset
 #' for anonymization of data with a household structure (or other hierarchical structure).
-#' Requires a mathing household ID in both files.
+#' Requires a matching household ID in both files.
 #'
 #' @param dat a data.frame with the full dataset
 #' @param hhId name of the household (cluster) ID (identical in both datasets)
-#' @param dathh a dataframe with the treated householod level data
+#' @param dathh a dataframe with the treated household level data (generated for example with \link{selectHouseholdData})
 #' @return a data.frame with the treated household level variables and the raw individual level variables
-#' @author Thijs Benschop
+#' @author Thijs Benschop and Bernhard Meindl
 #' @export
-#'
 #' @examples
-#'
-#' # Load data
+#' ## Load data
 #' x <- testdata
-#' # Create household level dataset
-#' x_hh <- selectHouseholdData(x, "ori_hid", c("urbrur", "roof",  "walls", "water", "electcon", "household_weights"), weightVarHH = "household_weights")
-#' # Anonymize household level dataset and extract data
+#' ## Create household level dataset
+#' x_hh <- selectHouseholdData(dat=x, hhId="ori_hid",
+#'   hhVars=c("urbrur", "roof",  "walls", "water", "electcon", "household_weights"))
+#' ## Anonymize household level dataset and extract data
 #' sdc_hh <- createSdcObj(x_hh, keyVars=c('urbrur','roof'), w='household_weights')
 #' sdc_hh <- kAnon(sdc_hh, k = 3)
 #' x_hh_anon <- extractManipData(sdc_hh)
 #'
-#' # Merge anonymized household level data back into the full dataset
+#' ## Merge anonymized household level data back into the full dataset
 #' x_anonhh <- mergeHouseholdData(x, "ori_hid", x_hh_anon)
 #'
-#' # Anonymize full dataset and extract data
+#' ## Anonymize full dataset and extract data
 #' sdc_full <- createSdcObj(x_anonhh, keyVars=c('sex', 'age', 'urbrur', 'roof'), w='sampling_weight')
 #' sdc_full <- kAnon(sdc_full, k = 3)
 #' x_full_anon <- extractManipData(sdc_full)
-#'
 mergeHouseholdData <- function(dat, hhId, dathh) {
   # Check whether household ID is available in both datasets
   if (!(hhId %in% colnames(dathh)))
-    stop("The selected household ID isn't available in the anonymized household data. \n Respecify hhId")
+    stop("The selected household ID isn't available in the anonymized household data.\nRespecify hhId")
   if (!(hhId %in% colnames(dat)))
-    stop("The selected household ID isn't available in the full dataset. \n Respecify hhId")
- 
+    stop("The selected household ID isn't available in the full dataset.\nRespecify hhId")
+
   # Drop all variables from the untreated dataset that are in the household level dataset except the household ID and the weight variable
   # The weights from the household level file aren't exported because they either are contained in the complete dataset or generated and can
   # therefore be generated by the user.
   toBeDropped <- colnames(dathh)
   toBeDropped <- toBeDropped[-which(toBeDropped %in% hhId)]
 
-  res <- dat[,-which(colnames(dat) %in% toBeDropped)]
- 
+  res <- dat[,-which(colnames(dat) %in% toBeDropped), drop=FALSE]
+
   # Merge the individual level and household level files by the household ID
   # Individuals without matching household ID in dathh are kept and have all missings for the household level variables
   res <- merge(res, dathh, by = hhId, all.x = TRUE)
- 
+
   # Move hhId to first column
   res <- res[,c(hhId, colnames(res)[-which(colnames(res) %in% hhId)])]
- 
-  return(res)
+  invisible(res)
 }
-    
+
 #' Generate one strata variable from multiple factors
 #'
 #' For strata defined by multiple variables (e.g. sex,age,country) one combined

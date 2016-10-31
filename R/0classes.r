@@ -262,6 +262,7 @@
 #' @importFrom 'graphics' 'segments'
 #' @importFrom 'graphics' 'strwidth'
 #' @importFrom 'graphics' 'text'
+#' @importFrom 'stats' 'complete.cases'
 #' @importFrom 'stats' 'as.formula'
 #' @importFrom 'stats' 'biplot'
 #' @importFrom 'stats' 'coef'

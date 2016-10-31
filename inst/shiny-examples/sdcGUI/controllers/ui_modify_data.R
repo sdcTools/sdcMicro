@@ -580,6 +580,132 @@ output$ui_sample_microdata <- renderUI({
   out
 })
 
+# UI-output to deal with hierarchical data (eg. households and individuals)
+
+output$ui_hierarchical_data_prep <- renderUI({
+  output$hier_data_prep_btn <- renderUI({
+    req(input$sel_hhvars)
+    if (length(input$sel_hhvars)<2) {
+      btn <- myActionButton("btn_hier_data_prep_xxx", label="Please select at least two variables, one of them being an household id", btn.style="danger")
+    } else {
+      btn <- myActionButton("btn_hier_data_prep", label="Create household-input data", btn.style="primary")
+    }
+    btn
+  })
+
+  if (obj$hhdata_selected==TRUE) {
+    return(
+      fluidRow(
+        column(12, h4("Note"), align="center"),
+        column(12, p("The current input data have already been modified to be used as household-level data."), align="center"),
+        column(12, p("If you want to work on individual-level data, you will have to delete the entire microdata file and start from scratch"), align="center")
+      ))
+  }
+
+  out <- list(
+    fluidRow(column(12, h4("Prepare household-level data"), align="center"))
+  )
+
+  if (!is.null(lastError())) {
+    out <- list(out, fluidRow(
+      column(12, h4("The following Error has occured!", align="center")),
+      column(12, code(lastError()), align="center")))
+  }
+
+  output$sel_hhvars_id <- renderUI({
+    sel1 <- selectInput("sel_hhvars_id", label=h5("Please a suitable household id variable"),
+      choices=allVars(), selected=input$sel_hhvars, multiple=FALSE, width="50%")
+  })
+  output$sel_hhvars <- renderUI({
+    req(input$sel_hhvars_id)
+    selectInput("sel_hhvars", label=h5("Please select all variables that refer to households and not to individuals"),
+      choices=setdiff(allVars(), input$sel_hhvars_id), selected=input$sel_hhvars, multiple=TRUE, width="50%")
+  })
+
+  out <- list(out, fluidRow(
+    column(6, uiOutput("sel_hhvars_id"), align="center"), column(6, uiOutput("sel_hhvars"), align="center"),
+    column(12, p("Do not forget to also select a variable containing household sampling weights (if available). When setting up an sdcProblem, it is important to
+      use correct sampling weights!"), align="center"),
+    column(12, uiOutput("hier_data_prep_btn"), align="center")
+  ))
+  out
+})
+
+observeEvent(input$sel_hhvars_id, {
+  updateSelectInput(session, inputId="sel_hhvars", choices = setdiff(allVars(), input$sel_hhvars_id), selected=setdiff(names(input$sel_hhvars), input$sel_hhvars_id))
+})
+observeEvent(input$sel_hhvars, {
+  updateSelectInput(session, inputId="sel_hhvars_id", choices = allVars(), selected=input$sel_hhvars_id)
+})
+
+
+output$ui_hierarchical_data_merge <- renderUI({
+  if (obj$hhdata_applied==TRUE) {
+    return(
+      fluidRow(
+        column(12, h4("Success"), align="center"),
+        column(12, p("Your original input data have already been enhanced with household-level data!"), align="center"),
+        column(12, p("To add another household-level dataset, you will have to delete the entire microdata file and start from scratch"), align="center")
+    ))
+  }
+
+  if (obj$hhdata_selected==TRUE) {
+    return(
+      fluidRow(
+        column(12, h4("Note"), align="center"),
+        column(12, p("The current input data have been modified to be used as household-level data.
+          It is therefore not possible, to merge additional household-level data to the current inputdata."), align="center"),
+            column(12, p("To do so, you will have to delete the entire microdata file and start from scratch"), align="center")
+      ))
+  }
+
+  out <- list(
+  fluidRow(column(12, h4("Merge Data"), align="center")))
+
+  if (!is.null(lastError())) {
+    out <- list(out, fluidRow(
+      column(12, h4("The following Error has occured!", align="center")),
+      column(12, code(lastError()), align="center")))
+  }
+  if (!is.null(obj$hhdata)) {
+    sel1 <- selectInput("sel_hhid_hhdata", label=h5("Select a variable containing household ids"), choices=intersect(colnames(obj$hhdata), colnames(inputdata())),
+      selected=input$sel_hhid_hhdata)
+    btn <- myActionButton("btn_merge_hhdata", label="Merge household- and individual level data", btn.style="primary")
+    out <- list(out, fluidRow(
+      column(12, p("You can reset the uploaded data by clicking the button below."), align="center"),
+      column(12, myActionButton("reset_hhdata", label="Reset uploaded household-level data", btn.style="danger"), align="center"),
+      column(6, sel1, align="center"), column(6, btn, align="center")
+    ))
+  } else {
+    out <- list(out, fluidRow(
+      column(12, p("You can now read in an already exported, anonymized household-level file which you can merge to the individual-level microdata in the next step."), align="center"),
+      column(12, p("Note: the selected file file is loaded immediately. Set options before selecting the file."), align="center"),
+      column(12, fileInput("file_hhfile", h5(paste0("Select File (allowed types are '.rdata')")), width="50%", accept=".rdata"), align="center")))
+  }
+  out
+})
+
+output$ui_hierarchical_data <- renderUI({
+  rb1 <- radioButtons("rb_hierdata_selection", label=h5("What do you want to do?"),
+    choices=c("Prepare file for the anonymization of household level variables"="prep_data", "Merging an anonymized household level file"="merge_hhdata"),
+    selected=input$rb_hierdata_selection, inline=TRUE)
+
+  out <- list(
+    fluidRow(column(12, h4("Deal with hierarchical Data"), align="center")),
+    fluidRow(column(12, rb1, align="center"))
+  )
+
+  if (!is.null(input$rb_hierdata_selection)) {
+    if (input$rb_hierdata_selection=="prep_data") {
+      out <- list(out, uiOutput("ui_hierarchical_data_prep"))
+    }
+    if (input$rb_hierdata_selection=="merge_hhdata") {
+      out <- list(out, uiOutput("ui_hierarchical_data_merge"))
+    }
+  }
+  out
+})
+
 output$ui_modify_data_main <- renderUI({
   out <- NULL
   if (!is.null(input$sel_moddata)) {
@@ -610,6 +736,9 @@ output$ui_modify_data_main <- renderUI({
     if (input$sel_moddata=="createstratvar") {
       out <- list(out, uiOutput("ui_modify_create_stratvar"))
     }
+    if (input$sel_moddata=="deal_with_hierarchical_data") {
+      out <- list(out, uiOutput("ui_hierarchical_data"))
+    }
   }
   out
 })
@@ -625,7 +754,8 @@ output$ui_modify_data_sidebar_left <- renderUI({
       "Convert variables to numeric"="recode_to_numeric",
       "Modify an existing factor-variable"="modify_factor",
       "Create a stratification variable"="createstratvar",
-      "Set specific values in a variable to NA"="set_to_na")
+      "Set specific values in a variable to NA"="set_to_na",
+      "Hierarchical data"="deal_with_hierarchical_data")
     if (!is.null(sdcObj())) {
       cc <- cc[1:2]
     }
@@ -635,9 +765,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
   rb <- radioButtons("sel_moddata", label=h5("What do you want to do?"),
     choices=choices_modifications(),
     selected=input$sel_moddata, width="100%")
-  fluidRow(
-    column(12, p(rb, align="center"))
-  )
+  fluidRow(column(12, rb))
 })
 
 output$ui_modify_data <- renderUI({

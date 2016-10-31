@@ -96,6 +96,30 @@ shinyServer(function(session, input, output) {
     cmd
   })
 
+  # import household-file
+  code_importHHFile <- reactive({
+    file_hhfile <- fixUploadedFilesNames(input$file_hhfile)
+    cmd <- paste0("res <- readMicrodata(")
+    cmd <- paste0(cmd, "path=",dQuote(normalizePath(file_hhfile$datapath, winslash = "/")))
+    cmd <- paste0(cmd, ", type=",dQuote("R"))
+    cmd <- paste0(cmd, ", convertCharToFac=",FALSE)
+    cmd <- paste0(cmd, ", drop_all_missings=",FALSE)
+    cmd <- paste0(cmd,")")
+    cmd
+  })
+
+  # merge household-file
+  code_merge_hhdata  <- reactive({
+    cmd <- paste0("inputdata <- mergeHouseholdData(dat=obj$inputdata, hhId=",dQuote(input$sel_hhid_hhdata),", dathh=obj$hhdata)")
+    cmd
+  })
+
+  # prepare a household-level input file
+  code_prepare_hhdata <- reactive({
+    cmd <- paste0("inputdata <- selectHouseholdData(dat=obj$inputdata, hhId=",dQuote(input$sel_hhvars_id),", hhVars=",VecToRStr(input$sel_hhvars, quoted=TRUE),")")
+    cmd
+  })
+
   # code to import previously saved sdcProblem
   code_import_problem <- reactive({
     file_importProblem <- fixUploadedFilesNames(input$file_importProblem)
@@ -645,6 +669,67 @@ shinyServer(function(session, input, output) {
       obj$comptime <- obj$comptime+ptm[3]
     }
   })
+
+  # read a household-level-file
+  observeEvent(input$file_hhfile, {
+    cmd <- code_importHHFile()
+    res <- try(eval(parse(text=cmd)))
+    if (class(res)%in%"try-error") {
+      obj$last_error <- res
+      return(invisible(NULL))
+    }
+    if (class(res)!="data.frame") {
+      return(invisible(NULL))
+    }
+    if (length(intersect(colnames(res), colnames(obj$inputdata)))==0) {
+      obj$last_error <- "no variables overlap with current loaded microdata"
+      return(invisible(NULL))
+    }
+    obj$hhdata <- res
+    obj$last_error <- NULL
+
+    code_out <- gsub(input$file_hhfile$datapath, input$file_hhfile$name, cmd)
+    code_out <- gsub("res", "hhdata", code_out)
+    obj$code_read_and_modify <- c(obj$code_read_and_modify, "## read household-level data", code_out)
+    obj$sdcObj <- NULL # start fresh
+  })
+
+  # reset uploaded household-level data
+  observeEvent(input$reset_hhdata, {
+    obj$hhdata <- NULL
+    obj$last_error <- NULL
+    obj$code_read_and_modify <- c(obj$code_read_and_modify, "## deleting previously imported household dataset","rm(hhdata)")
+  })
+
+  # merge household and individual-level data
+  observeEvent(input$btn_merge_hhdata, {
+    cmd <- code_merge_hhdata()
+    res <- try(eval(parse(text=cmd)))
+    if (class(res)%in%"try-error") {
+      obj$last_error <- res
+      return(invisible(NULL))
+    }
+    obj$last_error <- NULL
+    obj$inputdata <- res # update inputdata
+    obj$hhdata_applied <- TRUE
+    obj$code_read_and_modify <- c(obj$code_read_and_modify, "## merging household- and individual level microdata",gsub("obj[$]", "", cmd))
+
+    # return to overview
+  })
+
+  observeEvent(input$btn_hier_data_prep, {
+    cmd <- code_prepare_hhdata()
+    res <- try(eval(parse(text=cmd)))
+    if (class(res)%in%"try-error") {
+      obj$last_error <- res
+      return(invisible(NULL))
+    }
+    obj$last_error <- NULL
+    obj$hhdata_selected <- TRUE
+    obj$inputdata <- res
+    obj$code_read_and_modify <- c(obj$code_read_and_modify, "## restricting input data to household-level data",gsub("obj[$]", "", cmd))
+  })
+
   # use existing data.frame from global environment
   observeEvent(input$btn_chooose_df, {
     ptm <- proc.time()
@@ -822,6 +907,9 @@ shinyServer(function(session, input, output) {
     #cat(paste("'btn_reset_inputdata' was clicked",input$btn_reset_inputdata,"times..!\n"))
     ptm <- proc.time()
     obj$inputdata <- NULL
+    obj$hhdata <- NULL
+    obj$hhdata_applied <- FALSE
+    obj$hhdata_selected <- FALSE
     obj$code_read_and_modify <- c()
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
@@ -1120,6 +1208,7 @@ shinyServer(function(session, input, output) {
     obj$lastreport <- paste0(file.path(res$path, res$fout),".html")
   })
 
+  # export the anonymized data
   observeEvent(input$btn_export_anon_data, {
     ptm <- proc.time()
     res <- code_export_anondata()
@@ -1129,6 +1218,7 @@ shinyServer(function(session, input, output) {
     obj$lastdataexport <- res$fout
   })
 
+  # export an sdcProblem (reproducibility page)
   observeEvent(input$btn_exportProblem, {
     ptm <- proc.time()
     res <- code_export_sdcproblem()
@@ -1145,6 +1235,7 @@ shinyServer(function(session, input, output) {
     }
   })
 
+  # export an sdcProblem (undo page)
   observeEvent(input$btn_exportProblem1, {
     ptm <- proc.time()
     res <- code_export_sdcproblem1()
@@ -1161,18 +1252,7 @@ shinyServer(function(session, input, output) {
     }
   })
 
-  ## reproducibility ##
-  #observeEvent(input$btn_exportProblem, {
-  #cat(paste("'btn_exportProblem' was clicked",input$btn_exportProblem,"times..!\n"))
-  #  ptm <- proc.time()
-  #  cmd <- code_undo()
-  #  runEvalStr(cmd=cmd, comment=NULL)
-  #  ptm <- proc.time()-ptm
-  #  obj$comptime <- obj$comptime+ptm[3]
-  #  updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
-  #  updateNavbarPage(session, "mainnav", selected="Anonymize")
-  #})
-
+  # import an sdcProblem (reproducibility page)
   observeEvent(input$file_importProblem, {
     ptm <- proc.time()
     code <- code_import_problem()
@@ -1197,7 +1277,7 @@ shinyServer(function(session, input, output) {
     }
   })
 
-  # for use in undo-page
+  # import an sdcProblem (undo page)
   observeEvent(input$file_importProblem1, {
     ptm <- proc.time()
     code <- code_import_problem1()
