@@ -14,7 +14,7 @@ observeEvent(input$path_export_problem1, {
 })
 output$ui_export_problem1 <- renderUI({
   pp <- textInput("path_export_problem1", label=h5("Enter a directory where you want to write the file to"),
-    placeholder=paste("e.g:",getwd()), width="75%", value=obj$path_export_problem)
+    placeholder=paste("e.g:",getwd()), width="50%", value=obj$path_export_problem)
 
   out <- fluidRow(column(12, h4("Export an existing sdcProblem", align="center")))
   if (!is.null(lastError())) {
@@ -50,8 +50,8 @@ output$ui_script_import1 <- renderUI({
   if (!is.null(sdcObj())) {
     out <- list(out, fluidRow(column(12, p("The file must be an",code(".rdata"),"File. Please note that uploading a previously saved problem, will overwrite any existing current sdcProblem-instance!", align="center"))))
   }
-  fI <- fileInput("file_importProblem1", strong("Select previously exported sdcProblem (.rdata)"), width="100%", accept=".rdata")
-  out <- list(out, fluidRow(column(12, p(fI, align="center"))))
+  fI <- fileInput("file_importProblem1", strong("Select previously exported sdcProblem (.rdata)"), width="50%", accept=".rdata")
+  out <- list(out, fluidRow(column(12, fI, align="center")))
   out
 })
 
