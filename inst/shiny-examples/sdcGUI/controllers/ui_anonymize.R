@@ -2,6 +2,7 @@
 choices_anon_manage <- function(){
   choices <- c(
     "Show Summary"="sdcObj_summary",
+    "Explore variables"="sdcObj_explore_variables",
     "Add 'Ghost'-Variables"="sdcObj_addghostvars",
     "Create new IDs"="sdcObj_randIds")
   return(choices)
@@ -118,6 +119,9 @@ output$ui_main_anon <- renderUI({
   ## sdcMicroObj-based
   if (input$sel_sdcresults=="sdcObj_summary") {
     return(uiOutput("ui_sdcObj_summary"))
+  }
+  if (input$sel_sdcresults=="sdcObj_explore_variables") {
+    return(uiOutput("ui_sdcObj_explorevars"))
   }
   if (input$sel_sdcresults=="sdcObj_addghostvars") {
     return(uiOutput("ui_sdcObj_addghostvars"))

@@ -336,12 +336,12 @@ obj$anon_performed <- NULL # what has been applied?
 obj$rbs <- obj$sls <- NULL
 obj$setupval_inc <- 0
 obj$inp_sel_viewvar1 <- NULL
+obj$inp_sel_anonvar1 <- NULL
 obj$report_path <- NULL # required for text-input in export sdcReport
 obj$lastreport <- NULL # required to show the last saved report
 obj$dataexport_path <- NULL # required for text-input in export anonymized file
 obj$lastdataexport <- NULL # required to show the last saved exported data
 obj$path_export_problem <- NULL # required for text-input in export sdcProblem
 obj$lastproblemexport <- NULL # required to show the last exported sdcproblem
-
-obj$path_export_problem1 <- NULL # required for text-input in export sdcProblem
-obj$lastproblemexport1 <- NULL # required to show the last exported sdcproblem
+obj$path_export_problem1 <- NULL # required for text-input in export sdcProblem (undo-page)
+obj$lastproblemexport1 <- NULL # required to show the last exported sdcproblem (undo-page)

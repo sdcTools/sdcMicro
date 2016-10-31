@@ -240,6 +240,177 @@ output$ui_sdcObj_summary <- renderUI({
   out
 })
 
+## explore current variables
+output$ui_sdcObj_explorevars <- renderUI({
+  output$ui_selanonvar1 <- renderUI({
+    selectInput("view_selanonvar1", choices=allVars(), label=h5("Choose a variable"), multiple=FALSE, selected=obj$inp_sel_anonvar1, width="100%")
+  })
+  # This is required so that usual changes of the dropdown-select are also reflected in the reactive variable obj$inp_sel_anonvar1
+  observeEvent(input$ui_selanonvar1, {
+    obj$inp_sel_anonvar1 <- input$ui_selanonvar1
+  })
+  output$ui_selanonvar2 <- renderUI({
+    selectInput("view_selanonvar2", choices=c("none", allVars()), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
+  })
+
+  observeEvent(input$view_selanonvar1, {
+    vv <- allVars()
+    ii <- which(input$view_selanonvar1==vv)
+    if (length(ii)>0) {
+      vv <- c("none",vv[-c(ii)])
+      updateSelectInput(session, inputId="view_selanonvar2", choices=vv, selected=input$view_selanonvar2)
+    }
+  })
+  observeEvent(input$view_selanonvar2, {
+    vv <- allVars()
+    ii <- which(input$view_selanonvar2==vv)
+    if (length(ii)>0) {
+      vv <- vv[-c(ii)]
+      updateSelectInput(session, inputId="view_selanonvar1", choices=vv, selected=input$view_selanonvar1)
+    }
+  })
+
+  output$view_summary_anon <- renderUI({
+    req(input$view_selanonvar1, input$view_selanonvar1)
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(NULL)
+    }
+    inputdata <- extractManipData(curObj, randomizeRecords="no")
+    v1 <- input$view_selanonvar1
+    v2 <- input$view_selanonvar2
+    if (is.null(v1)) {
+      return(NULL)
+    }
+
+    if (!is.null(v2) && v2!="none") {
+      df <- data.frame(inputdata[[v1]], inputdata[[v2]])
+      colnames(df) <- c(v1, v2)
+      cl1 <- class(df[[1]]) %in% c("factor", "character")
+      cl2 <- class(df[[2]]) %in% c("factor", "character")
+    } else {
+      df <- data.frame(inputdata[[v1]])
+      colnames(df) <- v1
+      cl1 <- class(df[[1]]) %in% c("factor", "character")
+    }
+    if (!is.null(v2) && v2=="none") {
+      if (cl1) {
+        res <- list(tab=summaryfn(inputdata[[v1]]))
+        colnames(res$tab) <- c(v1, "Frequency", "Percentage")
+      } else {
+        res <- list(tab=as.data.frame(t(summaryfn(inputdata[[v1]]))))
+      }
+    } else {
+      # 2 factors
+      if (cl1 & cl2) {
+        res <- list(tab=as.data.frame.table(addmargins(table(df[[1]], df[[2]], useNA="always"))), var=c(v1, v2))
+        colnames(res$tab) <- c(res$var, "Frequency")
+        res$tab$Frequency <- as.integer(res$tab$Frequency)
+        res$tab$Percentage <- formatC(100*(res$tab$Frequency/nrow(df)), format="f", digits=2)
+      } else if (cl1 & !cl2) {
+        res <- tapply(df[[2]], df[[1]], summaryfn)
+        res <- do.call("rbind", res)
+        bb <- data.frame(f=rownames(res))
+        colnames(bb) <- v1
+        res <- cbind(bb, res)
+        rownames(res) <- NULL
+        res <- list(tab=res)
+      } else if (!cl1 & cl2) {
+        res <- tapply(df[[1]], df[[2]], summaryfn)
+        res <- do.call("rbind", res)
+        bb <- data.frame(f=rownames(res))
+        colnames(bb) <- v2
+        res <- cbind(bb, res)
+        rownames(res) <- NULL
+        res <- list(tab=res)
+      } else {
+        # two numeric variables
+        tab1 <- as.data.frame(t(summaryfn(df[[1]])))
+        tab2 <- as.data.frame(t(summaryfn(df[[2]])))
+        vcor <- round(cor(df[[1]], df[[2]]),3)
+        res <- list(vars=c(v1,v2),tab1=tab1, tab2=tab2, vcor=vcor)
+      }
+    }
+
+    out <- NULL
+    if (is.null(res$tab1)) {
+      out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), align="center")))
+    } else {
+      out <- list(out, fluidRow(
+        column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))), align="center")),
+        column(12, h5(HTML(paste("Summary of Variable",code(res$vars[1]))), align="center")),
+        column(12, renderTable(res$tab1, include.rownames=FALSE), align="center"),
+        column(12, h5(HTML(paste("Summary of Variable",code(res$vars[2]))), align="center")),
+        column(12, renderTable(res$tab2, include.rownames=FALSE), align="center")))
+    }
+
+    nainfo <- data.frame(variable=c(v1, v2))
+    nainfo$nr_na <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
+    nainfo$perc_na <- formatC(100*(nainfo$nr_na/nrow(df)), format="f", digits=2)
+    out <- list(out,
+      fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.", align="center")))
+    if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
+      out <- list(out,
+        fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.", align="center")))
+    }
+    out
+  })
+  output$view_plot_anon <- renderPlot({
+    req(input$view_selanonvar1, input$view_selanonvar2)
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(NULL)
+    }
+    inputdata <- extractManipData(curObj, randomizeRecords="no")
+    vv1 <- inputdata[[input$view_selanonvar1]]
+    if (input$view_selanonvar2=="none") {
+      if (is.factor(vv1) | is.character(vv1)) {
+        tt <- table(vv1, useNA="always")
+        names(tt)[length(tt)] <- "NA"
+        barplot(tt, col="#DADFE1")
+      } else {
+        hist(vv1, main=NULL, xlab=input$view_selanonvar1, col="#DADFE1")
+      }
+    } else {
+      vv2 <- inputdata[[input$view_selanonvar2]]
+      cl1 <- class(vv1) %in% c("factor", "character")
+      cl2 <- class(vv2) %in% c("factor", "character")
+      df <- data.frame(vv1, vv2)
+      vars <-  c(input$view_selanonvar1, input$view_selanonvar2)
+      colnames(df) <- vars
+      if (cl1 & cl2) {
+        n <- length(unique(df[[vars[1]]]))
+        cols <- colorRampPalette(c("#DADFE1", "#1E824C"), alpha=TRUE)(n)
+        mosaicplot(as.formula(paste("~",paste(vars,collapse="+"),sep="")),data=df,main="", color=cols)
+      } else if (cl1 & !cl2) {
+        boxplot(df[[2]]~df[[1]], xlab=vars[1], ylab=vars[2], col="#DADFE1")
+      } else if (!cl1 & cl2) {
+        boxplot(df[[1]]~df[[2]], xlab=vars[2], ylab=vars[1], col="#DADFE1")
+      } else {
+        plot(df, xlab=vars[1], ylab=vars[2])
+      }
+    }
+  })
+
+  if (!is.null(lastError())) {
+    return(fluidRow(
+      column(12, h4("The following Error has occured!", align="center")),
+      column(12, code(lastError()))))
+  }
+
+  out <- fluidRow(column(12, h4("Analyze existing variables in current sdc Problem", align="center")))
+  out <- list(out, fluidRow(
+    column(6, uiOutput("ui_selanonvar1")),
+    column(6, uiOutput("ui_selanonvar2"))))
+
+  out <- list(out, fluidRow(
+    column(12, plotOutput("view_plot_anon", height="500px"))
+  ))
+  out <- list(out, uiOutput("view_summary_anon"))
+  out
+})
+
+
 ## add Ghost-Vars
 output$ui_sdcObj_addghostvars <- renderUI({
   btn_ghosts <- myActionButton("btn_addGhostVars",label=("add 'Ghost'-variables"), "primary", css.class="btn-xs")
@@ -287,7 +458,6 @@ output$ui_sdcObj_randIds <- renderUI({
   ))
   out
 })
-
 
 sdcData <- reactive({
   inputdata <- inputdata()
