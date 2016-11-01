@@ -31,7 +31,7 @@ output$ui_topbotcoding_num <- renderUI({
   output$ui_topbot_params_num <- renderUI({
     sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), selected=obj$inp_sel_topbot_var_num, multiple=FALSE, label="Select variable")
     sel_kind <- selectInput("sel_topbot_kind_num", choices=c("top","bottom"), multiple=FALSE, label="Apply Top/Bottom-Coding?")
-    txt_val <- textInput("num_topbot_val_num", label="Value", placeholder="Please enter a number")
+    txt_val <- textInput("num_topbot_val_num", label="Threshold value", placeholder="Please enter a number")
     txt_replace <- textInput("num_topbot_replacement_num", label="Replacement Value", placeholder="Please enter a number")
     out <- fluidRow(column(6, sel_var), column(6, sel_kind))
     out <- list(out, fluidRow(column(6, txt_val), column(6, txt_replace)))
