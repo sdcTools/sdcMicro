@@ -111,10 +111,11 @@ dataTypes <- reactive({
 
 # index of categorical key variables
 get_keyVars <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  return(obj$sdcObj@keyVars)
+  return(curObj@keyVars)
 })
 
 # categorical key variables by names
@@ -127,10 +128,11 @@ get_keyVars_names <- reactive({
 
 # index of weight-variable
 get_weightVar <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  return(obj$sdcObj@weightVar)
+  return(curObj@weightVar)
 })
 
 # weightVar by name
@@ -143,10 +145,11 @@ get_weightVar_name <- reactive({
 
 # index of numerical key variables
 get_numVars <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  return(obj$sdcObj@numVars)
+  return(curObj@numVars)
 })
 
 # get numerical key-variables by names
@@ -159,10 +162,11 @@ get_numVars_names <- reactive({
 
 # index of pram variables
 get_pramVars <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  return(obj$sdcObj@pramVars)
+  return(curObj@pramVars)
 })
 # get pram variables by names
 get_pramVars_names <- reactive({
@@ -173,14 +177,16 @@ get_pramVars_names <- reactive({
 })
 
 get_strataVar <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  return(get.sdcMicroObj(obj$sdcObj, "strataVar"))
+  return(get.sdcMicroObj(curObj, "strataVar"))
 })
 # strataVar by name
 get_strataVar_names <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
   sv <- get_strataVar()
@@ -197,40 +203,45 @@ poss_strataVarP <- reactive({
 
 # original data
 get_origData <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  return(obj$sdcObj@origData)
+  return(curObj@origData)
 })
 
 get_manipKeyVars <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  return(obj$sdcObj@manipKeyVars)
+  return(curObj@manipKeyVars)
 })
 
 get_manipNumVars <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  return(obj$sdcObj@manipNumVars)
+  return(curObj@manipNumVars)
 })
 
 # risks
 get_risk <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  return(as.data.frame(obj$sdcObj@risk$individual))
+  return(as.data.frame(curObj@risk$individual))
 })
 
 # all numeric/integer variables
 get_allNumericVars_name <- reactive({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(NULL)
   }
-  tmp <- get.sdcMicroObj(obj$sdcObj, type="origData")
+  tmp <- get.sdcMicroObj(curObj, type="origData")
   names(tmp)[sapply(tmp, class)%in% c("numeric","integer")]
 })
 
