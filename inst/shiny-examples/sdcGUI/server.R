@@ -597,40 +597,40 @@ shinyServer(function(session, input, output) {
     } else {
       tmpF <- paste0("sdcReport_external",format(Sys.time(), "%Y%m%d_%H%M"))
     }
-    cmd <- paste0("report(obj=sdcObj, outdir=",dQuote(input$report_path),", filename=",dQuote(tmpF),', title="SDC-Report", internal=',internal,")")
+    cmd <- paste0("report(obj=sdcObj, outdir=",dQuote(obj$path_export),", filename=",dQuote(tmpF),', title="SDC-Report", internal=',internal,")")
     attributes(cmd)$evalAsIs <- TRUE
-    return(list(cmd=cmd, path=input$report_path, fout=tmpF))
+    return(list(cmd=cmd, path=obj$path_export, fout=tmpF))
   })
 
   # export/save the anonymized file
   code_export_anondata <- reactive({
     input$btn_export_anon_data # required for timestamp!
     fout <- paste0("exportedData_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".",input$dat_exp_type)
-    fout <- file.path(input$dataexport_path, fout)
+    fout <- file.path(obj$path_export, fout)
     cmd <- paste0("writeSafeFile(obj=sdcObj, format=",dQuote(input$dat_exp_type), ", randomizeRecords=",dQuote(input$sel_export_randomizeorder))
     cmd <- paste0(cmd,", fileOut=",dQuote(fout),")\n")
     attributes(cmd)$evalAsIs <- TRUE
-    return(list(cmd=cmd, path=input$dataexport_path, fout=fout))
+    return(list(cmd=cmd, path=obj$path_export, fout=fout))
     cmd
   })
   # for use in reproducibility-page
   code_export_sdcproblem <- reactive({
     input$btn_exportProblem # required for timestamp!
     fout <- paste0("sdcProblem_GUI_export",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
-    fout <- file.path(input$path_export_problem, fout)
+    fout <- file.path(obj$path_export, fout)
     cmd <- paste0("save(prob, file=",dQuote(fout), ", compress=TRUE)")
     attributes(cmd)$evalAsIs <- TRUE
-    return(list(cmd=cmd, path=input$path_export_problem, fout=fout))
+    return(list(cmd=cmd, path=obj$path_export, fout=fout))
     cmd
   })
   # for use in undo-page
   code_export_sdcproblem1 <- reactive({
     input$btn_exportProblem1 # required for timestamp!
     fout <- paste0("sdcProblem_GUI_export",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
-    fout <- file.path(input$path_export_problem1, fout)
+    fout <- file.path(obj$path_export, fout)
     cmd <- paste0("save(prob, file=",dQuote(fout), ", compress=TRUE)")
     attributes(cmd)$evalAsIs <- TRUE
-    return(list(cmd=cmd, path=input$path_export_problem1, fout=fout))
+    return(list(cmd=cmd, path=obj$path_export, fout=fout))
     cmd
   })
   ### END CODE GENERATION EXPRESSIONS ####

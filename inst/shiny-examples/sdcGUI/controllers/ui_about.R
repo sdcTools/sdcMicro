@@ -19,6 +19,26 @@ observeEvent(input$help_about, {
 })
 
 
+output$btn_update_export_path <- renderUI({
+  if (is.null(input$path_export_data)) {
+    return(NULL)
+  }
+  if (input$path_export_data=="") {
+    return(NULL)
+  }
+  if (!dir.exists(input$path_export_data)) {
+    return(myActionButton("btn_update_export_path_xxx", "The specified directory does not exist, thus the path can't be updated", btn.style="default"))
+  }
+  if (file.access(input$path_export_data, mode=2)!=0) {
+    return(myActionButton("btn_update_export_path_xxx", "The specified directory is not writeable, thus the path can't be updated!", btn.style="default"))
+  }
+  return(myActionButton("btn_update_export_path", "Update the current output path", btn.style="primary"))
+})
+
+observeEvent(input$btn_update_export_path, {
+  obj$path_export <- input$path_export_data
+})
+
 output$ui_about <- renderUI({
   out <- fluidRow(
     column(12, h4("About the Interface", align="center")),
@@ -29,6 +49,17 @@ output$ui_about <- renderUI({
       column(12, p("Link to GUI-Tutorial"), align="center"),
       column(12, p("Link to GUI-Tutorial"), align="center"),
       column(12, p("If you already have an sdcProblem that was exported from the GUI, you can upload it in Tab",code("Reproducibility"),"."), align="center")
+  ))
+
+
+  pp <- textInput("path_export_data", label=h5("Enter a directory where any exported files (data, script, problem instances) should be saved to"),
+    placeholder=paste("e.g:", getwd()), width="50%")
+  out <- list(out, fluidRow(
+    column(12, h4("GUI-Settings"), align="center"),
+    column(12, p("Below you can opt to change the default path, where all output from the GUI will be saved. You can change this path any time later as well."),align="center"),
+    column(12, p("Currently, all output will be saved to",code(obj$path_export),"."), align="center"),
+    column(12, pp, align="center"),
+    column(12, uiOutput("btn_update_export_path"), align="center")
   ))
 
   btn1 <- bsButton("help_about", label="", icon=icon("question"), style = "primary", size="extra-small", type="action", block = FALSE, disabled = FALSE, value = FALSE)

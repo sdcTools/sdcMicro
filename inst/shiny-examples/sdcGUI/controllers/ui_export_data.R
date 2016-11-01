@@ -1,21 +1,8 @@
 # UI-Output for exporting the report
-output$ui_export_report_btn <- renderUI({
-  req(input$rb_simple_report, input$report_path)
-  if (!dir.exists(input$report_path)) {
-    return(myActionButton("myRepDownload_xxx", "Error: The specified directory does not exist!", btn.style="danger"))
-  }
-  if (file.access(input$report_path, mode=2)!=0) {
-    return(myActionButton("myRepDownload_xxx", "Error: The specified directory is not writeable!", btn.style="danger"))
-  }
-  return(myActionButton("myRepDownload", "Save the report", btn.style="primary"))
-})
-
 output$ui_export_report <- renderUI({
   rb1 <- radioButtons("rb_simple_report", strong("Type of Report"),
     choices=c("internal (detailed)"="internal", "external (short overview)"="external"),
     inline=TRUE, selected=input$rb_simple_report)
-  pp <- textInput("report_path", label=h5("Enter a directory where you want to write the file to"),
-    placeholder=paste("e.g:",getwd()), width="75%")
   out <- fluidRow(
     column(12, h4("Export the anonymization report"), align="center"))
 
@@ -29,8 +16,7 @@ output$ui_export_report <- renderUI({
 
   out <- list(out, fluidRow(
     column(12, rb1, align="center"),
-    column(12, pp, align="center"),
-    column(12, uiOutput("ui_export_report_btn"), align="center")))
+    column(12, myActionButton("myRepDownload", "Save the report", btn.style="primary"), align="center")))
 
   if (!is.null(obj$lastreport)) {
     out <- list(out, fluidRow(
@@ -42,10 +28,6 @@ output$ui_export_report <- renderUI({
     }
   }
   out
-})
-
-observeEvent(input$report_path, {
-  obj$report_path <- input$report_path
 })
 
 # UI-Output for exporting the (anonymized) data
@@ -131,16 +113,13 @@ output$ui_export_data <- renderUI({
       sel_randomize
     })
     help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
-    pp <- textInput("dataexport_path", label=h5("Enter a directory in which you want to save the anonymized file"),
-        placeholder=paste("e.g:",getwd()), width="75%")
     out <- list(out, fluidRow(
-      column(6, uiOutput("sel_randomize_export"), align="center"),
-      column(6, pp, align="center")))
-    out <- list(out, fluidRow(
-      column(6, help_randomize, align="center"),
-      column(6, NULL, align="center")
+      column(12, uiOutput("sel_randomize_export"), align="center"),
+      column(12, help_randomize, align="center")
     ))
-    out <- list(out, fluidRow(column(12, uiOutput("ui_export_data_btn"), align="center")))
+    out <- list(out, fluidRow(
+      column(12, myActionButton("btn_export_anon_data", "Save the anonymized dataset", btn.style="primary"), align="center")
+    ))
 
     if (!is.null(obj$lastdataexport)) {
       out <- list(out, fluidRow(

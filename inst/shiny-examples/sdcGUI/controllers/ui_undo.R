@@ -1,21 +1,5 @@
 # GUI-output to export script
-output$exportProblem_btn1 <- renderUI({
-  req(input$path_export_problem1)
-  if (!dir.exists(input$path_export_problem1)) {
-    return(myActionButton("btn_exportProblem1_xxx", "Error: The specified directory does not exist!", btn.style="danger"))
-  }
-  if (file.access(input$path_export_problem1, mode=2)!=0) {
-    return(myActionButton("btn_exportProblem1_xxx", "Error: The specified directory is not writeable!", btn.style="danger"))
-  }
-  return(myActionButton("btn_exportProblem1", "Save the current problem", btn.style="primary"))
-})
-observeEvent(input$path_export_problem1, {
-  obj$path_export_problem1 <- input$path_export_problem1
-})
 output$ui_export_problem1 <- renderUI({
-  pp <- textInput("path_export_problem1", label=h5("Enter a directory where you want to write the file to"),
-    placeholder=paste("e.g:",getwd()), width="50%")
-
   out <- fluidRow(column(12, h4("Export an existing sdcProblem", align="center")))
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
@@ -25,8 +9,7 @@ output$ui_export_problem1 <- renderUI({
   out <- list(out, fluidRow(
     column(12, p("You can save all relevant data and code for later re-use by clicking the button below.", align="center")),
     column(12, p("Note: This feature is GUI-only and cannot be reproduced from the command-line version.", align="center")),
-    column(12, pp, align="center"),
-    column(12, uiOutput("exportProblem_btn1"), align="center")))
+    column(12, myActionButton("btn_exportProblem1", "Save the current problem", btn.style="primary"), align="center")))
 
   if (!is.null(obj$lastproblemexport1)) {
     out <- list(out, fluidRow(
