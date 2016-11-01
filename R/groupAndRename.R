@@ -48,6 +48,9 @@ definition=function(obj, var, before, after) {
   ll <- levels(obj)
   ll[ll %in% before] <- after[1]
   levels(obj) <- ll
+  if (any(is.na(obj))) {
+    obj <- addNA(obj)
+  }
   obj
 })
 

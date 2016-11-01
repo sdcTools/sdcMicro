@@ -22,6 +22,9 @@ the modified \code{\link{sdcMicroObj-class}}
 \description{
 Change the scale of a variable
 }
+\note{
+NA will be a valid factor-level if the variables contain missing values
+}
 \examples{
 ## for objects of class sdcMicro:
 data(testdata2)

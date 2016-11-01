@@ -181,6 +181,7 @@ definition=function(obj, var) {
 #' @docType methods
 #' @param obj object of class \code{\link{sdcMicroObj-class}}
 #' @param var name of the keyVariable to change
+#' @note NA will be a valid factor-level if the variables contain missing values
 #' @return the modified \code{\link{sdcMicroObj-class}}
 #' @keywords methods
 #' @export
@@ -218,8 +219,10 @@ definition=function(obj, var) {
   }
   for (vv in var) {
     obj[[vv]] <- as.factor(obj[[vv]])
+    if (any(is.na(obj[vv]))) {
+      obj[[vv]] <- addNA(obj[[vv]]) # NA as factor-level
+    }
   }
-  obj
   obj
 })
 

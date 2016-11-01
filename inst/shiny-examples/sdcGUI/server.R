@@ -144,6 +144,7 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", var=",dQuote(input$sel_factor))
     cmd <- paste0(cmd, ", before=",VecToRStr(input$cbg_factor, quoted=TRUE))
     cmd <- paste0(cmd, ", after=",VecToRStr(input$inp_newlevname, quoted=TRUE),")")
+    cmd <- sub('\"NA\"', "NA", cmd) # fix issue, if NA will be recoded
     cmd
   })
 
