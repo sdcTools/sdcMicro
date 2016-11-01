@@ -11,17 +11,29 @@ choices_import <- reactive({
   }
 })
 
-output$current_code <- renderText({
+current_code <- reactive({
   code_ges <- c(obj$code, obj$code_read_and_modify, obj$code_setup, obj$code_anonymize)
-  paste0("<pre class='r'><code class='r' id='codeout'>",paste(highr:::hi_html(code_ges), collapse="\n"),"</code></pre>")
+  code_ges
+})
+
+output$current_code <- renderText({
+
+  paste0("<pre class='r'><code class='r' id='codeout'>",paste(highr:::hi_html(current_code()), collapse="\n"),"</code></pre>")
 })
 
 # GUI-output to view script
 output$ui_script_view <- renderUI({
-  fluidRow(
-    column(12, h4("View the current generated script")),
-    column(12, uiOutput("current_code"))
+  out <- fluidRow(
+    column(12, h4("View the current generated script"), align="center"),
+    column(12, myActionButton("btn_save_script", "Save Script to File", btn.style="primary"), align="center"),
+    column(12, tags$br(), uiOutput("current_code"))
   )
+
+  if (!is.null(obj$lastscriptexport)) {
+    out <- list(out, fluidRow(
+      column(12, tags$br(), p("Information: the last script you have exported was saved as", code(obj$lastscriptexport)), align="center")))
+  }
+  out
 })
 
 # GUI-output to export script

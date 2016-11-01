@@ -1302,6 +1302,14 @@ shinyServer(function(session, input, output) {
     }
   })
 
+  # save script to file
+  observeEvent(input$btn_save_script, {
+    fout <- paste0("exportedScript_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".R")
+    ff <- file.path(obj$path_export, fout)
+    cat(paste0(current_code(), collapse="\n"), file=ff)
+    obj$lastscriptexport <- ff
+  })
+
   # create links to sdcProblem
   lapply(href_to_setup, function(x) {
     eval(parse(text=x))

@@ -341,6 +341,8 @@ obj$lastreport <- NULL # required to show the last saved report
 obj$lastdataexport <- NULL # required to show the last saved exported data
 obj$lastproblemexport <- NULL # required to show the last exported sdcproblem
 obj$lastproblemexport1 <- NULL # required to show the last exported sdcproblem (undo-page)
+obj$lastscriptexport <- NULL # required to show the last saved script
+
 obj$hhdata <- NULL # household-file data required for merging
 obj$hhdata_applied <- FALSE # TRUE, if mergeHouseholdData() has been applied
 obj$hhdata_selected <- FALSE # TRUE, if selectHouseholdData() has been applied
