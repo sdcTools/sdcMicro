@@ -33,7 +33,11 @@ arguments to \code{read.table()}.}
 a data.frame or an object of class 'simple.error'
 }
 \description{
-reads data from various formats into R. Used by default in \code{\link{sdcGUI}}.
+reads data from various formats into R. Used in \code{\link{sdcGUI}}.
+}
+\note{
+if \code{type} is either \code{'sas'}, \code{'spss'} or \code{'stata'}, values read in as \code{NaN}
+will be converted to \code{NA}.
 }
 \author{
 Bernhard Meindl

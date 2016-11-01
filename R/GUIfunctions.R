@@ -266,7 +266,7 @@ tryCatchFn <- function(expr) {
 
 #' readMicrodata
 #'
-#' reads data from various formats into R. Used by default in \code{\link{sdcGUI}}.
+#' reads data from various formats into R. Used in \code{\link{sdcGUI}}.
 #'
 #' @param path a file path
 #' @param type which format does the file have. currently allowed values are
@@ -285,6 +285,8 @@ tryCatchFn <- function(expr) {
 #' @param ... additional parameters. Currently used only if \code{type='csv'} to pass
 #' arguments to \code{read.table()}.
 #'
+#' @note if \code{type} is either \code{'sas'}, \code{'spss'} or \code{'stata'}, values read in as \code{NaN}
+#' will be converted to \code{NA}.
 #' @return a data.frame or an object of class 'simple.error'
 #' @author Bernhard Meindl
 #' @export
@@ -310,44 +312,49 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     sep <- opts$sep
     res <- tryCatchFn(read.table(path, sep=sep, header=header))
   }
-  if ( "simpleError" %in% class(res) ) {
+  if ("simpleError" %in% class(res)) {
     return(res)
-  } else {
-    if (!"data.frame" %in% class(res)) {
-      res$message <- paste0(res$message,"\ndata read into the system was not of class 'data.frame'!")
-      return(res)
-    }
-    # convert result to clas 'data.frame' if it is a 'tbl_df'...
-    if ("tbl_df" %in% class(res)) {
-      class(res) <- "data.frame"
-    }
-    # check if any variable has class 'labelled' and convert it to factors.
-    # this might happen if we read data with read_xxx() from haven
-    cl_lab <- which(sapply(res, class)=="labelled")
-    if (length(cl_lab) > 0) {
-      if (length(cl_lab)==1) {
-        res[[cl_lab]] <- as_factor(res[[cl_lab]])
-      } else {
-        res[,cl_lab] <- lapply(res[,cl_lab] , as_factor)
-      }
-    }
+  }
+  if (!"data.frame" %in% class(res)) {
+    res$message <- paste0(res$message,"\ndata read into the system was not of class 'data.frame'!")
+    return(res)
+  }
+  # convert result to clas 'data.frame' if it is a 'tbl_df'...
+  if ("tbl_df" %in% class(res)) {
+    class(res) <- "data.frame"
+  }
 
-    if (convertCharToFac) {
-      # convert character-variables to factors
-      cl_char <- which(sapply(res, class)=="character")
-      if (length(cl_char) >0) {
-        if (length(cl_char) == 1) {
-          res[[cl_char]] <- as.factor(res[[cl_char]])
-        } else {
-          res[,cl_char] <- lapply(res[,cl_char], as.factor)
-        }
+  # convert NaN to NA if data was read in with haven
+  if (type %in% c("sas","spss","stata")) {
+    res[is.na(res)] <- NA
+  }
+
+  # check if any variable has class 'labelled' and convert it to factors.
+  # this might happen if we read data with read_xxx() from haven
+  cl_lab <- which(sapply(res, class)=="labelled")
+  if (length(cl_lab) > 0) {
+    if (length(cl_lab)==1) {
+      res[[cl_lab]] <- as_factor(res[[cl_lab]])
+    } else {
+      res[,cl_lab] <- lapply(res[,cl_lab] , as_factor)
+    }
+  }
+
+  if (convertCharToFac) {
+    # convert character-variables to factors
+    cl_char <- which(sapply(res, class)=="character")
+    if (length(cl_char) >0) {
+      if (length(cl_char) == 1) {
+        res[[cl_char]] <- as.factor(res[[cl_char]])
+      } else {
+        res[,cl_char] <- lapply(res[,cl_char], as.factor)
       }
     }
-    if (drop_all_missings) {
-      # drop all variables that are NA-only
-      keep <- which(sapply(res, function(x) sum(is.na(x))!=length(x)))
-      res <- res[,keep,drop=FALSE]
-    }
+  }
+  if (drop_all_missings) {
+    # drop all variables that are NA-only
+    keep <- which(sapply(res, function(x) sum(is.na(x))!=length(x)))
+    res <- res[,keep,drop=FALSE]
   }
   res
 }
