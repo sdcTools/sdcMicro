@@ -15,7 +15,7 @@ output$ui_export_report <- renderUI({
     choices=c("internal (detailed)"="internal", "external (short overview)"="external"),
     inline=TRUE, selected=input$rb_simple_report)
   pp <- textInput("report_path", label=h5("Enter a directory where you want to write the file to"),
-    placeholder=paste("e.g:",getwd()), width="75%", value=obj$report_path)
+    placeholder=paste("e.g:",getwd()), width="75%")
   out <- fluidRow(
     column(12, h4("Export the anonymization report"), align="center"))
 
@@ -132,7 +132,7 @@ output$ui_export_data <- renderUI({
     })
     help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
     pp <- textInput("dataexport_path", label=h5("Enter a directory in which you want to save the anonymized file"),
-        placeholder=paste("e.g:",getwd()), width="75%", value=obj$dataexport_path)
+        placeholder=paste("e.g:",getwd()), width="75%")
     out <- list(out, fluidRow(
       column(6, uiOutput("sel_randomize_export"), align="center"),
       column(6, pp, align="center")))

@@ -14,7 +14,7 @@ observeEvent(input$path_export_problem1, {
 })
 output$ui_export_problem1 <- renderUI({
   pp <- textInput("path_export_problem1", label=h5("Enter a directory where you want to write the file to"),
-    placeholder=paste("e.g:",getwd()), width="50%", value=obj$path_export_problem)
+    placeholder=paste("e.g:",getwd()), width="50%")
 
   out <- fluidRow(column(12, h4("Export an existing sdcProblem", align="center")))
   if (!is.null(lastError())) {
