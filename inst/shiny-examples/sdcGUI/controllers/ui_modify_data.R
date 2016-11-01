@@ -171,7 +171,11 @@ output$ui_modify_change_factor <- renderUI({
     if ( is.null(input$sel_factor) ) {
       return(NULL)
     }
-    barplot(table(obj$inputdata[[input$sel_factor]]))
+    df <- table(inputdata()[[input$sel_factor]], useNA="always")
+    dn <- dimnames(df)[[1]]
+    dn[length(dn)] <- "NA"
+    dimnames(df)[[1]] <- dn
+    barplot(df)
   })
 
   # current factor-levels

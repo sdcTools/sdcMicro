@@ -17,6 +17,10 @@ output$ui_recode <- renderUI({
     }
     ff <- get_manipKeyVars()[[input$sel_recfac]]
     ll <- as.list(levels(ff))
+    ii <- which(is.na(ll))
+    if (length(ii)==1) {
+      ll[[ii]] <- "NA"
+    }
     names(ll) <- paste(ll, "(",table(ff),"obs)")
     ll
   })
@@ -37,11 +41,11 @@ output$ui_recode <- renderUI({
     # current categorical key variables
     kv <- get_keyVars_names()
     # we always have at least one categorical key-variable!
-    selfac1 <- selectInput("sel_recfac",label=NULL, choices=kv, selected=input$sel_recfac, width="100%")
+    selfac1 <- selectInput("sel_recfac",label=h5("Choose factor variable"), choices=kv, selected=input$sel_recfac, width="100%")
     selfac1
   })
   output$recfac_cbgr <- renderUI({
-    cbgr <- selectInput("cbg_recfac",label=NULL, multiple=TRUE, selectize=FALSE,
+    cbgr <- selectInput("cbg_recfac",label=h5("Select levels to recode/combine"), multiple=TRUE, selectize=TRUE,
       choices=curRecFacVals(), selected=input$cbg_recfac, width="100%")
   })
   output$recfac_btn <- renderUI({
@@ -50,17 +54,13 @@ output$ui_recode <- renderUI({
   })
   output$recfac_txtval <- renderUI({
     req(input$cbg_recfac)
-    txtval <- textInput("inp_newlevname_rec",label=NULL,
+    txtval <- textInput("inp_newlevname_rec",label=h5("New label for recoded values"),
       value=paste0(input$cbg_recfac, collapse="_"), width="100%")
   })
   out <- list(out, fluidRow(
-    column(4, h5("Choose factor variable", align="center")),
-    column(4, h5("Select levels to recode/combine", align="center")),
-    column(4, h5("New label for recoded values", align="center"))))
-  out <- list(out, fluidRow(
-    column(4, uiOutput("recfac_selfac1")),
-    column(4, uiOutput("recfac_cbgr")),
-    column(4, uiOutput("recfac_txtval"))))
+    column(4, uiOutput("recfac_selfac1"), align="center"),
+    column(4, uiOutput("recfac_cbgr"), align="center"),
+    column(4, uiOutput("recfac_txtval"), align="center")))
   out <- list(out, fluidRow(
     column(12, uiOutput("recfac_btn"), align="center"),
     column(12, plotOutput("plot_facRec"))))

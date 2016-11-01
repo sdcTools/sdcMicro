@@ -315,6 +315,7 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", var=",dQuote(input$sel_recfac))
     cmd <- paste0(cmd, ", before=",VecToRStr(input$cbg_recfac, quoted=TRUE))
     cmd <- paste0(cmd, ", after=",VecToRStr(input$inp_newlevname_rec, quoted=TRUE),")")
+    cmd <- sub('\"NA\"', "NA", cmd) # fix issue, if NA will be recoded
     txt_action <- paste0("Recoded ",dQuote(input$sel_recfac),": ", VecToRStr_txt(input$cbg_recfac)," to ",VecToRStr_txt(input$inp_newlevname_rec))
     return(list(cmd=cmd, txt_action=txt_action))
   })
