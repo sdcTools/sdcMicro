@@ -46,7 +46,7 @@ output$ui_recode <- renderUI({
   })
   output$recfac_cbgr <- renderUI({
     cbgr <- selectInput("cbg_recfac",label=h5("Select levels to recode/combine"), multiple=TRUE, selectize=TRUE,
-      choices=curRecFacVals(), selected=input$cbg_recfac, width="100%")
+      choices=curRecFacVals(), width="100%")
   })
   output$recfac_btn <- renderUI({
     req(input$cbg_recfac)
