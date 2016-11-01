@@ -181,6 +181,11 @@ output$ui_modify_change_factor <- renderUI({
     }
     ff <- obj$inputdata[[input$sel_factor]]
     ll <- as.list(levels(ff))
+
+    ii <- which(is.na(ll))
+    if (length(ii)==1) {
+      ll[[ii]] <- "NA"
+    }
     names(ll) <- paste(ll, "(",table(ff),"obs)")
     ll
   })
@@ -193,17 +198,18 @@ output$ui_modify_change_factor <- renderUI({
     ))
     return(out)
   }
-  selfac1 <- selectInput("sel_factor",label=h5("Choose factor variable"),
-    choices=vv, selected=input$sel_factor)
+  selfac1 <- selectInput("sel_factor", label=h5("Choose factor variable"),
+    choices=vv)#, selected=input$sel_factor)
   cbgr <- selectInput("cbg_factor",label=h5("Select Levels to recode/combine"),
-        multiple=TRUE, selectize=TRUE, choices=curFactorVals(), selected=input$cbg_factor, width="100%")
+    multiple=TRUE, selectize=TRUE, choices=curFactorVals(), selected=input$cbg_factor, width="100%")
   if (is.null(input$cbg_factor)) {
     btnUp <- NULL
     txtval <- NULL
   } else {
+    txt <- paste0(input$cbg_factor, collapse="_")
     btnUp <- myActionButton("btn_update_factor",label="Update factor", "primary")
     txtval <- textInput("inp_newlevname",label=h5("New label for recoded values"),
-    value=paste0(input$cbg_factor, collapse="_"), width="100%")
+    value=txt, width="100%")
   }
 
   out <- list(out, fluidRow(
