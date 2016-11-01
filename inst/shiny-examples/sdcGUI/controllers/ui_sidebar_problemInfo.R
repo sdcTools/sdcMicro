@@ -6,7 +6,7 @@ output$tabinfo_sb_results <- output$tabinfo_sb_anonymize <- renderUI({
 
   fluidRow(
     column(12, h4("Important Variables"), align="center"),
-    column(12, renderDataTable({
+    column(12, DT::renderDataTable({
       inp
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
@@ -20,7 +20,7 @@ output$tabparam_sb_results <- output$tabparam_sb_anonymize <- renderUI({
   }
   fluidRow(
     column(12, h4("Additional Parameters"), align="center"),
-    column(12, renderDataTable({
+    column(12, DT::renderDataTable({
       inp
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
@@ -60,7 +60,7 @@ output$risk_sb_anonymize <- renderUI({
 
   fluidRow(
     column(12, h4("Risk (k-Anonymity)"), align="center"),
-    column(12, renderDataTable({
+    column(12, DT::renderDataTable({
       df
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
@@ -81,7 +81,7 @@ output$numrisk_sb_anonymize <- renderUI({
 
   fluidRow(
     column(12, h4("Numeric Risk"), align="center"),
-    column(12, renderDataTable({
+    column(12, DT::renderDataTable({
       dt
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)))
@@ -109,7 +109,7 @@ output$loss_sb_anonymize <- renderUI({
 
   fluidRow(
     column(12, h4("Information Loss"), align="center"),
-    column(12, renderDataTable({
+    column(12, DT::renderDataTable({
       df
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)),align="center")
@@ -136,7 +136,7 @@ output$pram_sb_anonymize <- renderUI({
         key-variable. Risk-measures and k-anonymity assessment are not useful anymore!", align="center"))))
   }
   out <- list(out, fluidRow(
-    column(12, renderDataTable({
+    column(12, DT::renderDataTable({
       pI$summary
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
