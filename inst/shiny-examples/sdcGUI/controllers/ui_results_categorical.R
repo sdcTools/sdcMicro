@@ -97,7 +97,7 @@ output$ui_rescat_recodes <- renderUI({
     }
 
     # key var | nr_cat_orig | nr_cat_mod | mean.size(orig) | smallest(orig)
-    kV_o <- get_origData()[,get_keyVars_names()]
+    kV_o <- get_origData()[,get_keyVars_names(), drop=F]
     kV_m <- get_manipKeyVars()
 
     res_o <- lapply(kV_o, function(x) { c(nr=length(unique(x)), mean=mean(table(x)), min=min(table(x)))})
@@ -112,7 +112,7 @@ output$ui_rescat_recodes <- renderUI({
           min.size.orig=res_o[[i]][3], min.size.mod=res_m[[i]][3]))
     }
     out
-  }, options = list(scrollX=TRUE, pageLength = 10, searching=FALSE))
+  }, rownames=FALSE, options = list(scrollX=TRUE, pageLength = 10, searching=FALSE))
 
   fluidRow(
     column(12, h4("Display information loss based on Recodings of categorical key variables", align="center")),
