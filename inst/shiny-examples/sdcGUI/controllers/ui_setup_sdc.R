@@ -522,7 +522,11 @@ output$setupbtn <- renderUI({
   # some selected categorical key-variables are numeric or character
   ii <- which(useAsKeys=="Cat." & types%in%c("numeric","character"))
   if (length(ii)>0) {
-    return(myErrBtn("tmp", label="Error: Selected categorical key variables are of type 'numeric' or 'character'"))
+    txt <- paste("You selected a variable of type",dQuote("numeric"),"as categorical key variables. Convert this variable first to a factor variable and reselect this variable.")
+    return(list(
+      myErrBtn("sdc_setuperr_1", label="Error: Selected categorical key variables are of type 'numeric' or 'character'"),
+      bsTooltip("sdc_setuperr_1", title=txt, trigger="hover", placement="top")
+    ))
   }
   # some selected numerical key-variables are factor or character
   ii <- which(useAsKeys=="Cont." & types%in%c("factor","character"))
