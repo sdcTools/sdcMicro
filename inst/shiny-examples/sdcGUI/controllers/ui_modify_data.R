@@ -80,7 +80,7 @@ output$ui_modify_recode_to_factor <- renderUI({
     req(input$sel_custom_split)
     mult <- FALSE
     if (!is.null(input$sel_custom_split) && input$sel_custom_split=="no") {
-      selectInput("sel_num_glrec",label=h5("Choose numeric variable"), choices=vv, selected=input$sel_num_glrec, multiple=TRUE)
+      selectInput("sel_num_glrec",label=h5("Choose numeric variable"), choices=vv, multiple=TRUE)
     } else {
       radioButtons("rb_num_glrec",label=h5("Choose numeric variable"), choices=vv, selected=input$rb_num_glrec)
     }
@@ -97,7 +97,7 @@ output$ui_modify_recode_to_factor <- renderUI({
     if (is.null(input$sel_custom_split)) {
       return(NULL)
     }
-    btn_rec <- myActionButton("btn_recode_to_factor",label=("Recode to factor"), "primary")
+    btn_rec <- myActionButton("btn_recode_to_factor",label=("Convert to factor(s)"), "primary")
     if (input$sel_custom_split=="no") {
       return(btn_rec)
     } else {
@@ -140,7 +140,7 @@ output$ui_modify_recode_to_factor <- renderUI({
   }
 
   out <- fluidRow(
-    column(12, h4("Recode a numeric variable into a factor", align="center"),
+    column(12, h4("Convert numeric variables into a factor", align="center"),
     column(12, p("You can now choose a variable of class 'numeric' and convert it into a variable of type 'factor'. If
       you do not want to use custom breaks, the variable is transformed without any changes into a factor variable and all unique values
       of the variable will also be factor levels. By using custom-breaks, you need to either specify the number of new categories or
