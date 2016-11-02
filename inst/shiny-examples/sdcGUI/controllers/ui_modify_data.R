@@ -196,12 +196,12 @@ output$ui_modify_change_factor <- renderUI({
 
   output$reclocfac_var <- renderUI({
     vv <- facVars()
-    selfac1 <- selectInput("sel_factor", label=h5("Choose factor variable"), choices=vv)
+    selfac1 <- selectInput("sel_factor", label=h5("Choose factor variable"), choices=vv, selected=input$sel_factor)
     selfac1
   })
 
   output$reclocfac_levs <- renderUI({
-    selectInput("cbg_factor",label=h5("Select Levels to recode/combine"),
+    selectInput("cbg_factor", label=h5("Select Levels to recode/combine"),
       multiple=TRUE, selectize=TRUE, choices=curFactorVals(), width="100%")
   })
 
