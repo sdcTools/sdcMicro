@@ -561,7 +561,9 @@ output$setupbtn <- renderUI({
     }
     # weight-variables must be numeric
     if (!types[ii] %in% c("numeric","integer")) {
-      return(myErrBtn("tmp", label="Error: Weight variable must be of type 'numeric' or 'integer'"))
+      txt <- paste0("The weight variable has to be of type ",dQuote("numeric")," or type ", dQuote("integer"),". ")
+      txt <- paste0(txt, "Please go back to the Microdata tab to convert the variables to the appropriate type or change the variable type in the dataset and reload the data.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
   }
 
