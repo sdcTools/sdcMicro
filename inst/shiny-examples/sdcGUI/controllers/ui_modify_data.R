@@ -598,7 +598,6 @@ output$ui_sample_microdata <- renderUI({
 })
 
 # UI-output to deal with hierarchical data (eg. households and individuals)
-
 output$ui_hierarchical_data_prep <- renderUI({
   output$hier_data_prep_btn <- renderUI({
     req(input$sel_hhvars)
@@ -611,10 +610,16 @@ output$ui_hierarchical_data_prep <- renderUI({
   })
 
   if (obj$hhdata_selected==TRUE) {
+    curdat <- inputdata()
+    df <- data.frame(
+      "variable name"=colnames(curdat),
+      "type"=dataTypes())
     return(
       fluidRow(
         column(12, h4("Note"), align="center"),
-        column(12, p("The current input data have already been modified to be used as household-level data."), align="center"),
+        column(12, p("The current input data have already been modified to be used as household-level data. The data
+          contain",code(nrow(inputdata())),"observations in the following",code(ncol(inputdata())),"variables."), align="center"),
+        column(12, renderTable(df), align="center"),
         column(12, p("If you want to work on individual-level data, you will have to delete the entire microdata file and start from scratch"), align="center")
       ))
   }
@@ -631,12 +636,12 @@ output$ui_hierarchical_data_prep <- renderUI({
 
   output$sel_hhvars_id <- renderUI({
     sel1 <- selectInput("sel_hhvars_id", label=h5("Please a suitable household id variable"),
-      choices=allVars(), selected=input$sel_hhvars, multiple=FALSE, width="50%")
+      choices=allVars(), multiple=FALSE, width="50%")
   })
   output$sel_hhvars <- renderUI({
     req(input$sel_hhvars_id)
     selectInput("sel_hhvars", label=h5("Please select all variables that refer to households and not to individuals"),
-      choices=setdiff(allVars(), input$sel_hhvars_id), selected=input$sel_hhvars, multiple=TRUE, width="50%")
+      choices=setdiff(allVars(), input$sel_hhvars_id), multiple=TRUE, width="50%")
   })
 
   out <- list(out, fluidRow(
