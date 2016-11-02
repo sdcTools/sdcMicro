@@ -12,7 +12,7 @@
 #' \itemize{
 #' \item 1: density traces
 #' \item 2: parallel boxplots
-#' 
+#'
 #' \item 3: differences in totals}
 #' @author Matthias Templ
 #' @seealso \code{\link{microaggregation}}
@@ -107,16 +107,11 @@ plotMicro <- function(x, p, which.plot = 1:3) {
   }
   if (3 %in% which.plot) {
     groups <- colnames(x$x)
-    s <- seq(1, 31, 2)
-    s2 <- seq(2, 32, 2)
-    Abnahme <- c(7.99, 9.49, 2.73, 3.57, 0, 0, 6.52, 2.52, 1.75, 0, 3.05, 0.73, 5.42, 0,
-      5.07, 3.59)
-    Zunahme <- c(0, 0, 0, 0, 1.64, 0.81, 0, 0, 0, 6.46, 0, 0, 0, 2.48, 0, 0)
     x1 <- as.data.frame(x$x)
     x2 <- as.data.frame(x$mx)
     colnames(x2) <- colnames(x1)
     totx <- apply(x1, 2, sum)
-    totxm <- apply(x2, 2, sum) * x$fot
+    totxm <- apply(x2, 2, sum)
     Difference <- ((totxm - totx)/totx) * 100
     wx <- which(Difference < 0)
     wxm <- which(Difference >= 0)
@@ -126,9 +121,9 @@ plotMicro <- function(x, p, which.plot = 1:3) {
     d2[wxm] <- Difference[wxm]
     par(mar = c(0.5, 5, 0.5, 1), mfrow = c(1, 1))
     plot.new()
-    plot.window(xlim = c(-10, 10), ylim = c(-1.5, 17))
+    plot.window(xlim = c(-10, 10), ylim = c(-1.5, length(groups)))
     ticks <- seq(-10, 10, 2)
-    y <- 1:16
+    y <- 1:length(groups)
     h <- 0.3
     lines(rep(0, 2), c(-1.5, 5.5), col = "grey")
     segments(-10, y, 10, y, lty = "dotted")
