@@ -113,7 +113,7 @@ output$ui_modify_recode_to_factor <- renderUI({
           return(fluidRow(
             column(12, myActionButton("btn_recode_to_factor_notworking",label=("Error: Please check your input (non-numeric?)"), "danger"), align="center")
           ))
-        } else if (length(res)==1 & res > nrow(obj$inputdata)) {
+        } else if (length(res)==1 && res > nrow(obj$inputdata)) {
           return(fluidRow(
             column(12, myActionButton("btn_recode_to_factor_notworking",label=("Error: The number of groups is too large!"), "danger"), align="center")
           ))
