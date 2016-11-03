@@ -1281,6 +1281,7 @@ shinyServer(function(session, input, output) {
           obj[[nn]] <- res[[nn]]
         }
         obj$last_error <- NULL
+        updateSelectInput(session, "sel_anonymize", selected="manage_sdcProb")
         updateNavbarPage(session, "mainnav", selected="Anonymize")
       }
     }
@@ -1304,6 +1305,7 @@ shinyServer(function(session, input, output) {
         }
         obj$last_error <- NULL
         rm(res)
+        updateSelectInput(session, "sel_anonymize", selected="manage_sdcProb")
         updateNavbarPage(session, "mainnav", selected="Anonymize")
       }
     }
