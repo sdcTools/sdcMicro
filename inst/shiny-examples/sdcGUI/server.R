@@ -604,7 +604,7 @@ shinyServer(function(session, input, output) {
   # for use in reproducibility-page
   code_export_sdcproblem <- reactive({
     input$btn_exportProblem # required for timestamp!
-    fout <- paste0("sdcProblem_GUI_export",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
+    fout <- paste0("exportedProblem_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
     fout <- file.path(obj$path_export, fout)
     cmd <- paste0("save(prob, file=",dQuote(fout), ", compress=TRUE)")
     attributes(cmd)$evalAsIs <- TRUE
@@ -614,7 +614,7 @@ shinyServer(function(session, input, output) {
   # for use in undo-page
   code_export_sdcproblem1 <- reactive({
     input$btn_exportProblem1 # required for timestamp!
-    fout <- paste0("sdcProblem_GUI_export",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
+    fout <- paste0("exportedProblem_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".rdata")
     fout <- file.path(obj$path_export, fout)
     cmd <- paste0("save(prob, file=",dQuote(fout), ", compress=TRUE)")
     attributes(cmd)$evalAsIs <- TRUE
