@@ -738,9 +738,10 @@ shinyServer(function(session, input, output) {
     cmd <- code_resetmicrovar()
     evalcmd <- gsub("inputdata","obj$inputdata", cmd)
     eval(parse(text=evalcmd))
-    obj$code_read_and_modify <- c(obj$code_read_and_modify,cmd,"\n")
+    obj$code_read_and_modify <- c(obj$code_read_and_modify,"## Reset variable(s) to original state", cmd)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    obj$inp_sel_viewvar1 <- input$sel_reset_microvars[1]
     updateSelectInput(session, "sel_moddata",selected="view_var")
   })
   # undo-button

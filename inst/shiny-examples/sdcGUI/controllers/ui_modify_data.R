@@ -495,25 +495,24 @@ output$ui_view_var <- renderUI({
   out
 })
 
+# UI-output to reset a variable to its original state
 output$ui_reset_var <- renderUI({
-  if (is.null(obj$inputdata)) {
-    return(NULL)
-  }
+  output$reset_microvar_var <- renderUI({
+    selectInput("sel_reset_microvars", label=h5("Choose variable(s) to reset"),
+      choices=allVars(), multiple=TRUE, width="50%")
+  })
 
-  sel_reset <- selectInput("sel_reset_microvars", label=h5("Choose variable(s) to reset"),
-    choices=names(obj$inputdata), multiple=TRUE, selected=input$sel_reset_microvars)
+  output$reset_microvar_btn <- renderUI({
+    req(input$sel_reset_microvars)
+    myActionButton("btn_resetmicrovar",label="Reset selected variable(s) to their original state", "primary")
+  })
 
-  if (is.null(input$sel_reset_microvars) || length(input$sel_reset_microvars)==0) {
-    btn_reset <- NULL
-  } else {
-    btn_reset <- myActionButton("btn_resetmicrovar",label="Reset selected variable(s) to their original state", "primary", css.class="btn-xs")
-  }
   list(
     fluidRow(
       column(12, h4("Reset variables"), align="center"),
       column(12, p("In this screen you can reset variable(s) in the imported microdata set. That means any prior modification steps will be undone."), align="center"),
-      column(12, sel_reset, align="center"),
-      column(12, btn_reset, align="center")
+      column(12, uiOutput("reset_microvar_var"), align="center"),
+      column(12, uiOutput("reset_microvar_btn"), align="center")
     ))
 })
 
