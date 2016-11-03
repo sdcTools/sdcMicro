@@ -90,13 +90,10 @@ output$ui_sel_sdcresults <- renderUI({
 
 ## left sidebar
 output$ui_sdcObj_reset <- renderUI({
-  invalidateLater(15000)
-  if (obj$reset_sdc1>0) {
-    # show real reset button!
-    btn_reset <- myActionButton("btn_reset_sdc",label=("Really?"), "danger",  css.class="btn-xs")
-  } else {
-    btn_reset <- myActionButton("btn_reset_sdc1",label=("Click here to start from scratch"), "warning", css.class="btn-xs")
+  if (is.null(sdcObj())) {
+    return(NULL)
   }
+  btn_reset <- myActionButton("btn_reset_sdc1", label=("Click here to start from scratch"), "warning", css.class="btn-xs")
   btn_reset
 })
 

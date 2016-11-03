@@ -1,6 +1,5 @@
 library(shiny)
 library(grid)
-library(ggthemes)
 library(sdcMicro)
 library(rhandsontable)
 library(haven)
@@ -314,8 +313,8 @@ obj <- reactiveValues() # we work with this data!
 
 testdata$urbrur <-  as.numeric(testdata$urbrur)
 
-obj$inputdata <- obj$inputdataB <- testdata
-#obj$inputdata <- NULL
+#obj$inputdata <- obj$inputdataB <- testdata
+obj$inputdata <- NULL
 obj$sdcObj <- NULL
 #obj$sdcObj <- createSdcObj(testdata,
 #  keyVars=c('roof','walls','water'),
@@ -328,8 +327,6 @@ obj$transmat <- NULL
 obj$last_warning <- NULL
 obj$last_error <- NULL
 obj$comptime <- 0
-obj$reset_sdc1 <- 0
-obj$reset_inputdata1 <- 0
 obj$microfilename <- NULL # name of uploaded file
 obj$lastaction <- NULL
 obj$anon_performed <- NULL # what has been applied?

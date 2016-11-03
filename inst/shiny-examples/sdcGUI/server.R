@@ -9,18 +9,6 @@ shinyServer(function(session, input, output) {
     values$starting <- FALSE
   })
 
-  autoInvalidate <- reactiveTimer(25000)
-  # after 25 seconds, the reactive-values used to display the
-  # confirm-buttons for resetting the sdcObj and the microdata
-  # are resetted
-  # The output$functions are updating every 15 seconds to check,
-  # if something has changed
-  observe({
-    autoInvalidate()
-    obj$reset_inputdata1 <- 0
-    obj$reset_sdc1 <- 0
-  })
-
   # dynamically generate inputs (currently used in setup-sdcProblem)
   shinyInput <- function(FUN, len, id, ...) {
     inputs = character(len)
@@ -885,10 +873,20 @@ shinyServer(function(session, input, output) {
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
-  # reset the sdcMicroObj
+
+  ## show confirmation modal window before resetting the current problem
   observeEvent(input$btn_reset_sdc1, {
-    obj$reset_sdc1 <- 1
+    if (!is.null(sdcObj())) {
+      txt <- p("By clicking the button below, you delete the current sdcProblem!")
+      btn <- myActionButton("btn_reset_sdc",label=("Delete current problem"), "danger")
+      inp <- fluidRow(
+        column(12, txt, align="center"),
+        column(12, btn, align="center")
+      )
+      showModal(modalDialog(inp, title="Confirm to delete the current sdcProblem", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    }
   })
+
   observeEvent(input$btn_reset_sdc, {
     ptm <- proc.time()
     obj$sdcObj <- NULL
@@ -897,14 +895,24 @@ shinyServer(function(session, input, output) {
     obj$anon_performed <- NULL
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    obj$reset_sdc1 <- 0
+    removeModal(session=session) # remove the modal
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
     updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
-  # reset the inputdata by setting obj$inputdata to NULL
-  observeEvent(input$btn_reset_inputdata1, {
-    obj$reset_inputdata1 <- 1
+
+  ## show confirmation modal window before resetting inputdata
+  observeEvent(input$btn_reset_inputdata_xx, {
+    if (!is.null(inputdata())) {
+      txt <- p("By clicking the button below, you really delete the current inputdata")
+      btn <- myActionButton("btn_reset_inputdata",label=("Delete current inputdata"), "danger")
+      inp <- fluidRow(
+        column(12, txt, align="center"),
+        column(12, btn, align="center")
+      )
+      showModal(modalDialog(inp, title="Confirm to delete the current inputdata", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    }
   })
+
   observeEvent(input$btn_reset_inputdata, {
     #cat(paste("'btn_reset_inputdata' was clicked",input$btn_reset_inputdata,"times..!\n"))
     ptm <- proc.time()
@@ -915,7 +923,7 @@ shinyServer(function(session, input, output) {
     obj$code_read_and_modify <- c()
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    obj$reset_inputdata1 <- 0
+    removeModal(session=session) # remove the modal
   })
   # reset errors while reading data
   observeEvent(input$btn_reset_inputerror, {

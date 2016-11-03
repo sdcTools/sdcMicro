@@ -530,22 +530,10 @@ output$ui_show_microdata <- renderUI({
     my_data_dt()
   })
 
-  output$btn_inputdata <- renderUI({
-    invalidateLater(15000)
-    if (obj$reset_inputdata1>0) {
-      # show real reset button!
-      btn <- myActionButton("btn_reset_inputdata",label=("By clicking, you really delete the current inputdata"), "danger", css.class="btn-xs")
-    } else {
-      btn <- myActionButton("btn_reset_inputdata1",label=("Reset inputdata"), "warning", css.class="btn-xs")
-    }
-    fluidRow(column(12, p(btn, align="center")))
-  })
-
   out <- fluidRow(
     column(12, h4(paste("Microdata in use:",shQuote(obj$microfilename))), align="center"),
     column(12, p("The dataset has",code(nrow(obj$inputdata)),"observations in",code(ncol(obj$inputdata)),"variables and can be used to set up the",code("sdcMicroObj"),
       "that can be anonymized."), align="center"))
-  out <- list(out, uiOutput("btn_inputdata"))
   out <- list(out, fluidRow(
     column(12, dataTableOutput("tab_inputdata"))))
   return(out)
@@ -766,9 +754,17 @@ output$ui_modify_data_main <- renderUI({
 })
 
 output$ui_modify_data_sidebar_left <- renderUI({
+  output$btn_reset_inputdata <- renderUI({
+    if (is.null(inputdata())) {
+      return(NULL)
+    }
+    btn <- myActionButton("btn_reset_inputdata_xx",label=("Reset inputdata"), "warning", css.class="btn-xs")
+    btn
+  })
+
   choices_modifications <- reactive({
     cc <- c(
-      "Display/Reset Microdata"="show_microdata",
+      "Display Microdata"="show_microdata",
       "Explore variables"="view_var",
       "Reset variables"="reset_var",
       "Use only a subset of the available microdata"="sample_microdata",
@@ -787,7 +783,11 @@ output$ui_modify_data_sidebar_left <- renderUI({
   rb <- radioButtons("sel_moddata", label=h5("What do you want to do?"),
     choices=choices_modifications(),
     selected=input$sel_moddata, width="100%")
-  fluidRow(column(12, rb))
+  fluidRow(
+    column(12, h5("Reset the inputdata")),
+    column(12, uiOutput("btn_reset_inputdata")),
+    column(12, rb)
+  )
 })
 
 output$ui_modify_data <- renderUI({
