@@ -581,9 +581,9 @@ shinyServer(function(session, input, output) {
     input$myRepDownload # required for timestamp!
     internal <- ifelse(input$rb_simple_report=="internal", TRUE, FALSE)
     if (internal) {
-      tmpF <- paste0("sdcReport_internal",format(Sys.time(), "%Y%m%d_%H%M"))
+      tmpF <- paste0("sdcReport_internal_",format(Sys.time(), "%Y%m%d_%H%M"))
     } else {
-      tmpF <- paste0("sdcReport_external",format(Sys.time(), "%Y%m%d_%H%M"))
+      tmpF <- paste0("sdcReport_external_",format(Sys.time(), "%Y%m%d_%H%M"))
     }
     cmd <- paste0("report(obj=sdcObj, outdir=",dQuote(obj$path_export),", filename=",dQuote(tmpF),', title="SDC-Report", internal=',internal,")")
     attributes(cmd)$evalAsIs <- TRUE
