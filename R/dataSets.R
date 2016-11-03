@@ -331,7 +331,7 @@ NULL
 #' @name testdata
 #' @aliases testdata testdata2
 #' @docType data
-#' @format A data frame with 4580 observations on the following 15 variables.
+#' @format testdata: a data frame with 4580 observations on the following 15 variables.
 #' \describe{
 #' \item{urbrur}{a numeric vector}
 #' \item{roof}{a numeric vector}
@@ -348,7 +348,7 @@ NULL
 #' \item{ori_hid}{a numeric vector}
 #' \item{sampling_weight}{a numeric vector}
 #' \item{household_weights}{a numeric vector}}
-#' A data frame with 93 observations on the following 19 variables.
+#' testdata2: A data frame with 93 observations on the following 19 variables.
 #' \describe{
 #' \item{urbrur}{a numeric vector}
 #' \item{roof}{a numeric vector}
@@ -372,8 +372,6 @@ NULL
 #' @references The International Household Survey Network, www.ihsn.org
 #' @keywords datasets
 #' @examples
-#'
-#' data(testdata)
-#' ## maybe str(testdata) ; plot(testdata) ...
-#'
+#' head(testdata)
+#' head(testdata2)
 NULL
