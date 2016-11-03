@@ -256,7 +256,7 @@ get_risk <- reactive({
 })
 
 noInputData <- function(prefix="btn_a_micro_", uri) {
-  txt <- "Please go back to 'Data/Import' and choose a dataset or upload a file!"
+  txt <- "Please go back to 'Microdata' and choose a dataset or upload a file!"
   btn <- myActionButton(paste0(prefix,uri),label=("Upload microdata"), "primary")
   fluidRow(
     column(12, h2("No input data available!", align="center")),
@@ -265,7 +265,7 @@ noInputData <- function(prefix="btn_a_micro_", uri) {
 }
 
 noSdcProblem <- function(prefix="btn_a_setup_", uri) {
-  txt <- "Please go back to 'Anonymize/Setup SDC-Problem' and start with a scenario!"
+  txt <- "Please go back to 'Anonymize' and start with a scenario!"
   btn <- myActionButton(paste0(prefix,uri),label=("Create an SDC-Problem"), "primary")
   fluidRow(
     column(12, h2("No sdcProblem was specified!", align="center")),
