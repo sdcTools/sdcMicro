@@ -413,7 +413,7 @@ output$ui_view_var <- renderUI({
         # two numeric variables
         tab1 <- as.data.frame(t(summaryfn(df[[1]])))
         tab2 <- as.data.frame(t(summaryfn(df[[2]])))
-        vcor <- round(cor(df[[1]], df[[2]]),3)
+        vcor <- round(cor(df[[1]], df[[2]], use="pairwise.complete.obs"),3)
         res <- list(vars=c(v1,v2),tab1=tab1, tab2=tab2, vcor=vcor)
       }
     }
