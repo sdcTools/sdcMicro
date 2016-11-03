@@ -71,8 +71,8 @@ output$ui_script_import <- renderUI({
   if (!is.null(sdcObj())) {
     out <- list(out, fluidRow(column(12, p("The file must be an",code(".rdata"),"File. Please note that uploading a previously saved problem, will overwrite any existing current sdcProblem-instance!", align="center"))))
   }
-  fI <- fileInput("file_importProblem", strong("Select previously exported sdcProblem (.rdata)"), width="100%", accept=".rdata")
-  out <- list(out, fluidRow(column(12, p(fI, align="center"))))
+  fI <- fileInput("file_importProblem", strong("Select previously exported sdcProblem (.rdata)"), width="50%", accept=".rdata")
+  out <- list(out, fluidRow(column(12, fI, align="center")))
   out
 })
 
@@ -98,7 +98,11 @@ output$ui_script_sidebar_left <- renderUI({
 
 output$ui_script <- renderUI({
   if (is.null(obj$inputdata)) {
-    return(noInputData(uri="ui_script"))
+    return(list(
+      noInputData(uri="ui_script"),
+      fluidRow(column(12, tags$br(), p("or go back to tab 'Undo' and upload a previously saved problem instance"), align="center")),
+      fluidRow(column(12, myActionButton("nodata_script_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))
+    ))
   } else {
     out <- fluidRow(
       column(3, uiOutput("ui_script_sidebar_left")),

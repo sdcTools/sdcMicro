@@ -86,7 +86,11 @@ output$ui_results_sidebar_left <- renderUI({
 
 output$ui_results <- renderUI({
   if (is.null(sdcObj())) {
-    return(noSdcProblem(uri="ui_results"))
+    return(list(
+      noSdcProblem(uri="ui_results"),
+      fluidRow(column(12, tags$br(), p("or go back to tab 'Undo' and upload a previously saved problem instance"), align="center")),
+      fluidRow(column(12, myActionButton("nodata_results_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))
+    ))
   } else {
     out <- fluidRow(
       column(2, uiOutput("ui_results_sidebar_left")),

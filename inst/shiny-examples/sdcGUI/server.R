@@ -1319,6 +1319,20 @@ shinyServer(function(session, input, output) {
     obj$lastscriptexport <- ff
   })
 
+  # go to some pages to "undo" in case user wants to upload a previously saved file
+  observeEvent(input$nodata_export_uploadproblem, {
+    updateNavbarPage(session, "mainnav", selected="Undo")
+  })
+  observeEvent(input$nodata_results_uploadproblem, {
+    updateNavbarPage(session, "mainnav", selected="Undo")
+  })
+  observeEvent(input$nodata_anonymize_uploadproblem, {
+    updateNavbarPage(session, "mainnav", selected="Undo")
+  })
+  observeEvent(input$nodata_script_uploadproblem, {
+    updateNavbarPage(session, "mainnav", selected="Undo")
+  })
+
   # create links to sdcProblem
   lapply(href_to_setup, function(x) {
     eval(parse(text=x))

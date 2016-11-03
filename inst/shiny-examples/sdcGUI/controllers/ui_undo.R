@@ -42,7 +42,8 @@ output$ui_script_import1 <- renderUI({
 output$ui_undo <- renderUI({
   curObj <- sdcObj()
   if (is.null(curObj)) {
-    return(noSdcProblem(uri="ui_undo"))
+    return(list(noSdcProblem(uri="ui_undo"),
+      fluidRow(column(12, tags$br(), p("or"), align="center")), uiOutput("ui_script_import1")))
   }
   if (is.null(curObj@prev)) {
     out <- fluidRow(

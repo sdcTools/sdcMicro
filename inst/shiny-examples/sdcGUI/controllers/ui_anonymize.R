@@ -162,7 +162,11 @@ output$ui_main_anon <- renderUI({
 
 output$ui_anonymize <- renderUI({
   if (is.null(obj$inputdata)) {
-    return(noInputData(uri="ui_anonymize"))
+    return(list(
+      noInputData(uri="ui_anonymize"),
+      fluidRow(column(12, tags$br(), p("or go back to tab 'Undo' and upload a previously saved problem instance"), align="center")),
+      fluidRow(column(12, myActionButton("nodata_anonymize_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))
+    ))
   }
 
   if (is.null(sdcObj())) {
