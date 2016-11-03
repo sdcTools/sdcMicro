@@ -2,8 +2,8 @@ Package: sdcMicro
 Type: Package
 Title: Statistical Disclosure Control Methods for Anonymization of Microdata and
     Risk Estimation
-Version: 4.7.4
-Date: 2016-10-18
+Version: 4.7.5
+Date: 2016-11-03
 Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl
 Maintainer: Matthias Templ <matthias.templ@gmail.com>
 Description: Data from statistical agencies and other institutions are mostly
@@ -16,7 +16,7 @@ LazyData: TRUE
 ByteCompile: TRUE
 LinkingTo: Rcpp
 Depends:
-    R (>= 2.10),rmarkdown,knitr,data.table,xtable
+    R (>= 2.10)
 Suggests:
     laeken,testthat
 Imports:
@@ -24,6 +24,10 @@ Imports:
     stats,
     graphics,
     car,
+    rmarkdown,
+    knitr,
+    data.table,
+    xtable,
     robustbase,
     cluster,
     MASS,
@@ -38,6 +42,7 @@ Imports:
     ggthemes,
     rhandsontable,
     DT,
+    shinyBS,
     prettydoc
 License: GPL-2
 URL: https://github.com/alexkowa/sdcMicro
@@ -85,3 +90,4 @@ Collate:
     'sdcGUI.R'
     'show_sdcMicroObj.R'
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr
