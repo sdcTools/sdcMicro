@@ -313,9 +313,6 @@ exportData <- reactive({
   if (is.null(curObj)) {
     return(NULL)
   }
-  if (is.null(input$sel_export_randomizeorder)) {
-    return(NULL)
-  }
   extractManipData(curObj, randomizeRecords=input$sel_export_randomizeorder)
 })
 
