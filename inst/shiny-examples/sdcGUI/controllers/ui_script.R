@@ -1,7 +1,7 @@
 choices_import <- reactive({
   if(is.null(sdcObj())) {
     return(c(
-      "View the current script"="script_view",
+      "View/Save the current script"="script_view",
       "Import a previously saved sdcProblem"="script_import"))
   } else {
     return(c(
@@ -17,7 +17,6 @@ current_code <- reactive({
 })
 
 output$current_code <- renderText({
-
   paste0("<pre class='r'><code class='r' id='codeout'>",paste(highr:::hi_html(current_code()), collapse="\n"),"</code></pre>")
 })
 
