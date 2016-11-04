@@ -11,19 +11,19 @@ writeSafeFile(obj, format, randomizeRecords, fileOut, ...)
 
 \item{format}{(character) specifies the output file format. Accepted values are:
 \itemize{
-\item {'rdata'}{output will be saved in the R binary file-format.}
-\item {'sav'}{output will be saved as SPSS-file.}
-\item {'dta'}{ouput will be saved as STATA-file.}
-\item {'csv'}{output will be saved as comma seperated (text)-file.}}}
+\item {'rdata'}{ output will be saved in the R binary file-format.}
+\item {'sav'}{ output will be saved as SPSS-file.}
+\item {'dta'}{ ouput will be saved as STATA-file.}
+\item {'csv'}{ output will be saved as comma seperated (text)-file.}}}
 
 \item{randomizeRecords}{(logical) specifies, if the output records should be randomized. The following
 options are possible:
 \itemize{
-\item {'no'}{default, no randomization takes place}
-\item {'simple'}{records are just randomly swapped.}
-\item {'byHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset. If
+\item {'no'}{ default, no randomization takes place}
+\item {'simple'}{ records are just randomly swapped.}
+\item {'byHH'}{ if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset. If
 slot 'hhId' is \code{NULL}, the records or the dataset are randomly changed.}
-\item {'withinHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset and
+\item {'withinHH'}{ if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset and
 additionally, the order of records within the clusters are also randomly changed. If slot 'hhId' is \code{NULL}, the records or the dataset are
 randomly changed.}}}
 

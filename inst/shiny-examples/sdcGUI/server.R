@@ -18,6 +18,15 @@ shinyServer(function(session, input, output) {
     inputs
   }
 
+  # obtain the values of inputs
+  shinyValue <- function(id, len) {
+    unlist(lapply(seq_len(len), function(i) {
+      value = input[[paste0(id, i)]]
+      if (is.null(value)) NA else value
+    }))
+  }
+
+  # update pram matrix
   observe({
     curObj <- sdcObj()
     if (!is.null(curObj)) {
@@ -37,13 +46,7 @@ shinyServer(function(session, input, output) {
     }
   })
 
-  # obtain the values of inputs
-  shinyValue <- function(id, len) {
-    unlist(lapply(seq_len(len), function(i) {
-      value = input[[paste0(id, i)]]
-      if (is.null(value)) NA else value
-    }))
-  }
+
 
   # reactive expression, we use this to change the output of output$sdcObj_exists in controllers/ui_setup_sdc.R
   lastWarning <- reactive({
@@ -595,7 +598,7 @@ shinyServer(function(session, input, output) {
     input$btn_export_anon_data # required for timestamp!
     fout <- paste0("exportedData_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".",input$dat_exp_type)
     fout <- file.path(obj$path_export, fout)
-    cmd <- paste0("writeSafeFile(obj=sdcObj, format=",dQuote(input$dat_exp_type), ", randomizeRecords=",dQuote(input$sel_export_randomizeorder))
+    cmd <- paste0("writeSafeFile(obj=sdcObj, format=",dQuote(input$dat_exp_type), ", randomizeRecords=",dQuote(input$rb_export_randomizeorder))
     cmd <- paste0(cmd,", fileOut=",dQuote(fout),")\n")
     attributes(cmd)$evalAsIs <- TRUE
     return(list(cmd=cmd, path=obj$path_export, fout=fout))
@@ -669,6 +672,7 @@ shinyServer(function(session, input, output) {
       return(invisible(NULL))
     }
     if (class(res)!="data.frame") {
+      obj$last_error <- "object was not a data frame"
       return(invisible(NULL))
     }
     if (length(intersect(colnames(res), colnames(obj$inputdata)))==0) {

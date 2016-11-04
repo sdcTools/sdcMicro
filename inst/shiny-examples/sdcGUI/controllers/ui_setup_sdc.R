@@ -410,7 +410,6 @@ output$ui_sdcObj_explorevars <- renderUI({
   out
 })
 
-
 ## add Ghost-Vars
 output$ui_sdcObj_addghostvars <- renderUI({
   btn_ghosts <- myActionButton("btn_addGhostVars",label=("add 'Ghost'-variables"), "primary", css.class="btn-xs")
@@ -470,11 +469,10 @@ sdcData <- reactive({
   df <- data.frame(
     "Variable Name"=vars,
     Type=dataTypes(),
-    Key=shinyInput(radioButtons, length(vars), paste0("setup_key_",vv,"_"), choices=c("No", "Cat.","Cont."), inline=TRUE),
+    Key=shinyInput(radioButtons, length(vars), paste0("setup_key_",vv,"_"), choices=c("No", "Cat.", "Cont."), inline=TRUE),
     Pram=shinyInput(checkboxInput, length(vars), paste0("setup_pram_",vv,"_"), value=FALSE, width="20px"),
     Weight=shinyInput(checkboxInput, length(vars), paste0("setup_weight_",vv,"_"), value=FALSE, width="20px"),
-    "Cluster ID"=shinyInput(checkboxInput, length(vars), paste0("setup_cluster_",vv,"_"), value=FALSE, width="20px"),
-    Remove=shinyInput(checkboxInput, length(vars), paste0("setup_remove_",vv,"_"), value=FALSE, width="20px")
+    "Cluster ID"=shinyInput(checkboxInput, length(vars), paste0("setup_cluster_",vv,"_"), value=FALSE, width="20px")
   )
   df$nrCodes <- sapply(inputdata, function(x) { length(unique(x))} )
   df$nrNA <- sapply(inputdata, function(x) { sum(is.na(x))} )
@@ -482,23 +480,15 @@ sdcData <- reactive({
   df
 })
 
-
 output$setupTable <- DT::renderDataTable({
   sdcData()
 }, server=FALSE, escape=FALSE, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
 options = list(
   searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE, autoWidth=FALSE,
-  columnDefs=list(list(width='160px', targets = c(0:2))),
-  columnDefs=list(list(width='25px', targets=c(3:8))),
+  columnDefs=list(list(width='400px', targets = c(2))),
   preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
   drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
 ))
-
-#proxy = dataTableProxy('setupTable')
-#observe({
-#  cat("observe tablechange!\n")
-#  replaceData(proxy, sdcData())
-#})
 
 # show the setup-button or an error-message
 output$setupbtn <- renderUI({
@@ -662,11 +652,14 @@ output$ui_sdcObj_info <- renderUI({
   })
 })
 
+output$sel_sdc_infovar <- renderUI({
+  selectInput("sel_infov", label=h4("Select variable to show information"), choices=allVars(), width="100%")
+})
+
 output$ui_sdcObj_create <- renderUI({
-  sel_infov <- selectInput("sel_infov", label=h4("Select variable to show information"), choices=allVars(), selected=input$sel_infov, width="100%")
   out <- fluidRow(
-    column(8, div(style='padding-right : 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
-    column(4, sel_infov, uiOutput("ui_sdcObj_info"), align="center")
+    column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
+    column(4, uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
   )
   out
 })

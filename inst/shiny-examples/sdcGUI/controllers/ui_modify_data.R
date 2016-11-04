@@ -10,15 +10,15 @@ output$ui_modify_recode_to_numeric <- renderUI({
     }
   })
 
-  vv <- c(charVars(), facVars())
+  vv <- facVars()
   if (length(vv) == 0) {
     return(fluidRow(
-      column(12, h4("No character/factor variables available in the inputdata!", align="center"))
+      column(12, h4("No factor variables available in the inputdata!", align="center"))
     ))
   }
   out <- fluidRow(
-    column(12, h4("Recode a character/factor variable(s) into a numeric variable"), align="center"),
-    column(12, p("You can now choose a variable of class 'character' or 'factor' and convert it into a variable of type 'numeric'"), align="center"))
+    column(12, h4("Recode factor variable(s) into a numeric variable(s)"), align="center"),
+    column(12, p("You can now choose a facor variable and convert it into a variable of type 'numeric'"), align="center"))
   out <- list(out, fluidRow(
     column(12, uiOutput("ui_to_num_var"), align="center"),
     column(12, uiOutput("ui_to_num_btn"), align="center")))

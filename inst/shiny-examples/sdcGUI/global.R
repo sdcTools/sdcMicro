@@ -5,6 +5,7 @@ library(rhandsontable)
 library(haven)
 library(DT)
 library(shinyBS)
+library(data.table)
 # required that 'dQuote()' works nicely when
 # outputting R-Code
 options(useFancyQuotes=FALSE)
@@ -203,7 +204,6 @@ testdata$urbrur[sample(1:nrow(testdata), 10)] <- NA
 testdata$roof <- factor(testdata$roof)
 testdata$walls <- factor(testdata$walls)
 testdata$sex <- factor(testdata$sex)
-
 # which data.frames ware available in the global environment?
 ex <- ls()
 if ( length(ex) > 0 ) {
@@ -350,3 +350,6 @@ if (file.access(getwd(), mode=2)==0) {
 } else {
   obj$path_export <- tempdir()
 }
+# is available in exported problem instances
+# helpful for debugging
+obj$sessioninfo <- sessionInfo()

@@ -43,7 +43,7 @@ output$ui_export_data_btn <- renderUI({
 })
 output$ui_export_data <- renderUI({
   output$dt_exportData <- DT::renderDataTable({
-    req(input$sel_export_randomizeorder)
+    req(input$rb_export_randomizeorder)
     exportData()
   }, options=list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=10), rownames=FALSE)
 
@@ -93,7 +93,7 @@ output$ui_export_data <- renderUI({
       out <- list(out, uiOutput("ui_export_stata"))
     }
 
-    output$sel_randomize_export <- renderUI({
+    output$rb_randomize_export <- renderUI({
       curObj <- sdcObj()
       if (is.null(curObj)) {
         return(NULL)
@@ -102,19 +102,17 @@ output$ui_export_data <- renderUI({
       choices <- c("Do not randomize"="no","Perform random swapping of IDs"="simple",
         "Randomize by cluster/household id"="byHH", "Randomize within cluster/household id"="withinHH")
       if (!is.null(curObj@hhId)) {
-        sel_randomize <- selectInput("sel_export_randomizeorder", label=h5(lab), choices=choices,
-          selected=input$sel_export_randomizeorder)
+        rb <- radioButtons("rb_export_randomizeorder", label=h5(lab), choices=choices, inline=TRUE)
       } else {
-        sel_randomize <- selectInput("sel_export_randomizeorder", label=h5(lab), choices=choices[1:2],
-          selected=input$sel_export_randomizeorder)
+        rb <- radioButtons("rb_export_randomizeorder", label=h5(lab), choices=choices[1:2], inline=TRUE)
       }
-      sel_randomize
+      help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
+      return(fluidRow(
+        column(12, rb, align="center"),
+        column(12, help_randomize, align="center")
+      ))
     })
-    help_randomize <- helpText("If you want to randomize the order of the observations, please specify",tags$i("yes"),".")
-    out <- list(out, fluidRow(
-      column(12, uiOutput("sel_randomize_export"), align="center"),
-      column(12, help_randomize, align="center")
-    ))
+    out <- list(out, uiOutput("rb_randomize_export"))
     out <- list(out, fluidRow(
       column(12, myActionButton("btn_export_anon_data", "Save the anonymized dataset", btn.style="primary"), align="center")
     ))
