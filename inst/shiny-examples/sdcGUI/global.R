@@ -5,6 +5,7 @@ library(rhandsontable)
 library(haven)
 library(DT)
 library(shinyBS)
+library(data.table)
 # required that 'dQuote()' works nicely when
 # outputting R-Code
 options(useFancyQuotes=FALSE)
@@ -350,3 +351,6 @@ if (file.access(getwd(), mode=2)==0) {
 } else {
   obj$path_export <- tempdir()
 }
+# is available in exported problem instances
+# helpful for debugging
+obj$sessioninfo <- sessionInfo()
