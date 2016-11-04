@@ -5,7 +5,8 @@ date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: true
-    number_sections: true
+    toc_depth: 5
+    number_sections: false
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -22,36 +23,39 @@ Package `sdcMicro` contains a [shiny](https://cran.r-project.org/web/packages/sh
 - Obtain information on disclosure risks and/or information loss
 - Keep reproducibility by being able do download the underlying code from `sdcMicro`
 
-# Information on specific tabs/pages
+We now describe the features of the interactive graphical user interface in detail. The GUI is seperated into 7 main categories, which can be selected from the navigation bar at the top of the screen. Initially, some of these pages will be empty and their content changes once microdata have been uploaded or an `sdcMicroObj` has been generated.
 
-We now give describe the features of the interactive graphical user interface in detain. The GUI is seperated into 7 main categories, which can be selected from the navigation bar at the top of the screen. Initially, some of these pages will be empty and their content changes once microdata have been uploaded or an `sdcMicroObj` has been generated.
+# About/Help {#about}
 
-## About/Help {#about}
+to be written
 
-## Microdata
+# Microdata
+On this page, the user has the possibility to either upload data sets stored as files on the hard drive into the GUI or to select data frames that exist in the users workspace before working the graphical user interface was started. This allows to perform common datamanipulation steps directly in `R` before continuing to anonymize the dataset using the GUI.
 
-### Upload microdata {#upload_microdata}
+We note that the content of this pages changes depending if micro data have already been uploaded or not. In the former case, the user can view, modify or reset variables from the uploaded dataset as described in chapter  [Modify microdata](#modify_microdata). In the latter case, the user is asked to upload data in the GUI which is described in chapter [Upload microdata](#upload_microdata) below.
+
+## Upload microdata {#upload_microdata}
 By default, no microdata are loaded into the GUI. Therefore the user has to upload some data in the GUI that can later be anonymized. If no microdata are available, the left-sidebar shows the following options that can be selected by clicking on the appropriate radio-button entry. In case the selected data could not be used (eg. the data could not be converted to a `data.frame`), the user is presented with the resulting error message and a button `Try-again`. After clicking this button, another microdata file can be imported.
 
-#### Use testdata/internal data
+### Use testdata/internal data
 This screen allows the user to select data.frames that are available in the users-workspace when starting the user interface. Two test-data sets (`testdata` and `testdata2`, information on which is available from `?testdata`) that are included in `sdcMicro` are always available. Pressing the action button below the drop-down selection input will make the GUI use the selected data frame.
 
-#### R-Dataset (.rdata)
-Here users can opt to upload a file saved in `R` binary format. The users can change the options if character vectors should be automatically converted to factors and if variables that only contain missing-values only should be dropped. By clicking on the `Browse` button the user needs to select a `rdata`-file on disk which he wants to upload. For detailed explanation on the options, please see the chaptor on [additional options](#additional_options).
+### R-Dataset (.rdata)
+Here users can opt to upload a file saved in `R` binary format. The users can change the options if character vectors should be automatically converted to factors and if variables that only contain missing-values only should be dropped. By clicking on the `Browse` button the user needs to select a `rdata`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
-#### SPSS-File (.sav)
-Here users can opt to upload a file exported from `SPSS`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `sav`-file on disk which he wants to upload. For detailed explanation on the options, please see the chaptor on [additional options](#additional_options).
+### SPSS-File (.sav)
+Here users can opt to upload a file exported from `SPSS`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `sav`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
-#### SAS-File (.sasb7dat)
-Here users can opt to upload a file exported from `SAS`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `sas7bdat`-file on disk which he wants to upload. For detailed explanation on the options, please see the chaptor on [additional options](#additional_options).
+### SAS-File (.sasb7dat)
+Here users can opt to upload a file exported from `SAS`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `sas7bdat`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
-#### Comma-seperated File (.csv, .txt)
-Here users can opt to upload a text file where variables are seperated by some characters. Typically these data would be exported from software such as `Excel`. It is crucial that users choose if the data file has variable names in the first row and how variables are seperated. Then users may also change if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped when the data are read into the GUI. By clicking on the `Browse` button the user needs to select a `txt` or `csv`-file on disk which he wants to upload. For detailed explanation on the options, please see the chaptor on [additional options](#additional_options).
+### Comma-seperated File (.csv, .txt)
+Here users can opt to upload a text file where variables are seperated by some characters. Typically these data would be exported from software such as `Excel`. It is crucial that users choose if the data file has variable names in the first row and how variables are seperated. Then users may also change if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped when the data are read into the GUI. By clicking on the `Browse` button the user needs to select a `txt` or `csv`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
-#### STATA-File (.dta)
-Here users can opt to upload a file exported from `Stata`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `dta`-file on disk which he wants to upload. For detailed explanation on the options, please see the chaptor on [additional options](#additional_options).
+### STATA-File (.dta)
+Here users can opt to upload a file exported from `Stata`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `dta`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
-#### Additional options {#additional_options}
+### Additional options {#additional_options}
 We now describe the choices users can make when uploading data.
 
 **Convert character-vectors to factors?**
@@ -78,15 +82,15 @@ This option not only available when a text/csv file should be imported. In that 
 
 This option not available when an existing data frame from the current workspace should be used. For any other selection, clicking on the `Browse` button allows the user to select a file on the local hard drive. A feature is that only files with the accepted file ending (e.g `.dta` when files from `Stata` `.rdata` when data exported from `R` should be imported) are shown. This reduces the risk, that a unsuitable file can be selected. Once a file has been selected, pushing the `Open` button immediately uploads the file so that the GUI can process it. If the file cannot be read into the system successfully, the user is presented with the resulting error message. If everything works out smoothly, microdata are now available and the left sidemenu changes. The user can now start the anonymization process. For further information, please have a look at the following sections.
 
-### Modify microdata {#modify_microdata}
+## Modify microdata {#modify_microdata}
 Once data have been uploaded, the content of the *Microdata*-page changes and users can select from a range of possibilities on what to do with the current inputdata. Once data are available, a button `Reset inputdata` is available on top of the sidebar. Clicking this button allows to reset or delete the current input data. However, clicking this button does not immediately reset the problem. Instead, a pop-up window comes up where the user has to confirm to reset the current microdata. This action will be performed, if the user click on the button labelled *"Delete current inputdata"*. If the user clicks *"Dismiss"*, the inputdata remain unchanged.
 
-By default, the first entry ("*Display/Reset Microdata*") is selected. These entries can be selected by clicking on the desired text or directly on the button. We now continue to describe the features that can be selected.
+By default, the first entry ("*Display Microdata*") is selected. These entries can be selected by clicking on the desired text or directly on the button. We now continue to describe the features that can be selected.
 
-#### Display Microdata
+### Display Microdata {#display_microdata}
 This is the default selection, after microdata have been successfully imported or uploaded as described in [uploading microdata](#upload_microdata). This page gives a short overview on the microdata. It shows the name of the imported file as well as the number of observations and the number of variables that are available. Below this information, the user is presented with an interactive table containing the current microdata. The variables can be sorted by clicking on the small arrows next to the variable names on top of the table. Also on the top, there is a dropdown field where users can select how many observations should be displayed on one page. On the bottom of the table the users can find a dynamic pagination field which allows users to jump to a given *"page"* of the current table.
 
-####  Explore variables {#explore_inputvars}
+### Explore variables {#explore_inputvars}
 On this page users have the possibility to explore variables from the current microdata. Users have to choose a variable by selecting a variable from the dropdown field with label *"Choose a variable"*. The default value of this input field is the first variable in the dataset. Optionally, a second variable can be selected by choosing a variable from the dropdown field labelled *"Choose a second variable (optional)"* which has the default value of *"None"*. Once the variables have been selected, a graph and additional information is presented below. The specific output depends on the number of variable(s) chosen as well as their type:
 
 **One variable selected:**
@@ -113,77 +117,216 @@ In this case, a mosaicplot of the selected variables is shown as well as a table
 
 In this case, a grouped boxplot of the continous variable (type is `integer` or `numeric`) is shown for each level or unique value of the non-continuous variable. Below, for each level of the non-continuous variable, the same summary statistics as already described above of the continuous variable are shown. Finally, the number and percentage of missing values is displayed for both selected variables.
 
-####  Reset variables
+### Reset variables {#reset_inputvars}
 When a microdata set is uploaded, internally a backup of the unmodified dataset is saved. This allows users to reset any modifications in variables in the inputdata file which can be done on this page. To do so, the user needs to select one or more variables from the select field which is by default empty. When all variables that should be reverted are selected, one has to click outside the dropdown field to close the input. Afterwards, an action button labelled `Reset selected variable(s) to their original state` occurs below the input field. Clicking on this button resets the selected variables to their original state. In case you want to remove already selected variables, you can just click on these variable names in the input field and either press the *"backspace"*- or *"delete"*" keys on the keyboard.
 
 In any case, after pressing the action button, the GUI changes to the [*"Explore variables"*](#explore_inputvars) page at which the first of the selected variable(s) is shown.
 
-####  Use only a subset of the available microdata
-####  Convert numeric variables to factors
-####  Convert variables to numeric
-####  Modify an existing factor-variable
-####  Create a stratification variable
-####  Set specific values in a variable to `NA`
-####  Hierarchical data
+### Use only a subset of the available microdata
+On this page it is possible to decrease the size of the inputdata. This is especially useful if one wants to test different parameter settings and a run on the complete dataset would take long. To reduce the size of the inputdataset, the user has to select a method using the drop down field `How would you like to restrict the microdata?` and to select a value from the slider `Choose your 'n'`. The following choices are possible on how to reduce the dataset, the range of values that can be chosen from the slider depends on the choice.
+
+  - `n-Percent of the data`: `n%` of the data will be randomly chosen. The slider ranges in this case from 1 to 100.
+  - `the first n-observations`: the data set is decreased by only using the first `n%` records. The slider ranges in this case from 1 to the total number of records.
+  - `every n-th observation`: This choice allows to create a simple, systematic sample of input data by selecting every `nth` observation. The slider ranges in this case from 1 to at max 500.
+  - `exactly n randomly drawn observations`: the data set is decreased by taking a random sample of `n%` records. The slider ranges in this case from 1 to the total number of records.
+    
+When the desired selections have been applied, pushing the button `Apply subsetting of the microdata` performs the actual sub-subsampling. After the micro data set has been reduced, the user is taken to the [Display microdata](#display_microdata) page where the reduced dataset can be analysed.
+
+### [tbw] Convert numeric variables to factors
+
+- `Choose numeric variable` (selectInput) multiple or single selection
+- `Custom Breaks` (radio buttons with choices `no` (default) and `yes`)
+
+In case of custom breaks, additional UI elements
+
+- `Select Algorithm` with choices `equidistant`, `logEqui`, `equalAmount` and `manual`
+- `Specify the number of breaks` (for all choices except `manual`)
+- `Specify the custom breaks` (textInput, custom format!)
+
+- Button ``Convert to factor(s)`. Afterwards it jumps to the [explore variable](#explore_inputvars) page with the first of the recoded variables being selected.
+
+### [tbw] Convert variables to numeric
+
+- `Choose variable`: selection of any current factor variables is possible
+- Button `Recode to numeric`: Afterwards it jumps to the [explore variable](#explore_inputvars) page with the first of the recoded variables being selected.
 
 
-## Anonymize {#anonymize}
+
+### [tbw] Modify an existing factor-variable {#recode_factors_inputdata}
+
+- `Choose factor variable` all possible factor variables
+- Below: `Select Levels to recode/combine` multiple levels may be selected.Clicking selected levels can be removed!
+- Once at least one level has been selected we have
+    - `New label for recoded values`: by default, values are pasted together. Note: Its possible to rename factor levels here!
+    - Button: `Update factor variable`
+- Below: Barplot of the selected factor variable. This plot changes once the Button is pressed.
+
+### [tbw] Create a stratification variable
+- Explain why this is in the GUI. Stratification can be selected in some anonymization methods!
+
+- `Select Variables` one or mor variables from the micro data can be selected
+
+- `desired variable name`: Textinput where new variable name can be specified. by default, the selected variable names are pasted together using `_` as seperator
+- Button `Create stratification variable`
+
+
+### Set specific values in a variable to `NA`
+In this section, users can set values in some variables to missing (`NA`). The first step is to choose one of two possible methods by choosing either `by Id` (the default selection) or `by rule` in the radio button input labelled `How do you want to select the Observations where you want to set values to missing?` on top of the page.
+
+If `by Id` has been selected, the user can set values in one or more variables for a specific record to missing. He therefore needs to select at least one variable in the input called `Select Variable for Suppression`. Once at least one variable has been selected, a new input field occurs. In this input called `In which ID do you want to suppress values?`, a number between 1 and at most the number of records can be specified. This selection refers to the row in which for the selected variables the values will be set to `NA`. The user can change this index either by clicking on the small arrows at the right hand side of the input field which allow to increment or decrement the current number by one. As an alternative, it is also possible to directly enter a number in the field.
+
+In case `by rule` has been selected, these choices are slightly different. In the variable selection it is only possible to select one variable. The other difference is that there is no input field where the user can select a number. Instead, there is a dropdown field where the user can select one of the distinct values of the selected variable. The idea is that all records having this values in the selected variable will the set to `NA`.
+
+The remaining part of this page is identical for both choices of the method. Below these inputs, an interactive table showing the current microdata is shown. This table can be filtered and navigated exactly the same way as already described [here](#display_microdata). If all selections are valid, a button labelled `Set values to NA` is shown above this table. Pressing this button sets the correspondig values to `NA` in the micro data. Afterwards, the page changes and the  [Exlore variables](#explore_inputvars) page is shown. In this page, the (first) selected variable in which values should be set to missing is pre-selected to be analyzed.
+
+### [tbw] Hierarchical data
+- Improvements in code
+    - change check: at least 1 variable must be selected (not two)
+    - add tags$br() after the "reset" button
+    - improve UI
+    
+- `What do you want to do?` are radio buttons with choices `Prepare file for the anonymization of household level variables` or `Merging an anonymized household level file`
+
+**case 1**
+
+- selectInput (single) `Please a suitable household id variable`
+- selectInput (multiple) `Please select all variables that refer to households and not to individuals`
+- Button `Create household-input data` if at least one variable in selected. Pressing the button refreshes the page and shows the number and names of variables and okbservations as well as their type in a small table.
+
+**case 2**
+
+- `Browse` -> select file from disk, uploaded immediatly. On success, button labelled `Reset uploaded household data`. clicking allows to upload a different file
+- `Select a variable containing household ids` selectInput with variables that exist in both datasets
+- button `Merge household- and individual level data`. On click, merge is performed and if successful, the page refreshes and the user is informed. We then can continue working on the merged dataset.
+
+# Anonymize {#anonymize}
 If no inputdata have been uploaded
 
 - Information to either to to `Microdata` to upload data or to `Undo` to upload a previously saved problem instance
 - If Microdata are available and no problem has been defined -> goto [setup a sdc problem](#setup_sdcproblem)
 - If a problem has been set up, apply anonymization techniques described in [Anonymization methods](#anonymization_methods)
 
-### Set up a problem {#setup_sdcproblem}
+## [tbw] Set up a problem {#setup_sdcproblem}
 
-### Anonymization Methods {#anonymization_methods}
+- GUI is splitted in two parts. 
+  - Left hand side: Specify the sdc problem
+  - Right hand side: analyse/view some variables
 
-## Risk/Utility  {#risk_utility}
+- interactive table with 9 columns
+    - Variable.Name	
+    - Type	
+    - Key	
+    - Pram	
+    - Weight	
+    - Cluster.ID	
+    - Remove	
+    - nrCodes	
+    - nrNA
 
-## Export Data {#export_data}
+- checks: either popup windows with some instructions or a red action button below the table.
+
+- `Parameter "alpha"`: slider between 0 and 1 -> relevant for freq calc
+- `Parameter "seed"`: slider between -250 and 250. 
+- explain sliders: click and move with keyboard arrows to left and right
+- If everything is ok blue button `Setup SDC problem`
+
+Right hand side:
+
+- Select variable to show information: choose available variables
+    - plot (histogram or barplot)
+    - table (factor or character or integer with <=
+    - Number of levels including NA: 310 distinct values), 
+    - Summary for numeric variables
+
+
+## [tbw] Anonymization Methods {#anonymization_methods}
+Left Sidebar: choose what to do. Choices are `View/Analyse existing sdcProblem`, `Anonymize categorical variables` and `Anonymize numerical variables`.
+
+### [tbw] View/Analyse existing sdcProblem
+
+Analyse the Problem
+
+#### [tbw] Show Summary
+
+
+#### [tbw] Explore variables
+
+This is exactly the same thing as already described in [Explore variables](#explore_inputvars), the only difference being that the analyzed variables are now those currently available in the active problem instance.
+
+#### [tbw] Add 'Ghost'-Variables
+
+#### [tbw] Create new IDs
+
+### [tbw] Anonymize categorical variables
+#### [tbw] Recoding
+
+to be written, same as described [here](#recode_factors_inputdata), the only difference being that the analyzed variables are now those currently available in the active problem instance.
+
+#### [tbw] k-Anonymity
+#### [tbw] Postrandomization (PRAM)
+#### [tbw] Supress values with high risks
+
+
+### [tbw] Anonymize numerical variables
+#### [tbw] Top-/Bottom Coding
+#### [tbw] Apply Microaggregation
+#### [tbw] Adding Noise to the data
+#### [tbw] Apply Rank-Swapping
+
+# [tbw] Risk/Utility  {#risk_utility}
+
+
+# Export Data {#export_data}
 In this tab, the GUI offers the possibiliby to export the current state of the anonymized microdata from the current problem instance to a file in various formats or save a report summarizing the anonymization process as an html-file to disk. If no problem instance has been specified, the user is informed that he needs to create a problem first. By clicking on the button labelled `Create an SDC-Problem`, the GUI changes to the [Anonymize](#anonymize) page, where the user can create a problem. As an alternative, the user may upload a previously saved problem instance. By clicking on the button `Upload a previously saved problem`, the user is taken to the [Undo](#undo) page where he may upload an previously saved problem instance.
 
-If, however, a problem has already been defined the sidebar on the left hand side of the screen allows the user to choose from either `Anonymized Data` (the default) or `Anonymization Report` by clicking on the desired text or button. 
+If, however, a problem instance has been defined, the page features a sidebar on the left hand side of the screen. In this sidebar, the user can choose from either `Anonymized Data` (the default) or `Anonymization Report` by clicking on the desired text or button. 
 
-### Anonymized Data
+## Anonymized Data
+On this page, the micro data available at present in the active sdc problem instance after the applied anonymization techniques as described [here](#anonymization_methods) can be saved to disk. 
 
-- data table (interactive)
-- Select file-format (Radiobuttons) | R-Dataset   SPSS-File   Comma-seperated File   STATA-File
-- Options for csv-export
-    - First row contains variable names: TRUE   FALSE
-    - Separator: Semicolon (;)   Tab   Comma (,)
-    - Decimal-Character: Dot (.)   Comma (,)
-- Randomize Order of Observations:  "Do not randomize"","Perform random swapping of IDs", Randomize by cluster/household id"="byHH", "Randomize within cluster/household" (last two are only available if a household/cluster variable is set in the current problem instance)
-- save button "Save the anonymized data"
-Clicking on this button saves the current script in a file `exportedData_sdcMicro_{timestamp}.{filetype}` in the destination folder that has been specified in the [About](#about) page or (by default) in the current working directory if this setting has not been changed.
+On top of this page, an interactive, sortable and browsable table containing showing the data that will be written to a file are shown. The variables can be sorted by clicking on the small arrows next to the variable names on top of the table. Also on the top, there is a dropdown field where users can select how many observations should be displayed on one page. On the bottom of the table the users can find a dynamic pagination field which allows users to jump to a given *"page"* of the current table.
 
+Below the table, two sets of radio buttons are shown:
 
-### Anonymization Report
-- Type of Report: internal (detailed)   external (short overview)
-- save button "Save the report"
-Clicking on this button saves the current script in a file `sdcReport_internal_{timestamp}.html` in the destination folder that has been specified in the [About](#about) page or (by default) in the current working directory if this setting has not been changed.
+**Select file-format**
 
+Using this input, the desired output format can be specified. The possible choices are `R-Dataset`, `SPSS-File`, `Comma-seperated File` and `STATA-File` and can be selected by clicking on the appropriate text or button. If `Comma-seperated File` is chosen, additional controls relevant for the generation of the output file appear below. These options three additional radio button inputs:
 
-## Reproducibility {#reproducibility}
-TODO: describe choices if no inputdata/sdcProblem are available!
+  - **First row contains variable names**: allows to specify if variable names should be written to the output file (`TRUE`) which is the default setting or not (`FALSE`)
+  - **Separator**: allows to specify the seperation character, possible choices are `Semicolon (;)` (the default), `Tab` and `Comma (,)`
+  - **Decimal-Character**: allows to specify the decimal character, possible choices are `Dot (.)` (the default) and `Comma (,)`
 
-In this tab, users find information to be able to reproduce the anonymization steps in the command line interface. On the left hand sidebar, users can make the choices that are described below. It is possible to view the current script (the default), import a previously exported sdc problem from disk or save the current state of the current problem instance to disk for later re-import. This option is however only possible if a problem instance has been successfully specified.
+**Randomize Order of Observations**
 
-### View/Save the current script
+This set of radio buttons allow to choose, if the observations in the dataset should be randomized. The possible choices are `Do not randomize` (the default). In that case, the order of records remains unchanged. If `Perform random swapping of IDs` is chosen, the records of the dataset are randomly changed. In case that a household/cluster variable has been selected when specifying the current sdc problem as described [here](setup_sdcproblem), two additional options are possible. If `Randomize by cluster/household id` is selected, the values of this identification variable are randomized across the dataset. If the user opts to choose `Randomize within cluster/household`, not only the values of the household identification variable are randomly changed but also the the order of records within the households/clusters are permuted.
+
+Below this option, a button labelled `Save the anonymized data` is shown. Clicking this button finally creates a file named `exportedData_sdcMicro_{timestamp}.{filetype}` using `writeSafeFile()` with the specified settings in the destination folder that has been specified in the [About](#about) page or (by default) in the current working directory if this setting has not been changed.
+
+## Anonymization Report
+On this page, an anonymization report can be generated and saved to disk. The user can select the type of record that can be generated by choosing from the radio button input. If `internal (detailed)` (the default) is selected, a quite long report is generated while the resulting report if `external (short overview)` was selected just gives a very broad overview about the anonymization process. Once the selection has been done, clicking on the button labelled `Save the report` writes the report to disk. A file `sdcReport_internal_{timestamp}.html` is generated in the destination folder that has been specified in the [About](#about) page or (by default) in the current working directory if this setting has not been changed.
+
+# Reproducibility {#reproducibility}
+In this tab, users find information to be able to reproduce the anonymization steps in the command line interface. 
+
+If no inputdata have been uploaded on the [Microdata](#upload_microdata) page, this page shows two buttons. Clicking on the button labelled `Upload microdata` sends the user to the [Microdata](#upload_microdata) section of the GUI where microdata may be uploaded. Clicking on the button below labelled `Upload a previously saved problem` navigates to the [Undo](#undo) page where a problem instance that has been saved to disk can be uploaded.
+
+If inputdata or a problem instance are available, on the left hand side of the page a sidebar is shown. In this sidebar, users can make the choices that are described below. It is possible to view the current script (the default), import a previously exported sdc problem from disk or save the current state of the current problem instance to disk for later re-import. This option is however only possible if a problem instance has been successfully specified.
+
+## View/Save the current script
 On this page, users can view the code that has been applied so far. This code could be run in `sdcMicro` directly with the only limitation being that the file path when uploading microdata files is relative to the `fileInput()`-functionality of shiny which gives no way to return the path of the uploaded file on the local disk. So for full reproducibiliby, users may need to adjust the path listed in the current script.
 
 Above the script output, a button labelled `Save Script to File` is shown. Clicking on this button saves the current script in a file `exportedScript_sdcMicro_{timestamp}.R` in the destination folder that has been specified in the [About](#about) page or (by default) in the current working directory if this setting has not been changed.
 
-### Import a previously saved sdcProblem
+## Import a previously saved sdcProblem
 On this page it is possible to import a previously saved problem instance to the GUI. Once the user clicks on the `Browse` button, he may locate any previously exported problem instance. The file chooser only allows to upload `.rdata` files to minimize possible mistakes. Once the file has been located and the `Open` button is pressed, the selected file is loaded into the GUI. If the import was successful, the content of the GUI has been replaced with the data from the imported file.
 
 If the import was not successful, the user is presented with the resulting error message and a button labelled `Try again!`. After clicking this button, it is possible to upload a different file. If the import of the problem instance worked, the GUI changes to the overview of the current sdc problem instance as described [here](#setup_sdcproblem).
 
-### Export/Save the current sdcProblem
+## Export/Save the current sdcProblem
 This option is only shown in the sidebar once an sdc problem instance has been generated as described [here](#anonymize). If the button labelled `Save the current problem` is clicked, the entire current probleminstance (and including all GUI-relevant data) are saved to a file named `exportedProblem_{timestamp}.rdata` in the destination folder that has been specified in the [About](#about) page or (by default) in the current working directory if this setting has not been changed.
 
 After the file has been successfully saved, the page refreshes and shows the complete path to most recent saved file at the bottom of the page.
 
-## Undo {#undo}
+# [tbw] Undo {#undo}
 
-# Summary
+# [tbw] Summary

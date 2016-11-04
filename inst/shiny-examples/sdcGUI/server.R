@@ -983,8 +983,8 @@ shinyServer(function(session, input, output) {
     runEvalStrMicrodat_no_errorchecking(cmd=cmd, comment="## Set specific values to 'NA'")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
-    updateNavbarPage(session, "mainnav", selected="Microdata")
+    obj$inp_sel_viewvar1 <- input$sel_na_suppvar[1]
+    updateSelectInput(session, "sel_moddata", selected = "view_var")
   })
   ### anonymization methods (categorical) ###
   # pram() with given transition-matrix

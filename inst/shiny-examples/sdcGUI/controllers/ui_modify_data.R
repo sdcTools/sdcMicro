@@ -273,39 +273,31 @@ output$ui_modify_create_stratvar <- renderUI({
 output$ui_set_to_na <- renderUI({
   output$ui_nasupptype <- renderUI({
     radioButtons("set_to_na_type", label=h5("How do you want to select the Observations where you want to set values to missing?"),
-      choices=c("By Id"="id", "By rule"="rule"), selected=input$set_to_na_type, inline=TRUE)
+      choices=c("By Id"="id", "By rule"="rule"), inline=TRUE)
   })
   output$tab_inputdata_setna <- renderDataTable({
     a <- obj$inputdata
     cbind(id=1:nrow(a),a)
   },
-    options = list(scrollX=TRUE, searching=FALSE, paging=TRUE, ordering=FALSE, bInfo=FALSE))
-
+    options=list(scrollX=TRUE, searching=FALSE, paging=TRUE, ordering=FALSE, bInfo=FALSE))
   output$ui_nasuppvar <- renderUI({
-    if (is.null(input$set_to_na_type)) {
-      return(NULL)
-    }
+    req(input$set_to_na_type)
     multiple <- FALSE
     if (input$set_to_na_type=="id") {
       multiple <- TRUE
     }
-    res <- selectInput("sel_na_suppvar", choices=allVars(), multiple=multiple, label="Select Variable for Suppression")
+    res <- selectInput("sel_na_suppvar", choices=allVars(), multiple=multiple, label=h5("Select Variable for Suppression"), width="50%")
     return(res)
   })
-
   output$ui_nasuppid <- renderUI({
-    if (is.null(input$sel_na_suppvar)) {
-      return(NULL)
-    }
+    req(input$sel_na_suppvar, input$set_to_na_type)
     if (input$set_to_na_type=="id") {
-      res <- numericInput("num_na_suppid", label="In which ID do you want to suppress values?", value=1, min=1, max=nrow(obj$inputdata))
+      res <- numericInput("num_na_suppid", label=h5("In which ID do you want to suppress values?"), value=1, min=1, max=nrow(obj$inputdata))
     } else {
-      res <- selectInput("num_na_suppid", label="Which value in this variable would you like to set to NA", multiple=FALSE, choices=sort(unique(obj$inputdata[[input$sel_na_suppvar]])))
+      res <- selectInput("num_na_suppid", label=h5("Which value in this variable would you like to set to NA"), multiple=FALSE, choices=sort(unique(obj$inputdata[[input$sel_na_suppvar]])))
     }
     return(res)
   })
-
-
   output$ui_ansuppbtn <- renderUI({
     if (is.null(input$sel_na_suppvar) || length(input$sel_na_suppvar)==0) {
       return(NULL)
@@ -313,12 +305,18 @@ output$ui_set_to_na <- renderUI({
     if (is.null(input$num_na_suppid) || length(input$num_na_suppid)==0) {
       return(NULL)
     }
+    if (!is.null(input$num_na_suppid) && input$num_na_suppid<1) {
+      return(NULL)
+    }
+    if (!is.null(input$num_na_suppid) && input$num_na_suppid>nrow(inputdata())) {
+      return(NULL)
+    }
     myActionButton("btn_set_to_na",label=("Set values to NA"), "primary")
   })
 
   out <- fluidRow(
     column(12, h4("Set cells to NA (missing)", align="center")),
-    column(12, uiOutput("ui_nasupptype")))
+    column(12, uiOutput("ui_nasupptype"), align="center"))
 
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_nasuppvar"), align="center"),
