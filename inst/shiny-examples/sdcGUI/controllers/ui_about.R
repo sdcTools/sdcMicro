@@ -39,6 +39,19 @@ observeEvent(input$btn_update_export_path, {
   obj$path_export <- input$path_export_data
 })
 
+output$stop_btn <- renderUI({
+  btn <- bsButton("stop_sdcGUI", label="Stop the GUI", style="primary",
+   onclick="setTimeout(function(){window.close();},500);")
+  fluidRow(
+    column(12, btn, tags$br(), tags$br(), align="center")
+  )
+})
+observeEvent(input$stop_sdcGUI,{
+  res <- reactiveValuesToList(obj)
+  res <- res[c("inputdata","sdcObj")]
+  stopApp(invisible(res))
+})
+
 output$ui_about <- renderUI({
   out <- fluidRow(
     column(12, h4("About the Interface", align="center")),
@@ -51,7 +64,6 @@ output$ui_about <- renderUI({
       column(12, p("If you already have an sdcProblem that was exported from the GUI, you can upload it in Tab",code("Reproducibility"),"."), align="center")
   ))
 
-
   pp <- textInput("path_export_data", label=h5("Enter a directory where any exported files (data, script, problem instances) should be saved to"),
     placeholder=paste("e.g:", getwd()), width="50%")
   out <- list(out, fluidRow(
@@ -62,10 +74,14 @@ output$ui_about <- renderUI({
     column(12, uiOutput("btn_update_export_path"), align="center")
   ))
 
+  # stop the app
+  out <- list(out, uiOutput("stop_btn"))
+
   btn1 <- bsButton("help_about", label="", icon=icon("question"), style = "primary", size="extra-small", type="action", block = FALSE, disabled = FALSE, value = FALSE)
   out <- list(out, fluidRow(
     column(12, btn1, align="center"),
     bsTooltip("help_about", title="show some additional information", placement="bottom", trigger="hover", options = NULL)
   ))
+
   out
 })
