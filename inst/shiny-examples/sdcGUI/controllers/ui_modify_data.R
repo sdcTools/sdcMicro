@@ -236,17 +236,24 @@ output$ui_modify_change_factor <- renderUI({
 
 # UI-output to create a stratification variable
 output$ui_modify_create_stratvar <- renderUI({
-  sel <- selectInput("sel_allvars_strata",label=h5("Select Variables"), multiple=TRUE,
-    choices=allVars(), selected=input$sel_allvars_strata, width="100%")
-
-  if ( is.null(input$sel_allvars_strata) ) {
-    txtval <- NULL
-    btn <- NULL
-  } else {
-    txtval <- textInput("inp_vname_strata",label=h5("desired variable name"),
-      value=paste0(input$sel_allvars_strata, collapse="_"), width="100%")
-    btn <- myActionButton("btn_create_stratavar",label=("Create stratification variable"), "primary")
-  }
+  output$sel_genstrata <- renderUI({
+    selectInput("sel_allvars_strata",label=h5("Select Variables"), multiple=TRUE,
+      choices=allVars(), width="100%")
+  })
+  output$vname_genstrata <- renderUI({
+    req(input$sel_allvars_strata)
+    if (length(input$sel_allvars_strata) < 2) {
+      return(NULL)
+    }
+    textInput("inp_vname_strata",label=h5("desired variable name"), value=paste0(input$sel_allvars_strata, collapse="_"), width="100%")
+  })
+  output$btn_genstrata <- renderUI({
+    req(input$sel_allvars_strata)
+    if (length(input$sel_allvars_strata) < 2) {
+      return(NULL)
+    }
+    fluidRow(column(12, myActionButton("btn_create_stratavar",label=("Create stratification variable"), "primary"), align="center"))
+  })
 
   out <- fluidRow(
     column(12, h4("Create a stratification variable", align="center")),
@@ -256,11 +263,9 @@ output$ui_modify_create_stratvar <- renderUI({
       This is useful if you want to create a new variable for e.g stratification purposes when creating a new sdc pproblem.", align="center")))
 
   out <- list(out, fluidRow(
-    column(6, p(sel, align="center")),
-    column(6, p(txtval, align="center"))))
-
-  out <- list(out, fluidRow(
-    column(6, p(btn, align="center"))))
+    column(6, uiOutput("sel_genstrata"), align="center"),
+    column(6, uiOutput("vname_genstrata"), align="center")))
+  out <- list(out, uiOutput("btn_genstrata"))
   out
 })
 
