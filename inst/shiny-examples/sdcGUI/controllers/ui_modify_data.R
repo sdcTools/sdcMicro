@@ -1,7 +1,7 @@
 # UI-output for recoding a variable to a numeric variable
 output$ui_modify_recode_to_numeric <- renderUI({
   output$ui_to_num_var <- renderUI({
-    selectInput("sel_to_num_var",label=h5("Choose variable"), choices=vv, width="50%", selected=input$sel_to_num_var, multiple=TRUE)
+    selectInput("sel_to_num_var",label=h5("Choose variable"), choices=vv, width="50%", multiple=TRUE)
   })
   output$ui_to_num_btn <- renderUI({
     req(input$sel_to_num_var)
@@ -9,19 +9,20 @@ output$ui_modify_recode_to_numeric <- renderUI({
       return(myActionButton("btn_recode_to_numeric",label=("Recode to numeric"), "primary"))
     }
   })
-
   vv <- facVars()
   if (length(vv) == 0) {
     return(fluidRow(
-      column(12, h4("No factor variables available in the inputdata!", align="center"))
+      column(12, h4("No factor variables available in the inputdata!", align="center")),
+      column(12, h4("There are no variables in the input data that could be converted to numeric variables.", align="center"))
     ))
   }
+  info_txt <- list('Please take care, internally',code("as.numeric()"),'is used, so the resulting numeric vector contains the underlying numeric (integer) representation of the input variable, which is often meaningless as it may not correspond to the factor levels!')
   out <- fluidRow(
     column(12, h4("Recode factor variable(s) into a numeric variable(s)"), align="center"),
-    column(12, p("You can now choose a facor variable and convert it into a variable of type 'numeric'"), align="center"))
-  out <- list(out, fluidRow(
+    column(12, p("You can now choose one or more factor variable and convert them into variable(s) of type 'numeric'"), align="center"),
+    column(12, p(info_txt), align="center"),
     column(12, uiOutput("ui_to_num_var"), align="center"),
-    column(12, uiOutput("ui_to_num_btn"), align="center")))
+    column(12, uiOutput("ui_to_num_btn"), align="center"))
   out
 })
 

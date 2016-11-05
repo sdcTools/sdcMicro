@@ -145,12 +145,10 @@ In case of custom breaks, additional UI elements
 
 - Button ``Convert to factor(s)`. Afterwards it jumps to the [explore variable](#explore_inputvars) page with the first of the recoded variables being selected.
 
-### [tbw] Convert variables to numeric
+### Convert variables to numeric
+In this page, factor variables from the input data may be converted back to numeric variables. If no factor variables are present in the micro data, the user is shown this information and no conversion is possible. If, however, factor variables are available from the current active micro data, the user can select one or more variables from the input field labelled `Choose variable`. Once at least one variable is selected, a button called `Recode to numeric` occurs below the variable selection input. After clicking this button, the conversion is done and the view changes to the [explore variable](#explore_inputvars) page with the first of the recoded variables being selected.
 
-- `Choose variable`: selection of any current factor variables is possible
-- Button `Recode to numeric`: Afterwards it jumps to the [explore variable](#explore_inputvars) page with the first of the recoded variables being selected.
-
-
+It should be noted however - as also shown on the GUI - that this feature should be used with care because internalle function `as.numeric()' is used to perform the conversation. Thus, the resulting numeric vector contains the underlying numeric (integer) representation of the input factor, which is often meaningless as it may not correspond to the factor levels.
 
 ### [tbw] Modify an existing factor-variable {#recode_factors_inputdata}
 
