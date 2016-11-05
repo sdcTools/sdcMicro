@@ -29,7 +29,7 @@ We now describe the features of the interactive graphical user interface in deta
 
 to be written
 
-# Microdata
+# Microdata {#microdata}
 On this page, the user has the possibility to either upload data sets stored as files on the hard drive into the GUI or to select data frames that exist in the users workspace before working the graphical user interface was started. This allows to perform common datamanipulation steps directly in `R` before continuing to anonymize the dataset using the GUI.
 
 We note that the content of this pages changes depending if micro data have already been uploaded or not. In the former case, the user can view, modify or reset variables from the uploaded dataset as described in chapter  [Modify microdata](#modify_microdata). In the latter case, the user is asked to upload data in the GUI which is described in chapter [Upload microdata](#upload_microdata) below.
@@ -333,11 +333,16 @@ On this page it is possible to import a previously saved problem instance to the
 
 If the import was not successful, the user is presented with the resulting error message and a button labelled `Try again!`. After clicking this button, it is possible to upload a different file. If the import of the problem instance worked, the GUI changes to the overview of the current sdc problem instance as described [here](#setup_sdcproblem).
 
-## Export/Save the current sdcProblem
+## Export/Save the current sdcProblem {#export_sdc_probleminstance}
 This option is only shown in the sidebar once an sdc problem instance has been generated as described [here](#anonymize). If the button labelled `Save the current problem` is clicked, the entire current probleminstance (and including all GUI-relevant data) are saved to a file named `exportedProblem_{timestamp}.rdata` in the destination folder that has been specified in the [About](#about) page or (by default) in the current working directory if this setting has not been changed.
 
 After the file has been successfully saved, the page refreshes and shows the complete path to most recent saved file at the bottom of the page.
 
-# [tbw] Undo {#undo}
+# Undo {#undo}
+This page allows the user to undo the last anonymization step. If there is no active sdc problem, the user is presented with two options. He can either click on the button labelled `Upload microdata` in case no micro data have been uploaded to the GUI or on the button `Create an SDC problem` in case that micro data are available. In the former case the page is changed to the [Microdata](#microdata) page while in the latter case it is changed to the [Anonymize](#anonymize) page. In both cases the user may also click on the `Browse` button to import a [previously saved problem instance](#export_sdc_probleminstance). We note that this functionality is always available from this page, independent on the availabilty of inputdata, an sdc problem instance or if it is possible to undo anonymization steps.
+
+If a problem instance is available, the page layout changes. In case it is possible to undo an anonymization step, the last anonymization action that has been applied is printed on top of this page. Below there is a button termed `Undo last Step`. Clicking on this button opens a pop up window in which the user has to confirm that the last anonymization step should be revertd. In case that this button was unintentionally pressed, clicking on `Dismiss` closes the popup window and it is possible to continue with the anonymization process.
+
+Below, this button there is another action button labelled `Save the current problem` which has exactly the same functionality as the button described [here]( {#export_sdc_probleminstance}). Once the pproblem was successfully saved to disk, the page refreshes and the path the exported file is shown.
 
 # [tbw] Summary

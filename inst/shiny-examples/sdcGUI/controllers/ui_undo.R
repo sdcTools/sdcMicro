@@ -40,6 +40,10 @@ output$ui_script_import1 <- renderUI({
 
 
 output$ui_undo <- renderUI({
+  if (is.null(inputdata())) {
+    return(list(noInputData(uri="ui_undo"),
+      fluidRow(column(12, tags$br(), p("or"), align="center")), uiOutput("ui_script_import1")))
+  }
   curObj <- sdcObj()
   if (is.null(curObj)) {
     return(list(noSdcProblem(uri="ui_undo"),
@@ -52,7 +56,7 @@ output$ui_undo <- renderUI({
     out <- list(out, uiOutput("ui_export_problem1"), uiOutput("ui_script_import1"))
     return(out)
   } else {
-    btn_undo <- myActionButton("btn_undo", "Undo last Step", "danger", css.class="btn-xs")
+    btn_undo <- myActionButton("btn_undo_xx", "Undo last Step", "danger")
     out <- fluidRow(
       column(12, h4("Undo last step"), align="center"),
       column(12, p("Clicking the button below will remove (if possible) the following anonymization step!"), align="center"),

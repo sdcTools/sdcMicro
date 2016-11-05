@@ -749,15 +749,30 @@ shinyServer(function(session, input, output) {
     updateSelectInput(session, "sel_moddata",selected="view_var")
   })
   # undo-button
+
+  ## show confirmation modal window before undoing last step
+  observeEvent(input$btn_undo_xx, {
+    txt <- p("By clicking the button below, you really undo the last anonymization step")
+    btn <- myActionButton("btn_undo", label=("Undo last step"), "danger")
+    inp <- fluidRow(
+      column(12, txt, align="center"),
+      column(12, btn, align="center")
+    )
+    showModal(modalDialog(inp, title="Confirm to undo last anonymization step", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+  })
+
   observeEvent(input$btn_undo, {
     ptm <- proc.time()
     cmd <- code_undo()
     runEvalStr(cmd=cmd, comment=NULL)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
+    removeModal(session=session) # remove the modal
     updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
     updateNavbarPage(session, "mainnav", selected="Anonymize")
   })
+
+
 
   # export data
   observeEvent(input$b_export, {
