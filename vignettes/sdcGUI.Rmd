@@ -171,25 +171,20 @@ In case `by rule` has been selected, these choices are slightly different. In th
 
 The remaining part of this page is identical for both choices of the method. Below these inputs, an interactive table showing the current microdata is shown. This table can be filtered and navigated exactly the same way as already described [here](#display_microdata). If all selections are valid, a button labelled `Set values to NA` is shown above this table. Pressing this button sets the correspondig values to `NA` in the micro data. Afterwards, the page changes and the  [Exlore variables](#explore_inputvars) page is shown. In this page, the (first) selected variable in which values should be set to missing is pre-selected to be analyzed.
 
-### [tbw] Hierarchical data
-- Improvements in code
-    - change check: at least 1 variable must be selected (not two)
-    - add tags$br() after the "reset" button
-    - improve UI
-    
-- `What do you want to do?` are radio buttons with choices `Prepare file for the anonymization of household level variables` or `Merging an anonymized household level file`
+### Hierarchical data
+In this page, users find the functionality to deal with hierarchical data. The idea is as follows. Often data contain clusters, eg. individual within households or students within classes. In this case, it is often the case that some variables of the data set are only relevant on cluster-level while others are relevant on individual level. It is also often the case that one wants to apply different anonymization strategies for the different *levels* of the data. So the GUI offers a way to deal with this situation in the following way.
 
-**case 1**
+The radio buttons labelled `What do you want to do?` allow to choose from `Prepare file for the anonymization of household level variables` (the default) and `Merging an anonymized household level file`. In the former case, the uploaded micro data set can be restricted to those variables relevant for the cluster-level only. Once that has been done, the user may anonymize the household file and can finally export the anonymized file to disk as described [here](#export_data). In the latter case, an already exported, anonymized household-level file can be imported to the GUI and merged with the individual level file. Then the anonymization process can be started by creating a problem instance using individual-level variables as keys. Finally, the user is able to export an anonymized file that is safe on both levels. We now describe both possibilibies in this section:
 
-- selectInput (single) `Please a suitable household id variable`
-- selectInput (multiple) `Please select all variables that refer to households and not to individuals`
-- Button `Create household-input data` if at least one variable in selected. Pressing the button refreshes the page and shows the number and names of variables and okbservations as well as their type in a small table.
+**Prepare file for the anonymization of household level variables**
 
-**case 2**
+In case the goal is to prepare a household-level file, the user first needs to select an identifier for the households or clusters. This select input termed `Please select a suitable household identificator` is initially empty. Once a variable has been selected from the list of all variables available from the input data, an additional select field called `Please select all variables that refer to households and not to individuals` appears next to it. In this input, one or more variables that are relevant for households only (that means, these variables feature the contain the same values for each household) can be selected. Once at least one additional variable has been chosen, a button labelled `Create household-input data` is shown below. Clicking on this button restricts the current data set to the selected variables and to only one (the first) record for each value of the cluster identificator. Finally, the page refreshes and the number of observations and variables in the updated, household level data set is shown. Additionally, the names of the variables as well as their type are presented in tabular format.
 
-- `Browse` -> select file from disk, uploaded immediatly. On success, button labelled `Reset uploaded household data`. clicking allows to upload a different file
-- `Select a variable containing household ids` selectInput with variables that exist in both datasets
-- button `Merge household- and individual level data`. On click, merge is performed and if successful, the page refreshes and the user is informed. We then can continue working on the merged dataset.
+**Merging an anonymized household level file**
+
+In this case, the goal is to merge an already anonymized household level file to the currently available data file. This procedure is performed in two steps. In the first step, the user needs to click on the `Browse` button to select the anonymized file that should be merged. Once the `Open` button is clicked the file is uploaded immediately. We note here that it is only possible to upload data that have been exported as `.rdata`-files as described [here](#export_data). After pressing the button, the file will be uploaded to the system. If an error occured (e.g the selected data file does not contain a data frame or if the data set does not contain any variables that overlap with the current inputdata) an error message is shown and the user may upload a different file from disk.
+
+On success, the layout of the page changes too. A button labelled `Reset uploaded household data` appears which allows to reset the household level data and makes it possible to upload yet another file. Additionally, a dropdown field labelled `Select a variable containing household ids` appears. In this input, the user needs to select a variable from the list of variables that are available from both datasets containing the identification variable. The selected variable will finally be used to merge the datasets. Below this selection, a button termed `Merge household- and individual level data` is shown. On clicking this button, the merge is performed. If everything went well, the page refreshes and the number of observations and variables in the updated micro data file shown. Additionally, the names of the variables as well as their type are presented in tabular format.
 
 # Anonymize {#anonymize}
 If no inputdata have been uploaded
@@ -267,6 +262,24 @@ to be written, same as described [here](#recode_factors_inputdata), the only dif
 
 # [tbw] Risk/Utility  {#risk_utility}
 
+- If no problem instance has been specified -> `Create a SDC problem` (Anonymize page) or `Upload a previously saved problem` (Undo-page)
+- Once a problem instance has been specified -> Sidebar left + Sidebar right
+
+## [tbw] Risk measures
+### [tbw] Information of Risks
+### [tbw] Suda2 risk-measure
+### [tbw] l-Diversity risk-measure
+
+## [tbw] Visualizations
+### [tbw] Histogram/Mosaicplot
+### [tbw] Tabulations
+### [tbw] Information Loss
+### [tbw] Obs violating k-Anon
+
+## [tbw] Numerical Risk Measures
+### [tbw] Compare summary statistics
+### [tbw] Disclosure Risk
+### [tbw] Information Loss
 
 # Export Data {#export_data}
 In this tab, the GUI offers the possibiliby to export the current state of the anonymized microdata from the current problem instance to a file in various formats or save a report summarizing the anonymization process as an html-file to disk. If no problem instance has been specified, the user is informed that he needs to create a problem first. By clicking on the button labelled `Create an SDC-Problem`, the GUI changes to the [Anonymize](#anonymize) page, where the user can create a problem. As an alternative, the user may upload a previously saved problem instance. By clicking on the button `Upload a previously saved problem`, the user is taken to the [Undo](#undo) page where he may upload an previously saved problem instance.

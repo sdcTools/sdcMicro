@@ -588,15 +588,24 @@ output$ui_sample_microdata <- renderUI({
 # UI-output to deal with hierarchical data (eg. households and individuals)
 output$ui_hierarchical_data_prep <- renderUI({
   output$hier_data_prep_btn <- renderUI({
-    req(input$sel_hhvars)
-    if (length(input$sel_hhvars)<2) {
-      btn <- myActionButton("btn_hier_data_prep_xxx", label="Please select at least two variables, one of them being an household id", btn.style="danger")
-    } else {
-      btn <- myActionButton("btn_hier_data_prep", label="Create household-input data", btn.style="primary")
+    req(input$sel_hhvars, input$sel_hhvars_id)
+    if (input$sel_hhvars_id=="") {
+      return(NULL)
     }
-    btn
+    if (length(input$sel_hhvars)>0) {
+      return(myActionButton("btn_hier_data_prep", label="Create household-input data", btn.style="primary"))
+    }
+    return(invisible(NULL))
   })
-
+  output$sel_hhvars_id <- renderUI({
+    selectInput("sel_hhvars_id", label=h5("Please select a suitable household identificator"),
+      choices=c("",allVars()), multiple=FALSE, width="75%")
+  })
+  output$sel_hhvars <- renderUI({
+    req(input$sel_hhvars_id)
+    selectInput("sel_hhvars", label=h5("Please select all variables that refer to households and not to individuals"),
+      choices=setdiff(allVars(), input$sel_hhvars_id), multiple=TRUE, width="75%")
+  })
   if (obj$hhdata_selected==TRUE) {
     curdat <- inputdata()
     df <- data.frame(
@@ -606,31 +615,19 @@ output$ui_hierarchical_data_prep <- renderUI({
       fluidRow(
         column(12, h4("Note"), align="center"),
         column(12, p("The current input data have already been modified to be used as household-level data. The data
-          contain",code(nrow(inputdata())),"observations in the following",code(ncol(inputdata())),"variables."), align="center"),
+          set contains",code(nrow(inputdata())),"observations in the following",code(ncol(inputdata())),"variables."), align="center"),
         column(12, renderTable(df), align="center"),
         column(12, p("If you want to work on individual-level data, you will have to delete the entire microdata file and start from scratch"), align="center")
       ))
   }
 
-  out <- list(
-    fluidRow(column(12, h4("Prepare household-level data"), align="center"))
-  )
+  out <- list(fluidRow(column(12, h4("Prepare household-level data"), align="center")))
 
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
       column(12, h4("The following Error has occured!", align="center")),
       column(12, code(lastError()), align="center")))
   }
-
-  output$sel_hhvars_id <- renderUI({
-    sel1 <- selectInput("sel_hhvars_id", label=h5("Please a suitable household id variable"),
-      choices=allVars(), multiple=FALSE, width="50%")
-  })
-  output$sel_hhvars <- renderUI({
-    req(input$sel_hhvars_id)
-    selectInput("sel_hhvars", label=h5("Please select all variables that refer to households and not to individuals"),
-      choices=setdiff(allVars(), input$sel_hhvars_id), multiple=TRUE, width="50%")
-  })
 
   out <- list(out, fluidRow(
     column(6, uiOutput("sel_hhvars_id"), align="center"), column(6, uiOutput("sel_hhvars"), align="center"),
@@ -642,19 +639,35 @@ output$ui_hierarchical_data_prep <- renderUI({
 })
 
 observeEvent(input$sel_hhvars_id, {
-  updateSelectInput(session, inputId="sel_hhvars", choices = setdiff(allVars(), input$sel_hhvars_id), selected=setdiff(names(input$sel_hhvars), input$sel_hhvars_id))
+  updateSelectInput(session, inputId="sel_hhvars", choices=setdiff(allVars(), input$sel_hhvars_id), selected=setdiff(names(input$sel_hhvars), input$sel_hhvars_id))
 })
 observeEvent(input$sel_hhvars, {
-  updateSelectInput(session, inputId="sel_hhvars_id", choices = allVars(), selected=input$sel_hhvars_id)
+  updateSelectInput(session, inputId="sel_hhvars_id", choices=allVars(), selected=input$sel_hhvars_id)
 })
 
-
 output$ui_hierarchical_data_merge <- renderUI({
+  output$sel_hhid_merge <- renderUI({
+    selectInput("sel_hhid_hhdata", label=h5("Select a variable containing household ids"), choices=intersect(colnames(obj$hhdata), colnames(inputdata())),
+      selected=input$sel_hhid_hhdata)
+  })
+  output$btn_reset_hhdata <- renderUI({
+    myActionButton("reset_hhdata", label="Reset uploaded household-level data", btn.style="danger")
+  })
+  output$btn_merge_hhdata <- renderUI({
+    myActionButton("btn_merge_hhdata", label="Merge household- and individual level data", btn.style="primary")
+  })
+
   if (obj$hhdata_applied==TRUE) {
+    curdat <- inputdata()
+    df <- data.frame(
+      "variable name"=colnames(curdat),
+      "type"=dataTypes())
     return(
       fluidRow(
         column(12, h4("Success"), align="center"),
-        column(12, p("Your original input data have already been enhanced with household-level data!"), align="center"),
+        column(12, p("Your original input data have already been enhanced with (anonymized) household-level data!"), align="center"),
+        column(12, p("The data set contains",code(nrow(inputdata())),"observations in the following",code(ncol(inputdata())),"variables."), align="center"),
+        column(12, renderTable(df), align="center"),
         column(12, p("To add another household-level dataset, you will have to delete the entire microdata file and start from scratch"), align="center")
     ))
   }
@@ -669,22 +682,20 @@ output$ui_hierarchical_data_merge <- renderUI({
       ))
   }
 
-  out <- list(
-  fluidRow(column(12, h4("Merge Data"), align="center")))
-
+  out <- list(fluidRow(column(12, h4("Merge Data"), align="center")))
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
       column(12, h4("The following Error has occured!", align="center")),
       column(12, code(lastError()), align="center")))
   }
   if (!is.null(obj$hhdata)) {
-    sel1 <- selectInput("sel_hhid_hhdata", label=h5("Select a variable containing household ids"), choices=intersect(colnames(obj$hhdata), colnames(inputdata())),
-      selected=input$sel_hhid_hhdata)
-    btn <- myActionButton("btn_merge_hhdata", label="Merge household- and individual level data", btn.style="primary")
     out <- list(out, fluidRow(
       column(12, p("You can reset the uploaded data by clicking the button below."), align="center"),
-      column(12, myActionButton("reset_hhdata", label="Reset uploaded household-level data", btn.style="danger"), align="center"),
-      column(6, sel1, align="center"), column(6, btn, align="center")
+      column(12, uiOutput("btn_reset_hhdata"), align="center"),
+      column(12, h4("Continue with the merge"), align="center"),
+      column(12, p("You can now continue to merge the current household level data to the individual level microdata."), align="center"),
+      column(12, uiOutput("sel_hhid_merge"), align="center"),
+      column(12, uiOutput("btn_merge_hhdata"), align="center")
     ))
   } else {
     out <- list(out, fluidRow(
