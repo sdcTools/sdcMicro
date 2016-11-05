@@ -182,8 +182,6 @@ output$ui_modify_change_factor <- renderUI({
     names(ll) <- paste(ll, "(",table(ff),"obs)")
     ll
   })
-
-  # plot of current factor
   output$plot_fac <- renderPlot({
     if (is.null(input$sel_factor)) {
       return(NULL)
@@ -194,23 +192,19 @@ output$ui_modify_change_factor <- renderUI({
     dimnames(df)[[1]] <- dn
     barplot(df)
   })
-
   output$reclocfac_var <- renderUI({
     vv <- facVars()
-    selfac1 <- selectInput("sel_factor", label=h5("Choose factor variable"), choices=vv, selected=input$sel_factor)
+    selfac1 <- selectInput("sel_factor", label=h5("Choose factor variable"), choices=vv, selected=input$sel_factor, width="100%")
     selfac1
   })
-
   output$reclocfac_levs <- renderUI({
     selectInput("cbg_factor", label=h5("Select Levels to recode/combine"),
       multiple=TRUE, selectize=TRUE, choices=curFactorVals(), width="100%")
   })
-
   output$reclocfac_btn <- renderUI({
     req(input$cbg_factor)
     myActionButton("btn_update_factor", label="Update factor variable", "primary")
   })
-
   output$reclocfac_txtval <- renderUI({
     req(input$cbg_factor)
     txtval <- textInput("inp_newlevname", label=h5("New label for recoded values"),
@@ -225,9 +219,9 @@ output$ui_modify_change_factor <- renderUI({
     return(out)
   }
   out <- list(out, fluidRow(
-    column(12, uiOutput("reclocfac_var"), align="center"),
-    column(6, uiOutput("reclocfac_levs"), align="center"),
-    column(6, uiOutput("reclocfac_txtval"), align="center")))
+    column(4, uiOutput("reclocfac_var"), align="center"),
+    column(4, uiOutput("reclocfac_levs"), align="center"),
+    column(4, uiOutput("reclocfac_txtval"), align="center")))
 
   out <- list(out, fluidRow(
     column(12, uiOutput("reclocfac_btn"), align="center"),
