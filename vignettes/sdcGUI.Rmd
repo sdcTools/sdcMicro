@@ -161,14 +161,10 @@ In case of custom breaks, additional UI elements
     - Button: `Update factor variable`
 - Below: Barplot of the selected factor variable. This plot changes once the Button is pressed.
 
-### [tbw] Create a stratification variable
-- Explain why this is in the GUI. Stratification can be selected in some anonymization methods!
+### Create a stratification variable
+On this page, the user is able to generate a new variable based on two ore more variables from the current micro data. The reason for this is that several anonymization techiques that are explained [here](#anonymize_categorical) and [here](#anonymize_numerical) can by applied independently to subgroups of the input data that are given by the values of a so called `stratification variable`. This page allows to create such a variable in a convinient way.
 
-- `Select Variables` one or mor variables from the micro data can be selected
-
-- `desired variable name`: Textinput where new variable name can be specified. by default, the selected variable names are pasted together using `_` as seperator
-- Button `Create stratification variable`
-
+The user has to specify at least two variables in the select field labelled `Select Variables`. From this field, all variables that are available in the micro data set can possibly be selected. Once two or more variables are selected, two new inputs appear. The first one appears right next to the variable selection field and is called `New variable name`. In this field, user can enter a desired name for the new variable. By default, the variable name listed consists of the selected variables chained together using `_` as seperator. By clicking into the field, the user can enter a customized variable name. If the current value in this text input field is not the name of an already existing variable, a button termed `Create stratification variable` appears below. Clicking on this button adds the new variable to the input data set. The variable is generated as a factor variable in which the values of the contributing variables are also chained together using `_` as the seperator. After pressing the button, the page changes to the [explore variable](#explore_inputvars) page where the newly generated variable is already selected.
 
 ### Set specific values in a variable to `NA`
 In this section, users can set values in some variables to missing (`NA`). The first step is to choose one of two possible methods by choosing either `by Id` (the default selection) or `by rule` in the radio button input labelled `How do you want to select the Observations where you want to set values to missing?` on top of the page.
@@ -257,7 +253,7 @@ This is exactly the same thing as already described in [Explore variables](#expl
 
 #### [tbw] Create new IDs
 
-### [tbw] Anonymize categorical variables
+### [tbw] Anonymize categorical variables {#anonymize_categorical}
 #### [tbw] Recoding
 
 to be written, same as described [here](#recode_factors_inputdata), the only difference being that the analyzed variables are now those currently available in the active problem instance.
@@ -267,7 +263,7 @@ to be written, same as described [here](#recode_factors_inputdata), the only dif
 #### [tbw] Supress values with high risks
 
 
-### [tbw] Anonymize numerical variables
+### [tbw] Anonymize numerical variables {#anonymize_numerical}
 #### [tbw] Top-/Bottom Coding
 #### [tbw] Apply Microaggregation
 #### [tbw] Adding Noise to the data

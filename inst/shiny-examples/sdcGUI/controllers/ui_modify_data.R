@@ -245,14 +245,17 @@ output$ui_modify_create_stratvar <- renderUI({
     if (length(input$sel_allvars_strata) < 2) {
       return(NULL)
     }
-    textInput("inp_vname_strata",label=h5("desired variable name"), value=paste0(input$sel_allvars_strata, collapse="_"), width="100%")
+    textInput("inp_vname_strata", label=h5("New variable name"), value=paste0(input$sel_allvars_strata, collapse="_"), width="100%")
   })
   output$btn_genstrata <- renderUI({
-    req(input$sel_allvars_strata)
+    req(input$sel_allvars_strata, input$inp_vname_strata)
     if (length(input$sel_allvars_strata) < 2) {
       return(NULL)
     }
-    fluidRow(column(12, myActionButton("btn_create_stratavar",label=("Create stratification variable"), "primary"), align="center"))
+    if (input$inp_vname_strata %in% colnames(inputdata())) {
+      return(NULL)
+    }
+    fluidRow(column(12, myActionButton("btn_create_stratavar", label=("Create stratification variable"), "primary"), align="center"))
   })
 
   out <- fluidRow(

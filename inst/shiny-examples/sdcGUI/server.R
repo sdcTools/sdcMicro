@@ -957,8 +957,8 @@ shinyServer(function(session, input, output) {
     runEvalStrMicrodat(cmd=res$cmd, comment=res$comment)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
-    updateNavbarPage(session, "mainnav", selected="Microdata")
+    obj$inp_sel_viewvar1 <- input$inp_vname_strata
+    updateSelectInput(session, "sel_moddata", selected="view_var")
   })
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_factor, {
@@ -984,7 +984,7 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     obj$inp_sel_viewvar1 <- input$sel_na_suppvar[1]
-    updateSelectInput(session, "sel_moddata", selected = "view_var")
+    updateSelectInput(session, "sel_moddata", selected="view_var")
   })
   ### anonymization methods (categorical) ###
   # pram() with given transition-matrix
