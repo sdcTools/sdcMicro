@@ -52,8 +52,7 @@ output$ui_modify_recode_to_factor <- renderUI({
     if (is.null(input$sel_algo)){
       return(NULL)
     }
-    sl1 <- numericInput("sl_number_breaks",label=h5("Specify the number of breaks"), value=3, min=2, max=10, step=1)
-    sl1
+    return(numericInput("sl_number_breaks",label=h5("Specify the number of breaks"), value=3, min=2, max=20, step=1))
   })
   output$ui_globalRecode_manual <- renderUI({
     if (is.null(input$sel_algo)){
@@ -79,15 +78,16 @@ output$ui_modify_recode_to_factor <- renderUI({
   })
   output$ui_globalRecode_var <- renderUI({
     req(input$sel_custom_split)
+    vv <- numVars()
     mult <- FALSE
     if (!is.null(input$sel_custom_split) && input$sel_custom_split=="no") {
-      selectInput("sel_num_glrec",label=h5("Choose numeric variable"), choices=vv, multiple=TRUE)
+      selectInput("sel_num_glrec", label=h5("Choose numeric variables"), choices=vv, multiple=TRUE)
     } else {
-      radioButtons("rb_num_glrec",label=h5("Choose numeric variable"), choices=vv, selected=input$rb_num_glrec)
+      radioButtons("rb_num_glrec", label=h5("Choose a numeric variable"), choices=vv, selected=input$rb_num_glrec)
     }
   })
   output$ui_globalRecode_split <- renderUI({
-    radioButtons("sel_custom_split",label=h5("Custom Breaks"), choices=c("no","yes"),
+    radioButtons("sel_custom_split",label=h5("Use custom breaks?"), choices=c("no","yes"),
       selected=input$sel_custom_split, inline=TRUE, width="100%")
   })
   output$ui_globalRecode_cutalgo <- renderUI({
@@ -95,15 +95,28 @@ output$ui_modify_recode_to_factor <- renderUI({
       choices=c("equidistant","logEqui","equalAmount","manual"), selected=input$sel_algo)
   })
   output$ui_globalRecode_btn <- renderUI({
-    if (is.null(input$sel_custom_split)) {
-      return(NULL)
-    }
-    btn_rec <- myActionButton("btn_recode_to_factor",label=("Convert to factor(s)"), "primary")
+    req(input$sel_custom_split)
+    btn_rec <- myActionButton("btn_recode_to_factor(s)", label=("Convert to factors"), "primary")
     if (input$sel_custom_split=="no") {
-      return(btn_rec)
-    } else {
-      if (!is.null(input$sel_algo) && input$sel_algo!="manual") {
+      if (length(input$sel_num_glrec)==0) {
+        return(NULL)
+      } else {
         return(btn_rec)
+      }
+    } else {
+      btn_rec <- myActionButton("btn_recode_to_factor", label=("Convert to factor"), "primary")
+      if (!is.null(input$sel_algo) && input$sel_algo!="manual") {
+        if (is.null(input$sl_number_breaks)) {
+          return(NULL)
+        } else {
+          if (is.na(input$sl_number_breaks)) {
+            return(NULL)
+          } else if (input$sl_number_breaks<1) {
+            return(NULL)
+          } else {
+            return(btn_rec)
+          }
+        }
       } else {
         inp <- input$txt_custom_breaks
         if (is.null(inp) || inp=="") {

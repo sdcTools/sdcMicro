@@ -132,18 +132,24 @@ On this page it is possible to decrease the size of the inputdata. This is espec
     
 When the desired selections have been applied, pushing the button `Apply subsetting of the microdata` performs the actual sub-subsampling. After the micro data set has been reduced, the user is taken to the [Display microdata](#display_microdata) page where the reduced dataset can be analysed.
 
-### [tbw] Convert numeric variables to factors
+### Convert numeric variables to factors
+This page allows to convert continuous variables (`numeric` or `integer`) into factors. Users can choose from a range of possibilites how the factor variable should be generated, ranging from automatic conversion to complete manual control. 
 
-- `Choose numeric variable` (selectInput) multiple or single selection
-- `Custom Breaks` (radio buttons with choices `no` (default) and `yes`)
+By default, two input fields are available. On the left hand side there is a dropdown select field termed `Choose numeric variables` where the user can select from the list of numeric variables in the input data set. Next to this element, there is are two radio buttons labelled `Use custom breaks?` with two options, `no` (the default) and `yes`. If the `no` is selected in this input and at least one numeric variable has been clicked from the select input `Choose numeric variables`, a button termed `Convert to factor(s)` occurs. Pressing this button converts all of the selected numerical variables into factors. Afterwards, the user is taken to the [explore variables](#explore_inputvars) page where the first of the selected variable(s) is shown.
 
-In case of custom breaks, additional UI elements
+If, however, the radio buttons `Use custom breaks?` are set to `yes`, the layout of the page changes. In this case, the user is able to adjust the way the factor variable should be generated and additional UI elements appear. The first visible change is, that only one numeric variable can now be selected. Now, a list of radio buttons labelled `Choose a numeric variable` is shown where all available variables are printed below each other. Selecting a specific variable works by clicking on either the variable name or the radio button itself. The next choice the user has to make is in a select input field termed `Select Algorithm` in which `equidistant` (the default), `logEqui`, `equalAmount` or `manual` are possible values.
 
-- `Select Algorithm` with choices `equidistant`, `logEqui`, `equalAmount` and `manual`
-- `Specify the number of breaks` (for all choices except `manual`)
-- `Specify the custom breaks` (textInput, custom format!)
+The remaining user interface is the same for the first three choices of the `Select Algorithm` input and is slightly different if `manual` has been selected. In the first case, a numeric input field labelled `Specify the number of breaks` is shown while in the second case a text input field labelled `Specify the custom breaks` occurs right next to the select input field where the algorithm can be selected. 
 
-- Button ``Convert to factor(s)`. Afterwards it jumps to the [explore variable](#explore_inputvars) page with the first of the recoded variables being selected.
+If either `equidistant`, `logEqui` or `equalAmount` are selected, the number specified in the numeric input field defines the number of levels the new factor will have. The difference between the methods are:
+
+- `equidistant`: the intervals used for the recoding have (approximately) the same size
+- `logEqui`: the intervals used for the recoding of the log-transformed data have (approximately) the same size
+- `equalAmount`: the intervals used for recoding are chosen in a way, that the new groups include (approximately) the same number of observations 
+
+If `manual` was specified in the select input termed `Select Algorithm`, the user can enter custom breakpoints that will be used to define the new groups in the recoded variable. The syntax in this text field is the way that the breakpoints (numbers) have to be entered seperated by a colon (`,`). This sequence of numbers will be interpreted as follows: all values greater than the value before a colon and all values smaller or equal than the value after the colon are grouped together. Any non-matched values will be `NA`. As an example, entering `1,3,5,9` would create a factor from a numeric variable by grouping together all values in x greater than 1 and less or equal to 3 into the first group, all values greater than 3 and less or equal to 5 into the second group and all values greater than 5 and less or equal to 9 into a third group. Any values in x less or equal than 1 or greater or equal to 10 would be `NA`. However, `-Inf` and `Inf` may be entered as the first or last value to avoid the generation of `NAs`. Already existing missing values in the numeric input variable will stay `NA` after the recoding.
+
+What is common for all choices of `Select Algorithm` is that a button labelled `Convert to factor` appears if the information that has been entered is correct. Also, at the bottom of the page a table with two columns is shown. The first columns shows each of the unique values of the selected variable while the second column shows the number of occurances of this value. On pressing the action button, the selected numeric variable is recoded according the the parameters that have been chosen. After the recode has been done, the current view changes to the [explore variable](#explore_inputvars) page with the recoded factor variable already being selected.
 
 ### Convert variables to numeric
 In this page, factor variables from the input data may be converted back to numeric variables. If no factor variables are present in the micro data, the user is shown this information and no conversion is possible. If, however, factor variables are available from the current active micro data, the user can select one or more variables from the input field labelled `Choose variable`. Once at least one variable is selected, a button called `Recode to numeric` occurs below the variable selection input. After clicking this button, the conversion is done and the view changes to the [explore variable](#explore_inputvars) page with the first of the recoded variables being selected.
