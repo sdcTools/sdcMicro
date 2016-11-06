@@ -420,36 +420,28 @@ output$ui_kAnon <- renderUI({
 
 # GUI-output for suppression of values in key-variables with risk > than threshold
 output$ui_supp_threshold <- renderUI({
-  # so that the slider-value is not changed while updating the importance vector
   output$ui_supp_th <- renderUI({
     up <- round(max(get_risk()$risk),3)+0.005
     sl <- sliderInput("sl_supp_threshold", label=h5("Individual Risk Threshold"),
       min=0, max=up, value=0, step=0.001, width="100%")
     sl
   })
-  # risk-plot
   output$ui_supp_riskplot <- renderPlot({
-    if ( is.null(input$sl_supp_threshold)) {
-      return(NULL)
-    }
+    req(input$sl_supp_threshold)
     risks <- get_risk()
     curObj <- sdcObj()
     nn <- paste(colnames(curObj@origData)[curObj@keyVars], collapse=" x ")
     hist(risks$risk, xlab="Individual Risk", ylab="Frequency", main=nn, col="#DADFE1")
-    abline(v=input$sl_supp_threshold, lwd=2, col="#F9690E")
+    abline(v=input$sl_supp_threshold, lwd=2, col="#000000")
   })
-  # number of risky observations that would be suppressed
   nr_riskyobs <- reactive({
     req(input$sl_supp_threshold)
     nr_risk <- sum(get_risk()$risk>=input$sl_supp_threshold)
     nr_risk
   })
-  # key-variable
   output$ui_supp_th_var <- renderUI({
-    req(input$sl_supp_threshold)
     selectInput("sel_supp_th_var", label=h5("Select Key-Variable for Suppression"), choices=get_keyVars_names(), selected=input$sel_supp_th_var, width="100%")
   })
-
   output$ui_supp_th_btn <- renderUI({
     req(input$sel_supp_th_var)
     btn <- myActionButton("btn_supp_th", label=paste("Suppress",nr_riskyobs(),"values with high risk in", dQuote(input$sel_supp_th_var)), "primary")
@@ -461,13 +453,10 @@ output$ui_supp_threshold <- renderUI({
     column(12, p("This is a relatively easy method which allows to suppress or rather set to",code("NA"),"values in selected key-variables
       in observations that have a individual risk higher than the selected risk-threshold. Please note that this method does not take into account a possibly
       specified stratification variable.", align="center")))
-
   out <- list(out, fluidRow(
-    column(6, uiOutput("ui_supp_th")),
-    column(6, uiOutput("ui_supp_th_var"))))
-  out <- list(out, fluidRow(
-    column(12, plotOutput("ui_supp_riskplot"))))
-  out <- list(out, fluidRow(
-    column(12, uiOutput("ui_supp_th_btn"), align="center")))
+    column(6, uiOutput("ui_supp_th_var")),
+    column(6, uiOutput("ui_supp_th"))))
+  out <- list(out, fluidRow(column(12, plotOutput("ui_supp_riskplot"))))
+  out <- list(out, fluidRow(column(12, uiOutput("ui_supp_th_btn"), align="center")))
   out
 })

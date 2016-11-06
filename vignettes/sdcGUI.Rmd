@@ -256,12 +256,12 @@ This sidebar is always updated whenever the sdc problem instance is modified whi
 ### [tbw] View/Analyse existing sdcProblem {#view_analyze_existing_problem}
 Analyse the Problem
 
-#### [tbw] Show Summary
-#### [tbw] Explore variables
+#### [tbw] Show Summary {#show_sdc_summary}
+#### [tbw] Explore variables {#explore_sdc_vars}
 This is exactly the same thing as already described in [Explore variables](#explore_inputvars), the only difference being that the analyzed variables are now those currently available in the active problem instance.
 
-#### [tbw] Add 'Ghost'-Variables
-#### [tbw] Create new IDs
+#### [tbw] Add 'Ghost'-Variables {#add_ghostvars}
+#### [tbw] Create new IDs {#create_new_ids}
 
 ### Anonymize categorical variables {#anonymize_categorical}
 If `Anonymize categorical variables` has been selected in `What do you want to do?` in the left sidebar of the screen, the options [Recoding](#recoding_sdcproblem), [k-Anonymity](#kanon), [Postrandomization (simple)](#pram_simple), [Postrandomization (expert)](#pram_expert) and [Supress values with high risks](#supp_highrisk) are available from the radio button list termed `Choose a Method` and will be described below.
@@ -288,7 +288,10 @@ Below this inputs, an interactive table is shown. This table has to be edited by
 
 Once the transition matrix is valid (eg. the values in all rows sum up to `100`), a button labelled `Postrandomize` appears at the bottom of the page. Pressing this button performs the postrandomization. Afterwards, the page refreshes and in the right sidebar a section called `Postrandomization` either appears or is extended. In this part of the sidebar, for each variable that has been postrandomized the number and percentages of value changes are listed.
 
-#### [tbw] Supress values with high risks {#supp_highrisk}
+#### Supress values with high risks {#supp_highrisk}
+On this page it is possible to set values for the most-risky records to `NA` in a categorical key variable. To do so, the user needs to select a categorical key variable from the select input labelled `Select Key-Variable for Suppression` in which by default the first key variable is already selected. The next step is to set an appropriate threshold value which will be used to identify the *"risky"* records. These records are defined as those having an individual reidentification risk larger than the selected threshold. The threshold may be changed by updating the slider input termed `Individual Risk Threshold`. The range of this slider starts at `0` and the maximum value depends on the current sdc problem.
+
+Below this inputs, histogram showing the distribution of the individual risk values is plotted. In the graph, a vertical black line representing the current value of the threshold is also shown. Finally there is a button labelled `Supress {nr} values with high risk in variable {var}` is present. The labelling of this button is dynamic. It shows the number of records that would be set to missing in the selected variable for the current choice of the threshold. If this button is pressed, the records in the selected variable having individual risks above the threshold are set to `NA`. The view finally updates and the [Show Summary](#show_sdc_summary) page is shown where all measures have been recalculated.
 
 ### [tbw] Anonymize numerical variables {#anonymize_numerical}
 #### [tbw] Top-/Bottom Coding
