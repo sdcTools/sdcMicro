@@ -67,21 +67,20 @@ output$ui_recode <- renderUI({
   out
 })
 
-# UI-output for postrandomization
-output$ui_pram <- renderUI({
+# UI-output for postrandomization (expert-useage)
+output$ui_pram_expert <- renderUI({
   # update obj$transmat if table has been changed
   observe({
-    if(!is.null(input$transmat)) {
-      obj$transmat <- hot_to_r(input$transmat)
+    if(!is.null(input$pram_expert_transmat)) {
+      obj$transmat <- hot_to_r(input$pram_expert_transmat)
     }
   })
-
   # Fire event when selected pram-variable changes
   # initialize transition-matrix with 0.9 in diagonals
   # because with 1 some error with rhandsontable is available.
-  observeEvent(input$sel_pramvars, {
-    if (!is.null(input$sel_pramvars) && length(input$sel_pramvars)==1) {
-      v <- get_origData()[[input$sel_pramvars]]
+  observeEvent(input$sel_pramvars_expert, {
+    if (!is.null(input$sel_pramvars_expert) && length(input$sel_pramvars_expert)==1) {
+      v <- get_origData()[[input$sel_pramvars_expert]]
       ll <- levels(v)
       m <- diag(length(ll))
       diag(m) <- 0.90
@@ -89,154 +88,148 @@ output$ui_pram <- renderUI({
       obj$transmat <- m
     }
   })
-
   # Transitionmatrix for PRAM
-  output$transmat <- renderRHandsontable({
-    if (is.null(input$sel_pramvars) || length(input$sel_pramvars)!=1) {
+  output$pram_expert_transmat <- renderRHandsontable({
+    if (is.null(input$sel_pramvars_expert) || length(input$sel_pramvars_expert)!=1) {
       return(NULL)
     }
     # hot_col(1:ncol(obj$transmat), type="numeric", format="0.00")
     m <- rhandsontable(obj$transmat) #%>% hot_context_menu(allowRowEdit=FALSE, allowColEdit=FALSE)
     m
   })
-
-  # stratification variable for PRAM
-  output$pram_strata <- renderUI({
-    req(input$sel_pramvars)
-
-    selectInput("pram_strataV", label=h5("Do you want to apply the method for each group defined by the selected variable?"),
-      choices=c("no stratification", setdiff(poss_strataVarP(), input$sel_pramvars)), multiple=FALSE, width="50%")
+  output$pram_expert_strata <- renderUI({
+    selectInput("pram_expert_strataV", label=h5("Postrandomize within different groups (stratification)?"),
+      choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%")
   })
-
-  output$ui_pram_params <- renderUI({
-    curObj <- sdcObj()
-    if (is.null(curObj)) {
+  output$pram_expert_var <- renderUI({
+    selectInput("sel_pramvars_expert", choices=pramVars(), label=h5("Select variable for PRAM"),
+      selected=input$sel_pramvars_expert, width="100%", multiple=FALSE)
+  })
+  output$pram_expert_btn <- renderUI({
+    req(input$pram_expert_strataV)
+    if (is.null(obj$transmat)) {
       return(NULL)
     }
-    pramvars <- setdiff(facVars(), curObj@pram$summary$variable)
-
-    if (length(pramvars)==0) {
-      return(fluidRow(
-        column(12, h4("Postrandomization of categorical variables", align="center")),
-        column(12, h5("No factor variables available in the data, or all possible variables already have been post-randomized!", align="center"))
-      ))
+    if (!all(rowSums(obj$transmat)==1)) {
+      return(myActionButton("btn_pram_expert_notworking", label="Error: Not all row-sums of the transition matrix equal 1", btn="danger"))
     }
-
-    rb_expert <- radioButtons("rb_expert_pram", label=h5("Use expert settings"),
-      choices=c(FALSE, TRUE), selected=input$rb_expert_pram, inline=TRUE)
-
-    if (is.null(input$rb_expert_pram) || input$rb_expert_pram==FALSE) {
-      sel_pramvar <- selectInput("sel_pramvars", choices=pramvars, label=h5("Select variable(s) for PRAM"),
-        selected=input$sel_pramvars, width="100%", multiple=TRUE)
-    } else {
-      sel_pramvar <- selectInput("sel_pramvars", choices=pramvars, label=h5("Select variable for PRAM"),
-        selected=input$sel_pramvars, width="100%", multiple=FALSE)
+    if (input$pram_expert_strataV %in% input$sel_pramvars_expert) {
+      txt <- "You have selected a variable relevant for stratification that should also be pramed. This is not possible. Please remove the variable from one of the inputs"
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
-
-    out <- NULL
-    if (!is.null(lastError())) {
-      out <- list(out, fluidRow(
-        column(12, h4("Application of the last method resulted in the following error!", align="center")),
-        column(12, verbatimTextOutput("ui_lasterror"))))
-    }
-    if (!is.null(lastWarning())) {
-      out <- list(out, fluidRow(
-        column(12, inp=h4("Application of the last method resulted in the following warning!", align="center")),
-        column(12, inp=verbatimTextOutput("ui_lastwarning"))))
-    }
-
-    out <- list(out, fluidRow(
-      column(12, h4("Postrandomization of categorical variables", align="center")),
-      column(12, p("The algorithm randomly changes the values of selected variables in some records according
-      to an invariant probability transition matrix (in non-expert mode) or a custom-defined transition matrix (in expert mode).", align="center")),
-      column(12, p("In non-expert mode, two parameters (",code("pd"),"and",code("alpha"),") must be specified.",
-        code("pd"),"refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this
-      value is chosen, the more likely it is that a value stays the same and is not going to be changed.",code("alpha"),"allows to add some
-      perturbation to the calculated transition matrix. The lower this number is, the less perturbed the matrix will get. In
-      expert mode, the user can freely specify a transition matrix which will be used for the post-randomization of a single variable. However, the
-      requirement is that all row sums of the specified matrix sum up to 1!", align="center")),
-      column(12, p("Please also note that if you have specified a stratification variable when creating the",code("sdcMicroObj"),"postrandomization
-      is performed independently on all data-subsets specified by the stratification variable!", align="center"))))
-
-    out <- list(out, fluidRow(
-      column(12, uiOutput("pram_strata"), align="center")
-    ))
-
-    out <- list(out, fluidRow(
-      column(6, rb_expert, align="center"),
-      column(6, sel_pramvar, align="center")))
-
-    if (is.null(input$rb_expert_pram) || input$rb_expert_pram==FALSE) {
-      sl1 <- sliderInput("sl_pd", min=0.01, max=1.00, step=0.01, value=0.8, label=h5("Choose value for 'pd'"), width="100%")
-      sl2 <- sliderInput("sl_alpha", min=0.01, max=1.00, step=0.01, value=0.5,label=h5("Choose value for 'alpha'"), width="100%")
-      btn_submit <- myActionButton("btn_pram_nonexpert", label="Postrandomize", btn="primary")
-      out <- list(out, fluidRow(
-        column(6, sl1, align="center"),
-        column(6, sl2, align="center")))
-      out <- list(out, fluidRow(
-        column(12, btn_submit, align="center")))
-    } else {
-      if (is.null(obj$transmat)) {
-        btn_submit <- NULL
-      } else {
-        btn_submit <- myActionButton("btn_pram_expert", label="Postrandomize", btn="primary")
-        if (!all(rowSums(obj$transmat)==1)) {
-          btn_submit <- myActionButton("btn_pram_expert_notworking", label="Error: Not all row-sums of the transition matrix equal 1", btn="danger")
-        }
-      }
-
-      out <- list(out, fluidRow(
-        column(12, rHandsontableOutput("transmat", width="100%")),
-        column(12, btn_submit, align="center")))
-    }
-    out
-    # if (input$rb_expert_pram==TRUE) {
-    #   if (length(pramvars) > 0) {
-    #     btn_submit <- myActionButton("btn_pram_expert", label="Postrandomize", btn="primary")
-    #     if (!all(rowSums(obj$transmat)==1)) {
-    #       btn_submit <- myActionButton("btn_pram_expert_notworking", label="Error: Not all row-sums of the transition matrix equal 1", btn="danger")
-    #     }
-    #     out <- list(out, fluidRow(
-    #       column(12, rHandsontableOutput("transmat", width="100%")),
-    #       column(12, btn_submit, align="center")))
-    #     return(out)
-    #   }
-    # } else {
-    #   sl1 <- sliderInput("sl_pd", min=0.01, max=1.00, step=0.01, value=0.8, label=h5("Choose value for 'pd'"), width="100%")
-    #   sl2 <- sliderInput("sl_alpha", min=0.01, max=1.00, step=0.01, value=0.5,label=h5("Choose value for 'alpha'"), width="100%")
-    #   btn_submit <- myActionButton("btn_pram_nonexpert", label="Postrandomize", btn="primary")
-    #   out <- list(out, fluidRow(
-    #     column(6, sl1, align="center"),
-    #     column(6, sl2, align="center")))
-    #   out <- list(out, fluidRow(
-    #     column(12, btn_submit, align="center")))
-    #   return(out)
-    # }
+    return(myActionButton("btn_pram_expert", label="Postrandomize", btn="primary"))
   })
 
-  #out <- fluidRow(
-  #  column(12, h4("Postrandomization of categorical variables", align="center")),
-  #  column(12, p("The algorithm randomly changes the values of selected variables in some records according
-  #    to an invariant probability transition matrix (in non-expert mode) or a custom-defined transition matrix (in expert mode).", align="center")),
-  #  column(12, p("In non-expert mode, two parameters (",code("pd"),"and",code("alpha"),") must be specified.",
-  #    code("pd"),"refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this
-  #    value is chosen, the more likely it is that a value stays the same and is not going to be changed.",code("alpha"),"allows to add some
-  #    perturbation to the calculated transition matrix. The lower this number is, the less perturbed the matrix will get. In
-  #    expert mode, the user can freely specify a transition matrix which will be used for the post-randomization of a single variable. However, the
-  #    requirement is that all row sums of the specified matrix sum up to 1!", align="center")),
-  #  column(12, p("Please also note that if you have specified a stratification variable when creating the",code("sdcMicroObj"),"postrandomization
-  #    is performed independently on all data-subsets specified by the stratification variable!", align="center")))
+  if (length(pramVars())==0) {
+    return(fluidRow(
+      column(12, h4("Postrandomization of categorical variables", align="center")),
+      column(12, h5("No factor variables available in the data, or all possible variables already have been post-randomized!", align="center"))
+    ))
+  }
 
-  #out <- list(out, fluidRow(
-  #  column(6, uiOutput("pram_useExpert"), align="center"),
-  #  column(6, uiOutput("pram_var"), align="center")))
-  out <- list(uiOutput("ui_pram_params"))
+  out <- NULL
+  if (!is.null(lastError())) {
+    out <- list(out, fluidRow(
+      column(12, h4("Application of the last Postrandomization attempt resulted in the following error!", align="center")),
+      column(12, verbatimTextOutput("ui_lasterror"))))
+  }
+  if (!is.null(lastWarning())) {
+    out <- list(out, fluidRow(
+      column(12, inp=h4("Application of the last Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, inp=verbatimTextOutput("ui_lastwarning"))))
+  }
+  out <- list(out, fluidRow(
+    column(12, h4("Postrandomization of categorical variables (expert usage)", align="center")),
+    column(12, p("The algorithm allows to randomly change values in the selected variable according to a custom-defined transition matrix.", align="center")),
+    column(12, p("Below, you can now freely specify a transition matrix which will be used for the post randomization of a single variable. You need to make sure
+      that all row sums of the specified matrix sum up to 1!", align="center")),
+    column(12, p("Please also note that you may specify a stratification variable. In this case, the postrandomization
+      is performed independently on all data-subsets specified by the selected stratification variable!", align="center"))))
+
+  out <- list(out, fluidRow(
+    column(6, uiOutput("pram_expert_var"), align="center"),
+    column(6, uiOutput("pram_expert_strata"), align="center")))
+
+  out <- list(out, fluidRow(
+    column(12, rHandsontableOutput("pram_expert_transmat", width="100%")),
+    column(12, tags$br(), uiOutput("pram_expert_btn"), align="center")))
+  out
+})
+
+# UI-output for postrandomization (simple-useage)
+output$ui_pram_simple <- renderUI({
+  output$pram_simple_var <- renderUI({
+    selectInput("sel_pramvars_simple", choices=pramVars(), label=h5("Select variable(s) for PRAM"), width="100%", multiple=TRUE)
+  })
+  output$pram_simple_strata <- renderUI({
+    selectInput("pram_strataV_simple", label=h5("Postrandomize within different groups (stratification)?"),
+      choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%")
+  })
+  output$pram_simple_pd <- renderUI({
+    sliderInput("pram_simple_pd", min=0.01, max=1.00, step=0.01, value=0.8, label=h5("Choose value for 'pd'"), width="100%")
+  })
+  output$pram_simple_alpha <- renderUI({
+    sliderInput("pram_simple_alpha", min=0.01, max=1.00, step=0.01, value=0.5,label=h5("Choose value for 'alpha'"), width="100%")
+  })
+  output$pram_simple_btn <- renderUI({
+    req(input$sel_pramvars_simple, input$pram_strataV_simple)
+    if (length(input$sel_pramvars_simple)==0) {
+      return(NULL)
+    }
+    if (input$pram_strataV_simple %in% input$sel_pramvars_simple) {
+      txt <- "You have selected a variable relevant for stratification that should also be pramed. This is not possible. Please remove the variable from one of the inputs"
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    }
+    myActionButton("btn_pram_nonexpert", label="Postrandomize", btn="primary")
+  })
+
+  pramvars <- pramVars()
+  if (length(pramvars)==0) {
+    return(fluidRow(
+      column(12, h4("Postrandomization of categorical variables", align="center")),
+      column(12, h5("No factor variables available in the data, or all possible variables already have been post-randomized!", align="center"))
+    ))
+  }
+
+  out <- NULL
+  if (!is.null(lastError())) {
+    out <- list(out, fluidRow(
+      column(12, h4("Application of the Postrandomization attempt resulted in the following error!", align="center")),
+      column(12, verbatimTextOutput("ui_lasterror"))))
+  }
+  if (!is.null(lastWarning())) {
+    out <- list(out, fluidRow(
+      column(12, h4("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, verbatimTextOutput("ui_lastwarning"))))
+  }
+
+  out <- list(out, fluidRow(
+    column(12, h4("Postrandomization of categorical variables (simple)", align="center")),
+    column(12, p("The algorithm randomly changes the values of selected variables in some records according
+      to an invariant probability transition matrix (in non-expert mode).", align="center")),
+    column(12, p("To generate the transition matrix, two parameters (",code("pd"),"and",code("alpha"),") must be specified.",
+      code("pd"),"refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this
+      value is chosen, the more likely it is that a value stays the same and is not going to be changed.",code("alpha"),"allows to add some
+      perturbation to the calculated transition matrix. The lower this number is, the less perturbed the matrix will get.", align="center")),
+    column(12, p("Please also note that you may specify a stratification variable. In this case, the postrandomization
+      is performed independently on all data-subsets specified by the selected stratification variable!", align="center"))))
+
+  out <- list(out, fluidRow(
+    column(6, uiOutput("pram_simple_var"), align="center"),
+    column(6, uiOutput("pram_simple_strata"), align="center")
+  ))
+  out <- list(out, fluidRow(
+    column(6, uiOutput("pram_simple_pd"), align="center"),
+    column(6, uiOutput("pram_simple_alpha"), align="center")
+  ))
+  out <- list(out, fluidRow(
+    column(12, uiOutput("pram_simple_btn"), align="center")
+  ))
   out
 })
 
 # UI-output for kAnon
-# current values of the importance-vector
-# must be outside because of code_kAnon()
+# current values of the importance-vector must be outside because of code_kAnon()
 kAnon_impvec <- reactive({
   cn <- names(input)[grep("sel_importance_", names(input))]
   if (length(cn)==0) {

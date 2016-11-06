@@ -127,7 +127,7 @@ output$pram_sb_anonymize <- renderUI({
     return(NULL)
   }
 
-  out <- fluidRow(column(12, h4("Post-Randomization"), align="center"))
+  out <- fluidRow(column(12, h4("Postrandomization"), align="center"))
 
   # check warnings!
   wn <- curObj@additionalResults$sdcMicro_warnings

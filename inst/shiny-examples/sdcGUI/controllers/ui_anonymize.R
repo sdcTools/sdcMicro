@@ -11,7 +11,8 @@ choices_anon_cat <- function() {
   choices <- c(
     "Recoding"="recode",
     "k-Anonymity"="kanon",
-    "Postrandomization (PRAM)"="pram",
+    "Postrandomization (simple)"="pram_simple",
+    "Postrandomization (expert)"="pram_expert",
     "Supress values with high risks"="supp_threshold")
   return(choices)
 }
@@ -93,7 +94,7 @@ output$ui_sdcObj_reset <- renderUI({
   if (is.null(sdcObj())) {
     return(NULL)
   }
-  btn_reset <- myActionButton("btn_reset_sdc1", label=("Click here to start from scratch"), "warning", css.class="btn-xs")
+  btn_reset <- myActionButton("btn_reset_sdc1", label=("Delete SDC problem"), "warning", css.class="btn-xs")
   btn_reset
 })
 
@@ -130,8 +131,11 @@ output$ui_main_anon <- renderUI({
     return(uiOutput("ui_sdcObj_reset"))
   }
   ## categorical methods
-  if (input$sel_sdcresults=="pram") {
-    return(uiOutput("ui_pram"))
+  if (input$sel_sdcresults=="pram_expert") {
+    return(uiOutput("ui_pram_expert"))
+  }
+  if (input$sel_sdcresults=="pram_simple") {
+    return(uiOutput("ui_pram_simple"))
   }
   if (input$sel_sdcresults=="recode") {
     return(uiOutput("ui_recode"))

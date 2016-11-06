@@ -46,11 +46,9 @@ shinyServer(function(session, input, output) {
     }
   })
 
-
-
   # reactive expression, we use this to change the output of output$sdcObj_exists in controllers/ui_setup_sdc.R
   lastWarning <- reactive({
-    return(obj$last_warning)
+    return(obj$last_warning$warnMsg)
   })
   # reactive expression, we use this to change the output of output$sdcObj_exists in controllers/ui_setup_sdc.R
   lastError <- reactive({
@@ -226,8 +224,8 @@ shinyServer(function(session, input, output) {
 
   # code for expert pram-application
   code_pram_expert <- reactive({
-    if (input$pram_strataV!="no stratification") {
-      res <- code_reset_strata(new_strataV=input$pram_strataV, ex_strataV=NULL)
+    if (input$pram_expert_strataV!="no stratification") {
+      res <- code_reset_strata(new_strataV=input$pram_expert_strataV, ex_strataV=NULL)
       cmd_strata1 <- res$cmd1
       cmd_strata2 <- res$cmd2
     } else {
@@ -238,29 +236,29 @@ shinyServer(function(session, input, output) {
     rn <- rownames(obj$transmat)
     matstr <- VecToRStr(v, quoted=FALSE)
     cmd <- paste0("mat <- matrix(",matstr,",ncol=",ncol(obj$transmat),"); ")
-    cmd <- paste0(cmd,"rownames(mat) <- colnames(mat) <- ", VecToRStr(rn, quoted=TRUE),";\n")
-    cmd <- paste0(cmd,"sdcObj <- pram(sdcObj, variables=",dQuote(input$sel_pramvars),", pd=mat)")
+    cmd <- paste0(cmd,"\nrownames(mat) <- colnames(mat) <- ", VecToRStr(rn, quoted=TRUE),";\n")
+    cmd <- paste0(cmd,"sdcObj <- pram(sdcObj, variables=",dQuote(input$sel_pramvars_expert),", pd=mat)")
 
-    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars), " with invariant transition matrix (see above)\n")
+    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars_expert), " with invariant transition matrix (see above)\n")
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
   # code for non-expert pram-application
   code_pram_nonexpert <- reactive({
-    if (input$pram_strataV!="no stratification") {
-      res <- code_reset_strata(new_strataV=input$pram_strataV, ex_strataV=NULL)
+    if (input$pram_strataV_simple!="no stratification") {
+      res <- code_reset_strata(new_strataV=input$pram_strataV_simple, ex_strataV=NULL)
       cmd_strata1 <- res$cmd1
       cmd_strata2 <- res$cmd2
     } else {
       cmd_strata1 <- cmd_strata2 <- NA
     }
 
-    cmd <- paste0("sdcObj <- pram(sdcObj, variables=",VecToRStr(input$sel_pramvars, quoted=TRUE))
-    cmd <- paste0(cmd,", pd=",input$sl_pd)
-    cmd <- paste0(cmd,", alpha=",input$sl_alpha,")")
+    cmd <- paste0("sdcObj <- pram(sdcObj, variables=",VecToRStr(input$sel_pramvars_simple, quoted=TRUE))
+    cmd <- paste0(cmd,", pd=",input$pram_simple_pd)
+    cmd <- paste0(cmd,", alpha=",input$pram_simple_alpha,")")
 
-    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars), " with invariant transition matrix (see above)")
-    txt_action <- paste0(txt_action, " (parameters pd=", input$sl_pd," and alpha=", input$sl_alpha,")\n")
+    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars_simple), " with invariant transition matrix (see above)")
+    txt_action <- paste0(txt_action, " (parameters pd=", input$pram_simple_pd," and alpha=", input$pram_simple_alpha,")\n")
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
@@ -342,7 +340,6 @@ shinyServer(function(session, input, output) {
     type <- dataTypes()
     vv <- obj$setupval_inc
     useAsKey <- shinyValue(paste0("setup_key_",vv,"_"), nc)
-    useAsPram <- shinyValue(paste0("setup_pram_",vv,"_"), nc)
     useAsWeight <- shinyValue(paste0("setup_weight_",vv,"_"), nc)
     useAsClusterID <- shinyValue(paste0("setup_cluster_",vv,"_"), nc)
     deleteVariable <- shinyValue(paste0("setup_remove_",vv,"_"), nc)
@@ -377,14 +374,6 @@ shinyServer(function(session, input, output) {
       hhId <- NULL
     }
 
-    # pram vars
-    ind_p <- which(useAsPram==TRUE)
-    if (length(ind_p)>0) {
-      pV <- vars[ind_p]
-    } else {
-      pV <- NULL
-    }
-
     # numeric key variables
     ind_nv <- which(useAsKey=="Cont.")
     if (length(ind_nv)>0) {
@@ -399,6 +388,15 @@ shinyServer(function(session, input, output) {
       excludeVars <- vars[ind_d]
     } else {
       excludeVars <- NULL
+    }
+
+    # pram vars as all non-used factor-variables
+    ind_p <- setdiff(1:length(vars), c(ind_h, ind_kv, ind_d))
+    ind_p <- ind_p[which(type[ind_p]=="factor")]
+    if (length(ind_p)>0) {
+      pV <- vars[ind_p]
+    } else {
+      pV <- NULL
     }
 
     # create stratification variable if more than 1 variable is listed!
@@ -1015,19 +1013,27 @@ shinyServer(function(session, input, output) {
       cmd1 <- res$cmd_strata1
       attributes(cmd1)$evalAsIs <- TRUE
       runEvalStr(cmd=cmd1, comment="## set stratification variable")
-    }
-    if (is.null(lastError())) {
-      runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a transition matrix)")
-      cmd2 <- res$cmd_strata2
-      if (!is.na(cmd2)) {
-        attributes(cmd2)$evalAsIs <- TRUE
-        runEvalStr(cmd=cmd2, comment="## reset stratification variable")
+      if (is.null(lastError())) {
+        runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a transition matrix)")
+        cmd2 <- res$cmd_strata2
+        if (!is.na(cmd2)) {
+          attributes(cmd2)$evalAsIs <- TRUE
+          runEvalStr(cmd=cmd2, comment="## reset stratification variable")
+        }
       }
+    } else {
+      runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a transition matrix)")
     }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing pram() (this might take a long time)...", value = 1)
     if (is.null(lastError())) {
+      obj$last_error <- NULL
+      obj$lastaction <- res$txt_action
+      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
+    }
+    if (is.null(lastError())) {
+      obj$last_error <- NULL
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
@@ -1045,20 +1051,23 @@ shinyServer(function(session, input, output) {
       cmd1 <- res$cmd_strata1
       attributes(cmd1)$evalAsIs <- TRUE
       runEvalStr(cmd=cmd1, comment="## set stratification variable")
-    }
-    if (is.null(lastError())) {
-      runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
-      cmd2 <- res$cmd_strata2
-      if (!is.na(cmd2)) {
-        attributes(cmd2)$evalAsIs <- TRUE
-        runEvalStr(cmd=cmd2, comment="## reset stratification variable")
+      if (is.null(lastError())) {
+        obj$last_error <- NULL
+        runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
+        cmd2 <- res$cmd_strata2
+        if (!is.na(cmd2)) {
+          attributes(cmd2)$evalAsIs <- TRUE
+          runEvalStr(cmd=cmd2, comment="## reset stratification variable")
+        }
       }
+    } else {
+      runEvalStr(cmd=res$cmd, comment="## Postrandomization (using a invariant, randomly generated transition matrix)")
     }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="performing pram() (this might take a long time)...", value = 1)
-
     if (is.null(lastError())) {
+      obj$last_error <- NULL
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }

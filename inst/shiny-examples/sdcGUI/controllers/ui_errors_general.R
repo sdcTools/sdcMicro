@@ -1,5 +1,5 @@
 output$ui_lastwarning <- renderPrint({
-  cat(lastWarning()$warnMsg)
+  cat(lastWarning())
 })
 
 output$ui_lasterror <- renderPrint({

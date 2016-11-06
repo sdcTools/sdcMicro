@@ -176,6 +176,17 @@ get_pramVars_names <- reactive({
   return(colnames(get_origData())[get_pramVars()])
 })
 
+# we allow all key vars (they are factors) and the pram vars that exist in
+# the current problem (which are any non-used factor variables) and do not show
+# those that already have been pramed once!
+pramVars <- reactive({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NULL)
+  }
+  return(setdiff(unique(c(get_all_factorvars_name(), get_pramVars_names())), curObj@pram$summary$variable))
+})
+
 get_strataVar <- reactive({
   curObj <- sdcObj()
   if (is.null(curObj)) {
@@ -198,7 +209,7 @@ get_strataVar_names <- reactive({
 
 # all possible stratification variables
 poss_strataVarP <- reactive({
-  setdiff(allVarsP(), c(get_keyVars_names(), get_weightVar_name(), get_pramVars_names(), get_numVars_names()))
+  setdiff(allVarsP(), c(get_all_numericvars_name()))
 })
 
 # original data
@@ -235,14 +246,34 @@ get_risk <- reactive({
   return(as.data.frame(curObj@risk$individual))
 })
 
-# all numeric/integer variables
-get_allNumericVars_name <- reactive({
+get_all_factorvars_name <- reactive({
   curObj <- sdcObj()
   if (is.null(curObj)) {
     return(NULL)
   }
   tmp <- get.sdcMicroObj(curObj, type="origData")
-  names(tmp)[sapply(tmp, class)%in% c("numeric","integer")]
+  names(tmp)[sapply(tmp, class)%in% c("factor")]
+})
+# all numeric/integer variables
+get_all_integervars_name <- reactive({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NULL)
+  }
+  tmp <- get.sdcMicroObj(curObj, type="origData")
+  names(tmp)[sapply(tmp, class)%in% c("integer")]
+})
+get_all_numericvars_name <- reactive({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NULL)
+  }
+  tmp <- get.sdcMicroObj(curObj, type="origData")
+  names(tmp)[sapply(tmp, class)%in% c("integer")]
+})
+
+get_allNumericVars_name <- reactive({
+  c(get_all_numericvars_name(), get_all_integervars_name())
 })
 
 # possible variables for microaggregation and addNoise,...
@@ -316,7 +347,6 @@ exportData <- reactive({
   extractManipData(curObj, randomizeRecords=input$rb_export_randomizeorder)
 })
 
-
 # compute some risk-measures
 measure_riskComp <- reactive({
   if (is.null(sdcObj())) {
@@ -352,39 +382,6 @@ measure_riskComp <- reactive({
   res
 })
 
-
-### generalized test-function to create uiOutput
-## selectInput
-ui_custom_selectInput <- function(choices, id, label, multiple=FALSE) {
-  if (is.null(input[[id]])) {
-    sel <- ""
-  } else {
-    sel <- input[[id]]
-  }
-  renderUI({selectInput(inputId=id, label=h5(label), choices=choices, selected=sel, multiple=multiple, width="100%")})
-}
-## numericInput
-ui_custom_numericInput <- function(id, label, min, max) {
-  if (is.null(input[[id]])) {
-    sel <- min
-  } else {
-    sel <- input[[id]]
-  }
-  renderUI({numericInput(inputId=id, label=h5(label), min=min, max=max, value=sel, width="100%")})
-}
-
-ui_custom_textInput <- function(id, label, placeholder="please enter a text") {
-  isolate({
-    if (is.null(input[[id]])) {
-      sel <- ""
-    } else {
-      sel <- input[[id]]
-    }
-    renderUI({textInput(inputId=id, label=h5(label), value=sel, width="100%", placeholder=placeholder)})
-  })
-}
-
-
 ## information on current sdcProblem used in sidebars
 infodat <- reactive({
   # important variables
@@ -414,8 +411,8 @@ infodat <- reactive({
 
   # params
   res <- obj$sdcObj@options
-  params <- data.frame(Parameter=c("nrObs","alpha","RandomSeed","RandomizeOrder"),
-    Value=c(nrow(obj$inputdata), res$alpha,res$seed,"FALSE"))
+  params <- data.frame(Parameter=c("nrObs","alpha","RandomSeed"),
+    Value=c(nrow(obj$inputdata), res$alpha,res$seed))
   params$Value <- as.character(params$Value)
   list(df=df, params=params)
 })
