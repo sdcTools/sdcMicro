@@ -96,7 +96,7 @@ output$ui_modify_recode_to_factor <- renderUI({
   })
   output$ui_globalRecode_btn <- renderUI({
     req(input$sel_custom_split)
-    btn_rec <- myActionButton("btn_recode_to_factor(s)", label=("Convert to factors"), "primary")
+    btn_rec <- myActionButton("btn_recode_to_factor", label=("Convert to factors"), "primary")
     if (input$sel_custom_split=="no") {
       if (length(input$sel_num_glrec)==0) {
         return(NULL)
