@@ -269,7 +269,7 @@ get_all_numericvars_name <- reactive({
     return(NULL)
   }
   tmp <- get.sdcMicroObj(curObj, type="origData")
-  names(tmp)[sapply(tmp, class)%in% c("integer")]
+  names(tmp)[sapply(tmp, class)%in% c("numeric")]
 })
 
 get_allNumericVars_name <- reactive({
@@ -382,6 +382,15 @@ measure_riskComp <- reactive({
   res
 })
 
+## information on local suppression
+info_localsupp <- reactive({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NULL)
+  }
+  curObj@localSuppression$totalSupps
+})
+
 ## information on current sdcProblem used in sidebars
 infodat <- reactive({
   # important variables
@@ -389,24 +398,29 @@ infodat <- reactive({
   if (length(kV)==0 ) {
     return(NULL)
   }
-  df <- data.frame(Variable=kV, type="keyVar")
+  df <- data.frame(Variable=kV, type="keyVar", Suppressions=0)
+
+  ls <- info_localsupp()
+  if (!is.null(ls)) {
+    df$Suppressions <- as.integer(ls[1,])
+  }
 
   nV <- get_numVars_names()
   if (length(nV)>0) {
-    df <- rbind(df, data.frame(Variable=nV, type="numVar"))
+    df <- rbind(df, data.frame(Variable=nV, type="numVar", Suppressions=NA))
   }
   wV <- get_weightVar_name()
   if (length(wV)>0) {
-    df <- rbind(df, data.frame(Variable=wV, type="weightVar"))
+    df <- rbind(df, data.frame(Variable=wV, type="weightVar", Suppressions=NA))
   }
   sV <- get_strataVar_names()
   if (length(sV)>0) {
-    df <- rbind(df, data.frame(Variable=sV, type="strataVar"))
+    df <- rbind(df, data.frame(Variable=sV, type="strataVar", Suppressions=NA))
   }
 
   pV <- get_pramVars_names()
   if (length(pV)>0) {
-    df <- rbind(df, data.frame(Variable=pV, type="pramVar"))
+    df <- rbind(df, data.frame(Variable=pV, type="pramVar", Suppressions=NA))
   }
 
   # params

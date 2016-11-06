@@ -319,7 +319,7 @@ output$ui_kAnon <- renderUI({
     sl <- lapply(1:n, function(i) {
       selectInput(
         inputId=paste0('sel_importance_', i),
-        label=paste0('Select the Importance for keyVariable ', kV[i]),
+        label=paste0('Select the importance for key variable ', dQuote(kV[i])),
         choices=c("",poss[[i]]$poss), selected=poss[[i]]$val, width="100%")
     })
     # how many rows?
@@ -387,7 +387,7 @@ output$ui_kAnon <- renderUI({
 
   output$kanon_strata <- renderUI({
     selectInput("kanon_strataV", label=h5("Do you want to apply the method for each group defined by the selected variable?"),
-      choices=c("no stratification", poss_strataVarP()), multiple=FALSE)
+      choices=c("no stratification", setdiff(poss_strataVarP(), c(get_all_numericvars_name(), get_keyVars_names()))), multiple=FALSE, width="75%")
   })
 
   out <- fluidRow(
