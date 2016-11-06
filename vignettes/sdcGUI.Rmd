@@ -266,8 +266,8 @@ This is exactly the same thing as already described in [Explore variables](#expl
 ### Anonymize categorical variables {#anonymize_categorical}
 If `Anonymize categorical variables` has been selected in `What do you want to do?` in the left sidebar of the screen, the options [Recoding](#recoding_sdcproblem), [k-Anonymity](#kanon), [Postrandomization (simple)](#pram_simple), [Postrandomization (expert)](#pram_expert) and [Supress values with high risks](#supp_highrisk) are available from the radio button list termed `Choose a Method` and will be described below.
 
-#### [tbw] Recoding {#recoding_sdcproblem}
-to be written, same as described [here](#recode_factors_inputdata), the only difference being that the analyzed variables are now those currently available in the active problem instance.
+#### Recoding {#recoding_sdcproblem}
+This page allows to recode or coarsen the selected categorical key variables. The functionality is the same as already described [here](#recode_factors_inputdata) for recoding of factor variables in the original micro data file. There are two slight differences, though. The first one is that the variables that can be selected in the input field termed `Choose factor variable` are restricted to the categorical key variables that have been chosen when the sdc problem was created, as described [here](setup_sdcproblem). The other difference is that once recoding is done, the page refreshes and the content in the right sidebar is recalculated. This especially affects the number of observations violating k-anonymity that are shown in the block `Risk (k-Anonymity)`.
 
 #### [tbw] k-Anonymity {#kanon}
 #### Postrandomization (simple) {#pram_simple}
