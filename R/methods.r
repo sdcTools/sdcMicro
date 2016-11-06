@@ -210,6 +210,8 @@ signature=signature(object="sdcMicroObj", value="characterOrNULL"),
 definition = function(object, value) {
  if (is.null(value)) {
    object@strataVar <- NULL
+   if (length(object@set) == 0 || !"strataVar" %in% object@set)
+     object@set <- c(object@set, "strataVar")
    return(object)
  }
 
@@ -224,6 +226,8 @@ definition = function(object, value) {
    stop("stratification-variables cannot be a categorical key-variable!\n")
  }
  object@strataVar <- match(value, cn)
+ if (length(object@set) == 0 || !"strataVar" %in% object@set)
+   object@set <- c(object@set, "strataVar")
  return(object)
 })
 
