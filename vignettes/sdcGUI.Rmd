@@ -83,9 +83,9 @@ This option not only available when a text/csv file should be imported. In that 
 This option not available when an existing data frame from the current workspace should be used. For any other selection, clicking on the `Browse` button allows the user to select a file on the local hard drive. A feature is that only files with the accepted file ending (e.g `.dta` when files from `Stata` `.rdata` when data exported from `R` should be imported) are shown. This reduces the risk, that a unsuitable file can be selected. Once a file has been selected, pushing the `Open` button immediately uploads the file so that the GUI can process it. If the file cannot be read into the system successfully, the user is presented with the resulting error message. If everything works out smoothly, microdata are now available and the left sidemenu changes. The user can now start the anonymization process. For further information, please have a look at the following sections.
 
 ## Modify microdata {#modify_microdata}
-Once data have been uploaded, the content of the *Microdata*-page changes and users can select from a range of possibilities on what to do with the current inputdata. Once data are available, a button `Reset inputdata` is available on top of the sidebar. Clicking this button allows to reset or delete the current input data. However, clicking this button does not immediately reset the problem. Instead, a pop-up window comes up where the user has to confirm to reset the current microdata. This action will be performed, if the user click on the button labelled *"Delete current inputdata"*. If the user clicks *"Dismiss"*, the inputdata remain unchanged.
+Once data have been uploaded, the content of the *Microdata*-page changes and users can select from a range of possibilities on what to do with the current inputdata. Once data are available, a button `Reset inputdata` is available on top of the sidebar. Clicking this button allows to reset or delete the current input data. However, clicking this button does not immediately reset the problem. Instead, a pop-up window comes up where the user has to confirm to reset the current microdata. This action will be performed, if the user click on the button labelled `Delete current inputdata`. If the user clicks `Dismiss`, the inputdata remains unchanged.
 
-By default, the first entry ("*Display Microdata*") is selected. These entries can be selected by clicking on the desired text or directly on the button. We now continue to describe the features that can be selected.
+Below this button, a list of radio buttons termed `What do you want to do?` is shown. By default, the first entry ("*Display Microdata*") is selected. These entries can be selected by clicking on the desired text or directly on the button. We now continue to describe the features that can be selected.
 
 ### Display Microdata {#display_microdata}
 This is the default selection, after microdata have been successfully imported or uploaded as described in [uploading microdata](#upload_microdata). This page gives a short overview on the microdata. It shows the name of the imported file as well as the number of observations and the number of variables that are available. Below this information, the user is presented with an interactive table containing the current microdata. The variables can be sorted by clicking on the small arrows next to the variable names on top of the table. Also on the top, there is a dropdown field where users can select how many observations should be displayed on one page. On the bottom of the table the users can find a dynamic pagination field which allows users to jump to a given *"page"* of the current table.
@@ -163,7 +163,7 @@ If at least one factor level is selected, a text input called `New label for rec
 
 Below this three input fields a button labelled `Update factor variable` and a barplot showing the absolute number of the current levels of the factors are shown. Pressing the action button results in updating the factor. In this case, the page refreshes and the plot adjusts the the changes that have been applied.
 
-### Create a stratification variable
+### Create a stratification variable {#create_strata_var}
 On this page, the user is able to generate a new variable based on two ore more variables from the current micro data. The reason for this is that several anonymization techiques that are explained [here](#anonymize_categorical) and [here](#anonymize_numerical) can by applied independently to subgroups of the input data that are given by the values of a so called `stratification variable`. This page allows to create such a variable in a convinient way.
 
 The user has to specify at least two variables in the select field labelled `Select Variables`. From this field, all variables that are available in the micro data set can possibly be selected. Once two or more variables are selected, two new inputs appear. The first one appears right next to the variable selection field and is called `New variable name`. In this field, user can enter a desired name for the new variable. By default, the variable name listed consists of the selected variables chained together using `_` as seperator. By clicking into the field, the user can enter a customized variable name. If the current value in this text input field is not the name of an already existing variable, a button termed `Create stratification variable` appears below. Clicking on this button adds the new variable to the input data set. The variable is generated as a factor variable in which the values of the contributing variables are also chained together using `_` as the seperator. After pressing the button, the page changes to the [explore variable](#explore_inputvars) page where the newly generated variable is already selected.
@@ -193,72 +193,102 @@ In this case, the goal is to merge an already anonymized household level file to
 On success, the layout of the page changes too. A button labelled `Reset uploaded household data` appears which allows to reset the household level data and makes it possible to upload yet another file. Additionally, a dropdown field labelled `Select a variable containing household ids` appears. In this input, the user needs to select a variable from the list of variables that are available from both datasets containing the identification variable. The selected variable will finally be used to merge the datasets. Below this selection, a button termed `Merge household- and individual level data` is shown. On clicking this button, the merge is performed. If everything went well, the page refreshes and the number of observations and variables in the updated micro data file shown. Additionally, the names of the variables as well as their type are presented in tabular format.
 
 # Anonymize {#anonymize}
-If no inputdata have been uploaded
+This page is relevant for either creating a sdc problem (of class `sdcMicroObj`) that can then be anonymized within the GUI. If the user navigates to this page and no inputdata have been uploaded, this page shows two options. The user can either click on the button labelled `Upload microdata` or on a button labelled `Upload a previously saved sdc problem`. In the first case the user is taken to the [Microdata](#microdata) page where microdata can be uploaded as described [here](#upload_microdata), in the latter case the user is taken to the [Undo](#undo) page where an already [exported problem instance](#export_sdc_probleminstance) can be uploaded.
 
-- Information to either to to `Microdata` to upload data or to `Undo` to upload a previously saved problem instance
-- If Microdata are available and no problem has been defined -> goto [setup a sdc problem](#setup_sdcproblem)
-- If a problem has been set up, apply anonymization techniques described in [Anonymization methods](#anonymization_methods)
+If Microdata are available and no problem has been defined, the user can define a new sdc problem instance. Details on how to this can be done are given in chapter [Set up a problem](#setup_sdcproblem). Once a problem instance has been defined, the page layout changes and the user can either view or modify the problem instance as described in []() or apply anonymization techniques to [categorical](#anonymize_categorical) or [continuous](#anonymize_numerical) variables. Details on how specific methods can be applied are given in chapter [Anonymization methods](#anonymization_methods).
 
-## [tbw] Set up a problem {#setup_sdcproblem}
+## Set up a problem {#setup_sdcproblem}
+If micro data have already been uploaded, the first step in the anonymization procedure is to create an sdc problem which can be done on this page. The layout of this page is splitted into two parts. On the left hand side, the user is presented with a table and choices that are required to define a new problem instance. On the right hand side, the user is given the possibility to explore a variable. This is useful for example to decide which variables should be used as categorical or continuous key variables. For further discussion on the choice of variables, the user should have a look at `?createSdcObj` which is the underlying function that is used to generate a problem. We now explain in detail how to proceed.
 
-- GUI is splitted in two parts. 
-  - Left hand side: Specify the sdc problem
-  - Right hand side: analyse/view some variables
+On top of the right hand sidebar the user is shown a select input field labelled `Select variable to show information` in which any of the variables from the current micro data set can be selected. By default the first variable of the data set is chosen. Below this select input a graph depending on the variable type is shown. If the selected variable is either of type `factor`, `character` or `integer` (with less or equal than 10 unique values), a barplot is shown. For variables of type `numeric` or `integer` with more than 10 unique values, a histogram showing the distribution is plotted. Below the plot, the number of unique values including `NA` is shown. Finally, below this information even more information on the selected variable is shown. In case of a continuous variable, the typical main summary statistics (Minimum, Mean, Median, Maximum and 5%-, 25%-, 75%- and 95%-quantiles) are presented while for factor variables (as well as integer variables with not more than 10 unique values), the number of occurences for each possible level is shown.
 
-- interactive table with 9 columns
-    - Variable.Name	
-    - Type	
-    - Key	
-    - Pram	
-    - Weight	
-    - Cluster.ID	
-    - Remove	
-    - nrCodes	
-    - nrNA
+On the left hand side, an interactive table with a row for each variable available in the micro data and a total of 9 columns is shown. This table allows the user to specify relevant variables for the sdc problem. Also, it shows additional information on each variable. The variables are:
 
-- checks: either popup windows with some instructions or a red action button below the table.
+- **Variable.Name**: the variable name	
+- **Type**: the class of the variable according to `class()`
+- **Key**:	radio buttons with 3 choices, `no` (the default), `Cat.` and `Cont.`
+    - `no`: the variable is not uses as either categorical or continuous key variable
+    - `Cat.`: the variable is used as categorical key variable
+    - `Cont.`: the variable is used as continuous key variable
+- **Weight**:	the variable that contains sampling weights (if any)
+- **Cluster.ID**: the variable that identifies clusters (for example households)
+- **Remove**: variables that should be excluded when setting up the sdc problem.
+- **nrCodes**: the number of unique values in the variable
+- **nrNA**: number of missing values in the variable
 
-- `Parameter "alpha"`: slider between 0 and 1 -> relevant for freq calc
-- `Parameter "seed"`: slider between -250 and 250. 
-- explain sliders: click and move with keyboard arrows to left and right
-- If everything is ok blue button `Setup SDC problem`
+For columns `Weight`, `Cluster.ID` and `Remove`, checkboxes are present in the table. These checkboxes are by default not selected. The checkboxes can be enabled by clicking on them. While there can at most be one variable selected as weight variable and variable holding cluster ids, multiple variables may be checked in column `Remove`. 
 
-Right hand side:
+Below the table, two slider inputs are shown. The first one, labelled `Parameter "alpha"` is relevant for the frequency calculation given the categorical key variables that contain missing (`NA`) values. For this input, values between `0` and `1` (the default setting) in steps of `0.01` can be selected. We note that leaving the value at `1` leads to the same results as in versions of `sdcMicro` <= 4.7.0. For details on this parameter, please have a look at `?freqCalc`. The second slider, termed `Parameter "seed"` can take on values between `-250` and `250` in steps of `1` and is the number used to set the seed for the random number generator to ensure reproducability. By default, this value is set to `0`. We note that once the sliders are selected, values can also be increased and decreased by clicking the up and down (or left and right) keys on the keyboard.
 
-- Select variable to show information: choose available variables
-    - plot (histogram or barplot)
-    - table (factor or character or integer with <=
-    - Number of levels including NA: 310 distinct values), 
-    - Summary for numeric variables
+Whenever values in either the radio buttons or the checkboxes are changed, it is internally checked if all conditions for a successful generation of a new sdc problem are fulfilled. In the case that some restrictions are violated, either a popup window containing additional information occurs or a red button with the error message is shown. The user can then change the variable settings in the table. Once all checks are passed, a blue button labelled `Setup SDC problem` appears below the two sliders. Clicking on this button creates the sdc problem. Finally, the page refreshes and the layout changes. In [Anonymization Methods](#anonymization_methods), these changes are further explained.
 
+## Anonymization Methods {#anonymization_methods}
+Once an sdc problem has been defined as described [above](#setup_sdcproblem), the layout of the page changes. It now features a left sidebar and the main content is shown at the right side of the screen. 
 
-## [tbw] Anonymization Methods {#anonymization_methods}
-Left Sidebar: choose what to do. Choices are `View/Analyse existing sdcProblem`, `Anonymize categorical variables` and `Anonymize numerical variables`.
+In the left sidebar, users can choose which kind of anonymization options they want to apply. On top of the sidebar, a button labelled `Delete SDC problem` is shown. Clicking this button allows to reset the current sdc problem. However, clicking this button does not immediately reset the problem but instead, a popup window appears. In this window the user has to confirm that the current problem should be deleted. This action will be performed, if the user click on the button labelled `Delete current problem`. If the user clicks `Dismiss`, the sdc problem remains unchanged.
 
-### [tbw] View/Analyse existing sdcProblem
+Below this button, a list of radio buttons termed `What do you want to do?` is shown. By default, the first entry (`View/Analyse existing sdcProblem`) is selected, the other choices are `Anonymize categorical variables` and `Anonymize numerical variables`. Below, there is another list of radio buttons termed `Choose a Method`. The entires in this second select input depend on the choice in `What do you want to do?` and update once this input changes. Also, the content in the center of the screen is dependent on the choices in the left sidebar. We now continue to describe the possible choices for [View/Analyse existing sdcProblem](#view_analyze_existing_problem), [Anonymize categorical variables](#anonymize_categorical) and [Anonymize numerical variables](#anonymize_numerical).
 
+In case either `Anonymize categorical variables` or `Anonymize numerical variables` is selected, the layout of the page is changed again. In this case, a sidebar on the right hand side of the page appears. In this sidebar, many useful statistics on the current anonymization process are listed below each other:
+
+- **Important Variables**
+
+In the first section, the *"important"* variables in the current sdc problem are listed. These are the categorical key variables, the numerical key variables (if any) as well as the variables defining sampling weights or cluster identification (if any). This information is presented in tabular format.
+
+- **Additional Parameters** 
+
+The second block lists - also in tabular format - the number of records in the data set within the current sdc problem instance and the value for paramters `alpha` and `random seed` that were used when setting up the current problem.
+
+- **Risk (k-Anonymity)**
+
+The next table shown the number and percentages of records violating `2`-, `3`- and `5`-anonymity in the current sdc problem. In parenthesis the corresponding numbers are shown for the initial sdc problem without any anonymization procedures applied.
+
+- **Numeric Risk** 
+
+In case that variables have been specified as numerical key variables when [setting up the sdc problem](#setup_sdcproblem), another table showing the estimated minimal and maximum risk for numeric key variables is shown for both the original and the (possibly) modified variables. For more information have a look at `?dRisk`.
+
+- **Information Loss**
+
+The section on information loss is also only displayed if continuous key variables are available in the current problem instance. If this is the case, the values for utility measures `IL1` and the `Difference of Eigenvalues` are shown for both the original and (possibly) modified variables. For more information have a look at `?dUtility`.
+
+This sidebar is always updated whenever the sdc problem instance is modified which is the case when any anonymization procedure was applied. In some cases it is also extended, for example when categorical variables have been post randomized as explained in [here](#pram_simple) and [here](#pram_expert).
+
+### [tbw] View/Analyse existing sdcProblem {#view_analyze_existing_problem}
 Analyse the Problem
 
 #### [tbw] Show Summary
-
-
 #### [tbw] Explore variables
-
 This is exactly the same thing as already described in [Explore variables](#explore_inputvars), the only difference being that the analyzed variables are now those currently available in the active problem instance.
 
 #### [tbw] Add 'Ghost'-Variables
-
 #### [tbw] Create new IDs
 
-### [tbw] Anonymize categorical variables {#anonymize_categorical}
-#### [tbw] Recoding
+### Anonymize categorical variables {#anonymize_categorical}
+If `Anonymize categorical variables` has been selected in `What do you want to do?` in the left sidebar of the screen, the options [Recoding](#recoding_sdcproblem), [k-Anonymity](#kanon), [Postrandomization (simple)](#pram_simple), [Postrandomization (expert)](#pram_expert) and [Supress values with high risks](#supp_highrisk) are available from the radio button list termed `Choose a Method` and will be described below.
 
+#### [tbw] Recoding {#recoding_sdcproblem}
 to be written, same as described [here](#recode_factors_inputdata), the only difference being that the analyzed variables are now those currently available in the active problem instance.
 
-#### [tbw] k-Anonymity
-#### [tbw] Postrandomization (PRAM)
-#### [tbw] Supress values with high risks
+#### [tbw] k-Anonymity {#kanon}
+#### Postrandomization (simple) {#pram_simple}
+This page offers the possibility to randomize one or more variables based on an invariant probability transition matrix. To apply this method to the current sdc problem, the user has to choose at least one variable from the input field labelled `Select variable(s) for PRAM` in which by default no variable is selected. The user can choose in this input from any existing factor variable that has not yet been pramed in the current sdc problem. It is also possible to select one or more categorical key variables. In this case, however, any future risk-calculations cannot be reliably interpreted any longer. This warning (as well as any other possible warnings and errors, if any) are however shown to the user at the top of the page.
 
+After selecting at least one variable, is it possible to select a variable which will be used for stratification. If the default value of `no stratification` in the select input named `Postrandomize within different groups (stratification)?` is changed, the post randomization of the selected variables is performed independently for each unique value of the selected variable. In this select field, only one variable may be selected. It should be noted, that stratification variables can be crated before setting up the sdc problem instance as it was described [here](#create_strata_var).
+
+To create the transition matrix, two parameters (`pd` and `alpha`) need to be provided using slider inputs. `pd` refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this value is chosen, the more likely it is that a value stays the same category and is not going to be changed. Parameter `alpha` allows to add some perturbation to the calculated transition matrix. The lower this number is, the less perturbed the matrix will get. By default, the value of `Choose value for 'pd'` will be `0.8` and the value of `Choose value for 'alpha'` will be `0.5`. For further details, have a look at `?pram`.
+
+Once at least one variable that should be pramed has been selected, a button labelled `Postrandomize` appears at the bottom of the page. Pressing this button performs the postrandomization. Afterwards, the page refreshes and in the right sidebar a section called `Postrandomization` either appears or is extended. In this part of the sidebar, for each variable that has been postrandomized the number and percentages of value changes are listed.
+
+#### Postrandomization (expert) {#pram_expert}
+This page offers the possibility to randomize a variable using a freely specified transition matrix. To apply this method to the current sdc problem, the user has to choose one variable from the input field labelled `Select variable for PRAM` in which by default the first possible variable is selected. The user can choose in this input from any existing factor variable that has not yet been pramed in the current sdc problem. It is also possible to select one or more categorical key variables. In this case, however, any future risk-calculations cannot be reliably interpreted any longer. This warning (as well as any other possible warnings and errors, if any) are however shown to the user at the top of the page.
+
+After selecting at least one variable, is it possible to select a variable which will be used for stratification. If the default value of `no stratification` in the select input named `Postrandomize within different groups (stratification)?` is changed, the post randomization of the selected variables is performed independently for each unique value of the selected variable. In this select field, only one variable may be selected. It should be noted, that stratification variables can be crated before setting up the sdc problem instance as it was described [here](#create_strata_var).
+
+Below this inputs, an interactive table is shown. This table has to be edited by the user in a way so that it can be used as a transition matrix. For any given row, the numbers specify percentages that the current value (the actual row name) changes to the value specified by the respective colum name. By default, in the diagonal of the table, the values are `100`. This means that the probability that the value does not change is `100%`. The user can change the table in a way that the sum of the values in each row equals `100`. If this is not the case, a red button appears below the table giving instant feedback that the table needs to be further edited. Values in specific cells may be changed by clicking into the cell and entering a new values.
+
+Once the transition matrix is valid (eg. the values in all rows sum up to `100`), a button labelled `Postrandomize` appears at the bottom of the page. Pressing this button performs the postrandomization. Afterwards, the page refreshes and in the right sidebar a section called `Postrandomization` either appears or is extended. In this part of the sidebar, for each variable that has been postrandomized the number and percentages of value changes are listed.
+
+#### [tbw] Supress values with high risks {#supp_highrisk}
 
 ### [tbw] Anonymize numerical variables {#anonymize_numerical}
 #### [tbw] Top-/Bottom Coding

@@ -232,7 +232,7 @@ shinyServer(function(session, input, output) {
       cmd_strata1 <- cmd_strata2 <- NA
     }
 
-    v <- as.vector(as.matrix(obj$transmat))
+    v <- as.vector(as.matrix(obj$transmat))/100
     rn <- rownames(obj$transmat)
     matstr <- VecToRStr(v, quoted=FALSE)
     cmd <- paste0("mat <- matrix(",matstr,",ncol=",ncol(obj$transmat),"); ")

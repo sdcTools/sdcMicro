@@ -83,7 +83,7 @@ output$ui_pram_expert <- renderUI({
       v <- get_origData()[[input$sel_pramvars_expert]]
       ll <- levels(v)
       m <- diag(length(ll))
-      diag(m) <- 0.90
+      diag(m) <- 100
       rownames(m) <- colnames(m) <- ll
       obj$transmat <- m
     }
@@ -110,8 +110,8 @@ output$ui_pram_expert <- renderUI({
     if (is.null(obj$transmat)) {
       return(NULL)
     }
-    if (!all(rowSums(obj$transmat)==1)) {
-      return(myActionButton("btn_pram_expert_notworking", label="Error: Not all row-sums of the transition matrix equal 1", btn="danger"))
+    if (!all(rowSums(obj$transmat)==100)) {
+      return(myActionButton("btn_pram_expert_notworking", label="Error: Not all row-sums of the transition matrix equal 100", btn="danger"))
     }
     if (input$pram_expert_strataV %in% input$sel_pramvars_expert) {
       txt <- "You have selected a variable relevant for stratification that should also be pramed. This is not possible. Please remove the variable from one of the inputs"
