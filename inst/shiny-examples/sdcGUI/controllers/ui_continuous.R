@@ -183,7 +183,7 @@ output$ui_microaggregation <- renderUI({
   }
   btn_microagg <- myActionButton("btn_microagg", label="Perform Microaggregation", "primary")
   if (has_numkeyvars() | length(input$sel_microagg_v)>0 ) {
-    out <- list(out, fluidRow(column(12, p(btn_microagg, align="center"))))
+    out <- list(out, fluidRow(column(12, btn_microagg, align="center")))
   }
   out
 })
@@ -194,7 +194,7 @@ output$ui_noise <- renderUI({
   # 'correlated' needs at least two columns=variables
   choices_noise <- reactive({
     m <- c("additive","correlated2","restr","ROMM","outdect")
-    if (length(input$sel_noise_v) >=2 | length(get.sdcMicroObj(sdcObj(), type="numVars")) >= 2) {
+    if (length(input$sel_noise_v) >=2 | length(get_numVars_names()) >= 2) {
       m <- c(m, "correlated")
     }
     m
@@ -212,76 +212,50 @@ output$ui_noise <- renderUI({
 
   # ui for slider defining noise, p or delta
   output$ui_noise_slider <- renderUI({
-    input$sel_noise_method
-    isolate({
-      if (is.null(input$sel_noise_method)) {
-        return(NULL)
-      }
-      if (input$sel_noise_method=="correlated2") {
-        lab <- h4("Parameter 'delta'")
-        par <- c(value=0.1, min=0.1, max=2, step=0.01)
-      } else if (input$sel_noise_method=="ROMM") {
-        lab <- h4("Parameter 'p'")
-        par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
-      } else {
-        lab <- h4("Amount of noise")
-        par <- c(value=150, min=0, max=300, step=1)
-      }
-      sliderInput("sl_noise_noise", label=lab,
-        min=par["min"], max=par["max"], step=par["step"], value=par["value"], width="100%")
-    })
+    req(input$sel_noise_method)
+    if (input$sel_noise_method=="correlated2") {
+      lab <- h5("Amount of noise (parameter 'delta')")
+      par <- c(value=0.1, min=0.1, max=2, step=0.01)
+    } else if (input$sel_noise_method=="ROMM") {
+      lab <- h5("Amount of noise (parameter 'p')")
+      par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
+    } else {
+      lab <- h5("Amount of noise (parameter 'noise')")
+      par <- c(value=150, min=0, max=300, step=1)
+    }
+    sliderInput("sl_noise_noise", label=lab, min=par["min"], max=par["max"], step=par["step"], value=par["value"], width="100%")
   })
 
   # ui for selection of method
   output$ui_noise_method <- renderUI({
-    input$sel_noise_method
-    isolate({
-      sel_method <- selectInput("sel_noise_method", label=h5("Select the algorithm"),
-        choices=choices_noise(),
-        selected=input$sel_noise_method, width="100%")
-      sel_method
-    })
+    selectInput("sel_noise_method", label=h5("Select the algorithm"), choices=choices_noise(), selected=input$sel_noise_method, width="100%")
   })
 
   # variables selected
   output$ui_noise_vars <- renderUI({
-    input$sel_noise_method
-    isolate({
-      lab <- h5("Select variables")
-      if (has_numkeyvars()) {
-        lab <- list(lab, p("If empty, all numerical key variables will be used!"))
-      }
-      sel_noisevars <- selectInput("sel_noise_v", choices=possvars_numericmethods(),
-        label=lab, selected=input$sel_noise_v, width="100%", multiple=TRUE)
-      sel_noisevars
-    })
+    selectInput("sel_noise_v", choices=get_numVars_names(), label=h5("Select variables"), width="75%", multiple=TRUE)
   })
 
   # ui for 'btn_noise
   output$ui_noise_btn <- renderUI({
     btn <- NULL
     if (has_numkeyvars() | length(input$sel_noise_v)>0) {
-      btn <- myActionButton("btn_noise", label="Apply addNoise()", "primary")
+      btn <- myActionButton("btn_noise", label="Add noise", "primary")
     }
     btn
   })
 
   out <- fluidRow(
     column(12, h4("Adding Stochastic Noise", align="center")),
-    column(12, p("Various methods for adding noise to perturb continuous scaled variables can be selected below. Please note, that even if a
-      stratification variable has been defined during the initialization of the sdc-Problem, this information will not be used in this case. So the noise will be applied on
-      the entire data set.", align="center")))
+    column(12, p("Various methods for adding noise to perturb numeric key variables can be selected below. If no variables are selected,
+    the noise is added to all numeric key variables in the current problem instance.", align="center")))
 
   out <- list(out, fluidRow(
-    column(6, uiOutput("ui_noise_method")),
-    column(6, uiOutput("ui_noise_slider"))))
+    column(6, uiOutput("ui_noise_vars"), align="center"),
+    column(6, uiOutput("ui_noise_method"), align="center")))
 
-  out <- list(out, fluidRow(
-    column(3, ""),
-    column(6, uiOutput("ui_noise_vars")),
-    column(3, "")))
-
-  out <- list(out, fluidRow(column(12, uiOutput("ui_noise_btn"))))
+  out <- list(out, fluidRow(column(12, uiOutput("ui_noise_slider"), align="center")))
+  out <- list(out, fluidRow(column(12, uiOutput("ui_noise_btn"), align="center")))
   out
 })
 

@@ -344,7 +344,24 @@ In the case that clusterbased methods should be used, the layout is the same for
 
 If all options have been set, a button labelled `Perform Microaggregation` is shown at the bottom of the page. Clicking this button performs the microaggregation of the selected variables according to the options that have been set. Since the computation might take a long time, on the bottom right screen a progress bar occurs showing that the process is running. Once it is finished, the page updates and the [Show Summary](#show_sdc_summary) page is shown. On this page, the section `Compare numVars` is either updated or has been added and section `Information on risk for numerical key variables`, `Information loss` and `Anonymization steps` were updated and the current values and statistics are shown.
 
-#### [tbw] Adding Noise {#add_noise}
+#### Adding Noise {#add_noise}
+In this section it is possible to perturbate numeric key variables by adding stochastic noise. The first option is to select some numerical key variables from the select input labelled `Select variables`. If this input field is left empty (which is the default), noise will be added to all numerical key variables.
+
+Next to this field, users can select the desired algorithm in the select input termed `Select the algorithm`. The choices are:
+
+- `additive` (the default value)
+- `correlated2`
+- `restr`
+- `ROMM`
+- `outdect`
+- `correlated`
+
+We note that the last method (`correlated`) is only available if at least two numerical key variables have been have been specified in the current problem instance. For details on the methods, we refer the reader to the man page for `?addNoise`.
+
+Below this two inputs, a slider input is shown. This input is dynamically labelled depending on the choice of the method. For all methods, however, this slider is used to enter the amount of perturbation which should be used. Since the parametrization for the different methods is different, this slider has different default values and different ranges depending on the choice of the method. Again, we refer to `?addNoise` for further details.
+
+If all options have been set, a button labelled `Add noise` is shown at the bottom of the page. Clicking this button adds noise to the selected variables according to the options that have been set. Since the computation might take some time, on the bottom right screen a progress bar occurs showing that the process is running. Once it is finished, the page updates and the [Show Summary](#show_sdc_summary) page is shown. On this page, the section `Compare numVars` is either updated or has been added and section `Information on risk for numerical key variables`, `Information loss` and `Anonymization steps` were updated and the current values and statistics are shown.
+
 #### [tbw] Rank-Swapping {#rank_swapping}
 
 # [tbw] Risk/Utility  {#risk_utility}
