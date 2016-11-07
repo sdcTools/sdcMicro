@@ -20,10 +20,10 @@ choices_anon_num <- reactive({
   if (length(get_numVars()>0)) {
     return(c(
       "Top-/Bottom Coding"="topbot_num",
-      "Apply Microaggregation"="microaggregation",
-      "Adding Noise to the data"="noise",
+      "Microaggregation"="microaggregation",
+      "Adding Noise"="noise",
       #"Shuffling the data"="shuffling",
-      "Apply Rank-Swapping"="rankswap"))
+      "Rank-Swapping"="rankswap"))
   }
   if (length(numVars())>0) {
     return(c("Top-/Bottom Coding"="topbot_num"))
