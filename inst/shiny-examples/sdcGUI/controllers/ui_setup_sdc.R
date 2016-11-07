@@ -435,17 +435,21 @@ output$ui_sdcObj_addghostvars <- renderUI({
 ## add new random ID-variable
 output$ui_sdcObj_randIds <- renderUI({
   output$randid_newid <- renderUI({
-    textInput("txt_randid_newid", label=h5("Choose a suitable name of the new ID-variable"))
+    textInput("txt_randid_newid", label=h5("Choose a suitable name of the new ID-variable"), width="100%")
   })
   output$randid_withinvar <- renderUI({
     selectInput("sel_randid_withinvar", label=h5("If used, the ID will be the same for equal values of the selected variable"),
-      choices=c("none",allVars()), selected=input$sel_randid_withinvar, multiple=FALSE)
+      choices=c("none",allVars()), multiple=FALSE, width="100%")
   })
   output$randid_btn <- renderUI({
-    if (is.null(input$txt_randid_newid) || input$txt_randid_newid=="") {
+    req(input$txt_randid_newid)
+    if (input$txt_randid_newid=="") {
       return(NULL)
     }
-    myActionButton("btn_addRandID",label=("add a new random ID-variable"), "primary", css.class="btn-xs")
+    if (input$txt_randid_newid %in% allVarsP()) {
+      return(NULL)
+    }
+    myActionButton("btn_addRandID", label=("Add new ID-variable"), "primary")
   })
   out <- fluidRow(column(12, h4("Add a new random ID variable to the the existing Problem", align="center")))
   out <- list(out, fluidRow(

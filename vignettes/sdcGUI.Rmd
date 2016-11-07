@@ -261,7 +261,11 @@ Analyse the Problem
 This is exactly the same thing as already described in [Explore variables](#explore_inputvars), the only difference being that the analyzed variables are now those currently available in the active problem instance.
 
 #### [tbw] Add 'Ghost'-Variables {#add_ghostvars}
-#### [tbw] Create new IDs {#create_new_ids}
+
+#### Create new IDs {#create_new_ids}
+In this part of the GUI it is possible create a new random variable. To perform the task, the user needs to specify two inputs. In the first one, termed `Choose a suitable name of the new ID-variable`, the desired variable name of the new id needs to be entered. The second input is a drop down field, in which either `none` (the default value) or any variable available from the current sdc problem may be selected. In case a variable has been selected in this input, the newly generated variable features identical (but random) numbers for equal values of the selected variable.
+
+When both inputs have been chosen, a button labelled `Add new ID-variable` appears at the bottom of the page. Pressing this button creates the new variable and adds it to the current sdc problem. The view finally updates and the [Show Summary](#show_sdc_summary) page is shown the dimension of the dataset have been updated.
 
 ### Anonymize categorical variables {#anonymize_categorical}
 If `Anonymize categorical variables` has been selected in `What do you want to do?` in the left sidebar of the screen, the options [Recoding](#recoding_sdcproblem), [k-Anonymity](#kanon), [Postrandomization (simple)](#pram_simple), [Postrandomization (expert)](#pram_expert) and [Supress values with high risks](#supp_highrisk) are available from the radio button list termed `Choose a Method` and will be described below.
