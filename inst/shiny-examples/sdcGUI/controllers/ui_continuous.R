@@ -277,46 +277,46 @@ output$ui_rankswap <- renderUI({
   output$ui_rankswap_btn <- renderUI({
     btn <- NULL
     if (has_numkeyvars() | length(input$sel_rankswap_v)>0) {
-      btn <- myActionButton("btn_rankswap", label="Apply rankSwap()", "primary")
+      btn <- myActionButton("btn_rankswap", label="Apply rank-swapping", "primary")
     }
     btn
   })
 
   output$ui_rankswap_vars <- renderUI({
-    lab <- h5("Select Variables")
-    if (has_numkeyvars()) {
-      lab <- list(lab, p("If empty, all numerical key variables will be used!"))
-    }
-    sel_rankswapvars <- selectInput("sel_rankswap_v", choices=possvars_numericmethods(),
-      label=lab, selected=input$sel_rankswap_v, width="100%", multiple=TRUE)
-    sel_rankswapvars
+    selectInput("sel_rankswap_v", choices=possvars_numericmethods(), label=h5("Select Variables"), width="100%", multiple=TRUE)
   })
-
-  sl_rankswap_top <- isolate(sliderInput("sl_rankswap_top", label=h4("Percentage of largest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%"))
-  sl_rankswap_bot <- isolate(sliderInput("sl_rankswap_bot", label=h4("Percentage of lowest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%"))
-  sl_rankswap_k0 <- isolate(sliderInput("sl_rankswap_k0", label=h4("Subset-mean preservation factor"), min=0, max=1, step=0.01, value=0, width="100%"))
-  sl_rankswap_r0 <- isolate(sliderInput("sl_rankswap_r0", label=h4("Multivariate preservation factor"), min=0, max=1, step=0.01, value=0.95, width="100%"))
-  sl_rankswap_p <- isolate(sliderInput("sl_rankswap_p", label=h4("Rank range as percentage of total sample size."), min=0, max=100, step=1, value=0, width="100%"))
-
+  output$sl_rankswap_top <- renderUI({
+    sliderInput("sl_rankswap_top", label=h5("Percentage of largest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%")
+  })
+  output$sl_rankswap_bot <- renderUI({
+    sliderInput("sl_rankswap_bot", label=h5("Percentage of lowest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%")
+  })
+  output$sl_rankswap_k0 <- renderUI({
+    sliderInput("sl_rankswap_k0", label=h5("Subset-mean preservation factor"), min=0, max=1, step=0.01, value=0, width="100%")
+  })
+  output$sl_rankswap_r0 <- renderUI({
+    sliderInput("sl_rankswap_r0", label=h5("Multivariate preservation factor"), min=0, max=1, step=0.01, value=0.95, width="100%")
+  })
+  output$sl_rankswap_p <- renderUI({
+    sliderInput("sl_rankswap_p", label=h5("Rank range as percentage of total sample size."), min=0, max=100, step=1, value=0, width="100%")
+  })
 
   out <- fluidRow(
     column(12, h4("Rank Swapping", align="center")),
     column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
-      so that correlation structure of original variables are preserved and also some perturbation is applied. Please note, that even if a
-      stratification variable has been defined during the initialization of the sdc-Problem, this information will not be used in this case. So the noise will be applied on
-      the entire data set.", align="center")))
+      so that correlation structure of original variables are preserved and also some perturbation is applied.", align="center")))
 
   out <- list(out, fluidRow(
-    column(4, uiOutput("ui_rankswap_vars")),
-    column(4, p(sl_rankswap_bot, align="center")),
-    column(4, p(sl_rankswap_top, align="center"))))
+    column(4, uiOutput("ui_rankswap_vars"), align="center"),
+    column(4, uiOutput("sl_rankswap_bot"), align="center"),
+    column(4, uiOutput("sl_rankswap_top"), align="center")))
 
   out <- list(out, fluidRow(
-    column(4, sl_rankswap_k0),
-    column(4, p(sl_rankswap_r0, align="center")),
-    column(4, p(sl_rankswap_p, align="center"))))
+    column(4, uiOutput("sl_rankswap_k0"), align="center"),
+    column(4, uiOutput("sl_rankswap_r0"), align="center"),
+    column(4, uiOutput("sl_rankswap_p"), align="center")))
 
   out <- list(out, fluidRow(
-    column(12, uiOutput("ui_rankswap_btn"))))
+    column(12, uiOutput("ui_rankswap_btn"), align="center")))
   out
 })
