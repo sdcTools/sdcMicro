@@ -104,52 +104,42 @@ output$ui_microaggregation <- renderUI({
 
   # additional ui-elements for cluster-based methods
   output$ui_microagg_clusterbased <- renderUI({
-    rb_clustermethod <- radioButtons("rb_microagg_clustermethod", label=h4("Clustermethod"),
+    rb_clustermethod <- radioButtons("rb_microagg_clustermethod", label=h5("Clustermethod"),
       choices=c("clara","pam","kmeans","cmeans","bclust"),
       width="100%", selected=input$rb_microagg_clustermethod, inline=TRUE)
-    rb_transf <- radioButtons("rb_microagg_transf", label=h4("Transformation"),
+    rb_transf <- radioButtons("rb_microagg_transf", label=h5("Transformation"),
       choices=c("none","log","boxcox"), width="100%", selected=input$rb_microagg_transf, inline=TRUE)
-    sl_nc <- isolate(sliderInput("sl_microagg_nc", label=h4("Number of clusters"), min=1, max=15, step=1, value=3, width="100%"))
+    sl_nc <- isolate(sliderInput("sl_microagg_nc", label=h5("Number of clusters"), min=1, max=15, step=1, value=3, width="100%"))
 
     return(fluidRow(
-      column(4, rb_clustermethod),
-      column(4, rb_transf),
-      column(4, sl_nc)
+      column(4, rb_clustermethod, align="center"),
+      column(4, rb_transf, align="center"),
+      column(4, sl_nc, align="center")
     ))
   })
 
   # stratification variable for PRAM
   output$ui_microagg_strata <- renderUI({
-    selectInput("sel_microagg_strata", label=h5("Do you want to apply the method for each group defined by the selected variable?"),
+    selectInput("sel_microagg_strata", label=h5("Apply microaggregation in groups (stratification)?"),
         choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%", selected=input$sel_microagg_strata)
   })
 
-  rb_clbased <- radioButtons("rb_microagg_cluster", label=h5("Do you want to use a cluster-based method?"),
+  rb_clbased <- radioButtons("rb_microagg_cluster", label=h5("Use a cluster-based method?"),
     choices=c("No","Yes"), selected=input$rb_microagg_cluster, inline=TRUE, width="100%")
   sel_method <- selectInput("sel_microagg_method", label=h5("Select the method"),
     choices=choices_aggmethods(), selected=input$sel_microagg_method, width="100%")
-
-  lab_microvars <- h5("Select Variables for Microaggregation")
-  if (has_numkeyvars()) {
-    lab_microvars <- list(lab_microvars, p("If empty, the specified numerical key variables will be used!"))
-  }
-
   sel_microvars <- selectInput("sel_microagg_v", choices=possvars_numericmethods(),
-    label=lab_microvars, selected=input$sel_microagg_v, width="100%", multiple=TRUE)
+    label=h5("Select Variables for Microaggregation"), selected=input$sel_microagg_v, width="100%", multiple=TRUE)
 
   out <- fluidRow(
     column(12, h4("Microaggregation for numerical variables", align="center")),
     column(12, p("Many different algorithms to microaggregate (some) or all numeric key variables can be selected here. The most important
-      parameter is the",code("aggregation level"), "because it specifies how many observations are grouped together before replacing actual values with some kind of aggregate.", align="center")),
-    column(12, p("By default, microaggregation is performed by strata (if a strata-variable has been selected in the creating of the sdc-Problem. However,
-      This can be circumvented by selecting",tags$i("Do not use any stratification variable"),"in the corresponding selection menu. In this place, also other variables may be selected
-      which will be used only for the microaggregation procedure as stratification variable.", align="center")),
-    column(12, h4("Microaggregation for numerical variables", align="center")))
+      parameter is the",code("aggregation level"), "because it specifies how many observations are grouped together before replacing actual values with some kind of aggregate.", align="center")))
 
   out <- list(out, fluidRow(
-    column(4, sel_method),
-    column(4, rb_clbased),
-    column(4, uiOutput("ui_microagg_strata"))
+    column(4, rb_clbased, align="center"),
+    column(4, sel_method, align="center"),
+    column(4, uiOutput("ui_microagg_strata"), align="center")
   ))
 
   # simple, onedims, pca, mcdpca, pppca: --> aggr, measure, trim
@@ -157,28 +147,33 @@ output$ui_microaggregation <- renderUI({
   # influence, clustpca, clustmcdpca, clustpppca: --> aggr, measure, trim, clustermethod, transf, nc
   # rmd, mdav: aggr,
   if ( !is.null(input$sel_microagg_method) ) {
-    sl1 <- sliderInput("sl_microagg_aggr", label=h4("Aggregation-Level"), min=1, max=15, step=1, value=3, width="100%")
-
-    out <- list(out, fluidRow(
-      column(6, p(sl1, align="center")),
-      column(6, sel_microvars)))
+    sl1 <- sliderInput("sl_microagg_aggr", label=h5("Aggregation-Level"), min=1, max=15, step=1, value=3, width="100%")
+    if (has_numkeyvars()) {
+      out <- list(out, fluidRow(
+        column(6, sl1, align="center"),
+        column(6, tipify(sel_microvars, "If empty, the specified numerical key variables will be used!"), align="center")))
+    } else {
+      out <- list(out, fluidRow(
+        column(6, sl1, align="center"),
+        column(6, sel_microvars, align="center")))
+    }
 
     if (!input$sel_microagg_method %in% c("mdav","rmd")) {
-      rb_measure <- radioButtons("sl_microagg_measure", label=h4("Aggregation Statistics"), choices=c("mean", "median", "trim", "onestep"),
+      rb_measure <- radioButtons("sl_microagg_measure", label=h5("Aggregation Statistics"), choices=c("mean", "median", "trim", "onestep"),
         width="100%", selected=input$sl_microagg_measure, inline=TRUE)
-      sl_trim <- sliderInput("sl_microagg_trim", label=h4("Trimming-Percentage"), min=0, max=0.5, step=0.01, value=0, width="100%")
+      sl_trim <- sliderInput("sl_microagg_trim", label=h5("Trimming-Percentage"), min=0, max=0.5, step=0.01, value=0, width="100%")
 
       if (input$sel_microagg_method=="single") {
         sel_varsort <- selectInput("sel_microagg_varsort", label=h5("Select variable for sorting"),
           choices=get_allNumericVars_name(), selected=input$sel_microagg_varsort, width="100%")
         out <- list(out, fluidRow(
-          column(4, p(rb_measure, align="center")),
-          column(4, p(sl_trim, align="center")),
-          column(4, p(sel_varsort, align="center"))))
+          column(4, rb_measure, align="center"),
+          column(4, sl_trim, align="center"),
+          column(4, sel_varsort, align="center")))
       } else {
         out <- list(out, fluidRow(
-          column(6, p(rb_measure, align="center")),
-          column(6, p(sl_trim, align="center"))))
+          column(6, rb_measure, align="center"),
+          column(6, sl_trim, align="center")))
       }
       # cluster-based methods
       if (input$rb_microagg_cluster=="Yes") {
