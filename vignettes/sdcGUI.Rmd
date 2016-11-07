@@ -262,8 +262,8 @@ Analyse the Problem
     - Variable(s) age are linked to key variable roof
 
 
-#### [tbw] Explore variables {#explore_sdc_vars}
-This is exactly the same thing as already described in [Explore variables](#explore_inputvars), the only difference being that the analyzed variables are now those currently available in the active problem instance.
+#### Explore variables {#explore_sdc_vars}
+This view allows to explore all variables in their current state in the sdc problem. The functionality is exactly the same as it was already described in [Explore variables](#explore_inputvars) for the exploration of variables in the originally uploaded micro data set. The only difference being that the analyzed variables are now those currently available in the active problem instance.
 
 #### Add 'Ghost'-Variables {#add_ghostvars}
 Here, users can one or more variables to a specifiy categorical key variable. For any linked variable, the anonymized dataset will feature the same suppression pattern than the key variable. This is for example helpful if similar variables exist but it would not make sense to all add of them as categorical key variables.
