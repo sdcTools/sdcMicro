@@ -29,12 +29,12 @@ output$ui_topbotcoding_num <- renderUI({
     boxplot(vv, main=input$sel_topbot_var_num, xlab=input$sel_topbot_var_num, col="#DADFE1")
   })
   output$ui_topbot_params_num <- renderUI({
-    sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), selected=obj$inp_sel_topbot_var_num, multiple=FALSE, label="Select variable")
-    sel_kind <- selectInput("sel_topbot_kind_num", choices=c("top","bottom"), multiple=FALSE, label="Apply Top/Bottom-Coding?")
-    txt_val <- textInput("num_topbot_val_num", label="Threshold value", placeholder="Please enter a number")
-    txt_replace <- textInput("num_topbot_replacement_num", label="Replacement Value", placeholder="Please enter a number")
-    out <- fluidRow(column(6, sel_var), column(6, sel_kind))
-    out <- list(out, fluidRow(column(6, txt_val), column(6, txt_replace)))
+    sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), selected=obj$inp_sel_topbot_var_num, multiple=FALSE, label=h5("Select variable"), width="75%")
+    sel_kind <- radioButtons("sel_topbot_kind_num", choices=c("top","bottom"), label=h5("Apply Top/Bottom-Coding?"), inline=TRUE)
+    txt_val <- textInput("num_topbot_val_num", label=h5("Threshold value"), placeholder="Please enter a number", width="75%")
+    txt_replace <- textInput("num_topbot_replacement_num", label=h5("Replacement Value"), placeholder="Please enter a number", width="75%")
+    out <- fluidRow(column(6, sel_var, align="center"), column(6, sel_kind, align="center"))
+    out <- list(out, fluidRow(column(6, txt_val, align="center"), column(6, txt_replace, align="center")))
     out
   })
   observeEvent(input$sel_topbot_var_num,{
@@ -78,9 +78,13 @@ output$ui_topbotcoding_num <- renderUI({
 
   out <- fluidRow(
     column(12, h4("Apply Top/Bottom-Coding", align="center")),
-    column(12, plotOutput("ui_topbot_plot_num")))
+    column(12, p("This page allows to replace values above (Top-Coding) or below (Bottom-Coding) a threshold with a custom number."), align="center")
+  )
   out <- list(out, uiOutput("ui_topbot_params_num"))
   out <- list(out, uiOutput("ui_topbot_btn_num"))
+  out <- list(out, fluidRow(
+    column(12, plotOutput("ui_topbot_plot_num"))
+  ))
   out
 })
 

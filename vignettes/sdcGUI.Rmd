@@ -303,11 +303,19 @@ On this page it is possible to set values for the most-risky records to `NA` in 
 
 Below this inputs, histogram showing the distribution of the individual risk values is plotted. In the graph, a vertical black line representing the current value of the threshold is also shown. Finally there is a button labelled `Supress {nr} values with high risk in variable {var}` is present. The labelling of this button is dynamic. It shows the number of records that would be set to missing in the selected variable for the current choice of the threshold. If this button is pressed, the records in the selected variable having individual risks above the threshold are set to `NA`. The view finally updates and the [Show Summary](#show_sdc_summary) page is shown where all measures have been recalculated.
 
-### [tbw] Anonymize numerical variables {#anonymize_numerical}
-#### [tbw] Top-/Bottom Coding
-#### [tbw] Apply Microaggregation
-#### [tbw] Adding Noise to the data
-#### [tbw] Apply Rank-Swapping
+### Anonymize numerical variables {#anonymize_numerical}
+If `Anonymize numerical variables` has been selected in `What do you want to do?` in the left sidebar of the screen in the [Anonymize](#anonymize) page, the options [Top-/Bottom Coding](#top_bot_coding), [Microaggregation](#microaggregation), [Adding Noise](#add_noise) and [Rank-Swapping](#rank_swapping) are available from the radio button list termed `Choose a Method` and will be described in the subsequent chapters. We note however that only the first choice ([Top-/Bottom Coding](#top_bot_coding)) is always available. The remaining choices are only visible if numeric key variables have been specified when the sdc problem was created as described [here](#setup_sdcproblem).
+
+#### Top-/Bottom Coding {#top_bot_coding}
+This page allows to replace values above (*"Top-Coding"*) or below (*"Bottom-Coding"*) a threshold with a custom number. This page not only allows to recode numeric key variables but any numeric variables currently available. The first step is to choose a variable from the select input labelled `Select variable`. By default, the first numeric variable in the current sdc problem instance is selected. Next to this field are radio buttons labelled `Apply Top/Bottom-Coding?` in which by default the value `top` is chosen.
+
+Below these inputs, it is required to enter two numbers in the input fields labelled `Threshold value` and `Replacement Value`. These numbers relate to the threshold (larger than in case of top-coding and less than in case of bottom-coding) for the first input and the number that will replace the current values in the selected variable. To help users find suitable thresholds, a boxplot showing the distribution of the currently selected variable is shown below the inputs.
+
+Once all required inputs - especially the threshold and the replacement values - are set and are found to be valid, additional elements appear between the input fields and the boxplot. The first additional element is a text stating how many of the values would be replaced as well as the corresponding percentage. Below this information, a button termed `Apply Top/Bottom-Coding` shows up. Once this button is pressed, the values are replaced according to the current setting and the page updates with the additional elements disappearing again and the boxplot is updated too. Also, the right sidebar updates. In case the recoded variable was a numeric key variable, the values in sections `Numeric Risk` and `Information Loss` may change.
+
+#### [tbw] Microaggregation {#microaggregation}
+#### [tbw] Adding Noise {#add_noise}
+#### [tbw] Rank-Swapping {#rank_swapping}
 
 # [tbw] Risk/Utility  {#risk_utility}
 
