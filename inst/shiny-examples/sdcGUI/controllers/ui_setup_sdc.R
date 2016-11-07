@@ -43,7 +43,7 @@ output$ui_sdcObj_summary <- renderUI({
     }
     gV <- x$ghostVars
     if (length(gV)>0) {
-      out <- list(out, fluidRow(column(12, list(tags$br(),"Selected ghost varibles (linked variables)"), align="center")))
+      out <- list(out, fluidRow(column(12, list(tags$br(),"Selected ghost variables (linked variables)"), align="center")))
       for (i in 1:length(gV)) {
         out <- list(out, fluidRow(
           column(12, list("Variable(s)", lapply(gV[[i]][[2]], function(x) {
@@ -412,23 +412,36 @@ output$ui_sdcObj_explorevars <- renderUI({
 
 ## add Ghost-Vars
 output$ui_sdcObj_addghostvars <- renderUI({
-  btn_ghosts <- myActionButton("btn_addGhostVars",label=("add 'Ghost'-variables"), "primary", css.class="btn-xs")
-  res <- possGhostVars()
-  gv1 <- selectInput("sel_gv1", label=h5("Select key-Variable"), choices=res$kv, selected=input$sel_gv1, width="100%")
-  gv2 <- selectInput("sel_gv2", label=h5("Select ghost-variables"), choices=res$gv, selected=input$sel_gv2,multiple=TRUE, width="100%")
+  output$addgv_btn <- renderUI({
+    req(input$sel_gv2)
+    if (length(input$sel_gv2)==0) {
+      return(NULL)
+    }
+    btn_ghosts <- myActionButton("btn_addGhostVars", label="add 'Ghost'-variables", "primary")
+  })
+  output$addgv_v1 <- renderUI({
+    res <- possGhostVars()
+    selectInput("sel_gv1", label=h5("Select categorical key variable"), choices=res$kv, width="100%")
+  })
+  output$addgv_v2 <- renderUI({
+    res <- possGhostVars()
+    selectInput("sel_gv2", label=h5("Select ghost variable(s)"), choices=res$gv,  multiple=TRUE, width="100%")
+  })
 
+  res <- possGhostVars()
   if (length(res$gv) == 0) {
     return(fluidRow(column(12,
       h4("No variables are available that could be used as",code("ghost-variables"),".", align="center"))))
   }
-  out <- fluidRow(column(12, h4("Add 'Ghost-Vars' to the existing Problem", align="center")))
+  out <- fluidRow(
+    column(12, h4("Add 'Ghost-Vars' to the existing Problem"), align="center"),
+    column(12, p("Any variables linked to a categorical key variable will have the same suppression pattern in the anonymized data set."), align="center")
+  )
   out <- list(out, fluidRow(
-    column(6, gv1, align="center"),
-    column(6, gv2, align="center")
+    column(6, uiOutput("addgv_v1"), align="center"),
+    column(6, uiOutput("addgv_v2"), align="center")
   ))
-  if (!is.null(input$sel_gv2) && length(input$sel_gv2)>0) {
-    out <- list(out, fluidRow(column(12, btn_ghosts, align="center")))
-  }
+  out <- list(out, fluidRow(column(12, uiOutput("addgv_btn"), align="center")))
   out
 })
 
