@@ -2,11 +2,10 @@
 output$ui_recode <- renderUI({
   out <- fluidRow(
     column(12, h4("Recode categorical key variables", align="center")),
-    column(12, p("To reduce risk, it is often useful to combine multiple chararacteristics of categorical key variables into
-      a new, combined category. You need to select a categorical key variable and then choose two or more levels which you want to combine. Once this
-      has been done, a new label for the new category can be assigned. If you are ready, you just need to press the button.", align="center")),
-    column(12, p("Note: If you only select one level, you still can press the button and update the key variable. In this case you can rename
-      the the selected value.", align="center")))
+    column(12, p("To reduce risk, it is often useful to combine the levels of categorical key variables into a new, combined category.
+      You need to select a categorical key variable and then choose two or more levels, which you want to combine.
+      Once this has been done, a new label for the new category can be assigned.", align="center")),
+    column(12, p("Note: If you only select only one level, you can rename the selected value.", align="center")))
 
   # current factor-levels
   curRecFacVals <- reactive({
@@ -50,7 +49,7 @@ output$ui_recode <- renderUI({
   })
   output$recfac_btn <- renderUI({
     req(input$cbg_recfac)
-    myActionButton("btn_update_recfac",label="Update key variable", "primary")
+    myActionButton("btn_update_recfac",label="Recode key variable	", "primary")
   })
   output$recfac_txtval <- renderUI({
     req(input$cbg_recfac)
@@ -93,16 +92,19 @@ output$ui_pram_expert <- renderUI({
     if (is.null(input$sel_pramvars_expert) || length(input$sel_pramvars_expert)!=1) {
       return(NULL)
     }
-    # hot_col(1:ncol(obj$transmat), type="numeric", format="0.00")
     m <- rhandsontable(obj$transmat) #%>% hot_context_menu(allowRowEdit=FALSE, allowColEdit=FALSE)
     m
   })
   output$pram_expert_strata <- renderUI({
-    selectInput("pram_expert_strataV", label=h5("Postrandomize within different groups (stratification)?"),
+    txt_tooltip <- "By default PRAM is applied within the strata specified by the selected strata variable."
+    selectInput("pram_expert_strataV",
+      label=h5("Postrandomize within different groups (stratification)?", tipify(icon("question"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%")
   })
   output$pram_expert_var <- renderUI({
-    selectInput("sel_pramvars_expert", choices=pramVars(), label=h5("Select variable for PRAM"),
+    txt_tooltip <- "The expert mode allows specifying the transition matrix manually."
+    selectInput("sel_pramvars_expert", choices=pramVars(),
+      label=h5("Select variable for PRAM", tipify(icon("question"), title=txt_tooltip, placement="top")),
       selected=input$sel_pramvars_expert, width="100%", multiple=FALSE)
   })
   output$pram_expert_btn <- renderUI({
@@ -119,7 +121,22 @@ output$ui_pram_expert <- renderUI({
     }
     return(myActionButton("btn_pram_expert", label="Postrandomize", btn="primary"))
   })
-
+  output$pram_expert_warning <- renderUI({
+    if (is.null(lastWarning())) {
+      return(NULL)
+    }
+    fluidRow(
+      column(12, h5("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, verbatimTextOutput("ui_lastwarning")))
+  })
+  output$pram_expert_error <- renderUI({
+    if (is.null(lastError())) {
+      return(NULL)
+    }
+    fluidRow(
+      column(12, h5("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, verbatimTextOutput("ui_lasterror")))
+  })
   if (length(pramVars())==0) {
     return(fluidRow(
       column(12, h4("Postrandomization of categorical variables", align="center")),
@@ -127,30 +144,20 @@ output$ui_pram_expert <- renderUI({
     ))
   }
 
-  out <- NULL
-  if (!is.null(lastError())) {
-    out <- list(out, fluidRow(
-      column(12, h4("Application of the last Postrandomization attempt resulted in the following error!", align="center")),
-      column(12, verbatimTextOutput("ui_lasterror"))))
-  }
-  if (!is.null(lastWarning())) {
-    out <- list(out, fluidRow(
-      column(12, inp=h4("Application of the last Postrandomization attempt resulted in the following warning!", align="center")),
-      column(12, inp=verbatimTextOutput("ui_lastwarning"))))
-  }
-  out <- list(out, fluidRow(
-    column(12, h4("Postrandomization of categorical variables (expert usage)", align="center")),
-    column(12, p("The algorithm allows to randomly change values in the selected variable according to a custom-defined transition matrix.", align="center")),
-    column(12, p("Below, you can now freely specify a transition matrix which will be used for the post randomization of a single variable. You need to make sure
-      that all row sums of the specified matrix sum up to 1!", align="center")),
-    column(12, p("Please also note that you may specify a stratification variable. In this case, the postrandomization
-      is performed independently on all data-subsets specified by the selected stratification variable!", align="center"))))
+  out <- fluidRow(column(12, h4("Postrandomization (PRAM) (expert usage)"), align="center"))
+  out <- list(out, uiOutput("pram_expert_error"), uiOutput("pram_expert_warning"))
 
+  out <- list(out, fluidRow(
+    column(12, p("The PRAM algorithm randomly changes the values of selected variables in some records according to a custom-defined transition matrix."), align="center")),
+    column(12, p("The user can freely specify a transition matrix, which will be used for the post-randomization of a single variable. The requirement
+      is that all row sums of the specified matrix sum up to 100!"), align="center"))
   out <- list(out, fluidRow(
     column(6, uiOutput("pram_expert_var"), align="center"),
     column(6, uiOutput("pram_expert_strata"), align="center")))
 
+  txt_tooltip_mat <- "Each row specifies the probability that the given value is changed to one of the values in the top row."
   out <- list(out, fluidRow(
+    column(12, p("Specify the transition matrix. Note: the entries in each rows must add up to 100.", tipify(icon("question"), title=txt_tooltip_mat, placement="top")), align="center"),
     column(12, rHandsontableOutput("pram_expert_transmat", width="100%")),
     column(12, tags$br(), uiOutput("pram_expert_btn"), align="center")))
   out
@@ -159,17 +166,25 @@ output$ui_pram_expert <- renderUI({
 # UI-output for postrandomization (simple-useage)
 output$ui_pram_simple <- renderUI({
   output$pram_simple_var <- renderUI({
-    selectInput("sel_pramvars_simple", choices=pramVars(), label=h5("Select variable(s) for PRAM"), width="100%", multiple=TRUE)
+    txt_tooltip <- "An invariant transition matrix is used, which guarantees that the univariate distribution of the variables in unchanged in probability."
+    selectInput("sel_pramvars_simple", choices=pramVars(),
+      label=h5("Select variable(s) for PRAM", tipify(icon("question"), title=txt_tooltip, placement="top")), width="100%", multiple=TRUE)
   })
   output$pram_simple_strata <- renderUI({
-    selectInput("pram_strataV_simple", label=h5("Postrandomize within different groups (stratification)?"),
+    txt_tooltip <- "By default PRAM is applied within the strata specified by the selected strata variable."
+    selectInput("pram_strataV_simple",
+      label=h5("Postrandomize within different groups (stratification)?", tipify(icon("question"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%")
   })
   output$pram_simple_pd <- renderUI({
-    sliderInput("pram_simple_pd", min=0.01, max=1.00, step=0.01, value=0.8, label=h5("Choose value for 'pd'"), width="100%")
+    txt_tooltip <- "pd refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this value is, the more likely it is that values are not changed."
+    sliderInput("pram_simple_pd", min=0.01, max=1.00, step=0.01, value=0.8,
+      label=h5("Choose value for 'pd'", tipify(icon("question"), title=txt_tooltip, placement="top")), width="100%")
   })
   output$pram_simple_alpha <- renderUI({
-    sliderInput("pram_simple_alpha", min=0.01, max=1.00, step=0.01, value=0.5,label=h5("Choose value for 'alpha'"), width="100%")
+    txt_tooltip <- "alpha allows to add some perturbation to the calculated transition matrix. The lower alpha, the less perturbed the matrix will get."
+    sliderInput("pram_simple_alpha", min=0.01, max=1.00, step=0.01, value=0.5,
+      label=h5("Choose value for 'alpha'", tipify(icon("question"), title=txt_tooltip, placement="top")), width="100%")
   })
   output$pram_simple_btn <- renderUI({
     req(input$sel_pramvars_simple, input$pram_strataV_simple)
@@ -182,6 +197,22 @@ output$ui_pram_simple <- renderUI({
     }
     myActionButton("btn_pram_nonexpert", label="Postrandomize", btn="primary")
   })
+  output$pram_simple_warning <- renderUI({
+    if (is.null(lastWarning())) {
+      return(NULL)
+    }
+    fluidRow(
+      column(12, h5("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, verbatimTextOutput("ui_lastwarning")))
+  })
+  output$pram_simple_error <- renderUI({
+    if (is.null(lastError())) {
+      return(NULL)
+    }
+    fluidRow(
+      column(12, h5("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, verbatimTextOutput("ui_lasterror")))
+  })
 
   pramvars <- pramVars()
   if (length(pramvars)==0) {
@@ -191,29 +222,12 @@ output$ui_pram_simple <- renderUI({
     ))
   }
 
-  out <- NULL
-  if (!is.null(lastError())) {
-    out <- list(out, fluidRow(
-      column(12, h4("Application of the Postrandomization attempt resulted in the following error!", align="center")),
-      column(12, verbatimTextOutput("ui_lasterror"))))
-  }
-  if (!is.null(lastWarning())) {
-    out <- list(out, fluidRow(
-      column(12, h4("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
-      column(12, verbatimTextOutput("ui_lastwarning"))))
-  }
-
+  out <- fluidRow(column(12, h4("Postrandomization (PRAM)"), align="center"))
+  out <- list(out, uiOutput("pram_simple_error"), uiOutput("pram_simple_warning"))
   out <- list(out, fluidRow(
-    column(12, h4("Postrandomization of categorical variables (simple)", align="center")),
-    column(12, p("The algorithm randomly changes the values of selected variables in some records according
-      to an invariant probability transition matrix (in non-expert mode).", align="center")),
-    column(12, p("To generate the transition matrix, two parameters (",code("pd"),"and",code("alpha"),") must be specified.",
-      code("pd"),"refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this
-      value is chosen, the more likely it is that a value stays the same and is not going to be changed.",code("alpha"),"allows to add some
-      perturbation to the calculated transition matrix. The lower this number is, the less perturbed the matrix will get.", align="center")),
-    column(12, p("Please also note that you may specify a stratification variable. In this case, the postrandomization
-      is performed independently on all data-subsets specified by the selected stratification variable!", align="center"))))
-
+    column(12, p("The PRAM algorithm randomly changes the values of selected variables in some records according
+      to an invariant probability transition matrix.", align="center")),
+    column(12, p("The invariant probability transition matrix is set by specifying two parameters (",code("pd"),"and",code("alpha"),").", align="center"))))
   out <- list(out, fluidRow(
     column(6, uiOutput("pram_simple_var"), align="center"),
     column(6, uiOutput("pram_simple_strata"), align="center")
@@ -364,7 +378,9 @@ output$ui_kAnon <- renderUI({
           column(6, obj$sls[[i]], align="center")))
       }
     } else {
-      sl <- sliderInput("sl_kanon_k", label=h5("Please specify the k-Anonymity parameter"),
+      txt_tooltip <- "The choice of k is guided by the need for anonymization. A higher parameter will lead to more suppressions."
+      sl <- sliderInput("sl_kanon_k",
+        label=h5("Please specify the k-Anonymity parameter", tipify(icon("question"), title=txt_tooltip, placement="top")),
         min=2, max=50, value=3, step=1, width="100%")
       out <- fluidRow(column(12, sl, align="center"))
     }
@@ -386,34 +402,46 @@ output$ui_kAnon <- renderUI({
   })
 
   output$kanon_strata <- renderUI({
-    selectInput("kanon_strataV", label=h5("Do you want to apply the method for each group defined by the selected variable?"),
+    txt_tooltip <- "By default k-anonymity is established within the strata specified by the selected strata variable."
+    selectInput("kanon_strataV",
+      label=h5("Do you want to apply the method for each group defined by the selected variable?", tipify(icon("question"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", setdiff(poss_strataVarP(), c(get_all_numericvars_name(), get_keyVars_names()))), multiple=FALSE, width="75%")
+  })
+
+  output$kanon_use_importance <- renderUI({
+    txt_tooltip <- "Values in variables with high importance (low values) are less likely to be suppressed than values in variables with low importance (high values)"
+    radioButtons(inputId="rb_show_importance",
+      label=h5("Do you want to modify importance of key-variables for suppression?", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      selected=input$rb_show_importance, width="100%", inline=TRUE, choices=c("No", "Yes"))
+  })
+
+  output$kanon_use_combs <- renderUI({
+    txt_tooltip <- "To reduce computation time, it is possible to establish k-anonymity on all subsets of a certain size of the total set of categorical"
+    txt_tooltip <- paste(txt_tooltip, "key variables. The level of k-anonymity can be set for each subset size. In case several sizes are chosen, the algorithm establishes k-anonymity first on the smaller subsets.")
+    radioButtons("rb_kanon_useCombs", choices=c("No","Yes"), width="100%", inline=TRUE,
+      selected=input$rb_kanon_useCombs,
+      label=h5("Apply k-Anonymity to subsets of key-variables?", tipify(icon("question"), title=txt_tooltip, placement="top")))
   })
 
   out <- fluidRow(
     column(12, h4("Establish k-anonymity", align="center")),
-    column(12, p("k-Anonymity will be established by suppressing or rather setting to",code(NA),"some values in the categorical key variables.
-    By default, the key-variables will be preferred to feature required suppressions will be computed by default. If you decide to specify the",tags$i("importance"),", make
-    sure that assign low numbers to those variables that you do not want many suppressions in. On the other hand, the higher the importance value for a variable, the larger
-    the probability that values will be suppressed within this variable", align="center")),
-    column(12, p("You may also decide to apply the procedure for all possible subsets of key variables. This is useful, if you have many
-      key variables. In this case you can choose different values for parameter",code("k"),".", align="center")),
-    column(12, p("Please also note that if you have specified a stratification variable when creating the",code("sdcMicroObj"),"k-anonymity is established
-      for all the data-subsets specified by the stratification variable!", align="center"))
-  )
+    column(12, p("k-anonymity will be established by suppressing or rather setting some values in the selected categorical key variables to",code("NA"),"."), align="center"),
+    column(12, p("By default, the key-variables will be considered for suppression in the order of their number of distinct categories. A variable with
+      many categories is less likely to have values suppressed than a variable with few categories. It is also possible to set the order by
+      specifying an importance vector.", align="center")),
+    column(12, p("You may also decide to apply the procedure for all possible subsets of key variables. This is useful, if you have many key variables
+      and can reduces computation time. You can set a different value for the parameter",code("k"),"for each size of subsets.", align="center")))
 
   out <- list(out, fluidRow(column(12, uiOutput("kanon_strata"), align="center")))
-
-  rb1 <- radioButtons(inputId="rb_show_importance", label=h5(paste("Do you want to modify importance of key-variables for suppression?")),
-    selected=input$rb_show_importance, width="100%", inline=TRUE, choices=c("No", "Yes"))
-  out <- list(out, fluidRow(column(12, rb1, align="center")))
-
+  out <- list(out, fluidRow(
+    column(12, uiOutput("kanon_use_importance"), align="center"),
+    column(12, helpText("Tip – The total number of suppressions is likely to increase by specifying an importance vector. Specifying an importance vector can affect the computation time."), align="center")
+  ))
   out <- list(out, uiOutput("ui_kanon_importanceInputs")) # might be NULL
 
   # show combs-ui?
-  rb2 <- radioButtons("rb_kanon_useCombs", choices=c("No","Yes"), width="100%", inline=TRUE,
-    selected=input$rb_kanon_useCombs, label=h5("Apply k-Anonymity to subsets of key-variables?"))
-  out <- list(out, fluidRow(column(12, rb2, align="center")))
+
+  out <- list(out, fluidRow(column(12, uiOutput("kanon_use_combs"), align="center")))
   out <- list(out, uiOutput("ui_kanon_combs"), uiOutput("kanon_btn"))
   out
 })
@@ -421,8 +449,9 @@ output$ui_kAnon <- renderUI({
 # GUI-output for suppression of values in key-variables with risk > than threshold
 output$ui_supp_threshold <- renderUI({
   output$ui_supp_th <- renderUI({
+    txt_tooltip <- "Any value in in the selected key variable of a record with an individual risk higher than this threshold is suppressed."
     up <- round(max(get_risk()$risk),3)+0.005
-    sl <- sliderInput("sl_supp_threshold", label=h5("Individual Risk Threshold"),
+    sl <- sliderInput("sl_supp_threshold", label=h5("Threshold for individual risk", tipify(icon("question"),title=txt_tooltip, placement="top")),
       min=0, max=up, value=0, step=0.001, width="100%")
     sl
   })
@@ -449,13 +478,12 @@ output$ui_supp_threshold <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Suppress above given threshold", align="center")),
-    column(12, p("This is a relatively easy method which allows to suppress or rather set to",code("NA"),"values in selected key-variables
-      in observations that have a individual risk higher than the selected risk-threshold. Please note that this method does not take into account a possibly
-      specified stratification variable.", align="center")))
+    column(12, h4("Suppress values with high risks"), align="center"),
+    column(12, p("This method allows to suppress values (or rather set to NA) in the selected key-variables in records that have an
+      individual risk higher than the specified threshold."), align="center"))
   out <- list(out, fluidRow(
-    column(6, uiOutput("ui_supp_th_var")),
-    column(6, uiOutput("ui_supp_th"))))
+    column(6, uiOutput("ui_supp_th_var"), align="center"),
+    column(6, uiOutput("ui_supp_th"), align="center")))
   out <- list(out, fluidRow(column(12, plotOutput("ui_supp_riskplot"))))
   out <- list(out, fluidRow(column(12, uiOutput("ui_supp_th_btn"), align="center")))
   out

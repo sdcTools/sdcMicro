@@ -29,10 +29,16 @@ output$ui_topbotcoding_num <- renderUI({
     boxplot(vv, main=input$sel_topbot_var_num, xlab=input$sel_topbot_var_num, col="#DADFE1")
   })
   output$ui_topbot_params_num <- renderUI({
+    txt_tooltip1 <- "In case of top, all values above the threshold are replaced, in the case of bottom, all values below the threshold are replaced."
+    txt_tooltip2 <- "All values below (bottom) or above (top) this threshold are replaced with the replacement value."
+    txt_tooltip3 <- "The replacement value is the value that replaces all the values below (bottom) or above (top) the specified threshold. Often the replacement value is the same as the threshold value."
     sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), selected=obj$inp_sel_topbot_var_num, multiple=FALSE, label=h5("Select variable"), width="75%")
-    sel_kind <- radioButtons("sel_topbot_kind_num", choices=c("top","bottom"), label=h5("Apply Top/Bottom-Coding?"), inline=TRUE)
-    txt_val <- textInput("num_topbot_val_num", label=h5("Threshold value"), placeholder="Please enter a number", width="75%")
-    txt_replace <- textInput("num_topbot_replacement_num", label=h5("Replacement Value"), placeholder="Please enter a number", width="75%")
+    sel_kind <- radioButtons("sel_topbot_kind_num", choices=c("top","bottom"),
+      label=h5("Apply Top/Bottom-Coding?", tipify(icon("question"), title=txt_tooltip1, placement="top")), inline=TRUE)
+    txt_val <- textInput("num_topbot_val_num", label=h5("Threshold value", tipify(icon("question"), title=txt_tooltip2, placement="top")),
+      placeholder="Please enter a number", width="75%")
+    txt_replace <- textInput("num_topbot_replacement_num", label=h5("Replacement Value", tipify(icon("question"), title=txt_tooltip3, placement="top")),
+      placeholder="Please enter a number", width="75%")
     out <- fluidRow(column(6, sel_var, align="center"), column(6, sel_kind, align="center"))
     out <- list(out, fluidRow(column(6, txt_val, align="center"), column(6, txt_replace, align="center")))
     out
@@ -76,9 +82,11 @@ output$ui_topbotcoding_num <- renderUI({
     }
   })
 
+  helptxt <- "Here you can recode all values in a variable below (bottom-coding) or above (top-coding) a certain threshold. These values are replaced"
+  helptxt <- paste(helptxt, "with the specified replacement value.")
   out <- fluidRow(
-    column(12, h4("Apply Top/Bottom-Coding", align="center")),
-    column(12, p("This page allows to replace values above (Top-Coding) or below (Bottom-Coding) a threshold with a custom number."), align="center")
+    column(12, h4("Apply Top- and bottom coding", align="center")),
+    column(12, p(helptxt), align="center")
   )
   out <- list(out, uiOutput("ui_topbot_params_num"))
   out <- list(out, uiOutput("ui_topbot_btn_num"))
@@ -104,12 +112,18 @@ output$ui_microaggregation <- renderUI({
 
   # additional ui-elements for cluster-based methods
   output$ui_microagg_clusterbased <- renderUI({
-    rb_clustermethod <- radioButtons("rb_microagg_clustermethod", label=h5("Clustermethod"),
-      choices=c("clara","pam","kmeans","cmeans","bclust"),
-      width="100%", selected=input$rb_microagg_clustermethod, inline=TRUE)
-    rb_transf <- radioButtons("rb_microagg_transf", label=h5("Transformation"),
+    txt_clmethod <- ""
+    txt_cltransf <- ""
+    txt_clnrcl <- ""
+    rb_clustermethod <- radioButtons("rb_microagg_clustermethod",
+      label=h5("Clustermethod", tipify(icon("question"), title=txt_clmethod, placement="top")),
+      choices=c("clara","pam","kmeans","cmeans","bclust"), width="100%", selected=input$rb_microagg_clustermethod, inline=TRUE)
+    rb_transf <- radioButtons("rb_microagg_transf",
+      label=h5("Transformation", tipify(icon("question"), title=txt_cltransf, placement="top")),
       choices=c("none","log","boxcox"), width="100%", selected=input$rb_microagg_transf, inline=TRUE)
-    sl_nc <- isolate(sliderInput("sl_microagg_nc", label=h5("Number of clusters"), min=1, max=15, step=1, value=3, width="100%"))
+    sl_nc <- isolate(sliderInput("sl_microagg_nc",
+      label=h5("Number of clusters", tipify(icon("question"), title=txt_clnrcl, placement="top")),
+      min=1, max=15, step=1, value=3, width="100%"))
 
     return(fluidRow(
       column(4, rb_clustermethod, align="center"),
@@ -117,28 +131,76 @@ output$ui_microaggregation <- renderUI({
       column(4, sl_nc, align="center")
     ))
   })
-
-  # stratification variable for PRAM
   output$ui_microagg_strata <- renderUI({
-    selectInput("sel_microagg_strata", label=h5("Apply microaggregation in groups (stratification)?"),
-        choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%", selected=input$sel_microagg_strata)
+    txt_tooltip <- "By default microaggregation is applied within the strata specified by the selected strata variable."
+    selectInput("sel_microagg_strata",
+      label=h5("Apply microaggregation in groups (stratification)?", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%", selected=input$sel_microagg_strata)
   })
-
-  rb_clbased <- radioButtons("rb_microagg_cluster", label=h5("Use a cluster-based method?"),
-    choices=c("No","Yes"), selected=input$rb_microagg_cluster, inline=TRUE, width="100%")
-  sel_method <- selectInput("sel_microagg_method", label=h5("Select the method"),
-    choices=choices_aggmethods(), selected=input$sel_microagg_method, width="100%")
-  sel_microvars <- selectInput("sel_microagg_v", choices=possvars_numericmethods(),
-    label=h5("Select Variables for Microaggregation"), selected=input$sel_microagg_v, width="100%", multiple=TRUE)
+  output$ui_microagg_use_cluster <- renderUI({
+    txt_tooltip <- ""
+    radioButtons("rb_microagg_cluster",
+      label=h5("Use a cluster-based method?", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      choices=c("No","Yes"), selected=input$rb_microagg_cluster, inline=TRUE, width="100%")
+  })
+  output$ui_microagg_method <- renderUI({
+    txt <- "MDAV is the default method. The different methods differ with respect to the distance measure used to measure the proximity between two values.<br />"
+    txt <- paste(txt, "<strong>mdav</strong> - grouping is based on classical (Euclidean) distance measures<br />")
+    txt <- paste(txt, "<strong>rmd</strong> - grouping is based on robust multivariate (Mahalanobis) distance measures<br />")
+    txt <- paste(txt, "<strong>pca</strong> - grouping is based on principal component analysis whereas the data are sorted on the first principal component<br />")
+    txt <- paste(txt, "<strong>clustpppca</strong> - add here<br />")
+    txt <- paste(txt, "<strong>mdcpca</strong> - add here<br />")
+    txt <- paste(txt, "<strong>single</strong> - add here<br />")
+    txt <- paste(txt, "<strong>simple</strong> - add here<br />")
+    txt <- paste(txt, "<strong>onedims</strong> - add here<br />")
+    txt <- paste(txt, "<strong>pppca</strong> - add here<br /><br />")
+    txt <- paste(txt, "<strong>Cluster-based methods:</strong><br />")
+    txt <- paste(txt, "<strong>influence</strong> - grouping is based on clustering and aggregation is performed within clusters<br /><br />")
+    txt <- paste(txt, "<strong>clustpca</strong> - add here<br /><br />")
+    txt <- paste(txt, "<strong>clustmcdpca</strong> - add here<br /><br />")
+    txt <- paste(txt, "<strong>clustpppca</strong> - grouping is based on clustering and (robust) principal component analysis for each cluster<br /><br />")
+    sel_method <- selectInput("sel_microagg_method",
+      label=h5("Select the method", tipify(icon("question"), title=txt, placement="bottom")),
+      choices=choices_aggmethods(), selected=input$sel_microagg_method, width="100%")
+  })
+  output$ui_microagg_vars <- renderUI({
+    selectInput("sel_microagg_v", choices=possvars_numericmethods(),
+      label=h5("Select Variables for Microaggregation"),
+      selected=input$sel_microagg_v, width="100%", multiple=TRUE)
+  })
+  output$ui_microagg_agglevel <- renderUI({
+    txt_tooltip <- "Specifies the group size"
+    sliderInput("sl_microagg_aggr",
+      label=h5("Aggregation-Level", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      min=1, max=15, step=1, value=3, width="100%")
+  })
+  output$ui_microagg_aggmeasures <- renderUI({
+    txt_tooltip <- "Specifies the group statistic that replaces all values in a group."
+    radioButtons("sl_microagg_measure",
+      label=h5("Aggregation Statistics", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      choices=c("mean", "median", "trim", "onestep"), width="100%", selected=input$sl_microagg_measure, inline=TRUE)
+  })
+  output$ui_microagg_trim <- renderUI({
+    txt_tooltip <- "Specifies the group statistic that replaces all values in a group."
+    sliderInput("sl_microagg_trim",
+      label=h5("Trimming-Percentage", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      min=0, max=0.5, step=0.01, value=0, width="100%")
+  })
+  output$ui_microagg_varsort <- renderUI({
+    txt_tooltip <- ""
+    sel_varsort <- selectInput("sel_microagg_varsort",
+      label=h5("Select variable for sorting", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      choices=get_allNumericVars_name(), selected=input$sel_microagg_varsort, width="100%")
+  })
 
   out <- fluidRow(
     column(12, h4("Microaggregation for numerical variables", align="center")),
-    column(12, p("Many different algorithms to microaggregate (some) or all numeric key variables can be selected here. The most important
+    column(12, p("Many different algorithms to microaggregate numeric key variables can be applied here. The most important
       parameter is the",code("aggregation level"), "because it specifies how many observations are grouped together before replacing actual values with some kind of aggregate.", align="center")))
 
   out <- list(out, fluidRow(
-    column(4, rb_clbased, align="center"),
-    column(4, sel_method, align="center"),
+    column(4, uiOutput("ui_microagg_use_cluster"), align="center"),
+    column(4, uiOutput("ui_microagg_method"), align="center"),
     column(4, uiOutput("ui_microagg_strata"), align="center")
   ))
 
@@ -147,33 +209,19 @@ output$ui_microaggregation <- renderUI({
   # influence, clustpca, clustmcdpca, clustpppca: --> aggr, measure, trim, clustermethod, transf, nc
   # rmd, mdav: aggr,
   if ( !is.null(input$sel_microagg_method) ) {
-    sl1 <- sliderInput("sl_microagg_aggr", label=h5("Aggregation-Level"), min=1, max=15, step=1, value=3, width="100%")
-    if (has_numkeyvars()) {
-      out <- list(out, fluidRow(
-        column(6, sl1, align="center"),
-        column(6, tipify(sel_microvars, "If empty, the specified numerical key variables will be used!"), align="center")))
-    } else {
-      out <- list(out, fluidRow(
-        column(6, sl1, align="center"),
-        column(6, sel_microvars, align="center")))
-    }
-
+    out <- list(out, fluidRow(
+      column(6, uiOutput("ui_microagg_agglevel"), align="center"),
+      column(6, uiOutput("ui_microagg_vars"), align="center")))
     if (!input$sel_microagg_method %in% c("mdav","rmd")) {
-      rb_measure <- radioButtons("sl_microagg_measure", label=h5("Aggregation Statistics"), choices=c("mean", "median", "trim", "onestep"),
-        width="100%", selected=input$sl_microagg_measure, inline=TRUE)
-      sl_trim <- sliderInput("sl_microagg_trim", label=h5("Trimming-Percentage"), min=0, max=0.5, step=0.01, value=0, width="100%")
-
       if (input$sel_microagg_method=="single") {
-        sel_varsort <- selectInput("sel_microagg_varsort", label=h5("Select variable for sorting"),
-          choices=get_allNumericVars_name(), selected=input$sel_microagg_varsort, width="100%")
         out <- list(out, fluidRow(
-          column(4, rb_measure, align="center"),
-          column(4, sl_trim, align="center"),
-          column(4, sel_varsort, align="center")))
+          column(4, uiOutput("ui_microagg_aggmeasures"), align="center"),
+          column(4, uiOutput("ui_microagg_trim"), align="center"),
+          column(4, uiOutput("ui_microagg_varsort"), align="center")))
       } else {
         out <- list(out, fluidRow(
-          column(6, rb_measure, align="center"),
-          column(6, sl_trim, align="center")))
+          column(6, uiOutput("ui_microagg_aggmeasures"), align="center"),
+          column(6, uiOutput("ui_microagg_trim"), align="center")))
       }
       # cluster-based methods
       if (input$rb_microagg_cluster=="Yes") {
@@ -214,13 +262,16 @@ output$ui_noise <- renderUI({
   output$ui_noise_slider <- renderUI({
     req(input$sel_noise_method)
     if (input$sel_noise_method=="correlated2") {
-      lab <- h5("Amount of noise (parameter 'delta')")
+      txt_tooltip <- "The added noise is proportional to the variance in the data. The amount of noise is the multiplier for the standard deviation of the noise."
+      lab <- h5("Amount of noise (parameter 'delta')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.1, min=0.1, max=2, step=0.01)
     } else if (input$sel_noise_method=="ROMM") {
-      lab <- h5("Amount of noise (parameter 'p')")
+      txt_tooltip <- ""
+      lab <- h5("Amount of noise (parameter 'p')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
     } else {
-      lab <- h5("Amount of noise (parameter 'noise')")
+      txt_tooltip <- ""
+      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     }
     sliderInput("sl_noise_noise", label=lab, min=par["min"], max=par["max"], step=par["step"], value=par["value"], width="100%")
@@ -228,7 +279,16 @@ output$ui_noise <- renderUI({
 
   # ui for selection of method
   output$ui_noise_method <- renderUI({
-    selectInput("sel_noise_method", label=h5("Select the algorithm"), choices=choices_noise(), selected=input$sel_noise_method, width="100%")
+    txt_tooltip <- "<strong>Noise addition methods:</strong><br />"
+    txt_tooltip <- paste0(txt_tooltip, "<strong>additive</strong> - adds noise completely at random to each variable depending on their size and standard deviation<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated2</strong> - adds noise and preserves the covariances<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>restr</strong> - takes the sample size into account when adding noise<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>ROMM</strong> - implementation of the algorithm ROMM (Random Orthogonalized Matrix Masking)<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>outdect</strong> - adds noise only to outliers. The outliers are identified with univariate and robust multivariate procedures based on a robust mahalanobis distances calculated by the MCD estimator.<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated</strong> - adds noise and preserves the covariances")
+    selectInput("sel_noise_method",
+      label=h5("Select the algorithm", tipify(icon("question"), title=txt_tooltip, placement="bottom")),
+      choices=choices_noise(), selected=input$sel_noise_method, width="100%")
   })
 
   # variables selected
@@ -247,8 +307,7 @@ output$ui_noise <- renderUI({
 
   out <- fluidRow(
     column(12, h4("Adding Stochastic Noise", align="center")),
-    column(12, p("Various methods for adding noise to perturb numeric key variables can be selected below. If no variables are selected,
-    the noise is added to all numeric key variables in the current problem instance.", align="center")))
+    column(12, p("Here you can use various methods to add noise in order to perturb continuous variables.", align="center")))
 
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_noise_vars"), align="center"),
@@ -292,19 +351,28 @@ output$ui_rankswap <- renderUI({
     sliderInput("sl_rankswap_bot", label=h5("Percentage of lowest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%")
   })
   output$sl_rankswap_k0 <- renderUI({
-    sliderInput("sl_rankswap_k0", label=h5("Subset-mean preservation factor"), min=0, max=1, step=0.01, value=0, width="100%")
+    txt_tooltip <- ""
+    sliderInput("sl_rankswap_k0",
+      label=h5("Subset-mean preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      min=0, max=1, step=0.01, value=0, width="100%")
   })
   output$sl_rankswap_r0 <- renderUI({
-    sliderInput("sl_rankswap_r0", label=h5("Multivariate preservation factor"), min=0, max=1, step=0.01, value=0.95, width="100%")
+    txt_tooltip <- ""
+    sliderInput("sl_rankswap_r0",
+      label=h5("Multivariate preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      min=0, max=1, step=0.01, value=0.95, width="100%")
   })
   output$sl_rankswap_p <- renderUI({
-    sliderInput("sl_rankswap_p", label=h5("Rank range as percentage of total sample size."), min=0, max=100, step=1, value=0, width="100%")
+    txt_tooltip <- ""
+    sliderInput("sl_rankswap_p",
+      label=h5("Rank range as percentage of total sample size.", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      min=0, max=100, step=1, value=0, width="100%")
   })
 
   out <- fluidRow(
-    column(12, h4("Rank Swapping", align="center")),
+    column(12, h4("Apply rank swapping"), align="center"),
     column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
-      so that correlation structure of original variables are preserved and also some perturbation is applied.", align="center")))
+      so that correlation structure of original variables is preserved and some perturbation is applied."), align="center"))
 
   out <- list(out, fluidRow(
     column(4, uiOutput("ui_rankswap_vars"), align="center"),

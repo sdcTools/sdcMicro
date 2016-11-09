@@ -103,7 +103,7 @@ output$loss_sb_anonymize <- renderUI({
   diff_eigen <- formatC(utility$eigen*100, format="f", digits=2)
 
   df <- data.frame(
-    Measure=c("IL1","Difference of Eigenvalues"),
+    Measure=c("IL1s","Difference of Eigenvalues"),
     orig=c(0.00, 0.00),
     modified=c(il1, diff_eigen))
 
@@ -149,10 +149,9 @@ output$anonmeth_sb_risk <- renderUI({
   if (is.null(curMethods)) {
     return(NULL)
   }
-
   res <- tags$ul(
-    lapply( 1:length(curMethods), function(x) {
-      tags$li(curMethods[x])
+    lapply(1:length(curMethods), function(x) {
+      tags$li(sub(" (see above) ","",curMethods[x]))
     }
   ))
   out <- fluidRow(column(12, h4("Anonymization Steps"), align="center"))

@@ -1,7 +1,7 @@
 # UI-output for recoding a variable to a numeric variable
 output$ui_modify_recode_to_numeric <- renderUI({
   output$ui_to_num_var <- renderUI({
-    selectInput("sel_to_num_var",label=h5("Choose variable"), choices=vv, width="50%", multiple=TRUE)
+    selectInput("sel_to_num_var",label=h5("Choose variable(s)"), choices=vv, width="50%", multiple=TRUE)
   })
   output$ui_to_num_btn <- renderUI({
     req(input$sel_to_num_var)
@@ -9,18 +9,20 @@ output$ui_modify_recode_to_numeric <- renderUI({
       return(myActionButton("btn_recode_to_numeric",label=("Recode to numeric"), "primary"))
     }
   })
-  vv <- facVars()
+  vv <- c(facVars(), charVars())
   if (length(vv) == 0) {
     return(fluidRow(
       column(12, h4("No factor variables available in the inputdata!", align="center")),
       column(12, h4("There are no variables in the input data that could be converted to numeric variables.", align="center"))
     ))
   }
-  info_txt <- list('Please take care, internally',code("as.numeric()"),'is used, so the resulting numeric vector contains the underlying numeric (integer) representation of the input variable, which is often meaningless as it may not correspond to the factor levels!')
+
+  helptxt <- "Continuous key variables have to be of type ‘numeric’ or type ‘integer’.  Variables of type ‘character’ or type ‘factor’ need to be converted"
+  helptxt <- paste(helptxt, "to type ‘numeric’ before selecting these as continuous key variables. Here you can convert variables of type ‘character’ and")
+  helptxt <- paste(helptxt, "type ‘factor’ to type ‘numeric’.")
   out <- fluidRow(
-    column(12, h4("Recode factor variable(s) into a numeric variable(s)"), align="center"),
-    column(12, p("You can now choose one or more factor variable and convert them into variable(s) of type 'numeric'"), align="center"),
-    column(12, p(info_txt), align="center"),
+    column(12, h4("Convert character/factor variables to numeric variables"), align="center"),
+    column(12, p(helptxt), align="center"),
     column(12, uiOutput("ui_to_num_var"), align="center"),
     column(12, uiOutput("ui_to_num_btn"), align="center"))
   out
@@ -52,7 +54,7 @@ output$ui_modify_recode_to_factor <- renderUI({
     if (is.null(input$sel_algo)){
       return(NULL)
     }
-    return(numericInput("sl_number_breaks",label=h5("Specify the number of breaks"), value=3, min=2, max=20, step=1))
+    return(numericInput("sl_number_breaks",label=h5("Specify number of intervals"), value=3, min=2, max=20, step=1))
   })
   output$ui_globalRecode_manual <- renderUI({
     if (is.null(input$sel_algo)){
@@ -81,7 +83,7 @@ output$ui_modify_recode_to_factor <- renderUI({
     vv <- numVars()
     mult <- FALSE
     if (!is.null(input$sel_custom_split) && input$sel_custom_split=="no") {
-      selectInput("sel_num_glrec", label=h5("Choose numeric variables"), choices=vv, multiple=TRUE)
+      selectInput("sel_num_glrec", label=h5("Choose numeric variable(s)"), choices=vv, multiple=TRUE)
     } else {
       radioButtons("rb_num_glrec", label=h5("Choose a numeric variable"), choices=vv, selected=input$rb_num_glrec)
     }
@@ -91,12 +93,17 @@ output$ui_modify_recode_to_factor <- renderUI({
       selected=input$sel_custom_split, inline=TRUE, width="100%")
   })
   output$ui_globalRecode_cutalgo <- renderUI({
-    selectInput("sel_algo",label=h5("Select Algorithm"),
+    txt <- paste("<strong>Description of algorithms:</strong><br /><br />")
+    txt <- paste(txt, "- <strong>equidistant:</strong> uses breakpoints that generate intervals of equal length. The number of records in each interval might differ.<br />")
+    txt <- paste(txt, "- <strong>logEqui:</strong> uses breakpoints that generate intervals of equal length based on the log transformation of the data. The number of records in each interval might differ.<br />")
+    txt <- paste(txt, "- <strong>equalAmount:</strong> uses breakpoints such that each group/interval has the same number of records. The intervals might be of different length.<br />")
+    txt <- paste(txt, "- <strong>manual:</strong> allows the user to set the breakpoints manually. Note: make sure that all values are included in the specified intervals.")
+    selectInput("sel_algo",label=h5("Select algorithm", tipify(icon("question"), title=txt, placement="top")),
       choices=c("equidistant","logEqui","equalAmount","manual"), selected=input$sel_algo)
   })
   output$ui_globalRecode_btn <- renderUI({
     req(input$sel_custom_split)
-    btn_rec <- myActionButton("btn_recode_to_factor", label=("Convert to factors"), "primary")
+    btn_rec <- myActionButton("btn_recode_to_factor", label=("Convert to factor"), "primary")
     if (input$sel_custom_split=="no") {
       if (length(input$sel_num_glrec)==0) {
         return(NULL)
@@ -153,13 +160,14 @@ output$ui_modify_recode_to_factor <- renderUI({
     ))
   }
 
+  helptxt <- "Categorical key variables have to be of type ‘factor’ or type ‘integer’.  Variables of type ‘numeric’ need to be converted to type ‘factor’"
+  helptxt <- paste(helptxt,"selecting these as categorical key variables. Here you can convert variables of type ‘numeric’ to type ‘factor’.")
+  helptxt <- paste(helptxt, "Each unique value is converted to a separate category (factor level). In case several values in the numeric variable should")
+  helptxt <- paste(helptxt, "be combined into one factor level, customized breaks can be specified. Several algorithms are available to customize the breaks.")
+
   out <- fluidRow(
-    column(12, h4("Convert numeric variables into a factor", align="center"),
-    column(12, p("You can now choose a variable of class 'numeric' and convert it into a variable of type 'factor'. If
-      you do not want to use custom breaks, the variable is transformed without any changes into a factor variable and all unique values
-      of the variable will also be factor levels. By using custom-breaks, you need to either specify the number of new categories or
-      define the cut-points manually."), align="center"),
-    column(12, p("Please note that factor labels are automatically generated. You can change them later once the factor has been generated!"), align="center")))
+    column(12, h4("Convert numeric variable to factor variable", align="center"),
+    column(12, p(helptxt), align="center")))
 
   if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
     out <- list(out, fluidRow(
@@ -216,7 +224,7 @@ output$ui_modify_change_factor <- renderUI({
   })
   output$reclocfac_btn <- renderUI({
     req(input$cbg_factor)
-    myActionButton("btn_update_factor", label="Update factor variable", "primary")
+    myActionButton("btn_update_factor", label="Group factor levels", "primary")
   })
   output$reclocfac_txtval <- renderUI({
     req(input$cbg_factor)
@@ -224,13 +232,16 @@ output$ui_modify_change_factor <- renderUI({
       value=paste0(input$cbg_factor, collapse="_"), width="100%")
   })
 
-  out <- fluidRow(column(12, h4("Modify an existing factor-variable", align="center")))
+  out <- fluidRow(column(12, h4("Group factor levels in factor variables in raw data", align="center")))
   if (length(facVars())==0) {
     out <- list(out, fluidRow(
       column(12, h5("Currently, there are no factor-variables available that could be recoded!", align="center"))
     ))
     return(out)
   }
+
+  helptxt <- "Here you can group/combine the factor levels of categorical variables of type ‘factor‘ before setting up the sdcMicro object."
+  out <- fluidRow(out, column(12, helptxt, align="center"))
   out <- list(out, fluidRow(
     column(4, uiOutput("reclocfac_var"), align="center"),
     column(4, uiOutput("reclocfac_levs"), align="center"),
@@ -245,7 +256,7 @@ output$ui_modify_change_factor <- renderUI({
 # UI-output to create a stratification variable
 output$ui_modify_create_stratvar <- renderUI({
   output$sel_genstrata <- renderUI({
-    selectInput("sel_allvars_strata",label=h5("Select Variables"), multiple=TRUE,
+    selectInput("sel_allvars_strata",label=h5("Select variables to generate a stratification variable"), multiple=TRUE,
       choices=allVars(), width="100%")
   })
   output$vname_genstrata <- renderUI({
@@ -253,7 +264,7 @@ output$ui_modify_create_stratvar <- renderUI({
     if (length(input$sel_allvars_strata) < 2) {
       return(NULL)
     }
-    textInput("inp_vname_strata", label=h5("New variable name"), value=paste0(input$sel_allvars_strata, collapse="_"), width="100%")
+    textInput("inp_vname_strata", label=h5("Specify variable name for stratification variable"), value=paste0(input$sel_allvars_strata, collapse="_"), width="100%")
   })
   output$btn_genstrata <- renderUI({
     req(input$sel_allvars_strata, input$inp_vname_strata)
@@ -266,12 +277,14 @@ output$ui_modify_create_stratvar <- renderUI({
     fluidRow(column(12, myActionButton("btn_create_stratavar", label=("Create stratification variable"), "primary"), align="center"))
   })
 
+  helptxt <- "Many SDC methods can be applied within strata. Here you can generate a new stratification variable by chaining together values of two or more"
+  helptxt <- paste(helptxt, "variables. The number of strata is the product of the number of factor levels in the selected variables. For instance by choosing")
+  helptxt <- paste(helptxt, "gender (male, female) and region (region 1, region 2), 4 strata are generated (male - region 1, male - region 2, female - region 1, female - region 2).")
+  helptxt <- paste(helptxt, "By default the variable name of the stratification variable consists of the variable names separated by  ‘_’ . You can also specify")
+  helptxt <- paste(helptxt, "the variable name by typing it into the text field. The new variable is added to the loaded micro data set and will be exported.")
   out <- fluidRow(
-    column(12, h4("Create a stratification variable", align="center")),
-    column(12, p("This method allows to",tags$i("chain together"),"values of two
-      or more variables which will be seperated by",code("_"),". You can also specify the variable name by typing
-      it into the text-field and which will be used to append the new variable to the micro data set.
-      This is useful if you want to create a new variable for e.g stratification purposes when creating a new sdc pproblem.", align="center")))
+    column(12, h4("Create a stratification variable"), align="center"),
+    column(12, p(helptxt), align="center"))
 
   out <- list(out, fluidRow(
     column(6, uiOutput("sel_genstrata"), align="center"),
@@ -283,7 +296,7 @@ output$ui_modify_create_stratvar <- renderUI({
 # UI-output to set specific values to NA
 output$ui_set_to_na <- renderUI({
   output$ui_nasupptype <- renderUI({
-    radioButtons("set_to_na_type", label=h5("How do you want to select the Observations where you want to set values to missing?"),
+    radioButtons("set_to_na_type", label=h5("How do you want to select the cells to be recoded to missing?"),
       choices=c("By Id"="id", "By rule"="rule"), inline=TRUE)
   })
   output$tab_inputdata_setna <- renderDataTable({
@@ -297,7 +310,7 @@ output$ui_set_to_na <- renderUI({
     if (input$set_to_na_type=="id") {
       multiple <- TRUE
     }
-    res <- selectInput("sel_na_suppvar", choices=allVars(), multiple=multiple, label=h5("Select Variable for Suppression"), width="50%")
+    res <- selectInput("sel_na_suppvar", choices=allVars(), multiple=multiple, label=h5("Select variable to set records to NA"), width="50%")
     return(res)
   })
   output$ui_nasuppid <- renderUI({
@@ -325,8 +338,13 @@ output$ui_set_to_na <- renderUI({
     myActionButton("btn_set_to_na",label=("Set values to NA"), "primary")
   })
 
+  helptxt <- paste0("In the loaded dataset different missing value code might be available, such as",code(9),",",code(999),",",code(-9),", etc.")
+  helptxt <- paste0(helptxt, "sdcMicro can only interpret missing values that are coded",code("NA"),". Here you can set other missing value")
+  helptxt <- paste0(helptxt, "codes to",code("NA"),"(by rule). It is also possible to set individual cells to",code("NA"),"by selecting the variable and record number (by id).")
+
   out <- fluidRow(
     column(12, h4("Set cells to NA (missing)", align="center")),
+    column(12, HTML(helptxt), align="center"),
     column(12, uiOutput("ui_nasupptype"), align="center"))
 
   out <- list(out, fluidRow(
@@ -495,7 +513,7 @@ output$ui_view_var <- renderUI({
       column(12, code(lastError()))))
   }
 
-  out <- fluidRow(column(12, h4("Analyze existing variables", align="center")))
+  out <- fluidRow(column(12, h4("Explore variables in raw data", align="center")))
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
 
   out <- list(out, fluidRow(
@@ -521,10 +539,12 @@ output$ui_reset_var <- renderUI({
     myActionButton("btn_resetmicrovar",label="Reset selected variable(s) to their original state", "primary")
   })
 
+  txt_reset <- "Here you can undo any modifications to variables made after loading the dataset into the GUI."
+  txt_reset <- paste(txt_reset, "Resetting restores the variable to its original state and cancels any modifications.")
   list(
     fluidRow(
       column(12, h4("Reset variables"), align="center"),
-      column(12, p("In this screen you can reset variable(s) in the imported microdata set. That means any prior modification steps will be undone."), align="center"),
+      column(12, p(txt_reset), align="center"),
       column(12, uiOutput("reset_microvar_var"), align="center"),
       column(12, uiOutput("reset_microvar_btn"), align="center")
     ))
@@ -543,10 +563,11 @@ output$ui_show_microdata <- renderUI({
     my_data_dt()
   })
 
+  txt_microdata <- paste0("In this tab you can manipulate the data to prepare for setting up an object of class",code("sdcMicroObj"),"in the Anonymize tab. ")
+  txt_microdata <- paste0(txt_microdata, "The loaded dataset is",code(obj$microfilename),"and consists of",code(nrow(obj$inputdata)),"observations and ",code(ncol(obj$inputdata)),"variables.")
   out <- fluidRow(
-    column(12, h4(paste("Microdata in use:",shQuote(obj$microfilename))), align="center"),
-    column(12, p("The dataset has",code(nrow(obj$inputdata)),"observations in",code(ncol(obj$inputdata)),"variables and can be used to set up the",code("sdcMicroObj"),
-      "that can be anonymized."), align="center"))
+    column(12, h4("Loaded microdata"), align="center"),
+    column(12, p(HTML(txt_microdata)), align="center"))
   out <- list(out, fluidRow(
     column(12, dataTableOutput("tab_inputdata"))))
   return(out)
@@ -554,7 +575,7 @@ output$ui_show_microdata <- renderUI({
 
 # UI-output to use only a subset of the available microdata
 output$ui_sample_microdata <- renderUI({
-  sel1 <- selectInput("sel_sdcP_sample_type", label=h5("How would you like to restrict the microdata?"),
+  sel1 <- selectInput("sel_sdcP_sample_type", label=h5("Select a method to restrict the number of records"),
   choices=c('n-Percent of the data'='n_perc',
             'the first n-observations'='first_n',
             'every n-th observation'='every_n',
@@ -579,18 +600,21 @@ output$ui_sample_microdata <- renderUI({
       sl_from <- 1
       sl_to <- nrow(obj$inputdata)
     }
-    sl1 <- sliderInput("sel_sdcP_sample_n", label=h5("Choose your 'n'"),
+    sl1 <- sliderInput("sel_sdcP_sample_n", label=h5("Set 'n' for the selected method"),
       value=sl_val, min=sl_from, max=sl_to, step=1, width="100%")
   } else {
     sl1 <- NULL
   }
 
-  btn <- myActionButton("btn_sample_microdata", label="Apply subsetting of the microdata", btn.style="primary")
+  btn <- myActionButton("btn_sample_microdata", label="Create subset", btn.style="primary")
+
+  txt_subset <- "For testing purposes, you can here reduce the number of records in the dataset by selecting a subset."
+  txt_subset <- paste(txt_subset, "This reduces the computation time of several anonymization methods.")
+  txt_subset <- paste(txt_subset, "Note: This is solely for testing purposes to reduce the computation time and not an anonymization method. To produce an anonymized dataset this should not be used.")
 
   out <- fluidRow(
     column(12, h4("Use only a subset of the dataset", align="center")),
-    column(12, p("You can restrict the microdataset that is used in the following anonymization procedure. This
-      will reduce computation time of the algorithms", align="center")))
+    column(12, p(txt_subset, align="center")))
   out <- list(out, fluidRow(
     column(6, p(sel1, align="center")),
     column(6, p(sl1, align="center"))))
@@ -611,7 +635,7 @@ output$ui_hierarchical_data_prep <- renderUI({
     return(invisible(NULL))
   })
   output$sel_hhvars_id <- renderUI({
-    selectInput("sel_hhvars_id", label=h5("Please select a suitable household identificator"),
+    selectInput("sel_hhvars_id", label=h5("Select the household id variable"),
       choices=c("",allVars()), multiple=FALSE, width="75%")
   })
   output$sel_hhvars <- renderUI({
@@ -642,10 +666,12 @@ output$ui_hierarchical_data_prep <- renderUI({
       column(12, code(lastError()), align="center")))
   }
 
+  helptxt <- "One record per household is selected and all variables that do not pertain to the household level are removed. Do not forget to select"
+  helptxt <- paste(helptxt, "a variable containing household sampling weights (if available). When setting up an sdcProblem, it is important to use correct sampling weights!")
+
   out <- list(out, fluidRow(
+    column(12, p(helptxt), align="center"),
     column(6, uiOutput("sel_hhvars_id"), align="center"), column(6, uiOutput("sel_hhvars"), align="center"),
-    column(12, p("Do not forget to also select a variable containing household sampling weights (if available). When setting up an sdcProblem, it is important to
-      use correct sampling weights!"), align="center"),
     column(12, uiOutput("hier_data_prep_btn"), align="center")
   ))
   out
@@ -712,8 +738,8 @@ output$ui_hierarchical_data_merge <- renderUI({
     ))
   } else {
     out <- list(out, fluidRow(
-      column(12, p("You can now read in an already exported, anonymized household-level file which you can merge to the individual-level microdata in the next step."), align="center"),
-      column(12, p("Note: the selected file file is loaded immediately. Set options before selecting the file."), align="center"),
+      column(12, p("You can now read in an already exported and anonymized household-level file to replace the household level variables in the raw dataset you read in the next step."), align="center"),
+      column(12, p("Note: the selected file is loaded immediately. Set options before selecting the file."), align="center"),
       column(12, fileInput("file_hhfile", h5(paste0("Select File (allowed types are '.rdata')")), width="50%", accept=".rdata"), align="center")))
   }
   out
@@ -721,11 +747,18 @@ output$ui_hierarchical_data_merge <- renderUI({
 
 output$ui_hierarchical_data <- renderUI({
   rb1 <- radioButtons("rb_hierdata_selection", label=h5("What do you want to do?"),
-    choices=c("Prepare file for the anonymization of household level variables"="prep_data", "Merging an anonymized household level file"="merge_hhdata"),
+    choices=c("Prepare file for the anonymization of household level variables"="prep_data", "Merge an anonymized household level file into the full dataset"="merge_hhdata"),
     selected=input$rb_hierdata_selection, inline=TRUE)
 
+  helptxt <- "Often microdata files incur a hierarchical structure, such as a household structure. In such cases the anonymization process consists of two steps: "
+  helptxt <- paste0(helptxt, tags$br(), "1) the anonymization of the higher level records and variables (household file) and ")
+  helptxt <- paste0(helptxt, "2) the anonymization of the complete file with the anonymized higher level file merged into. Here you can create a household ")
+  helptxt <- paste0(helptxt, "level file for step 1 and merge the anonymized household level file back into the full dataset for step 2. The dataset needs to contain a household ID.")
+
   out <- list(
-    fluidRow(column(12, h4("Deal with hierarchical Data"), align="center")),
+    fluidRow(
+      column(12, h4("Deal with hierarchical Data"), align="center"),
+      column(12, p(HTML(helptxt)), align="center")),
     fluidRow(column(12, rb1, align="center"))
   )
 

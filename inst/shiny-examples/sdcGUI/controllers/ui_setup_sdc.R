@@ -23,27 +23,28 @@ output$ui_sdcObj_summary <- renderUI({
 
     if (length(x$numVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Numerical key variables", lapply(x$numVars, function(x) {code(x)})), align="center")))
+        column(12, list("Numerical key variables:", lapply(x$numVars, function(x) {code(x)})), align="center")))
     }
     if (length(x$weightVar)>0) {
       out <- list(out, fluidRow(
         column(12, list("Sampling weights:", lapply(x$weightVar, function(x) {code(x)})), align="center")))
     }
-    if (length(x$strataVar)>0) {
-      out <- list(out, fluidRow(
-        column(12, list("Stratification variable", lapply(x$strataVar, function(x) {code(x)})), align="center")))
-    }
+    # cannot be selected when creating the sdc problem instance
+    #if (length(x$strataVar)>0) {
+    #  out <- list(out, fluidRow(
+    #    column(12, list("Stratification variable:", lapply(x$strataVar, function(x) {code(x)})), align="center")))
+    #}
     if (length(x$householdId)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Household/cluster variable:", lapply(x$householdId, function(x) {code(x)})), align="center")))
+        column(12, list("Household/cluster Id:", lapply(x$householdId, function(x) {code(x)})), align="center")))
     }
     if (length(x$delVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Deleted variables", lapply(x$delVars, function(x) {code(x)})), align="center")))
+        column(12, list("Deleted variables:", lapply(x$delVars, function(x) {code(x)})), align="center")))
     }
     gV <- x$ghostVars
     if (length(gV)>0) {
-      out <- list(out, fluidRow(column(12, list(tags$br(),"Selected ghost variables (linked variables)"), align="center")))
+      out <- list(out, fluidRow(column(12, tags$br(), list("Linked variables:"), align="center")))
       for (i in 1:length(gV)) {
         out <- list(out, fluidRow(
           column(12, list("Variable(s)", lapply(gV[[i]][[2]], function(x) {
@@ -125,11 +126,11 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     out <- fluidRow(
-      column(12, h4("Information on risk for numerical key variables"), align="center"),
+      column(12, h4("Information loss  (numeric)"), align="center"),
       column(12, p("The disclosure risk is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),".
       In the original data the risk is assumed to be between",code("0%"),"and",code("100%"),"."), align="center"),
       column(12, h4("Information loss"), align="center"),
-      column(12, p("Measure",strong("IL1"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
+      column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
     )
     out
   })
@@ -204,8 +205,10 @@ output$ui_sdcObj_summary <- renderUI({
   })
   output$anonMethods <- renderUI({
     anon_methods <- unique(anonPerformed())
+    out <- fluidRow(column(12, h4("Anonymization steps"),align="center"))
     if (is.null(anon_methods)) {
-      return(invisible(NULL))
+      out <- list(out, fluidRow(column(12, code("no methods have been applied"),align="center")))
+      return(out)
     } else {
       out <- fluidRow(column(12, h4("Anonymization steps"),align="center"))
       for (i in 1:length(anon_methods)) {
@@ -398,7 +401,7 @@ output$ui_sdcObj_explorevars <- renderUI({
       column(12, code(lastError()))))
   }
 
-  out <- fluidRow(column(12, h4("Analyze existing variables in current sdc Problem", align="center")))
+  out <- fluidRow(column(12, h4("Explore variables in treated data"), align="center"))
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_selanonvar1")),
     column(6, uiOutput("ui_selanonvar2"))))
@@ -433,10 +436,13 @@ output$ui_sdcObj_addghostvars <- renderUI({
     return(fluidRow(column(12,
       h4("No variables are available that could be used as",code("ghost-variables"),".", align="center"))))
   }
+
+  helptxt <- "Often datasets contain variables that are related to the key variables used for local suppression. Here you can link variables to"
+  helptxt <- paste(helptxt, "categorical key variables. Any suppression in the key variable will lead to a suppression in the variables linked")
+  helptxt <- paste(helptxt, "to that key variable. Several variables can be linked to one key variable. The linked variables are called ghost variables.")
   out <- fluidRow(
-    column(12, h4("Add 'Ghost-Vars' to the existing Problem"), align="center"),
-    column(12, p("Any variables linked to a categorical key variable will have the same suppression pattern in the anonymized data set."), align="center")
-  )
+    column(12, h4("Add ghost variables"), align="center"),
+    column(12, p(helptxt), align="center"))
   out <- list(out, fluidRow(
     column(6, uiOutput("addgv_v1"), align="center"),
     column(6, uiOutput("addgv_v2"), align="center")
@@ -448,7 +454,7 @@ output$ui_sdcObj_addghostvars <- renderUI({
 ## add new random ID-variable
 output$ui_sdcObj_randIds <- renderUI({
   output$randid_newid <- renderUI({
-    textInput("txt_randid_newid", label=h5("Choose a suitable name of the new ID-variable"), width="100%")
+    textInput("txt_randid_newid", label=h5("Specify name for the new ID variable"), width="100%")
   })
   output$randid_withinvar <- renderUI({
     selectInput("sel_randid_withinvar", label=h5("If used, the ID will be the same for equal values of the selected variable"),
@@ -464,7 +470,16 @@ output$ui_sdcObj_randIds <- renderUI({
     }
     myActionButton("btn_addRandID", label=("Add new ID-variable"), "primary")
   })
-  out <- fluidRow(column(12, h4("Add a new random ID variable to the the existing Problem", align="center")))
+
+  helptxt <- "The ID in microdata as well as the order of records can be used to reconstruct suppressed values."
+  helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
+  helptxt <- paste(helptxt, "you can select the household ID as variable for which the new ID should be the same for equal value.")
+  helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
+
+  out <- fluidRow(
+    column(12, h4("Add a new random ID variable"), align="center"),
+    column(12, p(helptxt), align="center"),
+    column(12, p(helptxt2), align="center"))
   out <- list(out, fluidRow(
     column(6, uiOutput("randid_newid"), align="center"),
     column(6, uiOutput("randid_withinvar"), align="center")
@@ -590,9 +605,16 @@ output$setupbtn <- renderUI({
 
 # show additional parameters
 output$setup_moreparams <- renderUI({
-  sl_alpha <- sliderInput("sl_alpha", label=h5("Parameter 'alpha'"), value=1, min=0, max=1, step=0.01, width="90%")
+  txt_seed <- "The seed is used to initialize the random number generator used for probabilistic methods."
+  txt_alpha <- "Parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
+  txt_alpha <- paste(txt_alpha, "measures for categorical key variables, and is the weight with which a key that coincide based on a missing value (NA) contributes to these frequencies.")
+  sl_alpha <- sliderInput("sl_alpha",
+    label=h5("Parameter 'alpha'", tipify(icon("question"), title=txt_alpha, placement="top")),
+    value=1, min=0, max=1, step=0.01, width="90%")
   help_alpha <- helpText("The higher alpha, the more keys containing missing values will contribute to the calculation of 'fk' and 'Fk'")
-  sl_seed <- sliderInput("sl_seed", label=h5("Parameter 'seed'"), value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
+  sl_seed <- sliderInput("sl_seed",
+    label=h5("Parameter 'seed'", tipify(icon("question"), title=txt_seed, placement="top")),
+    value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
   help_seed <- helpText("Select an initial (integer) value for the random seed generator")
   out <- list(
     fluidRow(column(6, sl_alpha, align="center"), column(6, sl_seed, align="center")),
@@ -606,8 +628,16 @@ output$ui_sdcObj_create1 <- renderUI({
   if (!is.null(obj$last_error)) {
     out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror"))))
   }
+
+  helptxt <- paste("Please select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional),
+    pram variables (optional), weights variable (optional), household cluster id (optional), variables to be removed (optional). Also, specify the parameters alpha and set a seed at the bottom of this page.")
+
+  helptxt2 <- "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go Microdata tab and convert variables to numeric or factor."
+
   out <- list(out,
-    fluidRow(column(12, h4("Setup an sdc-Problem", align="center"))),
+    fluidRow(column(12, h4("Setup an sdc-Problem"), align="center")),
+    fluidRow(column(12, p(helptxt), align="center")),
+    fluidRow(column(12, p(helptxt2), align="center")),
     fluidRow(column(12, DT::dataTableOutput("setupTable", height="100%"))))
   out
 })
