@@ -63,31 +63,6 @@ choices_anonymize <- reactive({
     }
   }
 })
-output$ui_sel_anonymize <- renderUI({
-  choices <- choices_anonymize()
-  if (is.null(input$sel_anonymize)) {
-    sel <- choices[1]
-  } else {
-    sel <- input$sel_anonymize
-  }
-  radioButtons("sel_anonymize", label=h5("What do you want to do?"),
-    choices=choices,selected=sel, width="100%")
-})
-output$ui_sel_sdcresults <- renderUI({
-  req(input$sel_anonymize)
-  cc <- res_choices_anon()
-  if (is.null(input$sel_sdcresults)) {
-    sel <- cc[1]
-  } else {
-    sel <- input$sel_sdcresults
-  }
-  if (!is.null(sel)) {
-    if (!sel %in% cc) {
-      sel <- cc[1]
-    }
-  }
-  radioButtons("sel_sdcresults", label=h5("Choose a Method"),choices=cc,selected=sel, width="100%")
-})
 
 ## left sidebar
 output$ui_sdcObj_reset <- renderUI({
@@ -106,62 +81,116 @@ output$ui_reset <- renderUI({
 })
 
 output$ui_anonymize_sidebar_left <- renderUI({
-  list(uiOutput("ui_reset"), uiOutput("ui_sel_anonymize"), uiOutput("ui_sel_sdcresults"))
+  output$ui_sel_anonymize <- renderUI({
+    choices <- choices_anonymize()
+    if (is.null(input$sel_anonymize)) {
+      sel <- choices[1]
+    } else {
+      sel <- input$sel_anonymize
+    }
+    radioButtons("sel_anonymize", label=h5("What do you want to do?"),
+      choices=choices, selected=sel, width="100%")
+  })
+
+  output$sel_manage <- renderUI({
+    if (is.null(input$sel_anonymize)) {
+      return(NULL)
+    }
+    cc <- choices_anon_manage()
+    radioButtons("sel_sdcresults_manage", label=h5("Choose a Method"),
+      choices=cc, selected=input$sel_sdcresults_manage, width="100%")
+  })
+  output$sel_cat <- renderUI({
+    if (is.null(input$sel_anonymize)) {
+      return(NULL)
+    }
+    cc <- choices_anon_cat()
+    radioButtons("sel_sdcresults_cat", label=h5("Choose a Method"),
+      choices=cc, selected=input$sel_sdcresults_cat, width="100%")
+  })
+  output$sel_num <- renderUI({
+    if (is.null(input$sel_anonymize)) {
+      return(NULL)
+    }
+    cc <- choices_anon_num()
+    radioButtons("sel_sdcresults_num", label=h5("Choose a Method"),
+      choices=cc, selected=input$sel_sdcresults_num, width="100%")
+  })
+
+  out <- list(uiOutput("ui_reset"), uiOutput("ui_sel_anonymize"))
+  if (!is.null(input$sel_anonymize)) {
+    if (input$sel_anonymize=="manage_sdcProb") {
+      out <- list(out, uiOutput("sel_manage"))
+    }
+    if (input$sel_anonymize=="cat_anon") {
+      out <- list(out, uiOutput("sel_cat"))
+    }
+    if (input$sel_anonymize=="cat_num") {
+      out <- list(out, uiOutput("sel_num"))
+    }
+  }
+  out
 })
 
 # center column
 output$ui_main_anon <- renderUI({
-  if (is.null(input$sel_sdcresults)) {
-    return(NULL)
-  }
+  req(input$sel_anonymize)
+
   ## sdcMicroObj-based
-  if (input$sel_sdcresults=="sdcObj_summary") {
-    return(uiOutput("ui_sdcObj_summary"))
-  }
-  if (input$sel_sdcresults=="sdcObj_explore_variables") {
-    return(uiOutput("ui_sdcObj_explorevars"))
-  }
-  if (input$sel_sdcresults=="sdcObj_addghostvars") {
-    return(uiOutput("ui_sdcObj_addghostvars"))
-  }
-  if (input$sel_sdcresults=="sdcObj_randIds") {
-    return(uiOutput("ui_sdcObj_randIds"))
-  }
-  if (input$sel_sdcresults=="sdcObj_reset") {
-    return(uiOutput("ui_sdcObj_reset"))
+  if (input$sel_anonymize=="manage_sdcProb" & !is.null(input$sel_sdcresults_manage)) {
+    if (input$sel_sdcresults_manage=="sdcObj_summary") {
+      return(uiOutput("ui_sdcObj_summary"))
+    }
+    if (input$sel_sdcresults_manage=="sdcObj_explore_variables") {
+      return(uiOutput("ui_sdcObj_explorevars"))
+    }
+    if (input$sel_sdcresults_manage=="sdcObj_addghostvars") {
+      return(uiOutput("ui_sdcObj_addghostvars"))
+    }
+    if (input$sel_sdcresults_manage=="sdcObj_randIds") {
+      return(uiOutput("ui_sdcObj_randIds"))
+    }
+    if (input$sel_sdcresults_manage=="sdcObj_reset") {
+      return(uiOutput("ui_sdcObj_reset"))
+    }
   }
   ## categorical methods
-  if (input$sel_sdcresults=="pram_expert") {
-    return(uiOutput("ui_pram_expert"))
-  }
-  if (input$sel_sdcresults=="pram_simple") {
-    return(uiOutput("ui_pram_simple"))
-  }
-  if (input$sel_sdcresults=="recode") {
-    return(uiOutput("ui_recode"))
-  }
-  if (input$sel_sdcresults=="kanon") {
-    return(uiOutput("ui_kAnon"))
-  }
-  if (input$sel_sdcresults=="supp_threshold") {
-    return(uiOutput("ui_supp_threshold"))
+  if (input$sel_anonymize=="cat_anon" & !is.null(input$sel_sdcresults_cat)) {
+    if (input$sel_sdcresults_cat=="pram_expert") {
+      return(uiOutput("ui_pram_expert"))
+    }
+    if (input$sel_sdcresults_cat=="pram_simple") {
+      return(uiOutput("ui_pram_simple"))
+    }
+    if (input$sel_sdcresults_cat=="recode") {
+      return(uiOutput("ui_recode"))
+    }
+    if (input$sel_sdcresults_cat=="kanon") {
+      return(uiOutput("ui_kAnon"))
+    }
+    if (input$sel_sdcresults_cat=="supp_threshold") {
+      return(uiOutput("ui_supp_threshold"))
+    }
   }
   ## numerical methods
-  if (input$sel_sdcresults=="topbot_num") {
-    return(uiOutput("ui_topbotcoding_num"))
+  if (input$sel_anonymize=="cat_num" & !is.null(input$sel_sdcresults_num)) {
+    if (input$sel_sdcresults_num=="topbot_num") {
+      return(uiOutput("ui_topbotcoding_num"))
+    }
+    if (input$sel_sdcresults_num=="noise") {
+      return(uiOutput("ui_noise"))
+    }
+    if (input$sel_sdcresults_num=="microaggregation") {
+      return(uiOutput("ui_microaggregation"))
+    }
+    #if (input$sel_sdcresults_num=="shuffling") {
+    #  out <- list(out, uiOutput("ui_shuffling"))
+    #}
+    if (input$sel_sdcresults_num=="rankswap") {
+      return(uiOutput("ui_rankswap"))
+    }
   }
-  if (input$sel_sdcresults=="noise") {
-    return(uiOutput("ui_noise"))
-  }
-  if (input$sel_sdcresults=="microaggregation") {
-    return(uiOutput("ui_microaggregation"))
-  }
-  #if (input$sel_sdcresults=="shuffling") {
-  #  out <- list(out, uiOutput("ui_shuffling"))
-  #}
-  if (input$sel_sdcresults=="rankswap") {
-    return(uiOutput("ui_rankswap"))
-  }
+  return(invisible(NULL))
 })
 
 output$ui_anonymize <- renderUI({
@@ -176,7 +205,7 @@ output$ui_anonymize <- renderUI({
   if (is.null(sdcObj())) {
     return(uiOutput("ui_sdcObj_create"))
   } else {
-    if(is.null(input$sel_sdcresults) || input$sel_sdcresults=="sdcObj_summary") {
+    if(is.null(input$sel_sdcresults_manage) || (input$sel_anonymize=="manage_sdcProb" & input$sel_sdcresults_manage=="sdcObj_summary")) {
       out <- list(fluidRow(
         column(2, uiOutput("ui_anonymize_sidebar_left")),
         column(10, uiOutput("ui_main_anon"))))

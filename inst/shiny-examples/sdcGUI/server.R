@@ -858,8 +858,13 @@ shinyServer(function(session, input, output) {
       radioButtons(id, label=h5(paste("Apply k-Anon to all subsets of",i,"key variables?")),
         selected=input[[id]], width="100%", inline=TRUE, choices=c("No", "Yes"))
     })
+
+    updateRadioButtons(session, "sel_sdcresults_cat", choices=choices_anon_cat(), selected="recode")
+    updateRadioButtons(session, "sel_sdcresults_num", choices=choices_anon_num(), selected="topbot_num")
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
+
+
   })
   # add ghost-vars to an existing sdcMicroObj
   observeEvent(input$btn_addGhostVars, {
@@ -874,7 +879,7 @@ shinyServer(function(session, input, output) {
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # add new random IDs to an existing sdcMicroObj
   observeEvent(input$btn_addRandID, {
@@ -889,7 +894,7 @@ shinyServer(function(session, input, output) {
       obj$anon_performed <- c(obj$anon_performed, "Create a new random ID-variable")
     }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
 
   ## show confirmation modal window before resetting the current problem
@@ -915,7 +920,7 @@ shinyServer(function(session, input, output) {
     obj$comptime <- obj$comptime+ptm[3]
     removeModal(session=session) # remove the modal
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
 
   ## show confirmation modal window before resetting inputdata
@@ -1113,7 +1118,7 @@ shinyServer(function(session, input, output) {
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_recfac, {
@@ -1144,8 +1149,6 @@ shinyServer(function(session, input, output) {
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     progress$set(message="performing topBotCoding() (this might take a long time)...", value = 1)
-    #updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    #updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # microaggregation()
   observeEvent(input$btn_microagg, {
@@ -1177,7 +1180,7 @@ shinyServer(function(session, input, output) {
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # addNoise()
   observeEvent(input$btn_noise, {
@@ -1195,7 +1198,7 @@ shinyServer(function(session, input, output) {
     }
     progress$set(message="performing addNoise() (this might take a long time)...", value = 1)
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
   # rankSwap()
   observeEvent(input$btn_rankswap, {
@@ -1214,7 +1217,7 @@ shinyServer(function(session, input, output) {
     }
     progress$set(message="performing rankSwap() (this might take a long time)...", value = 1)
     updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults",choices=choices_anon_manage(), selected="sdcObj_summary")
+    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
   })
 
   ### risk-measurements ###
