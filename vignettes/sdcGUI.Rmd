@@ -23,7 +23,9 @@ Package `sdcMicro` contains a [shiny](https://cran.r-project.org/web/packages/sh
 - Obtain information on disclosure risks and/or information loss
 - Keep reproducibility by being able do download the underlying code from `sdcMicro`
 
-We now describe the features of the interactive graphical user interface in detail. The GUI is seperated into 7 main categories, which can be selected from the navigation bar at the top of the screen. Initially, some of these pages will be empty and their content changes once microdata have been uploaded or an `sdcMicroObj` has been generated.
+We now describe the features of the interactive graphical user interface in detail. The GUI is seperated into 7 main categories, which can be selected from the navigation bar at the top of the screen. Initially, some of these pages will be empty and their content changes once microdata have been uploaded or an `sdcMicroObj` has been generated. 
+
+We also want to note that throughout the GUI qustionmark signs are shown. Hovering the mouse over these small icons triggers a pop up window with additional information which will help during the anonymization process.
 
 # About/Help {#about}
 
@@ -32,7 +34,7 @@ to be written
 # Microdata {#microdata}
 On this page, the user has the possibility to either upload data sets stored as files on the hard drive into the GUI or to select data frames that exist in the users workspace before working the graphical user interface was started. This allows to perform common datamanipulation steps directly in `R` before continuing to anonymize the dataset using the GUI.
 
-We note that the content of this pages changes depending if micro data have already been uploaded or not. In the former case, the user can view, modify or reset variables from the uploaded dataset as described in chapter  [Modify microdata](#modify_microdata). In the latter case, the user is asked to upload data in the GUI which is described in chapter [Upload microdata](#upload_microdata) below.
+We note that the content of this pages changes depending if micro data have already been uploaded or not. In the former case, the user can view, modify or reset variables from the uploaded dataset as described in chapter [Modify microdata](#modify_microdata). In the latter case, the user is asked to upload data in the GUI which is described in chapter [Upload microdata](#upload_microdata) below.
 
 ## Upload microdata {#upload_microdata}
 By default, no microdata are loaded into the GUI. Therefore the user has to upload some data in the GUI that can later be anonymized. If no microdata are available, the left-sidebar shows the following options that can be selected by clicking on the appropriate radio-button entry. In case the selected data could not be used (eg. the data could not be converted to a `data.frame`), the user is presented with the resulting error message and a button `Try-again`. After clicking this button, another microdata file can be imported.
@@ -123,36 +125,36 @@ When a microdata set is uploaded, internally a backup of the unmodified dataset 
 In any case, after pressing the action button, the GUI changes to the [*"Explore variables"*](#explore_inputvars) page at which the first of the selected variable(s) is shown.
 
 ### Use only a subset of the available microdata
-On this page it is possible to decrease the size of the inputdata. This is especially useful if one wants to test different parameter settings and a run on the complete dataset would take long. To reduce the size of the inputdataset, the user has to select a method using the drop down field `How would you like to restrict the microdata?` and to select a value from the slider `Choose your 'n'`. The following choices are possible on how to reduce the dataset, the range of values that can be chosen from the slider depends on the choice.
+On this page it is possible to decrease the size of the inputdata. This is especially useful if one wants to test different parameter settings and a run on the complete dataset would take long. To reduce the size of the inputdataset, the user has to select a method using the drop down field `Select a method to restrict the number of records` and to select a value from the slider `Set 'n' for the selected method`. The following choices are possible on how to reduce the dataset, the range of values that can be chosen from the slider depends on the choice.
 
   - `n-Percent of the data`: `n%` of the data will be randomly chosen. The slider ranges in this case from 1 to 100.
   - `the first n-observations`: the data set is decreased by only using the first `n%` records. The slider ranges in this case from 1 to the total number of records.
   - `every n-th observation`: This choice allows to create a simple, systematic sample of input data by selecting every `nth` observation. The slider ranges in this case from 1 to at max 500.
   - `exactly n randomly drawn observations`: the data set is decreased by taking a random sample of `n%` records. The slider ranges in this case from 1 to the total number of records.
     
-When the desired selections have been applied, pushing the button `Apply subsetting of the microdata` performs the actual sub-subsampling. After the micro data set has been reduced, the user is taken to the [Display microdata](#display_microdata) page where the reduced dataset can be analysed.
+When the desired selections have been applied, pushing the button `Create subset` performs the actual sub-subsampling. After the micro data set has been reduced, the user is taken to the [Display microdata](#display_microdata) page where the reduced dataset can be analysed.
 
 ### Convert numeric variables to factors
 This page allows to convert continuous variables (`numeric` or `integer`) into factors. Users can choose from a range of possibilites how the factor variable should be generated, ranging from automatic conversion to complete manual control. 
 
-By default, two input fields are available. On the left hand side there is a dropdown select field termed `Choose numeric variables` where the user can select from the list of numeric variables in the input data set. Next to this element, there is are two radio buttons labelled `Use custom breaks?` with two options, `no` (the default) and `yes`. If the `no` is selected in this input and at least one numeric variable has been clicked from the select input `Choose numeric variables`, a button termed `Convert to factor(s)` occurs. Pressing this button converts all of the selected numerical variables into factors. Afterwards, the user is taken to the [explore variables](#explore_inputvars) page where the first of the selected variable(s) is shown.
+By default, two input fields are available. On the left hand side there is a dropdown select field termed `Choose numeric variables` where the user can select from the list of numeric variables in the input data set. Next to this element, there is are two radio buttons labelled `Use custom breaks?` with two options, `no` (the default) and `yes`. If the `no` is selected in this input and at least one numeric variable has been clicked from the select input `Choose numeric variable(s)`, a button termed `Convert to factor(s)` occurs. Pressing this button converts all of the selected numerical variables into factors. Afterwards, the user is taken to the [explore variables](#explore_inputvars) page where the first of the selected variable(s) is shown.
 
-If, however, the radio buttons `Use custom breaks?` are set to `yes`, the layout of the page changes. In this case, the user is able to adjust the way the factor variable should be generated and additional UI elements appear. The first visible change is, that only one numeric variable can now be selected. Now, a list of radio buttons labelled `Choose a numeric variable` is shown where all available variables are printed below each other. Selecting a specific variable works by clicking on either the variable name or the radio button itself. The next choice the user has to make is in a select input field termed `Select Algorithm` in which `equidistant` (the default), `logEqui`, `equalAmount` or `manual` are possible values.
+If, however, the radio buttons `Use custom breaks?` are set to `yes`, the layout of the page changes. In this case, the user is able to adjust the way the factor variable should be generated and additional UI elements appear. The first visible change is, that only one numeric variable can now be selected. Now, a list of radio buttons labelled `Choose a numeric variable` is shown where all available variables are printed below each other. Selecting a specific variable works by clicking on either the variable name or the radio button itself. The next choice the user has to make is in a select input field termed `Select algorithm` in which `equidistant` (the default), `logEqui`, `equalAmount` or `manual` are possible values.
 
-The remaining user interface is the same for the first three choices of the `Select Algorithm` input and is slightly different if `manual` has been selected. In the first case, a numeric input field labelled `Specify the number of breaks` is shown while in the second case a text input field labelled `Specify the custom breaks` occurs right next to the select input field where the algorithm can be selected. 
+The remaining user interface is the same for the first three choices of the `Select algorithm` input and is slightly different if `manual` has been selected. In the first case, a numeric input field labelled `Specify number of intervals` is shown while in the second case a text input field labelled `Specify the custom breaks` occurs right next to the select input field where the algorithm can be selected. 
 
 If either `equidistant`, `logEqui` or `equalAmount` are selected, the number specified in the numeric input field defines the number of levels the new factor will have. The difference between the methods are:
 
-- `equidistant`: the intervals used for the recoding have (approximately) the same size
-- `logEqui`: the intervals used for the recoding of the log-transformed data have (approximately) the same size
-- `equalAmount`: the intervals used for recoding are chosen in a way, that the new groups include (approximately) the same number of observations 
+- `equidistant`: uses breakpoints that generate intervals of equal length. The number of records in each interval might differ. 
+- `logEqui`: uses breakpoints that generate intervals of equal length based on the log transformation of the data. The number of records in each interval might differ.
+- `equalAmount`: uses breakpoints such that each group/interval has the same number of records. The intervals might be of different length.
 
-If `manual` was specified in the select input termed `Select Algorithm`, the user can enter custom breakpoints that will be used to define the new groups in the recoded variable. The syntax in this text field is the way that the breakpoints (numbers) have to be entered seperated by a colon (`,`). This sequence of numbers will be interpreted as follows: all values greater than the value before a colon and all values smaller or equal than the value after the colon are grouped together. Any non-matched values will be `NA`. As an example, entering `1,3,5,9` would create a factor from a numeric variable by grouping together all values in x greater than 1 and less or equal to 3 into the first group, all values greater than 3 and less or equal to 5 into the second group and all values greater than 5 and less or equal to 9 into a third group. Any values in x less or equal than 1 or greater or equal to 10 would be `NA`. However, `-Inf` and `Inf` may be entered as the first or last value to avoid the generation of `NAs`. Already existing missing values in the numeric input variable will stay `NA` after the recoding.
+Selecting `manual` allows the user to set the breakpoints manually. Note: make sure that all values are included in the specified intervals. The syntax in this text field is the way that the breakpoints (numbers) have to be entered seperated by a colon (`,`). This sequence of numbers will be interpreted as follows: all values greater than the value before a colon and all values smaller or equal than the value after the colon are grouped together. Any non-matched values will be `NA`. As an example, entering `1,3,5,9` would create a factor from a numeric variable by grouping together all values in x greater than 1 and less or equal to 3 into the first group, all values greater than 3 and less or equal to 5 into the second group and all values greater than 5 and less or equal to 9 into a third group. Any values in x less or equal than 1 or greater or equal to 10 would be `NA`. However, `-Inf` and `Inf` may be entered as the first or last value to avoid the generation of `NAs`. Already existing missing values in the numeric input variable will stay `NA` after the recoding.
 
-What is common for all choices of `Select Algorithm` is that a button labelled `Convert to factor` appears if the information that has been entered is correct. Also, at the bottom of the page a table with two columns is shown. The first columns shows each of the unique values of the selected variable while the second column shows the number of occurances of this value. On pressing the action button, the selected numeric variable is recoded according the the parameters that have been chosen. After the recode has been done, the current view changes to the [explore variable](#explore_inputvars) page with the recoded factor variable already being selected.
+What is common for all choices of `Select algorithm` is that a button labelled `Convert to factor` appears if the information that has been entered is correct. Also, at the bottom of the page a table with two columns is shown. The first columns shows each of the unique values of the selected variable while the second column shows the number of occurances of this value. On pressing the action button, the selected numeric variable is recoded according the the parameters that have been chosen. After the recode has been done, the current view changes to the [explore variable](#explore_inputvars) page with the recoded factor variable already being selected.
 
 ### Convert variables to numeric
-In this page, factor variables from the input data may be converted back to numeric variables. If no factor variables are present in the micro data, the user is shown this information and no conversion is possible. If, however, factor variables are available from the current active micro data, the user can select one or more variables from the input field labelled `Choose variable`. Once at least one variable is selected, a button called `Recode to numeric` occurs below the variable selection input. After clicking this button, the conversion is done and the view changes to the [explore variable](#explore_inputvars) page with the first of the recoded variables being selected.
+In this page, variables of type `factor` and `character` from the input data can be converted to numeric variables. If no such variables are present in the micro data, the user is shown this information and no conversion is possible. Otherwise, the user can select one or more variables from the input field labelled `Choose variable(s)`. Once at least one variable is selected, a button called `Recode to numeric` occurs below the variable selection input. After clicking this button, the conversion is done and the view changes to the [explore variable](#explore_inputvars) page with the first of the recoded variables being selected.
 
 It should be noted however - as also shown on the GUI - that this feature should be used with care because internalle function `as.numeric()' is used to perform the conversation. Thus, the resulting numeric vector contains the underlying numeric (integer) representation of the input factor, which is often meaningless as it may not correspond to the factor levels.
 
@@ -161,17 +163,17 @@ When this option has been selected from the left hand sidebar, it is possible to
 
 If at least one factor level is selected, a text input called `New label for recoded values` is shown. By default, this input has a value that is computed by joining the selected factor levels together using the character `_` as seperator. By clicking into this text field, users can also start to enter a custom name for the new factor level. If only one level has been selected in `Select Levels to recode/combine`, entering a value different than the default value in this input leads to renaming of this specific factor level. 
 
-Below this three input fields a button labelled `Update factor variable` and a barplot showing the absolute number of the current levels of the factors are shown. Pressing the action button results in updating the factor. In this case, the page refreshes and the plot adjusts the the changes that have been applied.
+Below this three input fields a button labelled `Group factor levels` and a barplot showing the absolute number of the current levels of the factors are shown. Pressing the action button results in updating the factor. In this case, the page refreshes and the plot adjusts the the changes that have been applied.
 
 ### Create a stratification variable {#create_strata_var}
 On this page, the user is able to generate a new variable based on two ore more variables from the current micro data. The reason for this is that several anonymization techiques that are explained [here](#anonymize_categorical) and [here](#anonymize_numerical) can by applied independently to subgroups of the input data that are given by the values of a so called `stratification variable`. This page allows to create such a variable in a convinient way.
 
-The user has to specify at least two variables in the select field labelled `Select Variables`. From this field, all variables that are available in the micro data set can possibly be selected. Once two or more variables are selected, two new inputs appear. The first one appears right next to the variable selection field and is called `New variable name`. In this field, user can enter a desired name for the new variable. By default, the variable name listed consists of the selected variables chained together using `_` as seperator. By clicking into the field, the user can enter a customized variable name. If the current value in this text input field is not the name of an already existing variable, a button termed `Create stratification variable` appears below. Clicking on this button adds the new variable to the input data set. The variable is generated as a factor variable in which the values of the contributing variables are also chained together using `_` as the seperator. After pressing the button, the page changes to the [explore variable](#explore_inputvars) page where the newly generated variable is already selected.
+The user has to specify at least two variables in the select field labelled `Select variables to generate a stratification variable`. From this field, all variables that are available in the micro data set can possibly be selected. Once two or more variables are selected, two new inputs appear. The first one appears right next to the variable selection field and is called `Specify variable name for stratification variable`. In this field, user can enter a desired name for the new variable. By default, the variable name listed consists of the selected variables chained together using `_` as seperator. By clicking into the field, the user can enter a customized variable name. If the current value in this text input field is not the name of an already existing variable, a button termed `Create stratification variable` appears below. Clicking on this button adds the new variable to the input data set. The variable is generated as a factor variable in which the values of the contributing variables are also chained together using `_` as the seperator. After pressing the button, the page changes to the [explore variable](#explore_inputvars) page where the newly generated variable is already selected.
 
 ### Set specific values in a variable to `NA`
-In this section, users can set values in some variables to missing (`NA`). The first step is to choose one of two possible methods by choosing either `by Id` (the default selection) or `by rule` in the radio button input labelled `How do you want to select the Observations where you want to set values to missing?` on top of the page.
+In this section, users can set values in some variables to missing (`NA`). The first step is to choose one of two possible methods by choosing either `by Id` (the default selection) or `by rule` in the radio button input labelled `How do you want to select the cells to be recoded to missing?` on top of the page.
 
-If `by Id` has been selected, the user can set values in one or more variables for a specific record to missing. He therefore needs to select at least one variable in the input called `Select Variable for Suppression`. Once at least one variable has been selected, a new input field occurs. In this input called `In which ID do you want to suppress values?`, a number between 1 and at most the number of records can be specified. This selection refers to the row in which for the selected variables the values will be set to `NA`. The user can change this index either by clicking on the small arrows at the right hand side of the input field which allow to increment or decrement the current number by one. As an alternative, it is also possible to directly enter a number in the field.
+If `by Id` has been selected, the user can set values in one or more variables for a specific record to missing. He therefore needs to select at least one variable in the input called `Select variable to set records to NA`. Once at least one variable has been selected, a new input field occurs. In this input called `In which ID do you want to suppress values?`, a number between 1 and at most the number of records can be specified. This selection refers to the row in which for the selected variables the values will be set to `NA`. The user can change this index either by clicking on the small arrows at the right hand side of the input field which allow to increment or decrement the current number by one. As an alternative, it is also possible to directly enter a number in the field.
 
 In case `by rule` has been selected, these choices are slightly different. In the variable selection it is only possible to select one variable. The other difference is that there is no input field where the user can select a number. Instead, there is a dropdown field where the user can select one of the distinct values of the selected variable. The idea is that all records having this values in the selected variable will the set to `NA`.
 
@@ -180,13 +182,13 @@ The remaining part of this page is identical for both choices of the method. Bel
 ### Hierarchical data
 In this page, users find the functionality to deal with hierarchical data. The idea is as follows. Often data contain clusters, eg. individual within households or students within classes. In this case, it is often the case that some variables of the data set are only relevant on cluster-level while others are relevant on individual level. It is also often the case that one wants to apply different anonymization strategies for the different *levels* of the data. So the GUI offers a way to deal with this situation in the following way.
 
-The radio buttons labelled `What do you want to do?` allow to choose from `Prepare file for the anonymization of household level variables` (the default) and `Merging an anonymized household level file`. In the former case, the uploaded micro data set can be restricted to those variables relevant for the cluster-level only. Once that has been done, the user may anonymize the household file and can finally export the anonymized file to disk as described [here](#export_data). In the latter case, an already exported, anonymized household-level file can be imported to the GUI and merged with the individual level file. Then the anonymization process can be started by creating a problem instance using individual-level variables as keys. Finally, the user is able to export an anonymized file that is safe on both levels. We now describe both possibilibies in this section:
+The radio buttons labelled `What do you want to do?` allow to choose from `Prepare file for the anonymization of household level variables` (the default) and `Merge an anonymized household level file into the full dataset`. In the former case, the uploaded micro data set can be restricted to those variables relevant for the cluster-level only. Once that has been done, the user may anonymize the household file and can finally export the anonymized file to disk as described [here](#export_data). In the latter case, an already exported, anonymized household-level file can be imported to the GUI and merged with the individual level file. Then the anonymization process can be started by creating a problem instance using individual-level variables as keys. Finally, the user is able to export an anonymized file that is safe on both levels. We now describe both possibilibies in this section:
 
 **Prepare file for the anonymization of household level variables**
 
-In case the goal is to prepare a household-level file, the user first needs to select an identifier for the households or clusters. This select input termed `Please select a suitable household identificator` is initially empty. Once a variable has been selected from the list of all variables available from the input data, an additional select field called `Please select all variables that refer to households and not to individuals` appears next to it. In this input, one or more variables that are relevant for households only (that means, these variables feature the contain the same values for each household) can be selected. Once at least one additional variable has been chosen, a button labelled `Create household-input data` is shown below. Clicking on this button restricts the current data set to the selected variables and to only one (the first) record for each value of the cluster identificator. Finally, the page refreshes and the number of observations and variables in the updated, household level data set is shown. Additionally, the names of the variables as well as their type are presented in tabular format.
+In case the goal is to prepare a household-level file, the user first needs to select an identifier for the households or clusters. This select input termed `Select the household id variable` is initially empty. Once a variable has been selected from the list of all variables available from the input data, an additional select field called `Please select all variables that refer to households and not to individuals` appears next to it. In this input, one or more variables that are relevant for households only (that means, these variables feature the contain the same values for each household) can be selected. Once at least one additional variable has been chosen, a button labelled `Create household-input data` is shown below. Clicking on this button restricts the current data set to the selected variables and to only one (the first) record for each value of the cluster identificator. Finally, the page refreshes and the number of observations and variables in the updated, household level data set is shown. Additionally, the names of the variables as well as their type are presented in tabular format.
 
-**Merging an anonymized household level file**
+**Merge an anonymized household level file into the full dataset**
 
 In this case, the goal is to merge an already anonymized household level file to the currently available data file. This procedure is performed in two steps. In the first step, the user needs to click on the `Browse` button to select the anonymized file that should be merged. Once the `Open` button is clicked the file is uploaded immediately. We note here that it is only possible to upload data that have been exported as `.rdata`-files as described [here](#export_data). After pressing the button, the file will be uploaded to the system. If an error occured (e.g the selected data file does not contain a data frame or if the data set does not contain any variables that overlap with the current inputdata) an error message is shown and the user may upload a different file from disk.
 
@@ -249,18 +251,105 @@ In case that variables have been specified as numerical key variables when [sett
 
 - **Information Loss**
 
-The section on information loss is also only displayed if continuous key variables are available in the current problem instance. If this is the case, the values for utility measures `IL1` and the `Difference of Eigenvalues` are shown for both the original and (possibly) modified variables. For more information have a look at `?dUtility`.
+The section on information loss is also only displayed if continuous key variables are available in the current problem instance. If this is the case, the values for utility measures `IL1s` and the `Difference of Eigenvalues` are shown for both the original and (possibly) modified variables. For more information have a look at `?dUtility`.
 
 This sidebar is always updated whenever the sdc problem instance is modified which is the case when any anonymization procedure was applied. In some cases it is also extended, for example when categorical variables have been post randomized as explained in [here](#pram_simple) and [here](#pram_expert).
 
-### [tbw] View/Analyse existing sdcProblem {#view_analyze_existing_problem}
-Analyse the Problem
+### View/Analyse existing sdcProblem {#view_analyze_existing_problem}
+This page allows the user to view the current anonymization state. In the [Show Summary](show_sdc_summary) page, a lot of detailed information about the current problem instance is shown. After applying anonymization techniques, the GUI often changes to this page so that it is easily possible to check what has changed.
 
-#### [tbw] Show Summary {#show_sdc_summary}
+Furthermore, it is also possible to [explore the variables](#explore_sdc_vars) within the current problem or to modify the problem instance by [linking variables](#add_ghostvars) to some categorical key variables as described or to create random identification variables as it is described [here](#create_new_ids).
 
-- Selected ghost varibles (linked variables) 
-    - Variable(s) age are linked to key variable roof
 
+#### Show Summary {#show_sdc_summary}
+This page gives an overview about the current sdc problem. The information listed here is dynamic and is updated whenever a operation (or rather anonymization) technique has been applied to the problem instance. The summary of the problem is divided into the following subsections. However, not all of these sections are present at any time. The content of the possible parts will be explained in this chapter.
+
+- `Important variables and information`
+
+In this section, information about the dimension (number of records, number of variables) of the current data set in the active problem instance is shown. Additionally, the important variables in the sdcMicro are listed. These variables are:
+
+  - *Categorical key variables*: the selected categorical key variables
+  - *Numerical key variables*: the continuous key variables
+  - *Sampling weights*: variable containing sampling weights
+  - *Household/cluster Id*: variable holding household or cluster identificators
+  - *Deleted variables*: variables that have been deleted when setting up the current problem
+  - *Linked variables*: variables that are linked to categorical key variables
+
+We note that only the first entry (*Categorical key variables*) is always visible. The other entries are only shown when they were specified when the sdc problem was created as described [here](#setup_sdcproblem).  
+
+- `Computation time`
+
+This section prints the current time spent for computations. This refers to the time that was actually spent performing anonymization steps as well as setting up the problem instance. The time shown here does however not track the time that was spent in the GUI.
+
+- `Information on categorical key variables`
+
+In this part of the summary, some aggregation statistics on the categorical key variables are printed in tabular format. The table holds `4` columns and features a row for each categorical key variable of the current problem instance. The columns of this table are:
+
+- *keyVar*: the variable name of the key variable
+- *Number of categories*: the current number of categories
+- *Mean size*: the mean size of the existing categories
+- *Size of smallest*: The number of records in the smallest category
+
+The the last three columns, the same information based on the data set that was used to create the problem instance is shown in parenthesis. We note that `NA` values (missings) are counted as separate categories in this table.
+
+- `Risk-measures for categorical variables`
+
+In the section, the expected number and percentage of re-identifications in the population given the current set of categorical key variables taking account possibly specified sampling weights is printed. Furthermore, a robust measure is shown listing the number of observations whose individual risk is larger than the median of the individual risk distribution plus two times its *"Median Absolute Deviation"*, for details have a look at `?mad`.
+
+The same information is also listed for the initial data set that was used to create the current sdc problem.
+
+- `Information on k-Anonymity`
+
+In this section, a table showing the number and percentages of observations that violate `k`-anonymity is shown. The table has the following `3` columns:
+
+- *k-anonimity*: shows the parameter `k`
+- *Current data*:	the number and percentages of observations violating `k`-anonymity in the current (anonymized) data
+- *Original data*: the number and percentages of observations violating `k`-anonymity in the initial data set used to set up the problem instance.
+
+This table changes for example, if categorical key variables are [recoded](#recoding_sdcproblem), k-anonymity is [established](#kanon), postrandomization has been applied (which is described [here](#pram_simple) and [here](#pram_expert)) or values based in their individual risk value are [suppressed](#supp_highrisk).
+
+- `Postrandomization`
+
+In case, variables have been postrandomized, as described [here](#pram_simple) and [here](#pram_expert), the final transition matrices as are shown for each variable that has been post-randomized.
+
+At the end of this section, a table with three columns summarizing the postrandomization results is printed. The columns are:
+
+- *variable*: variable name of variable that has been postrandomized
+- *nrChanges*: the absolute number of value-changes.
+- percChanges*: the percentage of changed values
+
+For each variable that has been postrandomized, a row is added to this table.
+
+- `Compare numVars`
+
+In this section, a table showing important statistics of numerical key variables is printed. However, this section is only shown if at least one variable has been specified as numerical key variable when [setting up](#setup_sdcproblem) the current problem.  
+
+In case it is shown, the table has the following `8` columns.
+
+- *Variable*: the name of the numeric key variable
+- *Type*: this shows whether the values in the row refer to the current, possibly anonmyized variable (`modified`) or the initial data used to create the sdc problem (`orig`)
+- *Min.*: the minimum value of the variable
+- *1st Qu.*: the value at the first quantile
+- *Median*: the median value
+- *Mean*: the arithmetic mean
+- *3rd Qu.*: the value at the third quantile
+- *Max.*: the maximium value of the variable
+
+This table is updated, whenever a [numeric anonymization technique](#anonymize_numerical) is applied on at least one numeric key variable.
+
+- `Information on risk for numerical key variables`
+
+This part shows a global risk measure based on the numeric key variables for the current and the initial data set. This information is only visible if at least one variable has been specified as numerical key variable when [setting up](#setup_sdcproblem) the current problem.  
+
+The assumtion is that the re-identification risk based on numerical key variables is initially always between `0%` and `100%`. The more the numeric key variables are changed, the less the upper bound of this risk interval is. 
+
+- `Information loss` 
+
+The section on information loss (equally data utility) of numeric key variables is also only visible if numeric key variables are available in the current problem instance. If this is the case, the values of two measures, `IL1s` and the `difference of eigenvalues` are printed for the current, possibly modified numerical key variables as well as the initial data set used when the problem instance was created. For details on the measures, have a look at `?dataUtility`.
+
+- `Anonymization steps`
+
+At the bottom of this page, the anonymization steps that have been applied, are listed. This helps the user to get a quick overview, on what has already been done to protect the data. This section is expecially useful when previously [exported problem instances](#export_sdc_probleminstance) are [imported](#undo). If no techniques have been applied, this information is also returned.
 
 #### Explore variables {#explore_sdc_vars}
 This view allows to explore all variables in their current state in the sdc problem. The functionality is exactly the same as it was already described in [Explore variables](#explore_inputvars) for the exploration of variables in the originally uploaded micro data set. The only difference being that the analyzed variables are now those currently available in the active problem instance.
@@ -273,7 +362,7 @@ In order to link a variable to a key variable, one has to select the key variabl
 Once at least one variable has been chosen that should be linked, a button labelled `add 'Ghost'-variables` appears at the bottom of the page. Pressing this button adds the link to the current sdc problem and the view refreshes to the [Show Summary](#show_sdc_summary) page. On top of the page in the section `Important variables and information` the added link between the categorical key variable and the linked variables that has just been added is shown.
 
 #### Create new IDs {#create_new_ids}
-In this part of the GUI it is possible create a new random variable. To perform the task, the user needs to specify two inputs. In the first one, termed `Choose a suitable name of the new ID-variable`, the desired variable name of the new id needs to be entered. The second input is a drop down field, in which either `none` (the default value) or any variable available from the current sdc problem may be selected. In case a variable has been selected in this input, the newly generated variable features identical (but random) numbers for equal values of the selected variable.
+In this part of the GUI it is possible create a new random variable. To perform the task, the user needs to specify two inputs. In the first one, termed `Specify name for the new ID variable`, the desired variable name of the new id needs to be entered. The second input is a drop down field, in which either `none` (the default value) or any variable available from the current sdc problem may be selected. In case a variable has been selected in this input, the newly generated variable features identical (but random) numbers for equal values of the selected variable.
 
 When both inputs have been chosen, a button labelled `Add new ID-variable` appears at the bottom of the page. Pressing this button creates the new variable and adds it to the current sdc problem. The view finally updates and the [Show Summary](#show_sdc_summary) page is shown where the dimension of the data set have been updated.
 
@@ -313,7 +402,7 @@ Below this inputs, an interactive table is shown. This table has to be edited by
 Once the transition matrix is valid (eg. the values in all rows sum up to `100`), a button labelled `Postrandomize` appears at the bottom of the page. Pressing this button performs the postrandomization. Afterwards, the page refreshes and in the right sidebar a section called `Postrandomization` either appears or is extended. In this part of the sidebar, for each variable that has been postrandomized the number and percentages of value changes are listed.
 
 #### Supress values with high risks {#supp_highrisk}
-On this page it is possible to set values for the most-risky records to `NA` in a categorical key variable. To do so, the user needs to select a categorical key variable from the select input labelled `Select Key-Variable for Suppression` in which by default the first key variable is already selected. The next step is to set an appropriate threshold value which will be used to identify the *"risky"* records. These records are defined as those having an individual reidentification risk larger than the selected threshold. The threshold may be changed by updating the slider input termed `Individual Risk Threshold`. The range of this slider starts at `0` and the maximum value depends on the current sdc problem.
+On this page it is possible to set values for the most-risky records to `NA` in a categorical key variable. To do so, the user needs to select a categorical key variable from the select input labelled `Select Key-Variable for Suppression` in which by default the first key variable is already selected. The next step is to set an appropriate threshold value which will be used to identify the *"risky"* records. These records are defined as those having an individual reidentification risk larger than the selected threshold. The threshold may be changed by updating the slider input termed `Threshold for individual risk`. The range of this slider starts at `0` and the maximum value depends on the current sdc problem.
 
 Below this inputs, histogram showing the distribution of the individual risk values is plotted. In the graph, a vertical black line representing the current value of the threshold is also shown. Finally there is a button labelled `Supress {nr} values with high risk in variable {var}` is present. The labelling of this button is dynamic. It shows the number of records that would be set to missing in the selected variable for the current choice of the threshold. If this button is pressed, the records in the selected variable having individual risks above the threshold are set to `NA`. The view finally updates and the [Show Summary](#show_sdc_summary) page is shown where all measures have been recalculated.
 
@@ -392,7 +481,48 @@ If all options have been set, a button labelled `Apply rank-swapping` is shown a
 
 ## [tbw] Risk measures
 ### [tbw] Information of Risks
+
+- `What kind of results do you want to show?` -> 
+
+**Risk Measures**
+
+- Expected reidentifications
+
+We expect 9 re-identifications ( 0.2 %) in the anonymized data set.
+
+In the original dataset we expected 9 ( 0.2 %) re-identifications.
+
+- Expected reidentifications taking cluster-information into account
+
+In this case, we expect to have 44.45 ( 0.97 %) re-identifications given the anonymized data set. For the original data, we expected to have 44.45 ( 0.97 %)) re-identifications.
+
+- Records with large individual reidentification risks
+
+The following (robust) measure calculates the number of records having an individual risk that is larger than the median of all indiviual risks plus two times its Median Absolute Deviation or having an absolute value larger than 0.1 . 0 observations ( 0 in the original data) have a high risk according to this measure.
+
+**Risky Observations** 
+
+Display risky-observations in a Table
+
+`Minimum risk for to be shown in the table` -> slider: 0 and max individual risk
+
+- interactive table with all categorical key variables, fk, Fk and indivRisk
+
+
+**Plot of risks**
+
+- Histogram showing distribution of individual reidentification-risks
+
+
+
 ### [tbw] Suda2 risk-measure
+
+Suda2 scores can only be computed for scenarios with >= 3 categorical key variables! 
+
+else 
+
+
+
 ### [tbw] l-Diversity risk-measure
 
 ## [tbw] Visualizations
