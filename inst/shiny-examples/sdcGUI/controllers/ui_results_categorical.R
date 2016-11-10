@@ -276,6 +276,7 @@ output$ui_rescat_violating_kanon <- renderUI({
       return(NULL)
     }
     df <- cbind(get_origData()[ii, get_keyVars()], risks[ii,])
+    df$risk <- formatC(df$risk, format="f", digits=3)
     df[order(df$fk),]
   })
 

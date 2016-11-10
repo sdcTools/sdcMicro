@@ -549,7 +549,10 @@ Recoding categorical key variables by combining levels leads to information loss
 
 The table is interactive and in case of many key variables, it can be sorted by clicking on the small arrow signs that are shown next to the column names.
 
-### [tbw] Obs violating k-Anon
+### Obs violating k-Anon
+On this page it is possible to find out how many records in the anonymized dataset violate `k`-anonymity for different choices of `k`. On this page there is a slider input labelled `Select value for 'k'` that can take values between `1` and `50`. Dragging the slider with the mouse or changing the value of the slider with the arrow-keys on the keyboard leads to a recalculation of the number and percentage of observations that violate `k`-anonymity for the current choice of `k`. This information is printed on the screen below the slider. 
+
+Furthermore, a table listing all the records in the dataset that violate `k`-anonymity are printed. For these observations, the interactive table contains all categorical key variables ere you can browse the records that violate k-anonymity for the selected level of `k`. In this table, all categorical key variables are shown as well as `risk` (the individual risk), `fk` (the frequency this combination of value in the key vars occurs in the data) and  `Fk` (the estimated frequency of this combination of values in the keyvars in the population taking sampling weights into account) are shown.
 
 ## [tbw] Numerical Risk Measures
 ### [tbw] Compare summary statistics
