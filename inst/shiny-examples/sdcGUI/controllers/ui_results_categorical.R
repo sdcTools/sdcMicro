@@ -110,6 +110,8 @@ output$ui_rescat_recodes <- renderUI({
           mean.size.orig=res_o[[i]][2], mean.size.mod=res_m[[i]][2],
           min.size.orig=res_o[[i]][3], min.size.mod=res_m[[i]][3]))
     }
+    out$mean.size.orig <- formatC(out$mean.size.orig, format="f", digits=3)
+    out$mean.size.mod <- formatC(out$mean.size.mod, format="f", digits=3)
     out
   }, rownames=FALSE, options = list(scrollX=TRUE, pageLength = 10, searching=FALSE))
 
