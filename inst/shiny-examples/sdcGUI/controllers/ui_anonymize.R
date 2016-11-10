@@ -21,7 +21,7 @@ choices_anon_menu <- reactive({
     "Microaggregation",
     "Adding Noise",
     "Rank-Swapping")
-  if (length(get_numVars()==0)) {
+  if (length(get_numVars())==0) {
     c_num <- c_num[1]
   }
   df3 <- data.frame(name=c_num, group=3, header=NA, stringsAsFactors=FALSE)
