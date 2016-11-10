@@ -72,12 +72,33 @@ shinyServer(function(session, input, output) {
   # read microdata
   code_readMicrodata <- reactive({
     file1 <- fixUploadedFilesNames(input$file1)
+
+    val <- obj$cur_selection_import
+    if (val=="btn_import_data_1") {
+      dattype <- "rdf"
+    }
+    if (val=="btn_import_data_2") {
+      dattype <- "R"
+    }
+    if (val=="btn_import_data_3") {
+      dattype <- "spss"
+    }
+    if (val=="btn_import_data_4") {
+      dattype <- "sas"
+    }
+    if (val=="btn_import_data_5") {
+      dattype <- "csv"
+    }
+    if (val=="btn_import_data_6") {
+      dattype <- "stata"
+    }
+
     cmd <- paste0("res <- readMicrodata(")
     cmd <- paste0(cmd, "path=",dQuote(normalizePath(file1$datapath,winslash = "/")))
-    cmd <- paste0(cmd, ", type=",dQuote(input$dat_type))
+    cmd <- paste0(cmd, ", type=",dQuote(dattype))
     cmd <- paste0(cmd, ", convertCharToFac=",input$rb_convert_c_to_f)
     cmd <- paste0(cmd, ", drop_all_missings=",input$rb_drop_all_missings)
-    if (input$dat_type=="csv") {
+    if (dattype=="csv") {
       cmd <- paste0(cmd, ", header=",input$import_csv_header)
       cmd <- paste0(cmd, ", sep=",dQuote(input$import_csv_sep))
     }
