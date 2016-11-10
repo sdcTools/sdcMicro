@@ -340,6 +340,7 @@ shinyServer(function(session, input, output) {
     type <- dataTypes()
     vv <- obj$setupval_inc
     useAsKey <- shinyValue(paste0("setup_key_",vv,"_"), nc)
+    useAsPram <- shinyValue(paste0("setup_pram_",vv,"_"), nc)
     useAsWeight <- shinyValue(paste0("setup_weight_",vv,"_"), nc)
     useAsClusterID <- shinyValue(paste0("setup_cluster_",vv,"_"), nc)
     deleteVariable <- shinyValue(paste0("setup_remove_",vv,"_"), nc)
@@ -374,6 +375,14 @@ shinyServer(function(session, input, output) {
       hhId <- NULL
     }
 
+    # pram vars
+    ind_p <- which(useAsPram==TRUE)
+    if (length(ind_p)>0) {
+      pV <- vars[ind_p]
+    } else {
+      pV <- NULL
+    }
+
     # numeric key variables
     ind_nv <- which(useAsKey=="Cont.")
     if (length(ind_nv)>0) {
@@ -388,15 +397,6 @@ shinyServer(function(session, input, output) {
       excludeVars <- vars[ind_d]
     } else {
       excludeVars <- NULL
-    }
-
-    # pram vars as all non-used factor-variables
-    ind_p <- setdiff(1:length(vars), c(ind_h, ind_kv, ind_d))
-    ind_p <- ind_p[which(type[ind_p]=="factor")]
-    if (length(ind_p)>0) {
-      pV <- vars[ind_p]
-    } else {
-      pV <- NULL
     }
 
     # create stratification variable if more than 1 variable is listed!

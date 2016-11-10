@@ -184,7 +184,7 @@ pramVars <- reactive({
   if (is.null(curObj)) {
     return(NULL)
   }
-  return(setdiff(unique(c(get_all_factorvars_name(), get_pramVars_names())), curObj@pram$summary$variable))
+  return(get_pramVars_names())
 })
 
 get_strataVar <- reactive({

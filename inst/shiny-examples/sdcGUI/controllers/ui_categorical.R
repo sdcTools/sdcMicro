@@ -140,7 +140,8 @@ output$ui_pram_expert <- renderUI({
   if (length(pramVars())==0) {
     return(fluidRow(
       column(12, h4("Postrandomization of categorical variables", align="center")),
-      column(12, h5("No factor variables available in the data, or all possible variables already have been post-randomized!", align="center"))
+      column(12, h5("No variables have been specified for postrandomization during the initialization of the current problem or
+        all possible variables already have been post-randomized!", align="center"))
     ))
   }
 
@@ -218,7 +219,8 @@ output$ui_pram_simple <- renderUI({
   if (length(pramvars)==0) {
     return(fluidRow(
       column(12, h4("Postrandomization of categorical variables", align="center")),
-      column(12, h5("No factor variables available in the data, or all possible variables already have been post-randomized!", align="center"))
+      column(12, h5("No variables have been specified for postrandomization during the initialization of the current problem or
+        all possible variables already have been post-randomized!", align="center"))
     ))
   }
 

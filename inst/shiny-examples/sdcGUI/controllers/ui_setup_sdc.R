@@ -502,6 +502,7 @@ sdcData <- reactive({
     "Variable Name"=vars,
     Type=dataTypes(),
     Key=shinyInput(radioButtons, length(vars), paste0("setup_key_",vv,"_"), choices=c("No", "Cat.", "Cont."), inline=TRUE),
+    Pram=shinyInput(checkboxInput, length(vars), paste0("setup_pram_",vv,"_"), value=FALSE, width="20px"),
     Weight=shinyInput(checkboxInput, length(vars), paste0("setup_weight_",vv,"_"), value=FALSE, width="20px"),
     Remove=shinyInput(checkboxInput, length(vars), paste0("setup_remove_",vv,"_"), value=FALSE, width="20px"),
     "Cluster ID"=shinyInput(checkboxInput, length(vars), paste0("setup_cluster_",vv,"_"), value=FALSE, width="20px")
@@ -531,6 +532,7 @@ output$setupbtn <- renderUI({
   n <- length(allVars())
   types <- dataTypes()
   useAsKeys <- shinyValue(paste0("setup_key_",vv,"_"), n)
+  useAsPram <- shinyValue(paste0("setup_pram_",vv,"_"), n)
   useAsWeight <- shinyValue(paste0("setup_weight_",vv,"_"), n)
   useAsClusterID <- shinyValue(paste0("setup_cluster_",vv,"_"), n)
   deleteVariable <- shinyValue(paste0("setup_remove_",vv,"_"), n)
@@ -552,6 +554,25 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     txt <- paste0("Continuous key variables have to be of type ",dQuote("numeric")," or type ",dQuote("integer"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
     return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+  }
+
+  ## pram
+  ii <- which(useAsPram)
+  if (length(ii)>0) {
+    # selected pram vars must not be key-vars
+    if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
+      return(myErrBtn("tmp", label="Error: Selected pram variables are also key-variables"))
+    }
+    if (any(useAsWeight[ii] == TRUE)) {
+      return(myErrBtn("tmp", label="Error: Selected pram variable is also the weight variable"))
+    }
+    if (any(useAsClusterID[ii] == TRUE)) {
+      return(myErrBtn("tmp", label="Error: Selected pram variable is also the cluster-id variable"))
+    }
+    kk <- which(types[ii] != "factor")
+    if (length(kk)>0) {
+      return(myErrBtn("tmp", label="Error: Selected pram variable(s) must be of type 'factor'"))
+    }
   }
 
   ## weight-variables
@@ -591,6 +612,9 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be key variables"))
+    }
+    if (any(useAsPram[ii]==TRUE)) {
+      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be pram variables"))
     }
     if (any(useAsWeight[ii]==TRUE)) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the weight variable"))
