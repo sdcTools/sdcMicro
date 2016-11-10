@@ -146,6 +146,23 @@ fixUploadedFilesNames <- function(x) {
   x
 }
 
+genObserver_menus <- function(pat="btn_results_", n=1, updateVal) {
+  res <- paste0('observeEvent(input$',pat,n,', {
+    curid <- "',pat,n,'"
+    nn <- names(input)
+    nn <- nn[grep("',pat,'",nn)]
+    nn <- setdiff(nn, curid)
+    for (btnid in nn) {
+      updateButton(session, btnid, style="default")
+    }
+    obj$',updateVal,' <- "',pat,n,'"
+    updateButton(session, curid, style="primary")
+  });
+  ')
+  res
+}
+
+
 myActionButton <- function(inputId, label, btn.style="", css.class="") {
   if ( btn.style %in% c("primary","info","success","warning","danger","inverse","link")) {
     btn.css.class <- paste("btn", btn.style, sep="-")
@@ -343,6 +360,14 @@ obj$lastscriptexport <- NULL # required to show the last saved script
 obj$hhdata <- NULL # household-file data required for merging
 obj$hhdata_applied <- FALSE # TRUE, if mergeHouseholdData() has been applied
 obj$hhdata_selected <- FALSE # TRUE, if selectHouseholdData() has been applied
+
+# stores the current selection of the relevant navigation menus
+obj$cur_selection_results <- "btn_results_1" # navigation for Results/Risks
+obj$cur_selection_exports <- "btn_export_results_1" # navigation for export
+obj$cur_selection_script <- "btn_export_script_1" # navigation for reproducibility/script
+obj$cur_selection_microdata <- "btn_menu_microdata_1" # navigation for microdata
+obj$cur_selection_import <- "btn_import_data_1" # navigation for import
+obj$cur_selection_anon <- "btn_sel_anon_1" # navigation for anonymization
 
 # the path, where all output will be saved to
 if (file.access(getwd(), mode=2)==0) {

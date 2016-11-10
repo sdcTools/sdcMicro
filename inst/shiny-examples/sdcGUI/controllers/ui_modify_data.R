@@ -775,37 +775,36 @@ output$ui_hierarchical_data <- renderUI({
 
 output$ui_modify_data_main <- renderUI({
   out <- NULL
-  if (!is.null(input$sel_moddata)) {
-    if (input$sel_moddata=="show_microdata") {
-      out <- list(out, uiOutput("ui_show_microdata"))
-    }
-    if (input$sel_moddata=="sample_microdata") {
-      out <- list(out, uiOutput("ui_sample_microdata"))
-    }
-    if (input$sel_moddata=="view_var") {
-      out <- list(out, uiOutput("ui_view_var"))
-    }
-    if (input$sel_moddata=="reset_var") {
-      out <- list(out, uiOutput("ui_reset_var"))
-    }
-    if (input$sel_moddata=="set_to_na") {
-      out <- list(out, uiOutput("ui_set_to_na"))
-    }
-    if (input$sel_moddata=="recode_to_factor") {
-      out <- list(out, uiOutput("ui_modify_recode_to_factor"))
-    }
-    if (input$sel_moddata=="recode_to_numeric") {
-      out <- list(out, uiOutput("ui_modify_recode_to_numeric"))
-    }
-    if (input$sel_moddata=="modify_factor") {
-      out <- list(out, uiOutput("ui_modify_change_factor"))
-    }
-    if (input$sel_moddata=="createstratvar") {
-      out <- list(out, uiOutput("ui_modify_create_stratvar"))
-    }
-    if (input$sel_moddata=="deal_with_hierarchical_data") {
-      out <- list(out, uiOutput("ui_hierarchical_data"))
-    }
+  val <- obj$cur_selection_microdata
+  if (val=="btn_menu_microdata_1") {
+    return(uiOutput("ui_show_microdata"))
+  }
+  if (val=="btn_menu_microdata_2") {
+    return(uiOutput("ui_view_var"))
+  }
+  if (val=="btn_menu_microdata_3") {
+    return(uiOutput("ui_reset_var"))
+  }
+  if (val=="btn_menu_microdata_4") {
+    return(uiOutput("ui_sample_microdata"))
+  }
+  if (val=="btn_menu_microdata_5") {
+    return(uiOutput("ui_modify_recode_to_factor"))
+  }
+  if (val=="btn_menu_microdata_6") {
+    return(uiOutput("ui_modify_recode_to_numeric"))
+  }
+  if (val=="btn_menu_microdata_7") {
+    return(uiOutput("ui_modify_change_factor"))
+  }
+  if (val=="btn_menu_microdata_8") {
+    return(uiOutput("ui_modify_create_stratvar"))
+  }
+  if (val=="btn_menu_microdata_9") {
+    return(uiOutput("ui_set_to_na"))
+  }
+  if (val=="btn_menu_microdata_10") {
+    return(uiOutput("ui_hierarchical_data"))
   }
   out
 })
@@ -815,8 +814,11 @@ output$ui_modify_data_sidebar_left <- renderUI({
     if (is.null(inputdata())) {
       return(NULL)
     }
-    btn <- myActionButton("btn_reset_inputdata_xx",label=("Reset inputdata"), "warning", css.class="btn-xs")
-    btn
+    btn <- bsButton("btn_reset_inputdata_xx",label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small")
+    fluidRow(
+      column(12, h4("Reset the inputdata"), align="center"),
+      column(12, btn)
+    )
   })
 
   choices_modifications <- reactive({
@@ -837,18 +839,31 @@ output$ui_modify_data_sidebar_left <- renderUI({
     return(cc)
   })
 
-  rb <- radioButtons("sel_moddata", label=h5("What do you want to do?"),
-    choices=choices_modifications(),
-    selected=input$sel_moddata, width="100%")
+  output$ui_sel_microdata_btns <- renderUI({
+    cc <- choices_modifications()
+    out <- fluidRow(column(12, h4("What do you want to do?"), align="center"))
+    for (i in 1:length(cc)) {
+      if (i==1) {
+        style <- "primary"
+      } else {
+        style <- "default"
+      }
+      out <- list(out, fluidRow(
+        column(12, bsButton(paste0("btn_menu_microdata_",i), label=names(cc)[i], block=TRUE, size="extra-small", style=style), tags$br())))
+    }
+    # required observers that update the color of the active button!
+    eval(parse(text=genObserver_menus(pat="btn_menu_microdata_", n=1:10, updateVal="cur_selection_microdata")))
+    out
+  })
+
   fluidRow(
-    column(12, h5("Reset the inputdata")),
     column(12, uiOutput("btn_reset_inputdata")),
-    column(12, rb)
+    column(12, uiOutput("ui_sel_microdata_btns"))
   )
 })
 
 output$ui_modify_data <- renderUI({
   fluidRow(
-    column(3, uiOutput("ui_modify_data_sidebar_left")),
-    column(9, uiOutput("ui_modify_data_main")))
+    column(2, uiOutput("ui_modify_data_sidebar_left")),
+    column(10, uiOutput("ui_modify_data_main")))
 })

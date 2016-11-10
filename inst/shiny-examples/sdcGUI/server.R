@@ -744,7 +744,7 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     obj$inp_sel_viewvar1 <- input$sel_reset_microvars[1]
-    updateSelectInput(session, "sel_moddata",selected="view_var")
+    obj$cur_selection_microdata <- "btn_menu_microdata_2"
   })
   # undo-button
 
@@ -766,11 +766,9 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     removeModal(session=session) # remove the modal
-    updateSelectInput(session, "sel_anonymize", selected = "manage_sdcProb")
+    obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
     updateNavbarPage(session, "mainnav", selected="Anonymize")
   })
-
-
 
   # export data
   observeEvent(input$b_export, {
@@ -799,8 +797,8 @@ shinyServer(function(session, input, output) {
       vv <- input$rb_num_glrec
     }
     obj$inp_sel_viewvar1 <- vv
-    # Switch to overview-page
-    updateSelectInput(session, inputId="sel_moddata", selected="view_var")
+    # Switch to variable-view page
+    obj$cur_selection_microdata <- "btn_menu_microdata_2"
   })
   # recode to factor
   observeEvent(input$btn_recode_to_numeric, {
@@ -812,9 +810,8 @@ shinyServer(function(session, input, output) {
 
     # change reactive var so that overview-page shows the correct variable
     obj$inp_sel_viewvar1 <- input$sel_to_num_var[1]
-
-    # Switch to overview-page
-    updateSelectInput(session, inputId="sel_moddata", selected="view_var")
+    # Switch to variable-view page
+    obj$cur_selection_microdata <- "btn_menu_microdata_2"
   })
   # setup the sdcMicroObj
   observeEvent(input$btn_setup_sdc, {
@@ -858,13 +855,7 @@ shinyServer(function(session, input, output) {
       radioButtons(id, label=h5(paste("Apply k-Anon to all subsets of",i,"key variables?")),
         selected=input[[id]], width="100%", inline=TRUE, choices=c("No", "Yes"))
     })
-
-    updateRadioButtons(session, "sel_sdcresults_cat", choices=choices_anon_cat(), selected="recode")
-    updateRadioButtons(session, "sel_sdcresults_num", choices=choices_anon_num(), selected="topbot_num")
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
-
-
+    obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
   # add ghost-vars to an existing sdcMicroObj
   observeEvent(input$btn_addGhostVars, {
@@ -878,8 +869,7 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
+    obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
   # add new random IDs to an existing sdcMicroObj
   observeEvent(input$btn_addRandID, {
@@ -893,8 +883,7 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- paste("Create new ID-variable:", input$txt_randid_newid)
       obj$anon_performed <- c(obj$anon_performed, "Create a new random ID-variable")
     }
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
+    obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
 
   ## show confirmation modal window before resetting the current problem
@@ -919,8 +908,7 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     removeModal(session=session) # remove the modal
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
+    obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
 
   ## show confirmation modal window before resetting inputdata
@@ -976,7 +964,8 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     obj$inp_sel_viewvar1 <- input$inp_vname_strata
-    updateSelectInput(session, "sel_moddata", selected="view_var")
+    # Switch to variable-view page
+    obj$cur_selection_microdata <- "btn_menu_microdata_2"
   })
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_factor, {
@@ -991,8 +980,8 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()
     res <- code_subsetMicrodata()
     runEvalStrMicrodat(cmd=res$cmd, comment=res$comment)
-    updateSelectInput(session, "sel_moddata", selected = "show_microdata")
-    updateNavbarPage(session, "mainnav", selected="Microdata")
+    # Switch to view microdata
+    obj$cur_selection_microdata <- "btn_menu_microdata_1"
   })
   # event to set values to na in inputdata
   observeEvent(input$btn_set_to_na, {
@@ -1002,7 +991,8 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     obj$inp_sel_viewvar1 <- input$sel_na_suppvar[1]
-    updateSelectInput(session, "sel_moddata", selected="view_var")
+    # Switch to variable-view page
+    obj$cur_selection_microdata <- "btn_menu_microdata_2"
   })
   ### anonymization methods (categorical) ###
   # pram() with given transition-matrix
@@ -1117,8 +1107,7 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
+    obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
   # event to update/modify an existing factor variable
   observeEvent(input$btn_update_recfac, {
@@ -1179,8 +1168,7 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
+    obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
   # addNoise()
   observeEvent(input$btn_noise, {
@@ -1197,8 +1185,7 @@ shinyServer(function(session, input, output) {
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     progress$set(message="performing addNoise() (this might take a long time)...", value = 1)
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
+    obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
   # rankSwap()
   observeEvent(input$btn_rankswap, {
@@ -1216,8 +1203,7 @@ shinyServer(function(session, input, output) {
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
     progress$set(message="performing rankSwap() (this might take a long time)...", value = 1)
-    updateRadioButtons(session, "sel_anonymize",choices=choices_anonymize(), selected="manage_sdcProb")
-    updateRadioButtons(session, "sel_sdcresults_manage",choices=choices_anon_manage(), selected="sdcObj_summary")
+    obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
 
   ### risk-measurements ###
@@ -1312,7 +1298,7 @@ shinyServer(function(session, input, output) {
           obj[[nn]] <- res[[nn]]
         }
         obj$last_error <- NULL
-        updateSelectInput(session, "sel_anonymize", selected="manage_sdcProb")
+        obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
         updateNavbarPage(session, "mainnav", selected="Anonymize")
       }
     }
@@ -1336,7 +1322,7 @@ shinyServer(function(session, input, output) {
         }
         obj$last_error <- NULL
         rm(res)
-        updateSelectInput(session, "sel_anonymize", selected="manage_sdcProb")
+        obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
         updateNavbarPage(session, "mainnav", selected="Anonymize")
       }
     }

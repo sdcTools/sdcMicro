@@ -131,23 +131,27 @@ output$ui_export_main <- renderUI({
   if (is.null(sdcObj())) {
     return(list(out, noSdcProblem(uri="ui_export_data")))
   }
-
-  if (!is.null(input$sel_what_export)) {
-    if (input$sel_what_export=="exp_data") {
-      out <- list(out, uiOutput("ui_export_data"))
-    }
-    if (input$sel_what_export=="report") {
-      out <- list(out, uiOutput("ui_export_report"))
-    }
+  val <- obj$cur_selection_exports
+  if (val=="btn_export_results_1") {
+    return(uiOutput("ui_export_data"))
+  }
+  if (val=="btn_export_results_2") {
+    return(uiOutput("ui_export_report"))
   }
   out
 })
 
 output$ui_export_sidebar_left <- renderUI({
-  rb <- radioButtons("sel_what_export", label=h4("What do you want to export?"),
-    choices=c("Anonymized Data"="exp_data","Anonymization Report"="report"),
-    selected=input$sel_what_export, width="100%")
-  fluidRow(column(12, rb))
+  output$ui_sel_export_btns <- renderUI({
+    fluidRow(
+      column(12, h4("What do you want to export?"), align="center"),
+      column(12, bsButton("btn_export_results_1", "Anonymized Data", block=TRUE, size="extra-small", style="primary"), tags$br()),
+      column(12, bsButton("btn_export_results_2", "Anonymization Report", block=TRUE, size="extra-small", style="default"), tags$br())
+    )
+  })
+  # required observers that update the color of the active button!
+  eval(parse(text=genObserver_menus(pat="btn_export_results_", n=1:2, updateVal="cur_selection_exports")))
+  return(uiOutput("ui_sel_export_btns"))
 })
 
 output$ui_export <- renderUI({

@@ -1,33 +1,31 @@
 output$ui_rescat_riskinfo <- renderUI({
-  output$rb_riskselection <- renderUI({
+  output$ui_rescat_selection <- renderUI({
     radioButtons("rb_riskselection", label=h5("What kind of results do you want to show?"),
       choices=c("Risk Measures"="ui_rescat_riskymeasures", "Risky Observations"="ui_rescat_riskyobs", "Plot of risks"="ui_rescat_riskplot"),
       selected=input$rb_riskselection, inline=TRUE, width="100%")
   })
-  output$ui_rescat_riskymeasures <- renderUI({
-    riskinfo <- measure_riskComp()
-
-    out <- list(out, fluidRow(
-      column(12, p(code(riskinfo$s),"observations (",code(riskinfo$sorig),"in the original data) have an individual re-identification risk level higher than
+  output$rescat_riskymeasures <- renderUI({
+    rI <- measure_riskComp()
+    out <- fluidRow(
+      column(12, p(code(rI$s),"observations (",code(rI$sorig),"in the original data) have an individual re-identification risk level higher than
       the set benchmark value of",code(0.1),"or having a risk being larger than median of the risk distribution plus two times
       its",tags$i("Median Absolute Deviation."),"The individual re-identification risk is computed based on the selected categorical key
       variables and reflects both the frequencies of the keys in the data and the individual sampling weights."), align="center"),
-      column(12, p("Based on the individual re-identification risk, we expect",code(riskinfo$exp_reident_m),"re-identifications (",code(paste0(riskinfo$exp_reident_mp,"%")),")
-      in the anonymized data set. In the original dataset we expected",code(riskinfo$exp_reident_o),"(",code(paste0(riskinfo$exp_reident_op,"%")),") re-identifications."), align="center")
-    ))
-
-    if (riskinfo$hierrisk) {
+      column(12, p("Based on the individual re-identification risk, we expect",code(rI$exp_reident_m),"re-identifications (",code(paste0(rI$exp_reident_mp,"%")),")
+      in the anonymized data set. In the original dataset we expected",code(rI$exp_reident_o),"(",code(paste0(rI$exp_reident_op,"%")),") re-identifications."), align="center")
+    )
+    if (rI$hierrisk) {
       out <- list(out, fluidRow(
         column(12, h5("Expected reidentifications taking cluster-information into account"), align="center"),
-        column(12, p("If cluster-information is taken into account, we expect",code(riskinfo$hier_exp_m),
-          "(",code(paste0(riskinfo$hier_exp_mp,"%")),") re-identifications in the anonymized data set. In the original dataset we expected",
-          code(riskinfo$hier_exp_o),"(",code(paste0(riskinfo$hier_exp_op,"%")),") re-identifications."), align="center")))
+        column(12, p("If cluster-information is taken into account, we expect",code(rI$hier_exp_m),
+          "(",code(paste0(rI$hier_exp_mp,"%")),") re-identifications in the anonymized data set. In the original dataset we expected",
+          code(rI$hier_exp_o),"(",code(paste0(rI$hier_exp_op,"%")),") re-identifications."), align="center")))
     }
     out
   })
 
   # table and slider observation with risk > than specified threshold
-  output$ui_rescat_riskyobs <- renderUI({
+  output$rescat_riskyobs <- renderUI({
     # slider for minimal risk
     output$riskyobs_slider <- renderUI({
       sliderInput("sl_riskyobs", label=h5("Minimum risk for to be shown in the table"), min=0, max=max(get_risk()$risk), value=0, width="100%")
@@ -58,7 +56,7 @@ output$ui_rescat_riskinfo <- renderUI({
   })
 
   # display a risk-plot
-  output$ui_rescat_riskplot <- renderUI({
+  output$rescat_riskplot <- renderUI({
     output$plot_risk <- renderPlot({
       if (is.null(sdcObj())) {
         return(NULL)
@@ -74,16 +72,16 @@ output$ui_rescat_riskinfo <- renderUI({
   out <- fluidRow(
     column(12, h4("Risk measures"), align="center"),
     column(12, p("The output on this page is based on the categorical key variables in the current problem."), align="center"),
-    column(12, uiOutput("rb_riskselection"), align="center"))
+    column(12, uiOutput("ui_rescat_selection"), align="center"))
   if (!is.null(input$rb_riskselection)) {
-    if (input$rb_riskselection=="ui_rescat_riskymeasures") {
-      out <- list(out, uiOutput("ui_rescat_riskymeasures"))
+    if (input$rb_riskselection=="riskymeasures") {
+      out <- list(out, uiOutput("rescat_riskymeasures"))
     }
-    if (input$rb_riskselection=="ui_rescat_riskyobs") {
-      out <- list(out, uiOutput("ui_rescat_riskyobs"))
+    if (input$rb_riskselection=="riskyobs") {
+      out <- list(out, uiOutput("rescat_riskyobs"))
     }
-    if (input$rb_riskselection=="ui_rescat_riskplot") {
-      out <- list(out, uiOutput("ui_rescat_riskplot"))
+    if (input$rb_riskselection=="riskplot") {
+      out <- list(out, uiOutput("rescat_riskplot"))
     }
   }
   out

@@ -1,87 +1,73 @@
 output$ui_results_main <- renderUI({
   out <- NULL
-  if (!is.null(input$sel_results)) {
-    ## Categorical (defined in controller/ui_results_categorical.R)
-    if (input$sel_results=="riskinfo") {
-      out <- list(out, uiOutput("ui_rescat_riskinfo"))
-    }
-    if (input$sel_results=="ldiv") {
-      out <- list(out, uiOutput("ui_rescat_ldiv"))
-    }
-    if (input$sel_results=="suda2") {
-      out <- list(out, uiOutput("ui_rescat_suda2"))
-    }
-    if (input$sel_results=="mosaicplot") {
-      out <- list(out, uiOutput("ui_rescat_mosaicplot"))
-    }
-    if (input$sel_results=="tabulations") {
-      out <- list(out, uiOutput("ui_bivariate_tab"))
-    }
-    if (input$sel_results=="recodes") {
-      out <- list(out, uiOutput("ui_rescat_recodes"))
-    }
-    if (input$sel_results=="riskyobs") {
-      out <- list(out, uiOutput("ui_rescat_riskyobs"))
-    }
-    if (input$sel_results=="violating_kanon") {
-      out <- list(out, uiOutput("ui_rescat_violating_kanon"))
-    }
-    ## Numerical (defined in controller/ui_results_numerical.R)
-    if (input$sel_results=="numrisk") {
-      out <- list(out, uiOutput("ui_resnum_numrisk"))
-    }
-    if (input$sel_results=="infoloss") {
-      out <- list(out, uiOutput("ui_resnum_infoloss"))
-    }
-    if (input$sel_results=="comparison") {
-      out <- list(out, uiOutput("ui_resnum_comparison"))
-    }
+  val <- obj$cur_selection_results
+  ## Categorical (defined in controller/ui_results_categorical.R)
+  if (val=="btn_results_1") {
+    return(uiOutput("ui_rescat_riskinfo"))
+  }
+  if (val=="btn_results_2") {
+    return(uiOutput("ui_rescat_suda2"))
+  }
+  if (val=="btn_results_3") {
+    return( uiOutput("ui_rescat_ldiv"))
+  }
+
+  if (val=="btn_results_4") {
+    return(uiOutput("ui_rescat_mosaicplot"))
+  }
+  if (val=="btn_results_5") {
+    return(uiOutput("ui_bivariate_tab"))
+  }
+  if (val=="btn_results_6") {
+    return(uiOutput("ui_rescat_recodes"))
+  }
+  if (val=="btn_results_7") {
+    return(uiOutput("ui_rescat_violating_kanon"))
+  }
+  ## Numerical (defined in controller/ui_results_numerical.R)
+  if (val=="btn_results_8") {
+    return(uiOutput("ui_resnum_comparison"))
+  }
+  if (val=="btn_results_9") {
+    return(uiOutput("ui_resnum_numrisk"))
+  }
+  if (val=="btn_results_10") {
+    return(uiOutput("ui_resnum_infoloss"))
   }
   out
 })
 
 output$ui_results_sidebar_left <- renderUI({
-  # choices for dropdown-menus in tab 'View/Analyse results'
-  choices_results <- reactive({
-    if (is.null(input$rb_results_type)) {
-      return(NULL)
-    }
-    if (input$rb_results_type=="res_risk") {
-      choices <- c(
-        "Information of Risks"="riskinfo",
-        "Suda2 risk-measure"="suda2",
-        "l-Diversity risk-measure"="ldiv")
-    }
-    if (input$rb_results_type=="res_vis") {
-      choices <- c(
-        "Histogram/Mosaicplot"="mosaicplot",
-        "Tabulations"="tabulations",
-        "Information Loss"="recodes",
-        "Obs violating k-Anon"="violating_kanon")
-    }
-    if (input$rb_results_type=="res_numrisk") {
-      choices <- c(
-        "Compare summary statistics"="comparison",
-        "Disclosure Risk"="numrisk",
-        "Information Loss"="infoloss")
-    }
-    choices
+  output$ui_sel_resbtns_cat <- renderUI({
+    fluidRow(
+      column(12, h4("Risk measures"), align="center"),
+      column(12, bsButton("btn_results_1", "Information of risks", block=TRUE, size="extra-small", style="primary"), tags$br()),
+      column(12, bsButton("btn_results_2", "Suda2 risk-measure", block=TRUE, size="extra-small", style="default"), tags$br()),
+      column(12, bsButton("btn_results_3", "l-Diversity risk-measure", block=TRUE, size="extra-small", style="default"), tags$br())
+    )
   })
-  output$ui_sel_results <- renderUI({
-    if (is.null(input$sel_results)) {
-      sel <- choices_results()[1]
-    } else {
-      sel <- input$sel_results
-    }
-    radioButtons("sel_results", label=h5("Choose a measure/result"),
-      choices=choices_results(),selected=sel, width="100%")
+  output$ui_sel_resbtns_vis <- renderUI({
+    fluidRow(
+      column(12, h4("Visualizations"), align="center"),
+      column(12, bsButton("btn_results_4", "Histogram/Mosaicplot", block=TRUE, size="extra-small", style="default"), tags$br()),
+      column(12, bsButton("btn_results_5", "Tabulations", block=TRUE, size="extra-small", style="default"), tags$br()),
+      column(12, bsButton("btn_results_6", "Information Loss", block=TRUE, size="extra-small", style="default"), tags$br()),
+      column(12, bsButton("btn_results_7", "Obs violating k-Anon", block=TRUE, size="extra-small", style="default"), tags$br())
+    )
   })
-  rb1 <- radioButtons("rb_results_type", label=h5("What kind of results do you want to display?"),
-    choices=c("Risk measures"="res_risk", "Visualizations"="res_vis", "Numerical Risk Measures"="res_numrisk"),
-    selected=input$rb_results_type, inline=FALSE)
-  fluidRow(
-    column(12, rb1),
-    column(12, uiOutput("ui_sel_results")))
+  output$ui_sel_resbtns_num <- renderUI({
+    fluidRow(
+      column(12, h4("Numerical Risk Measures"), align="center"),
+      column(12, bsButton("btn_results_8", "Compare summary statistics", block=TRUE, size="extra-small", style="default"), tags$br()),
+      column(12, bsButton("btn_results_9", "Disclosure Risk", block=TRUE, size="extra-small", style="default"), tags$br()),
+      column(12, bsButton("btn_results_10", "Information Loss", block=TRUE, size="extra-small", style="default"), tags$br())
+    )
+  })
+
+  # required observers that update the color of the active button!
+  eval(parse(text=genObserver_menus(pat="btn_results_", n=1:10, updateVal="cur_selection_results")))
+
+  return(list(uiOutput("ui_sel_resbtns_cat"), uiOutput("ui_sel_resbtns_vis"), uiOutput("ui_sel_resbtns_num")))
 })
 
 output$ui_results <- renderUI({

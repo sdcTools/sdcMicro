@@ -77,23 +77,37 @@ output$ui_script_import <- renderUI({
 })
 
 output$ui_script_main <- renderUI({
-  if (!is.null(input$sel_script)) {
-    if (input$sel_script=="script_view") {
-      return(uiOutput("ui_script_view"))
-    }
-    if (input$sel_script=="script_import") {
-      return(uiOutput("ui_script_import"))
-    }
-    if (input$sel_script=="script_export") {
-      return(uiOutput("ui_script_export"))
-    }
+  val <- obj$cur_selection_script
+  if (val=="btn_export_script_1") {
+    return(uiOutput("ui_script_view"))
+  }
+  if (val=="btn_export_script_2") {
+    return(uiOutput("ui_script_import"))
+  }
+  if (val=="btn_export_script_3") {
+    return(uiOutput("ui_script_export"))
   }
 })
 
 output$ui_script_sidebar_left <- renderUI({
-  rb <- radioButtons("sel_script", label=h4("What do you want to do?", align="center"),
-  choices=choices_import(), selected=input$sel_script, width="100%")
-  fluidRow(column(12, rb))
+  output$ui_sel_script_btns <- renderUI({
+    cc <- choices_import()
+    out <- fluidRow(column(12, h4("What do you want to do?"), align="center"))
+    for (i in 1:length(cc)) {
+      if (i==1) {
+        style <- "primary"
+      } else {
+        style <- "default"
+      }
+      out <- list(out, fluidRow(
+        column(12, bsButton(paste0("btn_export_script_",i), label=names(cc)[i], block=TRUE, size="extra-small", style=style), tags$br())))
+    }
+    # required observers that update the color of the active button!
+    eval(parse(text=genObserver_menus(pat="btn_export_script_", n=1:3, updateVal="cur_selection_script")))
+    out
+  })
+
+  return(uiOutput("ui_sel_script_btns"))
 })
 
 output$ui_script <- renderUI({
@@ -105,8 +119,8 @@ output$ui_script <- renderUI({
     ))
   } else {
     out <- fluidRow(
-      column(3, uiOutput("ui_script_sidebar_left")),
-      column(9, uiOutput("ui_script_main")))
+      column(2, uiOutput("ui_script_sidebar_left")),
+      column(10, uiOutput("ui_script_main")))
   }
   return(out)
 })
