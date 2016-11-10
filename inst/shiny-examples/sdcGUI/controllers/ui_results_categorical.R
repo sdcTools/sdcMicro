@@ -316,7 +316,7 @@ output$ui_catvar1 <- renderUI({
   } else {
     sel <- input$sel_catvar1
   }
-  selectInput("sel_catvar1",label="Variable 1", choices=kv, selected=sel, width="100%")
+  selectInput("sel_catvar1", label=h5("Variable 1"), choices=kv, selected=sel, width="100%")
 })
 output$ui_catvar2 <- renderUI({
   kv <- c("none",setdiff(get_keyVars_names(), input$sel_catvar1))
@@ -326,13 +326,13 @@ output$ui_catvar2 <- renderUI({
   if (is.null(input$sel_catvar2)) {
     sel <- "none"
   } else {
-    if ( input$sel_catvar2==input$sel_catvar1) {
+    if (input$sel_catvar2==input$sel_catvar1) {
       sel <- "none"
     } else {
       sel <- input$sel_catvar2
     }
   }
-  selectInput("sel_catvar2",label="Variable 2", choices=kv, selected=sel, width="100%")
+  selectInput("sel_catvar2", label=h5("Variable 2"), choices=kv, selected=sel, width="100%")
 })
 
 # mosaicplot of one or two categorical key-variables
@@ -419,11 +419,19 @@ output$ui_bivariate_tab <- renderUI({
     }
     tab
   })
-  return(list(
+
+  out <- list(
     fluidRow(column(12, h4("Tabular representation of original and modified data"), align="center")),
-    uiOutput("ui_biv_selection"),
-    fluidRow(column(12, h4("Original data"), align="center")),
-    fluidRow(column(12, div(tableOutput("biv_tab_o"), align="center"))),
-    fluidRow(column(12, h4("Modified data"), align="center")),
-    fluidRow(column(12, div(tableOutput("biv_tab_m"), align="center")))))
+    uiOutput("ui_biv_selection"))
+
+  out <- list(out, fluidRow(
+    column(6, h4("Original data"), align="center"),
+    column(6, h4("Modified data"), align="center")
+  ))
+
+  out <- list(out, fluidRow(
+    column(6, tableOutput("biv_tab_o"), align="center"),
+    column(6, tableOutput("biv_tab_m"), align="center")
+  ))
+  out
 })

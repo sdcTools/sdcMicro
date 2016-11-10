@@ -49,7 +49,7 @@ output$ui_results_sidebar_left <- renderUI({
   output$ui_sel_resbtns_vis <- renderUI({
     fluidRow(
       column(12, h4("Visualizations"), align="center"),
-      column(12, bsButton("btn_results_4", "Histogram/Mosaicplot", block=TRUE, size="extra-small", style="default"), tags$br()),
+      column(12, bsButton("btn_results_4", "Barplot/Mosaicplot", block=TRUE, size="extra-small", style="default"), tags$br()),
       column(12, bsButton("btn_results_5", "Tabulations", block=TRUE, size="extra-small", style="default"), tags$br()),
       column(12, bsButton("btn_results_6", "Information Loss", block=TRUE, size="extra-small", style="default"), tags$br()),
       column(12, bsButton("btn_results_7", "Obs violating k-Anon", block=TRUE, size="extra-small", style="default"), tags$br())

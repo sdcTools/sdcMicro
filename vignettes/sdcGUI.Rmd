@@ -481,6 +481,7 @@ If all options have been set, a button labelled `Apply rank-swapping` is shown a
 - Once a problem instance has been specified -> Sidebar left + Sidebar right
 
 ## [tbw] Risk measures
+
 ### [tbw] Information of Risks
 
 - `What kind of results do you want to show?` -> 
@@ -527,8 +528,14 @@ else
 ### [tbw] l-Diversity risk-measure
 
 ## [tbw] Visualizations
-### [tbw] Histogram/Mosaicplot
-### [tbw] Tabulations
+### Barplot/Mosaicplot {#res_vis_plot}
+On this page it is possible to graphically compare key variables before and after the anonymization. In the select input labelled `Variable 1`, the first categorical key variable is already pre-selected while the value of the second input field `Variable 2` has the default value of `none`. If only one variable is specified, the users is presented with two graphs below these inputs. First, we see a barplot of the original data as it was when the problem instance was created. Below that, another barplot showing the anonymized variable is shown. 
+
+If the value in `Variable 2` is different from `none`, the two graphs change. In this case a mosaicplot of the two selected variables is shown for both the original and the anonymized variables.
+
+### Tabulations {#res_vis_tabulations}
+In this part of the interface it is possible to compare tabulations of categorical key variables before and after the anonymization. The page is built identically as the [Barplot/Mosaicplot](#res_vis_plot) page. The only difference is, that no graphs but tables are displayed below the inputs where the relevant variables can be selected. Also, the tables are shown next to each other to allow for easier comparison and less scrolling.
+
 ### [tbw] Information Loss
 ### [tbw] Obs violating k-Anon
 
