@@ -17,9 +17,9 @@ output$ui_modify_recode_to_numeric <- renderUI({
     ))
   }
 
-  helptxt <- "Continuous key variables have to be of type ‘numeric’ or type ‘integer’.  Variables of type ‘character’ or type ‘factor’ need to be converted"
-  helptxt <- paste(helptxt, "to type ‘numeric’ before selecting these as continuous key variables. Here you can convert variables of type ‘character’ and")
-  helptxt <- paste(helptxt, "type ‘factor’ to type ‘numeric’.")
+  helptxt <- "Continuous key variables have to be of type 'numeric' or type 'integer'.  Variables of type 'character' or type 'factor' need to be converted"
+  helptxt <- paste(helptxt, "to type 'numeric' before selecting these as continuous key variables. Here you can convert variables of type 'character' and")
+  helptxt <- paste(helptxt, "type 'factor' to type 'numeric'.")
   out <- fluidRow(
     column(12, h4("Convert character/factor variables to numeric variables"), align="center"),
     column(12, p(helptxt), align="center"),
@@ -240,7 +240,7 @@ output$ui_modify_change_factor <- renderUI({
     return(out)
   }
 
-  helptxt <- "Here you can group/combine the factor levels of categorical variables of type ‘factor‘ before setting up the sdcMicro object."
+  helptxt <- "Here you can group/combine the factor levels of categorical variables of type 'factor' before setting up the sdcMicro object."
   out <- fluidRow(out, column(12, helptxt, align="center"))
   out <- list(out, fluidRow(
     column(4, uiOutput("reclocfac_var"), align="center"),
@@ -280,7 +280,7 @@ output$ui_modify_create_stratvar <- renderUI({
   helptxt <- "Many SDC methods can be applied within strata. Here you can generate a new stratification variable by chaining together values of two or more"
   helptxt <- paste(helptxt, "variables. The number of strata is the product of the number of factor levels in the selected variables. For instance by choosing")
   helptxt <- paste(helptxt, "gender (male, female) and region (region 1, region 2), 4 strata are generated (male - region 1, male - region 2, female - region 1, female - region 2).")
-  helptxt <- paste(helptxt, "By default the variable name of the stratification variable consists of the variable names separated by  ‘_’ . You can also specify")
+  helptxt <- paste(helptxt, "By default the variable name of the stratification variable consists of the variable names separated by  '_' . You can also specify")
   helptxt <- paste(helptxt, "the variable name by typing it into the text field. The new variable is added to the loaded micro data set and will be exported.")
   out <- fluidRow(
     column(12, h4("Create a stratification variable"), align="center"),
