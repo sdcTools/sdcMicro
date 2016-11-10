@@ -124,7 +124,7 @@ When a microdata set is uploaded, internally a backup of the unmodified dataset 
 
 In any case, after pressing the action button, the GUI changes to the [*"Explore variables"*](#explore_inputvars) page at which the first of the selected variable(s) is shown.
 
-### Use only a subset of the available microdata
+### Use subset of microdata
 On this page it is possible to decrease the size of the inputdata. This is especially useful if one wants to test different parameter settings and a run on the complete dataset would take long. To reduce the size of the inputdataset, the user has to select a method using the drop down field `Select a method to restrict the number of records` and to select a value from the slider `Set 'n' for the selected method`. The following choices are possible on how to reduce the dataset, the range of values that can be chosen from the slider depends on the choice.
 
   - `n-Percent of the data`: `n%` of the data will be randomly chosen. The slider ranges in this case from 1 to 100.
@@ -170,7 +170,7 @@ On this page, the user is able to generate a new variable based on two ore more 
 
 The user has to specify at least two variables in the select field labelled `Select variables to generate a stratification variable`. From this field, all variables that are available in the micro data set can possibly be selected. Once two or more variables are selected, two new inputs appear. The first one appears right next to the variable selection field and is called `Specify variable name for stratification variable`. In this field, user can enter a desired name for the new variable. By default, the variable name listed consists of the selected variables chained together using `_` as seperator. By clicking into the field, the user can enter a customized variable name. If the current value in this text input field is not the name of an already existing variable, a button termed `Create stratification variable` appears below. Clicking on this button adds the new variable to the input data set. The variable is generated as a factor variable in which the values of the contributing variables are also chained together using `_` as the seperator. After pressing the button, the page changes to the [explore variable](#explore_inputvars) page where the newly generated variable is already selected.
 
-### Set specific values in a variable to `NA`
+### Set specific values to `NA`
 In this section, users can set values in some variables to missing (`NA`). The first step is to choose one of two possible methods by choosing either `by Id` (the default selection) or `by rule` in the radio button input labelled `How do you want to select the cells to be recoded to missing?` on top of the page.
 
 If `by Id` has been selected, the user can set values in one or more variables for a specific record to missing. He therefore needs to select at least one variable in the input called `Select variable to set records to NA`. Once at least one variable has been selected, a new input field occurs. In this input called `In which ID do you want to suppress values?`, a number between 1 and at most the number of records can be specified. This selection refers to the row in which for the selected variables the values will be set to `NA`. The user can change this index either by clicking on the small arrows at the right hand side of the input field which allow to increment or decrement the current number by one. As an alternative, it is also possible to directly enter a number in the field.

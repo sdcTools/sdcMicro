@@ -826,12 +826,12 @@ output$ui_modify_data_sidebar_left <- renderUI({
       "Display Microdata"="show_microdata",
       "Explore variables"="view_var",
       "Reset variables"="reset_var",
-      "Use only a subset of the available microdata"="sample_microdata",
+      "Use subset of microdata"="sample_microdata",
       "Convert numeric variables to factors"="recode_to_factor",
       "Convert variables to numeric"="recode_to_numeric",
       "Modify an existing factor-variable"="modify_factor",
       "Create a stratification variable"="createstratvar",
-      "Set specific values in a variable to NA"="set_to_na",
+      "Set specific values to NA"="set_to_na",
       "Hierarchical data"="deal_with_hierarchical_data")
     if (!is.null(sdcObj())) {
       cc <- cc[1:2]
