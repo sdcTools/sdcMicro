@@ -160,8 +160,8 @@ output$ui_modify_recode_to_factor <- renderUI({
     ))
   }
 
-  helptxt <- "Categorical key variables have to be of type ‘factor’ or type ‘integer’.  Variables of type ‘numeric’ need to be converted to type ‘factor’"
-  helptxt <- paste(helptxt,"selecting these as categorical key variables. Here you can convert variables of type ‘numeric’ to type ‘factor’.")
+  helptxt <- "Categorical key variables have to be of type 'factor' or type 'integer'.  Variables of type 'numeric' need to be converted to type 'factor'"
+  helptxt <- paste(helptxt,"selecting these as categorical key variables. Here you can convert variables of type 'numeric' to type 'factor'.")
   helptxt <- paste(helptxt, "Each unique value is converted to a separate category (factor level). In case several values in the numeric variable should")
   helptxt <- paste(helptxt, "be combined into one factor level, customized breaks can be specified. Several algorithms are available to customize the breaks.")
 
