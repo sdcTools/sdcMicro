@@ -38,35 +38,37 @@ output$ui_results_main <- renderUI({
 })
 
 output$ui_results_sidebar_left <- renderUI({
-  output$ui_sel_resbtns_cat <- renderUI({
-    fluidRow(
-      column(12, h4("Risk measures"), align="center"),
-      column(12, bsButton("btn_results_1", "Information of risks", block=TRUE, size="extra-small", style="primary"), tags$br()),
-      column(12, bsButton("btn_results_2", "Suda2 risk-measure", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_results_3", "l-Diversity risk-measure", block=TRUE, size="extra-small", style="default"), tags$br())
-    )
-  })
-  output$ui_sel_resbtns_vis <- renderUI({
-    fluidRow(
-      column(12, h4("Visualizations"), align="center"),
-      column(12, bsButton("btn_results_4", "Barplot/Mosaicplot", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_results_5", "Tabulations", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_results_6", "Information Loss", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_results_7", "Obs violating k-Anon", block=TRUE, size="extra-small", style="default"), tags$br())
-    )
-  })
-  output$ui_sel_resbtns_num <- renderUI({
-    fluidRow(
-      column(12, h4("Numerical Risk Measures"), align="center"),
-      column(12, bsButton("btn_results_8", "Compare summary statistics", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_results_9", "Disclosure Risk", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_results_10", "Information Loss", block=TRUE, size="extra-small", style="default"), tags$br())
-    )
-  })
+  output$ui_results_menubtns <- renderUI({
 
+    cc1 <- c("Information of risks", "Suda2 risk-measure", "l-Diversity risk-measure")
+    cc2 <- c("Barplot/Mosaicplot", "Tabulations", "Information Loss", "Obs violating k-Anon")
+    cc3 <- c("Compare summary statistics", "Disclosure Risk", "Information Loss")
+
+    df <- data.frame(lab=c(cc1,cc2,cc3), header=NA)
+    df$header[1] <- "Risk measures"
+    df$header[4] <- "Visualizations"
+    df$header[8] <- "Numerical Risk Measures"
+
+    out <- NULL
+    for (i in 1:nrow(df)) {
+      id <- paste0("btn_results_",i)
+      if (obj$cur_selection_results==id) {
+        style <- "primary"
+      } else {
+        style <- "default"
+      }
+      if (!is.na(df$header[i])) {
+        out <- list(out, fluidRow(column(12, h4(df$header[i]), align="center")))
+      }
+      out <- list(out, fluidRow(
+        column(12, bsButton(id, label=df$lab[i], block=TRUE, size="extra-small", style=style), tags$br())
+      ))
+    }
+    out
+  })
   # required observers that update the color of the active button!
   eval(parse(text=genObserver_menus(pat="btn_results_", n=1:10, updateVal="cur_selection_results")))
-  return(list(uiOutput("ui_sel_resbtns_cat"), uiOutput("ui_sel_resbtns_vis"), uiOutput("ui_sel_resbtns_num")))
+  return(uiOutput("ui_results_menubtns"))
 })
 
 output$ui_results <- renderUI({
