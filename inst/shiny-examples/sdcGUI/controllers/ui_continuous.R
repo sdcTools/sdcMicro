@@ -132,7 +132,7 @@ output$ui_microaggregation <- renderUI({
     ))
   })
   output$ui_microagg_strata <- renderUI({
-    txt_tooltip <- "By default microaggregation is applied within the strata specified by the selected strata variable."
+    txt_tooltip <- "By default maicroaggregation is applied on the complete dataset. To apply the algorithm within strata, select a variable for stratification. The algorithm is then applied within the strata defined by the factor levels of that variable."
     selectInput("sel_microagg_strata",
       label=h5("Apply microaggregation in groups (stratification)?", tipify(icon("question"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%", selected=input$sel_microagg_strata)
