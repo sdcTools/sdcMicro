@@ -96,7 +96,7 @@ output$ui_pram_expert <- renderUI({
     m
   })
   output$pram_expert_strata <- renderUI({
-    txt_tooltip <- "By default PRAM is applied within the strata specified by the selected strata variable."
+    txt_tooltip <- "By default PRAM is applied on the complete dataset. To apply the algorithm within strata, select a variable for stratification. The algorithm is then applied within the strata defined by the factor levels of that variable."
     selectInput("pram_expert_strataV",
       label=h5("Postrandomize within different groups (stratification)?", tipify(icon("question"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%")
@@ -172,7 +172,7 @@ output$ui_pram_simple <- renderUI({
       label=h5("Select variable(s) for PRAM", tipify(icon("question"), title=txt_tooltip, placement="top")), width="100%", multiple=TRUE)
   })
   output$pram_simple_strata <- renderUI({
-    txt_tooltip <- "By default PRAM is applied within the strata specified by the selected strata variable."
+    txt_tooltip <- "By default PRAM is applied on the complete dataset. To apply the algorithm within strata, select a variable for stratification. The algorithm is then applied within the strata defined by the factor levels of that variable."
     selectInput("pram_strataV_simple",
       label=h5("Postrandomize within different groups (stratification)?", tipify(icon("question"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%")
@@ -404,7 +404,7 @@ output$ui_kAnon <- renderUI({
   })
 
   output$kanon_strata <- renderUI({
-    txt_tooltip <- "By default k-anonymity is established within the strata specified by the selected strata variable."
+    txt_tooltip <- "By default k-anonymity is established on the complete dataset. To apply the algorithm within strata, select a variable for stratification. The algorithm is then applied within the strata defined by the factor levels of that variable."
     selectInput("kanon_strataV",
       label=h5("Do you want to apply the method for each group defined by the selected variable?", tipify(icon("question"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", setdiff(poss_strataVarP(), c(get_all_numericvars_name(), get_keyVars_names()))), multiple=FALSE, width="75%")
