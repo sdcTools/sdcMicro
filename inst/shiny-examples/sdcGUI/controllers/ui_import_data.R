@@ -111,15 +111,21 @@ output$ui_import_data_main <- renderUI({
 
 output$ui_import_data_sidebar_left <- renderUI({
   output$ui_sel_resbtns_import <- renderUI({
-    fluidRow(
-      column(12, h4("Select data source"), align="center"),
-      column(12, bsButton("btn_import_data_1", "Use testdata/internal data", block=TRUE, size="extra-small", style="primary"), tags$br()),
-      column(12, bsButton("btn_import_data_2", "R-Dataset (.rdata)", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_import_data_3", "SPSS-File (.sav)", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_import_data_4", "SAS-File (.sasb7dat)", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_import_data_5", "Comma-seperated File (.csv, .txt)", block=TRUE, size="extra-small", style="default"), tags$br()),
-      column(12, bsButton("btn_import_data_6", "STATA-File (.dta)", block=TRUE, size="extra-small", style="default"), tags$br())
-    )
+    cc <- c("Use testdata/internal data", "R-Dataset (.rdata)", "SPSS-File (.sav)", "SAS-File (.sasb7dat)",
+      "Comma-seperated File (.csv, .txt)", "STATA-File (.dta)")
+    out <- fluidRow(column(12, h4("Select data source"), align="center"))
+    for (i in 1:length(cc)) {
+      id <- paste0("btn_import_data_", i)
+      if (obj$cur_selection_import==id) {
+        style <- "primary"
+      } else {
+        style <- "default"
+      }
+      out <- list(out, fluidRow(
+        column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style), tags$br())
+      ))
+    }
+    out
   })
 
   # required observers that update the color of the active button!
