@@ -66,12 +66,12 @@ output$ui_results_sidebar_left <- renderUI({
 
   # required observers that update the color of the active button!
   eval(parse(text=genObserver_menus(pat="btn_results_", n=1:10, updateVal="cur_selection_results")))
-
   return(list(uiOutput("ui_sel_resbtns_cat"), uiOutput("ui_sel_resbtns_vis"), uiOutput("ui_sel_resbtns_num")))
 })
 
 output$ui_results <- renderUI({
-  if (is.null(sdcObj())) {
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
     return(list(
       noSdcProblem(uri="ui_results"),
       fluidRow(column(12, tags$br(), p("or go back to tab 'Undo' and upload a previously saved problem instance"), align="center")),

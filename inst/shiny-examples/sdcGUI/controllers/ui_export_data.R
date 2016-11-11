@@ -125,6 +125,44 @@ output$ui_export_data <- renderUI({
   out
 })
 
+# modify stata variable labels
+output$ui_modify_stata_labels <- renderUI({
+  stataVarnames <- reactive({
+    df <- obj$stata_varnames
+    if (is.null(df)) {
+      return(NULL)
+    }
+    df
+  })
+  output$statlab_table <- renderRHandsontable({
+    df <- stataVarnames()
+    if (is.null(df)) {
+      return(NULL)
+    }
+    m <- rhandsontable(df, stretchH="all", rowHeaders=NULL) %>%
+      hot_col("var.names", readOnly = TRUE)
+    m
+  })
+  # update reactive value on table change
+  observe({
+    if (!is.null(input$statlab_table)) {
+      tmpdf <- hot_to_r(input$statlab_table)
+      obj$stata_varnames$var.label <- tmpdf$var.label
+    }
+  })
+
+  out <- fluidRow(
+    column(12, h4("Change Stata value labels"), align="center"),
+    column(12, p("Please modify variable labels for stata here. The information you entered will be used if you save the anonymized data set
+      as stata-file."), align="center")
+  )
+  out <- fluidRow(
+    column(12, rHandsontableOutput("statlab_table"))
+  )
+  out
+})
+
+
 # UI-Output for Tab 'Export Data'
 output$ui_export_main <- renderUI({
   out <- NULL
@@ -138,19 +176,39 @@ output$ui_export_main <- renderUI({
   if (val=="btn_export_results_2") {
     return(uiOutput("ui_export_report"))
   }
+  if (val=="btn_export_results_3") {
+    return(uiOutput("ui_modify_stata_labels"))
+  }
   out
 })
 
 output$ui_export_sidebar_left <- renderUI({
+  choices_export <- reactive({
+    cc <- c("Anonymized Data", "Anonymization Report")
+    curLabs <- stataLabs()
+    if (!is.null(curLabs)) {
+      cc <- c(cc, "Change Stata Labels")
+    }
+    cc
+  })
   output$ui_sel_export_btns <- renderUI({
-    fluidRow(
-      column(12, h4("What do you want to export?"), align="center"),
-      column(12, bsButton("btn_export_results_1", "Anonymized Data", block=TRUE, size="extra-small", style="primary"), tags$br()),
-      column(12, bsButton("btn_export_results_2", "Anonymization Report", block=TRUE, size="extra-small", style="default"), tags$br())
-    )
+    cc <- choices_export()
+    out <- fluidRow(column(12, h4("What do you want to export?"), align="center"))
+    for (i in 1:length(cc)) {
+      id <- paste0("btn_export_results_", i)
+      if (obj$cur_selection_exports==id) {
+        style <- "primary"
+      } else {
+        style <- "default"
+      }
+      out <- list(out, fluidRow(
+        column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style), tags$br())
+      ))
+    }
+    return(out)
   })
   # required observers that update the color of the active button!
-  eval(parse(text=genObserver_menus(pat="btn_export_results_", n=1:2, updateVal="cur_selection_exports")))
+  eval(parse(text=genObserver_menus(pat="btn_export_results_", n=1:3, updateVal="cur_selection_exports")))
   return(uiOutput("ui_sel_export_btns"))
 })
 

@@ -430,3 +430,8 @@ infodat <- reactive({
   params$Value <- as.character(params$Value)
   list(df=df, params=params)
 })
+
+# return value labels from stata (if any)
+stataLabs <- reactive({
+  obj$stata_labs
+})

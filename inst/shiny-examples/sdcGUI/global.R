@@ -48,6 +48,7 @@ runEvalStr <- function(cmd, comment=NULL) {
     if (!is.null(comment)) {
       cmd <- paste0(comment,"\n",cmd)
     }
+    cmd <- sub('lab=obj[$]stata_labs, ','',cmd) # for stata export
     obj$code_anonymize <- c(obj$code_anonymize, cmd)
     # check if we have some new warnings
     current_warnings <- get.sdcMicroObj(obj$sdcObj, type="additionalResults")$sdcMicro_warnings
@@ -368,6 +369,10 @@ obj$cur_selection_script <- "btn_export_script_1" # navigation for reproducibili
 obj$cur_selection_microdata <- "btn_menu_microdata_1" # navigation for microdata
 obj$cur_selection_import <- "btn_import_data_1" # navigation for import
 obj$cur_selection_anon <- "btn_sel_anon_1" # navigation for anonymization
+
+# for stata-labelling
+obj$stata_labs <- NULL
+obj$stata_varnames <- NULL
 
 # the path, where all output will be saved to
 if (file.access(getwd(), mode=2)==0) {

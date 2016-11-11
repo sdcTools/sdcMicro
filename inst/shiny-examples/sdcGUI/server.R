@@ -618,6 +618,9 @@ shinyServer(function(session, input, output) {
     fout <- paste0("exportedData_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".",input$dat_exp_type)
     fout <- file.path(obj$path_export, fout)
     cmd <- paste0("writeSafeFile(obj=sdcObj, format=",dQuote(input$dat_exp_type), ", randomizeRecords=",dQuote(input$rb_export_randomizeorder))
+    if (input$dat_exp_type=="dta") {
+      cmd <- paste0(cmd,", lab=obj$stata_labs")
+    }
     cmd <- paste0(cmd,", fileOut=",dQuote(fout),")\n")
     attributes(cmd)$evalAsIs <- TRUE
     return(list(cmd=cmd, path=obj$path_export, fout=fout))
@@ -677,6 +680,16 @@ shinyServer(function(session, input, output) {
       obj$inputdataB <- obj$inputdata
       obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
       obj$sdcObj <- NULL # start fresh
+
+      # stata
+      if (obj$cur_selection_import=="btn_import_data_6") {
+        obj$stata_labs <- attributes(obj$inputdata)$lab
+        df <- obj$stata_labs[[1]]
+        obj$stata_varnames <- data.frame(var.names=unlist(df[[1]]), var.label=unlist(df[[2]]), stringsAsFactors=FALSE)
+      } else {
+        obj$stata_labs <- NULL
+        obj$stata_varnames <- NULL
+      }
       ptm <- proc.time()-ptm
       obj$comptime <- obj$comptime+ptm[3]
     }
@@ -747,6 +760,7 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_chooose_df, {
     ptm <- proc.time()
     cmd <- code_useRObj()
+    cat(cmd,"\n")
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
     obj$inputdataB <- obj$inputdata
@@ -754,6 +768,7 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     obj$microfilename <- input$sel_choose_df
+    obj$stata_labs <- NULL
   })
   # reset variables in inputdataset to their original values
   observeEvent(input$btn_resetmicrovar, {
@@ -952,6 +967,7 @@ shinyServer(function(session, input, output) {
     obj$hhdata <- NULL
     obj$hhdata_applied <- FALSE
     obj$hhdata_selected <- FALSE
+    obj$sdcObj <- NULL
     obj$code_read_and_modify <- c()
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
@@ -1259,6 +1275,19 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_export_anon_data, {
     ptm <- proc.time()
     res <- code_export_anondata()
+
+    if (input$dat_exp_type=="dta") {
+      newlabs <- obj$stata_labs # original labs
+      current_labs <- obj$stata_varnames # after changing the interactive table
+
+      # meta-information is available
+      if (!is.null(current_labs)) {
+        for (i in 1:nrow(current_labs)) {
+          newlabs <- changeVarLabel(newlabs, varname=current_labs$var.names[i], newlabel=current_labs$var.label[i])
+        }
+        obj$stata_labs <- newlabs
+      }
+    }
     runEvalStr(cmd=res$cmd, comment="## export anonymized data file and save to disk")
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
