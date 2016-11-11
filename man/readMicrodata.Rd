@@ -30,7 +30,9 @@ will be dropped}
 arguments to \code{read.table()}.}
 }
 \value{
-a data.frame or an object of class 'simple.error'
+a data.frame or an object of class 'simple.error'. If a stata file was read in, the resulting \code{data.frame}
+has an addtitional attribute \code{lab} in which value labels extracted with \code{\link{extractLabels}}
+are stored.
 }
 \description{
 reads data from various formats into R. Used in \code{\link{sdcGUI}}.
