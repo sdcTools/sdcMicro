@@ -43,7 +43,7 @@ addVarLabels <- function(datManip, lab){
 #' @author Thijs Benschop
 #' @export
 #'
-changeVarLabel <- function(lab, varname, newlabel, new){
+changeVarLabel <- function(lab, varname, newlabel){
   # Check whether varname is in lab
   if (!varname %in% lab[[1]][,"var.name"] )
     stop("The variable is not in the label information/original dataset. Labels can only be changed for variables in the original dataset.")
