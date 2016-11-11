@@ -1,3 +1,33 @@
+#' Extracts label information from dataframe read by read_dta from haven package.
+#' 
+#' Both variable labels and value labels are extracted.
+#'
+#' @param dat a data.frame loaded by read_dta from have package
+#' @return a list with both variable labels (as data.frame) and value labels (as list)
+#' @author Thijs Benschop
+#' @export
+#'
+extractLabels <- function(dat){
+  # Check whether there are variable labels available
+  if(!all(sapply(sapply(dat, function(x){attr(x, "label")}), is.null))){
+    
+    # Save all variable labels
+    varLab           <- as.data.frame(cbind(colnames(dat), lapply(dat, function(x){attr(x, "label")})))
+    colnames(varLab) <- c("var.name", "var.label")
+    rownames(varLab) <- NULL
+    
+  }else{varLab <- NULL}
+  
+  # Check whether there are value labels available
+  if(!all(sapply(sapply(dat, function(x){attr(x, "labels")}), is.null))){
+    # Save all value labels for variables of class labelled
+    valLab <- lapply(dat, function(x){attr(x, "labels")})
+    
+  }else{valLab <- NULL}
+  
+  return(list(varLab, valLab))
+}
+
 #' Creates a household level file from a dataset with a household structure.
 #'
 #' It removes individual level variables and selects one record per household based on a household ID. The function can also be used for other hierachical structures.
