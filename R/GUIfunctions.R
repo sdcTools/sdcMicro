@@ -18,11 +18,6 @@ addVarLabels <- function(datManip, lab){
     newLabels <- cbind(colnames(datManip), unlist(lapply(colnames(datManip), 
                                                          function(x){if(length(which(x == lab[[1]][,"var.name"])) == 0){return("")}else{lab[[1]][which(x == lab[[1]][,"var.name"]),"var.label"]}})))
     
-    #if(length(which(x == lab[[1]][,"var.name"])) == 0){NULL}else{}
-    unlist(lapply(colnames(datManip), function(x){if(length(which(x == lab[[1]][,"var.name"])) == 0){return(0)}else{which(x == lab[[1]][,"var.name"])}}))
-    # Fix what happens if not found, NULL or empty string
-    
-    
     # Add label attributes to all variables from newLabels
     datManip2 <- lapply(colnames(datManip), function(x) {
       attr(datManip[[x]], "label") <-  as.character(newLabels[which(x == newLabels[,1]),2])
