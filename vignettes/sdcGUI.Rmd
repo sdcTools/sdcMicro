@@ -475,16 +475,21 @@ The sliders `Subset-mean preservation factor`, `Multivariate preservation factor
 
 If all options have been set, a button labelled `Apply rank-swapping` is shown at the bottom of the page. Clicking this button applies the algorithm on the selected variables according to the options that have been set. Since the computation might take some time, on the bottom right screen a progress bar occurs showing that the process is running. Once it is finished, the page updates and the [Show Summary](#show_sdc_summary) page is shown. On this page, the section `Compare numVars` is either updated or has been added and section `Information on risk for numerical key variables`, `Information loss` and `Anonymization steps` were updated and the current values and statistics are shown.
 
-# [tbw] Risk/Utility  {#risk_utility}
+# Risk/Utility  {#risk_utility}
+On this tab it is possible to find out current values of various risk measures based on either categorical or numerical key variables in the active sdc problem. It is also possible to visualise or tabulate these variables as well as to identify *"risky"* records in anonymized data set.
 
-- If no problem instance has been specified -> `Create a SDC problem` (Anonymize page) or `Upload a previously saved problem` (Undo-page)
-- Once a problem instance has been specified -> Sidebar left + Sidebar right
+If no problem instance has been specified, two buttons will appear. Clicking on `Create a SDC problem` changes the view to the [Anonymize](#anonymize) page, where a new problem instance can be generated. By pushing the button termed `Upload a previously saved problem`, the view is changed to the [Undo](#undo) page, where a previously saved problem instance can be uploaded.
 
-## [tbw] Risk measures {#res_cat}
+If a problem instance has been defined, this page features a three column layout. The left sidebar features the navigation that is divided into three section labelled [Risk measures](#res_cat), [Visualizations](#res_vis) and [Numerical Risk Measures](#res_num). Specific measures can be selected by clicking on the action buttons shown in this sidebar. The current selected button is shown in a different color so that it is easy to see which selection is active. 
 
-Categorical risk measures
+On the right sidebar, two tables are shown. The first one, labelled `Important Variables` lists the categorical and numerical key variables. Additionally (if present), also the variables selected to be possibly postrandomized aas well as the variables holding sampling weights or cluster ids are shown. The second table labelled `Additional Parameters` shows the number of records as well as the choice of parameters `seed` and `alpha` that were used when the current problem was [specified](#setup_sdcproblem).
 
-### Information of Risks
+The main content depends on the current choice in the navgigation menu. In the following chapters, all possible selections are discussed.
+
+## Risk measures {#res_cat}
+In this section, it is possible to view current values of based on the categorical key variables, identify risky observations of compare plots of individual re-identification risks between original and anonymized micro data which is described [here](#cat_risk_info). Also, users may calculate [suda2](#suda2) and [l-diversity](#ldiv) risk measures.
+
+### Information of Risks {#cat_risk_info}
 Here, users have the possibility to obtain information on various risk-measures based on the categorical key variables, identify risky records and to visualize the individual re-identification risks. 
 
 To choose from this possibilities, the user needs to either select `Risk Measures` (the default value), `Risky Observations` or `Plot of risks` from the radio button list labelled `What kind of results do you want to show?`.
@@ -504,19 +509,22 @@ This page allows to filter records in the anonymized data set depending on a thr
 On this page, two plots are presented. The first histogram shows the distribution of the individual re-identification risks in the anonymized data set while the plot below shows the same information based in the original data set that was used when the problem instance was created. 
 
 
-### Suda2 risk-measure
+### Suda2 risk-measure {#suda2}
 On this page, users can apply the SUDA algorithm. This algorithm can be used to search for Minimum Sample Uniques (MSU) in the data given the current set of key-variables to look at those records that are unique in the sample uniques and to check if any of these sample uniques are also special uniques. Special uniques are defined as records having keys for which also a subset of the selected key variables is unique in the sample. See the help files for more information on SUDA scores.
 
 We note that this algorithm can only be applied, if the current problem instance features three or more categorical key variable. If this requirement is not fulfilled, the user is shown this information. Else, the user needs to choose a value for parameter `disFraction?` which is the sampling fraction for the simple random sampling or the common sampling fraction for stratified sampling used within the algorithm. By default, this value is set to 0.01 and can be changed by modifying the slider labelled `Select a value for sampling fraction for the stratified sampling`.
 
 After pressing the button termed `Calculate suda2-scores`, the actual computation is performed. Once this is finished, the layout of the page changes. On top of the page a button labelled `Reset to choose different a different disFraction parameter`. Pressing this button resets the results and allows to recompute the suda2 scores using a different value for parameter `disFraction`. Below this button, two tables are shown. The first table summarises the suda2 scores that have been obtained. It shows for 8 thresholds the number of records having suda2 scores greater than this value. The second table shows for each categorical key variable how much of the total risk is contributed to by each of the variables. This amount is shown in the second column (`contribution`) while the corresponding key variable is listed in column `variable`.
 
-### l-Diversity risk-measure
+### l-Diversity risk-measure {#ldiv}
 Here you can compute the `l`-diversity of sensitive variables. A dataset satisfies `l`-diversity if for every combination of the categorical key variables there are at least `l` different values for each of the sensitive variables. The statistics refer to the value of `l` for each record. To calculate this risk measure, the use needs to first select at least one sensitive variable. This can be done in the input field `Select one or more sensitive-variables` where all variables except for the categorical key variables can be selected. The other choice is to set a value for the *l-diversity constant* which can be done using the slider named `Select a value for the recursive-constant`. This constant is used to determine if a record is unsafe. If the calculated value for `l-diversity` for a record (having a specific key) is less than this constant, it is said to violate `l`-diversity.
 
 Once the parameters are set, a button labelled `Calculate l-diversity risk-measure` appears below. Pressing this button forces the calculation of the measure using the selected sensible variables and the constant. Once the calculation is finished, the content of the page changes. At the top of the page, a button named `Reset to choose different input parameters` is shown. Pressing this button resets the results and allows to specify other parameters. Below, a table containing for each selected sensible variable the 5-number summary of the calculated l-diversity measure. Below that, an interactive table showing all the records that violate `l`-diversity based on the choice of the recursive constant are displayed in an interactive table. If all records are safe, no table is shown.
 
-## [tbw] Visualizations {#res_vis}
+## Visualizations {#res_vis}
+In this section it is possible to either compare current key variables in the original and anonymized dataset [graphically](#res_vis_plot) or in [tabular](#res_vis_tabulations) format. It is also possible to view measures of [information loss based on recoding](#res_vis_infoloss_recoding) of categorical key variables or show the number of observations that [violate k-anonymity](#res_vis_violating_kanon) for arbitrarily values of `k`.
+
+
 ### Barplot/Mosaicplot {#res_vis_plot}
 On this page it is possible to graphically compare key variables before and after the anonymization. In the select input labelled `Variable 1`, the first categorical key variable is already pre-selected while the value of the second input field `Variable 2` has the default value of `none`. If only one variable is specified, the users is presented with two graphs below these inputs. First, we see a barplot of the original data as it was when the problem instance was created. Below that, another barplot showing the anonymized variable is shown. 
 
@@ -525,7 +533,7 @@ If the value in `Variable 2` is different from `none`, the two graphs change. In
 ### Tabulations {#res_vis_tabulations}
 In this part of the interface it is possible to compare tabulations of categorical key variables before and after the anonymization. The page is built identically as the [Barplot/Mosaicplot](#res_vis_plot) page. The only difference is, that no graphs but tables are displayed below the inputs where the relevant variables can be selected. Also, the tables are shown next to each other to allow for easier comparison and less scrolling.
 
-### Information Loss
+### Information Loss {#res_vis_infoloss_recoding}
 Recoding categorical key variables by combining levels leads to information loss. In this section it is possible to compare for each key variable the effects of recoding. Thus, a table containing the following columns for each categorical key variable is shown:
 
 - **keyVar**: the name of a categorical key variable
@@ -538,7 +546,7 @@ Recoding categorical key variables by combining levels leads to information loss
 
 The table is interactive and in case of many key variables, it can be sorted by clicking on the small arrow signs that are shown next to the column names.
 
-### Obs violating k-Anon
+### Obs violating k-Anon {#res_vis_violating_kanon}
 On this page it is possible to find out how many records in the anonymized dataset violate `k`-anonymity for different choices of `k`. On this page there is a slider input labelled `Select value for 'k'` that can take values between `1` and `50`. Dragging the slider with the mouse or changing the value of the slider with the arrow-keys on the keyboard leads to a recalculation of the number and percentage of observations that violate `k`-anonymity for the current choice of `k`. This information is printed on the screen below the slider. 
 
 Furthermore, a table listing all the records in the dataset that violate `k`-anonymity are printed. For these observations, the interactive table contains all categorical key variables ere you can browse the records that violate k-anonymity for the selected level of `k`. In this table, all categorical key variables are shown as well as `risk` (the individual risk), `fk` (the frequency this combination of value in the key vars occurs in the data) and  `Fk` (the estimated frequency of this combination of values in the keyvars in the population taking sampling weights into account) are shown.
@@ -623,5 +631,3 @@ This page allows the user to undo the last anonymization step. If there is no ac
 If a problem instance is available, the page layout changes. In case it is possible to undo an anonymization step, the last anonymization action that has been applied is printed on top of this page. Below there is a button termed `Undo last Step`. Clicking on this button opens a pop up window in which the user has to confirm that the last anonymization step should be revertd. In case that this button was unintentionally pressed, clicking on `Dismiss` closes the popup window and it is possible to continue with the anonymization process.
 
 Below, this button there is another action button labelled `Save the current problem` which has exactly the same functionality as the button described [here]( {#export_sdc_probleminstance}). Once the pproblem was successfully saved to disk, the page refreshes and the path the exported file is shown.
-
-# [tbw] Summary
