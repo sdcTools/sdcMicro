@@ -27,7 +27,7 @@ We now describe the features of the interactive graphical user interface in deta
 
 We also want to note that throughout the GUI qustionmark signs are shown. Hovering the mouse over these small icons triggers a pop up window with additional information which will help during the anonymization process.
 
-# About/Help {#about}
+# [tbw] About/Help {#about}
 
 to be written
 
@@ -519,13 +519,23 @@ Display risky-observations in a Table
 
 ### [tbw] Suda2 risk-measure
 
-Suda2 scores can only be computed for scenarios with >= 3 categorical key variables! 
+- Suda2 scores can only be computed for scenarios with >= 3 categorical key variables! 
 
-else 
+- The SUDA algorithm is used to search for Minimum Sample Uniques (MSU) in the data among the sample uniques to determine which sample uniques are also special uniques i.e., have subsets that are also unique. See the help files for more information on SUDA scores.
+
+- Select a value for sampling fraction for the stratified sampling
+- button `Calculate suda2-scores`
+Thresholds (DisFraction=0.1)
+- Attribute contributions
 
 
 
 ### [tbw] l-Diversity risk-measure
+
+Here you can compute the l-diversity of sensitive variables. A dataset satisfies l-diversity if for every key k there are at least ldifferent values for each of the sensitive variables. The statistics refer to the value of l for each record.
+
+- Select one or more sensitive-variables
+- Select a value for the recursive-constant 
 
 ## [tbw] Visualizations
 ### Barplot/Mosaicplot {#res_vis_plot}
@@ -539,13 +549,13 @@ In this part of the interface it is possible to compare tabulations of categoric
 ### Information Loss
 Recoding categorical key variables by combining levels leads to information loss. In this section it is possible to compare for each key variable the effects of recoding. Thus, a table containing the following columns for each categorical key variable is shown:
 
-- *keyVar*: the name of a categorical key variable
-- *nrCategories.orig*: the number of categories in the original variable
-- *nrCategories.mod*: the number of categories in the anonymized variable
-- *mean.size.orig*: the mean number of elements in each category in the original variable
-- *mean.size.mod*: the mean number of elements in each category in the anonymized variable
-- *min.size.orig*: the size of the smallest category in the original variable
-- *min.size.mod*: the size of the smallest category in the anonymized variable
+- **keyVar**: the name of a categorical key variable
+- **nrCategories.orig**: the number of categories in the original variable
+- **nrCategories.mod**: the number of categories in the anonymized variable
+- **mean.size.orig**: the mean number of elements in each category in the original variable
+- **mean.size.mod**: the mean number of elements in each category in the anonymized variable
+- **min.size.orig**: the size of the smallest category in the original variable
+- **min.size.mod**: the size of the smallest category in the anonymized variable
 
 The table is interactive and in case of many key variables, it can be sorted by clicking on the small arrow signs that are shown next to the column names.
 
@@ -554,10 +564,24 @@ On this page it is possible to find out how many records in the anonymized datas
 
 Furthermore, a table listing all the records in the dataset that violate `k`-anonymity are printed. For these observations, the interactive table contains all categorical key variables ere you can browse the records that violate k-anonymity for the selected level of `k`. In this table, all categorical key variables are shown as well as `risk` (the individual risk), `fk` (the frequency this combination of value in the key vars occurs in the data) and  `Fk` (the estimated frequency of this combination of values in the keyvars in the population taking sampling weights into account) are shown.
 
-## [tbw] Numerical Risk Measures
-### [tbw] Compare summary statistics
-### [tbw] Disclosure Risk
-### [tbw] Information Loss
+## Numerical Risk Measures
+
+In this section, it is possible to get information on important [summary statistics](#numres_summary_stats) of numerical key variables in the original and anonymized data set as well as to get information on the current [disclosure risk](#numres_disclosure_risk) as well as measures on [information loss](#numres_infoloss).
+
+### Compare summary statistics {#numres_summary_stats}
+In this section it is possible to compare statistics of the distribution of the numerical key variables in the current problem between the original and the anonymized data set. Optionally it is possible to calculate the available measures given the label of a categorical key variable. To start, the user needs to select a numerical key variable from the select input labelled `Choose a numerical key variable` in which already a variable is pre-selected. Next to this input is another select input labelled `Optionally choose a categorical variable` which has a default value of `None`. In this input, users may select one of the categorical key variables. If the default value is not changed, the summary statistics shown in tabular form below are calculated for each level of the specified categorical key variable.
+
+Once these selections have been made, some important values are printed in a section named `Measures` below. These values include the Pearson correlation  coefficient using pairwise complete information, the standard deviations as well as the interquartile range (a robust measure being the difference between 3rd and 1st quantile of the data set) of the selected variable in the original and the anonymized data set.
+
+Below this information, two tables are presented. The first refers to the original data and shows the Minimum, Mean, Median, Maximum as well as the 5%-, 25%-, 75%- and 95%-quantiles of the selected numerical key variable while the same information is shown in the table below for the variable in the anonymized data set. In case that a categorical variable has been choosen in `Optionally choose a categorical variable`, these summary statistics are calculated for each level of the selected categorical key variable. We note that since the levels of the categorical key variables might differ beetween original and anonymized data set, it is not possible to show this information in a single table. 
+
+### Disclosure Risk {#numres_disclosure_risk}
+On this page, users can check on the estimated disclosure risk for the selected numerical key variables. The measure can be interpreted in the following way. In the original, unmodified data that has been used to create the sdc problem, the risk for the numeric key variables is assumed to be between `0%` and `100%`. The more data anonymization techniques such as microaggregation or adding noise are applied to the data, the less the upper bound of the risk will be. So users can compare the estimated upper bound of the risk for numerical key variables in the anonymized data and compare on how much it has reduced from the initial value of `100%`. We note that the larger the deviations from the original data are, the lower the upper risk bound will be. However, this has of course also an impact on data utility measures that can be assessed from the menu button `Information Loss` as described [below](#numres_infoloss).
+
+### Information Loss {#numres_infoloss}
+Here, users can check on two measures of information loss. Generally speaking, both measures shown on this page have higher values, the more the numerical key variables have been modified or rather anonymized. We also note that if information loss and [disclosure risk for numerical variables](#numres_disclosure_risk) are always a trade of which need to be balanced. 
+
+On this page, the values of the `IL1s` measure (for which also the definition is shown) as well as the differences of robust eigenvalues of the data before and after the anonymization process are shown. 
 
 # Export Data {#export_data}
 In this tab, the GUI offers the possibiliby to export the current state of the anonymized microdata from the current problem instance to a file in various formats or save a report summarizing the anonymization process as an html-file to disk. If no problem instance has been specified, the user is informed that he needs to create a problem first. By clicking on the button labelled `Create an SDC-Problem`, the GUI changes to the [Anonymize](#anonymize) page, where the user can create a problem. As an alternative, the user may upload a previously saved problem instance. By clicking on the button `Upload a previously saved problem`, the user is taken to the [Undo](#undo) page where he may upload an previously saved problem instance.
