@@ -760,7 +760,6 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_chooose_df, {
     ptm <- proc.time()
     cmd <- code_useRObj()
-    cat(cmd,"\n")
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
     obj$inputdataB <- obj$inputdata
