@@ -67,23 +67,21 @@ output$ui_resnum_infoloss <- renderUI({
   out
 })
 
-output$ui_numvar_numres <- renderUI({
-  nv <- get_numVars_names()
-  if (length(nv)==0) {
-    return(NULL)
-  }
-  selectInput("sel_res_numvar1",label=h5("Numerical key Variable"),
-    choices=nv, selected=input$sel_res_numvar1, width="100%", multiple=FALSE)
-})
-output$ui_catvar_numres <- renderUI({
-  byv <- c("none", get_keyVars_names(), get_strataVar_names())
-  selectInput("sel_res_catvar1",label=h5("by Variable"), choices=byv,
-    selected=input$sel_res_catvar1, width="100%")
-})
 
 
 # display comparison (before-after) about numeric variables
 output$ui_resnum_comparison <- renderUI({
+  output$ui_numvar_numres <- renderUI({
+    nv <- get_numVars_names()
+    if (length(nv)==0) {
+      return(NULL)
+    }
+    selectInput("sel_res_numvar1", label=h5("Choose a numerical key variable"), choices=nv, width="100%", multiple=FALSE)
+  })
+  output$ui_catvar_numres <- renderUI({
+    byv <- c("none", get_keyVars_names(), get_strataVar_names())
+    selectInput("sel_res_catvar1", label=h5("Optionally choose a categorical variable"), choices=byv, width="100%")
+  })
   output$ui_numvar_modtab <- DT::renderDataTable({
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
@@ -103,7 +101,7 @@ output$ui_resnum_comparison <- renderUI({
       tab_m <- as.data.frame(t(summaryfn(df_m[[input$sel_res_numvar1]])))
     }
     tab_m
-  }, options=list(scrollX=TRUE, searching=FALSE, paging=FALSE))
+  }, options=list(scrollX=TRUE, searching=FALSE, paging=FALSE), rownames=FALSE)
   output$ui_numvar_origtab <- DT::renderDataTable({
     if (is.null(input$sel_res_numvar1)) {
       return(NULL)
@@ -123,34 +121,49 @@ output$ui_resnum_comparison <- renderUI({
       tab_o <- as.data.frame(t(summaryfn(df_o[[input$sel_res_numvar1]])))
     }
     tab_o
-  }, options=list(scrollX=TRUE, searching=FALSE, paging=FALSE))
+  }, options=list(scrollX=TRUE, searching=FALSE, paging=FALSE), rownames=FALSE)
   output$ui_numvar_cor <- renderUI({
-    if (is.null(input$sel_res_numvar1)) {
-      return(NULL)
-    }
+    req(input$sel_res_numvar1)
+    #if (is.null(input$sel_res_numvar1)) {
+    #  return(NULL)
+    #}
     if (length(input$sel_res_numvar1)==0) {
       return(NULL)
     }
     v_o <- get_origData()[[input$sel_res_numvar1]]
     v_m <- extractManipData(sdcObj())[[input$sel_res_numvar1]]
-    vv <- round(cor(v_o, v_m), digits=3)
-    txt_cor <- paste0("The ",strong("correlation")," between original and modified variable is", code(vv),". The ",strong("standard deviation"),
-    " of the original variable is ",code(round(sd(v_o),digits=3))," and the ",strong("standard deviation")," of the
-    modified variable is ", code(round(sd(v_m),digits=3)),".")
-    fluidRow(column(12, p(HTML(txt_cor), align="center")))
+    val_cor <- round(cor(v_o, v_m, use="pairwise.complete.obs"), digits=3)
+    txt_cor <- paste0("The ",strong("correlation")," between original and modified variable is ", code(val_cor),".",tags$br())
+
+    sd_o <- round(sd(v_o, na.rm=TRUE), digits=3)
+    sd_m <- round(sd(v_m, na.rm=TRUE), digits=3)
+    txt_sd <- paste0("The ",strong("standard deviation")," of the original variable is ",code(sd_o)," and ", code(sd_m)," for
+      the anonymized variable.", tags$br())
+    iqr_o <- round(IQR(v_o, na.rm=TRUE), digits=3)
+    iqr_m <- round(IQR(v_m, na.rm=TRUE), digits=3)
+    txt_iqr <- paste0("The ",strong("interquartile range")," of the original variable is ",code(iqr_o)," and ", code(iqr_m)," for
+      the anonymized variable.", tags$br())
+
+    fluidRow(
+      column(12, h5("Measures"), align="center"),
+      column(12, p(HTML(txt_cor)), align="center"),
+      column(12, p(HTML(txt_sd)), align="center"),
+      column(12, p(HTML(txt_iqr)), align="center")
+    )
   })
   if (!has_numkeyvars()) {
     return(uiOutput("nonumkey_continous_results"))
   }
 
   res <- fluidRow(
-    column(6, uiOutput("ui_numvar_numres")),
-    column(6, uiOutput("ui_catvar_numres")))
+    column(12, h4("Compare summary statistics of numerical key variables"), align="center"),
+    column(6, uiOutput("ui_numvar_numres"), align="center"),
+    column(6, uiOutput("ui_catvar_numres"), align="center"))
 
   res <- list(res, uiOutput("ui_numvar_cor"), fluidRow(
-    column(12, h5("Original Values", align="center")),
+    column(12, h5("Original Data", align="center")),
     column(12, dataTableOutput("ui_numvar_origtab")),
-    column(12, h5("Modified Data", align="center")),
+    column(12, h5("Anomyized Data", align="center")),
     column(12, dataTableOutput("ui_numvar_modtab"))))
   res
 })
