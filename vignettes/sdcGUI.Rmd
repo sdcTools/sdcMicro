@@ -484,38 +484,24 @@ If all options have been set, a button labelled `Apply rank-swapping` is shown a
 
 Categorical risk measures
 
-### [tbw] Information of Risks
+### Information of Risks
+Here, users have the possibility to obtain information on various risk-measures based on the categorical key variables, identify risky records and to visualize the individual re-identification risks. 
 
-- `What kind of results do you want to show?` -> 
+To choose from this possibilities, the user needs to either select `Risk Measures` (the default value), `Risky Observations` or `Plot of risks` from the radio button list labelled `What kind of results do you want to show?`.
 
 **Risk Measures**
 
-- Expected reidentifications
+Here, the number and percentages of observations that have a higher indidvidual re-identification risk than the main part of the other records is shown for both the initial as well as the anonymized data. The individual re-identification risk is computed based on the selected categorical key variables and reflects both the frequencies of the keys in the data and the individual sampling weights. A record is said to have a re-identification risk different from the main part of the data if its personal re-identification risk is either larger than the median + two times the Median Absolute Deviation of the distribution of all individual risks (a robust measure) or if it is deemed large. For this, the setting was choosen to be `0.1` (`10%`). 
 
-We expect 9 re-identifications ( 0.2 %) in the anonymized data set.
-
-In the original dataset we expected 9 ( 0.2 %) re-identifications.
-
-- Expected reidentifications taking cluster-information into account
-
-In this case, we expect to have 44.45 ( 0.97 %) re-identifications given the anonymized data set. For the original data, we expected to have 44.45 ( 0.97 %)) re-identifications.
-
-- Records with large individual reidentification risks
-
-The following (robust) measure calculates the number of records having an individual risk that is larger than the median of all indiviual risks plus two times its Median Absolute Deviation or having an absolute value larger than 0.1 . 0 observations ( 0 in the original data) have a high risk according to this measure.
+Also, it is shown how many observations (and the corresponding percentages) are expected to be re-identified. This information is also shown for the initial dataset and the anonymized data set so that comparisons can be easy done. In case a cluster-variable was specified during the setup of the problem instance, the expected number of reidentifications is also shown if the cluster (e.g persons living in households) information is taken into account as well. 
 
 **Risky Observations** 
 
-Display risky-observations in a Table
-
-`Minimum risk for to be shown in the table` -> slider: 0 and max individual risk
-
-- interactive table with all categorical key variables, fk, Fk and indivRisk
-
+This page allows to filter records in the anonymized data set depending on a threshold for the individual re-identification risk. To do so, the user can select a specific threshold by moving the slider input labelled `Minimum risk for to be shown in the table`. The slider ranges from `0` (the default value) up to the maximum risk-value currently available in the anonymized data set. If the default value is not changed, all observations are marked as *"risky"* because the re-identification risk is by default larger than `0`. Below the slider, the number and percentages of observations with individual re-identification risks larger than the currently specified threshold are shown. Below, a table containing the categorical key variables, the numbers of `fk`, `Fk` and the individual risk itself are shown for the observations that are marked as *"risky"*. Once the value of the threshold is changed, the number of risky observations will decrease. 
 
 **Plot of risks**
 
-- Histogram showing distribution of individual reidentification-risks
+On this page, two plots are presented. The first histogram shows the distribution of the individual re-identification risks in the anonymized data set while the plot below shows the same information based in the original data set that was used when the problem instance was created. 
 
 
 ### Suda2 risk-measure

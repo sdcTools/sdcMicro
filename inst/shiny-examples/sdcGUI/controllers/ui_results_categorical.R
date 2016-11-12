@@ -1,12 +1,13 @@
 output$ui_rescat_riskinfo <- renderUI({
   output$ui_rescat_selection <- renderUI({
     radioButtons("rb_riskselection", label=h5("What kind of results do you want to show?"),
-      choices=c("Risk Measures"="ui_rescat_riskymeasures", "Risky Observations"="ui_rescat_riskyobs", "Plot of risks"="ui_rescat_riskplot"),
+      choices=c("Risk Measures"="rescat_riskymeasures", "Risky Observations"="rescat_riskyobs", "Plot of risks"="rescat_riskplot"),
       selected=input$rb_riskselection, inline=TRUE, width="100%")
   })
   output$rescat_riskymeasures <- renderUI({
     rI <- measure_riskComp()
     out <- fluidRow(
+      column(12, h5("Risk measures"), align="center"),
       column(12, p(code(rI$s),"observations (",code(rI$sorig),"in the original data) have an individual re-identification risk level higher than
       the set benchmark value of",code(0.1),"or having a risk being larger than median of the risk distribution plus two times
       its",tags$i("Median Absolute Deviation."),"The individual re-identification risk is computed based on the selected categorical key
@@ -26,33 +27,69 @@ output$ui_rescat_riskinfo <- renderUI({
 
   # table and slider observation with risk > than specified threshold
   output$rescat_riskyobs <- renderUI({
-    # slider for minimal risk
-    output$riskyobs_slider <- renderUI({
-      sliderInput("sl_riskyobs", label=h5("Minimum risk for to be shown in the table"), min=0, max=max(get_risk()$risk), value=0, width="100%")
-    })
-
-    # table containing the corresponding observations
-    output$tab_risk <- renderDataTable({
-      if (is.null(sdcObj())) {
+    calc_riskyobs <- reactive({
+      input$sl_riskyobs
+      curObj <- sdcObj()
+      if (is.null(curObj)) {
         return(NULL)
       }
       if (is.null(input$sl_riskyobs)) {
         return(NULL)
       }
       df <- as.data.frame(get_origData()[,get_keyVars()])
+      N <- nrow(df)
       rk <- get_risk()
       df$fk <- rk$fk
       df$Fk <- rk$Fk
-      df$indivRisk=rk$risk
+      df$indivRisk <- rk$risk
       df[!duplicated(df),]
       df[order(df$indivRisk, decreasing=TRUE),]
-      df[df$indivRisk > input$sl_riskyobs,,drop=F]
-    }, options = list(pageLength = 10, searching=FALSE))
+      df <- df[df$indivRisk > input$sl_riskyobs,,drop=F]
+      if (nrow(df)>0) {
+        df$indivRisk <- formatC(df$indivRisk, format="fg", digits=3)
+      }
+      n <- nrow(df)
+      p <- paste0(formatC(100*(n/N), format="f", digits=2),"%")
+      return(list(df=df, n=n, p=p))
+      df
+    })
+    # slider for minimal risk
+    output$riskyobs_slider <- renderUI({
+      sliderInput("sl_riskyobs", label=h5("Minimum risk for to be shown in the table"), min=0, max=max(get_risk()$risk), value=0, width="100%")
+    })
+    output$riskyobs_result <- renderUI({
+      # table containing the corresponding observations
+      output$tab_risk <- renderDataTable({
+        df
+      }, options = list(pageLength = 10, searching=FALSE))
 
-    fluidRow(
+      res <- calc_riskyobs()
+      if (is.null(res)) {
+        return(NULL)
+      }
+      df <- res$df
+      n <- res$n
+      p <- res$p
+      out <- NULL
+      if (n == 0) {
+        out <- list(out, fluidRow(
+          column(12, p(code(n),"(",code(p),") records have a risk larger than",code(input$sl_riskyobs),"."), align="center")
+        ))
+      } else {
+        out <- list(out, fluidRow(
+          column(12, p(code(n),"(",code(p),") records have a risk larger than",code(input$sl_riskyobs),"."), align="center"),
+          column(12, dataTableOutput("tab_risk"))
+        ))
+      }
+      out
+    })
+
+
+    out <- fluidRow(
       column(12, h5("Display risky-observations in a Table", align="center")),
-      column(12, uiOutput("riskyobs_slider")),
-      column(12, dataTableOutput("tab_risk")))
+      column(12, uiOutput("riskyobs_slider"), align="center"))
+    out <- list(out, uiOutput("riskyobs_result"))
+    out
   })
 
   # display a risk-plot
@@ -62,25 +99,39 @@ output$ui_rescat_riskinfo <- renderUI({
         return(NULL)
       }
       rk <- get_risk()
-      hist(rk$risk, xlab="Risks", main="Individual risks", col="lightgrey")
+      hist(rk$risk, xlab="Risks", main="Individual risks (Anonymized data)", col="lightgrey")
     })
+
+    output$plot_risk_orig <- renderPlot({
+      curObj <- sdcObj()
+      if (is.null(curObj)) {
+        return(NULL)
+      }
+      rk <- curObj@originalRisk$individual[,1]
+      hist(rk, xlab="Risks", main="Individual risks (Original data)", col="lightgrey")
+    })
+
     fluidRow(
       column(12, h5("Plot showing distribution of individual reidentification-risks", align="center")),
-      column(12, plotOutput("plot_risk")))
+      column(12, h5("Anonymized data"), align="center"),
+      column(12, plotOutput("plot_risk"), align="center"),
+      column(12, h5("Original data"), align="center"),
+      column(12, plotOutput("plot_risk_orig"), align="center"))
   })
 
   out <- fluidRow(
     column(12, h4("Risk measures"), align="center"),
     column(12, p("The output on this page is based on the categorical key variables in the current problem."), align="center"),
     column(12, uiOutput("ui_rescat_selection"), align="center"))
+
   if (!is.null(input$rb_riskselection)) {
-    if (input$rb_riskselection=="riskymeasures") {
+    if (input$rb_riskselection=="rescat_riskymeasures") {
       out <- list(out, uiOutput("rescat_riskymeasures"))
     }
-    if (input$rb_riskselection=="riskyobs") {
+    if (input$rb_riskselection=="rescat_riskyobs") {
       out <- list(out, uiOutput("rescat_riskyobs"))
     }
-    if (input$rb_riskselection=="riskplot") {
+    if (input$rb_riskselection=="rescat_riskplot") {
       out <- list(out, uiOutput("rescat_riskplot"))
     }
   }
