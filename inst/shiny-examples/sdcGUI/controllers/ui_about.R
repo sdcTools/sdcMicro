@@ -76,12 +76,5 @@ output$ui_about <- renderUI({
 
   # stop the app
   out <- list(out, uiOutput("stop_btn"))
-
-  btn1 <- bsButton("help_about", label="", icon=icon("question"), style = "primary", size="extra-small", type="action", block = FALSE, disabled = FALSE, value = FALSE)
-  out <- list(out, fluidRow(
-    column(12, btn1, align="center"),
-    bsTooltip("help_about", title="show some additional information", placement="bottom", trigger="hover", options = NULL)
-  ))
-
   out
 })
