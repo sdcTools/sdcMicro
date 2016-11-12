@@ -478,3 +478,25 @@ calc_ldiv_result <- reactive({
 get_ldiv_result <- reactive({
   obj$ldiv_result
 })
+
+# calculate suda2-measure using data.frame-method
+calc_suda2_result <- reactive({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NULL)
+  }
+  inpdat <- extractManipData(curObj, randomizeRecords="no")
+  keyVars <- get_keyVars_names()
+  suda2 <- suda2(obj=inpdat, variables=keyVars, missing=NA, DisFraction=input$suda2_disf)
+
+  SEQ <- seq(0, 0.7, 0.1) + .Machine$double.eps
+  DISSudaScore <- paste(">", seq(0, 0.7, 0.1))
+  tab <- table(cut(suda2$disScore, breaks = c(-1, SEQ)))
+  df_thresholds <- data.frame(thresholds = DISSudaScore, number = as.integer(tab))
+  return(list(thresholds=df_thresholds, attribute_contributions=suda2$attribute_contributions, DisFraction=input$suda2_disf))
+})
+
+# current result of suda2-calculation
+get_suda2_result <- reactive({
+  obj$suda2_result
+})

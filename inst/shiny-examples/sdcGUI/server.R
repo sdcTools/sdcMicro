@@ -585,7 +585,7 @@ shinyServer(function(session, input, output) {
   # code for l-diversity
   code_suda2 <- reactive({
     cmd <- paste0("sdcObj <- suda2(obj=sdcObj")
-    cmd <- paste0(cmd, ", DisFraction=",input$suda2_disf,")")
+    cmd <- paste0(cmd, ", DisFraction=",input$suda2_disf,", missing=NA)")
     cmd
   })
 
@@ -898,6 +898,7 @@ shinyServer(function(session, input, output) {
     obj$cur_selection_import <- "btn_import_data_1"
     obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
     obj$ldiv_result <- NULL # reset ldiversity measure
+    obj$suda2_result <- NULL # reset suda2 measure
   })
   # add ghost-vars to an existing sdcMicroObj
   observeEvent(input$btn_addGhostVars, {
@@ -1275,10 +1276,24 @@ shinyServer(function(session, input, output) {
     obj$comptime <- obj$comptime+ptm[3]
   })
   # suda2()
+  observeEvent(input$btn_suda2_restart, {
+    obj$suda2_result <- NULL
+  })
   observeEvent(input$btn_suda2, {
     ptm <- proc.time()
     cmd <- code_suda2()
-    runEvalStr(cmd=cmd, comment="## calculating suda2 risk-measure")
+    # hack: we do not want the sdcmicro obj to be updated
+    # instead we calculate ldivsersity on a data.frame
+    #runEvalStr(cmd=cmd, comment="## calculating suda2 risk-measure")
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="calculating suda2 (this might take some time)...", value = 0)
+
+    obj$suda2_result <- calc_suda2_result()
+    progress$set(message="calculating suda2 (this might take some time)...", value = 1)
+
+    cmd <- paste0("## calculating suda2 riskmeasure","\n",cmd)
+    obj$code_anonymize <- c(obj$code_anonymize, cmd)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
   })

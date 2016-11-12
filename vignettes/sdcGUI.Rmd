@@ -518,19 +518,12 @@ Display risky-observations in a Table
 - Histogram showing distribution of individual reidentification-risks
 
 
+### Suda2 risk-measure
+On this page, users can apply the SUDA algorithm. This algorithm can be used to search for Minimum Sample Uniques (MSU) in the data given the current set of key-variables to look at those records that are unique in the sample uniques and to check if any of these sample uniques are also special uniques. Special uniques are defined as records having keys for which also a subset of the selected key variables is unique in the sample. See the help files for more information on SUDA scores.
 
-### [tbw] Suda2 risk-measure
+We note that this algorithm can only be applied, if the current problem instance features three or more categorical key variable. If this requirement is not fulfilled, the user is shown this information. Else, the user needs to choose a value for parameter `disFraction?` which is the sampling fraction for the simple random sampling or the common sampling fraction for stratified sampling used within the algorithm. By default, this value is set to 0.01 and can be changed by modifying the slider labelled `Select a value for sampling fraction for the stratified sampling`.
 
-- Suda2 scores can only be computed for scenarios with >= 3 categorical key variables! 
-
-- The SUDA algorithm is used to search for Minimum Sample Uniques (MSU) in the data among the sample uniques to determine which sample uniques are also special uniques i.e., have subsets that are also unique. See the help files for more information on SUDA scores.
-
-- Select a value for sampling fraction for the stratified sampling
-- button `Calculate suda2-scores`
-Thresholds (DisFraction=0.1)
-- Attribute contributions
-
-
+After pressing the button termed `Calculate suda2-scores`, the actual computation is performed. Once this is finished, the layout of the page changes. On top of the page a button labelled `Reset to choose different a different disFraction parameter`. Pressing this button resets the results and allows to recompute the suda2 scores using a different value for parameter `disFraction`. Below this button, two tables are shown. The first table summarises the suda2 scores that have been obtained. It shows for 8 thresholds the number of records having suda2 scores greater than this value. The second table shows for each categorical key variable how much of the total risk is contributed to by each of the variables. This amount is shown in the second column (`contribution`) while the corresponding key variable is listed in column `variable`.
 
 ### l-Diversity risk-measure
 Here you can compute the `l`-diversity of sensitive variables. A dataset satisfies `l`-diversity if for every combination of the categorical key variables there are at least `l` different values for each of the sensitive variables. The statistics refer to the value of `l` for each record. To calculate this risk measure, the use needs to first select at least one sensitive variable. This can be done in the input field `Select one or more sensitive-variables` where all variables except for the categorical key variables can be selected. The other choice is to set a value for the *l-diversity constant* which can be done using the slider named `Select a value for the recursive-constant`. This constant is used to determine if a record is unsafe. If the calculated value for `l-diversity` for a record (having a specific key) is less than this constant, it is said to violate `l`-diversity.

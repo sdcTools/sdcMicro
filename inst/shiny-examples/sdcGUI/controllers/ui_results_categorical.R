@@ -232,33 +232,22 @@ output$ui_rescat_suda2 <- renderUI({
     req(input$suda2_disf)
     myActionButton("btn_suda2", label="Calculate suda2-scores", btn.style="primary")
   })
+  output$suda2_resetbtn <- renderUI({
+    myActionButton("btn_suda2_restart", label="Reset to choose different a different disFraction parameter", btn.style="danger")
+  })
   # suda2-results
   output$suda2_result <- renderUI({
-    req(input$btn_suda2)
-    input$btn_suda2
-    isolate({
-      if (input$btn_suda2==0) {
-        return(NULL)
-      }
-      curObj <- sdcObj()
+    suda2 <- get_suda2_result()
+    if (is.null(suda2)) {
+      return(NULL)
+    }
 
-      res <- curObj@risk$suda2
-      if (is.null(input$suda2_disf) || is.null(res)) {
-        return(NULL)
-      }
-
-      SEQ <- seq(0, 0.7, 0.1) + .Machine$double.eps
-      DISSudaScore <- paste(">", seq(0, 0.7, 0.1))
-      tab <- table(cut(res$disScore, breaks = c(-1, SEQ)))
-      df_thresholds <- data.frame(thresholds = DISSudaScore, number = as.numeric(tab))
-
-      fluidRow(
-        column(12, h5(paste0("Thresholds (DisFraction=",input$suda2_disf,")")), align="center"),
-        column(12, renderTable(df_thresholds), align="center"),
-        column(12, h5("Attribute contributions"), align="center"),
-        column(12, renderTable(res$attribute_contributions), align="center")
-      )
-    })
+    fluidRow(
+      column(12, h5(paste0("Thresholds (DisFraction=",suda2$DisFraction,")")), align="center"),
+      column(12, renderTable(suda2$thresholds), align="center"),
+      column(12, h5("Attribute contributions"), align="center"),
+      column(12, renderTable(suda2$attribute_contributions), align="center")
+    )
   })
 
   # suda2 can only be calculated for sdcProblems with >= 3 categorical key variables
@@ -268,14 +257,25 @@ output$ui_rescat_suda2 <- renderUI({
       column(12, p("Suda2 scores can only be computed for scenarios with",code(">= 3"),"categorical key variables!", align="center"))
     ))
   }
-  return(fluidRow(
+
+  out <- fluidRow(
     column(12, h4("suda2 risk-measure", align="center")),
     column(12, p("The SUDA algorithm is used to search for Minimum Sample Uniques (MSU) in the data among the sample uniques to determine
       which sample uniques are also special uniques i.e., have subsets that are also unique. See the help files for more
-      information on SUDA scores."), align="center"),
-    column(12, div(uiOutput("suda2_disf"), align="center")),
-    column(12, div(uiOutput("suda2_btn"), align="center")),
-    column(12, uiOutput("suda2_result"))))
+      information on SUDA scores."), align="center"))
+
+  if (is.null(get_suda2_result())) {
+    out <- list(out, fluidRow(
+      column(12, uiOutput("suda2_disf"), align="center"),
+      column(12, uiOutput("suda2_btn"), align="center")
+    ))
+  } else {
+    out <- list(out, fluidRow(
+      column(12, uiOutput("suda2_resetbtn"), align="center"),
+      column(12, uiOutput("suda2_result"), align="center")
+    ))
+  }
+  return(out)
 })
 
 # information on k-anonymity

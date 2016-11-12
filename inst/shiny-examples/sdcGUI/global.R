@@ -358,6 +358,7 @@ obj$lastproblemexport <- NULL # required to show the last exported sdcproblem
 obj$lastproblemexport1 <- NULL # required to show the last exported sdcproblem (undo-page)
 obj$lastscriptexport <- NULL # required to show the last saved script
 obj$ldiv_result <- NULL # required for l-diversity risk-measure
+obj$suda2_result <- NULL # required for suda2 risk-measure
 obj$hhdata <- NULL # household-file data required for merging
 obj$hhdata_applied <- FALSE # TRUE, if mergeHouseholdData() has been applied
 obj$hhdata_selected <- FALSE # TRUE, if selectHouseholdData() has been applied
