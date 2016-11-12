@@ -1436,7 +1436,9 @@ shinyServer(function(session, input, output) {
   observeEvent(input$nodata_script_uploadproblem, {
     updateNavbarPage(session, "mainnav", selected="Undo")
   })
-
+  observeEvent(input$nodata_script_about, {
+    updateNavbarPage(session, "mainnav", selected="Undo")
+  })
   # create links to sdcProblem
   lapply(href_to_setup, function(x) {
     eval(parse(text=x))

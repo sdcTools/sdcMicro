@@ -54,18 +54,36 @@ observeEvent(input$stop_sdcGUI,{
 
 output$ui_about <- renderUI({
   out <- fluidRow(
-    column(12, h4("About the Interface", align="center")),
-    column(12, p("Some information about",code("sdcMicro"),"and how to use this graphical interface."), align="center"))
-    #out <- list(out, uiOutput("pkg_status"))
-    out <- list(out, fluidRow(
-      column(12, h4("Help"), align="center"),
-      column(12, p("Link to GUI-Tutorial"), align="center"),
-      column(12, p("Link to GUI-Tutorial"), align="center"),
-      column(12, p("If you already have an sdcProblem that was exported from the GUI, you can upload it in Tab",code("Reproducibility"),"."), align="center")
+    column(12, h4("sdcGUI", align="center")),
+    column(12, p("Some information about",code("sdcMicro"),"and how to use this graphical interface."), align="center")
+  )
+  #out <- list(out, uiOutput("pkg_status"))
+  out <- list(out, fluidRow(
+    column(12, h4("Help"), align="center"),
+    column(12, p("Detailed information on how to use this graphical user-interface (UI) can be found in a vignette that is included in",code("sdcMicro"),"."), align="center"),
+    column(12, p("You can read the vignette by typing",code('vignette("sdcGUI", package="sdcMicro")'),"into your",code("R"),"prompt."), align="center")
   ))
 
+  if (is.null(inputdata())) {
+    btn <- bsButton(paste0("btn_a_micro_ui_about"), label=("this button"), style="primary", size="extra-small")
+    btn_pi <- bsButton(paste0("nodata_script_about"), label=("here"), style="primary", size="extra-small")
+    out <- list(out, fluidRow(
+      column(12, h4("Getting started"), align="center"),
+      column(12, h5("Upload microdata"), align="center"),
+      column(12, p("To get started, you need to upload some micro data to the GUI. You can do so by clicking on",btn,"."), align="center"),
+      column(12, h5("Upload a problem instance"), align="center"),
+      column(12, p("Alternatively, you can also upload a previously saved problem instance by clicking",btn_pi,"."), align="center")
+    ))
+
+    #if (is.null(sdcObj())) {
+    #  column(12, p("If you already have an sdcProblem that was exported from the GUI, you can upload it in Tab",code("Reproducibility"),"."), align="center")
+    #}
+  }
+
+
+
   pp <- textInput("path_export_data", label=h5("Enter a directory where any exported files (data, script, problem instances) should be saved to"),
-    placeholder=paste("e.g:", getwd()), width="50%")
+    placeholder=paste("e.g:", obj$path_export), width="50%")
   out <- list(out, fluidRow(
     column(12, h4("GUI-Settings"), align="center"),
     column(12, p("Below you can opt to change the default path, where all output from the GUI will be saved. You can change this path any time later as well."),align="center"),

@@ -376,11 +376,13 @@ obj$stata_labs <- NULL
 obj$stata_varnames <- NULL
 
 # the path, where all output will be saved to
-if (file.access(getwd(), mode=2)==0) {
-  obj$path_export <- getwd()
+pp <- .startdir
+if (file.access(pp, mode=2)==0) {
+  obj$path_export <- pp
 } else {
   obj$path_export <- tempdir()
 }
+
 # is available in exported problem instances
 # helpful for debugging
 obj$sessioninfo <- sessionInfo()

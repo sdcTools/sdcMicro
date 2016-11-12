@@ -27,5 +27,8 @@ sdcGUI <- function(maxRequestSize=50, debug=FALSE) {
   options(shiny.maxRequestSize=ceiling(maxRequestSize)*1024^2)
   options(shiny.fullstacktrace=debug)
   options(shiny.trace=debug)
+
+  .GlobalEnv$.startdir <- getwd()
+  on.exit(rm(.startdir, envir=.GlobalEnv))
   shiny::runApp(appDir, display.mode="normal", launch.browser=TRUE)
 }
