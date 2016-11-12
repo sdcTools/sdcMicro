@@ -890,6 +890,12 @@ shinyServer(function(session, input, output) {
       radioButtons(id, label=h5(paste("Apply k-Anon to all subsets of",i,"key variables?")),
         selected=input[[id]], width="100%", inline=TRUE, choices=c("No", "Yes"))
     })
+    # reset all menu items to first choice
+    obj$cur_selection_results <- "btn_results_1"
+    obj$cur_selection_exports <- "btn_export_results_1"
+    obj$cur_selection_script <- "btn_export_script_1"
+    obj$cur_selection_microdata <- "btn_menu_microdata_1"
+    obj$cur_selection_import <- "btn_import_data_1"
     obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
   # add ghost-vars to an existing sdcMicroObj
