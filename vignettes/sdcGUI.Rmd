@@ -16,20 +16,27 @@ vignette: >
 # Introduction and Main Features
 Package `sdcMicro` contains a [shiny](https://cran.r-project.org/web/packages/shiny/index.html) app that should help users that are non-experts in R (command-line) to apply disclosure limitation techniques. For this reason, users may upload (micro)data files from different software products into the app and then start to anonymize the dataset by working within the interactive, graphical user interface (GUI). This document will give an overview of the functionalities of the graphical user interface which can be started with `sdcGUI()`. The main functionality of the GUI is:
 
-- Uploading microdata
-- Modify and analyze microdata
-- Creating `sdcMicroObj`-instances
-- Perform anonymization techniques on an `sdcMicroObj`-problem instance
-- Obtain information on disclosure risks and/or information loss
-- Keep reproducibility by being able do download the underlying code from `sdcMicro`
+- [Uploading microdata](#microdata)
+- [Modify and analyze microdata](#modify_microdata)
+- [Creating `sdcMicroObj`-instances](#setup_sdcproblem)
+- [Perform anonymization techniques on an `sdcMicroObj`-problem instance](#anonymize)
+- [Obtain information on disclosure risks and/or information loss](#risk_utility)
+- [Export anonymized data and reports](#export_data)
+- [Keep reproducibility by being able do download the underlying code from `sdcMicro`](#reproducibility)
 
 We now describe the features of the interactive graphical user interface in detail. The GUI is seperated into 7 main categories, which can be selected from the navigation bar at the top of the screen. Initially, some of these pages will be empty and their content changes once microdata have been uploaded or an `sdcMicroObj` has been generated. 
 
 We also want to note that throughout the GUI qustionmark signs are shown. Hovering the mouse over these small icons triggers a pop up window with additional information which will help during the anonymization process.
 
-# [tbw] About/Help {#about}
+# About/Help {#about}
 
-to be written
+This is the first page that is shown once the graphical user interface has been started using `sdcGUI()` after loading package `sdcMicro`. On this page, the user is presented the information on how to open this package vignette which contains extensive information on how to use the GUI. Furthermore, in section `Getting started` users are advised to either [upload microdata](#microdata) or to [upload a previously saved problem instance](#undo). Clicking on the relevant buttons brings the user automatically to the page from which the desired functionality is available. 
+
+In section `Settings`, it is possible to change the default output path. This path is used whenever the user decides to export data from the GUI to the hard disk. The default value is the directory from which the GUI was started (e.g the current working directory). Once a valid path is entered in the text input field, a button labelled `Update the current output path` appears below the input. Pressing this input updates the path. If successfull, the current path is shown both as placeholder in the text input as well as in the text above the input field. We note that you can change the path at any time during the anonymization process. Writing files to disk will always use the current path.
+
+Another possibility from this page is to stop the interface by clicking on a button labelled `Stop the GUI`. If this feature is used, the current [uploaded microdata] after [modifications](#modify_microdata) as well as the [current problem instance](#setup_sdcproblem) (if it has already been specified) are (invisibly) returned to `R`. So in case the interface was started with `x <- sdcGUI()`, `x` then contains a list with two elements named `inputdata` and `sdcObj`. This allows to continue working in `R`. Finally, users are shown ways on how to contact us for bug reports or any other issues.
+
+We now continue to describe the functionality of the user interface in detail.
 
 # Microdata {#microdata}
 On this page, the user has the possibility to either upload data sets stored as files on the hard drive into the GUI or to select data frames that exist in the users workspace before working the graphical user interface was started. This allows to perform common datamanipulation steps directly in `R` before continuing to anonymize the dataset using the GUI.
