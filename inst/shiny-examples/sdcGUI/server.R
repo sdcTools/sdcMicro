@@ -578,7 +578,7 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("sdcObj <- ldiversity(obj=sdcObj")
     cmd <- paste0(cmd, ", ldiv_index=",VecToRStr(input$ldiv_sensvar, quoted=TRUE))
     cmd <- paste0(cmd, ", l_recurs_c=",input$ldiv_recconst)
-    cmd <- paste0(cmd, ", missing=-999)")
+    cmd <- paste0(cmd, ", missing=NA)")
     cmd
   })
 
@@ -897,6 +897,7 @@ shinyServer(function(session, input, output) {
     obj$cur_selection_microdata <- "btn_menu_microdata_1"
     obj$cur_selection_import <- "btn_import_data_1"
     obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
+    obj$ldiv_result <- NULL # reset ldiversity measure
   })
   # add ghost-vars to an existing sdcMicroObj
   observeEvent(input$btn_addGhostVars, {
@@ -1250,10 +1251,26 @@ shinyServer(function(session, input, output) {
 
   ### risk-measurements ###
   # ldiversity()
+  # reset ldiv_result slot; required for better ui
+  observeEvent(input$btn_ldiv_restart, {
+    obj$ldiv_result <- NULL
+  })
   observeEvent(input$btn_ldiv, {
     ptm <- proc.time()
     cmd <- code_ldiv()
-    runEvalStr(cmd=cmd, comment="## calculating l-diversity measure")
+    # hack: we do not want the sdcmicro obj to be updated
+    # instead we calculate ldivsersity on a data.frame
+    cmd <- paste0("## calculating l-diversity measure","\n",cmd)
+    #runEvalStr(cmd=cmd, comment="## calculating l-diversity measure")
+
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message="calculating l-diversity (this might take some time)...", value = 0)
+
+    obj$ldiv_result <- calc_ldiv_result()
+    progress$set(message="calculating l-diversity (this might take some time)...", value = 1)
+
+    obj$code_anonymize <- c(obj$code_anonymize, cmd)
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
   })

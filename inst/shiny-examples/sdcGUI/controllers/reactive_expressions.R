@@ -435,3 +435,46 @@ infodat <- reactive({
 stataLabs <- reactive({
   obj$stata_labs
 })
+
+
+# perform calculation of l-diversity using data.frame-method
+calc_ldiv_result <- reactive({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NULL)
+  }
+
+  inpdat <- extractManipData(curObj, randomizeRecords="no")
+  keyVars <- get_keyVars_names()
+  sensVars <- input$ldiv_sensvar
+  ldiv <- ldiversity(obj=inpdat, keyVars=keyVars, ldiv_index=sensVars, l_recurs_c=input$ldiv_recconst, missing=NA)
+  risk <- curObj@risk
+
+  # table with violating observations
+  ldiv2 <- ldiv[,grep("_Distinct_Ldiversity",colnames(ldiv)),drop=FALSE]
+  for (i in 1:ncol(ldiv2)) {
+    ss <- summary(ldiv2[,i])
+    if (i==1) {
+      df <- data.frame(stats=names(ss), value=as.numeric(ss))
+    } else {
+      df <- cbind(df, data.frame(as.numeric(ss)))
+    }
+  }
+  colnames(df) <- c("stats", colnames(ldiv2))
+  fk <- risk$individual[,2]
+  TFfk <- apply(ldiv2,1,function(x)any(x<input$ldiv_recconst))
+  if (!any(TFfk)) {
+    tab <- data.frame()
+  } else {
+    tab <- cbind(ldiv2[TFfk,],fk[TFfk],inpdat[TFfk,])
+    colnames(tab)[1:ncol(ldiv2)] <- colnames(ldiv2)
+    colnames(tab)[ncol(ldiv2)+1] <- "fk"
+    tab <- tab[order(tab[,1]),]
+  }
+  return(list(tab=tab, df=df))
+})
+
+# current result of ldiversity-calculation
+get_ldiv_result <- reactive({
+  obj$ldiv_result
+})

@@ -125,6 +125,11 @@ output$ui_rescat_recodes <- renderUI({
 
 # display information on l-diversity risk-measure
 output$ui_rescat_ldiv <- renderUI({
+  # sensitive variable
+  output$ldiv_sensvar <- renderUI({
+    vv <- setdiff(allVars(), c(get_weightVar_name(), get_keyVars_names()))
+    selectInput("ldiv_sensvar", label=h5("Select one or more sensitive-variables"), selected=input$ldiv_sensvar, choices=vv, multiple=TRUE, width="100%")
+  })
   # recursive constant
   output$ldiv_recconst <- renderUI({
     txt_tooltip <- ""
@@ -132,79 +137,85 @@ output$ui_rescat_ldiv <- renderUI({
       label=h5("Select a value for the recursive-constant", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=1, max=100, value=2, width="100%")
   })
-  # sensitive variable
-  output$ldiv_sensvar <- renderUI({
-    vv <- setdiff(allVars(), c(get_weightVar_name(), get_keyVars_names()))
-    selectInput("ldiv_sensvar", label=h5("Select one or more sensitive-variables"), choices=vv, multiple=TRUE, selected=input$ldiv_sensvar, width="100%")
-  })
   # button
   output$ldiv_btn <- renderUI({
-    req(input$ldiv_sensvar)
+    req(input$ldiv_sensvar, input$ldiv_recconst)
     if (length(input$ldiv_sensvar)==0) {
       return(NULL)
     }
     myActionButton("btn_ldiv", label="Calculate l-diversity risk-measure", btn.style="primary")
   })
+
+  output$ldiv_resetbtn <- renderUI({
+    myActionButton("btn_ldiv_restart", label="Reset to choose different input parameters", btn.style="danger")
+  })
+
   # ldiversity-results
-  output$ldiv_result <- renderPrint({
-    if (is.null(input$ldiv_sensvar) || length(input$ldiv_sensvar)==0) {
-      return(NULL)
-    }
-    curObj <- sdcObj()
-    if (is.null(curObj)) {
-      return(NULL)
-    }
-    res <- curObj@risk$ldiversity
+  output$ldiv_summary <- renderUI({
+    output$ldiv_summary_table <- renderTable({
+      df_summary <- get_ldiv_result()$df
+      if (is.null(df_summary)) {
+        return(NULL)
+      }
+      df_summary
+    }, row.names=FALSE)
+    req(input$ldiv_sensvar)
+    out <- fluidRow(
+      column(12, h5("Summary statistics on distinct ldiversity"), align="center"),
+      column(12, tableOutput("ldiv_summary_table"), align="center"))
+    out
+  })
+
+  #  data table showing violating obs
+  output$ldiv_violating <- renderUI({
+    output$ldiv_violating_tab <- DT::renderDataTable({
+      get_ldiv_result()$tab
+    }, options=list(scrollX=TRUE), rownames=FALSE)
+    req(input$ldiv_sensvar)
+    res <- get_ldiv_result()
     if (is.null(res)) {
       return(NULL)
     }
-    print(res)
+    tab <- res$tab
+    if (nrow(tab)>0) {
+      out <- fluidRow(
+        column(12, h5("The following",nrow(tab),"records violate l-diversity in at least one sensible variable:"), align="center"),
+        column(12, DT::dataTableOutput("ldiv_violating_tab"), align="center")
+      )
+    } else {
+      out <- fluidRow(
+        column(12, p("No records violate l-diversity with the selected settings!"), align="center")
+      )
+    }
+    out
   })
-  #  data table showing violating obs
-  output$ldiv_violating <- renderDataTable({
-    curObj <- sdcObj()
-    risk <- curObj@risk
-    ldiv <- risk$ldiversity
-    if (is.null(input$ldiv_sensvar) || length(input$ldiv_sensvar)==0 || is.null(ldiv)) {
-      return(NULL)
-    }
-    ldiv <- ldiv[,grep("_Distinct_Ldiversity",colnames(ldiv)),drop=FALSE]
-    fk <- risk$individual[,2]
-    TFfk <- apply(ldiv,1,function(x)any(x<input$ldiv_recconst))
-    if (!any(TFfk)) {
-      return(data.frame())
-    }
-    orig <- get_origData()
-    kV <- get_manipKeyVars()
-    nV <- get_manipNumVars()
-    orig <- orig[,!colnames(orig) %in% c(colnames(kV), colnames(nV)), drop=FALSE]
-    d <- orig
-    if (!is.null(kV)) {
-      d <- cbind(kV, orig)
-    }
-    if (!is.null(nV))
-      d <- cbind(nV,orig)
-    xtmp <- cbind(ldiv[TFfk,],fk[TFfk],d[TFfk,])
-    colnames(xtmp)[1:ncol(ldiv)] <- colnames(ldiv)
-    colnames(xtmp)[ncol(ldiv)+1] <- "fk"
-    xtmp <- xtmp[order(xtmp[,1]),]
-    xtmp
-  }, options=list(scrollX=TRUE))
 
   txt <- paste0("Here you can compute the ",tags$i("l"),"-diversity of sensitive variables. A dataset ")
   txt <- paste0(txt, "satisfies ",tags$i("l"),"-diversity if for every key ",tags$i("k")," there are at least ")
   txt <- paste0(txt, tags$i("l"), "different values for each of the sensitive variables. The statistics refer to the value of ",tags$i("l")," for each record.")
-  res <- fluidRow(
+  out <- fluidRow(
     column(12, h4("l-diversity risk measure"), align="center"),
     column(12, p(HTML(txt)), align="center"))
-  res <- list(res, fluidRow(
-    column(6, uiOutput("ldiv_sensvar"), align="center"),
-    column(6, uiOutput("ldiv_recconst"), align="center")
-  ))
-  res <- list(res, fluidRow(
-    column(12, uiOutput("ldiv_btn"), align="center"),
-    column(12, verbatimTextOutput("ldiv_result")),
-    column(12, dataTableOutput("ldiv_violating"))))
+
+  res <- get_ldiv_result()
+
+  if (is.null(res)) {
+    out <- list(out, fluidRow(
+      column(6, uiOutput("ldiv_sensvar"), align="center"),
+      column(6, uiOutput("ldiv_recconst"), align="center")
+    ))
+    out <- list(out, fluidRow(column(12, uiOutput("ldiv_btn"), align="center")))
+  } else {
+    out <- list(out, fluidRow(column(12, uiOutput("ldiv_resetbtn"), align="center")))
+  }
+
+  if (!is.null(res)) {
+    out <- list(out, fluidRow(
+      column(12, uiOutput("ldiv_summary"), align="center"),
+      column(12, uiOutput("ldiv_violating"))
+    ))
+  }
+  return(out)
 })
 
 # display suda2-risk measure
@@ -244,7 +255,7 @@ output$ui_rescat_suda2 <- renderUI({
       fluidRow(
         column(12, h5(paste0("Thresholds (DisFraction=",input$suda2_disf,")")), align="center"),
         column(12, renderTable(df_thresholds), align="center"),
-        column(12, h5("Attribute_contributions"), align="center"),
+        column(12, h5("Attribute contributions"), align="center"),
         column(12, renderTable(res$attribute_contributions), align="center")
       )
     })

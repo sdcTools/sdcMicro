@@ -480,7 +480,9 @@ If all options have been set, a button labelled `Apply rank-swapping` is shown a
 - If no problem instance has been specified -> `Create a SDC problem` (Anonymize page) or `Upload a previously saved problem` (Undo-page)
 - Once a problem instance has been specified -> Sidebar left + Sidebar right
 
-## [tbw] Risk measures
+## [tbw] Risk measures {#res_cat}
+
+Categorical risk measures
 
 ### [tbw] Information of Risks
 
@@ -530,14 +532,12 @@ Thresholds (DisFraction=0.1)
 
 
 
-### [tbw] l-Diversity risk-measure
+### l-Diversity risk-measure
+Here you can compute the `l`-diversity of sensitive variables. A dataset satisfies `l`-diversity if for every combination of the categorical key variables there are at least `l` different values for each of the sensitive variables. The statistics refer to the value of `l` for each record. To calculate this risk measure, the use needs to first select at least one sensitive variable. This can be done in the input field `Select one or more sensitive-variables` where all variables except for the categorical key variables can be selected. The other choice is to set a value for the *l-diversity constant* which can be done using the slider named `Select a value for the recursive-constant`. This constant is used to determine if a record is unsafe. If the calculated value for `l-diversity` for a record (having a specific key) is less than this constant, it is said to violate `l`-diversity.
 
-Here you can compute the l-diversity of sensitive variables. A dataset satisfies l-diversity if for every key k there are at least ldifferent values for each of the sensitive variables. The statistics refer to the value of l for each record.
+Once the parameters are set, a button labelled `Calculate l-diversity risk-measure` appears below. Pressing this button forces the calculation of the measure using the selected sensible variables and the constant. Once the calculation is finished, the content of the page changes. At the top of the page, a button named `Reset to choose different input parameters` is shown. Pressing this button resets the results and allows to specify other parameters. Below, a table containing for each selected sensible variable the 5-number summary of the calculated l-diversity measure. Below that, an interactive table showing all the records that violate `l`-diversity based on the choice of the recursive constant are displayed in an interactive table. If all records are safe, no table is shown.
 
-- Select one or more sensitive-variables
-- Select a value for the recursive-constant 
-
-## [tbw] Visualizations
+## [tbw] Visualizations {#res_vis}
 ### Barplot/Mosaicplot {#res_vis_plot}
 On this page it is possible to graphically compare key variables before and after the anonymization. In the select input labelled `Variable 1`, the first categorical key variable is already pre-selected while the value of the second input field `Variable 2` has the default value of `none`. If only one variable is specified, the users is presented with two graphs below these inputs. First, we see a barplot of the original data as it was when the problem instance was created. Below that, another barplot showing the anonymized variable is shown. 
 
@@ -564,7 +564,7 @@ On this page it is possible to find out how many records in the anonymized datas
 
 Furthermore, a table listing all the records in the dataset that violate `k`-anonymity are printed. For these observations, the interactive table contains all categorical key variables ere you can browse the records that violate k-anonymity for the selected level of `k`. In this table, all categorical key variables are shown as well as `risk` (the individual risk), `fk` (the frequency this combination of value in the key vars occurs in the data) and  `Fk` (the estimated frequency of this combination of values in the keyvars in the population taking sampling weights into account) are shown.
 
-## Numerical Risk Measures
+## Numerical Risk Measures {#res_numrisk}
 
 In this section, it is possible to get information on important [summary statistics](#numres_summary_stats) of numerical key variables in the original and anonymized data set as well as to get information on the current [disclosure risk](#numres_disclosure_risk) as well as measures on [information loss](#numres_infoloss).
 

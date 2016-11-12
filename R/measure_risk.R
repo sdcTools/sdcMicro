@@ -55,16 +55,16 @@
 #' }
 #' @return A modified \code{\link{sdcMicroObj-class}} object or a list with the following elements:
 #' \itemize{
-#' \item{global_risk_ER}{expected number of re-identification.}
-#' \item{global_risk}{global risk (sum of indivdual risks).}
-#' \item{global_risk_pct}{global risk in percent.}
-#' \item{Res}{matrix with the risk, frequency in the sample and grossed-up frequency in the population (and the hierachical risk) for each observation.}
-#' \item{global_threshold}{for a given max_global_risk the threshold for the risk of observations.}
-#' \item{max_global_risk}{the input max_global_risk of the function.}
-#' \item{hier_risk_ER}{expected number of re-identification with household structure.}
-#' \item{hier_risk}{global risk with household structure (sum of indivdual risks).}
-#' \item{hier_risk_pct}{global risk with household structure in percent.}
-#' \item{ldiverstiy}{Matrix with Distinct_Ldiversity,
+#' \item{global_risk_ER: }{expected number of re-identification.}
+#' \item{global_risk: }{global risk (sum of indivdual risks).}
+#' \item{global_risk_pct: }{global risk in percent.}
+#' \item{Res: }{matrix with the risk, frequency in the sample and grossed-up frequency in the population (and the hierachical risk) for each observation.}
+#' \item{global_threshold: }{for a given max_global_risk the threshold for the risk of observations.}
+#' \item{max_global_risk: }{the input max_global_risk of the function.}
+#' \item{hier_risk_ER: }{expected number of re-identification with household structure.}
+#' \item{hier_risk: }{global risk with household structure (sum of indivdual risks).}
+#' \item{hier_risk_pct: }{global risk with household structure in percent.}
+#' \item{ldiverstiy: }{Matrix with Distinct_Ldiversity,
 #' Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}}
 #' @author Alexander Kowarik, Bernhard Meindl, Matthias Templ, Bernd Prantner, minor parts of IHSN C++ source
 #' @seealso \code{\link{freqCalc}}, \code{\link{indivRisk}}
