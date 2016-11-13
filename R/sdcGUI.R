@@ -14,6 +14,7 @@
 #' sdcGUI()
 #' }
 sdcGUI <- function(maxRequestSize=50, debug=FALSE) {
+  .startdir <- NULL
   if (!is.numeric(maxRequestSize)) {
     stop("argument 'maxRequestSize' must be numeric!\n")
   }
