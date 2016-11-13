@@ -267,7 +267,6 @@ definition=function(obj, var) {
 #' @docType methods
 #' @param obj object of class \code{\link{sdcMicroObj-class}}
 #' @param var name of the keyVariable to change
-#' @note NA will be a valid factor-level if the variables contain missing values
 #' @return the modified \code{\link{sdcMicroObj-class}}
 #' @keywords methods
 #' @export
@@ -305,9 +304,6 @@ definition=function(obj, var) {
   }
   for (vv in var) {
     obj[[vv]] <- as.factor(obj[[vv]])
-    if (any(is.na(obj[vv]))) {
-      obj[[vv]] <- addNA(obj[[vv]]) # NA as factor-level
-    }
   }
   obj
 })
@@ -377,8 +373,7 @@ tryCatchFn <- function(expr) {
 #' @note if \code{type} is either \code{'sas'}, \code{'spss'} or \code{'stata'}, values read in as \code{NaN}
 #' will be converted to \code{NA}.
 #' @return a data.frame or an object of class 'simple.error'. If a stata file was read in, the resulting \code{data.frame}
-#' has an addtitional attribute \code{lab} in which value labels extracted with \code{\link{extractLabels}}
-#' are stored.
+#' has an addtitional attribute \code{lab} in which variable and value labels are stored.
 #' @author Bernhard Meindl
 #' @export
 readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=TRUE, ...) {
@@ -426,10 +421,10 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   cl_lab <- which(sapply(res, class)=="labelled")
   if (length(cl_lab) > 0) {
     if (length(cl_lab)==1) {
-      res[[cl_lab]] <- addNA(as_factor(res[[cl_lab]]))
+      res[[cl_lab]] <- as_factor(res[[cl_lab]])
     } else {
       res[,cl_lab] <- lapply(res[,cl_lab] , function(x) {
-        addNA(factor(x))
+        as_factor(x)
       })
     }
   }

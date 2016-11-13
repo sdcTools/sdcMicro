@@ -150,11 +150,15 @@ shinyServer(function(session, input, output) {
 
   # code to group or rename factor-levels
   code_groupAndRename <- reactive({
+    vaddna <- FALSE
+    if (input$rb_micro_addna=="yes") {
+      vaddna <- TRUE
+    }
     cmd <- paste0("inputdata <- groupAndRename(obj=inputdata")
     cmd <- paste0(cmd, ", var=",dQuote(input$sel_factor))
     cmd <- paste0(cmd, ", before=",VecToRStr(input$cbg_factor, quoted=TRUE))
-    cmd <- paste0(cmd, ", after=",VecToRStr(input$inp_newlevname, quoted=TRUE),")")
-    cmd <- sub('\"NA\"', "NA", cmd) # fix issue, if NA will be recoded
+    cmd <- paste0(cmd, ", after=",VecToRStr(input$inp_newlevname, quoted=TRUE))
+    cmd <- paste0(cmd, ", addNA=",vaddna,")")
     cmd
   })
 
@@ -321,11 +325,15 @@ shinyServer(function(session, input, output) {
 
   # code to group or a key variable (factor)
   code_groupAndRename_keyvar <- reactive({
+    vaddna <- FALSE
+    if (input$rb_recfac_micro_addna=="yes") {
+      vaddna <- TRUE
+    }
     cmd <- paste0("sdcObj <- groupAndRename(obj=sdcObj")
     cmd <- paste0(cmd, ", var=",dQuote(input$sel_recfac))
     cmd <- paste0(cmd, ", before=",VecToRStr(input$cbg_recfac, quoted=TRUE))
-    cmd <- paste0(cmd, ", after=",VecToRStr(input$inp_newlevname_rec, quoted=TRUE),")")
-    cmd <- sub('\"NA\"', "NA", cmd) # fix issue, if NA will be recoded
+    cmd <- paste0(cmd, ", after=",VecToRStr(input$inp_newlevname_rec, quoted=TRUE))
+    cmd <- paste0(cmd, ", addNA=",vaddna,")")
     txt_action <- paste0("Recoded ",dQuote(input$sel_recfac),": ", VecToRStr_txt(input$cbg_recfac)," to ",VecToRStr_txt(input$inp_newlevname_rec))
     return(list(cmd=cmd, txt_action=txt_action))
   })

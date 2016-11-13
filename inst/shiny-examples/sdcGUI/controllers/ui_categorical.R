@@ -16,11 +16,7 @@ output$ui_recode <- renderUI({
     }
     ff <- get_manipKeyVars()[[input$sel_recfac]]
     ll <- as.list(levels(ff))
-    ii <- which(is.na(ll))
-    if (length(ii)==1) {
-      ll[[ii]] <- "NA"
-    }
-    names(ll) <- paste(ll, "(",table(ff),"obs)")
+    names(ll) <- paste0(ll, " (",table(ff)," obs)")
     ll
   })
 
@@ -39,13 +35,15 @@ output$ui_recode <- renderUI({
   output$recfac_selfac1 <- renderUI({
     # current categorical key variables
     kv <- get_keyVars_names()
-    # we always have at least one categorical key-variable!
-    selfac1 <- selectInput("sel_recfac",label=h5("Choose factor variable"), choices=kv, selected=input$sel_recfac, width="100%")
-    selfac1
+    selectInput("sel_recfac",label=h5("Choose factor variable"), choices=kv, selected=input$sel_recfac, width="50%")
   })
   output$recfac_cbgr <- renderUI({
     cbgr <- selectInput("cbg_recfac",label=h5("Select levels to recode/combine"), multiple=TRUE, selectize=TRUE,
       choices=curRecFacVals(), width="100%")
+  })
+  output$recfac_addna <- renderUI({
+    req(input$cbg_recfac)
+    radioButtons("rb_recfac_micro_addna", h5("Add missing values to new factor level?"), choices=c("no", "yes"), inline=TRUE)
   })
   output$recfac_btn <- renderUI({
     req(input$cbg_recfac)
@@ -57,9 +55,11 @@ output$ui_recode <- renderUI({
       value=paste0(input$cbg_recfac, collapse="_"), width="100%")
   })
   out <- list(out, fluidRow(
-    column(4, uiOutput("recfac_selfac1"), align="center"),
+    column(12, uiOutput("recfac_selfac1"), align="center")))
+  out <- list(out, fluidRow(
     column(4, uiOutput("recfac_cbgr"), align="center"),
-    column(4, uiOutput("recfac_txtval"), align="center")))
+    column(4, uiOutput("recfac_txtval"), align="center"),
+    column(4, uiOutput("recfac_addna"), align="center")))
   out <- list(out, fluidRow(
     column(12, uiOutput("recfac_btn"), align="center"),
     column(12, plotOutput("plot_facRec"))))

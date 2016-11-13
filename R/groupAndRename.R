@@ -16,7 +16,8 @@
 #' @param obj object of class \code{\link{sdcMicroObj-class}}
 #' @param var name of the keyVariable to change
 #' @param before vector of levels before recoding
-#' @param after vector of levels after recoding
+#' @param after name of new level after recoding
+#' @param addNA logical, if TRUE missing values in the input variables are added to the level specified in argument \code{after}.
 #' @return the modified \code{\link{sdcMicroObj-class}}
 #' @keywords methods
 #' @author Bernhard Meindl
@@ -29,18 +30,18 @@
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- groupAndRename(sdc, var="urbrur", before=c("1","2"), after=c("1"))
-groupAndRename <- function(obj, var, before, after) {
-  groupAndRenameX(obj=obj, var=var, before=before, after=after)
+groupAndRename <- function(obj, var, before, after, addNA=FALSE) {
+  groupAndRenameX(obj=obj, var=var, before=before, after=after, addNA=addNA)
 }
 
-setGeneric("groupAndRenameX", function(obj, var, before, after) {
+setGeneric("groupAndRenameX", function(obj, var, before, after, addNA=FALSE) {
   standardGeneric("groupAndRenameX")
 })
 
 setMethod(f="groupAndRenameX", signature=c("factor"),
-definition=function(obj, var, before, after) {
+definition=function(obj, var, before, after, addNA=FALSE) {
   if (!all(before %in% levels(obj))) {
-    stop("some elements of 'before' are not valid levels in variable 'var'!\n")
+    stop("some elements of 'before' are not valid levels in the input factor!\n")
   }
   if (any(duplicated(before))) {
     stop("each level from the original factor must be listed only once in argument 'before'!")
@@ -48,14 +49,15 @@ definition=function(obj, var, before, after) {
   ll <- levels(obj)
   ll[ll %in% before] <- after[1]
   levels(obj) <- ll
-  if (any(is.na(obj))) {
-    obj <- addNA(obj)
+  # add missing value (NA) to newly created level!
+  if (addNA) {
+    obj[is.na(obj)] <- after[1]
   }
   obj
 })
 
 setMethod(f="groupAndRenameX", signature=c("data.frame"),
-definition=function(obj, var, before, after) {
+definition=function(obj, var, before, after, addNA=FALSE) {
   if (length(var) != 1) {
     stop("length of input 'var' != 1!\n")
   }
@@ -66,15 +68,15 @@ definition=function(obj, var, before, after) {
   if (!is.factor(obj[[var]]) ) {
     stop("check input, we do not have a factor here!\n")
   }
-  obj[[var]] <- groupAndRename(obj[[var]], var=NULL, before=before, after=after)
+  obj[[var]] <- groupAndRename(obj[[var]], var=NULL, before=before, after=after, addNA=addNA)
   obj
 })
 
 setMethod(f="groupAndRenameX", signature=c("sdcMicroObj"),
-definition=function(obj, var, before, after) {
+definition=function(obj, var, before, after, addNA=FALSE) {
   obj <- nextSdcObj(obj)
   manipKey <- get.sdcMicroObj(obj, type="manipKeyVars")
-  manipKey[[var]] <- groupAndRename(manipKey[[var]], var=var, before=before, after=after)
+  manipKey[[var]] <- groupAndRename(manipKey[[var]], var=var, before=before, after=after, addNA=addNA)
   obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(manipKey))
   # calculate risk
   obj <- calcRisks(obj)

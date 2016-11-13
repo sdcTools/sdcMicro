@@ -6,7 +6,7 @@
 \title{Join levels of a variables in an object of class
 \code{\link{sdcMicroObj-class}} or \code{factor} or \code{data.frame}}
 \usage{
-groupAndRename(obj, var, before, after)
+groupAndRename(obj, var, before, after, addNA = FALSE)
 }
 \arguments{
 \item{obj}{object of class \code{\link{sdcMicroObj-class}}}
@@ -15,7 +15,9 @@ groupAndRename(obj, var, before, after)
 
 \item{before}{vector of levels before recoding}
 
-\item{after}{vector of levels after recoding}
+\item{after}{name of new level after recoding}
+
+\item{addNA}{logical, if TRUE missing values in the input variables are added to the level specified in argument \code{after}.}
 }
 \value{
 the modified \code{\link{sdcMicroObj-class}}

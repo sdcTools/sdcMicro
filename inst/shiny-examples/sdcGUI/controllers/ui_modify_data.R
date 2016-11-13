@@ -190,17 +190,16 @@ output$ui_modify_recode_to_factor <- renderUI({
 output$ui_modify_change_factor <- renderUI({
   # current factor-levels
   curFactorVals <- reactive({
+    inp <- inputdata()
+    if (is.null(inp)) {
+      return(NULL)
+    }
     if (is.null(input$sel_factor) ) {
       return(NULL)
     }
-    ff <- inputdata()[[input$sel_factor]]
+    ff <- inp[[input$sel_factor]]
     ll <- as.list(levels(ff))
-
-    ii <- which(is.na(ll))
-    if (length(ii)==1) {
-      ll[[ii]] <- "NA"
-    }
-    names(ll) <- paste(ll, "(",table(ff),"obs)")
+    names(ll) <- paste0(ll, " (",table(ff)," obs)")
     ll
   })
   output$plot_fac <- renderPlot({
@@ -215,12 +214,15 @@ output$ui_modify_change_factor <- renderUI({
   })
   output$reclocfac_var <- renderUI({
     vv <- facVars()
-    selfac1 <- selectInput("sel_factor", label=h5("Choose factor variable"), choices=vv, selected=input$sel_factor, width="100%")
-    selfac1
+    selectInput("sel_factor", label=h5("Choose factor variable"), choices=vv, selected=input$sel_factor, width="50%")
   })
   output$reclocfac_levs <- renderUI({
     selectInput("cbg_factor", label=h5("Select Levels to recode/combine"),
       multiple=TRUE, selectize=TRUE, choices=curFactorVals(), width="100%")
+  })
+  output$reclocfac_addna <- renderUI({
+    req(input$cbg_factor)
+    radioButtons("rb_micro_addna", h5("Add missing values to new factor level?"), choices=c("no", "yes"), inline=TRUE)
   })
   output$reclocfac_btn <- renderUI({
     req(input$cbg_factor)
@@ -243,9 +245,12 @@ output$ui_modify_change_factor <- renderUI({
   helptxt <- "Here you can group/combine the factor levels of categorical variables of type 'factor' before setting up the sdcMicro object."
   out <- fluidRow(out, column(12, helptxt, align="center"))
   out <- list(out, fluidRow(
-    column(4, uiOutput("reclocfac_var"), align="center"),
+    column(12, uiOutput("reclocfac_var"), align="center")))
+  out <- list(out, fluidRow(
     column(4, uiOutput("reclocfac_levs"), align="center"),
-    column(4, uiOutput("reclocfac_txtval"), align="center")))
+    column(4, uiOutput("reclocfac_txtval"), align="center"),
+    column(4, uiOutput("reclocfac_addna"), align="center")
+    ))
 
   out <- list(out, fluidRow(
     column(12, uiOutput("reclocfac_btn"), align="center"),
@@ -843,13 +848,14 @@ output$ui_modify_data_sidebar_left <- renderUI({
     cc <- choices_modifications()
     out <- fluidRow(column(12, h4("What do you want to do?"), align="center"))
     for (i in 1:length(cc)) {
-      if (i==1) {
+      id <- paste0("btn_menu_microdata_",i)
+      if (obj$cur_selection_microdata==id) {
         style <- "primary"
       } else {
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(paste0("btn_menu_microdata_",i), label=names(cc)[i], block=TRUE, size="extra-small", style=style), tags$br())))
+        column(12, bsButton(id, label=names(cc)[i], block=TRUE, size="extra-small", style=style), tags$br())))
     }
     # required observers that update the color of the active button!
     eval(parse(text=genObserver_menus(pat="btn_menu_microdata_", n=1:10, updateVal="cur_selection_microdata")))
