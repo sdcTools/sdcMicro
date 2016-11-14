@@ -43,7 +43,7 @@ output$ui_export_data <- renderUI({
 
   out <- fluidRow(
     column(12, h4("Export the anonymized microdata"), align="center"),
-    column(12, strong("View the data", align="center")),
+    column(12, strong("View anonymized data", align="center")),
     column(12, dataTableOutput("dt_exportData")),
     column(12, strong("Select file-format", align="center")),
     column(12, rb_exptype, align="center")
