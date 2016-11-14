@@ -112,7 +112,7 @@ output$ui_import_data_main <- renderUI({
 output$ui_import_data_sidebar_left <- renderUI({
   output$ui_sel_resbtns_import <- renderUI({
     cc <- c("Use testdata/internal data", "R-Dataset (.rdata)", "SPSS-File (.sav)", "SAS-File (.sasb7dat)",
-      "Comma-seperated File (.csv, .txt)", "STATA-File (.dta)")
+      "Comma-separated File (.csv, .txt)", "STATA-File (.dta)")
     out <- fluidRow(column(12, h4("Select data source"), align="center"))
     for (i in 1:length(cc)) {
       id <- paste0("btn_import_data_", i)

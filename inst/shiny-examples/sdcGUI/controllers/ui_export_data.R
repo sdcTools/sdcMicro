@@ -66,7 +66,7 @@ output$ui_export_data <- renderUI({
     fluidRow(column(12, p(txt, align="center")))
   })
   rb_exptype <- radioButtons("dat_exp_type", label=h5("Select file-format", align="center"),
-    choices=c("R-Dataset"="rdata","SPSS-File"="sav","Comma-seperated File"="csv", "STATA-File"="dta"), width="100%", selected=input$dat_exp_type, inline=TRUE)
+    choices=c("R-Dataset"="rdata","SPSS-File"="sav","Comma-separated File"="csv", "STATA-File"="dta"), width="100%", selected=input$dat_exp_type, inline=TRUE)
 
   out <- fluidRow(
     column(12, h4("Export the anonymized microdata"), align="center"))
