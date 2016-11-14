@@ -77,7 +77,7 @@ output$ui_export_data <- renderUI({
       column(12, verbatimTextOutput("ui_lasterror"))))
   }
   out <- list(out, fluidRow(
-    column(12, h5("Analyze the data", align="center")),
+    column(12, h5("View anonymized data"), align="center"),
     column(12, DT::dataTableOutput("dt_exportData")),
     column(12, rb_exptype, align="center")
   ))

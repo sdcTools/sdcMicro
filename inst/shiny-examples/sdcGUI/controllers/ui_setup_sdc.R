@@ -126,7 +126,7 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     out <- fluidRow(
-      column(12, h4("Information loss  (numeric)"), align="center"),
+      column(12, h4("Information on risk for numerical key variables"), align="center"),
       column(12, p("The disclosure risk is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),".
       In the original data the risk is assumed to be between",code("0%"),"and",code("100%"),"."), align="center"),
       column(12, h4("Information loss"), align="center"),
@@ -561,7 +561,7 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     # selected pram vars must not be key-vars
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
-      return(myErrBtn("tmp", label="Error: Selected pram variables are also key-variables"))
+      return(myErrBtn("tmp", label="Error: Selected pram variables are also key variables"))
     }
     if (any(useAsWeight[ii] == TRUE)) {
       return(myErrBtn("tmp", label="Error: Selected pram variable is also the weight variable"))
@@ -584,7 +584,7 @@ output$setupbtn <- renderUI({
   if (length(ii)==1) {
     # weights can't be any-key variables
     if (useAsKeys[ii]!="No") {
-      return(myErrBtn("tmp", label="Error: Weight variable cannot be selected as (numerical) key-variable"))
+      return(myErrBtn("tmp", label="Error: Weight variable cannot be selected as (numerical) key variable"))
     }
     # weight-variables must be numeric
     if (!types[ii] %in% c("numeric","integer")) {

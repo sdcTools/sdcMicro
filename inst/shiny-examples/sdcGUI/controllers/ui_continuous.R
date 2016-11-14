@@ -370,7 +370,7 @@ output$ui_rankswap <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Apply rank swapping"), align="center"),
+    column(12, h4("Rank Swapping"), align="center"),
     column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
       so that correlation structure of original variables is preserved and some perturbation is applied."), align="center"))
 

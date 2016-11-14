@@ -20,7 +20,7 @@ choices_anon_menu <- reactive({
     "Top-/Bottom Coding",
     "Microaggregation",
     "Adding Noise",
-    "Rank-Swapping")
+    "Rank Swapping")
   if (length(get_numVars())==0) {
     c_num <- c_num[1]
   }
