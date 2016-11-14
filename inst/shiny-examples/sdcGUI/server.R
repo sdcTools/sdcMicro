@@ -1328,7 +1328,7 @@ shinyServer(function(session, input, output) {
       # meta-information is available
       if (!is.null(current_labs)) {
         for (i in 1:nrow(current_labs)) {
-          newlabs <- changeVarLabel(newlabs, varname=current_labs$var.names[i], newlabel=current_labs$var.label[i])
+          newlabs <- sdcMicro:::changeVarLabel(newlabs, varname=current_labs$var.names[i], newlabel=current_labs$var.label[i])
         }
         obj$stata_labs <- newlabs
       }
