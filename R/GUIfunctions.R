@@ -569,11 +569,12 @@ writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
       ii <- which(ll1$var.name %in% colnames(dat))
       ll1 <- ll1[ii,]
       new_labs[[1]] <- ll1
-
       ll2 <- new_labs[[2]]
-      ii <- which(names(ll2) %in% colnames(dat))
-      ll2 <- ll2[ii]
-      new_labs[[2]] <- ll2
+      if (!is.null(ll2)) {
+        ii <- which(names(ll2) %in% colnames(dat))
+        ll2 <- ll2[ii]
+        new_labs[[2]] <- ll2
+      }
       dat <- addVarLabels(dat, lab=new_labs)
     }
     write_dta(data=dat, path=fileOut)
