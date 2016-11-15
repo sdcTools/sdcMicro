@@ -421,10 +421,10 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   cl_lab <- which(sapply(res, class)=="labelled")
   if (length(cl_lab) > 0) {
     if (length(cl_lab)==1) {
-      res[[cl_lab]] <- as_factor(res[[cl_lab]])
+      res[[cl_lab]] <- as_factor(res[[cl_lab]], levels="values")
     } else {
       res[,cl_lab] <- lapply(res[,cl_lab] , function(x) {
-        as_factor(x)
+        as_factor(x, levels="values")
       })
     }
   }
