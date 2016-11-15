@@ -72,23 +72,26 @@ output$ui_about <- renderUI({
   out <- list(out, fluidRow(
     column(12, h4("Settings"), align="center"),
     column(12, h5("Set storage path"), align="center"),
-    column(12, p("Below you can change the default path, where all output from the GUI will be saved. You can change this path any time later as well by returing to this tab."),align="center"),
+    column(12, p("Below you can change the default path, where all output from the GUI will be saved. You can change this path any time
+      later as well by returing to this tab."),align="center"),
     column(12, p("Currently, all output, such as anonymized data, scripts and reports, will be saved to",code(obj$path_export),"."), align="center"),
     column(12, pp, align="center"),
     column(12, uiOutput("btn_update_export_path"), align="center"),
     column(12, h5("Stop the interface"), align="center"),
-    column(12, p("By clicking on", stop_btn,", you can stop the the graphical user interface at any time during the anonymization process. If you have started the interface as",code('x <- sdcGUI()'),",",code("x"),
+    column(12, p("By clicking on", stop_btn,", you can stop the the graphical user interface at any time during the anonymization process.
+      If you have started the interface as",code('x <- sdcGUI()'),",",code("x"),
       "will contain the micro data and the sdc problem at the state just before stopping the GUI."), align="center"),
     column(12, h5("Restart the interface"), align="center"),
-    column(12, p("Should you accidentally close this browser window, you can open your current problem instance by entering the local IP address specified in the",code("R"),"console in which you started the GUI. The address starts with", code("http://127.0.0.1:"), ". You can also use the refresh button of your browser in case the GUI freezes."), align="center")
+    column(12, p("Should you accidentally close this browser window, you can open your current problem instance by entering the local IP address
+      specified in the",code("R"),"console in which you started the GUI. The address starts with", code("http://127.0.0.1:"), ". You
+      can also use the refresh button of your browser in case the GUI freezes."), align="center")
   ))
 
   out <- list(out, fluidRow(
     column(12, h4("Contact and Feedback"), align="center"),
     column(12, p("In case you have any suggestions or bug reports, please file an issue at the",
-      tags$a("Issue tracker", href="https://www.github.com/alexkowa/sdcMicro/issues"),"in our",
-      tags$a("github repo", href="https://www.github.com/alexkowa/sdcMicro"),"."), align="center")
+      tags$a("Issue tracker", href="https://www.github.com/alexkowa/sdcMicro/issues", target="_blank"),"in our",
+      tags$a("github repo", href="https://www.github.com/alexkowa/sdcMicro", target="_blank"),"."), align="center")
   ))
-
   out
 })
