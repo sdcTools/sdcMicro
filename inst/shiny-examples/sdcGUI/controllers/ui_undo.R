@@ -7,17 +7,12 @@ output$ui_export_problem1 <- renderUI({
       column(12, verbatimTextOutput("ui_lasterror"))))
   }
   out <- list(out, fluidRow(
-    column(12, p("The undo button can only be used to go one step back. For experimenting with SDC methods, parameters and settings, it can be
-      useful to save a certain state before starting to experiment with different SDC methods and, if the result is not satisfactory, revert to the
-      saved state. Here you can save the current state and, if necessary, reload this state. Reloading undoes any methods applied to the data since
-      saving the last state, but restores any methods applied before the saving. It is also possible to save several states, as they are saved on
-      disk.", align="center")),
+    column(12, p("The undo button can only be used to go one step back. For experimenting with SDC methods, parameters and settings, it can be useful to save a certain state before starting to experiment with different SDC methods and, if the result is not satisfactory, revert to the saved state. Here you can save the current state and, if necessary, reload this state. Reloading undoes any methods applied to the data since saving the last state, but restores any methods applied before the saving. It is also possible to save several states, as they are saved on disk.", align="center")),
     column(12, p("Note: This feature is GUI-only and cannot be reproduced from the command-line version.", align="center")),
     column(12, h5("Save current state", align="center")),
-    column(12, p("Click here to save the current state with all relevant data and code for reverting to this state later. This can also be used to save
-      the current state and continue working on this SDC problem at a later point in time.", align="center")),
+    column(12, p("Click here to save the current state with all relevant data and code for reverting to this state later. This can also be used to save the current state and continue working on this SDC problem at a later point in time.", align="center")),
     column(12, myActionButton("btn_exportProblem1", "Save current state", btn.style="primary"), align="center")))
-
+  
   if (!is.null(obj$lastproblemexport1)) {
     out <- list(out, fluidRow(
       column(12, tags$br(), p("The last saved state was saved under the following path as:", code(obj$lastproblemexport1)), align="center")))
@@ -42,8 +37,7 @@ output$ui_script_import1 <- renderUI({
   }
   if (!is.null(sdcObj())) {
     out <- fluidRow(column(12, h5("Revert to saved state", align="center")))
-    out <- list(out, fluidRow(column(12, p("Here you can load a previously saved state. The file must be an",code(".rdata"),"file. See above for the
-      path where you saved the last state. Please note that uploading a previously saved state overwrites all current results and results into a loss of any unsaved changes!", align="center"))))
+    out <- list(out, fluidRow(column(12, p("Here you can load a previously saved state. The file must be an",code(".rdata"),"file. See above for the path where you saved the last state. Please note that uploading a previously saved state overwrites all current results and results into a loss of any unsaved changes!", align="center"))))
   }
   fI <- fileInput("file_importProblem1", strong("Select previously exported sdcProblem (.rdata)"), width="50%", accept=".rdata")
   out <- list(out, fluidRow(column(12, fI, align="center")))
@@ -54,12 +48,12 @@ output$ui_script_import1 <- renderUI({
 output$ui_undo <- renderUI({
   if (is.null(inputdata())) {
     return(list(noInputData(uri="ui_undo"),
-      fluidRow(column(12, tags$br(), p("or"), align="center")), uiOutput("ui_script_import1")))
+                fluidRow(column(12, tags$br(), p("or"), align="center")), uiOutput("ui_script_import1")))
   }
   curObj <- sdcObj()
   if (is.null(curObj)) {
     return(list(noSdcProblem(uri="ui_undo"),
-      fluidRow(column(12, tags$br(), p("or"), align="center")), uiOutput("ui_script_import1")))
+                fluidRow(column(12, tags$br(), p("or"), align="center")), uiOutput("ui_script_import1")))
   }
   if (is.null(curObj@prev)) {
     out <- fluidRow(
