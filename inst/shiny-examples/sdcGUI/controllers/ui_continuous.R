@@ -29,18 +29,12 @@ output$ui_topbotcoding_num <- renderUI({
     boxplot(vv, main=input$sel_topbot_var_num, xlab=input$sel_topbot_var_num, col="#DADFE1")
   })
   output$ui_topbot_params_num <- renderUI({
-    txt_tooltip1 <- "In case of top, all values above the threshold are replaced, in the case of bottom, all values below the threshold are replaced."
-    txt_tooltip2 <- "All values below (bottom) or above (top) this threshold are replaced with the replacement value."
-    txt_tooltip3 <- "The replacement value is the value that replaces all the values below (bottom) or above (top) the specified threshold. Often the replacement value is the same as the threshold value."
-    sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), selected=obj$inp_sel_topbot_var_num, multiple=FALSE, label=h5("Select variable"), width="75%")
-    sel_kind <- radioButtons("sel_topbot_kind_num", choices=c("top","bottom"),
-      label=h5("Apply Top/Bottom-Coding?", tipify(icon("question"), title=txt_tooltip1, placement="top")), inline=TRUE)
-    txt_val <- textInput("num_topbot_val_num", label=h5("Threshold value", tipify(icon("question"), title=txt_tooltip2, placement="top")),
-      placeholder="Please enter a number", width="75%")
-    txt_replace <- textInput("num_topbot_replacement_num", label=h5("Replacement Value", tipify(icon("question"), title=txt_tooltip3, placement="top")),
-      placeholder="Please enter a number", width="75%")
-    out <- fluidRow(column(6, sel_var, align="center"), column(6, sel_kind, align="center"))
-    out <- list(out, fluidRow(column(6, txt_val, align="center"), column(6, txt_replace, align="center")))
+    sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), multiple=FALSE, label="Select variable")
+    sel_kind <- selectInput("sel_topbot_kind_num", choices=c("top","bottom"), multiple=FALSE, label="Apply Top/Bottom-Coding?")
+    txt_val <- textInput("num_topbot_val_num", label="Value", placeholder="Please enter a number")
+    txt_replace <- textInput("num_topbot_replacement_num", label="Replacement Value", placeholder="Please enter a number")
+    out <- fluidRow(column(6, sel_var), column(6, sel_kind))
+    out <- list(out, fluidRow(column(6, txt_val), column(6, txt_replace)))
     out
   })
   observeEvent(input$sel_topbot_var_num,{
@@ -85,9 +79,8 @@ output$ui_topbotcoding_num <- renderUI({
   helptxt <- "Here you can recode all values in a variable below (bottom-coding) or above (top-coding) a certain threshold. These values are replaced"
   helptxt <- paste(helptxt, "with the specified replacement value.")
   out <- fluidRow(
-    column(12, h4("Apply Top- and bottom coding", align="center")),
-    column(12, p(helptxt), align="center")
-  )
+    column(12, h4("Apply Top/Bottom-Coding", align="center")),
+    column(12, plotOutput("ui_topbot_plot_num")))
   out <- list(out, uiOutput("ui_topbot_params_num"))
   out <- list(out, uiOutput("ui_topbot_btn_num"))
   out <- list(out, fluidRow(
@@ -279,21 +272,27 @@ output$ui_noise <- renderUI({
 
   # ui for selection of method
   output$ui_noise_method <- renderUI({
-    txt_tooltip <- "<strong>Noise addition methods:</strong><br />"
-    txt_tooltip <- paste0(txt_tooltip, "<strong>additive</strong> - adds noise completely at random to each variable depending on their size and standard deviation<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated2</strong> - adds noise and preserves the covariances<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>restr</strong> - takes the sample size into account when adding noise<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>ROMM</strong> - implementation of the algorithm ROMM (Random Orthogonalized Matrix Masking)<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>outdect</strong> - adds noise only to outliers. The outliers are identified with univariate and robust multivariate procedures based on a robust mahalanobis distances calculated by the MCD estimator.<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated</strong> - adds noise and preserves the covariances")
-    selectInput("sel_noise_method",
-      label=h5("Select the algorithm", tipify(icon("question"), title=txt_tooltip, placement="bottom")),
-      choices=choices_noise(), selected=input$sel_noise_method, width="100%")
+    input$sel_noise_method
+    isolate({
+      sel_method <- selectInput("sel_noise_method", label=h5("Select the algorithm"),
+        choices=choices_noise(),
+        selected=input$sel_noise_method, width="100%")
+      sel_method
+    })
   })
 
   # variables selected
   output$ui_noise_vars <- renderUI({
-    selectInput("sel_noise_v", choices=get_numVars_names(), label=h5("Select variables"), width="75%", multiple=TRUE)
+    input$sel_noise_method
+    isolate({
+      lab <- h5("Select variables")
+      if (has_numkeyvars()) {
+        lab <- list(lab, p("If empty, all numerical key variables will be used!"))
+      }
+      sel_noisevars <- selectInput("sel_noise_v", choices=possvars_numericmethods(),
+        label=lab, selected=input$sel_noise_v, width="100%", multiple=TRUE)
+      sel_noisevars
+    })
   })
 
   # ui for 'btn_noise
@@ -307,7 +306,9 @@ output$ui_noise <- renderUI({
 
   out <- fluidRow(
     column(12, h4("Adding Stochastic Noise", align="center")),
-    column(12, p("Here you can use various methods to add noise in order to perturb continuous variables.", align="center")))
+    column(12, p("Various methods for adding noise to perturb continuous scaled variables can be selected below. Please note, that even if a
+      stratification variable has been defined during the initialization of the sdc-Problem, this information will not be used in this case. So the noise will be applied on
+      the entire data set.", align="center")))
 
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_noise_vars"), align="center"),
@@ -370,7 +371,7 @@ output$ui_rankswap <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Rank Swapping"), align="center"),
+    column(12, h4("Rank Swapping", align="center")),
     column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
       so that correlation structure of original variables is preserved and some perturbation is applied."), align="center"))
 
