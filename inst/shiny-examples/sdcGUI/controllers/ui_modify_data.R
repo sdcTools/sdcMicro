@@ -288,10 +288,17 @@ output$ui_modify_create_stratvar <- renderUI({
   helptxt <- paste(helptxt, "By default the variable name of the stratification variable consists of the variable names separated by  '_' . You can also specify")
   helptxt <- paste(helptxt, "the variable name by typing it into the text field. The new variable is added to the loaded micro data set and will be exported.")
   out <- fluidRow(
-    column(12, h4("Create a stratification variable"), align="center"),
-    column(12, p(helptxt), align="center"))
+    column(12, h4("Create a stratification variable", align="center")),
+    column(12, p("This method allows to",tags$i("chain together"),"values of two
+      or more variables which will be separated by",code("_"),". You can also specify the variable name by typing
+      it into the text-field and which will be used to append the new variable to the micro data set.
+      This is useful if you want to create a new variable for e.g stratification purposes when creating a new sdc problem.", align="center")))
 
   out <- list(out, fluidRow(
+    column(6, p(sel, align="center")),
+    column(6, p(txtval, align="center"))))
+
+	out <- list(out, fluidRow(
     column(6, uiOutput("sel_genstrata"), align="center"),
     column(6, uiOutput("vname_genstrata"), align="center")))
   out <- list(out, uiOutput("btn_genstrata"))

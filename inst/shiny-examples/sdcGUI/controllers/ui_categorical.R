@@ -2,10 +2,11 @@
 output$ui_recode <- renderUI({
   out <- fluidRow(
     column(12, h4("Recode categorical key variables", align="center")),
-    column(12, p("To reduce risk, it is often useful to combine the levels of categorical key variables into a new, combined category.
-      You need to select a categorical key variable and then choose two or more levels, which you want to combine.
-      Once this has been done, a new label for the new category can be assigned.", align="center")),
-    column(12, p("Note: If you only select only one level, you can rename the selected value.", align="center")))
+    column(12, p("To reduce risk, it is often useful to combine multiple chararacteristics of categorical key variables into
+      a new, combined category. You need to select a categorical key variable and then choose two or more levels which you want to combine. Once this
+      has been done, a new label for the new category can be assigned. If you are ready, you just need to press the button.", align="center")),
+    column(12, p("Note: If you only select one level, you still can press the button and update the key variable. In this case you can rename
+      the the selected value.", align="center")))
 
   # current factor-levels
   curRecFacVals <- reactive({
@@ -55,7 +56,9 @@ output$ui_recode <- renderUI({
       value=paste0(input$cbg_recfac, collapse="_"), width="100%")
   })
   out <- list(out, fluidRow(
-    column(12, uiOutput("recfac_selfac1"), align="center")))
+    column(4, h5("Choose factor variable", align="center")),
+    column(4, h5("Select levels to recode/combine", align="center")),
+    column(4, h5("New label for recoded values", align="center"))))
   out <- list(out, fluidRow(
     column(4, uiOutput("recfac_cbgr"), align="center"),
     column(4, uiOutput("recfac_txtval"), align="center"),
@@ -112,8 +115,13 @@ output$ui_pram_expert <- renderUI({
     if (is.null(obj$transmat)) {
       return(NULL)
     }
-    if (!all(rowSums(obj$transmat)==100)) {
-      return(myActionButton("btn_pram_expert_notworking", label="Error: Not all row-sums of the transition matrix equal 100", btn="danger"))
+    pramvars <- setdiff(facVars(), curObj@pram$summary$variable)
+
+    if (length(pramvars)==0) {
+      return(fluidRow(
+        column(12, h4("Postrandomization of categorical variables", align="center")),
+        column(12, h5("No factor variables available in the data, or all possible variables already have been post-randomized!", align="center"))
+      ))
     }
     if (input$pram_expert_strataV %in% input$sel_pramvars_expert) {
       txt <- "You have selected a variable relevant for stratification that should also be pramed. This is not possible. Please remove the variable from one of the inputs"
@@ -463,7 +471,7 @@ output$ui_supp_threshold <- renderUI({
     curObj <- sdcObj()
     nn <- paste(colnames(curObj@origData)[curObj@keyVars], collapse=" x ")
     hist(risks$risk, xlab="Individual Risk", ylab="Frequency", main=nn, col="#DADFE1")
-    abline(v=input$sl_supp_threshold, lwd=2, col="#000000")
+    abline(v=input$sl_supp_threshold, lwd=2, col="#F9690E")
   })
   nr_riskyobs <- reactive({
     req(input$sl_supp_threshold)
@@ -480,9 +488,16 @@ output$ui_supp_threshold <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Suppress values with high risks"), align="center"),
-    column(12, p("This method allows to suppress values (or rather set to NA) in the selected key-variables in records that have an
-      individual risk higher than the specified threshold."), align="center"))
+    column(12, h4("Suppress above given threshold", align="center")),
+    column(12, p("This is a relatively easy method which allows to suppress or rather set to",code("NA"),"values in selected key-variables
+      in observations that have a individual risk higher than the selected risk-threshold. Please note that this method does not take into account a possibly
+      specified stratification variable.", align="center")))
+
+  out <- list(out, fluidRow(
+    column(6, uiOutput("ui_supp_th")),
+    column(6, uiOutput("ui_supp_th_var"))))
+  out <- list(out, fluidRow(
+    column(12, plotOutput("ui_supp_riskplot"))))
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_supp_th_var"), align="center"),
     column(6, uiOutput("ui_supp_th"), align="center")))

@@ -69,16 +69,10 @@ output$ui_export_data <- renderUI({
     choices=c("R-Dataset"="rdata","SPSS-File"="sav","Comma-separated File"="csv", "STATA-File"="dta"), width="100%", selected=input$dat_exp_type, inline=TRUE)
 
   out <- fluidRow(
-    column(12, h4("Export the anonymized microdata"), align="center"))
-
-  if (!is.null(lastError())) {
-    out <- list(out, fluidRow(
-      column(12, h4("Trying to export the anonymized data resulted in the following error!", align="center")),
-      column(12, verbatimTextOutput("ui_lasterror"))))
-  }
-  out <- list(out, fluidRow(
-    column(12, h5("View anonymized data"), align="center"),
-    column(12, DT::dataTableOutput("dt_exportData")),
+    column(12, h4("Export the anonymized microdata"), align="center"),
+    column(12, strong("View anonymized data", align="center")),
+    column(12, dataTableOutput("dt_exportData")),
+    column(12, strong("Select file-format", align="center")),
     column(12, rb_exptype, align="center")
   ))
 

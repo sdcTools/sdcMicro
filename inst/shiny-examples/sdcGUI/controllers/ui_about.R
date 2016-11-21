@@ -43,11 +43,13 @@ observeEvent(input$stop_sdcGUI,{
 })
 
 output$ui_about <- renderUI({
-  #out <- list(out, uiOutput("pkg_status"))
-  out <- fluidRow(
-    column(12, h4("sdcGUI", align="center")),
-    column(12, p("This is the graphical user interface of",code("sdcMicro"),"that allows to anonymize microdata even in the case that you are not an
-      expert in the",code("R"),"programming language."), align="center")
+  fluidRow(
+    column(12, h4("About the Interface", align="center")),
+    column(12, p("Some information about",code("sdcMicro"),"and how to use this graphical interface."), align="center"),
+    column(12, h4("Help"), align="center"),
+    column(12, p("Link to GUI-Tutorial"), align="center"),
+    column(12, p("Link to GUI-Tutorial"), align="center"),
+    column(12, p("If you already have an sdcProblem that was exported from the GUI, you can upload it in Tab",code("Reproducibility"),"."), align="center")
   )
   out <- list(out, fluidRow(
     column(12, p("Detailed information on how to use this graphical user-interface (UI) can be found in a vignette that is included in",code("sdcMicro"),".

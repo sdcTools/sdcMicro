@@ -29,6 +29,10 @@ output$ui_sdcObj_summary <- renderUI({
       out <- list(out, fluidRow(
         column(12, list("Sampling weights:", lapply(x$weightVar, function(x) {code(x)})), align="center")))
     }
+    if (length(x$strataVar)>0) {
+      out <- list(out, fluidRow(
+        column(12, list("Numerical key variables", lapply(x$strataVar, function(x) {code(x)})), align="center")))
+    }
     # cannot be selected when creating the sdc problem instance
     #if (length(x$strataVar)>0) {
     #  out <- list(out, fluidRow(
@@ -36,11 +40,11 @@ output$ui_sdcObj_summary <- renderUI({
     #}
     if (length(x$householdId)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Household/cluster Id:", lapply(x$householdId, function(x) {code(x)})), align="center")))
+        column(12, list("Household/cluster variable:", lapply(x$householdId, function(x) {code(x)})), align="center")))
     }
     if (length(x$delVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Deleted variables:", lapply(x$delVars, function(x) {code(x)})), align="center")))
+        column(12, list("Deleted variables", lapply(x$delVars, function(x) {code(x)})), align="center")))
     }
     gV <- x$ghostVars
     if (length(gV)>0) {
@@ -110,10 +114,10 @@ output$ui_sdcObj_summary <- renderUI({
     riskyobs <- x[[1]]$riskyObs
     out <- fluidRow(
       column(12, h4("Risk-measures for categorical variables"), align="center"),
-      column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population. In the original
-        data, we expected to have",code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
-      column(12, p("Currently there are",code(riskyobs$mod),"observations that have a higher risk that the main part of the data. In the
-        original data this number was",code(riskyobs$orig),"."), align="center"))
+      column(12, p("We expect",code(as.integer(reident$mod)),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population. In the original
+        data, we expected to have",code(as.integer(reident$orig)),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
+      column(12, p("Currently there are",code(as.integer(riskyobs$mod)),"observations that have a higher risk that the main part of the data. In the
+        original data this number was",code(as.integer(riskyobs$orig)),"."), align="center"))
     out
   })
   output$show_info_risk <- renderUI({
@@ -130,7 +134,7 @@ output$ui_sdcObj_summary <- renderUI({
       column(12, p("The disclosure risk is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),".
       In the original data the risk is assumed to be between",code("0%"),"and",code("100%"),"."), align="center"),
       column(12, h4("Information loss"), align="center"),
-      column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
+      column(12, p("Measure",strong("IL1"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
     )
     out
   })
@@ -545,15 +549,13 @@ output$setupbtn <- renderUI({
   # some selected categorical key-variables are numeric or character
   ii <- which(useAsKeys=="Cat." & types%in%c("numeric","character"))
   if (length(ii)>0) {
-    txt <- paste0(" Categorical key variables have to be of type ",dQuote("factor"), " or type ", dQuote("integer"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
-    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    return(myErrBtn("tmp", label="Error: Selected categorical key variables are of type 'numeric' or 'character'"))
   }
 
   # some selected numerical key-variables are factor or character
   ii <- which(useAsKeys=="Cont." & types%in%c("factor","character"))
   if (length(ii)>0) {
-    txt <- paste0("Continuous key variables have to be of type ",dQuote("numeric")," or type ",dQuote("integer"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
-    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    return(myErrBtn("tmp", label="Error: Selected continous key variables are of type 'factor' or 'character'"))
   }
 
   ## pram
@@ -561,17 +563,13 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     # selected pram vars must not be key-vars
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
-      return(myErrBtn("tmp", label="Error: Selected pram variables are also key variables"))
+      return(myErrBtn("tmp", label="Error: Selected pram variables are also key-variables"))
     }
     if (any(useAsWeight[ii] == TRUE)) {
       return(myErrBtn("tmp", label="Error: Selected pram variable is also the weight variable"))
     }
     if (any(useAsClusterID[ii] == TRUE)) {
       return(myErrBtn("tmp", label="Error: Selected pram variable is also the cluster-id variable"))
-    }
-    kk <- which(types[ii] != "factor")
-    if (length(kk)>0) {
-      return(myErrBtn("tmp", label="Error: Selected pram variable(s) must be of type 'factor'"))
     }
   }
 
@@ -621,6 +619,9 @@ output$setupbtn <- renderUI({
     }
     if (any(useAsClusterID[ii]==TRUE)) {
       return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the cluster-id variable"))
+    }
+    if (any(useAsStrata[ii]==TRUE)) {
+      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be strata variables"))
     }
   }
   btn <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
@@ -710,6 +711,7 @@ output$sel_sdc_infovar <- renderUI({
 })
 
 output$ui_sdcObj_create <- renderUI({
+  sel_infov <- selectInput("sel_infov", label=h4("Select variable to show information"), choices=allVars(), selected=input$sel_infov, width="100%")
   out <- fluidRow(
     column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
     column(4, uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
