@@ -91,7 +91,9 @@ output$ui_about <- renderUI({
     column(12, h4("Contact and Feedback"), align="center"),
     column(12, p("In case you have any suggestions or bug reports, please file an issue at the",
       tags$a("Issue tracker", href="https://www.github.com/alexkowa/sdcMicro/issues", target="_blank"),"in our",
-      tags$a("github repo", href="https://www.github.com/alexkowa/sdcMicro", target="_blank"),"."), align="center")
+      tags$a("github repo", href="https://www.github.com/alexkowa/sdcMicro", target="_blank"),"."), align="center"),
+    column(12, p("Before reporting any bugs, please make sure that you are working with an up-to-date",tags$b("R"),"installation and
+      that all packages have been updated. You can do so by entering",code("update.packages(ask=FALSE)"),"into your prompt."), align="center")
   ))
   out
 })
