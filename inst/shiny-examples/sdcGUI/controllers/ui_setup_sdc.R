@@ -255,7 +255,7 @@ output$ui_sdcObj_explorevars <- renderUI({
   output$ui_selanonvar2 <- renderUI({
     selectInput("view_selanonvar2", choices=c("none", allVars()), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
   })
-  
+
   observeEvent(input$view_selanonvar1, {
     vv <- allVars()
     ii <- which(input$view_selanonvar1==vv)
@@ -585,7 +585,7 @@ output$setupbtn <- renderUI({
   if (length(ii)>1) {
     txt <- paste0("More than one weight variable is selected.", "Please unselect multiple weight variables.")
     return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
-  }  
+  }
   if (length(ii)==1) {
     # weights can't be any-key variables
     if (useAsKeys[ii]!="No") {
@@ -667,7 +667,7 @@ output$ui_sdcObj_create1 <- renderUI({
 
   helptxt <- paste("Please select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional),
     pram variables (optional), weights variable (optional), household cluster id (optional), variables to be removed (optional). Also, specify the parameters alpha and set a seed at the bottom of this page.")
-  
+
   helptxt2 <- "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go Microdata tab and convert variables to numeric or factor."
 
   out <- list(out,
