@@ -111,9 +111,9 @@ output$ui_sdcObj_summary <- renderUI({
     out <- fluidRow(
       column(12, h4("Risk-measures for categorical variables"), align="center"),
       column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population. In the original
-        data, we expected to have",code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
+          data, we expected to have",code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
       column(12, p("Currently there are",code(riskyobs$mod),"observations that have a higher risk that the main part of the data. In the
-        original data this number was",code(riskyobs$orig),"."), align="center"))
+          original data this number was",code(riskyobs$orig),"."), align="center"))
     out
   })
   output$show_info_risk <- renderUI({
@@ -255,7 +255,7 @@ output$ui_sdcObj_explorevars <- renderUI({
   output$ui_selanonvar2 <- renderUI({
     selectInput("view_selanonvar2", choices=c("none", allVars()), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
   })
-
+  
   observeEvent(input$view_selanonvar1, {
     vv <- allVars()
     ii <- which(input$view_selanonvar1==vv)
@@ -354,7 +354,7 @@ output$ui_sdcObj_explorevars <- renderUI({
       fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.", align="center")))
     if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
       out <- list(out,
-        fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.", align="center")))
+      fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.", align="center")))
     }
     out
   })
@@ -561,17 +561,21 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     # selected pram vars must not be key-vars
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
-      return(myErrBtn("tmp", label="Error: Selected pram variables are also key variables"))
+      txt <- paste0("Selected pram variables are also key variables.", " Please undo the pram variable selection and select only pram variables that are not selected as key variables.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
     if (any(useAsWeight[ii] == TRUE)) {
-      return(myErrBtn("tmp", label="Error: Selected pram variable is also the weight variable"))
+      txt <- paste0(" Selected pram variable is also the weight variable.", " Please undo the pram variable selection and select only pram variables that are not selected as weight variables.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
     if (any(useAsClusterID[ii] == TRUE)) {
-      return(myErrBtn("tmp", label="Error: Selected pram variable is also the cluster-id variable"))
+      txt <- paste0(" Selected pram variable is also the cluster-id variable.", " Please undo the pram variable selection and select only pram variables that are not selected as cluster-id variables.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
     kk <- which(types[ii] != "factor")
     if (length(kk)>0) {
-      return(myErrBtn("tmp", label="Error: Selected pram variable(s) must be of type 'factor'"))
+      txt <- paste0(" Pram  variables have to be of type ",dQuote("factor"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
   }
 
@@ -579,12 +583,14 @@ output$setupbtn <- renderUI({
   ii <- which(useAsWeight==TRUE)
   # more than one weight-variable
   if (length(ii)>1) {
-    return(myErrBtn("tmp", label="Error: More than one weight variable selected"))
-  }
+    txt <- paste0("More than one weight variable is selected.", "Please unselect multiple weight variables.")
+    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+  }  
   if (length(ii)==1) {
     # weights can't be any-key variables
     if (useAsKeys[ii]!="No") {
-      return(myErrBtn("tmp", label="Error: Weight variable cannot be selected as (numerical) key variable"))
+      txt <- paste0("Selected weight variable is also selected as key variable.", " Please undo the weight variable selection and select only a weight variable that is not selected as key variable.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
     # weight-variables must be numeric
     if (!types[ii] %in% c("numeric","integer")) {
@@ -598,12 +604,14 @@ output$setupbtn <- renderUI({
   ii <- which(useAsClusterID==TRUE)
   # more than one cluster-ids
   if (length(ii)>1) {
-    return(myErrBtn("tmp", label="Error: More than one cluster-id variable selected"))
+    txt <- paste0("More than one cluster-id variable is selected.", " Please unselect multiple cluster-id variables.")
+    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
   }
   if (length(ii)==1) {
     # cluster-ids can't be any-key variables
     if (useAsKeys[ii]!="No") {
-      return(myErrBtn("tmp", label="Error: Cluster-id variable cannot be selected as key variable"))
+      txt <- paste0("Selected cluster-id variable is also selected as key variable.", " Please undo the cluster-id variable selection and select only a cluster-id variable that is not selected as key variable.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
   }
 
@@ -611,16 +619,20 @@ output$setupbtn <- renderUI({
   ii <- which(deleteVariable==TRUE)
   if (length(ii)>0) {
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be key variables"))
+      txt <- paste0("Variables that should be deleted cannot be selected as key variables.", " Please undo this selection and select the variable as key variable or as variable that should be deleted.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
     if (any(useAsPram[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be pram variables"))
+      txt <- paste0("Variables that should be deleted cannot be selected as pram variables.", " Please undo this selection and select the variable as pram variable or as variable that should be deleted.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
     if (any(useAsWeight[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the weight variable"))
+      txt <- paste0("Variables that should be deleted cannot be selected as weight variable.", " Please undo this selection and select the variable as weight variable or as variable that should be deleted.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
     if (any(useAsClusterID[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the cluster-id variable"))
+      txt <- paste0("Variables that should be deleted cannot be selected as cluster-id variable.", " Please undo this selection and select the variable as cluster-id variable or as variable that should be deleted.")
+      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
   }
   btn <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
@@ -655,7 +667,7 @@ output$ui_sdcObj_create1 <- renderUI({
 
   helptxt <- paste("Please select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional),
     pram variables (optional), weights variable (optional), household cluster id (optional), variables to be removed (optional). Also, specify the parameters alpha and set a seed at the bottom of this page.")
-
+  
   helptxt2 <- "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go Microdata tab and convert variables to numeric or factor."
 
   out <- list(out,
