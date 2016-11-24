@@ -83,7 +83,9 @@ output$ui_topbotcoding_num <- renderUI({
   })
 
   helptxt <- "Here you can recode all values in a variable below (bottom-coding) or above (top-coding) a certain threshold. These values are replaced"
-  helptxt <- paste(helptxt, "with the specified replacement value.")
+  helptxt <- paste(helptxt, "with the specified replacement value. The boxplot below shows the distribution of the data before top- or bottom-coding. ")
+  helptxt <- paste(helptxt, "The bottom of the box is the 25th percentile and the top of the box the 75th percentile. The bar in the boxplot is the median. ")
+  helptxt <- paste(helptxt, "The length of the whiskers is 1.5 times the IQR, unless the smallest/largest obeservation is closer to the box. Any value below/above the whiskers is indicated as outlier.")
   out <- fluidRow(
     column(12, h4("Apply Top- and bottom coding", align="center")),
     column(12, p(helptxt), align="center")
