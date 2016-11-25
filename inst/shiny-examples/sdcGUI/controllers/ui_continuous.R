@@ -280,7 +280,7 @@ output$ui_noise <- renderUI({
       lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     } else if (input$sel_noise_method=="outdect"){
-      txt_tooltip <- "– The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data."
+      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data."
       lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     } else {
@@ -307,10 +307,11 @@ output$ui_noise <- renderUI({
 
   # variables selected
   output$ui_noise_vars <- renderUI({
-    txt_tooltip <- "Note that for some methods, the results are different if noise is added to single variables or to groups of variables. An example is the method 'correlated2', which preserves the covariance matrix of the data."
-    selectInput("sel_noise_v", choices=get_numVars_names(), 
-      label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="bottom")), 
-      width="75%", multiple=TRUE)
+    #txt_tooltip <- "Note that for some methods, the results are different if noise is added to single variables or to groups of variables. An example is the method 'correlated2', which preserves the covariance matrix of the data."
+    #selectInput("sel_noise_v", choices=get_numVars_names(), 
+    #  label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="bottom")), 
+    #  width="75%", multiple=TRUE)
+    selectInput("sel_noise_v", choices=get_numVars_names(), label=h5("Select variables"), width="75%", multiple=TRUE)
   })
 
   # ui for 'btn_noise
