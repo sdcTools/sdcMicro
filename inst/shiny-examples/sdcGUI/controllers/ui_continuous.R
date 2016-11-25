@@ -264,15 +264,27 @@ output$ui_noise <- renderUI({
   output$ui_noise_slider <- renderUI({
     req(input$sel_noise_method)
     if (input$sel_noise_method=="correlated2") {
-      txt_tooltip <- "The added noise is proportional to the variance in the data. The amount of noise is the multiplier for the standard deviation of the noise."
+      txt_tooltip <- "Delta is the parameter that determines the level of noise. The larger delta, the higher the noise level. Please refer to the literature for a more detailed description of the effect of delta."
       lab <- h5("Amount of noise (parameter 'delta')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.1, min=0.1, max=2, step=0.01)
     } else if (input$sel_noise_method=="ROMM") {
-      txt_tooltip <- ""
+      txt_tooltip <- "Parameter 'p' is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes."
       lab <- h5("Amount of noise (parameter 'p')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
-    } else {
-      txt_tooltip <- ""
+    } else if (input$sel_noise_method=="additive"){
+      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data. The added noise is generated from a univariate normal distribution."
+      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
+      par <- c(value=150, min=0, max=300, step=1)
+    } else if (input$sel_noise_method=="restr"){
+      txt_tooltip <- "The size of the noise depends on the parameter noise and the sample size. The higher this parameter, the larger the noise."
+      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
+      par <- c(value=150, min=0, max=300, step=1)
+    } else if (input$sel_noise_method=="outdect"){
+      txt_tooltip <- "– The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data."
+      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
+      par <- c(value=150, min=0, max=300, step=1)
+    } else if (input$sel_noise_method=="correlated"){
+      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the covariance matrix of the noise. For example, for the default value 150, the covariance matrix of the noise is 1.5 times the covariance matrix of the data. The added noise is generated from a multivariate normal distribution."
       lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     }
@@ -282,12 +294,12 @@ output$ui_noise <- renderUI({
   # ui for selection of method
   output$ui_noise_method <- renderUI({
     txt_tooltip <- "<strong>Noise addition methods:</strong><br />"
-    txt_tooltip <- paste0(txt_tooltip, "<strong>additive</strong> - adds noise completely at random to each variable depending on their size and standard deviation<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated2</strong> - adds noise and preserves the covariances<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>additive</strong> - adds noise at random to each variable independently, the size of noise is related to the standard deviation of each variable<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated2</strong> - adds noise and preserves the covariance matrix<br />")
     txt_tooltip <- paste0(txt_tooltip, "<strong>restr</strong> - takes the sample size into account when adding noise<br />")
     txt_tooltip <- paste0(txt_tooltip, "<strong>ROMM</strong> - implementation of the algorithm ROMM (Random Orthogonalized Matrix Masking)<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>outdect</strong> - adds noise only to outliers. The outliers are identified with univariate and robust multivariate procedures based on a robust mahalanobis distances calculated by the MCD estimator.<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated</strong> - adds noise and preserves the covariances")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>outdect</strong> - adds noise only to outliers in the data. The outliers are identified with univariate and robust multivariate procedures based on a robust Mahalanobis distance calculated by the MCD estimator.<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated</strong> - adds noise and preserves the covariance matrix")
     selectInput("sel_noise_method",
       label=h5("Select the algorithm", tipify(icon("question"), title=txt_tooltip, placement="bottom")),
       choices=choices_noise(), selected=input$sel_noise_method, width="100%")
@@ -295,7 +307,10 @@ output$ui_noise <- renderUI({
 
   # variables selected
   output$ui_noise_vars <- renderUI({
-    selectInput("sel_noise_v", choices=get_numVars_names(), label=h5("Select variables"), width="75%", multiple=TRUE)
+    txt_tooltip <- "Note that for some methods, the results are different if noise is added to single variables or to groups of variables. An example is the method 'correlated2', which preserves the covariance matrix of the data."
+    selectInput("sel_noise_v", choices=get_numVars_names(), 
+      label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="bottom")), 
+      width="75%", multiple=TRUE)
   })
 
   # ui for 'btn_noise
@@ -309,7 +324,7 @@ output$ui_noise <- renderUI({
 
   out <- fluidRow(
     column(12, h4("Adding Stochastic Noise", align="center")),
-    column(12, p("Here you can use various methods to add noise in order to perturb continuous variables.", align="center")))
+    column(12, p("Here you can use various methods to add noise in order to perturb continuous variables. Note: stochastic noise is a probabilistic method and the results differ depending on the current seed for the random number generator.", align="center")))
 
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_noise_vars"), align="center"),
