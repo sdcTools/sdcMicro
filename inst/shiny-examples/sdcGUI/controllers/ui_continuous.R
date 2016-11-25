@@ -269,7 +269,7 @@ output$ui_noise <- renderUI({
       par <- c(value=0.1, min=0.1, max=2, step=0.01)
     } else if (input$sel_noise_method=="ROMM") {
       txt_tooltip <- "Parameter 'p' is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes."
-      lab <- h5("Amount of noise (parameter 'p')", tipify(icon("question"), title=txt_tooltip, placement="top"))
+      lab <- h5("Amount of noise (parameter 'p')")#, tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
     } else if (input$sel_noise_method=="correlated"){
       txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the covariance matrix of the noise. For example, for the default value 150, the covariance matrix of the noise is 1.5 times the covariance matrix of the data. The added noise is generated from a multivariate normal distribution."
@@ -383,11 +383,11 @@ output$ui_rankswap <- renderUI({
     txt_tooltip <- paste0(txt_tooltip, "The absolute difference between the variable mean before and swapping (abs(X_1 - X_2), where X_1 is the (subset) sample mean before swapping ")
     txt_tooltip <- paste0(txt_tooltip, "and X_2 is the (subset) sample mean after swapping) is kept smaller than or equal to 2 * K_0 * X_1 / sqrt(N_S), where N_S is the sample size of the subset under consideration. Therefore, larger values of K_0 allow larger deviations.")
     sliderInput("sl_rankswap_k0",
-      label=h5("Subset-mean preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      label=h5("Subset-mean preservation factor", tipify(icon("question"), title=txt_tooltip, placement="bottom")),
       min=0, max=1, step=0.01, value=0, width="100%")
   })
   output$sl_rankswap_r0 <- renderUI({
-    txt_tooltip <- "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_0 = R_1/R_2 where R_1 is the correlation coefficient of the two variables after swapping, "
+    txt_tooltip <- "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_1/R_2 > R_0 where R_1 is the correlation coefficient of the two variables after swapping, "
     txt_tooltip <- paste0(txt_tooltip, "and R_2 is the correlation coefficient of the two variables before swapping.")
     sliderInput("sl_rankswap_r0",
       label=h5("Multivariate preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
