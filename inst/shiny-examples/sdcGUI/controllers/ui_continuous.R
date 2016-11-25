@@ -338,34 +338,47 @@ output$ui_rankswap <- renderUI({
   output$ui_rankswap_btn <- renderUI({
     btn <- NULL
     if (has_numkeyvars() | length(input$sel_rankswap_v)>0) {
-      btn <- myActionButton("btn_rankswap", label="Apply rank-swapping", "primary")
+      btn <- myActionButton("btn_rankswap", label="Apply rank swapping", "primary")
     }
     btn
   })
 
   output$ui_rankswap_vars <- renderUI({
-    selectInput("sel_rankswap_v", choices=possvars_numericmethods(), label=h5("Select Variables"), width="100%", multiple=TRUE)
+    txt_tooltip <- "Note that the results are different if rank swapping is applied to single variables or to groups of variables, since the covariance matrix is preserved."
+    selectInput("sel_rankswap_v", 
+      choices=possvars_numericmethods(), label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="top")), 
+      width="100%", multiple=TRUE)
   })
   output$sl_rankswap_top <- renderUI({
-    sliderInput("sl_rankswap_top", label=h5("Percentage of largest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%")
+    txt_tooltip <- "The highest values can be top-coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be top-coded as percentage of the sample size. By default no values are top-coded."
+    sliderInput("sl_rankswap_top", 
+      label=h5("Percentage of highest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")), 
+      min=0, max=25, step=1, value=0, width="100%")
   })
   output$sl_rankswap_bot <- renderUI({
-    sliderInput("sl_rankswap_bot", label=h5("Percentage of lowest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%")
+    txt_tooltip <- "The lowest values can be bottom-coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be bottom-coded as percentage of the sample size. By default no values are bottom-coded."
+    sliderInput("sl_rankswap_bot", 
+      label=h5("Percentage of lowest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")), 
+      min=0, max=25, step=1, value=0, width="100%")
+    
   })
   output$sl_rankswap_k0 <- renderUI({
-    txt_tooltip <- ""
+    txt_tooltip <- "The algorithm keeps the change in the means of the variables before and after rank swapping within a range based on the subset-mean preservation factor K_0. "
+    txt_tooltip <- paste0(txt_tooltip, "The absolute difference between the variable mean before and swapping (abs(X_1 - X_2), where X_1 is the (subset) sample mean before swapping ")
+    txt_tooltip <- paste0(txt_tooltip, "and X_2 is the (subset) sample mean after swapping) is kept smaller than or equal to 2 * K_0 * X_1 / sqrt(N_S), where N_S is the sample size of the subset under consideration. Therefore, larger values of K_0 allow larger deviations.")
     sliderInput("sl_rankswap_k0",
       label=h5("Subset-mean preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=1, step=0.01, value=0, width="100%")
   })
   output$sl_rankswap_r0 <- renderUI({
-    txt_tooltip <- ""
+    txt_tooltip <- "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_0 = R_1/R_2 where R_1 is the correlation coefficient of the two variables after swapping, "
+    txt_tooltip <- paste0(txt_tooltip, "and R_2 is the correlation coefficient of the two variables before swapping.")
     sliderInput("sl_rankswap_r0",
       label=h5("Multivariate preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=1, step=0.01, value=0.95, width="100%")
   })
   output$sl_rankswap_p <- renderUI({
-    txt_tooltip <- ""
+    txt_tooltip <- "This parameter (P) describes the size of the rank range as percentage of the total sample size. So two records are eligible for swapping if their ranks, i and j respectively, satisfy abs(i-j) < P*N/100, where N is the total sample size."
     sliderInput("sl_rankswap_p",
       label=h5("Rank range as percentage of total sample size.", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=100, step=1, value=0, width="100%")
@@ -374,7 +387,8 @@ output$ui_rankswap <- renderUI({
   out <- fluidRow(
     column(12, h4("Rank Swapping"), align="center"),
     column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
-      so that correlation structure of original variables is preserved and some perturbation is applied."), align="center"))
+      so that correlation structure of original variables is preserved and some perturbation is applied. Note: rank swapping is a probabilistic method 
+      and therefore the results differ depending on the current seed for the random number generator."), align="center"))
 
   out <- list(out, fluidRow(
     column(4, uiOutput("ui_rankswap_vars"), align="center"),
