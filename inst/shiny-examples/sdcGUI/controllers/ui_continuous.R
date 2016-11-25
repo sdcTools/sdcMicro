@@ -268,7 +268,7 @@ output$ui_noise <- renderUI({
       lab <- h5("Amount of noise (parameter 'delta')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.1, min=0.1, max=2, step=0.01)
     } else if (input$sel_noise_method=="ROMM") {
-      txt_tooltip <- "Parameter 'p' is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes."
+      txt_tooltip <- 'Parameter "p" is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes.'
       lab <- h5("Amount of noise (parameter 'p')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
     } else if (input$sel_noise_method=="correlated"){
@@ -308,8 +308,8 @@ output$ui_noise <- renderUI({
   # variables selected
   output$ui_noise_vars <- renderUI({
     #txt_tooltip <- "Note that for some methods, the results are different if noise is added to single variables or to groups of variables. An example is the method 'correlated2', which preserves the covariance matrix of the data."
-    #selectInput("sel_noise_v", choices=get_numVars_names(), 
-    #  label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="bottom")), 
+    #selectInput("sel_noise_v", choices=get_numVars_names(),
+    #  label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="bottom")),
     #  width="75%", multiple=TRUE)
     selectInput("sel_noise_v", choices=get_numVars_names(), label=h5("Select variables"), width="75%", multiple=TRUE)
   })
@@ -361,29 +361,29 @@ output$ui_rankswap <- renderUI({
 
   output$ui_rankswap_vars <- renderUI({
     txt_tooltip <- "Note that the results are different if rank swapping is applied to single variables or to groups of variables, since the covariance matrix is preserved."
-    selectInput("sel_rankswap_v", 
-      choices=possvars_numericmethods(), label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="top")), 
+    selectInput("sel_rankswap_v",
+      choices=possvars_numericmethods(), label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="top")),
       width="100%", multiple=TRUE)
   })
   output$sl_rankswap_top <- renderUI({
     txt_tooltip <- "The highest values can be top-coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be top-coded as percentage of the sample size. By default no values are top-coded."
-    sliderInput("sl_rankswap_top", 
-      label=h5("Percentage of highest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")), 
+    sliderInput("sl_rankswap_top",
+      label=h5("Percentage of highest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=25, step=1, value=0, width="100%")
   })
   output$sl_rankswap_bot <- renderUI({
     txt_tooltip <- "The lowest values can be bottom-coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be bottom-coded as percentage of the sample size. By default no values are bottom-coded."
-    sliderInput("sl_rankswap_bot", 
-      label=h5("Percentage of lowest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")), 
+    sliderInput("sl_rankswap_bot",
+      label=h5("Percentage of lowest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=25, step=1, value=0, width="100%")
-    
+
   })
   output$sl_rankswap_k0 <- renderUI({
     txt_tooltip <- "The algorithm keeps the change in the means of the variables before and after rank swapping within a range based on the subset-mean preservation factor K_0. "
     txt_tooltip <- paste0(txt_tooltip, "The absolute difference between the variable mean before and swapping (abs(X_1 - X_2), where X_1 is the (subset) sample mean before swapping ")
     txt_tooltip <- paste0(txt_tooltip, "and X_2 is the (subset) sample mean after swapping) is kept smaller than or equal to 2 * K_0 * X_1 / sqrt(N_S), where N_S is the sample size of the subset under consideration. Therefore, larger values of K_0 allow larger deviations.")
     sliderInput("sl_rankswap_k0",
-      label=h5("Subset-mean preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      label=h5("Subset-mean preservation factor", tipify(icon("question"), title=txt_tooltip, placement="bottom")),
       min=0, max=1, step=0.01, value=0, width="100%")
   })
   output$sl_rankswap_r0 <- renderUI({
@@ -403,7 +403,7 @@ output$ui_rankswap <- renderUI({
   out <- fluidRow(
     column(12, h4("Rank Swapping"), align="center"),
     column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
-      so that correlation structure of original variables is preserved and some perturbation is applied. Note: rank swapping is a probabilistic method 
+      so that correlation structure of original variables is preserved and some perturbation is applied. Note: rank swapping is a probabilistic method
       and therefore the results differ depending on the current seed for the random number generator."), align="center"))
 
   out <- list(out, fluidRow(
