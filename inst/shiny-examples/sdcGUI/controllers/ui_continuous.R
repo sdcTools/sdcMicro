@@ -268,13 +268,8 @@ output$ui_noise <- renderUI({
       lab <- h5("Amount of noise (parameter 'delta')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.1, min=0.1, max=2, step=0.01)
     } else if (input$sel_noise_method=="ROMM") {
-<<<<<<< HEAD
-      txt_tooltip <- "Parameter 'p' is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes."
-      lab <- h5("Amount of noise (parameter 'p')")#, tipify(icon("question"), title=txt_tooltip, placement="top"))
-=======
       txt_tooltip <- 'Parameter "p" is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes.'
       lab <- h5("Amount of noise (parameter 'p')", tipify(icon("question"), title=txt_tooltip, placement="top"))
->>>>>>> refs/remotes/alexkowa/sdcMicro_next
       par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
     } else if (input$sel_noise_method=="correlated"){
       txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the covariance matrix of the noise. For example, for the default value 150, the covariance matrix of the noise is 1.5 times the covariance matrix of the data. The added noise is generated from a multivariate normal distribution."
