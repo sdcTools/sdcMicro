@@ -271,8 +271,8 @@ output$ui_noise <- renderUI({
       txt_tooltip <- "Parameter 'p' is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes."
       lab <- h5("Amount of noise (parameter 'p')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
-    } else if (input$sel_noise_method=="additive"){
-      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data. The added noise is generated from a univariate normal distribution."
+    } else if (input$sel_noise_method=="correlated"){
+      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the covariance matrix of the noise. For example, for the default value 150, the covariance matrix of the noise is 1.5 times the covariance matrix of the data. The added noise is generated from a multivariate normal distribution."
       lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     } else if (input$sel_noise_method=="restr"){
@@ -283,10 +283,11 @@ output$ui_noise <- renderUI({
       txt_tooltip <- "– The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data."
       lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
-    } else if (input$sel_noise_method=="correlated"){
-      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the covariance matrix of the noise. For example, for the default value 150, the covariance matrix of the noise is 1.5 times the covariance matrix of the data. The added noise is generated from a multivariate normal distribution."
+    } else {
+      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data. The added noise is generated from a univariate normal distribution."
       lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
+   
     }
     sliderInput("sl_noise_noise", label=lab, min=par["min"], max=par["max"], step=par["step"], value=par["value"], width="100%")
   })
