@@ -307,11 +307,10 @@ output$ui_noise <- renderUI({
 
   # variables selected
   output$ui_noise_vars <- renderUI({
-    #txt_tooltip <- "Note that for some methods, the results are different if noise is added to single variables or to groups of variables. An example is the method 'correlated2', which preserves the covariance matrix of the data."
-    #selectInput("sel_noise_v", choices=get_numVars_names(),
-    #  label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="bottom")),
-    #  width="75%", multiple=TRUE)
-    selectInput("sel_noise_v", choices=get_numVars_names(), label=h5("Select variables"), width="75%", multiple=TRUE)
+    txt_tooltip <- "Note that for some methods, the results are different if noise is added to single variables or to groups of variables. An example is the method 'correlated2', which preserves the covariance matrix of the data."
+    selectInput("sel_noise_v", choices=get_numVars_names(),
+      label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="bottom")),
+      width="75%", multiple=TRUE)
   })
 
   # ui for 'btn_noise
@@ -387,7 +386,7 @@ output$ui_rankswap <- renderUI({
       min=0, max=1, step=0.01, value=0, width="100%")
   })
   output$sl_rankswap_r0 <- renderUI({
-    txt_tooltip <- "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_0 = R_1/R_2 where R_1 is the correlation coefficient of the two variables after swapping, "
+    txt_tooltip <- "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_1/R_2 > R_0 where R_1 is the correlation coefficient of the two variables after swapping, "
     txt_tooltip <- paste0(txt_tooltip, "and R_2 is the correlation coefficient of the two variables before swapping.")
     sliderInput("sl_rankswap_r0",
       label=h5("Multivariate preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
