@@ -83,7 +83,9 @@ output$ui_topbotcoding_num <- renderUI({
   })
 
   helptxt <- "Here you can recode all values in a variable below (bottom-coding) or above (top-coding) a certain threshold. These values are replaced"
-  helptxt <- paste(helptxt, "with the specified replacement value.")
+  helptxt <- paste(helptxt, "with the specified replacement value. The boxplot below shows the distribution of the data before top- or bottom-coding. ")
+  helptxt <- paste(helptxt, "The bottom of the box is the 25th percentile and the top of the box the 75th percentile. The bar in the boxplot is the median. ")
+  helptxt <- paste(helptxt, "The length of the whiskers is 1.5 times the IQR, unless the smallest/largest obeservation is closer to the box. Any value below/above the whiskers is indicated as outlier.")
   out <- fluidRow(
     column(12, h4("Apply Top- and bottom coding", align="center")),
     column(12, p(helptxt), align="center")
@@ -262,15 +264,27 @@ output$ui_noise <- renderUI({
   output$ui_noise_slider <- renderUI({
     req(input$sel_noise_method)
     if (input$sel_noise_method=="correlated2") {
-      txt_tooltip <- "The added noise is proportional to the variance in the data. The amount of noise is the multiplier for the standard deviation of the noise."
+      txt_tooltip <- "Delta is the parameter that determines the level of noise. The larger delta, the higher the noise level. Please refer to the literature for a more detailed description of the effect of delta."
       lab <- h5("Amount of noise (parameter 'delta')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.1, min=0.1, max=2, step=0.01)
     } else if (input$sel_noise_method=="ROMM") {
-      txt_tooltip <- ""
+      txt_tooltip <- "Parameter 'p' is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes."
       lab <- h5("Amount of noise (parameter 'p')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
+    } else if (input$sel_noise_method=="correlated"){
+      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the covariance matrix of the noise. For example, for the default value 150, the covariance matrix of the noise is 1.5 times the covariance matrix of the data. The added noise is generated from a multivariate normal distribution."
+      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
+      par <- c(value=150, min=0, max=300, step=1)
+    } else if (input$sel_noise_method=="restr"){
+      txt_tooltip <- "The size of the noise depends on the parameter noise and the sample size. The higher this parameter, the larger the noise."
+      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
+      par <- c(value=150, min=0, max=300, step=1)
+    } else if (input$sel_noise_method=="outdect"){
+      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data."
+      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
+      par <- c(value=150, min=0, max=300, step=1)
     } else {
-      txt_tooltip <- ""
+      txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data. The added noise is generated from a univariate normal distribution."
       lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("question"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     }
@@ -280,12 +294,12 @@ output$ui_noise <- renderUI({
   # ui for selection of method
   output$ui_noise_method <- renderUI({
     txt_tooltip <- "<strong>Noise addition methods:</strong><br />"
-    txt_tooltip <- paste0(txt_tooltip, "<strong>additive</strong> - adds noise completely at random to each variable depending on their size and standard deviation<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated2</strong> - adds noise and preserves the covariances<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>additive</strong> - adds noise at random to each variable independently, the size of noise is related to the standard deviation of each variable<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated2</strong> - adds noise and preserves the covariance matrix<br />")
     txt_tooltip <- paste0(txt_tooltip, "<strong>restr</strong> - takes the sample size into account when adding noise<br />")
     txt_tooltip <- paste0(txt_tooltip, "<strong>ROMM</strong> - implementation of the algorithm ROMM (Random Orthogonalized Matrix Masking)<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>outdect</strong> - adds noise only to outliers. The outliers are identified with univariate and robust multivariate procedures based on a robust mahalanobis distances calculated by the MCD estimator.<br />")
-    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated</strong> - adds noise and preserves the covariances")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>outdect</strong> - adds noise only to outliers in the data. The outliers are identified with univariate and robust multivariate procedures based on a robust Mahalanobis distance calculated by the MCD estimator.<br />")
+    txt_tooltip <- paste0(txt_tooltip, "<strong>correlated</strong> - adds noise and preserves the covariance matrix")
     selectInput("sel_noise_method",
       label=h5("Select the algorithm", tipify(icon("question"), title=txt_tooltip, placement="bottom")),
       choices=choices_noise(), selected=input$sel_noise_method, width="100%")
@@ -293,6 +307,10 @@ output$ui_noise <- renderUI({
 
   # variables selected
   output$ui_noise_vars <- renderUI({
+    #txt_tooltip <- "Note that for some methods, the results are different if noise is added to single variables or to groups of variables. An example is the method 'correlated2', which preserves the covariance matrix of the data."
+    #selectInput("sel_noise_v", choices=get_numVars_names(), 
+    #  label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="bottom")), 
+    #  width="75%", multiple=TRUE)
     selectInput("sel_noise_v", choices=get_numVars_names(), label=h5("Select variables"), width="75%", multiple=TRUE)
   })
 
@@ -307,7 +325,7 @@ output$ui_noise <- renderUI({
 
   out <- fluidRow(
     column(12, h4("Adding Stochastic Noise", align="center")),
-    column(12, p("Here you can use various methods to add noise in order to perturb continuous variables.", align="center")))
+    column(12, p("Here you can use various methods to add noise in order to perturb continuous variables. Note: stochastic noise is a probabilistic method and the results differ depending on the current seed for the random number generator.", align="center")))
 
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_noise_vars"), align="center"),
@@ -336,34 +354,47 @@ output$ui_rankswap <- renderUI({
   output$ui_rankswap_btn <- renderUI({
     btn <- NULL
     if (has_numkeyvars() | length(input$sel_rankswap_v)>0) {
-      btn <- myActionButton("btn_rankswap", label="Apply rank-swapping", "primary")
+      btn <- myActionButton("btn_rankswap", label="Apply rank swapping", "primary")
     }
     btn
   })
 
   output$ui_rankswap_vars <- renderUI({
-    selectInput("sel_rankswap_v", choices=possvars_numericmethods(), label=h5("Select Variables"), width="100%", multiple=TRUE)
+    txt_tooltip <- "Note that the results are different if rank swapping is applied to single variables or to groups of variables, since the covariance matrix is preserved."
+    selectInput("sel_rankswap_v", 
+      choices=possvars_numericmethods(), label=h5("Select variables", tipify(icon("question"), title=txt_tooltip, placement="top")), 
+      width="100%", multiple=TRUE)
   })
   output$sl_rankswap_top <- renderUI({
-    sliderInput("sl_rankswap_top", label=h5("Percentage of largest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%")
+    txt_tooltip <- "The highest values can be top-coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be top-coded as percentage of the sample size. By default no values are top-coded."
+    sliderInput("sl_rankswap_top", 
+      label=h5("Percentage of highest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")), 
+      min=0, max=25, step=1, value=0, width="100%")
   })
   output$sl_rankswap_bot <- renderUI({
-    sliderInput("sl_rankswap_bot", label=h5("Percentage of lowest values that are grouped together before rank swapping"), min=0, max=25, step=1, value=0, width="100%")
+    txt_tooltip <- "The lowest values can be bottom-coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be bottom-coded as percentage of the sample size. By default no values are bottom-coded."
+    sliderInput("sl_rankswap_bot", 
+      label=h5("Percentage of lowest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")), 
+      min=0, max=25, step=1, value=0, width="100%")
+    
   })
   output$sl_rankswap_k0 <- renderUI({
-    txt_tooltip <- ""
+    txt_tooltip <- "The algorithm keeps the change in the means of the variables before and after rank swapping within a range based on the subset-mean preservation factor K_0. "
+    txt_tooltip <- paste0(txt_tooltip, "The absolute difference between the variable mean before and swapping (abs(X_1 - X_2), where X_1 is the (subset) sample mean before swapping ")
+    txt_tooltip <- paste0(txt_tooltip, "and X_2 is the (subset) sample mean after swapping) is kept smaller than or equal to 2 * K_0 * X_1 / sqrt(N_S), where N_S is the sample size of the subset under consideration. Therefore, larger values of K_0 allow larger deviations.")
     sliderInput("sl_rankswap_k0",
       label=h5("Subset-mean preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=1, step=0.01, value=0, width="100%")
   })
   output$sl_rankswap_r0 <- renderUI({
-    txt_tooltip <- ""
+    txt_tooltip <- "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_0 = R_1/R_2 where R_1 is the correlation coefficient of the two variables after swapping, "
+    txt_tooltip <- paste0(txt_tooltip, "and R_2 is the correlation coefficient of the two variables before swapping.")
     sliderInput("sl_rankswap_r0",
       label=h5("Multivariate preservation factor", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=1, step=0.01, value=0.95, width="100%")
   })
   output$sl_rankswap_p <- renderUI({
-    txt_tooltip <- ""
+    txt_tooltip <- "This parameter (P) describes the size of the rank range as percentage of the total sample size. So two records are eligible for swapping if their ranks, i and j respectively, satisfy abs(i-j) < P*N/100, where N is the total sample size."
     sliderInput("sl_rankswap_p",
       label=h5("Rank range as percentage of total sample size.", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=100, step=1, value=0, width="100%")
@@ -372,7 +403,8 @@ output$ui_rankswap <- renderUI({
   out <- fluidRow(
     column(12, h4("Rank Swapping"), align="center"),
     column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
-      so that correlation structure of original variables is preserved and some perturbation is applied."), align="center"))
+      so that correlation structure of original variables is preserved and some perturbation is applied. Note: rank swapping is a probabilistic method 
+      and therefore the results differ depending on the current seed for the random number generator."), align="center"))
 
   out <- list(out, fluidRow(
     column(4, uiOutput("ui_rankswap_vars"), align="center"),
