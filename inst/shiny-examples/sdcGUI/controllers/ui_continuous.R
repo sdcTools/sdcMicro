@@ -173,14 +173,14 @@ output$ui_microaggregation <- renderUI({
     txtClus <- paste(txtClus, "<strong>clustpca</strong> - see pca, applied for within each cluster<br />")
     txtClus <- paste(txtClus, "<strong>clustmcdpca</strong> - see mcdpca, applied for within each cluster<br />")
     txtClus <- paste(txtClus, "<strong>clustpppca</strong> - see pppca, applied for within each cluster<br />")
-    if (input$rb_microagg_cluster=="No"){
+    if (input$rb_microagg_cluster=="No") {
       sel_method <- selectInput("sel_microagg_method",
-                                label=h5("Select the method", tipify(icon("question"), title=txt, placement="bottom")),
-                                choices=choices_aggmethods(), selected=input$sel_microagg_method, width="100%")
-    }else{
+        label=h5("Select the method", tipify(icon("question"), title=txt, placement="bottom")),
+        choices=choices_aggmethods(), selected=input$sel_microagg_method, width="100%")
+    } else {
       sel_method <- selectInput("sel_microagg_method",
-                                label=h5("Select the method", tipify(icon("question"), title=txtClus, placement="bottom")),
-                                choices=choices_aggmethods(), selected=input$sel_microagg_method, width="100%")
+        label=h5("Select the method", tipify(icon("question"), title=txtClus, placement="bottom")),
+        choices=choices_aggmethods(), selected=input$sel_microagg_method, width="100%")
     }
   })
   output$ui_microagg_vars <- renderUI({
