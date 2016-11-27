@@ -104,6 +104,9 @@ With method \sQuote{simple} one can apply microaggregation directly on the
 benchmark, i.e. replies the question how much better is a sorting of the
 data before aggregation.
 }
+\note{
+if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored.
+}
 \examples{
 data(Tarragona)
 m1 <- microaggregation(Tarragona, method='onedims', aggr=3)
