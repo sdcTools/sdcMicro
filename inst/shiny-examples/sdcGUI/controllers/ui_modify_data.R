@@ -199,6 +199,15 @@ output$ui_modify_change_factor <- renderUI({
     }
     ff <- inp[[input$sel_factor]]
     ll <- as.list(levels(ff))
+    # add output for debugging, remove later
+    if (length(ll)==0 | length(table(ff))==0) {
+      cat("problem in variable",dQuote(input$sel_factor)," (length(levels(x)) or length(table(x))) is 0!\n")
+      return(NULL)
+    }
+    if (length(ll) != length(table(ff))) {
+      cat("problem in variable",dQuote(input$sel_factor)," (length(levels(x)) != length(table(x)))!\n")
+      return(NULL)
+    }
     names(ll) <- paste0(ll, " (",table(ff)," obs)")
     ll
   })
