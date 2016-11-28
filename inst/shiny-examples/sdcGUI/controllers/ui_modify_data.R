@@ -378,7 +378,8 @@ output$ui_view_var <- renderUI({
     obj$inp_sel_viewvar1 <- input$view_selvar1
   })
   output$ui_selvar2 <- renderUI({
-    selectInput("view_selvar2", choices=c("none", allVars()), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
+    vv <- setdiff(allVars(), input$inp_sel_viewvar1)
+    selectInput("view_selvar2", choices=c("none", vv), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
   })
 
   observeEvent(input$view_selvar1, {
@@ -391,11 +392,13 @@ output$ui_view_var <- renderUI({
   })
   observeEvent(input$view_selvar2, {
     vv <- allVars()
-    ii <- which(input$view_selvar2==vv)
-    if (length(ii)>0) {
-      vv <- vv[-c(ii)]
-      updateSelectInput(session, inputId="view_selvar1", choices=vv, selected=input$view_selvar1)
+    if (input$view_selvar2!="none") {
+      ii <- which(input$view_selvar2==vv)
+      if (length(ii)>0) {
+        vv <- vv[-c(ii)]
+      }
     }
+    updateSelectInput(session, inputId="view_selvar1", choices=vv, selected=input$view_selvar1)
   })
 
   output$view_summary <- renderUI({

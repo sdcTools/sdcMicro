@@ -253,7 +253,8 @@ output$ui_sdcObj_explorevars <- renderUI({
     obj$inp_sel_anonvar1 <- input$ui_selanonvar1
   })
   output$ui_selanonvar2 <- renderUI({
-    selectInput("view_selanonvar2", choices=c("none", allVars()), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
+    vv <- setdiff(allVars(), input$view_selanonvar1)
+    selectInput("view_selanonvar2", choices=c("none", vv), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
   })
 
   observeEvent(input$view_selanonvar1, {
@@ -266,11 +267,13 @@ output$ui_sdcObj_explorevars <- renderUI({
   })
   observeEvent(input$view_selanonvar2, {
     vv <- allVars()
-    ii <- which(input$view_selanonvar2==vv)
-    if (length(ii)>0) {
-      vv <- vv[-c(ii)]
-      updateSelectInput(session, inputId="view_selanonvar1", choices=vv, selected=input$view_selanonvar1)
+    if (input$view_selanonvar2!="none") {
+      ii <- which(input$view_selanonvar2==vv)
+      if (length(ii)>0) {
+        vv <- vv[-c(ii)]
+      }
     }
+    updateSelectInput(session, inputId="view_selanonvar1", choices=vv, selected=input$view_selanonvar1)
   })
 
   output$view_summary_anon <- renderUI({
