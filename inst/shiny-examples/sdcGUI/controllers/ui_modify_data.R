@@ -485,6 +485,9 @@ output$ui_view_var <- renderUI({
   })
   output$view_plot <- renderPlot({
     inputdata <- inputdata()
+    if (is.null(inputdata)) {
+      return(NULL)
+    }
     req(input$view_selvar1, input$view_selvar2)
 
     vv1 <- inputdata[[input$view_selvar1]]
