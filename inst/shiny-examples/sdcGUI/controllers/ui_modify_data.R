@@ -328,19 +328,24 @@ output$ui_set_to_na <- renderUI({
     return(res)
   })
   output$ui_ansuppbtn <- renderUI({
-    if (is.null(input$sel_na_suppvar) || length(input$sel_na_suppvar)==0) {
+    req(input$sel_na_suppvar, input$num_na_suppid, input$set_to_na_type)
+    btn <- myActionButton("btn_set_to_na",label=("Set values to NA"), "primary")
+    if (input$set_to_na_type=="rule") {
+      return(btn)
+    }
+    if (length(input$sel_na_suppvar)==0){
       return(NULL)
     }
-    if (is.null(input$num_na_suppid) || length(input$num_na_suppid)==0) {
+    if (length(input$num_na_suppid)==0) {
       return(NULL)
     }
-    if (!is.null(input$num_na_suppid) && input$num_na_suppid<1) {
+    if (input$num_na_suppid<1) {
       return(NULL)
     }
-    if (!is.null(input$num_na_suppid) && input$num_na_suppid>nrow(inputdata())) {
+    if (input$num_na_suppid>nrow(inputdata())) {
       return(NULL)
     }
-    myActionButton("btn_set_to_na",label=("Set values to NA"), "primary")
+    return(btn)
   })
 
   helptxt <- paste0("In the loaded dataset different missing value code might be available, such as",code(9),",",code(999),",",code(-9),", etc.")
