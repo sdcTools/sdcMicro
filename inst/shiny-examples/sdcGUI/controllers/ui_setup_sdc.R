@@ -111,9 +111,9 @@ output$ui_sdcObj_summary <- renderUI({
     out <- fluidRow(
       column(12, h4("Risk-measures for categorical variables"), align="center"),
       column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population. In the original
-        data, we expected to have",code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
+          data, we expected to have",code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
       column(12, p("Currently there are",code(riskyobs$mod),"observations that have a higher risk that the main part of the data. In the
-        original data this number was",code(riskyobs$orig),"."), align="center"))
+          original data this number was",code(riskyobs$orig),"."), align="center"))
     out
   })
   output$show_info_risk <- renderUI({
@@ -253,7 +253,8 @@ output$ui_sdcObj_explorevars <- renderUI({
     obj$inp_sel_anonvar1 <- input$ui_selanonvar1
   })
   output$ui_selanonvar2 <- renderUI({
-    selectInput("view_selanonvar2", choices=c("none", allVars()), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
+    vv <- setdiff(allVars(), input$view_selanonvar1)
+    selectInput("view_selanonvar2", choices=c("none", vv), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
   })
 
   observeEvent(input$view_selanonvar1, {
@@ -266,11 +267,13 @@ output$ui_sdcObj_explorevars <- renderUI({
   })
   observeEvent(input$view_selanonvar2, {
     vv <- allVars()
-    ii <- which(input$view_selanonvar2==vv)
-    if (length(ii)>0) {
-      vv <- vv[-c(ii)]
-      updateSelectInput(session, inputId="view_selanonvar1", choices=vv, selected=input$view_selanonvar1)
+    if (input$view_selanonvar2!="none") {
+      ii <- which(input$view_selanonvar2==vv)
+      if (length(ii)>0) {
+        vv <- vv[-c(ii)]
+      }
     }
+    updateSelectInput(session, inputId="view_selanonvar1", choices=vv, selected=input$view_selanonvar1)
   })
 
   output$view_summary_anon <- renderUI({
@@ -354,7 +357,7 @@ output$ui_sdcObj_explorevars <- renderUI({
       fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.", align="center")))
     if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
       out <- list(out,
-        fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.", align="center")))
+      fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.", align="center")))
     }
     out
   })
@@ -529,7 +532,9 @@ output$setupbtn <- renderUI({
   if (is.null(input[[paste0("setup_key_",vv,"_1")]])) {
     return(NULL)
   }
-  n <- length(allVars())
+
+  vnames <- allVars()
+  n <- length(vnames)
   types <- dataTypes()
   useAsKeys <- shinyValue(paste0("setup_key_",vv,"_"), n)
   useAsPram <- shinyValue(paste0("setup_pram_",vv,"_"), n)
@@ -545,15 +550,19 @@ output$setupbtn <- renderUI({
   # some selected categorical key-variables are numeric or character
   ii <- which(useAsKeys=="Cat." & types%in%c("numeric","character"))
   if (length(ii)>0) {
-    txt <- paste0(" Categorical key variables have to be of type ",dQuote("factor"), " or type ", dQuote("integer"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
-    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    txt <- p("Categorical key variables have to be of type",dQuote("factor"), " or type ", dQuote("integer"),".", tags$br(), tags$br(),
+      tags$span(style="color:red; font-weight:bold","You need to go back and change the variable selection or change the variable type before making other variable selections!"), tags$br(), tags$br(),
+      "The variable type can be changed in the Microdata tab.")
+    showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
 
   # some selected numerical key-variables are factor or character
   ii <- which(useAsKeys=="Cont." & types%in%c("factor","character"))
   if (length(ii)>0) {
-    txt <- paste0("Continuous key variables have to be of type ",dQuote("numeric")," or type ",dQuote("integer"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
-    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    txt <- p("Continuous key variables have to be of type ",dQuote("numeric")," or type ",dQuote("integer"), tags$br(), tags$br(),
+      tags$span(style="color:red; font-weight:bold","You need to go back and change the variable selection or change the variable type before making other variable selections!"), tags$br(), tags$br(),
+      "The variable type can be changed in the Microdata tab.")
+    showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
 
   ## pram
@@ -561,17 +570,26 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     # selected pram vars must not be key-vars
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
-      return(myErrBtn("tmp", label="Error: Selected pram variables are also key variables"))
+      txt <- p("Selected pram variables are also key variables.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to undo the pram variable selection and select only pram variables that are not selected as key variables before making other variable selections!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsWeight[ii] == TRUE)) {
-      return(myErrBtn("tmp", label="Error: Selected pram variable is also the weight variable"))
+      txt <- p("Selected pram variables is also the weight variable.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to undo the pram variable selection and select only pram variables that are not selected as weight variables before making other variable selections!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsClusterID[ii] == TRUE)) {
-      return(myErrBtn("tmp", label="Error: Selected pram variable is also the cluster-id variable"))
+      txt <- p("Selected pram variable is also the cluster-id variable.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to undo the pram variable selection and select only pram variables that are not selected as cluster-id variables before making other variable selections!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     kk <- which(types[ii] != "factor")
     if (length(kk)>0) {
-      return(myErrBtn("tmp", label="Error: Selected pram variable(s) must be of type 'factor'"))
+      txt <- p("Pram variables have to be of type ",dQuote("factor"),".", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to go back and change the variable selection or change the variable type before making other variable selections!"), tags$br(), tags$br(),
+        "The variable type can be changed in the Microdata tab.")
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
 
@@ -579,18 +597,23 @@ output$setupbtn <- renderUI({
   ii <- which(useAsWeight==TRUE)
   # more than one weight-variable
   if (length(ii)>1) {
-    return(myErrBtn("tmp", label="Error: More than one weight variable selected"))
+    txt <- p("More than one weight variable is selected.", tags$br(), tags$br(),
+             tags$span(style="color:red; font-weight:bold","You need to undo the multiple weight variable selection and select only one weight variable before making other variable selections!"))
+    showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
   if (length(ii)==1) {
     # weights can't be any-key variables
     if (useAsKeys[ii]!="No") {
-      return(myErrBtn("tmp", label="Error: Weight variable cannot be selected as (numerical) key variable"))
+      txt <- p("Selected weight variable is also key variable.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to undo the weight variable selection and select a weight variable that is not selected as key variable before making other variable selections!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     # weight-variables must be numeric
     if (!types[ii] %in% c("numeric","integer")) {
-      txt <- paste0("The weight variable has to be of type ",dQuote("numeric")," or type ", dQuote("integer"),". ")
-      txt <- paste0(txt, "Please go back to the Microdata tab to convert the variables to the appropriate type or change the variable type in the dataset and reload the data.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      txt <- p("The weight variable has to be of type ",dQuote("numeric")," or type ", dQuote("integer"),".", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to go back and change the variable selection or change the variable type before making other variable selections!"), tags$br(), tags$br(),
+        "The variable type can be changed in the Microdata tab.")
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
 
@@ -598,12 +621,15 @@ output$setupbtn <- renderUI({
   ii <- which(useAsClusterID==TRUE)
   # more than one cluster-ids
   if (length(ii)>1) {
-    return(myErrBtn("tmp", label="Error: More than one cluster-id variable selected"))
+    txt <- p("More than one cluster-id variable is selected.", tags$br(), tags$br(),
+      tags$span(style="color:red; font-weight:bold","You need to undo the multiple cluster-id variable selection and select only one cluster-id variable before making other variable selections!"))
+    showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
   if (length(ii)==1) {
     # cluster-ids can't be any-key variables
     if (useAsKeys[ii]!="No") {
-      return(myErrBtn("tmp", label="Error: Cluster-id variable cannot be selected as key variable"))
+      txt <- paste0("Selected cluster-id variable is also selected as key variable.", " Please undo the cluster-id variable selection and select only a cluster-id variable that is not selected as key variable.")
+      showModal(modalDialog(list(p(txt)), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
 
@@ -611,16 +637,24 @@ output$setupbtn <- renderUI({
   ii <- which(deleteVariable==TRUE)
   if (length(ii)>0) {
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be key variables"))
+      txt <- p("Selected variable to be deleted is also selected as key variable.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as key variable before making other variable selections!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsPram[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be pram variables"))
+      txt <- p("Selected variable to be deleted is also selected as pram variable.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as pram variable before making other variable selections!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsWeight[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the weight variable"))
+      txt <- p("Selected variable to be deleted is also selected as weight variable.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as weight variable before making other variable selections!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsClusterID[ii]==TRUE)) {
-      return(myErrBtn("tmp", label="Error: Variables that should be deleted must not be the cluster-id variable"))
+      txt <- p("Selected variable to be deleted is also selected as cluster-id variable.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as cluster-id variable before making other variable selections!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
   btn <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
@@ -698,9 +732,18 @@ output$ui_sdcObj_info <- renderUI({
         column(12, renderPlot(hist(inp, main=NULL)), align="center")))
       ui_nrLevs <- p("Number of unique values including NA:", code(length(table(inp, useNA="always"))))
     }
-    out <- list(out, fluidRow(
-      column(12, ui_nrLevs, align="center"),
-      column(12, renderPrint(summary(inp)))))
+
+    if (is.factor(inp)) {
+      tt <- as.data.frame.table(table(inp, useNA="always"))
+      colnames(tt) <- c("Value", "Frequency")
+      out <- list(out, fluidRow(
+        column(12, ui_nrLevs, align="center"),
+        column(12, renderTable(tt))))
+    } else {
+      out <- list(out, fluidRow(
+        column(12, ui_nrLevs, align="center"),
+        column(12, renderPrint(summary(inp)))))
+    }
     out
   })
 })

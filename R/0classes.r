@@ -477,7 +477,6 @@
 #' @importFrom shiny withReactiveDomain
 #' @importFrom shiny withTags
 #' @import rhandsontable
-#' @import ggthemes
 #' @importFrom DT renderDataTable
 #' @importFrom DT dataTableOutput
 #' @importFrom sets set_power

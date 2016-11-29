@@ -199,6 +199,15 @@ output$ui_modify_change_factor <- renderUI({
     }
     ff <- inp[[input$sel_factor]]
     ll <- as.list(levels(ff))
+    # add output for debugging, remove later
+    if (length(ll)==0 | length(table(ff))==0) {
+      cat("problem in variable",dQuote(input$sel_factor)," (length(levels(x)) or length(table(x))) is 0!\n")
+      return(NULL)
+    }
+    if (length(ll) != length(table(ff))) {
+      cat("problem in variable",dQuote(input$sel_factor)," (length(levels(x)) != length(table(x)))!\n")
+      return(NULL)
+    }
     names(ll) <- paste0(ll, " (",table(ff)," obs)")
     ll
   })
@@ -328,19 +337,24 @@ output$ui_set_to_na <- renderUI({
     return(res)
   })
   output$ui_ansuppbtn <- renderUI({
-    if (is.null(input$sel_na_suppvar) || length(input$sel_na_suppvar)==0) {
+    req(input$sel_na_suppvar, input$num_na_suppid, input$set_to_na_type)
+    btn <- myActionButton("btn_set_to_na",label=("Set values to NA"), "primary")
+    if (input$set_to_na_type=="rule") {
+      return(btn)
+    }
+    if (length(input$sel_na_suppvar)==0){
       return(NULL)
     }
-    if (is.null(input$num_na_suppid) || length(input$num_na_suppid)==0) {
+    if (length(input$num_na_suppid)==0) {
       return(NULL)
     }
-    if (!is.null(input$num_na_suppid) && input$num_na_suppid<1) {
+    if (input$num_na_suppid<1) {
       return(NULL)
     }
-    if (!is.null(input$num_na_suppid) && input$num_na_suppid>nrow(inputdata())) {
+    if (input$num_na_suppid>nrow(inputdata())) {
       return(NULL)
     }
-    myActionButton("btn_set_to_na",label=("Set values to NA"), "primary")
+    return(btn)
   })
 
   helptxt <- paste0("In the loaded dataset different missing value code might be available, such as",code(9),",",code(999),",",code(-9),", etc.")
@@ -373,7 +387,8 @@ output$ui_view_var <- renderUI({
     obj$inp_sel_viewvar1 <- input$view_selvar1
   })
   output$ui_selvar2 <- renderUI({
-    selectInput("view_selvar2", choices=c("none", allVars()), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
+    vv <- setdiff(allVars(), input$inp_sel_viewvar1)
+    selectInput("view_selvar2", choices=c("none", vv), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
   })
 
   observeEvent(input$view_selvar1, {
@@ -386,11 +401,13 @@ output$ui_view_var <- renderUI({
   })
   observeEvent(input$view_selvar2, {
     vv <- allVars()
-    ii <- which(input$view_selvar2==vv)
-    if (length(ii)>0) {
-      vv <- vv[-c(ii)]
-      updateSelectInput(session, inputId="view_selvar1", choices=vv, selected=input$view_selvar1)
+    if (input$view_selvar2!="none") {
+      ii <- which(input$view_selvar2==vv)
+      if (length(ii)>0) {
+        vv <- vv[-c(ii)]
+      }
     }
+    updateSelectInput(session, inputId="view_selvar1", choices=vv, selected=input$view_selvar1)
   })
 
   output$view_summary <- renderUI({
@@ -480,6 +497,9 @@ output$ui_view_var <- renderUI({
   })
   output$view_plot <- renderPlot({
     inputdata <- inputdata()
+    if (is.null(inputdata)) {
+      return(NULL)
+    }
     req(input$view_selvar1, input$view_selvar2)
 
     vv1 <- inputdata[[input$view_selvar1]]

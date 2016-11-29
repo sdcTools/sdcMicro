@@ -39,7 +39,6 @@ Imports:
     ggplot2,
     shiny,
     haven,
-    ggthemes,
     rhandsontable,
     DT,
     shinyBS,

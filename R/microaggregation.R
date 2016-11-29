@@ -80,6 +80,7 @@
 #' \item{\code{method}: }{method}
 #' \item{\code{aggr}: }{aggregation level}
 #' \item{\code{measure}: }{proximity measure for aggregation}}
+#' @note if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored.
 #' @author Matthias Templ, Bernhard Meindl
 #'
 #' For method \dQuote{mdav}: This work is being supported by the International
