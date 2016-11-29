@@ -58,7 +58,7 @@ Here users can opt to upload a file exported from `SPSS`. The users can change t
 ### SAS-File (.sasb7dat)
 Here users can opt to upload a file exported from `SAS`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `sas7bdat`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
-### Comma-separated File (.csv, .txt)
+### CSV (.csv, .txt)
 Here users can opt to upload a text file where variables are separated by some characters. Typically these data would be exported from software such as `Excel`. It is crucial that users indicate if the data file has variable names in the first row and how variables are separated. At this point, users have the option to have character vectors automatically converted to factor or have variables that contain only missing-values ('NA') dropped when the data are read into the GUI. By clicking on the `Browse` button the user needs to select a `txt` or `csv`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
 ### STATA-File (.dta)
@@ -141,7 +141,7 @@ On this page it is possible to decrease the size of the input data. This is espe
     
 When the desired selections have been applied, pushing the button `Create subset` performs the actual sub-subsampling. After the micro data set has been reduced, the user is taken to the [Display microdata](#display_microdata) page where the reduced dataset can be analysed.
 
-### Convert numeric variables to factors
+### Convert numeric to factor
 This page allows to convert continuous variables (`numeric` or `integer`) into factors. Users can choose from a range of possibilites on  how the factor variable should be generated, ranging from automatic conversion to complete manual control. 
 
 By default, two input fields are available. On the left hand side there is a dropdown select field termed `Choose numeric variables` where the user can select from the list of numeric variables in the input data set. Next to this element, there is are two radio buttons labelled `Use custom breaks?` with two options, `no` (the default) and `yes`. If the `no` is selected in this input and at least one numeric variable has been clicked from the select input `Choose numeric variable(s)`, a button termed `Convert to factor(s)` occurs. Pressing this button converts all of the selected numerical variables into factors. Afterwards, the user is taken to the [explore variables](#explore_inputvars) page where the first of the selected variable(s) is shown.
@@ -165,7 +165,7 @@ In this page, variables of type `factor` and `character` from the input data can
 
 It should be noted however - as also shown on the GUI - that this feature should be used with care because internally,function `as.numeric()' is used to perform the conversation. Thus, the resulting numeric vector contains the underlying numeric (integer) representation of the input factor, which is often meaningless as it may not correspond to the factor levels.
 
-### Modify an existing factor-variable {#recode_factors_inputdata}
+### Modify factor variable {#recode_factors_inputdata}
 When this option has been selected from the left hand sidebar, it is possible to modify existing factor variables. The most common use case is to combine one or more levels of the factor. The other use case is to rename single factor levels. In order to proceed, the user must first select an existing factor variable from the select input labelled `Choose factor variable`. Below this box, there is another input termed `Select Levels to recode/combine`. In this input, all the levels of the active factor variable can be choosen by clicking on the are selectable. Already selected levels may be removed again by clicking on them with the mouse and pressing either the *"backspace"*- or *"delete"* keys on the keyboard.
 
 If at least one factor level is selected, a text input called `New label for recoded values` as well as a radio input labelled `Add missing values to new factor level?` appear. By default, the textbox containing the name of the new level is computed by joining the selected factor levels together using the character `_` as separator. By clicking into this text field, users can also start to enter a custom name for the new factor level. If only one level has been selected in `Select Levels to recode/combine`, entering a value different than the default value in this input leads to renaming of this specific factor level. The radio button input labelled `Add missing values to new factor level?` is set to `no` by default. If it is changed to yes, any missing (`NA`) values in the factor are added to the new level.
