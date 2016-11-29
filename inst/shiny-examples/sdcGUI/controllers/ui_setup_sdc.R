@@ -602,16 +602,6 @@ output$setupbtn <- renderUI({
   if (length(ii)==1) {
     # weights can't be any-key variables
     if (useAsKeys[ii]!="No") {
-<<<<<<< HEAD
-      txt <- paste0("Selected weight variable is also selected as key variable.", " Please undo the weight variable selection and select only a weight variable that is not selected as key variable.")
-      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
-    }
-    # weight-variables must be numeric
-    if (!types[ii] %in% c("numeric","integer")) {
-      txt <- paste0("The weight variable has to be of type ",dQuote("numeric")," or type ", dQuote("integer"),". ")
-      txt <- paste0(txt, "Please go back to the Microdata tab to convert the variables to the appropriate type or change the variable type in the dataset and reload the data.")
-      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
-=======
       txt <- p("Selected weight variable is also key variable.", br(), br(),
                tags$span(style="color:red; font-weight:bold","You need to undo the weight variable selection and select a weight variable that is not selected as key variable before making other variable selections!"))
       showModal(modalDialog(list(txt), title=strong("Invalid variable choice"), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
@@ -622,7 +612,6 @@ output$setupbtn <- renderUI({
                tags$span(style="color:red; font-weight:bold","You need to go back and change the variable selection or change the variable type before making other variable selections!"), br(), br(),
                "The variable type can be changed in the Microdata tab.")
       showModal(modalDialog(list(txt), title=strong("Invalid variable choice"), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
->>>>>>> 499ea0ec822ac7365fcbf7b624edd823ff09d3e3
     }
   }
 
