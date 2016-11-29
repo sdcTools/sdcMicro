@@ -548,8 +548,8 @@ output$setupbtn <- renderUI({
   # some selected categorical key-variables are numeric or character
   ii <- which(useAsKeys=="Cat." & types%in%c("numeric","character"))
   if (length(ii)>0) {
-    txt <- paste0(" Categorical key variables have to be of type ",dQuote("factor"), " or type ", dQuote("integer"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
-    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    txt <- paste0(" Categorical key variables have to be of type ",dQuote("factor"), " or type ", dQuote("integer"),". You can convert the variable type to the appropriate type in the Microdata tab. <br /> <br /> <strong>You need to go back and correct the variable selection or change the variable type before making other variable selections!</strong>")
+    return(modalDialog(list(p(txt)), title="Invalid variable choice", footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE))
   }
 
   # some selected numerical key-variables are factor or character
