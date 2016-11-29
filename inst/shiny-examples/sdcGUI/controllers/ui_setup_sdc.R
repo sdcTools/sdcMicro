@@ -549,14 +549,14 @@ output$setupbtn <- renderUI({
   ii <- which(useAsKeys=="Cat." & types%in%c("numeric","character"))
   if (length(ii)>0) {
     txt <- paste0(" Categorical key variables have to be of type ",dQuote("factor"), " or type ", dQuote("integer"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
-    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
 
   # some selected numerical key-variables are factor or character
   ii <- which(useAsKeys=="Cont." & types%in%c("factor","character"))
   if (length(ii)>0) {
     txt <- paste0("Continuous key variables have to be of type ",dQuote("numeric")," or type ",dQuote("integer"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
-    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
 
   ## pram
@@ -565,20 +565,20 @@ output$setupbtn <- renderUI({
     # selected pram vars must not be key-vars
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
       txt <- paste0("Selected pram variables are also key variables.", " Please undo the pram variable selection and select only pram variables that are not selected as key variables.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsWeight[ii] == TRUE)) {
       txt <- paste0(" Selected pram variable is also the weight variable.", " Please undo the pram variable selection and select only pram variables that are not selected as weight variables.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsClusterID[ii] == TRUE)) {
       txt <- paste0(" Selected pram variable is also the cluster-id variable.", " Please undo the pram variable selection and select only pram variables that are not selected as cluster-id variables.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     kk <- which(types[ii] != "factor")
     if (length(kk)>0) {
       txt <- paste0(" Pram  variables have to be of type ",dQuote("factor"),". Please go back to the Microdata tab to convert the variables to the appropriate type.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
 
@@ -587,19 +587,19 @@ output$setupbtn <- renderUI({
   # more than one weight-variable
   if (length(ii)>1) {
     txt <- paste0("More than one weight variable is selected.", "Please unselect multiple weight variables.")
-    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
   if (length(ii)==1) {
     # weights can't be any-key variables
     if (useAsKeys[ii]!="No") {
       txt <- paste0("Selected weight variable is also selected as key variable.", " Please undo the weight variable selection and select only a weight variable that is not selected as key variable.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     # weight-variables must be numeric
     if (!types[ii] %in% c("numeric","integer")) {
       txt <- paste0("The weight variable has to be of type ",dQuote("numeric")," or type ", dQuote("integer"),". ")
       txt <- paste0(txt, "Please go back to the Microdata tab to convert the variables to the appropriate type or change the variable type in the dataset and reload the data.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
 
@@ -608,13 +608,13 @@ output$setupbtn <- renderUI({
   # more than one cluster-ids
   if (length(ii)>1) {
     txt <- paste0("More than one cluster-id variable is selected.", " Please unselect multiple cluster-id variables.")
-    return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
   if (length(ii)==1) {
     # cluster-ids can't be any-key variables
     if (useAsKeys[ii]!="No") {
       txt <- paste0("Selected cluster-id variable is also selected as key variable.", " Please undo the cluster-id variable selection and select only a cluster-id variable that is not selected as key variable.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
 
@@ -623,19 +623,19 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
       txt <- paste0("Variables that should be deleted cannot be selected as key variables.", " Please undo this selection and select the variable as key variable or as variable that should be deleted.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsPram[ii]==TRUE)) {
       txt <- paste0("Variables that should be deleted cannot be selected as pram variables.", " Please undo this selection and select the variable as pram variable or as variable that should be deleted.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsWeight[ii]==TRUE)) {
       txt <- paste0("Variables that should be deleted cannot be selected as weight variable.", " Please undo this selection and select the variable as weight variable or as variable that should be deleted.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     if (any(useAsClusterID[ii]==TRUE)) {
       txt <- paste0("Variables that should be deleted cannot be selected as cluster-id variable.", " Please undo this selection and select the variable as cluster-id variable or as variable that should be deleted.")
-      return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+      showModal(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
   btn <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
