@@ -713,9 +713,18 @@ output$ui_sdcObj_info <- renderUI({
         column(12, renderPlot(hist(inp, main=NULL)), align="center")))
       ui_nrLevs <- p("Number of unique values including NA:", code(length(table(inp, useNA="always"))))
     }
-    out <- list(out, fluidRow(
-      column(12, ui_nrLevs, align="center"),
-      column(12, renderPrint(summary(inp)))))
+
+    if (is.factor(inp)) {
+      tt <- as.data.frame.table(table(inp, useNA="always"))
+      colnames(tt) <- c("Value", "Frequency")
+      out <- list(out, fluidRow(
+        column(12, ui_nrLevs, align="center"),
+        column(12, renderTable(tt))))
+    } else {
+      out <- list(out, fluidRow(
+        column(12, ui_nrLevs, align="center"),
+        column(12, renderPrint(summary(inp)))))
+    }
     out
   })
 })
