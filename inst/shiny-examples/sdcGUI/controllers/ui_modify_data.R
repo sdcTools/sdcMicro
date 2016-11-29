@@ -166,7 +166,7 @@ output$ui_modify_recode_to_factor <- renderUI({
   helptxt <- paste(helptxt, "be combined into one factor level, customized breaks can be specified. Several algorithms are available to customize the breaks.")
 
   out <- fluidRow(
-    column(12, h4("Convert numeric variable to factor variable", align="center"),
+    column(12, h4("Convert numeric to factor", align="center"),
     column(12, p(helptxt), align="center")))
 
   if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
@@ -854,7 +854,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
       "Use subset of microdata"="sample_microdata",
       "Convert numeric variables to factors"="recode_to_factor",
       "Convert variables to numeric"="recode_to_numeric",
-      "Modify an existing factor-variable"="modify_factor",
+      "Modify factor variable"="modify_factor",
       "Create a stratification variable"="createstratvar",
       "Set specific values to NA"="set_to_na",
       "Hierarchical data"="deal_with_hierarchical_data")
