@@ -690,7 +690,7 @@ output$ui_sdcObj_create1 <- renderUI({
   helptxt <- paste("Please select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional),
     pram variables (optional), weights variable (optional), household cluster id (optional), variables to be removed (optional). Also, specify the parameters alpha and set a seed at the bottom of this page.")
 
-  helptxt2 <- "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go Microdata tab and convert variables to numeric or factor."
+  helptxt2 <- "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor."
 
   out <- list(out,
     fluidRow(column(12, h4("Setup an sdc-Problem"), align="center")),
