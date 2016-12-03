@@ -852,7 +852,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
       "Explore variables"="view_var",
       "Reset variables"="reset_var",
       "Use subset of microdata"="sample_microdata",
-      "Convert numeric variables to factors"="recode_to_factor",
+      "Convert numeric to factor"="recode_to_factor",
       "Convert variables to numeric"="recode_to_numeric",
       "Modify factor variable"="modify_factor",
       "Create a stratification variable"="createstratvar",
