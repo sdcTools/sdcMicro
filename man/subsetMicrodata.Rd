@@ -24,7 +24,7 @@ an object of class \code{\link{sdcMicroObj-class}} with modified slot \code{@ori
 }
 \description{
 allows to restrict original data to only a subset. This may be useful to test some anonymization
-methods. This function will only be used in the graphical user interface \code{\link{sdcGUI}}.
+methods. This function will only be used in the graphical user interface \code{\link{sdcApp}}.
 }
 \author{
 Bernhard Meindl

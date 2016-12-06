@@ -43,11 +43,11 @@ observeEvent(input$btn_update_export_path, {
 })
 
 output$stop_btn <- renderUI({
-  btn <- bsButton("stop_sdcGUI", label="Stop the GUI", style="primary", size="extra-small",
+  btn <- bsButton("stop_sdcApp", label="Stop the GUI", style="primary", size="extra-small",
    onclick="setTimeout(function(){window.close();},500);")
   btn
 })
-observeEvent(input$stop_sdcGUI,{
+observeEvent(input$stop_sdcApp,{
   res <- reactiveValuesToList(obj)
   res <- res[c("inputdata","sdcObj")]
   stopApp(invisible(res))
@@ -56,10 +56,10 @@ observeEvent(input$stop_sdcGUI,{
 output$ui_about <- renderUI({
   btn_credits <- bsButton("btn_credits", "here", style="primary", size="extra-small")
   out <- fluidRow(
-    column(12, h4("sdcGUI", align="center")),
+    column(12, h4("sdcApp", align="center")),
     column(12, p("This is the graphical user interface of",code("sdcMicro"),"that allows to anonymize microdata even in the case that you are not an
       expert in the",code("R"),"programming language. Detailed information on how to use this graphical user-interface (UI) can be found in a vignette that is included in",code("sdcMicro"),".
-    You can read the vignette by typing",code('vignette("sdcGUI", package="sdcMicro")'),"into your",code("R"),"prompt."), align="center"),
+    You can read the vignette by typing",code('vignette("sdcApp", package="sdcMicro")'),"into your",code("R"),"prompt."), align="center"),
     column(12, p("For information who supported the development of the graphical user interface, please click", btn_credits,"."), align="center"),
     bsModal("cred_modal", title="Credits", trigger="btn_credits", uiOutput("credits"))
   )
@@ -78,7 +78,7 @@ output$ui_about <- renderUI({
 
   pp <- textInput("path_export_data", label=h5("Enter a directory where any exported files (data, script, problem instances) should be saved to"),
     placeholder=paste("e.g:", obj$path_export), width="50%")
-  stop_btn <- bsButton("stop_sdcGUI", label="Stop the GUI", style="primary", size="extra-small", onclick="setTimeout(function(){window.close();},500);")
+  stop_btn <- bsButton("stop_sdcApp", label="Stop the GUI", style="primary", size="extra-small", onclick="setTimeout(function(){window.close();},500);")
   out <- list(out, fluidRow(
     column(12, h4("Settings"), align="center"),
     column(12, h5("Set storage path"), align="center"),
@@ -89,7 +89,7 @@ output$ui_about <- renderUI({
     column(12, uiOutput("btn_update_export_path"), align="center"),
     column(12, h5("Stop the interface"), align="center"),
     column(12, p("By clicking on", stop_btn,", you can stop the the graphical user interface at any time during the anonymization process.
-      If you have started the interface as",code('x <- sdcGUI()'),",",code("x"),
+      If you have started the interface as",code('x <- sdcApp()'),",",code("x"),
       "will contain the micro data and the sdc problem at the state just before stopping the GUI."), align="center"),
     column(12, h5("Restart the interface"), align="center"),
     column(12, p("Should you accidentally close this browser window, you can open your current problem instance by entering the local IP address

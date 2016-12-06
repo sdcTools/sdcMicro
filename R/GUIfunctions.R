@@ -351,7 +351,7 @@ tryCatchFn <- function(expr) {
 
 #' readMicrodata
 #'
-#' reads data from various formats into R. Used in \code{\link{sdcGUI}}.
+#' reads data from various formats into R. Used in \code{\link{sdcApp}}.
 #'
 #' @param path a file path
 #' @param type which format does the file have. currently allowed values are
@@ -454,7 +454,7 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
 
 #' importProblem
 #'
-#' reads an sdcProblem with code that has been exported within \code{\link{sdcGUI}}.
+#' reads an sdcProblem with code that has been exported within \code{\link{sdcApp}}.
 #'
 #' @param path a file path
 #' @return an object of class \code{sdcMicro_GUI_export} or an object of class 'simple.error'
@@ -476,7 +476,7 @@ importProblem <- function(path) {
 #' subsetMicrodata
 #'
 #' allows to restrict original data to only a subset. This may be useful to test some anonymization
-#' methods. This function will only be used in the graphical user interface \code{\link{sdcGUI}}.
+#' methods. This function will only be used in the graphical user interface \code{\link{sdcApp}}.
 #'
 #' @param obj an object of class \code{\link{data.frame}} containing micro data
 #' @param type algorithm used to sample from original microdata. Currently supported choices are
@@ -522,7 +522,7 @@ subsetMicrodata <- function(obj, type, n) {
 #' writeSafeFile
 #'
 #' writes an anonymized dataset to a file. This function should be used in the
-#' graphical user interface \code{\link{sdcGUI}} only.
+#' graphical user interface \code{\link{sdcApp}} only.
 #'
 #' @param obj an object of class \code{\link{data.frame}} containing micro data
 #' @param randomizeRecords (logical) specifies, if the output records should be randomized. The following

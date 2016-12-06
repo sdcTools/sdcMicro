@@ -10,7 +10,7 @@ library(data.table)
 # outputting R-Code
 options(useFancyQuotes=FALSE)
 
-# maximum upload size = 1GB (defined in sdcGUI())
+# maximum upload size = 1GB (defined in sdcApp())
 #options(shiny.maxRequestSize=1000*1024^2)
 
 # cmd is the original codestr (also listed in tab 'script')

@@ -33,7 +33,7 @@ randomly changed.}}}
 }
 \description{
 writes an anonymized dataset to a file. This function should be used in the
-graphical user interface \code{\link{sdcGUI}} only.
+graphical user interface \code{\link{sdcApp}} only.
 }
 \author{
 Bernhard Meindl

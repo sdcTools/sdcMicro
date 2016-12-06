@@ -13,7 +13,7 @@ importProblem(path)
 an object of class \code{sdcMicro_GUI_export} or an object of class 'simple.error'
 }
 \description{
-reads an sdcProblem with code that has been exported within \code{\link{sdcGUI}}.
+reads an sdcProblem with code that has been exported within \code{\link{sdcApp}}.
 }
 \author{
 Bernhard Meindl

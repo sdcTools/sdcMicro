@@ -1,5 +1,5 @@
 ---
-title: "Using the interactive GUI - sdcGUI"
+title: "Using the interactive GUI - sdcApp"
 author: "Bernhard Meindl"
 date: "`r Sys.Date()`"
 output: 
@@ -14,7 +14,7 @@ vignette: >
 ---
 
 # Introduction and Main Features
-Package `sdcMicro` contains a [shiny](https://cran.r-project.org/web/packages/shiny/index.html) app that should help users that are non-experts in R (command-line) to apply disclosure limitation techniques. For this reason, users may upload (micro)data files from different software products into the app and then start to anonymize the dataset by working within the interactive, graphical user interface (GUI). This document will give an overview of the functionalities of the graphical user interface which can be started with `sdcGUI()`. The main functionality of the GUI is:
+Package `sdcMicro` contains a [shiny](https://cran.r-project.org/web/packages/shiny/index.html) app that should help users that are non-experts in R (command-line) to apply disclosure limitation techniques. For this reason, users may upload (micro)data files from different software products into the app and then start to anonymize the dataset by working within the interactive, graphical user interface (GUI). This document will give an overview of the functionalities of the graphical user interface which can be started with `sdcApp()`. The main functionality of the GUI is:
 
 - [Uploading microdata](#microdata)
 - [Modify and analyze microdata](#modify_microdata)
@@ -30,11 +30,11 @@ We also want to note that throughout the GUI, questionmark signs are shown. Hove
 
 # About/Help {#about}
 
-This is the first page that is shown once the graphical user interface has been started using `sdcGUI()` after loading package `sdcMicro`. On this page, the user is presented the information on how to open this package vignette which contains extensive information on how to use the GUI. Furthermore, in section `Getting started`, users are advised to either [upload microdata](#microdata) or to [upload a previously saved problem instance](#undo). Clicking on the relevant buttons brings the user automatically to the page from which the desired functionality is available. 
+This is the first page that is shown once the graphical user interface has been started using `sdcApp()` after loading package `sdcMicro`. On this page, the user is presented the information on how to open this package vignette which contains extensive information on how to use the GUI. Furthermore, in section `Getting started`, users are advised to either [upload microdata](#microdata) or to [upload a previously saved problem instance](#undo). Clicking on the relevant buttons brings the user automatically to the page from which the desired functionality is available. 
 
 In section `Settings`, it is possible to change the default output path. This path is used whenever the user decides to export data from the GUI to the hard disk. The default value is the directory from which the GUI was started (e.g the current working directory). Once a valid path is entered in the text input field, a button labelled `Update the current output path` appears below the input. Pressing this input updates the path. If successful, the current path is shown both as placeholder in the text input as well as in the text above the input field. We note that you can change the path at any time during the anonymization process. Writing files to disk will always use the current path.
 
-From this page, the user can also stop the interface by clicking on a button labelled `Stop the GUI`. If this feature is used, the current [uploaded microdata] after [modifications](#modify_microdata) as well as the [current problem instance](#setup_sdcproblem) (if it has already been specified) are (invisibly) returned to `R`. So in case the interface was started with `x <- sdcGUI()`, `x` then contains a list with two elements named `inputdata` and `sdcObj`. This allows one to continue working in `R`. Finally, users are shown ways on how to contact us for bug reports or any other issues.
+From this page, the user can also stop the interface by clicking on a button labelled `Stop the GUI`. If this feature is used, the current [uploaded microdata] after [modifications](#modify_microdata) as well as the [current problem instance](#setup_sdcproblem) (if it has already been specified) are (invisibly) returned to `R`. So in case the interface was started with `x <- sdcApp()`, `x` then contains a list with two elements named `inputdata` and `sdcObj`. This allows one to continue working in `R`. Finally, users are shown ways on how to contact us for bug reports or any other issues.
 
 We now continue to describe the functionality of the user interface in detail.
 

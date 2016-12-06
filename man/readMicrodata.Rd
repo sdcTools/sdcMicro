@@ -34,7 +34,7 @@ a data.frame or an object of class 'simple.error'. If a stata file was read in, 
 has an addtitional attribute \code{lab} in which variable and value labels are stored.
 }
 \description{
-reads data from various formats into R. Used in \code{\link{sdcGUI}}.
+reads data from various formats into R. Used in \code{\link{sdcApp}}.
 }
 \note{
 if \code{type} is either \code{'sas'}, \code{'spss'} or \code{'stata'}, values read in as \code{NaN}
