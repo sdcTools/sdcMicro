@@ -1,15 +1,26 @@
-# output$pkg_status <- renderUI({
-#   s <- obj$pkg_status
-#   if (s$isOk==TRUE) {
-#    return(fluidRow(
-#      column(12, p("sdcMicro is running in version",code(s$cranV),"and is up-to date!"),align="center")
-#    ))
-#   } else {
-#    return(fluidRow(
-#      column(12, p("Your version of sdcMicro is non-running the latest CRAN-version which is",code(paste0(s$cranV,".")),"Please update the package!"),align="center")
-#    ))
-#   }
-# })
+output$credits <- renderUI({
+  out <- fluidRow(
+    column(12, h4("Implementation"), align="center"),
+    column(12, p("This app was developed by", a(tags$strong("data-analysis OG"), href="http://www.data-analysis.at", target="_blank")), align="center"),
+    column(12, tags$img(src="imgs/logo_da.jpg"), tags$br(), align="center")
+  )
+  out <- list(out, fluidRow(
+    column(12, h4("Funding"), align="center"),
+    column(12, p("The work was funded by the", a(tags$strong("Worldbank Group"), href="http:/www.worldbank.org/", target="_blank")), align="center"),
+    column(12, tags$img(src="imgs/logo_worldbank.png"), tags$br(), align="center"),
+    column(12, p("and the Department for International Development",
+      a(tags$strong("DfID"), href="https://www.gov.uk/government/organisations/department-for-international-development", target="_blank")), align="center"),
+    column(12, tags$img(src="imgs/logo_ukaid.png"), align="center")
+  ))
+  out <- list(out, fluidRow(
+    column(12, h4("Special Thanks"), align="center"),
+    column(12, p("We also want to thank",tags$strong("Olivier Dupriez"),"and",tags$strong("Matthew Welsh"),"for the possibility to
+      create this GUI as well as many constructive suggestions and improvements. We also want to thank",tags$strong("Thijs Benschop"),
+      "and", tags$strong("Cathrine Machngauta"), "for testing, reporting issues and many contributions that improved the quality of
+      the final output."), align="center")
+  ))
+  out
+})
 
 output$btn_update_export_path <- renderUI({
   if (is.null(input$path_export_data)) {
@@ -43,16 +54,15 @@ observeEvent(input$stop_sdcGUI,{
 })
 
 output$ui_about <- renderUI({
-  #out <- list(out, uiOutput("pkg_status"))
+  btn_credits <- bsButton("btn_credits", "here", style="primary", size="extra-small")
   out <- fluidRow(
     column(12, h4("sdcGUI", align="center")),
     column(12, p("This is the graphical user interface of",code("sdcMicro"),"that allows to anonymize microdata even in the case that you are not an
-      expert in the",code("R"),"programming language."), align="center")
+      expert in the",code("R"),"programming language. Detailed information on how to use this graphical user-interface (UI) can be found in a vignette that is included in",code("sdcMicro"),".
+    You can read the vignette by typing",code('vignette("sdcGUI", package="sdcMicro")'),"into your",code("R"),"prompt."), align="center"),
+    column(12, p("For information who supported the development of the graphical user interface, please click", btn_credits,"."), align="center"),
+    bsModal("cred_modal", title="Credits", trigger="btn_credits", uiOutput("credits"))
   )
-  out <- list(out, fluidRow(
-    column(12, p("Detailed information on how to use this graphical user-interface (UI) can be found in a vignette that is included in",code("sdcMicro"),".
-    You can read the vignette by typing",code('vignette("sdcGUI", package="sdcMicro")'),"into your",code("R"),"prompt."), align="center")
-  ))
 
   if (is.null(inputdata())) {
     btn <- bsButton(paste0("btn_a_micro_ui_about"), label=("this button"), style="primary", size="extra-small")
