@@ -14,9 +14,9 @@ output$credits <- renderUI({
   ))
   out <- list(out, fluidRow(
     column(12, h4("Special Thanks"), align="center"),
-    column(12, p("We also want to thank",tags$strong("Olivier Dupriez"),"and",tags$strong("Matthew Welsh"),"for the possibility to
+    column(12, p("We also want to thank",tags$strong("Olivier Dupriez"),"and",tags$strong("Matthew Welch"),"for the possibility to
       create this GUI as well as many constructive suggestions and improvements. We also want to thank",tags$strong("Thijs Benschop"),
-      "and", tags$strong("Cathrine Machngauta"), "for testing, reporting issues and many contributions that improved the quality of
+      "and", tags$strong("Cathrine Machingauta"), "for testing, reporting issues and many contributions that improved the quality of
       the final output."), align="center")
   ))
   out
