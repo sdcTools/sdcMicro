@@ -10,7 +10,7 @@ output$credits <- renderUI({
     column(12, tags$img(src="imgs/logo_worldbank.png"), tags$br(), align="center"),
     column(12, p("and the Department for International Development",
       a(tags$strong("DfID"), href="https://www.gov.uk/government/organisations/department-for-international-development", target="_blank")), align="center"),
-    column(12, tags$img(src="imgs/logo_ukaid.png"), align="center")
+    column(12, tags$img(src="imgs/logo_ukaid.png", width = 70), align="center")
   ))
   out <- list(out, fluidRow(
     column(12, h4("Special Thanks"), align="center"),
