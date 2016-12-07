@@ -89,7 +89,7 @@ output$ui_about <- renderUI({
     column(12, p("By clicking ", stop_btn,", you can stop the graphical user interface at any time during the anonymization process.
       If you have started the interface as",code('x <- sdcApp()'),",",code("x"),
       "will contain the micro data and the sdc problem at the state just before stopping the GUI."), align="center"),
-    column(12, h4(start("Restart the interface")), align="center"),
+    column(12, h4(strong("Restart the interface")), align="center"),
     column(12, p("Should you accidentally close this browser window, you can open your current problem instance by entering the local IP address
       specified in the",code("R"),"console in which you started the GUI. The address starts with", code("http://127.0.0.1:"), ". You
       can also use the refresh button of your browser in case the GUI freezes."), align="center")
