@@ -490,9 +490,10 @@ calc_suda2_result <- reactive({
   suda2 <- suda2(obj=inpdat, variables=keyVars, missing=NA, DisFraction=input$suda2_disf)
 
   SEQ <- seq(0, 0.7, 0.1) + .Machine$double.eps
-  DISSudaScore <- paste(">", seq(0, 0.7, 0.1))
-  tab <- table(cut(suda2$disScore, breaks = c(-1, SEQ)))
-  df_thresholds <- data.frame(thresholds = DISSudaScore, number = as.integer(tab))
+  DISSudaScore <- c("== 0", "(0.0, 0.1]","(0.1, 0.2]", "(0.2, 0.3]", "(0.3, 0.4]", "(0.4, 0.5]", "(0.5, 0.6]", "(0.6, 0.7]","> 0.7")
+  tab <- table(cut(suda2$disScore, breaks = c(-1, SEQ, Inf)))
+  df_thresholds <- data.frame(interval = DISSudaScore, "number of records" = as.integer(tab))
+  colnames(df_thresholds) <- c("Interval", "Number of records")
   return(list(thresholds=df_thresholds, attribute_contributions=suda2$attribute_contributions, DisFraction=input$suda2_disf))
 })
 
