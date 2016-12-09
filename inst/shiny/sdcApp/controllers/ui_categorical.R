@@ -437,7 +437,7 @@ output$ui_kAnon <- renderUI({
   out <- list(out, fluidRow(column(12, uiOutput("kanon_strata"), align="center")))
   out <- list(out, fluidRow(
     column(12, uiOutput("kanon_use_importance"), align="center"),
-    column(12, helpText("Tip – The total number of suppressions is likely to increase by specifying an importance vector. Specifying an importance vector can affect the computation time."), align="center")
+    column(12, helpText("Tip - The total number of suppressions is likely to increase by specifying an importance vector. Specifying an importance vector can affect the computation time."), align="center")
   ))
   out <- list(out, uiOutput("ui_kanon_importanceInputs")) # might be NULL
 

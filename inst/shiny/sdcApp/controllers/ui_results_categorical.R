@@ -295,9 +295,11 @@ output$ui_rescat_suda2 <- renderUI({
     }
 
     fluidRow(
-      column(12, h5(paste0("Thresholds (DisFraction=",suda2$DisFraction,")")), align="center"),
+      column(12, h5(strong(paste0("Suda scores (sampling fraction is ",suda2$DisFraction,")"))), align="center"),
+      column(12, p("The table below shows the frequencies of the records with a suda score in the specified intervals."), align="center"),
       column(12, renderTable(suda2$thresholds), align="center"),
-      column(12, h5("Attribute contributions"), align="center"),
+      column(12, h5(strong("Attribute contributions")), align="center"),
+      column(12, p("The table below shows the contribution of each categorical key variable to the SUDA scores. The contribution of a variable is the percentage of the total MSUs in the file that include this variable."), align="center"),
       column(12, renderTable(suda2$attribute_contributions), align="center")
     )
   })
