@@ -273,9 +273,10 @@ output$ui_rescat_ldiv <- renderUI({
 output$ui_rescat_suda2 <- renderUI({
   # DisFraction
   output$suda2_disf <- renderUI({
-    txt_tooltip <- ""
+    txt_tooltip <- "This is the sampling fraction for a simple random sample and the common sampling fraction for stratified samples. The defaut value is 0.1, which corresponds to a 10 percent sample. "
+    txt_tooltip <- paste0(txt_tooltip, "Note that SUDA is sensitive to the sampling fraction and a wrong value can produce distorted results.") 
     sliderInput("suda2_disf",
-      label=h5("Select a value for sampling fraction for the stratified sampling", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      label=h5("Specify the sampling fraction for the stratified sampling", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0.01, max=0.5, step=0.01,value=0.1, width="100%")
   })
   # button
@@ -284,7 +285,7 @@ output$ui_rescat_suda2 <- renderUI({
     myActionButton("btn_suda2", label="Calculate suda2-scores", btn.style="primary")
   })
   output$suda2_resetbtn <- renderUI({
-    myActionButton("btn_suda2_restart", label="Reset to choose different a different disFraction parameter", btn.style="danger")
+    myActionButton("btn_suda2_restart", label="Reset to choose a different sampling fraction parameter", btn.style="danger")
   })
   # suda2-results
   output$suda2_result <- renderUI({
