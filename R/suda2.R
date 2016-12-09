@@ -66,7 +66,7 @@
 #' data(testdata2)
 #' data_suda2 <- suda2(testdata2,variables=c("urbrur","roof","walls","water","sex"))
 #' data_suda2
-#' str(data_suda)
+#' str(data_suda2)
 #' summary(data_suda2)
 #'
 #' ## for objects of class sdcMicro:
@@ -173,9 +173,10 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
 #'
 print.suda2 <- function(x, ...) {
   SEQ <- seq(0, 0.7, 0.1) + .Machine$double.eps
-  DISSudaScore <- c("0",paste(">", c("0.0",seq(0.1, 0.7, 0.1))))
+  DISSudaScore <- c("== 0", "(0.0, 0.1]","(0.1, 0.2]", "(0.2, 0.3]", "(0.3, 0.4]", "(0.4, 0.5]", "(0.5, 0.6]", "(0.6, 0.7]","> 0.7")
   tab <- table(cut(x$disScore, breaks = c(-1, SEQ, Inf)))
-  res <- data.frame(thresholds = DISSudaScore, number = as.numeric(tab))
+  res <- data.frame(interval = DISSudaScore, "number of records" = as.numeric(tab))
+  colnames(res) <- c("Interval", "Number of records")
   cat("\nDis suda scores table: \n")
   cat("- - - - - - - - - - - \n")
   print(res)

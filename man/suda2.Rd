@@ -56,7 +56,7 @@ the risk of the corresponding observation.
 data(testdata2)
 data_suda2 <- suda2(testdata2,variables=c("urbrur","roof","walls","water","sex"))
 data_suda2
-str(data_suda)
+str(data_suda2)
 summary(data_suda2)
 
 ## for objects of class sdcMicro:
