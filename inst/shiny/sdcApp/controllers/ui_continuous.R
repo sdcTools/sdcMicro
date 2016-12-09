@@ -159,6 +159,7 @@ output$ui_microaggregation <- renderUI({
       choices=c("No","Yes"), selected=input$rb_microagg_cluster, inline=TRUE, width="100%")
   })
   output$ui_microagg_method <- renderUI({
+    req(input$rb_microagg_cluster)
     txt <- "MDAV is the default method. The methods differ with respect to the way records are grouped (the distance measure used to measure the proximity between two records or the sorting algorithm) and whether clustering is applied before microaggregation.<br />"
     txt <- paste(txt, "<strong>mdav</strong> - grouping is based on classical (Euclidean) distance measures<br />")
     txt <- paste(txt, "<strong>rmd</strong> - grouping is based on robust multivariate (Mahalanobis) distance measures<br />")
