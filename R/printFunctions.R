@@ -249,12 +249,12 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
     ls <- get.sdcMicroObj(obj, "localSuppression")
     if (is.null(ls)) {
       if (docat) {
-        cat(paste0("Local Suppression has not been applied!\n"))
+        cat(paste0("Local suppression has not been applied!\n"))
       }
       return(invisible(NULL))
     }
     keyVars <- colnames(obj@manipKeyVars)
-    txt_ls <- paste0("Local Suppression")
+    txt_ls <- paste0("Local suppression")
     supps <- as.data.table(ls$supps)
     suppsT <- as.data.table(ls$totalSupps)
     if (nrow(supps) > 1) {
@@ -303,7 +303,7 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
     stats_rec <- as.data.table(stats_rec)
     setnames(stats_rec, c("Key Variable","Number of categories","","Mean size","","Size of smallest",""))
 
-    txt_rec <- paste0("Information on categorical Key-Variables:\n")
+    txt_rec <- paste0("Information on categorical key variables:\n")
     txt_rec <- paste0(txt_rec,"\nReported is the number, mean size and size of the smallest category for recoded variables.\n")
     txt_rec <- paste0(txt_rec, "In parenthesis, the same statistics are shown for the unmodified data.\n")
     txt_rec <- paste0(txt_rec, "Note: NA (missings) are counted as seperate categories!\n\n")
@@ -406,7 +406,7 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
       for (i in 1:length(gV)) {
         cur_kv <- cn[gV[[i]][[1]]]
         cur_gv <- cn[gV[[i]][[2]]]
-        txt <- paste0(txt, tabsp,tabsp,"Variable(s) ",paste(cur_gv, collapse = ", ")," are linked to key-variable ",cur_kv,"\n")
+        txt <- paste0(txt, tabsp,tabsp,"Variable(s) ",paste(cur_gv, collapse = ", ")," are linked to key variable ",cur_kv,"\n")
         gV[[i]][[1]] <- cur_kv
         gV[[i]][[2]] <- cur_gv
       }

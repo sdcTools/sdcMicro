@@ -195,7 +195,7 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
       gV <- standardizeInput(obj, ghostVars[[i]][[1]])
       sV <- standardizeInput(obj, ghostVars[[i]][[2]])
       if ( length(gV) != 1 ) {
-        stop("only one (existing) key-variable name can be specified as idenpendent variables in a ghostVars-element!\n")
+        stop("only one (existing) key variable name can be specified as idenpendent variables in a ghostVars-element!\n")
       }
       if ( any(sV %in% keyVarInd) ) {
         stop("one variables that are no categorical key variables can be specified as dependent variables in a ghostVars element.\n")

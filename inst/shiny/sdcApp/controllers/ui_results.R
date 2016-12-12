@@ -40,14 +40,14 @@ output$ui_results_main <- renderUI({
 output$ui_results_sidebar_left <- renderUI({
   output$ui_results_menubtns <- renderUI({
 
-    cc1 <- c("Information of risks", "Suda2 risk-measure", "l-Diversity risk-measure")
-    cc2 <- c("Barplot/Mosaicplot", "Tabulations", "Information Loss", "Obs violating k-Anon")
-    cc3 <- c("Compare summary statistics", "Disclosure Risk", "Information Loss")
+    cc1 <- c("Information of risk", "Suda2 risk measure", "l-Diversity risk measure")
+    cc2 <- c("Barplot/Mosaicplot", "Tabulations", "Information loss", "Obs. violating k-anon")
+    cc3 <- c("Compare summary statistics", "Disclosure risk", "Information loss")
 
     df <- data.frame(lab=c(cc1,cc2,cc3), header=NA)
     df$header[1] <- "Risk measures"
     df$header[4] <- "Visualizations"
-    df$header[8] <- "Numerical Risk Measures"
+    df$header[8] <- "Numerical risk measures"
 
     out <- NULL
     for (i in 1:nrow(df)) {

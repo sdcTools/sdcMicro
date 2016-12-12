@@ -64,15 +64,15 @@ definition = function(obj, threshold=0.15, keyVar) {
   rk <- get.sdcMicroObj(obj, type="risk")$individual[, 1]
 
   if (!is.character(keyVar)) {
-    stop("key-variables need to be specified by their name!\n")
+    stop("key variables need to be specified by their name!\n")
   }
   if ( length(keyVar)!=1) {
-    stop("more than 1 key-variable specified!\n")
+    stop("more than 1 key variable specified!\n")
   }
 
   cn <- colnames(get.sdcMicroObj(obj, type="origData"))[get.sdcMicroObj(obj, type="keyVars")]
   if (!keyVar %in% cn) {
-    stop("invalid key-variable specified!\n")
+    stop("invalid key variable specified!\n")
   }
 
   ls <- localSuppWORK(x=manipData, rk=rk, keyVar=keyVar, threshold=threshold)
@@ -115,13 +115,13 @@ definition = function(obj, threshold=0.15, keyVar) {
   rk <- indivRisk(obj)$rk
   x <- obj$freqCalc[,obj$keyVars]
   if ( length(keyVar)!=1) {
-    stop("more than 1 key-variable specified!\n")
+    stop("more than 1 key variable specified!\n")
   }
   if (is.numeric(keyVar)) {
     keyVar <- colnames(obj$freqCalc)[keyVar]
   }
   if (is.na(keyVar)) {
-    stop("invalid key-variable specified!\n")
+    stop("invalid key variable specified!\n")
   }
   res <- localSuppWORK(x=x, rk=rk, threshold=threshold, keyVar=keyVar)
   cat(res$newSupps,"observations has individual risks >=",threshold,"and were suppressed!\n")

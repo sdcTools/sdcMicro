@@ -5,7 +5,7 @@ choices_anon_menu <- reactive({
     "Add 'Ghost'-Variables",
     "Create new IDs")
   df1 <- data.frame(name=c_manage, group=1, header=NA, stringsAsFactors=FALSE)
-  df1$header[1] <- "View/Analyse existing sdcProblem"
+  df1$header[1] <- "View/Analyze existing sdcProblem"
 
   c_cat <- c(
     "Recoding",
@@ -17,7 +17,7 @@ choices_anon_menu <- reactive({
   df2$header[1] <- "Anonymize categorical variables"
 
   c_num <- c(
-    "Top-/Bottom Coding",
+    "Top/bottom coding",
     "Microaggregation",
     "Adding Noise",
     "Rank Swapping")

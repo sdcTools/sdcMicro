@@ -17,7 +17,7 @@ output$ui_sdcObj_summary <- renderUI({
     }
     x <- print(curObj, type="general", docat=FALSE)
     out <- fluidRow(
-      column(12, h4("Important variables and information"), align="center"),
+      column(12, h4("Summary of dataset and variable selection"), align="center"),
       column(12, p("The dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), align="center"),
       column(12, list("Categorical key variables:", lapply(x$keyVars, function(x) {code(x)})), align="center"))
 
@@ -84,18 +84,18 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     x <- print(curObj, type="kAnon", docat=FALSE)
-    txt <- "Below the number of observations violating k-Anonymity is shown for the original data and
-    the current dataset"
+    txt <- "Below the number of observations violating k-anonymity is shown for the original data and
+    the modified dataset"
     dt <- data.table(
-      "k-anonimity"=paste0(c(2,3,5),"-anonymity"),
-      "Current data"=c(paste0(x[["2anon"]]$mod," (",x[["2anon"]]$mod_p,"%)"),
+      "k-anonymity"=paste0(c(2,3,5),"-anonymity"),
+      "Modified data"=c(paste0(x[["2anon"]]$mod," (",x[["2anon"]]$mod_p,"%)"),
           paste0(x[["3anon"]]$mod," (",x[["3anon"]]$mod_p,"%)"),
           paste0(x[["5anon"]]$mod," (",x[["5anon"]]$mod_p,"%)")),
       "Original data"=c(paste0(x[["2anon"]]$orig," (",x[["2anon"]]$orig_p,"%)"),
           paste0(x[["3anon"]]$orig," (",x[["3anon"]]$orig_p,"%)"),
           paste0(x[["5anon"]]$orig," (",x[["5anon"]]$orig_p,"%)")))
     out <- fluidRow(
-      column(12, h4("Information on k-Anonymity"), align="center"),
+      column(12, h4("Information on k-anonymity"), align="center"),
       column(12, p(txt), align="center"),
       column(12, renderTable(dt), align="center"))
     out
@@ -109,7 +109,7 @@ output$ui_sdcObj_summary <- renderUI({
     reident <- x[[1]]$reident
     riskyobs <- x[[1]]$riskyObs
     out <- fluidRow(
-      column(12, h4("Risk-measures for categorical variables"), align="center"),
+      column(12, h4("Risk measures for categorical variables"), align="center"),
       column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population. In the original
           data, we expected to have",code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
       column(12, p("Currently there are",code(riskyobs$mod),"observations that have a higher risk that the main part of the data. In the
@@ -158,7 +158,7 @@ output$ui_sdcObj_summary <- renderUI({
     dt <- data.table(keyVar=x$supps$KeyVar)
     dt[,v1:=paste0(x$supps[[2]]," (",x$supps[[3]],"%)")]
     dt[,v2:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
-    setnames(dt, c("Key Variable", paste("Additional Supps due to last run of",meth), "Total Suppressions"))
+    setnames(dt, c("Key Variable", paste("Additional Supps due to last run of",meth), "Total suppressions"))
     out <- list(fluidRow(
       column(12, h4("Information on local suppression"), align="center"),
       column(12, p(txt), align="center"),
@@ -207,7 +207,7 @@ output$ui_sdcObj_summary <- renderUI({
     anon_methods <- unique(anonPerformed())
     out <- fluidRow(column(12, h4("Anonymization steps"),align="center"))
     if (is.null(anon_methods)) {
-      out <- list(out, fluidRow(column(12, code("no methods have been applied"),align="center")))
+      out <- list(out, fluidRow(column(12, code("No methods have been applied"),align="center")))
       return(out)
     } else {
       out <- fluidRow(column(12, h4("Anonymization steps"),align="center"))
@@ -476,7 +476,7 @@ output$ui_sdcObj_randIds <- renderUI({
 
   helptxt <- "The ID in microdata as well as the order of records can be used to reconstruct suppressed values."
   helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
-  helptxt <- paste(helptxt, "you can select the household ID as variable for which the new ID should be the same for equal value.")
+  helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal value.")
   helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
 
   out <- fluidRow(

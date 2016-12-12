@@ -34,7 +34,7 @@ output$ui_topbotcoding_num <- renderUI({
     txt_tooltip3 <- "The replacement value is the value that replaces all the values below (bottom) or above (top) the specified threshold. Often the replacement value is the same as the threshold value."
     sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), selected=obj$inp_sel_topbot_var_num, multiple=FALSE, label=h5("Select variable"), width="75%")
     sel_kind <- radioButtons("sel_topbot_kind_num", choices=c("top","bottom"),
-      label=h5("Apply Top/Bottom-Coding?", tipify(icon("question"), title=txt_tooltip1, placement="top")), inline=TRUE)
+      label=h5("Apply top/bottom coding?", tipify(icon("question"), title=txt_tooltip1, placement="top")), inline=TRUE)
     txt_val <- textInput("num_topbot_val_num", label=h5("Threshold value", tipify(icon("question"), title=txt_tooltip2, placement="top")),
       placeholder="Please enter a number", width="75%")
     txt_replace <- textInput("num_topbot_replacement_num", label=h5("Replacement Value", tipify(icon("question"), title=txt_tooltip3, placement="top")),
@@ -82,12 +82,12 @@ output$ui_topbotcoding_num <- renderUI({
     }
   })
 
-  helptxt <- "Here you can recode all values in a variable below (bottom-coding) or above (top-coding) a certain threshold. These values are replaced"
-  helptxt <- paste(helptxt, "with the specified replacement value. The boxplot below shows the distribution of the data before top- or bottom-coding. ")
+  helptxt <- "Here you can recode all values in a variable below (bottom coding) or above (top coding) a certain threshold. These values are replaced"
+  helptxt <- paste(helptxt, "with the specified replacement value. The boxplot below shows the distribution of the data before top/bottom coding. ")
   helptxt <- paste(helptxt, "The bottom of the box is the 25th percentile and the top of the box the 75th percentile. The bar in the boxplot is the median. ")
-  helptxt <- paste(helptxt, "The length of the whiskers is 1.5 times the IQR, unless the smallest/largest obeservation is closer to the box. Any value below/above the whiskers is indicated as outlier.")
+  helptxt <- paste(helptxt, "The length of the whiskers is 1.5 times the interquartile range (IQR), unless the smallest/largest obeservation is closer to the box. Any value below/above the whiskers is indicated as outlier.")
   out <- fluidRow(
-    column(12, h4("Apply Top- and bottom coding", align="center")),
+    column(12, h4("Apply top/bottom coding", align="center")),
     column(12, p(helptxt), align="center")
   )
   out <- list(out, uiOutput("ui_topbot_params_num"))
@@ -389,13 +389,13 @@ output$ui_rankswap <- renderUI({
       width="100%", multiple=TRUE)
   })
   output$sl_rankswap_top <- renderUI({
-    txt_tooltip <- "The highest values can be top-coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be top-coded as percentage of the sample size. By default no values are top-coded."
+    txt_tooltip <- "The highest values can be top coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be top coded as percentage of the sample size. By default no values are top coded."
     sliderInput("sl_rankswap_top",
       label=h5("Percentage of highest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=25, step=1, value=0, width="100%")
   })
   output$sl_rankswap_bot <- renderUI({
-    txt_tooltip <- "The lowest values can be bottom-coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be bottom-coded as percentage of the sample size. By default no values are bottom-coded."
+    txt_tooltip <- "The lowest values can be bottom coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be bottom coded as percentage of the sample size. By default no values are bottom coded."
     sliderInput("sl_rankswap_bot",
       label=h5("Percentage of lowest values that are grouped together before rank swapping", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0, max=25, step=1, value=0, width="100%")

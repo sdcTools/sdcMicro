@@ -382,7 +382,7 @@ output$ui_kAnon <- renderUI({
     } else {
       txt_tooltip <- "The choice of k is guided by the need for anonymization. A higher parameter will lead to more suppressions."
       sl <- sliderInput("sl_kanon_k",
-        label=h5("Please specify the k-Anonymity parameter", tipify(icon("question"), title=txt_tooltip, placement="top")),
+        label=h5("Please specify the k-anonymity parameter", tipify(icon("question"), title=txt_tooltip, placement="top")),
         min=2, max=50, value=3, step=1, width="100%")
       out <- fluidRow(column(12, sl, align="center"))
     }
@@ -399,7 +399,7 @@ output$ui_kAnon <- renderUI({
     if (kAnon_useImportance() && any(impvec=="")) {
       return(NULL)
     }
-    btn <- myActionButton("btn_kanon", label="Establish k-Anonymity", "primary")
+    btn <- myActionButton("btn_kanon", label="Establish k-anonymity", "primary")
     return(fluidRow(column(12, btn, align="center")))
   })
 
@@ -413,7 +413,7 @@ output$ui_kAnon <- renderUI({
   output$kanon_use_importance <- renderUI({
     txt_tooltip <- "Values in variables with high importance (low values) are less likely to be suppressed than values in variables with low importance (high values)"
     radioButtons(inputId="rb_show_importance",
-      label=h5("Do you want to modify importance of key-variables for suppression?", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      label=h5("Do you want to modify importance of key variables for suppression?", tipify(icon("question"), title=txt_tooltip, placement="top")),
       selected=input$rb_show_importance, width="100%", inline=TRUE, choices=c("No", "Yes"))
   })
 
@@ -422,17 +422,17 @@ output$ui_kAnon <- renderUI({
     txt_tooltip <- paste(txt_tooltip, "key variables. The level of k-anonymity can be set for each subset size. In case several sizes are chosen, the algorithm establishes k-anonymity first on the smaller subsets.")
     radioButtons("rb_kanon_useCombs", choices=c("No","Yes"), width="100%", inline=TRUE,
       selected=input$rb_kanon_useCombs,
-      label=h5("Apply k-Anonymity to subsets of key-variables?", tipify(icon("question"), title=txt_tooltip, placement="top")))
+      label=h5("Apply k-anonymity to subsets of key variables?", tipify(icon("question"), title=txt_tooltip, placement="top")))
   })
 
   out <- fluidRow(
     column(12, h4("Establish k-anonymity", align="center")),
     column(12, p("k-anonymity will be established by suppressing or rather setting some values in the selected categorical key variables to",code("NA"),"."), align="center"),
-    column(12, p("By default, the key-variables will be considered for suppression in the order of their number of distinct categories. A variable with
+    column(12, p("By default, the key variables will be considered for suppression in the order of their number of distinct categories. A variable with
       many categories is less likely to have values suppressed than a variable with few categories. It is also possible to set the order by
       specifying an importance vector.", align="center")),
     column(12, p("You may also decide to apply the procedure for all possible subsets of key variables. This is useful, if you have many key variables
-      and can reduces computation time. You can set a different value for the parameter",code("k"),"for each size of subsets.", align="center")))
+      and can reduce computation time. You can set a different value for the parameter",code("k"),"for each size of subsets.", align="center")))
 
   out <- list(out, fluidRow(column(12, uiOutput("kanon_strata"), align="center")))
   out <- list(out, fluidRow(
@@ -448,10 +448,10 @@ output$ui_kAnon <- renderUI({
   out
 })
 
-# GUI-output for suppression of values in key-variables with risk > than threshold
+# GUI-output for suppression of values in key variables with risk > than threshold
 output$ui_supp_threshold <- renderUI({
   output$ui_supp_th <- renderUI({
-    txt_tooltip <- "Any value in in the selected key variable of a record with an individual risk higher than this threshold is suppressed."
+    txt_tooltip <- "Any value in the selected key variable of a record with an individual risk higher than this threshold is suppressed."
     up <- round(max(get_risk()$risk),3)+0.005
     sl <- sliderInput("sl_supp_threshold", label=h5("Threshold for individual risk", tipify(icon("question"),title=txt_tooltip, placement="top")),
       min=0, max=up, value=0, step=0.001, width="100%")
@@ -471,7 +471,7 @@ output$ui_supp_threshold <- renderUI({
     nr_risk
   })
   output$ui_supp_th_var <- renderUI({
-    selectInput("sel_supp_th_var", label=h5("Select Key-Variable for Suppression"), choices=get_keyVars_names(), selected=input$sel_supp_th_var, width="100%")
+    selectInput("sel_supp_th_var", label=h5("Select key variable for suppression"), choices=get_keyVars_names(), selected=input$sel_supp_th_var, width="100%")
   })
   output$ui_supp_th_btn <- renderUI({
     req(input$sel_supp_th_var)
@@ -480,8 +480,8 @@ output$ui_supp_threshold <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Suppress values with high risks"), align="center"),
-    column(12, p("This method allows to suppress values (or rather set to NA) in the selected key-variables in records that have an
+    column(12, h4("Suppress values with high risk"), align="center"),
+    column(12, p("This method allows to suppress (set to NA) values in the selected key variables for records that have an
       individual risk higher than the specified threshold."), align="center"))
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_supp_th_var"), align="center"),

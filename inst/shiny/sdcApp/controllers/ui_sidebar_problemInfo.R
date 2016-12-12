@@ -5,10 +5,10 @@ output$tabinfo_sb_results <- output$tabinfo_sb_anonymize <- renderUI({
   }
 
   fluidRow(
-    column(12, h4("Important Variables"), align="center"),
+    column(12, h4("Important variables"), align="center"),
     column(12, DT::renderDataTable({
       inp
-    }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+    }, rownames=FALSE, colnames = c("Variable name", "Type", "Suppressions"), selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
   )
 })
@@ -19,7 +19,7 @@ output$tabparam_sb_results <- output$tabparam_sb_anonymize <- renderUI({
     return(NULL)
   }
   fluidRow(
-    column(12, h4("Additional Parameters"), align="center"),
+    column(12, h4("Additional parameters"), align="center"),
     column(12, DT::renderDataTable({
       inp
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
@@ -55,11 +55,11 @@ output$risk_sb_anonymize <- renderUI({
 
   df <- data.table(
     Measures=c("2-anonymity","3-anonymity","5-anonymity"),
-    orig=c(v1_o, v2_o, v3_o),
-    modified=c(v1,v2,v3))
+    Original=c(v1_o, v2_o, v3_o),
+    Modified=c(v1,v2,v3))
 
   fluidRow(
-    column(12, h4("Risk (k-Anonymity)"), align="center"),
+    column(12, h4("Risk (k-anonymity)"), align="center"),
     column(12, DT::renderDataTable({
       df
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
@@ -133,7 +133,7 @@ output$pram_sb_anonymize <- renderUI({
   wn <- curObj@additionalResults$sdcMicro_warnings
   if (!is.null(wn) && "pram" %in% wn$method) {
     out <- list(out, fluidRow(column(12, p("Note: Pram was applied on at least one categorical
-        key-variable. Risk-measures and k-anonymity assessment are not useful anymore!", align="center"))))
+        key variable. Risk measures and k-anonymity assessment are not useful anymore!", align="center"))))
   }
   out <- list(out, fluidRow(
     column(12, DT::renderDataTable({

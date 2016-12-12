@@ -39,7 +39,7 @@ definition = function(obj, keyVar, ghostVars) {
     stop("length of argument 'keyVar' must be 1 in addGhostVars!\n")
   }
   if (!keyVar %in% kv) {
-    stop("variable specified in 'keyVar' in not a categorical key-variable!\n")
+    stop("variable specified in 'keyVar' in not a categorical key variable!\n")
   }
 
   nv <- cn[get.sdcMicroObj(obj, type="numVars")]

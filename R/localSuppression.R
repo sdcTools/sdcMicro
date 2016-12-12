@@ -346,7 +346,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     importance <- match(names(xx), names(sort(xx, decreasing=FALSE)))
   } else {
     if (length(setdiff(sort(importance), 1:length(keyVars))) > 0) {
-      stop("importance vector needs to be discrete numbers between 1 and the number of key-variables!\n")
+      stop("importance vector needs to be discrete numbers between 1 and the number of key variables!\n")
     }
   }
 
@@ -499,7 +499,7 @@ print.localSuppression <- function(x, ...) {
   pp <- "\n-----------------------\n"
   pp <- paste0(pp, "Total number of suppressions in the key variables: ", totSupps," (new: ",addSupps,")\n\n")
   if (!is.na(x$threshold)) {
-    pp <- paste0(pp, "Number of suppressions by key-variables:\n\n")
+    pp <- paste0(pp, "Number of suppressions by key variables:\n\n")
     cat(pp)
     print(x$supps)
 
@@ -512,9 +512,9 @@ print.localSuppression <- function(x, ...) {
   }
 
   if (byStrata) {
-    pp <- paste0(pp, "Number of suppressions by key-variables and strata:\n(in parenthesis, the total number suppressions is shown)\n\n")
+    pp <- paste0(pp, "Number of suppressions by key variables and strata:\n(in parenthesis, the total number suppressions is shown)\n\n")
   } else {
-    pp <- paste0(pp, "Number of suppressions by key-variables:\n(in parenthesis, the total number suppressions is shown)\n\n")
+    pp <- paste0(pp, "Number of suppressions by key variables:\n(in parenthesis, the total number suppressions is shown)\n\n")
   }
 
   dt <- x$supps

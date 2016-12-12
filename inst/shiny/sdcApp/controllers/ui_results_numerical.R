@@ -21,7 +21,7 @@ output$ui_resnum_numrisk <- renderUI({
     return(invisible(NULL))
   }
   out <- fluidRow(
-    column(12, h4("Information on Risk for numerical key-variables"), align="center"),
+    column(12, h4("Information on risk for numerical key variables"), align="center"),
     column(12, p("The upper bound of the risk-interval is assumed to be 100% in the original data. Once the numeric key variables are modified,
       the upper bound may reduce. The larger the deviations from the original data, the lower the upper risk bound will be. However, this has also an
       impact on data utility."),align="center"),
@@ -57,7 +57,7 @@ output$ui_resnum_infoloss <- renderUI({
 
   txt3 <- paste("The",tags$strong("difference in eigenvalues"),"is a comparison of the robust eigenvalues of the data before and after anonymization.")
   out <- fluidRow(
-    column(12, h4("Information-Loss criteria based on numerical key-variables"), align="center"),
+    column(12, h4("Information-loss criteria based on numerical key variables"), align="center"),
     column(12, p(HTML(txt1)), align="center"),
     column(12, uiOutput("ui_formula1"),align="center"),
     column(12, p(HTML(txt2)), align="center"),

@@ -77,7 +77,7 @@ definition=function(obj, column, ...) {
 setMethod(f="globalRecodeX", signature=c("data.frame"),
 definition = function(obj, column, ...) {
   if (!column %in% colnames(obj)) {
-    stop("The variable specified in 'column' is not a valid key-variable!\n")
+    stop("The variable specified in 'column' is not a valid key variable!\n")
   }
   if (length(column)!=1) {
     stop("more than one variable specified in 'column'!\n")
