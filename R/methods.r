@@ -223,7 +223,7 @@ definition = function(object, value) {
    stop("stratification-variables could not be found!\n")
  }
  if (value%in%colnames(object@manipKeyVars)) {
-   stop("stratification-variables cannot be a categorical key-variable!\n")
+   stop("stratification-variables cannot be a categorical key variable!\n")
  }
  object@strataVar <- match(value, cn)
  if (length(object@set) == 0 || !"strataVar" %in% object@set)

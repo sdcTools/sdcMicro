@@ -53,17 +53,17 @@ if ( !is.null(modifications$delDirect) ) {
 
 ```{r, echo=FALSE, results="asis"}
 impVars <- get.reportObj(repObj, "importantVariables")
-cat(paste0("## Information on selected important (Key) Variables\n"))
-cat(paste0("- **Categorical Key-Variable(s)**: *", paste(impVars$catVars, collapse="* | *"),"*\n")) 
-cat(paste0("- **Continuous Key-Variable(s)**: *", paste(impVars$numVars, collapse="* | *"),"*\n")) 
-cat(paste0("- **Weight-Variable**: *", paste(impVars$weightVar, collapse="* | *"),"*\n")) 
+cat(paste0("## Information on selected important (key) variables\n"))
+cat(paste0("- **Categorical key variable(s)**: *", paste(impVars$catVars, collapse="* | *"),"*\n")) 
+cat(paste0("- **Continuous key variable(s)**: *", paste(impVars$numVars, collapse="* | *"),"*\n")) 
+cat(paste0("- **Weight variable**: *", paste(impVars$weightVar, collapse="* | *"),"*\n")) 
 cat(paste0("- **householdID**: *", paste(impVars$hhId, collapse="* | *"),"*\n")) 
 cat(paste0("- **strataVariable(s)**: *", paste(impVars$strataVars, collapse="* | *"),"*\n")) 
 
 #sensVar <- get.reportObj(repObj, "sensiblecn")
 if ( !is.null(impVars$sensibleVar ) ) {
-  cat(paste0("- **sensitive Variable(s) for l-diversity**: "))
-  cat(paste0("*",paste(impVars$sensibleVar, collapse="* | *"),"*"))
+  cat(paste0("- **Sensitive variable(s) for l-diversity**: "))
+  cat(paste0("*",paste(impVar$sensibleVar, collapse="* | *"),"*"))
 }
 cat("\n\n")
 ```
@@ -138,7 +138,7 @@ if ( show_indivrisk ) {
   riskNumKeyVars <- get.reportObj(repObj, "riskNumKeyVars")
   if ( is.list(riskNumKeyVars) ) {
     cat(paste0("### Disclosure Risk Continuous Scaled Variables\n"))
-    cat(paste0("The (distance-based) disclosure risk for continous key-variables is between "))
+    cat(paste0("The (distance-based) disclosure risk for continous key variables is between "))
     cat(paste0("0.000% and ",riskNumKeyVars$risk,"% in the modified data.\n\n"))
     cat(paste0("In the original data, the risk is assumed to be approximately 100.000%.\n\n"))
   }
