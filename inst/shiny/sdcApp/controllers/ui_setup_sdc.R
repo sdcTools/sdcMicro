@@ -195,7 +195,8 @@ output$ui_sdcObj_summary <- renderUI({
     if (is.null(x) || length(x$results)==0) {
       return(NULL)
     }
-    dt <- rbindlist(x$results)
+    dt <- rbindlist(x$results, fill=TRUE)
+    dt[is.na(`NA's`),`NA's`:="0"]
     dt <- cbind(data.table(Variable=rep(x$numVars, each=2)), dt)
     out <- fluidRow(column(12, h4("Compare numVars"), align="center"))
     out <- list(out, fluidRow(
