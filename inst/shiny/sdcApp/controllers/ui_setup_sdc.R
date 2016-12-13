@@ -158,7 +158,7 @@ output$ui_sdcObj_summary <- renderUI({
     dt <- data.table(keyVar=x$supps$KeyVar)
     dt[,v1:=paste0(x$supps[[2]]," (",x$supps[[3]],"%)")]
     dt[,v2:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
-    setnames(dt, c("Key Variable", paste("Additional Supps due to last run of",meth), "Total suppressions"))
+    setnames(dt, c("Key variable", paste("Additional suppressions due to last run of",meth), "Total number of missings in variable (NA)"))
     out <- list(fluidRow(
       column(12, h4("Information on local suppression"), align="center"),
       column(12, p(txt), align="center"),
@@ -198,7 +198,7 @@ output$ui_sdcObj_summary <- renderUI({
     dt <- rbindlist(x$results, fill=TRUE)
     dt[is.na(`NA's`),`NA's`:="0"]
     dt <- cbind(data.table(Variable=rep(x$numVars, each=2)), dt)
-    out <- fluidRow(column(12, h4("Compare numVars"), align="center"))
+    out <- fluidRow(column(12, h4("Compare numerical key variables"), align="center"))
     out <- list(out, fluidRow(
       column(12, renderTable(dt), align="center")
     ))
