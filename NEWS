@@ -1,14 +1,9 @@
-# 4.7.0
+# 5.0.0
 - new argument 'excludeVars' in createSdcObj()
-- sdcGUI() opens shiny-app automatically
-- shiny-version of the GUI directly included in the package
-- save pram-parameters in slot '@pram' for each pramed-variable
-- new helper function `addWarnings()` which adds warnings also to slot `@additionalResults$sdcMicro_warnings`. This is required so that we can access warnings easier within shiny and use `tryCatch()` in a managable way.
-- new method 'addGhostVars()' that allows to specify ghostVars easier within the GUI.
-- remove parameter 'opt' in microaggregation
-- removed matrix-method for microaggregation()
-- removed argument 'strata_variables() for sdcMicroObj-method of microaggregation()
-- new method "strataVar<-" that allows temporarily resetting strata variable in an sdcMicroObj-object
+- shiny-based GUI directly included in the package, can be started with sdcApp()
+- added vignette for sdcApp()
+- rewrite of function 'freqCalc()'
+- many improvements and bugfixes
 
 # 4.1.7
  - IHSN SDC guidelines as vignette
