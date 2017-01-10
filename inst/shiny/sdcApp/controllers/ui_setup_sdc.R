@@ -637,25 +637,29 @@ output$setupbtn <- renderUI({
   ## delete-variables must not be selected as anything else
   ii <- which(deleteVariable==TRUE)
   if (length(ii)>0) {
-    if (any(useAsKeys[ii] %in% c("Cat.","Cont."))) {
+    zz <- intersect(which(useAsKeys %in% c("Cat.","Cont.")), ii)
+    if (length(zz)>0) {
       txt <- p("Selected variable to be deleted is also selected as key variable.", tags$br(), tags$br(),
         tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as key variable before making other variable selections!"))
-      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[zz]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
-    if (any(useAsPram[ii]==TRUE)) {
+    zz <- intersect(which(useAsPram), ii)
+    if (length(zz)>0) {
       txt <- p("Selected variable to be deleted is also selected as pram variable.", tags$br(), tags$br(),
         tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as pram variable before making other variable selections!"))
-      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[zz]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
-    if (any(useAsWeight[ii]==TRUE)) {
+    zz <- intersect(which(useAsWeight), ii)
+    if (length(zz)>0) {
       txt <- p("Selected variable to be deleted is also selected as weight variable.", tags$br(), tags$br(),
         tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as weight variable before making other variable selections!"))
-      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[zz]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
-    if (any(useAsClusterID[ii]==TRUE)) {
+    zz <- intersect(which(useAsClusterID), ii)
+    if (length(zz)>0) {
       txt <- p("Selected variable to be deleted is also selected as cluster-id variable.", tags$br(), tags$br(),
         tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as cluster-id variable before making other variable selections!"))
-      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[zz]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
   btn <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
