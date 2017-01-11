@@ -1,7 +1,7 @@
 # specific (gui)-options for csv-import
 output$ui_import_csv <- renderUI({
   rb1 <- radioButtons("import_csv_header", label=h5("First row contains variable names"), choices=c(TRUE,FALSE), inline=TRUE)
-  rb2 <- radioButtons("import_csv_sep", label=h5("Separator"), choices=c(Semicolon=";", Tab="\t", Colon=","), inline=TRUE)
+  rb2 <- radioButtons("import_csv_sep", label=h5("Separator"), choices=c(Semicolon=";", Tab="\t", Comma=","), inline=TRUE)
   return(fluidRow(
     column(6, rb1, align="center"),
     column(6, rb2, align="center")))
