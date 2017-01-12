@@ -397,7 +397,8 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     opts <- list(...)
     header <- ifelse(opts$header==TRUE, TRUE, FALSE)
     sep <- opts$sep
-    res <- tryCatchFn(read.table(path, sep=sep, header=header))
+    quote <- "\""
+    res <- tryCatchFn(read.table(path, sep=sep, header=header, quote=quote))
   }
   if ("simpleError" %in% class(res)) {
     return(res)
