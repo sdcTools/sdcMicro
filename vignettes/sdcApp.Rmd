@@ -79,13 +79,13 @@ This option is not available when an existing data frame from the current worksp
 
 This option is only available when a text/csv file is imported. This radio button input has two possible choices, `TRUE` (the default value) and `FALSE`. If `TRUE`, the first row of the imported data set will be interpreted as variable names, if `FALSE`, variable names are automatically generated.
 
-**Separator (Semicolon, Tab, Colon)**
+**Separator (Comma, Semicolon, Tab)**
 
-This option is only available when a text/csv file is imported. The radio button input has three possible choices, `Semicolon` (the default value), `Tab` and `Colon` defining the value that is used to separate variables in the input file.
+This option is only available when a text/csv file is imported. The radio button input has three possible choices, `Comma` (the default value) `Semicolon` and `Tab` defining the value that is used to separate variables in the input file.
 
+- `Comma`: the ``r dQuote(",")`` character is used as separator
 - `Semicolon`: the `;` character is used as separator
 - `Tab`: tabulators (`\t`) are used as separators
-- `Colon`: the ``r dQuote(",")`` character is used as separator
 
 **Select File Input:**
 
