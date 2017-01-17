@@ -335,7 +335,11 @@ definition=function(obj, var) {
     stop("at least one variable specified in 'var' is not available in 'obj'!\n")
   }
   for (vv in var) {
-    obj[[vv]] <- as.numeric(obj[[vv]])
+    if("factor" %in% class(obj[[vv]])){
+      obj[[vv]] <- as.numeric(levels(obj[[vv]]))[obj[[vv]]] 
+    }else{
+      obj[[vv]] <- as.numeric(obj[[vv]])
+    }
   }
   obj
 })
