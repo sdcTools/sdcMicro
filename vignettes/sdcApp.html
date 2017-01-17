@@ -12,7 +12,7 @@
 
 <meta name="author" content="Bernhard Meindl" />
 
-<meta name="date" content="2017-01-12" />
+<meta name="date" content="2017-01-17" />
 
 <title>Using the interactive GUI - sdcApp</title>
 
@@ -32,7 +32,7 @@
 
 <h1 class="title toc-ignore">Using the interactive GUI - sdcApp</h1>
 <h4 class="author"><em>Bernhard Meindl</em></h4>
-<h4 class="date"><em>2017-01-12</em></h4>
+<h4 class="date"><em>2017-01-17</em></h4>
 
 
 <div id="TOC">
@@ -259,7 +259,7 @@
 <div id="convert-variables-to-numeric" class="section level3">
 <h3>Convert variables to numeric</h3>
 <p>In this page, variables of type <code>factor</code> and <code>character</code> from the input data can be converted to numeric variables. If no such variables are present in the microdata, the user is shown this information and no conversion is possible. Otherwise, the user can select one or more variables from the input field labelled <code>Choose variable(s)</code>. Once at least one variable is selected, a button called <code>Recode to numeric</code> occurs below the variable selection input. After clicking this button, the conversion is done and the view changes to the <a href="#explore_inputvars">explore variable</a> page with the first of the recoded variables being selected.</p>
-<p>It should be noted however - as also shown on the GUI - that this feature should be used with care because internally,function `as.numeric()’ is used to perform the conversation. Thus, the resulting numeric vector contains the underlying numeric (integer) representation of the input factor, which is often meaningless as it may not correspond to the factor levels.</p>
+<p>For variables of type <code>factor</code>, the factor levels are converted to numeric values. Factor levels that cannot be converted to numeric values are replaced with missing values (<code>NA</code>). It should be noted however - as also shown on the GUI - that, for variables of type <code>character</code>, this feature should be used with care because internally, the function <code>as.numeric()</code> is used to perform the conversion. Thus, the resulting numeric vector contains the underlying numeric (integer) representation of the input vector.</p>
 </div>
 <div id="recode_factors_inputdata" class="section level3">
 <h3>Modify factor variable</h3>
