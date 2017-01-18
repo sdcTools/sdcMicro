@@ -590,6 +590,7 @@ output$ui_show_microdata <- renderUI({
 
   txt_microdata <- paste0("In this tab you can manipulate the data to prepare for setting up an object of class",code("sdcMicroObj"),"in the Anonymize tab. ")
   txt_microdata <- paste0(txt_microdata, "The loaded dataset is",code(obj$microfilename),"and consists of",code(nrow(obj$inputdata)),"observations and ",code(ncol(obj$inputdata)),"variables.")
+  txt_microdata <- paste0(txt_microdata, code(attributes(obj$inputdata)),":")
   out <- fluidRow(
     column(12, h4("Loaded microdata"), align="center"),
     column(12, p(HTML(txt_microdata)), align="center"))

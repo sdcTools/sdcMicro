@@ -444,7 +444,12 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   if (drop_all_missings) {
     # drop all variables that are NA-only
     keep <- which(sapply(res, function(x) sum(is.na(x))!=length(x)))
+    dropped <- colnames(res)[-keep]
     res <- res[,keep,drop=FALSE]
+    # save names of dropped variables
+    if(length(dropped) > 0){
+      attr(res, "dropped") <- dropped
+    }
   }
 
   if (type=="stata") {
