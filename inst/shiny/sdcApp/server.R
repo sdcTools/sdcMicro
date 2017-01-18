@@ -126,7 +126,9 @@ shinyServer(function(session, input, output) {
 
   # prepare a household-level input file
   code_prepare_hhdata <- reactive({
-    cmd <- paste0("inputdata <- selectHouseholdData(dat=obj$inputdata, hhId=",dQuote(input$sel_hhvars_id),", hhVars=",VecToRStr(input$sel_hhvars, quoted=TRUE),")")
+    cn <- colnames(inputdata())
+    mm <- cn[sort(match(input$sel_hhvars, cn))]
+    cmd <- paste0("inputdata <- selectHouseholdData(dat=obj$inputdata, hhId=",dQuote(input$sel_hhvars_id),", hhVars=",VecToRStr(mm, quoted=TRUE),")")
     cmd
   })
 
