@@ -113,7 +113,10 @@ selectHouseholdData <- function(dat, hhId, hhVars) {
 
   # Keep only one observation per household
   res <- res[which(!duplicated(res[,hhId])),]
-
+  
+  # Sort hhVars on the order of the variables in dat
+  hhVars <- colnames(dat)[which(colnames(dat) %in% hhVars)]
+  
   # Drop all variables that are not at the household level
   res <- res[,c(hhId, hhVars), drop=FALSE]
   invisible(res)
