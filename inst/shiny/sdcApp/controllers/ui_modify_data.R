@@ -600,11 +600,11 @@ output$ui_show_microdata <- renderUI({
   out <- fluidRow(
     column(12, h4("Loaded microdata"), align="center"))
   if(is.null(attr(obj$inputdata, "dropped"))){
-    out <- fluidRow(
-      column(12, p(HTML(txt_microdata)), align="center"))
+    out <- list(out, fluidRow(
+      column(12, p(HTML(txt_microdata)), align="center")))
   }else{
-    out <- fluidRow(
-      column(12, list(HTML(txt_microdata), code(lapply(attr(obj$inputdata, "dropped"), function(x) {x}))), align="center"))
+    out <- list(out, fluidRow(
+      column(12, list(HTML(txt_microdata), code(lapply(attr(obj$inputdata, "dropped"), function(x) {x}))), align="center")))
   }
   out <- list(out, fluidRow(
     column(12, dataTableOutput("tab_inputdata"))))
