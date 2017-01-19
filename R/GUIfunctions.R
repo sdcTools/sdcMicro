@@ -113,7 +113,10 @@ selectHouseholdData <- function(dat, hhId, hhVars) {
 
   # Keep only one observation per household
   res <- res[which(!duplicated(res[,hhId])),]
-
+  
+  # Sort hhVars on the order of the variables in dat
+  hhVars <- colnames(dat)[which(colnames(dat) %in% hhVars)]
+  
   # Drop all variables that are not at the household level
   res <- res[,c(hhId, hhVars), drop=FALSE]
   invisible(res)
@@ -335,7 +338,11 @@ definition=function(obj, var) {
     stop("at least one variable specified in 'var' is not available in 'obj'!\n")
   }
   for (vv in var) {
-    obj[[vv]] <- as.numeric(obj[[vv]])
+    if("factor" %in% class(obj[[vv]])){
+      obj[[vv]] <- as.numeric(levels(obj[[vv]]))[obj[[vv]]] 
+    }else{
+      obj[[vv]] <- as.numeric(obj[[vv]])
+    }
   }
   obj
 })
