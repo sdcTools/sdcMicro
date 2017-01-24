@@ -70,6 +70,8 @@ extractLabels <- function(dat){
     varLab <- as.data.frame(cbind(colnames(dat), lapply(dat, function(x){attr(x, "label")})))
     colnames(varLab) <- c("var.name", "var.label")
     rownames(varLab) <- NULL
+    # Set to NULL values in var.label to NA
+    varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
   } else {
     varLab <- NULL
   }
