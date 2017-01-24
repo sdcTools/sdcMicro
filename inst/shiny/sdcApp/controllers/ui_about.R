@@ -59,7 +59,7 @@ output$ui_about <- renderUI({
     column(12, h4(strong("sdcApp"), align="center")),
     column(12, p("This graphical user interface of",code("sdcMicro")," allows you to anonymize microdata even if you are not an
       expert in the",code("R"),"programming language. Detailed information on how to use this graphical user-interface (GUI) can be found in a tutorial (a so-called vignette) that is included in the",code("sdcMicro"),"package.
-    You can read the vignette by typing",code('vignette("sdcApp", package="sdcMicro")'),"into your",code("R"),"prompt."), align="center"),
+    The vignette is available from the",tags$a("CRAN", href="https://cran.r-project.org/web/packages/sdcMicro/vignettes/sdcApp.html", target="_blank"), "website or by typing",code('vignette("sdcApp", package="sdcMicro")'),"into your",code("R"),"prompt."), align="center"),
     column(12, p("For information on the support and development of the graphical user interface, please click", btn_credits,"."), align="center"),
     bsModal("cred_modal", title="Credits", trigger="btn_credits", uiOutput("credits"))
   )
