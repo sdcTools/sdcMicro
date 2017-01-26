@@ -74,7 +74,7 @@ extractLabels <- function(dat){
     varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
     # Check whether all strings are UTF-8 encoded    
     if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
-      return(sum(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") })))))
+      return(sum(!validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") })))))
     }
   } else {
     varLab <- NULL
