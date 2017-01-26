@@ -70,6 +70,12 @@ extractLabels <- function(dat){
     varLab <- as.data.frame(cbind(colnames(dat), lapply(dat, function(x){attr(x, "label")})))
     colnames(varLab) <- c("var.name", "var.label")
     rownames(varLab) <- NULL
+    # Set to NULL values in var.label to NA
+    varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
+    # Check whether all strings are UTF-8 encoded    
+    if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
+      return(sum(!validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") })))))
+    }
   } else {
     varLab <- NULL
   }
@@ -380,7 +386,7 @@ tryCatchFn <- function(expr) {
 #' @note if \code{type} is either \code{'sas'}, \code{'spss'} or \code{'stata'}, values read in as \code{NaN}
 #' will be converted to \code{NA}.
 #' @return a data.frame or an object of class 'simple.error'. If a stata file was read in, the resulting \code{data.frame}
-#' has an addtitional attribute \code{lab} in which variable and value labels are stored.
+#' has an additional attribute \code{lab} in which variable and value labels are stored.
 #' @author Bernhard Meindl
 #' @export
 readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=TRUE, ...) {
@@ -393,6 +399,10 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   if (type=="stata") {
     res <- tryCatchFn(read_dta(file=path))
     lab <- extractLabels(res)
+    if("integer" %in% class(lab)){
+      res <- simpleError(paste0(lab, " variable labels are not UTF-8 encoded. Correct the labels and reload the data."))
+      return(res)
+    }
   }
   if (type=="R") {
     res <- tryCatchFn(get(load(file=path)))
