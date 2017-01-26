@@ -74,7 +74,7 @@ extractLabels <- function(dat){
     varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
     # Check whether all strings are UTF-8 encoded    
     if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
-      stop("Not all labels are UTF-8 encoded. Correct the labels and reload the data.")
+      return(sum(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") })))))
     }
   } else {
     varLab <- NULL
@@ -399,6 +399,10 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   if (type=="stata") {
     res <- tryCatchFn(read_dta(file=path))
     lab <- extractLabels(res)
+    if("integer" %in% class(lab)){
+      res$message <- paste0(res$message, lab, "\n variable labels are not UTF-8 encoded. Correct the labels and reload the data.")
+      return(res)
+    }
   }
   if (type=="R") {
     res <- tryCatchFn(get(load(file=path)))
