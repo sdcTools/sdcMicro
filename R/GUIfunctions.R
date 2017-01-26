@@ -72,6 +72,10 @@ extractLabels <- function(dat){
     rownames(varLab) <- NULL
     # Set to NULL values in var.label to NA
     varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
+    # Check whether all strings are UTF-8 encoded    
+    if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
+      stop("Not all labels are UTF-8 encoded. Correct the labels and reload the data.")
+    }
   } else {
     varLab <- NULL
   }
