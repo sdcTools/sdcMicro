@@ -400,6 +400,7 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     res <- tryCatchFn(read_dta(file=path))
     lab <- extractLabels(res)
     if("integer" %in% class(lab)){
+      res <- NULL
       res$message <- paste0(res$message, lab, "\n variable labels are not UTF-8 encoded. Correct the labels and reload the data.")
       return(res)
     }
