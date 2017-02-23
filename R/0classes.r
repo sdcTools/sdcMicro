@@ -2,7 +2,7 @@
 #all <- setdiff(getNamespaceExports("shiny"), c("renderDataTable", "dataTableOutput"))
 #cat(paste("#' @importFrom shiny", all), sep="\n")
 
-#' @useDynLib sdcMicro
+#' @useDynLib sdcMicro, .registration=TRUE
 #' @import methods
 #' @import Rcpp
 #' @import robustbase
