@@ -377,9 +377,9 @@ output$ui_rescat_violating_kanon <- renderUI({
 })
 
 output$ui_catvar1 <- renderUI({
-  kv <- get_keyVars_names()
+  kv <- c(get_keyVars_names(), get_pramVars_names())
   if (length(kv)>1) {
-    kv <- setdiff(get_keyVars_names(), input$sel_catvar2)
+    kv <- setdiff(kv, input$sel_catvar2)
   }
   if (is.null(input$sel_catvar1)) {
     sel <- kv[1]
@@ -389,8 +389,8 @@ output$ui_catvar1 <- renderUI({
   selectInput("sel_catvar1", label=h5("Variable 1"), choices=kv, selected=sel, width="100%")
 })
 output$ui_catvar2 <- renderUI({
-  kv <- c("none",setdiff(get_keyVars_names(), input$sel_catvar1))
-  if ( length(kv)==0) {
+  kv <- c("none",setdiff(c(get_keyVars_names(), get_pramVars_names()), input$sel_catvar1))
+  if (length(kv)==0) {
     return(NULL)
   }
   if (is.null(input$sel_catvar2)) {
@@ -426,7 +426,7 @@ output$ui_rescat_mosaicplot <- renderUI({
   })
   output$mosaicplot_m <- renderPlot({
     req(input$sel_catvar1)
-    df <- get_manipKeyVars()
+    df <- cbind(get_manipKeyVars(), get_manipPramVars())
     vars <- c(input$sel_catvar1, input$sel_catvar2)
     if (input$sel_catvar2=="none") {
       barplot(table(df[[vars[1]]]))
@@ -473,7 +473,7 @@ output$ui_bivariate_tab <- renderUI({
   })
   output$biv_tab_m <- renderTable({
     req(input$sel_catvar1)
-    df <- get_manipKeyVars()
+    df <- cbind(get_manipKeyVars(), get_manipPramVars())
     vars <- c(input$sel_catvar1, input$sel_catvar2)
     if (vars[2]=="none") {
       tab <- addmargins(table(df[[vars[1]]], useNA="always"))

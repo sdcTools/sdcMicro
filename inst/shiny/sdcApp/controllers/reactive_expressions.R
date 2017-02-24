@@ -237,6 +237,14 @@ get_manipNumVars <- reactive({
   return(curObj@manipNumVars)
 })
 
+get_manipPramVars <- reactive({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NULL)
+  }
+  return(curObj@manipPramVars)
+})
+
 # risks
 get_risk <- reactive({
   curObj <- sdcObj()
