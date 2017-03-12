@@ -717,9 +717,9 @@ output$ui_sdcObj_create1 <- renderUI({
   helptxt2 <- "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor."
 
   out <- list(out,
-    fluidRow(column(12, h4("Setup an sdc-Problem", tipify(icon("question"), title=helptxt, placement="bottom")), align="center")),
-    #fluidRow(column(12, p(helptxt), align="center")),
-    #fluidRow(column(12, p(helptxt2), align="center")),
+    fluidRow(column(12, h4("Setup an sdc-Problem", tipify(icon("question"), title="helptxt", placement="bottom")), align="center")),
+    fluidRow(column(12, p(helptxt), align="center")),
+    fluidRow(column(12, p(helptxt2), align="center")),
     fluidRow(column(12, DT::dataTableOutput("setupTable", height="100%"))))
   out
 })
