@@ -691,13 +691,15 @@ output$ui_sdcObj_create1 <- renderUI({
     out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror"))))
   }
 
-  txt_setup <- paste("Please select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional),
+  helptxt <- paste("Please select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional),
     pram variables (optional), weights variable (optional), household cluster id (optional), variables to be removed (optional). Also, specify the parameters alpha and set a seed at the bottom of this page.")
 
-  txt_setup <- paste(txt_setup, "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor.")
+  helptxt2 <- "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor."
 
   out <- list(out,
-    fluidRow(column(12, h4("Select variables", tipify(icon("question"), title=txt_setup, placement="bottom")), align="center")),
+    fluidRow(column(12, h4("Setup an sdc-Problem", tipify(icon("question"), title=helptext, placement="bottom")), align="center")),
+    #fluidRow(column(12, p(helptxt), align="center")),
+    #fluidRow(column(12, p(helptxt2), align="center")),
     fluidRow(column(12, DT::dataTableOutput("setupTable", height="100%"))))
   out
 })
