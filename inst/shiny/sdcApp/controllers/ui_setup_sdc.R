@@ -696,14 +696,11 @@ output$setup_moreparams <- renderUI({
   sl_alpha <- sliderInput("sl_alpha",
     label=h5("Parameter 'alpha'", tipify(icon("question"), title=txt_alpha, placement="top")),
     value=1, min=0, max=1, step=0.01, width="90%")
-  help_alpha <- helpText("The higher alpha, the more keys containing missing values will contribute to the calculation of 'fk' and 'Fk'")
   sl_seed <- sliderInput("sl_seed",
     label=h5("Parameter 'seed'", tipify(icon("question"), title=txt_seed, placement="top")),
     value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
-  help_seed <- helpText("Select an initial (integer) value for the random seed generator")
   out <- list(
-    fluidRow(column(6, sl_alpha, align="center"), column(6, sl_seed, align="center")),
-    fluidRow(column(6, help_alpha, align="center"), column(6, help_seed, align="center")))
+    fluidRow(column(6, sl_alpha, align="center"), column(6, sl_seed, align="center")))
   out
 })
 
