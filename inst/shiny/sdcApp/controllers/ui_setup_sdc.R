@@ -508,13 +508,14 @@ sdcData <- reactive({
     "Variable Name"=vars,
     Type=dataTypes(),
     Key=shinyInput(radioButtons, length(vars), paste0("setup_key_",vv,"_"), choices=c("No", "Cat.", "Cont."), inline=TRUE),
-    Pram=shinyInput(checkboxInput, length(vars), paste0("setup_pram_",vv,"_"), value=FALSE, width="20px"),
     Weight=shinyInput(checkboxInput, length(vars), paste0("setup_weight_",vv,"_"), value=FALSE, width="20px"),
     "Cluster ID"=shinyInput(checkboxInput, length(vars), paste0("setup_cluster_",vv,"_"), value=FALSE, width="20px"),
+    Pram=shinyInput(checkboxInput, length(vars), paste0("setup_pram_",vv,"_"), value=FALSE, width="20px"),
     Remove=shinyInput(checkboxInput, length(vars), paste0("setup_remove_",vv,"_"), value=FALSE, width="20px")
   )
   df$nrCodes <- sapply(inputdata, function(x) { length(unique(x))} )
   df$nrNA <- sapply(inputdata, function(x) { sum(is.na(x))} )
+  colnames(df) <- c("Variable name", "Type", "Key variables", "Weight", "Hierarchical identifier", "PRAM", "Delete", "Number of levels", "Number of missing")
   rownames(df) <- NULL
   df
 })
@@ -691,15 +692,11 @@ output$ui_sdcObj_create1 <- renderUI({
     out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror"))))
   }
 
-  helptxt <- paste("Select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional),
-    pram variables (optional), weights variable (optional), household cluster id (optional), variables to be removed (optional). Also, specify the parameters alpha and set a seed at the bottom of this page.")
-
-  helptxt2 <- "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor."
+  txt_setup <- "Select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional), pram variables (optional), weights variable (optional), household cluster id (optional), variables to be removed (optional). Also, specify the parameters alpha and set a seed at the bottom of this page."
+  txt_setup <- paste(txt_setup, "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor.")
 
   out <- list(out,
-    fluidRow(column(12, h4("Setup an sdc-Problem", tipify(icon("question"), title="helptxt", placement="bottom")), align="center")),
-    fluidRow(column(12, p(helptxt), align="center")),
-    fluidRow(column(12, p(helptxt2), align="center")),
+    fluidRow(column(12, h4("Select variables", tipify(icon("question"), title=txt_setup, placement="bottom")), align="center")),
     fluidRow(column(12, DT::dataTableOutput("setupTable", height="100%"))))
   out
 })
