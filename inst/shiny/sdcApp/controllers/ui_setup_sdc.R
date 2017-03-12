@@ -672,7 +672,7 @@ output$setupbtn <- renderUI({
 output$setup_moreparams <- renderUI({
   txt_seed <- "The seed is used to initialize the random number generator used for probabilistic methods."
   txt_alpha <- "Parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
-  txt_alpha <- paste(txt_alpha, "measures for categorical key variables, and is the weight with which a key that coincide based on a missing value (NA) contributes to these frequencies.")
+  txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincide based on a missing value (NA) contributes to these frequencies.")
   sl_alpha <- sliderInput("sl_alpha",
     label=h5("Parameter 'alpha'", tipify(icon("question"), title=txt_alpha, placement="top")),
     value=1, min=0, max=1, step=0.01, width="90%")
@@ -691,15 +691,13 @@ output$ui_sdcObj_create1 <- renderUI({
     out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror"))))
   }
 
-  helptxt <- paste("Please select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional),
+  txt_setup <- paste("Please select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional),
     pram variables (optional), weights variable (optional), household cluster id (optional), variables to be removed (optional). Also, specify the parameters alpha and set a seed at the bottom of this page.")
 
-  helptxt2 <- "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor."
+  txt_setup <- paste(txt_setup, "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor.")
 
   out <- list(out,
-    fluidRow(column(12, h4("Setup an sdc-Problem"), align="center")),
-    fluidRow(column(12, p(helptxt), align="center")),
-    fluidRow(column(12, p(helptxt2), align="center")),
+    fluidRow(column(12, h4("Select variables"), tipify(icon("question"), title=txt_setup, placement="bottom"), align="center")),
     fluidRow(column(12, DT::dataTableOutput("setupTable", height="100%"))))
   out
 })
@@ -753,7 +751,7 @@ output$ui_sdcObj_info <- renderUI({
 })
 
 output$sel_sdc_infovar <- renderUI({
-  selectInput("sel_infov", label=h4("Select variable to show information"), choices=allVars(), width="100%")
+  selectInput("sel_infov", label=h4("Explore variables"), choices=allVars(), width="100%")
 })
 
 output$ui_sdcObj_create <- renderUI({
