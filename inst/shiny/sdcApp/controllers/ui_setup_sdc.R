@@ -712,8 +712,8 @@ output$ui_sdcObj_create1 <- renderUI({
     out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror"))))
   }
 
-  txt_setup <- "Select the following variables for setting up the sdcMicro object: categorical key variables, continuous key variables (optional), pram variables (optional), weights variable (optional), household cluster id (optional), variables to be removed (optional). Also, specify the parameters alpha and set a seed at the bottom of this page."
-  txt_setup <- paste(txt_setup, "Tip - Before you start, double-check and make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor.")
+  txt_setup <- "Select the following variables for setting up the SDC problem instance: categorical key variables, continuous key variables (optional), variables selected for PRAM (optional), sample weight (optional), hierarchical identifier (optional), variables to be deleted (optional). Also, specify the parameter alpha and set a seed at the bottom of this page."
+  txt_setup <- paste(txt_setup, tags$br(), tags$br(), "Tip - Before you start, make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor.")
 
   out <- list(out,
     fluidRow(column(12, h4("Select variables", tipify(icon("question"), title=txt_setup, placement="bottom")), align="center")),
@@ -747,16 +747,16 @@ output$ui_sdcObj_info <- renderUI({
     if (is.factor(inp)) {
       out <- list(out, fluidRow(
         column(12, renderPlot(plot(inp, main=NULL)), align="center")))
-      ui_nrLevs <- p("Number of levels including NA:", code(length(table(inp, useNA="always"))))
+      ui_nrLevs <- p("Number of levels including missing (NA):", code(length(table(inp, useNA="always"))))
     } else {
       out <- list(out, fluidRow(
         column(12, renderPlot(hist(inp, main=NULL)), align="center")))
-      ui_nrLevs <- p("Number of unique values including NA:", code(length(table(inp, useNA="always"))))
+      ui_nrLevs <- p("Number of unique values including missing (NA):", code(length(table(inp, useNA="always"))))
     }
 
     if (is.factor(inp)) {
       tt <- as.data.frame.table(table(inp, useNA="always"))
-      colnames(tt) <- c("Value", "Frequency")
+      colnames(tt) <- c("Level", "Frequency")
       out <- list(out, fluidRow(
         column(12, ui_nrLevs, align="center"),
         column(12, renderTable(tt))))
