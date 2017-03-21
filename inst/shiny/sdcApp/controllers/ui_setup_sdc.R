@@ -693,7 +693,7 @@ output$setupbtn <- renderUI({
 output$setup_moreparams <- renderUI({
   txt_seed <- "The seed is used to initialize the random number generator used for probabilistic methods."
   txt_alpha <- "Parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
-  txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincide based on a missing value (NA) contributes to these frequencies.")
+  txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincides based on a missing value (NA) contributes to these frequencies.")
   sl_alpha <- sliderInput("sl_alpha",
     label=h5("Parameter 'alpha'", tipify(icon("question"), title=txt_alpha, placement="top")),
     value=1, min=0, max=1, step=0.01, width="90%")
