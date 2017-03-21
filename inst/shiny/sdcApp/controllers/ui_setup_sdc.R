@@ -1,7 +1,7 @@
 # Message, if inputdata were loaded but no categorical variables are available
 # at least one categorical variable is required to setup the sdc-problem
 output$noCatVars <- renderUI({
-  txt <- "Please go back to Tab 'Microdata' and create at least one factor variable!"
+  txt <- "Go back to the Microdata tab and convert at least one variable to type factor."
   fluidRow(
     column(12, h4("No categorical variables available!", align="center")),
     column(12, p(txt, align="center"))
@@ -18,16 +18,16 @@ output$ui_sdcObj_summary <- renderUI({
     x <- print(curObj, type="general", docat=FALSE)
     out <- fluidRow(
       column(12, h4("Summary of dataset and variable selection"), align="center"),
-      column(12, p("The dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), align="center"),
-      column(12, list("Categorical key variables:", lapply(x$keyVars, function(x) {code(x)})), align="center"))
+      column(12, p("The loaded dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), align="center"),
+      column(12, list("Categorical key variable(s):", lapply(x$keyVars, function(x) {code(x)})), align="center"))
 
     if (length(x$numVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Numerical key variables:", lapply(x$numVars, function(x) {code(x)})), align="center")))
+        column(12, list("Numerical key variable(s):", lapply(x$numVars, function(x) {code(x)})), align="center")))
     }
     if (length(x$weightVar)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Sampling weights:", lapply(x$weightVar, function(x) {code(x)})), align="center")))
+        column(12, list("Sampling weight:", lapply(x$weightVar, function(x) {code(x)})), align="center")))
     }
     # cannot be selected when creating the sdc problem instance
     #if (length(x$strataVar)>0) {
@@ -36,11 +36,11 @@ output$ui_sdcObj_summary <- renderUI({
     #}
     if (length(x$householdId)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Household/cluster Id:", lapply(x$householdId, function(x) {code(x)})), align="center")))
+        column(12, list("Hierarchical identifier:", lapply(x$householdId, function(x) {code(x)})), align="center")))
     }
     if (length(x$delVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Deleted variables:", lapply(x$delVars, function(x) {code(x)})), align="center")))
+        column(12, list("Deleted variable(s):", lapply(x$delVars, function(x) {code(x)})), align="center")))
     }
     gV <- x$ghostVars
     if (length(gV)>0) {
@@ -65,13 +65,13 @@ output$ui_sdcObj_summary <- renderUI({
     if (is.null(x)) {
       return(invisible(NULL))
     }
-    txt <-"Reported is the number, mean size and size of the smallest category for recoded variables.
-      In parenthesis, the same statistics are shown for the unmodified data. Note: NA (missings) are counted as separate categories!"
+    txt <-"Reported is the number of level, average frequency of each level and frequency of the smallest level for categorical key variables.
+      In parentheses, the same statistics are shown for the original data. Note that NA (missing) is counted as a separate category."
     dt <- data.table(
-      "keyVar"=x$keyVars,
-      "Number of categories"=paste(x$categories$orig, x$categories$mod),
-      "Mean size"=paste(x$meansize$orig, x$meansize$mod),
-      "Size of smallest"=paste(x$minsize$orig, x$minsize$mod))
+      "Variable name"=x$keyVars,
+      "Number of levels"=paste(x$categories$orig, x$categories$mod),
+      "Average frequency"=paste(x$meansize$orig, x$meansize$mod),
+      "Frequency of smallest level"=paste(x$minsize$orig, x$minsize$mod))
     out <- fluidRow(
       column(12, h4("Information on categorical key variables"), align="center"),
       column(12, p(txt), align="center"),
@@ -158,7 +158,7 @@ output$ui_sdcObj_summary <- renderUI({
     dt <- data.table(keyVar=x$supps$KeyVar)
     dt[,v1:=paste0(x$supps[[2]]," (",x$supps[[3]],"%)")]
     dt[,v2:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
-    setnames(dt, c("Key variable", paste("Additional suppressions due to last run of",meth), "Total number of missings in variable (NA)"))
+    setnames(dt, c("Key variable", paste("Additional suppressions due to last run of",meth), "Total number of missing values (NA) in variable"))
     out <- list(fluidRow(
       column(12, h4("Information on local suppression"), align="center"),
       column(12, p(txt), align="center"),
@@ -173,16 +173,16 @@ output$ui_sdcObj_summary <- renderUI({
     if (is.null(x)) {
       return(NULL)
     }
-    out <- fluidRow(column(12, h4("Postrandomization"), align="center"))
+    out <- fluidRow(column(12, h4("PRAM"), align="center"))
     dt <- x$pram_summary
     for (i in 1:nrow(dt)) {
       out <- list(out, fluidRow(
         column(12, p("Variable",code(dt$variable[i])), align="center"),
-        column(12, tags$i("final transition matrix"), align="center"),
+        column(12, tags$i("transition matrix"), align="center"),
         column(12, uiOutput(paste0("transmat_pram_",i)), align="center")))
     }
     out <- list(out, fluidRow(
-      column(12, p("Summary of changed observations due to postrandomization"), align="center"),
+      column(12, p("Summary of changed observations due to PRAM"), align="center"),
       column(12, renderTable(dt), align="center")))
     out
   })
@@ -403,11 +403,11 @@ output$ui_sdcObj_explorevars <- renderUI({
 
   if (!is.null(lastError())) {
     return(fluidRow(
-      column(12, h4("The following Error has occured!", align="center")),
+      column(12, h4("The following error has occured!", align="center")),
       column(12, code(lastError()))))
   }
 
-  out <- fluidRow(column(12, h4("Explore variables in treated data"), align="center"))
+  out <- fluidRow(column(12, h4("Explore variables in modified data"), align="center"))
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_selanonvar1")),
     column(6, uiOutput("ui_selanonvar2"))))
@@ -426,7 +426,7 @@ output$ui_sdcObj_addghostvars <- renderUI({
     if (length(input$sel_gv2)==0) {
       return(NULL)
     }
-    btn_ghosts <- myActionButton("btn_addGhostVars", label="add 'Ghost'-variables", "primary")
+    btn_ghosts <- myActionButton("btn_addGhostVars", label="Add linked variables", "primary")
   })
   output$addgv_v1 <- renderUI({
     res <- possGhostVars()
@@ -434,20 +434,20 @@ output$ui_sdcObj_addghostvars <- renderUI({
   })
   output$addgv_v2 <- renderUI({
     res <- possGhostVars()
-    selectInput("sel_gv2", label=h5("Select ghost variable(s)"), choices=res$gv,  multiple=TRUE, width="100%")
+    selectInput("sel_gv2", label=h5("Select linked variable(s)"), choices=res$gv,  multiple=TRUE, width="100%")
   })
 
   res <- possGhostVars()
   if (length(res$gv) == 0) {
     return(fluidRow(column(12,
-      h4("No variables are available that could be used as",code("ghost-variables"),".", align="center"))))
+      h4("No variables are available that could be used as",code("linked variables"),".", align="center"))))
   }
 
   helptxt <- "Often datasets contain variables that are related to the key variables used for local suppression. Here you can link variables to"
   helptxt <- paste(helptxt, "categorical key variables. Any suppression in the key variable will lead to a suppression in the variables linked")
-  helptxt <- paste(helptxt, "to that key variable. Several variables can be linked to one key variable. The linked variables are called ghost variables.")
+  helptxt <- paste(helptxt, "to that key variable. Several variables can be linked to one key variable.")
   out <- fluidRow(
-    column(12, h4("Add ghost variables"), align="center"),
+    column(12, h4("Add linked variables"), align="center"),
     column(12, p(helptxt), align="center"))
   out <- list(out, fluidRow(
     column(6, uiOutput("addgv_v1"), align="center"),
