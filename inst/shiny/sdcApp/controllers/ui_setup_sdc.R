@@ -347,9 +347,9 @@ output$ui_sdcObj_explorevars <- renderUI({
     } else {
       out <- list(out, fluidRow(
         column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))), align="center")),
-        column(12, h5(HTML(paste("Summary of Variable",code(res$vars[1]))), align="center")),
+        column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))), align="center")),
         column(12, renderTable(res$tab1, include.rownames=FALSE), align="center"),
-        column(12, h5(HTML(paste("Summary of Variable",code(res$vars[2]))), align="center")),
+        column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))), align="center")),
         column(12, renderTable(res$tab2, include.rownames=FALSE), align="center")))
     }
 
@@ -443,8 +443,8 @@ output$ui_sdcObj_addghostvars <- renderUI({
       h4("No variables are available that could be used as",code("linked variables"),".", align="center"))))
   }
 
-  helptxt <- "Often datasets contain variables that are related to the key variables used for local suppression. Here you can link variables to"
-  helptxt <- paste(helptxt, "categorical key variables. Any suppression in the key variable will lead to a suppression in the variables linked")
+  helptxt <- "Often datasets contain variables that are related to the key variables used for local suppression and could be used to reconstruct suppressed values. Here you can link variables to"
+  helptxt <- paste(helptxt, "categorical key variables. Any suppression in the key variable will lead to a suppression in the variable(s) linked")
   helptxt <- paste(helptxt, "to that key variable. Several variables can be linked to one key variable.")
   out <- fluidRow(
     column(12, h4("Add linked variables"), align="center"),
@@ -474,12 +474,12 @@ output$ui_sdcObj_randIds <- renderUI({
     if (input$txt_randid_newid %in% allVarsP()) {
       return(NULL)
     }
-    myActionButton("btn_addRandID", label=("Add new ID-variable"), "primary")
+    myActionButton("btn_addRandID", label=("Add new ID variable"), "primary")
   })
 
   helptxt <- "The ID in microdata as well as the order of records can be used to reconstruct suppressed values."
   helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
-  helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal value.")
+  helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
   helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
 
   out <- fluidRow(
@@ -557,9 +557,8 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     showBtn <- FALSE
     txt <- p("Categorical key variables have to be of type",dQuote("factor"), " or type ", dQuote("integer"),".", tags$br(), tags$br(),
-      tags$span(style="color:red; font-weight:bold","You need to go back and change the variable selection or change the variable type before making other variable selections!"), tags$br(), tags$br(),
-      "The variable type can be changed in the Microdata tab.")
-    showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
+      tags$span(style="color:red; font-weight:bold","Change the variable selection or go back to the Microdata tab and change the variable type before making other variable selections."))
+    showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice for ",dQuote(vnames[ii]))), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
 
   # some selected numerical key-variables are factor or character
@@ -567,9 +566,8 @@ output$setupbtn <- renderUI({
   if (length(ii)>0) {
     showBtn <- FALSE
     txt <- p("Continuous key variables have to be of type ",dQuote("numeric")," or type ",dQuote("integer"), tags$br(), tags$br(),
-      tags$span(style="color:red; font-weight:bold","You need to go back and change the variable selection or change the variable type before making other variable selections!"), tags$br(), tags$br(),
-      "The variable type can be changed in the Microdata tab.")
-    showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
+      tags$span(style="color:red; font-weight:bold","Change the variable selection or go back to the Microdata tab and change the variable type before making other variable selections."))
+    showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice for ",dQuote(vnames[ii]))), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
 
   ## pram
