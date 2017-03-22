@@ -861,7 +861,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
 
   choices_modifications <- reactive({
     cc <- c(
-      "Display Microdata"="show_microdata",
+      "Display microdata"="show_microdata",
       "Explore variables"="view_var",
       "Reset variables"="reset_var",
       "Use subset of microdata"="sample_microdata",
