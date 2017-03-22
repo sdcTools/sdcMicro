@@ -17,8 +17,8 @@ output$ui_modify_recode_to_numeric <- renderUI({
     ))
   }
 
-  helptxt <- "Continuous key variables have to be of type 'numeric' or type 'integer'.  Variables of type 'character' or type 'factor' need to be converted"
-  helptxt <- paste(helptxt, "to type 'numeric' before selecting these as continuous key variables. Here you can convert variables of type 'character' and")
+  helptxt <- "Numerical key variables have to be of type 'numeric' or type 'integer'. Variables of type 'character' or type 'factor' need to be converted"
+  helptxt <- paste(helptxt, "to type 'numeric' before selecting these as numerical key variables. Here you can convert variables of type 'character' and")
   helptxt <- paste(helptxt, "type 'factor' to type 'numeric'.")
   out <- fluidRow(
     column(12, h4("Convert character/factor variables to numeric variables"), align="center"),
@@ -60,10 +60,10 @@ output$ui_modify_recode_to_factor <- renderUI({
     if (is.null(input$sel_algo)){
       return(NULL)
     }
-    sel_br <- customTextInput("txt_custom_breaks",label=h5("Specify the custom breaks"), value=input$txt_custom_breaks)
+    sel_br <- customTextInput("txt_custom_breaks",label=h5("Specify custom breaks"), value=input$txt_custom_breaks)
     help_br <- helpText(
       "Example input: 1,3,5,9 splits the variable into the 3 groups (1,3],(3,5] and (5,9].", br(),
-      "If you supply 1 number (e.g. 3), the variable will be split in 3 equal sized groups.")
+      "If you supply 1 number (e.g. 3), the variable will be split in 3 equally sized groups.")
     list(sel_br, tags$br(), help_br)
   })
   output$ui_globalRecode_custom <- renderUI({
@@ -243,10 +243,10 @@ output$ui_modify_change_factor <- renderUI({
       value=paste0(input$cbg_factor, collapse="_"), width="100%")
   })
 
-  out <- fluidRow(column(12, h4("Group factor levels in factor variables in raw data", align="center")))
+  out <- fluidRow(column(12, h4("Group factor levels in factor variables in original data", align="center")))
   if (length(facVars())==0) {
     out <- list(out, fluidRow(
-      column(12, h5("Currently, there are no factor-variables available that could be recoded!", align="center"))
+      column(12, h5("There are no factor variables available that could be recoded!", align="center"))
     ))
     return(out)
   }
@@ -311,7 +311,7 @@ output$ui_modify_create_stratvar <- renderUI({
 output$ui_set_to_na <- renderUI({
   output$ui_nasupptype <- renderUI({
     radioButtons("set_to_na_type", label=h5("How do you want to select the cells to be recoded to missing?"),
-      choices=c("By Id"="id", "By rule"="rule"), inline=TRUE)
+      choices=c("By rule"="rule", "By ID"="id"), inline=TRUE)
   })
   output$tab_inputdata_setna <- renderDataTable({
     a <- obj$inputdata
@@ -332,7 +332,7 @@ output$ui_set_to_na <- renderUI({
     if (input$set_to_na_type=="id") {
       res <- numericInput("num_na_suppid", label=h5("In which ID do you want to suppress values?"), value=1, min=1, max=nrow(obj$inputdata))
     } else {
-      res <- selectInput("num_na_suppid", label=h5("Which value in this variable would you like to set to NA"), multiple=FALSE, choices=sort(unique(obj$inputdata[[input$sel_na_suppvar]])))
+      res <- selectInput("num_na_suppid", label=h5("Which value in this variable would you like to set to missing (NA)"), multiple=FALSE, choices=sort(unique(obj$inputdata[[input$sel_na_suppvar]])))
     }
     return(res)
   })
@@ -534,7 +534,7 @@ output$ui_view_var <- renderUI({
 
   if (!is.null(lastError())) {
     return(fluidRow(
-      column(12, h4("The following Error has occured!", align="center")),
+      column(12, h4("The following error has occured!", align="center")),
       column(12, code(lastError()))))
   }
 
@@ -588,8 +588,8 @@ output$ui_show_microdata <- renderUI({
     my_data_dt()
   })
   
-  txt_microdata <- paste0("In this tab you can manipulate the data to prepare for setting up an object of class",code("sdcMicroObj"),"in the Anonymize tab. ")
-  txt_microdata <- paste0(txt_microdata, "The loaded dataset is",code(obj$microfilename),"and consists of",code(nrow(obj$inputdata)),"observations and ",code(ncol(obj$inputdata)),"variables.")
+  #txt_microdata <- paste0("In this tab you can manipulate the data to prepare for setting up an object of class",code("sdcMicroObj"),"in the Anonymize tab. ")
+  txt_microdata <- paste0("The loaded dataset is",code(obj$microfilename),"and consists of",code(nrow(obj$inputdata)),"observations and ",code(ncol(obj$inputdata)),"variables. ")
   if(is.null(attr(obj$inputdata, "dropped"))){
     txt_microdata <- paste0(txt_microdata, "No variables were dropped because of all missing values.")
   }else{
@@ -614,8 +614,8 @@ output$ui_show_microdata <- renderUI({
 # UI-output to use only a subset of the available microdata
 output$ui_sample_microdata <- renderUI({
   sel1 <- selectInput("sel_sdcP_sample_type", label=h5("Select a method to restrict the number of records"),
-  choices=c('n-Percent of the data'='n_perc',
-            'the first n-observations'='first_n',
+  choices=c('n percent of the data'='n_perc',
+            'the first n observations'='first_n',
             'every n-th observation'='every_n',
             'exactly n randomly drawn observations'='size_n'),
   selected=input$sel_sdcP_sample_type, multiple=FALSE, width="100%")
