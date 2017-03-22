@@ -854,7 +854,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
     }
     btn <- bsButton("btn_reset_inputdata_xx",label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small")
     fluidRow(
-      column(12, h4("Reset the inputdata"), align="center"),
+      #column(12, h4("Reset the inputdata"), align="center"),
       column(12, btn)
     )
   })
@@ -896,8 +896,8 @@ output$ui_modify_data_sidebar_left <- renderUI({
   })
 
   fluidRow(
-    column(12, uiOutput("btn_reset_inputdata")),
-    column(12, uiOutput("ui_sel_microdata_btns"))
+    column(12, uiOutput("ui_sel_microdata_btns")),
+    column(12, uiOutput("btn_reset_inputdata"))
   )
 })
 
