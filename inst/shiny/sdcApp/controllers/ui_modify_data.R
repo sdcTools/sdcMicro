@@ -741,11 +741,11 @@ output$ui_hierarchical_data_merge <- renderUI({
       "type"=dataTypes())
     return(
       fluidRow(
-        column(12, h4("Success"), align="center"),
-        column(12, p("Your original input data have already been enhanced with (anonymized) household-level data!"), align="center"),
+        column(12, h4("Merging of files was successful"), align="center"),
+        column(12, p("The (anonymized) household-level data were merged into the input dataset"), align="center"),
         column(12, p("The data set contains",code(nrow(inputdata())),"observations in the following",code(ncol(inputdata())),"variables."), align="center"),
         column(12, renderTable(df), align="center"),
-        column(12, p("To add another household-level dataset, you will have to delete the entire microdata file and start from scratch"), align="center")
+        column(12, p("In order to merge a different household level dataset, it is necessary to remove and reload the loaded microdata."), align="center")
     ))
   }
 
@@ -762,7 +762,7 @@ output$ui_hierarchical_data_merge <- renderUI({
   out <- list(fluidRow(column(12, h4("Merge Data"), align="center")))
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
-      column(12, h4("The following Error has occured!", align="center")),
+      column(12, h4("The following error has occured!", align="center")),
       column(12, code(lastError()), align="center")))
   }
   if (!is.null(obj$hhdata)) {
