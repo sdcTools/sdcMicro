@@ -65,7 +65,7 @@ output$ui_sdcObj_summary <- renderUI({
     if (is.null(x)) {
       return(invisible(NULL))
     }
-    txt <-"Reported is the number of level, average frequency of each level and frequency of the smallest level for categorical key variables.
+    txt <-"Reported is the number of levels, average frequency of each level and frequency of the smallest level for categorical key variables.
       In parentheses, the same statistics are shown for the original data. Note that NA (missing) is counted as a separate category."
     dt <- data.table(
       "Variable name"=x$keyVars,
@@ -109,11 +109,11 @@ output$ui_sdcObj_summary <- renderUI({
     reident <- x[[1]]$reident
     riskyobs <- x[[1]]$riskyObs
     out <- fluidRow(
-      column(12, h4("Risk measures for categorical variables"), align="center"),
-      column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population. In the original
-          data, we expected to have",code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications."), align="center"),
-      column(12, p("Currently there are",code(riskyobs$mod),"observations that have a higher risk that the main part of the data. In the
-          original data this number was",code(riskyobs$orig),"."), align="center"))
+      column(12, h4("Risk measures for categorical key variables"), align="center"),
+      column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population, as compared to",
+                   code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications in the original data."), align="center"),
+      column(12, p(code(riskyobs$mod)," observations have a higher risk than the risk in the main part of the data, as compared to ",
+                   code(riskyobs$orig)," observations in the original data."), align="center"))
     out
   })
   output$show_info_risk <- renderUI({
@@ -126,9 +126,9 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     out <- fluidRow(
-      column(12, h4("Information on risk for numerical key variables"), align="center"),
-      column(12, p("The disclosure risk is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),".
-      In the original data the risk is assumed to be between",code("0%"),"and",code("100%"),"."), align="center"),
+      column(12, h4("Risk measures for numerical key variables"), align="center"),
+      column(12, p("The disclosure risk is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),",
+      as compared to between",code("0%"),"and",code("100%"),"in the original data."), align="center"),
       column(12, h4("Information loss"), align="center"),
       column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
     )
@@ -658,26 +658,26 @@ output$setupbtn <- renderUI({
     zz <- intersect(which(useAsPram), ii)
     if (length(zz)>0) {
       showBtn <- FALSE
-      txt <- p("Selected variable to be deleted is also selected as pram variable.", tags$br(), tags$br(),
-        tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as pram variable before making other variable selections!"))
+      txt <- p("The variable selected to be deleted is also selected as PRAM variable.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","Undo this variable selection and select only variables to be deleted that are not selected as PRAM variable before making other variable selections."))
       showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[zz]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     zz <- intersect(which(useAsWeight), ii)
     if (length(zz)>0) {
       showBtn <- FALSE
-      txt <- p("Selected variable to be deleted is also selected as weight variable.", tags$br(), tags$br(),
-        tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as weight variable before making other variable selections!"))
+      txt <- p("The variable selected to be deleted is also selected as weight variable.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","Undo this variable selection and select only variables to be deleted that are not selected as weight variable before making other variable selections."))
       showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[zz]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     zz <- intersect(which(useAsClusterID), ii)
     if (length(zz)>0) {
       showBtn <- FALSE
-      txt <- p("Selected variable to be deleted is also selected as cluster-id variable.", tags$br(), tags$br(),
-        tags$span(style="color:red; font-weight:bold","You need to undo this variable selection and select only variables to be deleted that are not selected as cluster-id variable before making other variable selections!"))
+      txt <- p("Selected variable to be deleted is also selected as hierarchical identifier.", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","Undo this variable selection and select only variables to be deleted that are not selected as hierarchical indentifier before making other variable selections."))
       showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[zz]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
-  btn <- myActionButton("btn_setup_sdc",label=("Setup SDC Problem"), "primary")
+  btn <- myActionButton("btn_setup_sdc",label=("Setup SDC problem"), "primary")
   if (showBtn==TRUE) {
     return(fluidRow(column(12, div(btn, align="center"))))
   } else {
@@ -688,7 +688,7 @@ output$setupbtn <- renderUI({
 # show additional parameters
 output$setup_moreparams <- renderUI({
   txt_seed <- "The seed is used to initialize the random number generator used for probabilistic methods."
-  txt_alpha <- "Parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
+  txt_alpha <- "The parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
   txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincides based on a missing value (NA) contributes to these frequencies.")
   sl_alpha <- sliderInput("sl_alpha",
     label=h5("Parameter 'alpha'", tipify(icon("question"), title=txt_alpha, placement="top")),
