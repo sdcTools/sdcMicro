@@ -108,12 +108,14 @@ output$ui_sdcObj_summary <- renderUI({
     x <- print(curObj, type="risk", docat=FALSE)
     reident <- x[[1]]$reident
     riskyobs <- x[[1]]$riskyObs
+    txt_risk <- "Observations with a higher risk than the main part of the data are defined as observations with an individual risk higher than the median "
+    txt_risk <- paste0(txt_risk, "plus twice the median absolute deviation of the individual risk of all records in the dataset. Only individuals with an individual risk higher than 0.1 are considered.")
     out <- fluidRow(
       column(12, h4("Risk measures for categorical key variables"), align="center"),
       column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population, as compared to",
                    code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications in the original data."), align="center"),
       column(12, p(code(riskyobs$mod)," observations have a higher risk than the risk in the main part of the data, as compared to ",
-                   code(riskyobs$orig)," observations in the original data."), align="center"))
+                   code(riskyobs$orig)," observations in the original data.", tipify(icon("question"), title=txt_risk, placement="top")), align="center"))
     out
   })
   output$show_info_risk <- renderUI({
@@ -747,10 +749,12 @@ output$ui_sdcObj_info <- renderUI({
           dn <- dimnames(df)[[1]]
           dn[length(dn)] <- "NA"
           dimnames(df)[[1]] <- dn
-          barplot(df, names.arg = gsub(paste0("(.{", round(36/length(dn)), "})"), paste0("\\1", "\n"), dn), las=1)
+          mp <- barplot(df, las=1, xaxt = 'n')
           #barplot(table(inp, useNA = "always"), main = NULL,
           #                              names.arg = c(head(gsub(paste0("(.{", round(36/length(table(inp, useNA = "always"))), "})"), paste0("\\1", "\n"), names(table(inp, useNA = "always"))), -1), "NA"), las = 1)
-                                #plot(inp, main=NULL)
+          #plot(inp, main=NULL)
+          mp <- barplot(df, las=1, xaxt = 'n')
+          mtext(gsub(paste0("(.{", round(36/length(dn)), "})"), paste0("\\1", "\n"), dn), side = 1, line = 2, at = mp)
         }), align="center")))
       #line = (0.5 * max(nchar(names(table(inp, useNA = "always"))) / (36/length(table(inp, useNA = "always"))))),
       ui_nrLevs <- p("Number of levels including missing (NA):", code(length(table(inp, useNA="always"))))
