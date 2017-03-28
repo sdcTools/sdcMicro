@@ -219,7 +219,7 @@ output$ui_modify_change_factor <- renderUI({
     dn <- dimnames(df)[[1]]
     dn[length(dn)] <- "NA"
     dimnames(df)[[1]] <- dn
-    barplot(df)
+    barplot(df, names.arg = gsub(paste0("(.{", round(120/length(dn)), "})"), paste0("\\1", "\n"), dn), las=1)
   })
   output$reclocfac_var <- renderUI({
     vv <- facVars()
