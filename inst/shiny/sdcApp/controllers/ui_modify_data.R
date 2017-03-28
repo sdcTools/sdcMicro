@@ -508,7 +508,9 @@ output$ui_view_var <- renderUI({
       if (is.factor(vv1) | is.character(vv1)) {
         tt <- table(vv1, useNA="always")
         names(tt)[length(tt)] <- "NA"
-        barplot(tt, col="#DADFE1")
+        #barplot(tt, col="#DADFE1")
+        mp <- barplot(tt, col="#DADFE1", las=1, xaxt = 'n')
+        
       } else {
         hist(vv1, main=NULL, xlab=input$view_selvar1, col="#DADFE1")
       }

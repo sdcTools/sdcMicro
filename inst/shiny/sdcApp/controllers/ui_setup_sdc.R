@@ -378,7 +378,8 @@ output$ui_sdcObj_explorevars <- renderUI({
       if (is.factor(vv1) | is.character(vv1)) {
         tt <- table(vv1, useNA="always")
         names(tt)[length(tt)] <- "NA"
-        barplot(tt, col="#DADFE1")
+        #barplot(tt, col="#DADFE1")
+        mp <- barplot(tt, col="#DADFE1", las=1, xaxt = 'n')
       } else {
         hist(vv1, main=NULL, xlab=input$view_selanonvar1, col="#DADFE1")
       }
@@ -760,7 +761,7 @@ output$ui_sdcObj_info <- renderUI({
       ui_nrLevs <- p("Number of levels including missing (NA):", code(length(table(inp, useNA="always"))))
     } else {
       out <- list(out, fluidRow(
-        column(12, renderPlot(hist(inp, main=NULL)), align="center")))
+        column(12, renderPlot(hist(inp, main=NULL, xlab = input$sel_infov)), align="center")))
       ui_nrLevs <- p("Number of unique values including missing (NA):", code(length(table(inp, useNA="always"))))
     }
 
