@@ -742,7 +742,11 @@ output$ui_sdcObj_info <- renderUI({
     out <- NULL
     if (is.factor(inp)) {
       out <- list(out, fluidRow(
-        column(12, renderPlot(plot(inp, main=NULL)), align="center")))
+        column(12, renderPlot({barplot(table(inp, useNA = "always"), main = NULL,
+                                        names.arg = c(head(gsub(paste0("(.{", round(36/length(table(inp, useNA = "always"))), "})"), paste0("\\1", "\n"), names(table(inp, useNA = "always"))), -1), "NA"), las = 1)
+                                #plot(inp, main=NULL)
+                              }), align="center")))
+      #line = (0.5 * max(nchar(names(table(inp, useNA = "always"))) / (36/length(table(inp, useNA = "always"))))),
       ui_nrLevs <- p("Number of levels including missing (NA):", code(length(table(inp, useNA="always"))))
     } else {
       out <- list(out, fluidRow(
