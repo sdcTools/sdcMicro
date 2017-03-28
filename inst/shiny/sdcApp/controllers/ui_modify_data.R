@@ -311,8 +311,8 @@ output$ui_modify_create_stratvar <- renderUI({
 # UI-output to set specific values to NA
 output$ui_set_to_na <- renderUI({
   output$ui_nasupptype <- renderUI({
-    radioButtons("set_to_na_type", label=h5("How do you want to select the cells to be recoded to missing?"),
-      choices=c("By rule"="rule", "By ID"="id"), inline=TRUE)
+    radioButtons("set_to_na_type", label=h5("How to select values to recode to NA?"),
+      choices=c("by value"="rule", "by record ID"="id"), inline=TRUE)
   })
   output$tab_inputdata_setna <- renderDataTable({
     a <- obj$inputdata
@@ -325,15 +325,15 @@ output$ui_set_to_na <- renderUI({
     if (input$set_to_na_type=="id") {
       multiple <- TRUE
     }
-    res <- selectInput("sel_na_suppvar", choices=allVars(), multiple=multiple, label=h5("Select variable to set records to NA"), width="50%")
+    res <- selectInput("sel_na_suppvar", choices=allVars(), multiple=multiple, label=h5("Select variable"), width="50%")
     return(res)
   })
   output$ui_nasuppid <- renderUI({
     req(input$sel_na_suppvar, input$set_to_na_type)
     if (input$set_to_na_type=="id") {
-      res <- numericInput("num_na_suppid", label=h5("In which ID do you want to suppress values?"), value=1, min=1, max=nrow(obj$inputdata))
+      res <- numericInput("num_na_suppid", label=h5("Select record ID"), value=1, min=1, max=nrow(obj$inputdata))
     } else {
-      res <- selectInput("num_na_suppid", label=h5("Which value in this variable would you like to set to missing (NA)"), multiple=FALSE, choices=sort(unique(obj$inputdata[[input$sel_na_suppvar]])))
+      res <- selectInput("num_na_suppid", label=h5("Select value to recode to NA"), multiple=FALSE, choices=sort(unique(obj$inputdata[[input$sel_na_suppvar]])))
     }
     return(res)
   })
@@ -358,12 +358,13 @@ output$ui_set_to_na <- renderUI({
     return(btn)
   })
 
-  helptxt <- paste0("In the loaded dataset different missing value code might be available, such as",code(9),",",code(999),",",code(-9),", etc.")
+  helptxt <- paste0("The loaded dataset may contain different missing value codes, such as",code(9),",",code(999),",",code(-9),", etc. ")
   helptxt <- paste0(helptxt, "sdcMicro can only interpret missing values that are coded",code("NA"),". Here you can set other missing value")
-  helptxt <- paste0(helptxt, "codes to",code("NA"),"(by rule). It is also possible to set individual cells to",code("NA"),"by selecting the variable and record number (by id).")
+  helptxt <- paste0(helptxt, "codes to",code("NA"),"(by missing value code). All records with that value in the variable will be recoded to NA. Alternatively one can set individual cells to",code("NA"),"by selecting the variable and record id (by record ID).")
+  helptxt <- paste0(helptxt, " Note that it impossible to later retrieve the original missing values. R does not allow for distinct missing value codes.")  
 
   out <- fluidRow(
-    column(12, h4("Set cells to NA (missing)", align="center")),
+    column(12, h4("Set missing values to NA", align="center")),
     column(12, HTML(helptxt), align="center"),
     column(12, uiOutput("ui_nasupptype"), align="center"))
 
@@ -510,7 +511,7 @@ output$ui_view_var <- renderUI({
         names(tt)[length(tt)] <- "NA"
         #barplot(tt, col="#DADFE1")
         mp <- barplot(tt, col="#DADFE1", las=1, xaxt = 'n')
-        
+        mtext(gsub(paste0("(.{", round(120/length(tt)), "})"), paste0("\\1", "\n"), names(tt)), side = 1, line = 2, at = mp)
       } else {
         hist(vv1, main=NULL, xlab=input$view_selvar1, col="#DADFE1")
       }
@@ -541,7 +542,7 @@ output$ui_view_var <- renderUI({
       column(12, code(lastError()))))
   }
 
-  out <- fluidRow(column(12, h4("Explore variables in raw data", align="center")))
+  out <- fluidRow(column(12, h4("Explore variables in original data", align="center")))
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
 
   out <- list(out, fluidRow(

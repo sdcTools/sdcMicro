@@ -84,8 +84,7 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     x <- print(curObj, type="kAnon", docat=FALSE)
-    txt <- "Below the number of observations violating k-anonymity is shown for the original data and
-    the modified dataset"
+    txt <- "Below the number of observations violating k-anonymity is shown for the original data and the modified dataset"
     dt <- data.table(
       "k-anonymity"=paste0(c(2,3,5),"-anonymity"),
       "Modified data"=c(paste0(x[["2anon"]]$mod," (",x[["2anon"]]$mod_p,"%)"),
@@ -380,6 +379,7 @@ output$ui_sdcObj_explorevars <- renderUI({
         names(tt)[length(tt)] <- "NA"
         #barplot(tt, col="#DADFE1")
         mp <- barplot(tt, col="#DADFE1", las=1, xaxt = 'n')
+        mtext(gsub(paste0("(.{", round(120/length(tt)), "})"), paste0("\\1", "\n"), names(tt)), side = 1, line = 2, at = mp)
       } else {
         hist(vv1, main=NULL, xlab=input$view_selanonvar1, col="#DADFE1")
       }
@@ -751,11 +751,10 @@ output$ui_sdcObj_info <- renderUI({
           dn[length(dn)] <- "NA"
           dimnames(df)[[1]] <- dn
           mp <- barplot(df, las=1, xaxt = 'n')
+          mtext(gsub(paste0("(.{", round(36/length(dn)), "})"), paste0("\\1", "\n"), dn), side = 1, line = 2, at = mp)
           #barplot(table(inp, useNA = "always"), main = NULL,
           #                              names.arg = c(head(gsub(paste0("(.{", round(36/length(table(inp, useNA = "always"))), "})"), paste0("\\1", "\n"), names(table(inp, useNA = "always"))), -1), "NA"), las = 1)
           #plot(inp, main=NULL)
-          mp <- barplot(df, las=1, xaxt = 'n')
-          mtext(gsub(paste0("(.{", round(36/length(dn)), "})"), paste0("\\1", "\n"), dn), side = 1, line = 2, at = mp)
         }), align="center")))
       #line = (0.5 * max(nchar(names(table(inp, useNA = "always"))) / (36/length(table(inp, useNA = "always"))))),
       ui_nrLevs <- p("Number of levels including missing (NA):", code(length(table(inp, useNA="always"))))
