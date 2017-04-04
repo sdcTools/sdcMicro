@@ -16,18 +16,19 @@ List cpp_calcSuppInds(NumericMatrix inp, NumericVector checkVals) {
   NumericVector dists(N);
   NumericVector vn(1);
   LogicalVector naVals=is_na(checkVals);
-  for ( int i=0; i<N; i++ ) {
+  for (int i=0; i<N; i++) {
     int counter=0;
-    for ( int j=0; j<nrKeys; j++ ) {
+    for (int j=0; j<nrKeys; j++) {
       vn[0]=inp(i,j);
       bool res=any(is_na(vn));
       bool res_cV=naVals[j];
-      if ( (res==false) and (res_cV==false) and (vn[0] != checkVals[j]) ) {
+      bool res_all=all(is_na(vn));
+      if ((res==false) and (res_cV==false) and (res_all==false) and (vn[0] != checkVals[j])) {
         counter=counter+1;
       }
     }
     /* update minimalDistance */
-    if ( (counter < minDist) and counter > 0 ) {
+    if ((counter < minDist) and counter > 0) {
       minDist=counter;
     }
     /* update fk */
