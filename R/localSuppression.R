@@ -460,7 +460,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   if (!is.null(strataVars)) {
     ss <- NAinKey[,lapply(.SD, function(x) sum(x)), .SDcols=setdiff(names(NAinKey), strataVars)]
     NAinKey <- rbind(NAinKey,ss,fill=TRUE)
-    NAinKey[[strataVars]] <- NULL
+    NAinKey[,paste(strataVars):=NULL]
     NAinKey <- as.data.frame(NAinKey)
     rownames(NAinKey) <- rownames(NAinKey)
   }
