@@ -179,7 +179,7 @@ shinyServer(function(session, input, output) {
       comment <- paste0("## Reduce dataset size - Select every n-th observations of the original dataset")
     }
     if (input$sel_sdcP_sample_type=="size_n") {
-      comment <- paste0("## Reduce dataset size - Selectn randomly drawn observations from the original dataset")
+      comment <- paste0("## Reduce dataset size - Select n randomly drawn observations from the original dataset")
     }
     return(list(cmd=cmd, comment=comment))
   })
@@ -189,7 +189,7 @@ shinyServer(function(session, input, output) {
     if (input$sel_custom_split=="no") {
       cmd <- paste0("inputdata <- varToFactor(obj=inputdata")
       cmd <- paste0(cmd, ", var=",VecToRStr(input$sel_num_glrec, quoted=TRUE),")")
-      comment <- "## Convert a numeric variable to factor with user-specified breaks"
+      comment <- "## Convert a numeric variable to factor (each distinct value becomes a factor level)"
     } else {
       cmd <- paste0("inputdata <- globalRecode(obj=inputdata")
       cmd <- paste0(cmd, ", column=",dQuote(input$rb_num_glrec))
@@ -233,7 +233,7 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", keyVar=",dQuote(input$sel_gv1))
     cmd <- paste0(cmd, ", ghostVars=",VecToRStr(input$sel_gv2, quoted=TRUE),")")
 
-    txt_action <- paste0("Linked ", VecToRStr_txt(input$sel_gv2), " to ", dQuote(input$sel_gv1), " as ghost variable")
+    txt_action <- paste0("Linked ", VecToRStr_txt(input$sel_gv2), " to ", dQuote(input$sel_gv1), " for local suppression.")
     return(list(cmd=cmd, txt_action=txt_action))
   })
 
@@ -266,7 +266,7 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd,"\nrownames(mat) <- colnames(mat) <- ", VecToRStr(rn, quoted=TRUE),";\n")
     cmd <- paste0(cmd,"sdcObj <- pram(sdcObj, variables=",dQuote(input$sel_pramvars_expert),", pd=mat)")
 
-    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars_expert), " with invariant transition matrix (see above)\n")
+    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars_expert), " with user-specified transition matrix (see above)\n")
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
