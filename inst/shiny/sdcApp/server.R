@@ -303,8 +303,12 @@ shinyServer(function(session, input, output) {
     if (kAnon_useImportance()) {
       cur_importance <- kAnon_impvec()
     } else {
-      # default: 1:n
-      cur_importance <- 1:length(get_keyVars())
+      # calculate importance just as in localSuppression()
+      # this is required because we want to show the order on the summary-page
+      # otherwise it would be possible just to set cur_importance to NULL
+      x <- as.data.table(get_manipKeyVars())
+      xx <- x[,lapply(.SD, function(y) { length(table(y))}), .SDcols=get_keyVars_names()]
+      cur_importance <- match(names(xx), names(sort(xx, decreasing=FALSE)))
     }
     cmd <- paste0(cmd,", importance=",VecToRStr(cur_importance, quoted=FALSE))
 
