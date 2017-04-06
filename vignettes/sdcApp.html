@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,7 +12,7 @@
 
 <meta name="author" content="Bernhard Meindl" />
 
-<meta name="date" content="2017-01-17" />
+<meta name="date" content="2017-04-06" />
 
 <title>Using the interactive GUI - sdcApp</title>
 
@@ -32,7 +32,7 @@
 
 <h1 class="title toc-ignore">Using the interactive GUI - sdcApp</h1>
 <h4 class="author"><em>Bernhard Meindl</em></h4>
-<h4 class="date"><em>2017-01-17</em></h4>
+<h4 class="date"><em>2017-04-06</em></h4>
 
 
 <div id="TOC">
@@ -41,16 +41,16 @@
 <li><a href="#about">About/Help</a></li>
 <li><a href="#microdata">Microdata</a><ul>
 <li><a href="#upload_microdata">Upload microdata</a><ul>
-<li><a href="#use-testdatainternal-data">Use testdata/internal data</a></li>
-<li><a href="#r-dataset-.rdata">R-Dataset (.rdata)</a></li>
-<li><a href="#spss-file-.sav">SPSS-File (.sav)</a></li>
-<li><a href="#sas-file-.sasb7dat">SAS-File (.sasb7dat)</a></li>
-<li><a href="#csv-.csv-.txt">CSV (.csv, .txt)</a></li>
-<li><a href="#stata-file-.dta">STATA-File (.dta)</a></li>
+<li><a href="#testdatainternal-data">Testdata/internal data</a></li>
+<li><a href="#r-dataset-.rdata">R-dataset (.rdata)</a></li>
+<li><a href="#spss-file-.sav">SPSS-file (.sav)</a></li>
+<li><a href="#sas-file-.sasb7dat">SAS-file (.sasb7dat)</a></li>
+<li><a href="#csv-file-.csv-.txt">CSV-file (.csv, .txt)</a></li>
+<li><a href="#stata-file-.dta">STATA-file (.dta)</a></li>
 <li><a href="#additional_options">Additional options</a></li>
 </ul></li>
 <li><a href="#modify_microdata">Modify microdata</a><ul>
-<li><a href="#display_microdata">Display Microdata</a></li>
+<li><a href="#display_microdata">Display microdata</a></li>
 <li><a href="#explore_inputvars">Explore variables</a></li>
 <li><a href="#reset_inputvars">Reset variables</a></li>
 <li><a href="#use-subset-of-microdata">Use subset of microdata</a></li>
@@ -68,7 +68,7 @@
 <li><a href="#view_analyze_existing_problem">View/Analyze existing sdcProblem</a><ul>
 <li><a href="#show_sdc_summary">Show Summary</a></li>
 <li><a href="#explore_sdc_vars">Explore variables</a></li>
-<li><a href="#add_ghostvars">Add ‘Ghost’-Variables</a></li>
+<li><a href="#add_ghostvars">Add linked variables</a></li>
 <li><a href="#create_new_ids">Create new IDs</a></li>
 </ul></li>
 <li><a href="#anonymize_categorical">Anonymize categorical variables</a><ul>
@@ -147,40 +147,40 @@
 <div id="upload_microdata" class="section level2">
 <h2>Upload microdata</h2>
 <p>By default, no microdata are loaded into the GUI. Therefore the user has to upload some data in the GUI that can later be anonymized. If no microdata are available, the left-sidebar shows the following options that can be selected by clicking on the appropriate action button. In case the selected data could not be used (eg. the data could not be converted to a <code>data.frame</code>), the user is presented with the resulting error message and a button <code>Try-again</code>. After clicking this button, another microdata file can be imported.</p>
-<div id="use-testdatainternal-data" class="section level3">
-<h3>Use testdata/internal data</h3>
+<div id="testdatainternal-data" class="section level3">
+<h3>Testdata/internal data</h3>
 <p>This screen allows the user to select data.frames that are available in the users-workspace when starting the user interface. Two test-data sets (<code>testdata</code> and <code>testdata2</code>, information on which is available from <code>?testdata</code>) that are included in <code>sdcMicro</code> are always available. Pressing the action button below the drop-down selection input will make the GUI use the selected data frame.</p>
 </div>
 <div id="r-dataset-.rdata" class="section level3">
-<h3>R-Dataset (.rdata)</h3>
+<h3>R-dataset (.rdata)</h3>
 <p>Here users can opt to upload a file saved in <code>R</code> binary format. The users can change the options if character vectors should be automatically converted to factors and if variables that only contain missing-values only should be dropped. By clicking on the <code>Browse</code> button the user needs to select a <code>rdata</code>-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on <a href="#additional_options">additional options</a>.</p>
 </div>
 <div id="spss-file-.sav" class="section level3">
-<h3>SPSS-File (.sav)</h3>
+<h3>SPSS-file (.sav)</h3>
 <p>Here users can opt to upload a file exported from <code>SPSS</code>. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values (‘NA’) only should be dropped. By clicking on the <code>Browse</code> button the user needs to select a <code>sav</code>-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on <a href="#additional_options">additional options</a>.</p>
 </div>
 <div id="sas-file-.sasb7dat" class="section level3">
-<h3>SAS-File (.sasb7dat)</h3>
+<h3>SAS-file (.sasb7dat)</h3>
 <p>Here users can opt to upload a file exported from <code>SAS</code>. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values (‘NA’) only should be dropped. By clicking on the <code>Browse</code> button the user needs to select a <code>sas7bdat</code>-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on <a href="#additional_options">additional options</a>.</p>
 </div>
-<div id="csv-.csv-.txt" class="section level3">
-<h3>CSV (.csv, .txt)</h3>
+<div id="csv-file-.csv-.txt" class="section level3">
+<h3>CSV-file (.csv, .txt)</h3>
 <p>Here users can opt to upload a text file where variables are separated by some characters. Typically these data would be exported from software such as <code>Excel</code>. It is crucial that users indicate if the data file has variable names in the first row and how variables are separated. At this point, users have the option to have character vectors automatically converted to factor or have variables that contain only missing-values (‘NA’) dropped when the data are read into the GUI. For columns read as character (text), the character <code>&quot;</code> is ignored as quoting character and not imported. By clicking on the <code>Browse</code> button the user needs to select a <code>txt</code> or <code>csv</code>-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on <a href="#additional_options">additional options</a>.</p>
 </div>
 <div id="stata-file-.dta" class="section level3">
-<h3>STATA-File (.dta)</h3>
+<h3>STATA-file (.dta)</h3>
 <p>Here users can opt to upload a file exported from <code>Stata</code>. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values (‘NA’) only should be dropped. By clicking on the <code>Browse</code> button the user needs to select a <code>dta</code>-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on <a href="#additional_options">additional options</a>.</p>
 </div>
 <div id="additional_options" class="section level3">
 <h3>Additional options</h3>
 <p>We now describe the choices users can make when uploading data.</p>
-<p><strong>Convert character-vectors to factors?</strong></p>
+<p><strong>Convert string variables (character vectors) to factor variables?</strong></p>
 <p>This option is not available when an existing data frame from the current workspace is selected/used. For any other selection, this radio button input has two possible choices, <code>TRUE</code> (the default value) and <code>FALSE</code>. If <code>TRUE</code>, any variables that are read into <code>R</code> as character-vectors should be automatically converted to a factor variable. Each distinct value of the variable will be a factor level in the imported dataset. If <code>FALSE</code>, no conversion is applied.</p>
-<p><strong>Drop variables with only NA-values</strong></p>
+<p><strong>Drop variables with only missing values (NA)?</strong></p>
 <p>This option is not available when an existing data frame from the current workspace is selected/used. For any other selection, this radio button input has two possible choices, <code>TRUE</code> (the default value) and <code>FALSE</code>. If <code>TRUE</code>, any variables in which only <code>NA</code>-values are read in are removed from the data set. If this option is set to <code>FALSE</code>, these variables (if any) will not be dropped.</p>
-<p><strong>First row contains variable names</strong></p>
+<p><strong>Does the first row contain the variable names?</strong></p>
 <p>This option is only available when a text/csv file is imported. This radio button input has two possible choices, <code>TRUE</code> (the default value) and <code>FALSE</code>. If <code>TRUE</code>, the first row of the imported data set will be interpreted as variable names, if <code>FALSE</code>, variable names are automatically generated.</p>
-<p><strong>Separator (Comma, Semicolon, Tab)</strong></p>
+<p><strong>Select the field seperator (Comma, Semicolon, Tab)</strong></p>
 <p>This option is only available when a text/csv file is imported. The radio button input has three possible choices, <code>Comma</code> (the default value) <code>Semicolon</code> and <code>Tab</code> defining the value that is used to separate variables in the input file.</p>
 <ul>
 <li><code>Comma</code>: the <code>&quot;,&quot;</code> character is used as separator</li>
@@ -196,7 +196,7 @@
 <p>Once data have been uploaded, the content of the <em>Microdata</em>-page changes and users can select from a range of possibilities on what to do with the current inputdata. Once data are available, a button <code>Reset inputdata</code> is available on top of the sidebar. Clicking this button allows to reset or delete the current input data. However, clicking this button does not immediately reset the problem. Instead, a pop-up window comes up where the user has to confirm to reset the current microdata. This action will be performed, if the user click on the button labelled <code>Delete current inputdata</code>. If the user clicks <code>Dismiss</code>, the inputdata remains unchanged.</p>
 <p>Below this button, a list of action buttons is shown. Clicking on any of these buttons changes the content of the main column. The currently active selection has a different color than the currently inactive buttons. By default, the first entry (“<em>Display Microdata</em>”) is selected. These entries can be selected by clicking on the desired text or directly on the button. We now continue to describe the features that can be selected.</p>
 <div id="display_microdata" class="section level3">
-<h3>Display Microdata</h3>
+<h3>Display microdata</h3>
 <p>This is the default selection, after microdata have been successfully imported or uploaded as described in <a href="#upload_microdata">uploading microdata</a>. This page gives a short overview on the microdata. It shows the name of the imported file as well as the number of observations and the number of variables that are available. Below this information, the user is presented with an interactive table containing the current microdata. The variables can be sorted by clicking on the small arrows next to the variable names on top of the table. Also on the top, there is a dropdown field where users can select how many observations should be displayed on one page. On the bottom of the table the users can find a dynamic pagination field which allows users to jump to a given <em>“page”</em> of the current table.</p>
 </div>
 <div id="explore_inputvars" class="section level3">
@@ -234,8 +234,8 @@
 <h3>Use subset of microdata</h3>
 <p>On this page it is possible to decrease the size of the input data. This is especially useful if one wants to test different parameter settings and a run on the complete dataset would take long. To reduce the size of the input dataset, the user has to select a method using the drop down field <code>Select a method to restrict the number of records</code> and to select a value from the slider <code>Set 'n' for the selected method</code>. The following choices are possible on how to reduce the dataset, the range of values that can be chosen from the slider depends on the choice.</p>
 <ul>
-<li><code>n-Percent of the data</code>: <code>n%</code> of the data will be randomly chosen. The slider ranges in this case from 1 to 100.</li>
-<li><code>the first n-observations</code>: the data set is decreased by only using the first <code>n%</code> records. The slider ranges in this case from 1 to the total number of records.</li>
+<li><code>n percent of the data</code>: <code>n%</code> of the data will be randomly chosen. The slider ranges in this case from 1 to 100.</li>
+<li><code>the first n observations</code>: the data set is decreased by only using the first <code>n%</code> records. The slider ranges in this case from 1 to the total number of records.</li>
 <li><code>every n-th observation</code>: This choice allows to create a simple, systematic sample of input data by selecting every <code>nth</code> observation. The slider ranges in this case from 1 to at max 500.</li>
 <li><code>exactly n randomly drawn observations</code>: the data set is decreased by taking a random sample of <code>n%</code> records. The slider ranges in this case from 1 to the total number of records.</li>
 </ul>
@@ -243,10 +243,10 @@
 </div>
 <div id="convert-numeric-to-factor" class="section level3">
 <h3>Convert numeric to factor</h3>
-<p>This page allows to convert continuous variables (<code>numeric</code> or <code>integer</code>) into factors. Users can choose from a range of possibilites on how the factor variable should be generated, ranging from automatic conversion to complete manual control.</p>
+<p>This page allows to convert numerical variables (<code>numeric</code> or <code>integer</code>) into factors. Users can choose from a range of possibilites on how the factor variable should be generated, ranging from automatic conversion to complete manual control.</p>
 <p>By default, two input fields are available. On the left hand side there is a dropdown select field termed <code>Choose numeric variables</code> where the user can select from the list of numeric variables in the input data set. Next to this element, there is are two radio buttons labelled <code>Use custom breaks?</code> with two options, <code>no</code> (the default) and <code>yes</code>. If the <code>no</code> is selected in this input and at least one numeric variable has been clicked from the select input <code>Choose numeric variable(s)</code>, a button termed <code>Convert to factor(s)</code> occurs. Pressing this button converts all of the selected numerical variables into factors. Afterwards, the user is taken to the <a href="#explore_inputvars">explore variables</a> page where the first of the selected variable(s) is shown.</p>
 <p>If, however, the radio buttons <code>Use custom breaks?</code> are set to <code>yes</code>, the layout of the page changes. In this case, the user is able to adjust the way the factor variable should be generated and additional UI elements appear. The first visible change is, that only one numeric variable can now be selected. Now, a list of radio buttons labelled <code>Choose a numeric variable</code> is shown where all available variables are printed below each other. Selecting a specific variable works by clicking on either the variable name or the radio button itself. The next choice the user has to make is in a select input field termed <code>Select algorithm</code> in which <code>equidistant</code> (the default), <code>logEqui</code>, <code>equalAmount</code> or <code>manual</code> are possible values.</p>
-<p>The remaining user interface is the same for the first three choices of the <code>Select algorithm</code> input and is slightly different if <code>manual</code> has been selected. In the first case, a numeric input field labelled <code>Specify number of intervals</code> is shown while in the second case a text input field labelled <code>Specify the custom breaks</code> occurs right next to the select input field where the algorithm can be selected.</p>
+<p>The remaining user interface is the same for the first three choices of the <code>Select algorithm</code> input and is slightly different if <code>manual</code> has been selected. In the first case, a numeric input field labelled <code>Specify number of intervals</code> is shown while in the second case a text input field labelled <code>Specify custom breaks</code> occurs right next to the select input field where the algorithm can be selected.</p>
 <p>If either <code>equidistant</code>, <code>logEqui</code> or <code>equalAmount</code> are selected, the number specified in the numeric input field defines the number of levels the new factor will have. The difference between the methods are:</p>
 <ul>
 <li><code>equidistant</code>: uses breakpoints that generate intervals of equal length. The number of records in each interval might differ.</li>
@@ -274,9 +274,9 @@
 </div>
 <div id="set-specific-values-to-na" class="section level3">
 <h3>Set specific values to <code>NA</code></h3>
-<p>In this section, users can set values in some variables to missing (<code>NA</code>). The first step is to choose one of two possible methods by choosing either <code>by Id</code> (the default selection) or <code>by rule</code> in the radio button input labelled <code>How do you want to select the cells to be recoded to missing?</code> on top of the page.</p>
-<p>If <code>by Id</code> has been selected, the user can set values in one or more variables for a specific record to missing. He therefore needs to select at least one variable in the input called <code>Select variable to set records to NA</code>. Once at least one variable has been selected, a new input field occurs. In this input called <code>In which ID do you want to suppress values?</code>, a number between 1 and at most the number of records can be specified. This selection refers to the row in which for the selected variables the values will be set to <code>NA</code>. The user can change this index either by clicking on the small arrows at the right hand side of the input field which allow to increment or decrement the current number by one. As an alternative, it is also possible to directly enter a number in the field.</p>
-<p>In case <code>by rule</code> has been selected, these choices are slightly different. In the variable selection it is only possible to select one variable. The other difference is that there is no input field where the user can select a number. Instead, there is a dropdown field where the user can select one of the distinct values of the selected variable. The idea is that all records having this values in the selected variable will the set to <code>NA</code>.</p>
+<p>In this section, users can set values in some variables to missing (<code>NA</code>). The first step is to choose one of two possible methods by choosing either <code>by record ID</code> (the default selection) or <code>by value</code> in the radio button input labelled <code>How do you want to select the cells to be recoded to missing?</code> on top of the page.</p>
+<p>If <code>by record ID</code> has been selected, the user can set values in one or more variables for a specific record to missing. He therefore needs to select at least one variable in the input called <code>Select variable</code>. Once at least one variable has been selected, a new input field occurs. In this input called <code>Select record ID</code>, a number between 1 and at most the number of records can be specified. This selection refers to the row in which for the selected variables the values will be set to <code>NA</code>. The user can change this index either by clicking on the small arrows at the right hand side of the input field which allow to increment or decrement the current number by one. As an alternative, it is also possible to directly enter a number in the field.</p>
+<p>In case <code>by value</code> has been selected, these choices are slightly different. In the variable selection it is only possible to select one variable. The other difference is that there is no input field where the user can select a number. Instead, there is a dropdown field where the user can select one of the distinct values of the selected variable. The idea is that all records having this values in the selected variable will the set to <code>NA</code>.</p>
 <p>The remaining part of this page is identical for both choices of the method. Below these inputs, an interactive table showing the current microdata is shown. This table can be filtered and navigated exactly the same way as already described <a href="#display_microdata">here</a>. If all selections are valid, a button labelled <code>Set values to NA</code> is shown above this table. Pressing this button sets the correspondig values to <code>NA</code> in the micro data. Afterwards, the page changes and the <a href="#explore_inputvars">Exlore variables</a> page is shown. In this page, the (first) selected variable in which values should be set to missing is pre-selected to be analyzed.</p>
 </div>
 <div id="hierarchical-data" class="section level3">
@@ -297,27 +297,27 @@
 <p>If microdata are available and no problem has been defined, the user can define a new sdc problem instance. Details on how this can be done are given in chapter <a href="#setup_sdcproblem">Set up a problem</a>. Once a problem instance has been defined, the page layout changes and the user can either view or modify the problem instance as described <a href="#view_analyze_existing_problem">here</a> or apply anonymization techniques to <a href="#anonymize_categorical">categorical</a> or <a href="#anonymize_numerical">continuous</a> variables. Details on how specific methods can be applied are given in chapter <a href="#anonymization_methods">Anonymization methods</a>.</p>
 <div id="setup_sdcproblem" class="section level2">
 <h2>Set up a problem</h2>
-<p>If microdata have already been uploaded, the first step in the anonymization procedure is to create an sdc problem which can be done on this page. The layout of this page is split into two parts. On the left hand side, the user is presented with a table and choices that are required to define a new problem instance. On the right hand side, the user is given the possibility to explore a variable. This is useful for example, to decide which variables should be used as categorical or continuous key variables. For further discussion on the choice of variables, the user should have a look at <code>?createSdcObj</code> which is the underlying function that is used to generate a problem. We now explain in detail how to proceed.</p>
-<p>On top of the right hand sidebar the user is shown a select input field labelled <code>Select variable to show information</code> in which any of the variables from the current micro data set can be selected. By default the first variable of the data set is chosen. Below this select input a graph depending on the variable type is shown. If the selected variable is either of type <code>factor</code>, <code>character</code> or <code>integer</code> (with less or equal than 10 unique values), a barplot is shown. For variables of type <code>numeric</code> or <code>integer</code> with more than 10 unique values, a histogram showing the distribution is plotted. Below the plot, the number of unique values including <code>NA</code> is shown. Finally, below this information even more information on the selected variable is shown. In case of a continuous variable, the typical main summary statistics (Minimum, Mean, Median, Maximum and 5%-, 25%-, 75%- and 95%-quantiles) are presented while for factor variables (as well as integer variables with not more than 10 unique values), the number of occurences for each possible level is shown.</p>
+<p>If microdata have already been uploaded, the first step in the anonymization procedure is to create an sdc problem which can be done on this page. The layout of this page is split into two parts. On the left hand side, the user is presented with a table and choices that are required to define a new problem instance. On the right hand side, the user is given the possibility to explore a variable. This is useful for example, to decide which variables should be used as categorical or numerical key variables. For further discussion on the choice of variables, the user should have a look at <code>?createSdcObj</code> which is the underlying function that is used to generate a problem. We now explain in detail how to proceed.</p>
+<p>On top of the right hand sidebar the user is shown a select input field labelled <code>Explore variables</code> in which any of the variables from the current micro data set can be selected. By default the first variable of the data set is chosen. Below this select input a graph depending on the variable type is shown. If the selected variable is either of type <code>factor</code>, <code>character</code> or <code>integer</code> (with less or equal than 10 unique values), a barplot is shown. For variables of type <code>numeric</code> or <code>integer</code> with more than 10 unique values, a histogram showing the distribution is plotted. Below the plot, the number of unique values including missing (<code>NA</code>) is shown. Finally, below this information even more information on the selected variable is shown. In case of a continuous variable, the typical main summary statistics (Minimum, Mean, Median, Maximum and 5%-, 25%-, 75%- and 95%-quantiles) are presented while for factor variables (as well as integer variables with not more than 10 unique values), the number of occurences for each possible level is shown.</p>
 <p>On the left hand side, an interactive table with a row for each variable available in the microdata and a total of 9 columns is shown. This table allows the user to specify relevant variables for the sdc problem. Also, it shows additional information on each variable. The variables are:</p>
 <ul>
-<li><strong>Variable.Name</strong>: the variable name<br />
+<li><strong>Variable name</strong>: the variable name<br />
 </li>
 <li><strong>Type</strong>: the class of the variable according to <code>class()</code></li>
-<li><strong>Key</strong>: radio buttons with 3 choices, <code>no</code> (the default), <code>Cat.</code> and <code>Cont.</code>
+<li><strong>Key variables</strong>: radio buttons with 3 choices, <code>no</code> (the default), <code>Cat.</code> and <code>Cont.</code>
 <ul>
 <li><code>no</code>: the variable is not uses as either categorical or continuous key variable</li>
 <li><code>Cat.</code>: the variable is used as categorical key variable</li>
 <li><code>Cont.</code>: the variable is used as continuous key variable</li>
 </ul></li>
-<li><strong>Pram</strong>: variables that are suitable to be postrandomized</li>
 <li><strong>Weight</strong>: the variable that contains sampling weights (if any)</li>
-<li><strong>Cluster.ID</strong>: the variable that identifies clusters (for example households)</li>
-<li><strong>Remove</strong>: variables that should be excluded when setting up the sdc problem.</li>
-<li><strong>nrCodes</strong>: the number of unique values in the variable</li>
-<li><strong>nrNA</strong>: number of missing values in the variable</li>
+<li><strong>Hierarchical identifier</strong>: the variable that identifies clusters (for example households)</li>
+<li><strong>PRAM</strong>: variables that are suitable to be postrandomized</li>
+<li><strong>Delete</strong>: variables that should be excluded when setting up the sdc problem.</li>
+<li><strong>Number of levels</strong>: the number of unique values in the variable</li>
+<li><strong>Number of missing</strong>: number of missing values in the variable</li>
 </ul>
-<p>For columns <code>Pram</code>, <code>Weight</code>, <code>Cluster.ID</code> and <code>Remove</code>, checkboxes are present in the table. These checkboxes are by default not selected. The checkboxes can be enabled by clicking on them. While there can at most be one variable selected as weight variable and variable holding cluster ids, multiple variables may be checked in column <code>Remove</code> or <code>Pram</code>.</p>
+<p>For columns <code>PRAM</code>, <code>Weight</code>, <code>Hierarchical identifier</code> and <code>Delete</code>, checkboxes are present in the table. These checkboxes are by default not selected. The checkboxes can be enabled by clicking on them. While there can at most be one variable selected as weight variable and variable holding cluster ids, multiple variables may be checked in column <code>Remove</code> or <code>Pram</code>.</p>
 <p>Below the table, two slider inputs are shown. The first one, labelled <code>Parameter &quot;alpha&quot;</code> is relevant for the frequency calculation given the categorical key variables that contain missing (<code>NA</code>) values. For this input, values between <code>0</code> and <code>1</code> (the default setting) in steps of <code>0.01</code> can be selected. We note that leaving the value at <code>1</code> leads to the same results as in versions of <code>sdcMicro</code> &lt;= 4.7.0. For details on this parameter, please have a look at <code>?freqCalc</code>. The second slider, termed <code>Parameter &quot;seed&quot;</code> can take on values between <code>-250</code> and <code>250</code> in steps of <code>1</code> and is the number used to set the seed for the random number generator to ensure reproducability. By default, this value is set to <code>0</code>. We note that once the sliders are selected, values can also be increased and decreased by clicking the up and down (or left and right) keys on the keyboard.</p>
 <p>Whenever values in either the radio buttons or the checkboxes are changed, it is internally checked if all conditions for a successful generation of a new sdc problem are fulfilled. In the case that some restrictions are violated, either a popup window containing additional information occurs or a red button with the error message is shown. The user can then change the variable settings in the table. Once all checks are passed, a blue button labelled <code>Setup SDC problem</code> appears below the two sliders. Clicking on this button creates the sdc problem. Finally, the page refreshes and the layout changes. In <a href="#anonymization_methods">Anonymization Methods</a>, these changes are further explained.</p>
 </div>
@@ -360,11 +360,11 @@
 </ul>
 <p>In this section, information about the dimension (number of records, number of variables) of the current data set in the active problem instance is shown. Additionally, the important variables in the sdcMicro are listed. These variables are:</p>
 <ul>
-<li><em>Categorical key variables</em>: the selected categorical key variables</li>
-<li><em>Numerical key variables</em>: the continuous key variables</li>
-<li><em>Sampling weights</em>: variable containing sampling weights</li>
-<li><em>Household/cluster Id</em>: variable holding household or cluster identificators</li>
-<li><em>Deleted variables</em>: variables that have been deleted when setting up the current problem</li>
+<li><em>Categorical key variable(s)</em>: the selected categorical key variables</li>
+<li><em>Numerical key variable(s)</em>: the continuous key variables</li>
+<li><em>Sampling weight</em>: variable containing sampling weights</li>
+<li><em>Hierarchical identifier</em>: variable holding household or cluster identificators</li>
+<li><em>Deleted variable(s)</em>: variables that have been deleted when setting up the current problem</li>
 <li><em>Linked variables</em>: variables that are linked to categorical key variables</li>
 </ul>
 <p>We note that only the first entry (<em>Categorical key variables</em>) is always visible. The other entries are only shown when they were specified when the sdc problem was created as described <a href="#setup_sdcproblem">here</a>.</p>
@@ -377,10 +377,10 @@
 </ul>
 <p>In this part of the summary, some aggregation statistics on the categorical key variables are printed in tabular format. The table holds <code>4</code> columns and features a row for each categorical key variable of the current problem instance. The columns of this table are:</p>
 <ul>
-<li><em>keyVar</em>: the name of the key variable</li>
-<li><em>Number of categories</em>: the current number of categories</li>
-<li><em>Mean size</em>: the mean size of the existing categories</li>
-<li><em>Size of smallest</em>: The number of records in the smallest category</li>
+<li><em>Variable name</em>: the name of the key variable</li>
+<li><em>Number of levels</em>: the current number of categories</li>
+<li><em>Average frequency</em>: the mean size of the existing categories</li>
+<li><em>Frequency of smallest level</em>: The number of records in the smallest category</li>
 </ul>
 <p>The the last three columns, the same information based on the data set that was used to create the problem instance is shown in parenthesis. We note that <code>NA</code> values (missings) are counted as separate categories in this table.</p>
 <ul>
@@ -399,14 +399,14 @@
 </ul>
 <p>This table changes for example, if categorical key variables are <a href="#recoding_sdcproblem">recoded</a>, k-anonymity is <a href="#kanon">established</a>, postrandomization has been applied (which is described <a href="#pram_simple">here</a> and <a href="#pram_expert">here</a>) or values based in their individual risk value are <a href="#supp_highrisk">suppressed</a>.</p>
 <ul>
-<li><code>Postrandomization</code></li>
+<li><code>PRAM</code></li>
 </ul>
-<p>In case, variables have been postrandomized, as described <a href="#pram_simple">here</a> and <a href="#pram_expert">here</a>, the final transition matrices as are shown for each variable that has been post-randomized.</p>
+<p>In case, variables have been postrandomized, as described <a href="#pram_simple">here</a> and <a href="#pram_expert">here</a>, the transition matrices as are shown for each variable that has been post-randomized.</p>
 <p>At the end of this section, a table with three columns summarizing the postrandomization results is printed. The columns are:</p>
 <ul>
 <li><em>variable</em>: variable name of variable that has been postrandomized</li>
 <li><em>nrChanges</em>: the absolute number of value-changes.</li>
-<li>percChanges*: the percentage of changed values</li>
+<li><em>percChanges</em>: the percentage of changed values</li>
 </ul>
 <p>For each variable that has been postrandomized, a row is added to this table.</p>
 <ul>
@@ -426,7 +426,7 @@
 </ul>
 <p>This table is updated, whenever a <a href="#anonymize_numerical">numeric anonymization technique</a> is applied on at least one numeric key variable.</p>
 <ul>
-<li><code>Information on risk for numerical key variables</code></li>
+<li><code>Risk measures for numerical key variables</code></li>
 </ul>
 <p>This part shows a global risk measure based on the numeric key variables for the current and the initial data set. This information is only visible if at least one variable has been specified as numerical key variable when <a href="#setup_sdcproblem">setting up</a> the current problem.</p>
 <p>The assumtion is that the re-identification risk based on numerical key variables is initially always between <code>0%</code> and <code>100%</code>. The more the numeric key variables are changed, the less the upper bound of this risk interval is.</p>
@@ -444,15 +444,15 @@
 <p>This view allows users to explore all variables in their current state in the sdc problem. The functionality is exactly the same as it was already described in <a href="#explore_inputvars">Explore variables</a> for the exploration of variables in the originally uploaded micro data set. The only difference being that the analyzed variables are now those currently available in the active problem instance.</p>
 </div>
 <div id="add_ghostvars" class="section level4">
-<h4>Add ‘Ghost’-Variables</h4>
+<h4>Add linked variables</h4>
 <p>Here, users can link one or more variables to a specific categorical key variable. For any linked variable, the anonymized dataset will feature the same suppression pattern than the key variable. This is helpful if for example, similar variables exist but it would not make sense to all add of them as categorical key variables.</p>
 <p>In order to link a variable to a key variable, one has to select the key variable using a drop-down menu field labelled <code>Select categorical key variable</code>. Next to this input there is another ‘select input’ field where all variables that are not used as either categorical or numerical key variables, weight- or stratification variable can be selected to be linked to the key variable before. In this input field, multiple variables may be selected.</p>
-<p>Once at least one variable has been selected for linking, a button labelled <code>add 'Ghost'-variables</code> appears at the bottom of the page. Pressing this button adds the link to the current sdc problem and the view refreshes to the <a href="#show_sdc_summary">Show Summary</a> page. This information is also displayed on top of the page in the section <code>Important variables and information</code>.</p>
+<p>Once at least one variable has been selected for linking, a button labelled <code>Add linked variables</code> appears at the bottom of the page. Pressing this button adds the link to the current sdc problem and the view refreshes to the <a href="#show_sdc_summary">Show Summary</a> page. This information is also displayed on top of the page in the section <code>Important variables and information</code>.</p>
 </div>
 <div id="create_new_ids" class="section level4">
 <h4>Create new IDs</h4>
 <p>In this part of the GUI it is possible create a new random variable. To perform the task, the user needs to specify two inputs. In the first one, termed <code>Specify name for the new ID variable</code>, the desired variable name of the new id needs to be entered. The second input is a drop down field, in which either <code>none</code> (the default value) or any variable available from the current sdc problem may be selected. In case a variable has been selected in this input, the newly generated variable features identical (but random) numbers for equal values of the selected variable.</p>
-<p>When both inputs have been chosen, a button labelled <code>Add new ID-variable</code> appears at the bottom of the page. Pressing this button creates the new variable and adds it to the current sdc problem. The view finally updates and the <a href="#show_sdc_summary">Show Summary</a> page is shown where the dimension of the data set have been updated.</p>
+<p>When both inputs have been chosen, a button labelled <code>Add new ID variable</code> appears at the bottom of the page. Pressing this button creates the new variable and adds it to the current sdc problem. The view finally updates and the <a href="#show_sdc_summary">Show Summary</a> page is shown where the dimension of the data set have been updated.</p>
 </div>
 </div>
 <div id="anonymize_categorical" class="section level3">
