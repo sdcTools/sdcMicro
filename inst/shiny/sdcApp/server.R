@@ -318,12 +318,12 @@ shinyServer(function(session, input, output) {
       k <- params$k
       txt_action <- NULL
       for (i in 1:length(k)) {
-        txt_action <- paste0(txt_action, "Establishing ",k[i],"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[as.numeric(cur_importance)]),") for all ",params$use[i],"-combinations of key variables.\n\n")
+        txt_action <- paste0(txt_action, "Establishing ",k[i],"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[order(as.numeric(cur_importance))]),") for all ",params$use[i],"-combinations of key variables.\n\n")
       }
     } else {
       cmd <- paste0(cmd, ", combs=NULL")
       k <- input$sl_kanon_k
-      txt_action <- paste0("Establishing ",k,"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[as.numeric(cur_importance)]),")")
+      txt_action <- paste0("Establishing ",k,"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[order(as.numeric(cur_importance))]),")")
     }
     cmd <- paste0(cmd, ", k=",VecToRStr(k, quoted=FALSE),")")
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
