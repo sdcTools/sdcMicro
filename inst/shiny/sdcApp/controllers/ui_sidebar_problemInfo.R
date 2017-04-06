@@ -54,12 +54,12 @@ output$risk_sb_anonymize <- renderUI({
   v3_o <- paste0(n5_o," (",formatC(100*(n5_o/obs), format="f", digits=2),"%)")
 
   df <- data.table(
-    Measures=c("2-anonymity","3-anonymity","5-anonymity"),
-    Original=c(v1_o, v2_o, v3_o),
-    Modified=c(v1,v2,v3))
-
+    "k-anonimity"=c("2-anonymity","3-anonymity","5-anonymity"),
+    "Modified data"=c(v1,v2,v3),
+    "Original data"=c(v1_o, v2_o, v3_o))
+  
   fluidRow(
-    column(12, h4("Risk (k-anonymity)"), align="center"),
+    column(12, h4("k-anonymity"), align="center"),
     column(12, DT::renderDataTable({
       df
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
