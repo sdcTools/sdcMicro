@@ -425,7 +425,7 @@ setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function
 
   if (randomizeRecords!="no") {
     hhid <- get.sdcMicroObj(obj, "hhId")
-    if (is.null(hhId) | randomizeRecords=="simple") {
+    if (is.null(hhid) | randomizeRecords=="simple") {
       # just simple randomization
       o <- o[sample(1:nrow(o)),]
     } else {
