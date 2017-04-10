@@ -124,7 +124,7 @@ output$ui_export_data <- renderUI({
       column(12, myActionButton("btn_export_anon_data", "Save dataset", btn.style="primary"), align="center")
     ))
 
-    if (!is.null(obj$lastdataexport)) {
+    if (!is.null(obj$lastdataexport) & is.null(lastError())) {
       out <- list(out, fluidRow(
         column(12, tags$br(), p("The dataset was saved as", code(obj$lastdataexport)), align="center")))
     }
