@@ -635,6 +635,11 @@ shinyServer(function(session, input, output) {
     if (input$dat_exp_type=="dta") {
       cmd <- paste0(cmd,", lab=obj$stata_labs")
     }
+    if (input$dat_exp_type=="csv") {
+      cmd <- paste0(cmd, ", col.names=",input$export_csv_header)
+      cmd <- paste0(cmd, ", sep=",dQuote(input$export_csv_sep))
+      cmd <- paste0(cmd, ", dec=",dQuote(input$export_csv_dec))
+    }
     cmd <- paste0(cmd,", fileOut=",dQuote(fout),")\n")
     attributes(cmd)$evalAsIs <- TRUE
     return(list(cmd=cmd, path=obj$path_export, fout=fout))

@@ -406,7 +406,7 @@ infodat <- reactive({
   if (length(kV)==0 ) {
     return(NULL)
   }
-  df <- data.frame(Variable=kV, type="keyVar", Suppressions=0)
+  df <- data.frame(Variable=kV, type="cat. key variable", Suppressions=0)
 
   ls <- info_localsupp()
   if (!is.null(ls)) {
@@ -415,25 +415,25 @@ infodat <- reactive({
 
   nV <- get_numVars_names()
   if (length(nV)>0) {
-    df <- rbind(df, data.frame(Variable=nV, type="numVar", Suppressions=NA))
+    df <- rbind(df, data.frame(Variable=nV, type="num. key variable", Suppressions=NA))
   }
   wV <- get_weightVar_name()
   if (length(wV)>0) {
-    df <- rbind(df, data.frame(Variable=wV, type="weightVar", Suppressions=NA))
+    df <- rbind(df, data.frame(Variable=wV, type="sampling weight", Suppressions=NA))
   }
   sV <- get_strataVar_names()
   if (length(sV)>0) {
-    df <- rbind(df, data.frame(Variable=sV, type="strataVar", Suppressions=NA))
+    df <- rbind(df, data.frame(Variable=sV, type="strata", Suppressions=NA))
   }
 
   pV <- get_pramVars_names()
   if (length(pV)>0) {
-    df <- rbind(df, data.frame(Variable=pV, type="pramVar", Suppressions=NA))
+    df <- rbind(df, data.frame(Variable=pV, type="PRAM variable", Suppressions=NA))
   }
 
   # params
   res <- obj$sdcObj@options
-  params <- data.frame(Parameter=c("nrObs","alpha","RandomSeed"),
+  params <- data.frame(Parameter=c("number of records","alpha","random seed"),
     Value=c(nrow(obj$inputdata), res$alpha,res$seed))
   params$Value <- as.character(params$Value)
   list(df=df, params=params)
