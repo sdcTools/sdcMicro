@@ -70,8 +70,11 @@ extractLabels <- function(dat){
     varLab <- as.data.frame(cbind(colnames(dat), lapply(dat, function(x){attr(x, "label")})))
     colnames(varLab) <- c("var.name", "var.label")
     rownames(varLab) <- NULL
+    # Set to NA values in var.label that have more than one element (value labels)
+    varLab[which(sapply(dat, function(x) { length(attr(x, "label")) }) > 1), 2] <- NA
     # Set to NULL values in var.label to NA
     varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
+
     # Check whether all strings are UTF-8 encoded    
     if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
       return(sum(!validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") })))))
