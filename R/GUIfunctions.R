@@ -72,6 +72,8 @@ extractLabels <- function(dat){
     rownames(varLab) <- NULL
     # Set to NULL values in var.label to NA
     varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
+    # Set to NULL values in var.label that have more than one element (value labels)
+    varLab[which(sapply(dat, function(x) { length(attr(x, "label")) }) > 1), 2] <- NA
     # Convert all variable labels to UTF-8
     varLab[, 2] <- unlist(varLab[,2], use.names = FALSE)
     varLab[which(!is.na(varLab[,2]) & !is.null(varLab[,2])), 2] <- toUTF8(varLab[which(!is.na(varLab[,2]) & !is.null( varLab[,2])), 2])
