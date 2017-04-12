@@ -72,10 +72,13 @@ extractLabels <- function(dat){
     rownames(varLab) <- NULL
     # Set to NULL values in var.label to NA
     varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
+    # Convert all variable labels to UTF-8
+    varLab[, 2] <- unlist(varLab[,2], use.names = FALSE)
+    varLab[which(!is.na(varLab[,2]) & !is.null(varLab[,2])), 2] <- toUTF8(varLab[which(!is.na(varLab[,2]) & !is.null( varLab[,2])), 2])
     # Check whether all strings are UTF-8 encoded    
-    if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
-      return(sum(!validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") })))))
-    }
+    #if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
+    #  return(sum(!validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") })))))
+    #}
   } else {
     varLab <- NULL
   }
@@ -392,17 +395,24 @@ tryCatchFn <- function(expr) {
 readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=TRUE, ...) {
   if (type=="sas") {
     res <- tryCatchFn(read_sas(data_file=path))
+    # Convert column names to utf8
+    colnames(res) <- enc2utf8(colnames(res))
   }
   if (type=="spss") {
     res <- tryCatchFn(read_spss(file=path))
+    # Convert column names to utf8
+    colnames(res) <- enc2utf8(colnames(res))
   }
   if (type=="stata") {
     res <- tryCatchFn(read_dta(file=path))
+    # Convert column names to utf8
+    colnames(res) <- enc2utf8(colnames(res))
+    
     lab <- extractLabels(res)
-    if("integer" %in% class(lab)){
-      res <- simpleError(paste0(lab, " variable labels are not UTF-8 encoded. Correct the labels and reload the data."))
-      return(res)
-    }
+    #if("integer" %in% class(lab)){
+    #  res <- simpleError(paste0(lab, " variable labels are not UTF-8 encoded. Correct the labels and reload the data."))
+    #  return(res)
+    #}
   }
   if (type=="R") {
     res <- tryCatchFn(get(load(file=path)))
@@ -468,7 +478,18 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
       attr(res, "dropped") <- dropped
     }
   }
-
+  
+  # Convert levels in factor and character variables to utf8
+  for (i in dim(res)[2]) {
+    #if("character" %in% class(res[,i])){
+      #which(res[,i] check for NULL, NA
+    #}
+    if("factor" %in% class(res[,i])){
+      if (!all(validUTF8(levels(res[,i])))){
+        levels(res[,i])[which(!validUTF8(levels(res[,i])))] <- toUTF8(levels(res[,i])[which(!validUTF8(levels(res[,i])))])
+      }
+    }
+  }
   if (type=="stata") {
     attr(res, "lab") <- lab
   }

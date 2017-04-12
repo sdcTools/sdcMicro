@@ -6,6 +6,7 @@ library(haven)
 library(DT)
 library(shinyBS)
 library(data.table)
+library(stringi)
 # required that 'dQuote()' works nicely when
 # outputting R-Code
 options(useFancyQuotes=FALSE)
