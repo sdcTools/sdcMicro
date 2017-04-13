@@ -72,7 +72,7 @@ extractLabels <- function(dat){
     rownames(varLab) <- NULL
     # Set to NULL values in var.label to NA
     varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
-    # Check whether all strings are UTF-8 encoded    
+    # Check whether all strings are UTF-8 encoded
     if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
       return(sum(!validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") })))))
     }
@@ -119,10 +119,10 @@ selectHouseholdData <- function(dat, hhId, hhVars) {
 
   # Keep only one observation per household
   res <- res[which(!duplicated(res[,hhId])),]
-  
+
   # Sort hhVars on the order of the variables in dat
   hhVars <- colnames(dat)[which(colnames(dat) %in% hhVars)]
-  
+
   # Drop all variables that are not at the household level
   res <- res[,c(hhId, hhVars), drop=FALSE]
   invisible(res)
@@ -345,7 +345,7 @@ definition=function(obj, var) {
   }
   for (vv in var) {
     if("factor" %in% class(obj[[vv]])){
-      obj[[vv]] <- as.numeric(levels(obj[[vv]]))[obj[[vv]]] 
+      obj[[vv]] <- as.numeric(levels(obj[[vv]]))[obj[[vv]]]
     }else{
       obj[[vv]] <- as.numeric(obj[[vv]])
     }
@@ -563,7 +563,8 @@ subsetMicrodata <- function(obj, type, n) {
 #' \item {'rdata'}{ output will be saved in the R binary file-format.}
 #' \item {'sav'}{ output will be saved as SPSS-file.}
 #' \item {'dta'}{ ouput will be saved as STATA-file.}
-#' \item {'csv'}{ output will be saved as comma seperated (text)-file.}}
+#' \item {'csv'}{ output will be saved as comma seperated (text)-file.}
+#' \item {'sas'}{ output will be saved as SAS-file (sas7bdat).}}
 #' @param fileOut (character) file to which output should be written
 #' @param ... optional arguments used for \code{write.table} if argument \code{format} equals \code{csv}
 #' @return NULL
@@ -581,6 +582,9 @@ writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
   }
   if (format=="sav") {
     write_sav(data=dat, path=fileOut)
+  }
+  if (format=="sas") {
+    write_sas(data=dat, path=fileOut)
   }
   if (format=="dta") {
     # add label information

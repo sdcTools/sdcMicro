@@ -629,7 +629,12 @@ shinyServer(function(session, input, output) {
   # export/save the anonymized file
   code_export_anondata <- reactive({
     input$btn_export_anon_data # required for timestamp!
-    fout <- paste0("exportedData_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".",input$dat_exp_type)
+    if (input$dat_exp_type=="sas") {
+      fext <- "sas7bdat"
+    } else {
+      fext <- input$dat_exp_type
+    }
+    fout <- paste0("exportedData_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".",fext)
     fout <- file.path(obj$path_export, fout)
     cmd <- paste0("writeSafeFile(obj=sdcObj, format=",dQuote(input$dat_exp_type), ", randomizeRecords=",dQuote(input$rb_export_randomizeorder))
     if (input$dat_exp_type=="dta") {
@@ -995,7 +1000,7 @@ shinyServer(function(session, input, output) {
     obj$sdcObj <- NULL
     obj$code_anonymize <- c()
     obj$code_setup <- c()
-    obj$anon_performed <- NULL    
+    obj$anon_performed <- NULL
     obj$code_read_and_modify <- c()
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
