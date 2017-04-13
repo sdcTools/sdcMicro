@@ -38,4 +38,3 @@ graphical user interface \code{\link{sdcApp}} only.
 \author{
 Bernhard Meindl
 }
-

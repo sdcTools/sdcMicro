@@ -32,4 +32,3 @@ sdc <- calcRisks(sdc)
 \seealso{
 \code{\link{sdcMicroObj-class}}
 }
-

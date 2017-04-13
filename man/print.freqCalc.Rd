@@ -26,11 +26,10 @@ f <- freqCalc(francdat, keyVars=c(2,4,5,6),w=8)
 f
 
 }
-\author{
-Matthias Templ
-}
 \seealso{
 \code{\link{freqCalc}}
 }
+\author{
+Matthias Templ
+}
 \keyword{print}
-

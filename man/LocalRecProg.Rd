@@ -50,6 +50,7 @@ categories based on the recoding result and repeatedly apply this algorithm.
  \describe{
 \item{list("signature(obj=\"sdcMicroObj\")")}{}}
 }
+
 \examples{
 # LocalRecProg
 data(testdata2)
@@ -77,4 +78,3 @@ sdc <- LocalRecProg(sdc)
 Alexander Kowarik, Bernd Prantner, IHSN C++ source, Akimichi Takemura
 }
 \keyword{manip}
-

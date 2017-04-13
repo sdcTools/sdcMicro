@@ -25,11 +25,10 @@ data_suda2
 }
 
 }
-\author{
-Matthias Templ
-}
 \seealso{
 \code{\link{suda2}}
 }
+\author{
+Matthias Templ
+}
 \keyword{print}
-

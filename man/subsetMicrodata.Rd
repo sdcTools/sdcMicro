@@ -29,4 +29,3 @@ methods. This function will only be used in the graphical user interface \code{\
 \author{
 Bernhard Meindl
 }
-

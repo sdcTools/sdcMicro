@@ -31,4 +31,3 @@ starts the graphical user interface developed with \emph{shiny}.
 sdcApp(theme="flatly")
 }
 }
-

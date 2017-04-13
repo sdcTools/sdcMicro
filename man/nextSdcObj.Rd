@@ -16,4 +16,3 @@ a modified \code{\link{sdcMicroObj-class}} object
 \description{
 internal function used to provide the undo-functionality.
 }
-

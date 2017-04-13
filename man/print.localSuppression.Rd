@@ -25,11 +25,10 @@ l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))
 l1
 
 }
-\author{
-Matthias Templ
-}
 \seealso{
 \code{\link{localSuppression}}
 }
+\author{
+Matthias Templ
+}
 \keyword{print}
-

@@ -36,4 +36,3 @@ sdc <- addGhostVars(sdc, keyVar="roof", ghostVars=c("represent"))
 Bernhard Meindl
 }
 \keyword{manip}
-

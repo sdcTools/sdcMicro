@@ -18,4 +18,3 @@ reads an sdcProblem with code that has been exported within \code{\link{sdcApp}}
 \author{
 Bernhard Meindl
 }
-

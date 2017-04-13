@@ -47,11 +47,10 @@ sdc <- createSdcObj(testdata2, keyVars=c('urbrur','roof','walls','water','electc
 sdc <- topBotCoding(sdc, value=500000, replacement=1000, column="income")
 testdataout <- extractManipData(sdc)
 }
-\author{
-Matthias Templ and Bernhard Meindl
-}
 \seealso{
 \code{\link{indivRisk}}
 }
+\author{
+Matthias Templ and Bernhard Meindl
+}
 \keyword{manip}
-

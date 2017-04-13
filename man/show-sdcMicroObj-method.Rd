@@ -16,4 +16,3 @@ a sdcMicro object
 \description{
 show a sdcMicro object
 }
-

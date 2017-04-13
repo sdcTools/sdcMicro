@@ -55,9 +55,6 @@ sdc <- localSupp(sdc, keyVar='urbrur', threshold=0.045)
 print(sdc, type="ls")
 
 }
-\author{
-Matthias Templ and Bernhard Meindl
-}
 \references{
 Templ, M. \emph{Statistical Disclosure Control for Microdata
 Using the R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number
@@ -66,5 +63,7 @@ Using the R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number
 \seealso{
 \code{\link{freqCalc}}, \code{\link{indivRisk}}
 }
+\author{
+Matthias Templ and Bernhard Meindl
+}
 \keyword{manip}
-
