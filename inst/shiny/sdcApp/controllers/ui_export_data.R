@@ -63,12 +63,17 @@ output$ui_export_data <- renderUI({
     txt <- list("The file will be exported using", code("write_sav()"), "from package", code("haven"),".")
     fluidRow(column(12, p(txt, align="center")))
   })
+  output$ui_export_sas <- renderUI({
+    txt <- list("The file will be exported using", code("write_sas()"), "from package", code("haven"),".")
+    fluidRow(column(12, p(txt, align="center")))
+  })
   output$ui_export_stata <- renderUI({
     txt <- list("The file will be exported using", code("write_dta()"), "from package", code("haven"),".")
     fluidRow(column(12, p(txt, align="center")))
   })
   rb_exptype <- radioButtons("dat_exp_type", label=h5("Select file format for export", align="center"),
-    choices=c("R-dataset (.RData)"="rdata","SPSS-file (.sav)"="sav","CSV-file (.csv)"="csv", "STATA-file (.dta)"="dta"), width="100%", selected=input$dat_exp_type, inline=TRUE)
+    choices=c("R-dataset (.RData)"="rdata","SPSS-file (.sav)"="sav","CSV-file (.csv)"="csv", "STATA-file (.dta)"="dta", "SAS-file (.sas7bdat)"="sas"),
+    width="100%", selected=input$dat_exp_type, inline=TRUE)
 
   out <- fluidRow(
     column(12, h4("Export anonymized microdata"), align="center"))
@@ -91,6 +96,9 @@ output$ui_export_data <- renderUI({
     if (input$dat_exp_type == "sav") {
       out <- list(out, uiOutput("ui_export_spss"))
     }
+    if (input$dat_exp_type == "sas") {
+      out <- list(out, uiOutput("ui_export_sas"))
+    }
     if (input$dat_exp_type == "dta") {
       out <- list(out, uiOutput("ui_export_stata"))
     }
@@ -109,7 +117,7 @@ output$ui_export_data <- renderUI({
       txt_randomize_hh  <- paste(txt_randomize_hh, " - Randomize by hierarchical identifier and within hierarchical units: the order of the hierchical units is randomized as well as the order of the records within the hierarchcial units")
       choices <- c("No randomization"="no","Randomization at record level"="simple",
         "Randomize by hierarchical identifier"="byHH", "Randomize by hierarchical identifier and within hierarchical units"="withinHH")
-      
+
       if (!is.null(curObj@hhId)) {
         rb <- radioButtons("rb_export_randomizeorder", label=h5("Randomize order of records", tipify(icon("question"), title=txt_randomize_hh, placement="top")), choices=choices[-2], inline=TRUE)
       } else {

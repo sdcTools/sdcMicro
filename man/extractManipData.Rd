@@ -55,4 +55,3 @@ dataM <- extractManipData(sdc)
 \author{
 Alexander Kowarik, Bernhard Meindl
 }
-

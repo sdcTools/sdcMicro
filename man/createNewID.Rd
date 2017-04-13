@@ -21,4 +21,3 @@ an \code{\link{sdcMicroObj-class}}-object with updated slot \code{origData}
 This is useful if the record IDs consist, for example, of a geo identifier and the household line number.
 This method can be used to create new, random IDs that cannot be reconstructed.
 }
-

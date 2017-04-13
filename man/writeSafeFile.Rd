@@ -14,7 +14,8 @@ writeSafeFile(obj, format, randomizeRecords, fileOut, ...)
 \item {'rdata'}{ output will be saved in the R binary file-format.}
 \item {'sav'}{ output will be saved as SPSS-file.}
 \item {'dta'}{ ouput will be saved as STATA-file.}
-\item {'csv'}{ output will be saved as comma seperated (text)-file.}}}
+\item {'csv'}{ output will be saved as comma seperated (text)-file.}
+\item {'sas'}{ output will be saved as SAS-file (sas7bdat).}}}
 
 \item{randomizeRecords}{(logical) specifies, if the output records should be randomized. The following
 options are possible:
@@ -38,4 +39,3 @@ graphical user interface \code{\link{sdcApp}} only.
 \author{
 Bernhard Meindl
 }
-

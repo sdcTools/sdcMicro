@@ -54,4 +54,3 @@ head(testdata2)
 The International Household Survey Network, www.ihsn.org
 }
 \keyword{datasets}
-

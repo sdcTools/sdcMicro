@@ -60,9 +60,6 @@ method=c("simple","onedims","pca","clustpppca",
 ## the other algorithms for this data set...
 }
 }
-\author{
-Matthias Templ
-}
 \references{
 Templ, M. and Meindl, B., \emph{Software Development for SDC in
 R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,
@@ -71,5 +68,7 @@ vol. 4302, pp. 347-359, 2006.
 \seealso{
 \code{\link{microaggregation}}, \code{\link{summary.micro}}
 }
+\author{
+Matthias Templ
+}
 \keyword{print}
-

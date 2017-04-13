@@ -53,4 +53,3 @@ get.sdcMicroObj(sdc, type="pramVars")
 sdc <- set.sdcMicroObj(sdc, type="pramVars", input=list(ind_pram))
 get.sdcMicroObj(sdc, type="pramVars")
 }
-

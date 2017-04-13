@@ -30,4 +30,3 @@ x_hh <- selectHouseholdData(dat=testdata, hhId="ori_hid",
 \author{
 Thijs Benschop and Bernhard Meindl
 }
-

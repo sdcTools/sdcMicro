@@ -138,11 +138,10 @@ print(sdc, type="pram")
 # we can also have a look at the transitions
 get.sdcMicroObj(sdc, "pram")$transitions
 }
-\author{
-Alexander Kowarik, Matthias Templ, Bernhard Meindl
-}
 \references{
 \url{http://www.gnu.org/software/glpk}
 }
+\author{
+Alexander Kowarik, Matthias Templ, Bernhard Meindl
+}
 \keyword{manip}
-

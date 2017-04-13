@@ -42,4 +42,3 @@ report(sdc)
 Matthias Templ, Bernhard Meindl
 }
 \keyword{methods}
-
