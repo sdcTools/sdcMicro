@@ -590,7 +590,7 @@ Below the table, two sets of radio buttons are shown:
 
 **Select file-format**
 
-Using this input, the desired output format can be specified. The possible choices are `R-Dataset`, `SPSS-File`, `Comma-separated File` and `STATA-File` and can be selected by clicking on the appropriate text or button. If `Comma-separated File` is chosen, additional controls relevant for the generation of the output file appear below. For this option, three additional radio button inputs are available:
+Using this input, the desired output format can be specified. The possible choices are `R-Dataset`, `SPSS-File`, `Comma-separated File`, `STATA-File` and `SAS-File` and can be selected by clicking on the appropriate text or button. If `Comma-separated File` is chosen, additional controls relevant for the generation of the output file appear below. For this option, three additional radio button inputs are available:
 
   - **Include variable names in first row?**: allows to specify if variable names should be written to the output file (`yes`) which is the default setting or not (`no`)
   - **Field separator**: allows to specify the separation character, possible choices are `Comma` (the default), `Semicolon` and `Tab`
