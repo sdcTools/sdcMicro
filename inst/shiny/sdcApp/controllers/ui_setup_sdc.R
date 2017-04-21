@@ -628,6 +628,12 @@ output$setupbtn <- renderUI({
         tags$span(style="color:red; font-weight:bold","Change the variable selection or go back to the Microdata tab and change the variable type before making other variable selections."))
       showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
+    if (any(is.na(inputdata()[[vnames[ii]]]))) {
+      showBtn <- FALSE
+      txt <- p("The weight variable contains at least one missing value (NA).", tags$br(), tags$br(),
+        tags$span(style="color:red; font-weight:bold","You need to go back and change the variable selection or change the variable type beforehand!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Missing values in weight variable (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
+    }    
   }
 
   ## cluster-ids
