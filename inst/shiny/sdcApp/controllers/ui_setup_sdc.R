@@ -626,7 +626,14 @@ output$setupbtn <- renderUI({
       showBtn <- FALSE
       txt <- p("The weight variable has to be of type ",dQuote("numeric")," or type ", dQuote("integer"),".", tags$br(), tags$br(),
         tags$span(style="color:red; font-weight:bold","Change the variable selection or go back to the Microdata tab and change the variable type before making other variable selections."))
-      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
+      showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (" ,dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
+    }
+    # weight-variable must not contain missing values (NA)
+    if (all(!is.na(inputdata()[[vnames[ii]]]))) {
+      showBtn <- FALSE
+      txt <- p("The weight variable contains", sum(is.na(inputdata()[[vnames[ii]]])),"missing value(s) (NA).", tags$br(), tags$br(), 
+        tags$span(style="color:red; font-weight:bold", "Undo the weight variable selection and select a weight variable that does not contain missing values before making other variable selections or remove the missing values in the weight variable in the dataset and reload the dataset!"))
+      showModal(modalDialog(list(txt), title=strong(paste("Missing value(s) in selected weight variable (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
 
