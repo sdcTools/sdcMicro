@@ -77,8 +77,8 @@ extractLabels <- function(dat){
     
     # Convert all variable labels to UTF-8
     varLab[, 2] <- unlist(varLab[,2], use.names = FALSE)
-    nonUTFvallabel <- varLab[which(!validUTF8(varLab[,2])),1] # Save list of all labels that aren't encoded in UTF-8
-    varLab[which(!is.na(varLab[,2]) & !is.null(varLab[,2])), 2] <- toUTF8(varLab[which(!is.na(varLab[,2]) & !is.null( varLab[,2])), 2])
+    nonUTFvarlabel <- varLab[which(!validUTF8(varLab[,2])), c(1,2)] # Save list of all labels that aren't encoded in UTF-8
+    varLab[which(!is.na(varLab[,2]) & !is.null(varLab[,2])), 2] <- enc2utf8(varLab[which(!is.na(varLab[,2]) & !is.null( varLab[,2])), 2])
     
     # Check whether all strings are UTF-8 encoded, no need for check, forced above
     #if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
@@ -95,7 +95,7 @@ extractLabels <- function(dat){
   } else {
     valLab <- NULL
   }
-  return(list(varLab, valLab, nonUTFvallabel))
+  return(list(varLab, valLab, nonUTFvarlabel))
 }
 
 #' Creates a household level file from a dataset with a household structure.
@@ -412,16 +412,11 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     res <- tryCatchFn(read_dta(file=path))
     # Convert column names to utf8
     nonUTFvarname <- NULL
-    which(!validUTF8(colnames(res)))
-      varLab[which(!validUTF8(varLab[,2])),1] # Save list of all labels that aren't encoded in UTF-8
-    colnames(res) <- 
-      enc2utf8(colnames(res))
-    nonUTFvallabel <- varLab[which(!validUTF8(varLab[,2])),1] # Save list of all labels that aren't encoded in UTF-8
-    
+    nonUTFvarname <- which(!validUTF8(colnames(res))) # Save list of all variable names that aren't encoded in UTF-8
+    colnames(res)[nonUTFvarname] <- enc2utf8(colnames(res)[nonUTFvarname])
     lab <- extractLabels(res)
     
     # Add variable names with non-UTF8 variables that were automatically converted
-    nonUTFvallabel
     #if("integer" %in% class(lab)){
     #  res <- simpleError(paste0(lab, " variable labels are not UTF-8 encoded. Correct the labels and reload the data."))
     #  return(res)
@@ -494,13 +489,21 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   
   # Convert levels in factor and character variables to utf8
   for (i in dim(res)[2]) {
-    #if("character" %in% class(res[,i])){
-      #which(res[,i] check for NULL, NA
-    #}
+    #nonUTFvallabels <- data.frame(varName = character(), initLabel = character(0), convLabel = character(0))
+    # Character strings
+    if("character" %in% class(res[,i])){
+      if (!all(validUTF8(levels(res[,i])))){
+        res[which(!validUTF8(res[,i])),i] <- "a"
+        #which(res[,i] check for NULL, NA
+      }
+    }
+    # Factor variables
     if("factor" %in% class(res[,i])){
       if (!all(validUTF8(levels(res[,i])))){
-        levels(res[,i])[which(!validUTF8(levels(res[,i])))] <- toUTF8(levels(res[,i])[which(!validUTF8(levels(res[,i])))])
-      }
+        #nonUTFvallabels <- list(nonUTFvallabels, list(levels(res[,i])[which(!validUTF8(levels(res[,i])))]))
+        levels(res[,i])[which(!validUTF8(levels(res[,i])))] <- "a" #(levels(res[,i])[which(!validUTF8(levels(res[,i])))])
+        levels(res[1,i]) <- "a"
+        }
     }
   }
   

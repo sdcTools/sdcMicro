@@ -636,7 +636,6 @@ output$setupbtn <- renderUI({
       showModal(modalDialog(list(txt), title=strong(paste("Missing value(s) in selected weight variable (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
   }
-
   ## cluster-ids
   ii <- which(useAsClusterID==TRUE)
   # more than one cluster-ids
