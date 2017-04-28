@@ -488,21 +488,20 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   }
   
   # Convert levels in factor and character variables to utf8
-  for (i in dim(res)[2]) {
+  for (i in 1:dim(res)[2]) {
     #nonUTFvallabels <- data.frame(varName = character(), initLabel = character(0), convLabel = character(0))
     # Character strings
     if("character" %in% class(res[,i])){
-      if (!all(validUTF8(levels(res[,i])))){
-        res[which(!validUTF8(res[,i])),i] <- "a"
+      if (any(!validUTF8(levels(res[,i])))){
+        res[which(!validUTF8(res[,i])),i] <- enc2utf8(res[which(!validUTF8(res[,i])),i])
         #which(res[,i] check for NULL, NA
       }
     }
     # Factor variables
     if("factor" %in% class(res[,i])){
-      if (!all(validUTF8(levels(res[,i])))){
+      if (any(!validUTF8(levels(res[,i])))){
         #nonUTFvallabels <- list(nonUTFvallabels, list(levels(res[,i])[which(!validUTF8(levels(res[,i])))]))
-        levels(res[,i])[which(!validUTF8(levels(res[,i])))] <- "a" #(levels(res[,i])[which(!validUTF8(levels(res[,i])))])
-        levels(res[1,i]) <- "a"
+        levels(res[,i])[which(!validUTF8(levels(res[,i])))] <- "a" #enc2utf8(levels(res[,i])[which(!validUTF8(levels(res[,i])))])
         }
     }
   }

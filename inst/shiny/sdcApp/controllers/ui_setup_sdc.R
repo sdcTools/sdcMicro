@@ -629,7 +629,7 @@ output$setupbtn <- renderUI({
       showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (" ,dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
     }
     # weight-variable must not contain missing values (NA)
-    if (all(!is.na(inputdata()[[vnames[ii]]]))) {
+    if (any(is.na(inputdata()[[vnames[ii]]]))) {
       showBtn <- FALSE
       txt <- p("The weight variable contains", sum(is.na(inputdata()[[vnames[ii]]])),"missing value(s) (NA).", tags$br(), tags$br(), 
         tags$span(style="color:red; font-weight:bold", "Undo the weight variable selection and select a weight variable that does not contain missing values before making other variable selections or remove the missing values in the weight variable in the dataset and reload the dataset!"))
