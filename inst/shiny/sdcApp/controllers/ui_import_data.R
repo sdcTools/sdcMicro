@@ -138,10 +138,34 @@ output$ui_import_data <- renderUI({
     column(10, uiOutput("ui_import_data_main")))
 })
 
+output$ui_show_changed_labels <- renderUI({
+  # Show changed labels
+  out <- fluidRow(
+      column(12, h3("Strings were automatically changed", align="center")),
+      column(12, p("Some strings in the variable names, variable labels or value labels were not encoded in UTF-8. These strings were automatically encoded into UTF-8. Some characters might have gotten lost in this process. Check the changes made in the overview below. You can agree with the changes and continue with the changed strings or reload the data after changing the strings in the dataset."), align="center")
+      )
+  # if(!i.null())
+  out <- list(out, fluidRow(
+    column(12, h5("Changed variable names", align="center")),
+    column(12, renderTable(nonUTFvallabels[,c(1,3)]), align = "center")
+  ))
+  out <- list(out, fluidRow(
+    column(12, h5("Changed variable labels", align="center")),
+    column(12, renderTable(nonUTFvallabels[,c(1,3)]), align = "center")
+  ))
+  out <- list(out, fluidRow(
+    column(12, h5("Changed value labels", align="center")),
+    column(12, renderTable(nonUTFvallabels[,c(1,3)]), align = "center")
+  ))
+  out
+})
+
 output$ui_inputdata <- renderUI({
   if (is.null(obj$inputdata)) {
     uiOutput("ui_import_data")
+#  } else if(!is.null(nonUTFvallabels) {
+#    uiOutput("ui_show_changed_labels")
   } else {
-    uiOutput("ui_modify_data")
+    uiOutput("ui_show_changed_labels") #uiOutput("ui_modify_data")
   }
 })

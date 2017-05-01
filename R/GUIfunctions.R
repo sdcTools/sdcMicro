@@ -404,25 +404,22 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     res <- tryCatchFn(read_sas(data_file=path))
     # Convert column names to utf8
     nonUTFvarname <- NULL
-    nonUTFvarname <- which(!validUTF8(colnames(res)) & !is.na(colnames(res))) # Save list of all variable names that aren't encoded in UTF-8
-    colnames(res)[nonUTFvarname] <- enc2utf8(colnames(res)[nonUTFvarname])
-    colnames(res)[nonUTFvarname] <- iconv(colnames(res)[nonUTFvarname], "UTF-8", "UTF-8", sub='') # Remove any non-UTF8 characters
-  }
+    nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
+    colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
+    }
   if (type=="spss") {
     res <- tryCatchFn(read_spss(file=path))
     # Convert column names to utf8
     nonUTFvarname <- NULL
-    nonUTFvarname <- which(!validUTF8(colnames(res)) & !is.na(colnames(res))) # Save list of all variable names that aren't encoded in UTF-8
-    colnames(res)[nonUTFvarname] <- enc2utf8(colnames(res)[nonUTFvarname])
-    colnames(res)[nonUTFvarname] <- iconv(colnames(res)[nonUTFvarname], "UTF-8", "UTF-8", sub='') # Remove any non-UTF8 characters
-  }
+    nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
+    colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
+    }
   if (type=="stata") {
     res <- tryCatchFn(read_dta(file=path))
     # Convert column names to utf8
     nonUTFvarname <- NULL
-    nonUTFvarname <- which(!validUTF8(colnames(res)) & !is.na(colnames(res))) # Save list of all variable names that aren't encoded in UTF-8
-    colnames(res)[nonUTFvarname] <- enc2utf8(colnames(res)[nonUTFvarname])
-    colnames(res)[nonUTFvarname] <- iconv(colnames(res)[nonUTFvarname], "UTF-8", "UTF-8", sub='') # Remove any non-UTF8 characters
+    nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
+    colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
     lab <- extractLabels(res)
     
     # Add variable names with non-UTF8 variables that were automatically converted
