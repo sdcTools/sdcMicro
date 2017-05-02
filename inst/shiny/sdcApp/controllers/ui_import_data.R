@@ -140,32 +140,51 @@ output$ui_import_data <- renderUI({
 
 output$ui_show_changed_labels <- renderUI({
   # Show changed labels
+  txtChangedLabels <- "Some strings in the variable names, variable labels and/or value labels were not in UTF-8 encoding. This app works only with strings in UTF-8 encoding or compatible. "
+  txtChangedLabels <- paste0(txtChangedLabels, "The strings not in UTF-8 encoding were automatically converted to UTF-8 encoding. Some characters might have changed or were removed in this process. ")
+  txtChangedLabels <- paste0(txtChangedLabels, "Check the converted strings in the overview below. You can choose to use the converted strings as displayed below (also in the exported dataset) or reset the dataset and reload after changing the strings in the dataset.")
+  btn1 <- bsButton("btn_reset_inputdata_xx", label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small")
+  btn2 <- bsButton("btn_a_setup_ui_anonymize", label=("Continue with converted strings"), block=TRUE, style="success", size="extra-small")
   out <- fluidRow(
-      column(12, h3("Strings were automatically changed", align="center")),
-      column(12, p("Some strings in the variable names, variable labels or value labels were not encoded in UTF-8. These strings were automatically encoded into UTF-8. Some characters might have gotten lost in this process. Check the changes made in the overview below. You can agree with the changes and continue with the changed strings or reload the data after changing the strings in the dataset."), align="center")
+      column(12, h3("Strings were automatically converted", align="center")),
+      column(12, txtChangedLabels, align="center"),
+      column(6, btn1), column(6, btn2)
       )
-  # if(!i.null())
-  out <- list(out, fluidRow(
-    column(12, h5("Changed variable names", align="center")),
-    column(12, renderTable(nonUTFvallabels[,c(1,3)]), align = "center")
-  ))
-  out <- list(out, fluidRow(
-    column(12, h5("Changed variable labels", align="center")),
-    column(12, renderTable(nonUTFvallabels[,c(1,3)]), align = "center")
-  ))
-  out <- list(out, fluidRow(
-    column(12, h5("Changed value labels", align="center")),
-    column(12, renderTable(nonUTFvallabels[,c(1,3)]), align = "center")
-  ))
+  if(!is.null(attr(obj$inputdata, "nonUTF")[[1]])){
+    df1 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[1]][, 2])
+    colnames(df1) <- c("Converted variable name")
+    out <- list(out, fluidRow(
+      column(12, h5("Changed variable names", align="center")),
+      column(12, renderTable(df1, colnames = TRUE), align = "center")
+    ))
+  }
+  if(length(attr(obj$inputdata, "nonUTF"))==3){
+    if(!is.null(attr(obj$inputdata, "nonUTF")[[3]])){
+      df2 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[3]][,c(1,3)])
+      colnames(df2) <- c("Variable name", "Converted variable label")
+      out <- list(out, fluidRow(
+        column(12, h5("Changed variable labels", align="center")),
+        column(12, renderTable(df2, colnames = TRUE), align = "center")
+      ))
+    }
+  }
+  if(!is.null(attr(obj$inputdata, "nonUTF")[[2]])){
+    df3 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[2]][,c(1,3)])
+    colnames(df3) <- c("Variable name", "Converted value label")
+    out <- list(out, fluidRow(
+      column(12, h5("Changed value labels", align="center")),
+      column(12, renderTable(df3), align = "center")
+    ))
+  }
   out
 })
 
 output$ui_inputdata <- renderUI({
   if (is.null(obj$inputdata)) {
     uiOutput("ui_import_data")
-#  } else if(!is.null(nonUTFvallabels) {
-#    uiOutput("ui_show_changed_labels")
+  } else if(!all(sapply(attr(obj$inputdata, "nonUTF"), is.null))) {
+    uiOutput("ui_show_changed_labels")
   } else {
-    uiOutput("ui_show_changed_labels") #uiOutput("ui_modify_data")
+    uiOutput("ui_modify_data")
   }
 })

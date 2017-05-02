@@ -400,24 +400,22 @@ tryCatchFn <- function(expr) {
 #' @author Bernhard Meindl
 #' @export
 readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=TRUE, ...) {
+  nonUTFvarname <- NULL
   if (type=="sas") {
     res <- tryCatchFn(read_sas(data_file=path))
     # Convert column names to utf8
-    nonUTFvarname <- NULL
     nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
     colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
     }
   if (type=="spss") {
     res <- tryCatchFn(read_spss(file=path))
     # Convert column names to utf8
-    nonUTFvarname <- NULL
     nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
     colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
     }
   if (type=="stata") {
     res <- tryCatchFn(read_dta(file=path))
     # Convert column names to utf8
-    nonUTFvarname <- NULL
     nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
     colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
     lab <- extractLabels(res)
@@ -494,6 +492,7 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   }
   
   # Convert levels in factor and character variables to utf8
+  nonUTFvallabels <- NULL
   for (i in 1:dim(res)[2]) {
     nonUTFvallabels <- data.frame(varName = character(), initLabel = character(0), convLabel = character(0), stringsAsFactors = FALSE)
     # Character strings
@@ -521,13 +520,20 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
         }
     }
   }
+  if(!is.null(nonUTFvarname)){if (dim(nonUTFvarname)[1] == 0){nonUTFvarname <- NULL}}  # Set to NULL if no changed labels
+  if(!is.null(nonUTFvallabels)){if (dim(nonUTFvallabels)[1] == 0){nonUTFvallabels <- NULL}} # Set to NULL if no changed labels
   
   if (type=="stata") {
     attr(res, "lab") <- lab
   }
   
   # Collect variable names, variable labels and value labels that were encoded to UTF8
-  # nonUTFvallabels, lab[[3]], nonUTFvarname
+  if (type=="stata") {
+    attr(res, "nonUTF") <- list(nonUTFvarname, nonUTFvallabels, lab[[3]])
+  } else{
+    attr(res, "nonUTF") <- list(nonUTFvarname, nonUTFvallabels)
+  }
+  
   res
 }
 
