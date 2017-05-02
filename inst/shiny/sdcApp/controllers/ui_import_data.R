@@ -144,12 +144,22 @@ output$ui_show_changed_labels <- renderUI({
   txtChangedLabels <- paste0(txtChangedLabels, "The strings not in UTF-8 encoding were automatically converted to UTF-8 encoding. Some characters might have changed or were removed in this process. ")
   txtChangedLabels <- paste0(txtChangedLabels, "Check the converted strings in the overview below. You can choose to use the converted strings as displayed below (also in the exported dataset) or reset the dataset and reload after changing the strings in the dataset.")
   btn1 <- bsButton("btn_reset_inputdata_xx", label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small")
-  btn2 <- bsButton("btn_a_setup_ui_anonymize", label=("Continue with converted strings"), block=TRUE, style="success", size="extra-small")
+  btn2 <- bsButton("btn_acc_utf8_conv", label=("Continue with converted strings"), block=TRUE, style="success", size="extra-small")
+  #btn2 <- bsButton("btn_a_setup_ui_inputdata", label=("Continue with converted strings"), block=TRUE, style="success", size="extra-small")
   out <- fluidRow(
       column(12, h3("Strings were automatically converted", align="center")),
       column(12, txtChangedLabels, align="center"),
-      column(6, btn1), column(6, btn2)
+      column(6, btn1, align="center")
       )
+  if(is.null(attr(obj$inputdata, "nonUTF")[[2]])){ # only show accept button if no changes to actual values are made
+    out <- list(out, fluidRow(
+      column(6, btn1), column(6, btn2)
+    ))
+  } else {
+    out <- list(out, fluidRow(
+      column(6, btn1, align="center")
+    ))
+  }
   if(!is.null(attr(obj$inputdata, "nonUTF")[[1]])){
     df1 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[1]][, 2])
     colnames(df1) <- c("Converted variable name")
@@ -182,7 +192,8 @@ output$ui_show_changed_labels <- renderUI({
 output$ui_inputdata <- renderUI({
   if (is.null(obj$inputdata)) {
     uiOutput("ui_import_data")
-  } else if(!all(sapply(attr(obj$inputdata, "nonUTF"), is.null))) {
+#  } else if(!all(sapply(attr(obj$inputdata, "nonUTF"), is.null))) {
+  } else if(obj$utf8) {
     uiOutput("ui_show_changed_labels")
   } else {
     uiOutput("ui_modify_data")

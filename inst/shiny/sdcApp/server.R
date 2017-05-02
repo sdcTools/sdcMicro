@@ -692,6 +692,7 @@ shinyServer(function(session, input, output) {
       }
       obj$last_error <- NULL
       obj$inputdata <- res
+      obj$utf8 <- !all(sapply(attr(obj$inputdata, "nonUTF"), is.null))
       code_out <- gsub(input$file1$datapath, input$file1$name, code)
       code_out <- gsub("res", "inputdata", code_out)
       obj$code_read_and_modify <- code_out
@@ -960,6 +961,10 @@ shinyServer(function(session, input, output) {
     }
   })
 
+  observeEvent(input$btn_acc_utf8_conv, {
+    obj$utf8 <- FALSE
+  })
+  
   observeEvent(input$btn_reset_sdc, {
     ptm <- proc.time()
     obj$sdcObj <- NULL
