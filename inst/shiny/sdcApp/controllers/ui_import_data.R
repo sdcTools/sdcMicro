@@ -158,7 +158,7 @@ output$ui_show_changed_labels <- renderUI({
     ))
   } else {
     out <- list(out, fluidRow(
-      column(6, btn1, align="center")
+      column(12, btn1, align="center")
     ))
   }
   if(!is.null(attr(obj$inputdata, "nonUTF")[[1]])){
