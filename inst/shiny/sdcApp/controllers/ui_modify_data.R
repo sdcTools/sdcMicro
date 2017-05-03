@@ -856,7 +856,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
     if (is.null(inputdata())) {
       return(NULL)
     }
-    btn <- bsButton("btn_reset_inputdata_xx",label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small")
+    btn <- bsButton("btn_reset_inputdata_xx",label=("Reset inputdata"), block=TRUE, style="warning")
     fluidRow(
       #column(12, h4("Reset the inputdata"), align="center"),
       column(12, btn)
@@ -883,7 +883,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
 
   output$ui_sel_microdata_btns <- renderUI({
     cc <- choices_modifications()
-    out <- fluidRow(column(12, h4("What do you want to do?"), align="center"))
+    out <- fluidRow(column(12, h4("What do you want to do?")))
     for (i in 1:length(cc)) {
       id <- paste0("btn_menu_microdata_",i)
       if (obj$cur_selection_microdata==id) {
@@ -892,7 +892,7 @@ output$ui_modify_data_sidebar_left <- renderUI({
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(id, label=names(cc)[i], block=TRUE, size="extra-small", style=style), tags$br())))
+        column(12, bsButton(id, label=names(cc)[i], block=TRUE, style=style), tags$br())))
     }
     # required observers that update the color of the active button!
     eval(parse(text=genObserver_menus(pat="btn_menu_microdata_", n=1:10, updateVal="cur_selection_microdata")))
@@ -907,6 +907,6 @@ output$ui_modify_data_sidebar_left <- renderUI({
 
 output$ui_modify_data <- renderUI({
   fluidRow(
-    column(2, uiOutput("ui_modify_data_sidebar_left")),
+    column(2, uiOutput("ui_modify_data_sidebar_left"), class="wb_sidebar"),
     column(10, uiOutput("ui_modify_data_main")))
 })
