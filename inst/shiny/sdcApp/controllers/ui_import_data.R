@@ -193,7 +193,6 @@ output$ui_show_changed_labels <- renderUI({
 output$ui_inputdata <- renderUI({
   if (is.null(obj$inputdata)) {
     uiOutput("ui_import_data")
-#  } else if(!all(sapply(attr(obj$inputdata, "nonUTF"), is.null))) {
   } else if(obj$utf8) {
     uiOutput("ui_show_changed_labels")
   } else {

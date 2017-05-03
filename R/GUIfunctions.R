@@ -419,12 +419,6 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
     colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
     lab <- extractLabels(res)
-    
-    # Add variable names with non-UTF8 variables that were automatically converted
-    #if("integer" %in% class(lab)){
-    #  res <- simpleError(paste0(lab, " variable labels are not UTF-8 encoded. Correct the labels and reload the data."))
-    #  return(res)
-    #}
   }
   if (type=="R") {
     res <- tryCatchFn(get(load(file=path)))
@@ -492,9 +486,8 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   }
   
   # Convert levels in factor and character variables to utf8
-  nonUTFvallabels <- NULL
+  nonUTFvallabels <- data.frame(varName = character(), initLabel = character(0), convLabel = character(0), stringsAsFactors = FALSE)
   for (i in 1:dim(res)[2]) {
-    nonUTFvallabels <- data.frame(varName = character(), initLabel = character(0), convLabel = character(0), stringsAsFactors = FALSE)
     # Character strings
     if("character" %in% class(res[,i])){
       if (any(!validUTF8(res[,i]))){

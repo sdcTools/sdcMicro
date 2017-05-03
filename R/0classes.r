@@ -539,7 +539,6 @@
 #' @importFrom haven write_dta
 #' @importFrom haven as_factor
 #' @importFrom prettydoc html_pretty
-#' @importFrom stringi stri_enc_toutf8
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))
 setClassUnion("numericOrNULL", c("numeric", "NULL"))
 setClassUnion("characterOrNULL", c("character", "NULL"))
