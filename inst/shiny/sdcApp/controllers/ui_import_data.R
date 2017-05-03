@@ -140,9 +140,10 @@ output$ui_import_data <- renderUI({
 
 output$ui_show_changed_labels <- renderUI({
   # Show changed labels
-  txtChangedLabels1 <- "Some strings in the variable names, variable labels and/or value labels in the loaded dataset are not in UTF-8 encoding. This app requires strings in UTF-8 encoding or compatible. "
-  txtChangedLabels1 <- paste0(txtChangedLabels1, "The overview below shows the strings that were not in UTF-8 encoding after automatic conversion to UTF-8 encoding. It is advised to reset the dataset and correct all strings in the original dataset before reloading. ")
-  txtChangedLabels2 <- "Alternatively, it is possible to proceed with the automatically converted strings as displayed below. This is not possible if string variable values were converted. NOTE: Some characters might have changed or were removed in the conversion process. Continuing with the converted strings may result in changed variable names and variable labels in the exported dataset."
+  txtChangedLabels1 <- "Some strings in the variable names, variable labels and/or value labels in the loaded dataset do not comply with UTF-8 encoding. This application requires strings to be UTF-8 encoded or UTF-8 compatible. The application has attempted to convert the non-compliant characters to UTF-8. "
+  txtChangedLabels2 <- "Below is a summary of the strings containing characters that are not compliant with UTF-8 encoding after been automatically converted to UTF-8 encoding. While the auto conversion process attempts to do the best it can to fix the issues, results are often uneven. To avoid the auto conversion of characters it is advised that the problems first be corrected in the original dataset and then reloaded into this application. Doing so will prevent unnecessary loss of information. "
+  txtChangedLabels3 <- "Alternatively, you can continue and allow the application to auto convert the characters. The summary below shows the strings after auto conversion. Continuing with the converted characters may result in changed variable names and variable labels in the exported anonymized dataset. "
+  txtChangedLabels4 <- "Note: The application will not allow the automatic conversion of values contained in string variables as this may result in changes to the actual data. In this case the data will need to be fixed before reloading into the application."
   btn1 <- bsButton("btn_reset_inputdata_xx", label=("Reset inputdata"), block=TRUE, style="default", size="extra-small")
   btn2 <- bsButton("btn_acc_utf8_conv", label=("Continue with converted strings"), block=TRUE, style="default", size="extra-small")
   out <- fluidRow(
@@ -150,6 +151,10 @@ output$ui_show_changed_labels <- renderUI({
       column(12, txtChangedLabels1, align="center"),
       column(12, tags$br()),
       column(12, txtChangedLabels2, align="center"),
+      column(12, tags$br()),
+      column(12, txtChangedLabels3, align="center"),
+      column(12, tags$br()),
+      column(12, txtChangedLabels4, align="center"),
       column(12, tags$br())
       )
   if(is.null(attr(obj$inputdata, "nonUTF")[[2]])){ # only show accept button if no changes to actual values are made
