@@ -140,16 +140,17 @@ output$ui_import_data <- renderUI({
 
 output$ui_show_changed_labels <- renderUI({
   # Show changed labels
-  txtChangedLabels <- "Some strings in the variable names, variable labels and/or value labels were not in UTF-8 encoding. This app works only with strings in UTF-8 encoding or compatible. "
-  txtChangedLabels <- paste0(txtChangedLabels, "The strings not in UTF-8 encoding were automatically converted to UTF-8 encoding. Some characters might have changed or were removed in this process. ")
-  txtChangedLabels <- paste0(txtChangedLabels, "Check the converted strings in the overview below. You can choose to use the converted strings as displayed below (also in the exported dataset) or reset the dataset and reload after changing the strings in the dataset.")
-  btn1 <- bsButton("btn_reset_inputdata_xx", label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small")
-  btn2 <- bsButton("btn_acc_utf8_conv", label=("Continue with converted strings"), block=TRUE, style="success", size="extra-small")
-  #btn2 <- bsButton("btn_a_setup_ui_inputdata", label=("Continue with converted strings"), block=TRUE, style="success", size="extra-small")
+  txtChangedLabels1 <- "Some strings in the variable names, variable labels and/or value labels in the loaded dataset are not in UTF-8 encoding. This app requires strings in UTF-8 encoding or compatible. "
+  txtChangedLabels1 <- paste0(txtChangedLabels1, "The overview below shows the strings that were not in UTF-8 encoding after automatic conversion to UTF-8 encoding. It is advised to reset the dataset and correct all strings in the original dataset before reloading. ")
+  txtChangedLabels2 <- "Alternatively, it is possible to proceed with the automatically converted strings as displayed below. This is not possible if string variable values were converted. NOTE: Some characters might have changed or were removed in the conversion process. Continuing with the converted strings may result in changed variable names and variable labels in the exported dataset."
+  btn1 <- bsButton("btn_reset_inputdata_xx", label=("Reset inputdata"), block=TRUE, style="default", size="extra-small")
+  btn2 <- bsButton("btn_acc_utf8_conv", label=("Continue with converted strings"), block=TRUE, style="default", size="extra-small")
   out <- fluidRow(
-      column(12, h3("Strings were automatically converted", align="center")),
-      column(12, txtChangedLabels, align="center"),
-      column(6, btn1, align="center")
+      column(12, h3("Strings not in UTF-8 encoding", align="center")),
+      column(12, txtChangedLabels1, align="center"),
+      column(12, tags$br()),
+      column(12, txtChangedLabels2, align="center"),
+      column(12, tags$br())
       )
   if(is.null(attr(obj$inputdata, "nonUTF")[[2]])){ # only show accept button if no changes to actual values are made
     out <- list(out, fluidRow(
