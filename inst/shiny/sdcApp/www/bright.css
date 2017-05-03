@@ -7,6 +7,13 @@
 /*
 ** VARIABLES
 */
+/* when body is not having a white background */
+/* for regular text */
+/* borders, buttons */
+/* navigation */
+/* navigation */
+/* for text-links and clickable elements */
+/* for text-links and clickable elements on hover */
 /* OVERALL STYLE */
 body {
   background-color: #F2F3F6;
@@ -56,7 +63,7 @@ a:hover {
 .navbar-default .navbar-brand,
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
-  color: #555;
+  color: #50595e;
 }
 
 .container-fluid > .navbar-header {

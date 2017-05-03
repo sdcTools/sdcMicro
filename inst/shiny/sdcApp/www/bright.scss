@@ -11,13 +11,18 @@
 ** VARIABLES
 */
 
+
 // COLORS
-$primary: #e4e9ec;
+
+$bg-color: #F2F3F6; /* when body is not having a white background */
+$text-color: #50595e; /* for regular text */
+$dark-gray: #555;
+$primary: #e4e9ec; /* borders, buttons */
 $primary-dark: darken($primary, 5%);
-$headings: #50595e;
-$accent: #0a92e4;
-$accent-hover: #22a6f5;
-$bg-color: #F2F3F6;
+$nav-a: #819dad; /* navigation */
+$nav-a-hover:#101f28; /* navigation */
+$accent: #0a92e4; /* for text-links and clickable elements */
+$accent-hover: #22a6f5; /* for text-links and clickable elements on hover */
 
 // TYPOGRAPHY
 
@@ -41,12 +46,12 @@ body {
     background-color: $bg-color;
     line-height: $line-height;
     font-size: $font-size;
-    color: #50595e;
+    color: $text-color;
     font-family: $sans-font;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-    color: $headings;
+    color: $text-color;
     margin-top: 24px;
     margin-bottom: 12px;
     font-family: $sans-font;
@@ -70,29 +75,29 @@ a {
     margin-bottom: 20px;
 
     .navbar-nav > li > a {
-    	color: #819dad;
+    	color: $nav-a;
     	font-weight: 500;
         padding: 10px 18px;
         @include default-transition;
     }
 
     .navbar-nav > li > a:hover {
-        color: #101f28;
+        color: $nav-a-hover;
         background: none;
     }
 
     .navbar-nav > .active > a, 
     .navbar-nav > .active > a:hover, 
     .navbar-nav > .active > a:focus {
-        border-bottom: solid 2px #555;
-        color: #555;
+        border-bottom: solid 2px $dark-gray;
+        color: $dark-gray;
         background: none;
     }
 
     .navbar-brand, 
     .navbar-brand:hover, 
     .navbar-brand:focus {
-        color: #555;
+        color: #50595e;
     }
 }
 
