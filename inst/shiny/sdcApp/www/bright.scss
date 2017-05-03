@@ -39,7 +39,7 @@ $line-height: calc(155% + 0.2vw);
 
 body {
     background-color: $bg-color;
-    line-height: line-height;
+    line-height: $line-height;
     font-size: $font-size;
     color: #50595e;
     font-family: $sans-font;

@@ -10,7 +10,7 @@
 /* OVERALL STYLE */
 body {
   background-color: #F2F3F6;
-  line-height: line-height;
+  line-height: calc(155% + 0.2vw);
   font-size: calc(0.9em + 0.4vw);
   color: #50595e;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
