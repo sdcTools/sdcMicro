@@ -1,16 +1,27 @@
 @import url("bootswatch_yeti.css");
+/*
+**
+** Theme inspired by http://data.worldbank.org/
+**
+*/
+/*
+** VARIABLES
+*/
 /* OVERALL STYLE */
 body {
   background-color: #F2F3F6;
   line-height: calc(155% + 0.2vw);
   font-size: calc(0.9em + 0.4vw);
   color: #50595e;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   color: #50595e;
   margin-top: 24px;
   margin-bottom: 12px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bold;
 }
 
 /* NAVBAR */
@@ -50,10 +61,20 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   font-weight: 700;
 }
 
-.btn-primary {
-  color: #ffffff;
-  background-color: #21A1EE;
+.wb-btn-inline {
+  background: none;
+  color: #0a92e4;
+  padding: 0;
   border: none;
+  border-bottom: solid 1px #0a92e4;
+  transition: all 0.25s;
+  font-size: inherit;
+}
+.wb-btn-inline:hover {
+  background-color: #0a92e4;
+  color: #fff;
+  border: none;
+  border-bottom: solid 1px #0a92e4;
 }
 
 /*# sourceMappingURL=bright.css.map */

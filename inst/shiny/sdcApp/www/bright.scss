@@ -1,7 +1,24 @@
 @import url('bootswatch_yeti.css'); 
 
 
-// Theme inspired by http://data.worldbank.org/
+/*
+**
+** Theme inspired by http://data.worldbank.org/
+**
+*/
+
+/*
+** VARIABLES
+*/
+
+// COLORS
+$primary: #e4e9ec;
+$accent: #0a92e4;
+$background: #F2F3F6;
+
+// TYPOGRAPHY
+
+$sans: "Helvetica Neue",Helvetica,Arial,sans-serif;
 
 /* OVERALL STYLE */
 
@@ -10,12 +27,15 @@ body {
     line-height: calc(155% + 0.2vw);
     font-size: calc(0.9em + 0.4vw);
     color: #50595e;
+    font-family: $sans;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: #50595e;
     margin-top: 24px;
     margin-bottom: 12px;
+    font-family: $sans;
+    font-weight: bold;
 }
 
 
@@ -27,7 +47,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 
 .navbar-default {
     background-color: #ffffff;
-    border-bottom: 1px solid #e4e9ec;
+    border-bottom: 1px solid $primary;
 
     .navbar-nav > li > a {
     	color: #819dad;
@@ -61,9 +81,19 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-weight: 700;
 }
 
-
-.btn-primary {
-    color: #ffffff;
-    background-color: #21A1EE;
+.wb-btn-inline {
+    background: none;
+    color: $accent;
+    padding: 0;
     border: none;
+    border-bottom: solid 1px $accent;
+    transition: all 0.25s;
+    font-size: inherit;
+
+    &:hover {
+        background-color: $accent;
+        color: #fff;
+        border: none;
+        border-bottom: solid 1px $accent;
+    }
 }
