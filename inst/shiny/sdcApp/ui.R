@@ -1,5 +1,5 @@
 library(shiny)
-shinyUI(navbarPage(id="mainnav", theme=.guitheme,"sdcMicro GUI",
+shinyUI(navbarPage(id="mainnav", theme="bright.css","sdcMicro GUI",
   tabPanel("About/Help", uiOutput("ui_about")),
   tabPanel("Microdata", uiOutput("ui_inputdata")),
   tabPanel("Anonymize", uiOutput("ui_anonymize")),
