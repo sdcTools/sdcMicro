@@ -782,6 +782,7 @@ shinyServer(function(session, input, output) {
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
     obj$inputdataB <- obj$inputdata
+    obj$utf8 <- FALSE
     obj$sdcObj <- NULL # start fresh
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
@@ -1002,6 +1003,7 @@ shinyServer(function(session, input, output) {
     obj$code_setup <- c()
     obj$anon_performed <- NULL    
     obj$code_read_and_modify <- c()
+    obj$utf8 <- FALSE
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     removeModal(session=session) # remove the modal
