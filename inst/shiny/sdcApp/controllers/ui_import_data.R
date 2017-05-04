@@ -75,7 +75,7 @@ output$ui_import_data_main <- renderUI({
     out <- list(out, fluidRow(
       column(6, rb1, align="center"),
       column(6, rb2, align="center")))
-    
+
     if (val == "csv") {
       allowed <- c(".txt",".csv")
       out <- list(out, uiOutput("ui_import_csv"))
@@ -95,7 +95,7 @@ output$ui_import_data_main <- renderUI({
       allowed <- c(".dta")
       out <- list(out, uiOutput("ui_import_stata"))
     }
-    
+
     out <- list(out, fluidRow(
       column(12, p("Note: the selected file is loaded immediately upon selecting. Set the above options before selecting the file."), align="center")
     ))
@@ -138,9 +138,64 @@ output$ui_import_data <- renderUI({
     column(10, uiOutput("ui_import_data_main")))
 })
 
+output$ui_show_changed_labels <- renderUI({
+  # Show changed labels
+  txtChangedLabels1 <- "Some strings in the variable names, variable labels and/or value labels in the loaded dataset do not comply with UTF-8 encoding. This application requires strings to be UTF-8 encoded or UTF-8 compatible. The application has attempted to convert the non-compliant characters to UTF-8. "
+  txtChangedLabels2 <- "Below is a summary of the strings containing characters that are not compliant with UTF-8 encoding after been automatically converted to UTF-8 encoding. While the auto conversion process attempts to do the best it can to fix the issues, results are often uneven. To avoid the auto conversion of characters it is advised that the problems first be corrected in the original dataset and then reloaded into this application. Doing so will prevent unnecessary loss of information. "
+  txtChangedLabels3 <- "Alternatively, you can continue and allow the application to auto convert the characters. The summary below shows the strings after auto conversion. Continuing with the converted characters may result in changed variable names and variable labels in the exported anonymized dataset. "
+  txtChangedLabels4 <- "Note: The application will not allow the automatic conversion of values contained in string variables as this may result in changes to the actual data. In this case the data will need to be fixed before reloading into the application."
+  btn1 <- bsButton("btn_reset_inputdata_xx", label=("Reset inputdata"), block=TRUE, style="default", size="extra-small")
+  btn2 <- bsButton("btn_acc_utf8_conv", label=("Continue with converted strings"), block=TRUE, style="default", size="extra-small")
+  out <- fluidRow(
+      column(12, h3("Strings not in UTF-8 encoding", align="center")),
+      column(12, txtChangedLabels1, align="center"),
+      column(12, tags$br()),
+      column(12, txtChangedLabels2, align="center"),
+      column(12, tags$br()),
+      column(12, txtChangedLabels3, align="center"),
+      column(12, tags$br()),
+      column(12, txtChangedLabels4, align="center"),
+      column(12, tags$br())
+      )
+  if (is.null(attr(obj$inputdata, "nonUTF")[[2]])) { # only show accept button if no changes to actual values are made
+    out <- list(out, fluidRow(column(6, btn1), column(6, btn2)))
+  } else {
+    out <- list(out, fluidRow(column(12, btn1, align="center")))
+  }
+  if (!is.null(attr(obj$inputdata, "nonUTF")[[1]])) {
+    df1 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[1]][, 2])
+    colnames(df1) <- c("Converted variable name")
+    out <- list(out, fluidRow(
+      column(12, h5("Changed variable names", align="center")),
+      column(12, renderTable(df1, colnames = TRUE), align = "center")
+    ))
+  }
+  if (length(attr(obj$inputdata, "nonUTF"))==3) {
+    if (!is.null(attr(obj$inputdata, "nonUTF")[[3]])) {
+      df2 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[3]][,c(1,3)])
+      colnames(df2) <- c("Variable name", "Converted variable label")
+      out <- list(out, fluidRow(
+        column(12, h5("Changed variable labels", align="center")),
+        column(12, renderTable(df2, colnames = TRUE), align = "center")
+      ))
+    }
+  }
+  if (!is.null(attr(obj$inputdata, "nonUTF")[[2]])) {
+    df3 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[2]][,c(1,3)])
+    colnames(df3) <- c("Variable name", "Converted value label")
+    out <- list(out, fluidRow(
+      column(12, h5("Changed value labels", align="center")),
+      column(12, renderTable(df3), align = "center")
+    ))
+  }
+  out
+})
+
 output$ui_inputdata <- renderUI({
   if (is.null(obj$inputdata)) {
     uiOutput("ui_import_data")
+  } else if(obj$utf8) {
+    uiOutput("ui_show_changed_labels")
   } else {
     uiOutput("ui_modify_data")
   }

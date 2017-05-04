@@ -74,9 +74,18 @@ extractLabels <- function(dat){
     varLab[which(sapply(dat, function(x) { length(attr(x, "label")) }) > 1), 2] <- NA
     # Set to NULL values in var.label to NA
     varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
-    # Check whether all strings are UTF-8 encoded    
-    if(!all(validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") }))))){
-      return(sum(!validUTF8(unlist(sapply(dat, function(x) { attr(x, "label") })))))
+    # Set to NA values in var.label that have more than one element (value labels)
+    varLab[which(sapply(dat, function(x) { length(attr(x, "label")) }) > 1), 2] <- NA
+
+    # Convert all variable labels to UTF-8
+    nonUTFvarlabel <- NULL
+    varLab[, 2] <- unlist(varLab[,2], use.names = FALSE)
+    if(any(!validUTF8(varLab[,2]))){
+      whichNotUTF8 <- which(!is.na(varLab[,2]) & !validUTF8(varLab[,2]))
+      nonUTFvarlabel <- varLab[whichNotUTF8, c(1,2)] # Save list of all labels that aren't encoded in UTF-8
+      varLab[whichNotUTF8, 2] <- enc2utf8(varLab[whichNotUTF8, 2])
+      varLab[whichNotUTF8, 2] <- iconv(varLab[whichNotUTF8, 2], "UTF-8", "UTF-8", sub='')
+      nonUTFvarlabel <- cbind(nonUTFvarlabel, varLab[whichNotUTF8, 2])
     }
   } else {
     varLab <- NULL
@@ -89,7 +98,7 @@ extractLabels <- function(dat){
   } else {
     valLab <- NULL
   }
-  return(list(varLab, valLab))
+  return(list(varLab, valLab, nonUTFvarlabel))
 }
 
 #' Creates a household level file from a dataset with a household structure.
@@ -392,19 +401,25 @@ tryCatchFn <- function(expr) {
 #' @author Bernhard Meindl
 #' @export
 readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=TRUE, ...) {
+  nonUTFvarname <- NULL
   if (type=="sas") {
     res <- tryCatchFn(read_sas(data_file=path))
-  }
+    # Convert column names to utf8
+    nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
+    colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
+    }
   if (type=="spss") {
     res <- tryCatchFn(read_spss(file=path))
-  }
+    # Convert column names to utf8
+    nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
+    colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
+    }
   if (type=="stata") {
     res <- tryCatchFn(read_dta(file=path))
+    # Convert column names to utf8
+    nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
+    colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
     lab <- extractLabels(res)
-    if("integer" %in% class(lab)){
-      res <- simpleError(paste0(lab, " variable labels are not UTF-8 encoded. Correct the labels and reload the data."))
-      return(res)
-    }
   }
   if (type=="R") {
     res <- tryCatchFn(get(load(file=path)))
@@ -471,8 +486,53 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     }
   }
 
+  # Convert levels in factor and character variables to utf8
+  nonUTFvallabels <- data.frame(varName = character(), initLabel = character(0), convLabel = character(0), stringsAsFactors = FALSE)
+  for (i in 1:dim(res)[2]) {
+    # Character strings
+    if ("character" %in% class(res[,i])) {
+      if (any(!validUTF8(res[,i]))) {
+        nonUTFvallabels <- rbind(nonUTFvallabels, cbind(rep(colnames(res)[i], length(unique(res[which(!validUTF8(res[,i])),i]))),
+          unique(res[which(!validUTF8(res[,i])),i]),
+          iconv(enc2utf8(unique(res[which(!validUTF8(res[,i])),i])), "UTF-8", "UTF-8", sub='')))
+        res[which(!validUTF8(res[,i])),i] <- enc2utf8(res[which(!validUTF8(res[,i])),i])
+        # Remove any non UTF8 characters
+        res[which(!validUTF8(res[,i])),i] <- iconv(res[which(!validUTF8(res[,i])),i], "UTF-8", "UTF-8", sub='')
+      }
+    }
+    # Factor variables
+    if ("factor" %in% class(res[,i])) {
+      if (any(!validUTF8(levels(res[,i])))) {
+        nonUTFvallabels <- rbind(nonUTFvallabels, cbind(rep(colnames(res)[i], length(levels(res[,i])[which(!validUTF8(levels(res[,i])))])),
+          levels(res[,i])[which(!validUTF8(levels(res[,i])))],
+          iconv(enc2utf8(levels(res[,i])[which(!validUTF8(levels(res[,i])))]), "UTF-8", "UTF-8", sub='')))
+        # Convert to UTF8, encoding unknown
+        levels(res[,i])[which(!validUTF8(levels(res[,i])))] <- enc2utf8(levels(res[,i])[which(!validUTF8(levels(res[,i])))])
+        # Remove any non UTF8 characters
+        levels(res[,i])[which(!validUTF8(levels(res[,i])))] <- iconv(levels(res[,i])[which(!validUTF8(levels(res[,i])))], "UTF-8", "UTF-8", sub='')
+      }
+    }
+  }
+  if (!is.null(nonUTFvarname)) {
+    if (dim(nonUTFvarname)[1] == 0) {
+      nonUTFvarname <- NULL
+    }
+  }  # Set to NULL if no changed labels
+  if (!is.null(nonUTFvallabels)) {
+    if (dim(nonUTFvallabels)[1] == 0) {
+      nonUTFvallabels <- NULL
+    }
+  } # Set to NULL if no changed labels
+
   if (type=="stata") {
     attr(res, "lab") <- lab
+  }
+
+  # Collect variable names, variable labels and value labels that were encoded to UTF8
+  if (type=="stata") {
+    attr(res, "nonUTF") <- list(nonUTFvarname, nonUTFvallabels, lab[[3]])
+  } else{
+    attr(res, "nonUTF") <- list(nonUTFvarname, nonUTFvallabels)
   }
   res
 }

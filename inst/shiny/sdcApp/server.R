@@ -697,6 +697,7 @@ shinyServer(function(session, input, output) {
       }
       obj$last_error <- NULL
       obj$inputdata <- res
+      obj$utf8 <- !all(sapply(attr(obj$inputdata, "nonUTF"), is.null))
       code_out <- gsub(input$file1$datapath, input$file1$name, code)
       code_out <- gsub("res", "inputdata", code_out)
       obj$code_read_and_modify <- code_out
@@ -786,6 +787,7 @@ shinyServer(function(session, input, output) {
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
     obj$inputdataB <- obj$inputdata
+    obj$utf8 <- FALSE
     obj$sdcObj <- NULL # start fresh
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
@@ -965,6 +967,10 @@ shinyServer(function(session, input, output) {
     }
   })
 
+  observeEvent(input$btn_acc_utf8_conv, {
+    obj$utf8 <- FALSE
+  })
+
   observeEvent(input$btn_reset_sdc, {
     ptm <- proc.time()
     obj$sdcObj <- NULL
@@ -1002,6 +1008,7 @@ shinyServer(function(session, input, output) {
     obj$code_setup <- c()
     obj$anon_performed <- NULL
     obj$code_read_and_modify <- c()
+    obj$utf8 <- FALSE
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     removeModal(session=session) # remove the modal
