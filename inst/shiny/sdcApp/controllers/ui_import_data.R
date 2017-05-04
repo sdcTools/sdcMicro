@@ -75,7 +75,7 @@ output$ui_import_data_main <- renderUI({
     out <- list(out, fluidRow(
       column(6, rb1, align="center"),
       column(6, rb2, align="center")))
-    
+
     if (val == "csv") {
       allowed <- c(".txt",".csv")
       out <- list(out, uiOutput("ui_import_csv"))
@@ -95,7 +95,7 @@ output$ui_import_data_main <- renderUI({
       allowed <- c(".dta")
       out <- list(out, uiOutput("ui_import_stata"))
     }
-    
+
     out <- list(out, fluidRow(
       column(12, p("Note: the selected file is loaded immediately upon selecting. Set the above options before selecting the file."), align="center")
     ))
@@ -157,16 +157,12 @@ output$ui_show_changed_labels <- renderUI({
       column(12, txtChangedLabels4, align="center"),
       column(12, tags$br())
       )
-  if(is.null(attr(obj$inputdata, "nonUTF")[[2]])){ # only show accept button if no changes to actual values are made
-    out <- list(out, fluidRow(
-      column(6, btn1), column(6, btn2)
-    ))
+  if (is.null(attr(obj$inputdata, "nonUTF")[[2]])) { # only show accept button if no changes to actual values are made
+    out <- list(out, fluidRow(column(6, btn1), column(6, btn2)))
   } else {
-    out <- list(out, fluidRow(
-      column(12, btn1, align="center")
-    ))
+    out <- list(out, fluidRow(column(12, btn1, align="center")))
   }
-  if(!is.null(attr(obj$inputdata, "nonUTF")[[1]])){
+  if (!is.null(attr(obj$inputdata, "nonUTF")[[1]])) {
     df1 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[1]][, 2])
     colnames(df1) <- c("Converted variable name")
     out <- list(out, fluidRow(
@@ -174,8 +170,8 @@ output$ui_show_changed_labels <- renderUI({
       column(12, renderTable(df1, colnames = TRUE), align = "center")
     ))
   }
-  if(length(attr(obj$inputdata, "nonUTF"))==3){
-    if(!is.null(attr(obj$inputdata, "nonUTF")[[3]])){
+  if (length(attr(obj$inputdata, "nonUTF"))==3) {
+    if (!is.null(attr(obj$inputdata, "nonUTF")[[3]])) {
       df2 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[3]][,c(1,3)])
       colnames(df2) <- c("Variable name", "Converted variable label")
       out <- list(out, fluidRow(
@@ -184,7 +180,7 @@ output$ui_show_changed_labels <- renderUI({
       ))
     }
   }
-  if(!is.null(attr(obj$inputdata, "nonUTF")[[2]])){
+  if (!is.null(attr(obj$inputdata, "nonUTF")[[2]])) {
     df3 <- as.data.frame(attr(obj$inputdata, "nonUTF")[[2]][,c(1,3)])
     colnames(df3) <- c("Variable name", "Converted value label")
     out <- list(out, fluidRow(

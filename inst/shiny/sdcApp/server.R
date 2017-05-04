@@ -965,7 +965,7 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_acc_utf8_conv, {
     obj$utf8 <- FALSE
   })
-  
+
   observeEvent(input$btn_reset_sdc, {
     ptm <- proc.time()
     obj$sdcObj <- NULL
@@ -1001,7 +1001,7 @@ shinyServer(function(session, input, output) {
     obj$sdcObj <- NULL
     obj$code_anonymize <- c()
     obj$code_setup <- c()
-    obj$anon_performed <- NULL    
+    obj$anon_performed <- NULL
     obj$code_read_and_modify <- c()
     obj$utf8 <- FALSE
     ptm <- proc.time()-ptm
