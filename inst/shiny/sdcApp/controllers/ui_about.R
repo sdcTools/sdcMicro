@@ -32,6 +32,9 @@ output$btn_update_export_path <- renderUI({
   if (!dir.exists(input$path_export_data)) {
     return(myActionButton("btn_update_export_path_xxx", "The specified directory does not exist, thus the path can't be updated", btn.style="danger"))
   }
+  if (grepl("\\", input$path_export_data, fixed=TRUE)){
+    return(myActionButton("btn_update_export_path_xxx", "Use '/' instead of backslash in the path!", btn.style="danger"))
+  }
   if (file.access(input$path_export_data, mode=2)!=0) {
     return(myActionButton("btn_update_export_path_xxx", "The specified directory is not writeable, thus the path can't be updated!", btn.style="danger"))
   }
