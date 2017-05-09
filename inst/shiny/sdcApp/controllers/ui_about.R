@@ -39,7 +39,7 @@ output$btn_update_export_path <- renderUI({
 })
 
 observeEvent(input$btn_update_export_path, {
-  obj$path_export <- input$path_export_data
+  obj$path_export <- gsub("\\\\", "/", input$path_export_data)
 })
 
 output$stop_btn <- renderUI({
