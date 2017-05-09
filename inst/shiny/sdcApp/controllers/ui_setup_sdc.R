@@ -610,7 +610,7 @@ output$setupbtn <- renderUI({
   if (length(ii)>1) {
     showBtn <- FALSE
     txt <- p("More than one weight variable is selected.", tags$br(), tags$br(),
-             tags$span(style="color:red; font-weight:bold","Undo the multiple weight variable selection and select only one weight variable before making other variable selections!"))
+      tags$span(style="color:red; font-weight:bold","Undo the multiple weight variable selection and select only one weight variable before making other variable selections!"))
     showModal(modalDialog(list(txt), title=strong(paste("Invalid variable choice (",dQuote(vnames[ii]),")")), footer=modalButton("Continue"), size="m", easyClose=TRUE, fade=TRUE), session=session)
   }
   if (length(ii)==1) {
