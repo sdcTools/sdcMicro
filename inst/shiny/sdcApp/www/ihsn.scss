@@ -1,5 +1,3 @@
-@import url('bootswatch_yeti.css'); 
-
 /*
 **  
 ** Theme name: IHSN
@@ -7,23 +5,17 @@
 **
 */
 
-/* Sass VARIABLES */
+// Uses bootswatch as a starting point, aka bootswatch is a DEPENDENCY
+@import url('bootswatch_yeti.css'); 
 
-// COLORS A
+// IMPORT COLOR VARIABLES
+/* Comment in/out one of the lines below to activate a dark or bright navigation */ 
 
-$bg-color: #F2F3F6; /* when body is not having a white background */
-$text-color: #50595e; /* for regular text */
-$dark-gray: #555;
-$primary: #e4e9ec; /* borders, buttons */
-$primary-dark: darken($primary, 5%);
-$nav-bg: #fff;
-$nav-a: #819dad; /* navigation */
-$nav-a-hover:#101f28; /* navigation */
-$accent: #0a92e4; /* for text-links and clickable elements */
-$accent-hover: #22a6f5; /* for text-links and clickable elements on hover */
+// @import 'variables_bright';
+@import 'variables_dark';
 
-// TYPOGRAPHY
 
+// TYPOGRAPHY VARIABLES 
 $sans-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
 $os-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 $mono-font: Menlo, Monaco, Consolas, "Courier New", monospace;
@@ -33,7 +25,6 @@ $line-height: calc(155% + 0.2vw);
 
 
 // MIXINS
-
 @mixin wb-sidebar {
     border-width: 1px;
     border-style: solid;
@@ -49,9 +40,8 @@ $line-height: calc(155% + 0.2vw);
     transition: all 0.25s;
 }
 
-/* 
-** OVERALL STYLE 
-*/
+
+// OVERALL STYLE 
 
 body {
     background-color: $bg-color;
@@ -65,10 +55,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: $text-color;
     margin-top: 24px;
     margin-bottom: 12px;
-    font-family: $sans-font;
+    font-family: $os-font;
     font-weight: bold;
 }
 
+p {
+    font-family: $os-font;
+}
 
 a {
     color: $accent;
@@ -78,42 +71,80 @@ a {
     }
 }
 
- // NAVIGATION
+// NAVIGATION - PROPOSAL 1 (Bright)
+
+// .navbar-default {
+//     background-color: $nav-bg;
+//     border-bottom: 1px solid $primary;
+//     margin-bottom: 20px;
+
+//     .navbar-nav > li > a {
+//     	color: $nav-a;
+//     	font-weight: 500;
+//         padding: 10px 18px;
+//         @include default-transition;
+//     }
+
+//     .navbar-nav > li > a:hover {
+//         color: $nav-a-hover;
+//         background: none;
+//     }
+
+//     .navbar-nav > .active > a, 
+//     .navbar-nav > .active > a:hover, 
+//     .navbar-nav > .active > a:focus {
+//         border-bottom: solid 2px $dark-gray;
+//         color: $dark-gray;
+//         background: none;
+//     }
+
+//     .navbar-brand, 
+//     .navbar-brand:hover, 
+//     .navbar-brand:focus {
+//         color: #50595e;
+//     }
+// } 
+
+// END OF NAVIGATION - PROPOSAL 1 (Bright)
+
+// NAVIGATION - PROPOSAL 2 (Dark)
 
 .navbar-default {
     background-color: $nav-bg;
-    border-bottom: 1px solid $primary;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 
     .navbar-nav > li > a {
-    	color: $nav-a;
-    	font-weight: 500;
+        color: $nav-a;
+        font-weight: 500;
         padding: 10px 18px;
+        text-transform: uppercase;
+        font-size: 11px;
         @include default-transition;
     }
 
     .navbar-nav > li > a:hover {
-        color: $nav-a-hover;
-        background: none;
+        color: #fff;
+        background: $nav-a-hover;
+        
     }
-
-    .navbar-nav > .active > a, 
-    .navbar-nav > .active > a:hover, 
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
     .navbar-nav > .active > a:focus {
-        border-bottom: solid 2px $dark-gray;
-        color: $dark-gray;
-        background: none;
+        color: #fff;
+        background: $nav-a-hover;
     }
-
-    .navbar-brand, 
-    .navbar-brand:hover, 
+    .navbar-brand,
+    .navbar-brand:hover,
     .navbar-brand:focus {
-        color: #50595e;
+        color: #fff;
     }
-}
+} 
+
+// END OF NAVIGATION - PROPOSAL 2 (Dark)
+
 
 .container-fluid > .navbar-header {
-	margin-left: 0;
+    margin-left: 0;
     margin-right: 10%;
     padding-left: 1%;
     font-weight: 700;
