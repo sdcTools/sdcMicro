@@ -1,12 +1,11 @@
 @import url("bootswatch_yeti.css");
 /*
-** Proposal 1
+**  
+** Theme name: IHSN
 ** Theme inspired by http://data.worldbank.org/
 **
 */
-/*
-** VARIABLES
-*/
+/* Sass VARIABLES */
 /* when body is not having a white background */
 /* for regular text */
 /* borders, buttons */
@@ -166,4 +165,4 @@ tbody td {
   }
 }
 
-/*# sourceMappingURL=bright.css.map */
+/*# sourceMappingURL=ihsn.css.map */
