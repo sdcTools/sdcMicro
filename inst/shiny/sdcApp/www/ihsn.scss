@@ -19,6 +19,7 @@
 $sans-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
 $os-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 $mono-font: Menlo, Monaco, Consolas, "Courier New", monospace;
+$serif-font: Georgia, serif;
 
 $font-size: calc(0.9em + 0.4vw);
 $line-height: calc(155% + 0.2vw);
@@ -55,12 +56,12 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: $text-color;
     margin-top: 24px;
     margin-bottom: 12px;
-    font-family: $os-font;
+    font-family: $sans-font;
     font-weight: bold;
 }
 
 p {
-    font-family: $os-font;
+    font-family: $sans-font;
 }
 
 a {
@@ -157,14 +158,14 @@ a {
     margin-bottom: 30px;
 }
 
-// SIDEBAR
+// SIDEBAR PROPOSAL 1
 
 .wb_sidebar {
     @include wb-sidebar;
-
+    
     .btn {
         white-space: initial;
-        font-size: 70%;
+        font-size: 90%;
     }
 
     .btn-default {
@@ -178,6 +179,29 @@ a {
     }
 }
 
+// END OF SIDEBAR PROPOSAL 1
+
+// SIDEBAR PROPOSAL 2
+// .wb_sidebar {
+//     min-height: 100vh;
+//     background-color: #EBF1F5;
+//     .btn {
+//         border: none;
+//         white-space: initial;
+//         font-size: 80%;
+//         font-weight: bold;
+//     }
+//     .btn-default {
+//         background: none;
+//         color: $accent;
+//         @include default-transition;
+//         &:hover {
+//             background-color: $primary;
+//         }
+//     }
+// }
+
+// END of SIDEBAR PROPOSAL 2
 
 // BUTTONS
 
