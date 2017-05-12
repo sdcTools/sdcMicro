@@ -11,8 +11,8 @@
 // IMPORT COLOR VARIABLES
 /* Comment in/out one of the lines below to activate a dark or bright navigation */ 
 
-// @import 'variables_bright';
-@import 'variables_dark';
+@import 'variables_bright';
+// @import 'variables_dark';
 
 
 // TYPOGRAPHY VARIABLES 
@@ -74,72 +74,73 @@ a {
 
 // NAVIGATION - PROPOSAL 1 (Bright)
 
-// .navbar-default {
-//     background-color: $nav-bg;
-//     border-bottom: 1px solid $primary;
-//     margin-bottom: 20px;
+.navbar-default {
+    background-color: $nav-bg;
+    border-bottom: 1px solid $primary;
+    margin-bottom: 20px;
 
-//     .navbar-nav > li > a {
-//     	color: $nav-a;
-//     	font-weight: 500;
-//         padding: 10px 18px;
-//         @include default-transition;
-//     }
+    .navbar-nav > li > a {
+    	color: $nav-a;
+    	font-weight: 500;
+        padding: 10px 18px;
+        @include default-transition;
+    }
 
-//     .navbar-nav > li > a:hover {
-//         color: $nav-a-hover;
-//         background: none;
-//     }
+    .navbar-nav > li > a:hover {
+        color: $nav-a-hover;
+        background: none;
+        border-bottom: solid 2px #555;
+    }
 
-//     .navbar-nav > .active > a, 
-//     .navbar-nav > .active > a:hover, 
-//     .navbar-nav > .active > a:focus {
-//         border-bottom: solid 2px $dark-gray;
-//         color: $dark-gray;
-//         background: none;
-//     }
+    .navbar-nav > .active > a, 
+    .navbar-nav > .active > a:hover, 
+    .navbar-nav > .active > a:focus {
+        border-bottom: solid 2px $dark-gray;
+        color: $dark-gray;
+        background: none;
+    }
 
-//     .navbar-brand, 
-//     .navbar-brand:hover, 
-//     .navbar-brand:focus {
-//         color: #50595e;
-//     }
-// } 
+    .navbar-brand, 
+    .navbar-brand:hover, 
+    .navbar-brand:focus {
+        color: #50595e;
+    }
+} 
 
 // END OF NAVIGATION - PROPOSAL 1 (Bright)
 
 // NAVIGATION - PROPOSAL 2 (Dark)
 
-.navbar-default {
-    background-color: $nav-bg;
-    margin-bottom: 0px;
+// .navbar-default {
+//     background-color: $nav-bg;
+//     margin-bottom: 0px;
 
-    .navbar-nav > li > a {
-        color: $nav-a;
-        font-weight: 500;
-        padding: 10px 18px;
-        text-transform: uppercase;
-        font-size: 11px;
-        @include default-transition;
-    }
+//     .navbar-nav > li > a {
+//         color: $nav-a;
+//         font-weight: 500;
+//         padding: 10px 18px;
+//         text-transform: uppercase;
+//         font-size: 11px;
+//         @include default-transition;
+//     }
 
-    .navbar-nav > li > a:hover {
-        color: #fff;
-        background: $nav-a-hover;
+//     .navbar-nav > li > a:hover {
+//         color: #fff;
+//         background: $nav-a-hover;
         
-    }
-    .navbar-nav > .active > a,
-    .navbar-nav > .active > a:hover,
-    .navbar-nav > .active > a:focus {
-        color: #fff;
-        background: $nav-a-hover;
-    }
-    .navbar-brand,
-    .navbar-brand:hover,
-    .navbar-brand:focus {
-        color: #fff;
-    }
-} 
+//     }
+//     .navbar-nav > .active > a,
+//     .navbar-nav > .active > a:hover,
+//     .navbar-nav > .active > a:focus {
+//         color: #fff;
+//         background: $nav-a-hover;
+//     }
+//     .navbar-brand,
+//     .navbar-brand:hover,
+//     .navbar-brand:focus {
+//         color: #fff;
+//     }
+// } 
 
 // END OF NAVIGATION - PROPOSAL 2 (Dark)
 
@@ -184,7 +185,7 @@ a {
 // SIDEBAR PROPOSAL 2
 // .wb_sidebar {
 //     min-height: 100vh;
-//     background-color: #EBF1F5;
+//     background-color: #e7e9ee;
 //     .btn {
 //         border: none;
 //         white-space: initial;
