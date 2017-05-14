@@ -1,4 +1,4 @@
 sdcMicro
 ========
 
-Readme for R-Package sdcMicro
+Fork created as part of Google Summer of Code, 2016.
