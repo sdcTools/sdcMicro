@@ -45,7 +45,7 @@ output$ui_export_data <- renderUI({
   output$dt_exportData <- DT::renderDataTable({
     req(input$rb_export_randomizeorder)
     exportData()
-  }, options=list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=10), rownames=FALSE)
+  }, options=list(scrollX=TRUE, lengthMenu=list(c(10, 20, 50, 100, -1), c('10', '20', '50', '100', 'All')), pageLength=10), rownames=FALSE)
 
   # specific (gui)-options for csv-export
   output$ui_export_csv <- renderUI({
