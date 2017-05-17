@@ -7,10 +7,10 @@
 
 // Uses bootswatch as a starting point, aka bootswatch is a DEPENDENCY
 @import url('bootswatch_yeti.css'); 
+@import url('https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css');
 
 // IMPORT COLOR VARIABLES
 /* Comment in/out one of the lines below to activate a dark or bright navigation */ 
-
 @import 'variables_bright';
 // @import 'variables_dark';
 
@@ -26,7 +26,7 @@ $line-height: calc(155% + 0.2vw);
 
 
 // MIXINS
-@mixin wb-sidebar {
+@mixin wb-sidebar-1 {
     border-width: 1px;
     border-style: solid;
     border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), #e4e9ec, rgba(0, 0, 0, 0)) 1 100%;
@@ -35,6 +35,15 @@ $line-height: calc(155% + 0.2vw);
     padding: 1.5em;
     padding-top: 20px;
     padding-bottom: 40px;
+}
+
+@mixin wb-sidebar-1-2 {
+    background-color: white;
+    height: 100vh;
+    padding: 1.5em;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    border-right: solid 1px $primary;
 }
 
 @mixin default-transition { 
@@ -46,18 +55,19 @@ $line-height: calc(155% + 0.2vw);
 
 body {
     background-color: $bg-color;
-    line-height: $line-height;
-    font-size: $font-size;
     color: $text-color;
+    font-size: $font-size;
     font-family: $sans-font;
+    line-height: $line-height;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: $text-color;
-    margin-top: 24px;
-    margin-bottom: 12px;
     font-family: $sans-font;
     font-weight: bold;
+    margin-top: 24px;
+    margin-bottom: 12px;
+
 }
 
 p {
@@ -66,6 +76,7 @@ p {
 
 a {
     color: $accent;
+    @include default-transition;
 
     &:hover {
         color: $accent-hover;
@@ -77,33 +88,36 @@ a {
 .navbar-default {
     background-color: $nav-bg;
     border-bottom: 1px solid $primary;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 
     .navbar-nav > li > a {
-    	color: $nav-a;
+    	border-bottom: none;
+        color: $nav-a;
     	font-weight: 500;
-        padding: 10px 18px;
+        height: 44px;        
+        padding: 11px 18px;
         @include default-transition;
     }
 
     .navbar-nav > li > a:hover {
-        color: $nav-a-hover;
-        background: none;
-        border-bottom: solid 2px #555;
+        color: white;
+        background-color: $accent-hover;
     }
 
     .navbar-nav > .active > a, 
     .navbar-nav > .active > a:hover, 
     .navbar-nav > .active > a:focus {
-        border-bottom: solid 2px $dark-gray;
-        color: $dark-gray;
         background: none;
+        border-bottom: solid 2px $nav-a-hover;
+        color: $dark-gray;
+        
     }
 
     .navbar-brand, 
     .navbar-brand:hover, 
     .navbar-brand:focus {
         color: #50595e;
+        height: 44px;
     }
 } 
 
@@ -146,10 +160,10 @@ a {
 
 
 .container-fluid > .navbar-header {
+    font-weight: 700;
     margin-left: 0;
     margin-right: 10%;
     padding-left: 1%;
-    font-weight: 700;
 }
 
 
@@ -162,20 +176,76 @@ a {
 // SIDEBAR PROPOSAL 1
 
 .wb_sidebar {
-    @include wb-sidebar;
+    // @include wb-sidebar-1;
+    // @include wb-sidebar-1-2;
     
-    .btn {
-        white-space: initial;
-        font-size: 90%;
-    }
+    // .btn {
+    //     font-size: 90%;
+    //     white-space: initial;
+    // }
 
-    .btn-default {
-        border: none;
-        background-color: $primary-dark;
-        @include default-transition; 
+    // .btn-default {
+    //     border: none;
+    //     background-color: $primary-dark;
+    //     @include default-transition; 
+
+    //     &:hover {
+    //         background-color: $accent-hover;
+    //         color: #fff;
+    //     }
+    // }
+
+    // .btn-warning {
+    //     border: none;
+    // }
+}
+
+
+// Sidebar Proposal 1 - Iteration 2 (flat, minimalistic) 
+.wb_sidebar {
+    @include wb-sidebar-1-2;
+
+    .btn-primary {
+        background: none;
+        border-left: solid 5px $accent-hover;
+        border-radius: 0px;
+        color: $accent;
+        text-align: left;
+        @include default-transition;
 
         &:hover {
-            background-color: $primary;
+            background: none;
+            border-left: solid 5px $accent-hover;
+            color: $accent-hover;
+        }
+    }
+    
+    
+    .btn-default {
+        background-color: #d5dde1;
+        background: none;
+        border: none;
+        border-radius: 0px;
+        text-align: left;
+        @include default-transition;
+
+        &:hover {
+            border-left: solid 5px $accent-hover;
+            transition: all 0.25s;
+            color: $accent-hover;
+        }
+    }
+
+    .btn-warning {
+        background: none;
+        border: none;
+        border-radius: 0px;
+        color: darkorange;
+        text-align: left;
+        @include default-transition;
+        
+        &:hover {
+            border-left: solid 5px darkorange;
         }
     }
 }
@@ -203,6 +273,15 @@ a {
 // }
 
 // END of SIDEBAR PROPOSAL 2
+
+
+// MAIN
+
+.col-sm-10 .shiny-html-output {
+    padding-top: 20px;
+}
+
+
 
 // BUTTONS
 

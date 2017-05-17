@@ -5,6 +5,7 @@
 **
 */
 @import url("bootswatch_yeti.css");
+@import url("https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css");
 /* Comment in/out one of the lines below to activate a dark or bright navigation */
 /* when body is not having a white background */
 /* for regular text */
@@ -15,18 +16,18 @@
 /* for text-links and clickable elements on hover */
 body {
   background-color: #F2F3F6;
-  line-height: calc(155% + 0.2vw);
-  font-size: calc(0.9em + 0.4vw);
   color: #50595e;
+  font-size: calc(0.9em + 0.4vw);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: calc(155% + 0.2vw);
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   color: #50595e;
-  margin-top: 24px;
-  margin-bottom: 12px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: bold;
+  margin-top: 24px;
+  margin-bottom: 12px;
 }
 
 p {
@@ -35,45 +36,48 @@ p {
 
 a {
   color: #0a92e4;
+  transition: all 0.25s;
 }
 a:hover {
-  color: #22a6f5;
+  color: #2baaf6;
 }
 
 .navbar-default {
   background-color: #fff;
   border-bottom: 1px solid #e4e9ec;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 }
 .navbar-default .navbar-nav > li > a {
+  border-bottom: none;
   color: #819dad;
   font-weight: 500;
-  padding: 10px 18px;
+  height: 44px;
+  padding: 11px 18px;
   transition: all 0.25s;
 }
 .navbar-default .navbar-nav > li > a:hover {
-  color: #101f28;
-  background: none;
-  border-bottom: solid 2px #555;
+  color: white;
+  background-color: #2baaf6;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-  border-bottom: solid 2px #555;
-  color: #555;
   background: none;
+  border-bottom: solid 2px #597789;
+  color: #555;
 }
 .navbar-default .navbar-brand,
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
   color: #50595e;
+  height: 44px;
 }
 
 .container-fluid > .navbar-header {
+  font-weight: 700;
   margin-left: 0;
   margin-right: 10%;
   padding-left: 1%;
-  font-weight: 700;
 }
 
 .tab-content {
@@ -81,26 +85,53 @@ a:hover {
 }
 
 .wb_sidebar {
-  border-width: 1px;
-  border-style: solid;
-  border-image: linear-gradient(to bottom, transparent, #e4e9ec, transparent) 1 100%;
-  background-image: linear-gradient(to bottom, transparent, white, transparent);
-  box-shadow: 10px 0px 12px -10px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  height: 100vh;
   padding: 1.5em;
   padding-top: 20px;
   padding-bottom: 40px;
+  border-right: solid 1px #e4e9ec;
 }
-.wb_sidebar .btn {
-  white-space: initial;
-  font-size: 90%;
+.wb_sidebar .btn-primary {
+  background: none;
+  border-left: solid 5px #2baaf6;
+  border-radius: 0px;
+  color: #0a92e4;
+  text-align: left;
+  transition: all 0.25s;
+}
+.wb_sidebar .btn-primary:hover {
+  background: none;
+  border-left: solid 5px #2baaf6;
+  color: #2baaf6;
 }
 .wb_sidebar .btn-default {
-  border: none;
   background-color: #d5dde1;
+  background: none;
+  border: none;
+  border-radius: 0px;
+  text-align: left;
   transition: all 0.25s;
 }
 .wb_sidebar .btn-default:hover {
-  background-color: #e4e9ec;
+  border-left: solid 5px #2baaf6;
+  transition: all 0.25s;
+  color: #2baaf6;
+}
+.wb_sidebar .btn-warning {
+  background: none;
+  border: none;
+  border-radius: 0px;
+  color: darkorange;
+  text-align: left;
+  transition: all 0.25s;
+}
+.wb_sidebar .btn-warning:hover {
+  border-left: solid 5px darkorange;
+}
+
+.col-sm-10 .shiny-html-output {
+  padding-top: 20px;
 }
 
 .btn-primary {
@@ -109,7 +140,7 @@ a:hover {
   transition: all 0.25s;
 }
 .btn-primary:hover {
-  background-color: #22a6f5;
+  background-color: #2baaf6;
 }
 
 .btn-primary,
