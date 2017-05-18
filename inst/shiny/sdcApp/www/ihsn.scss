@@ -7,12 +7,11 @@
 
 // Uses bootswatch as a starting point, aka bootswatch is a DEPENDENCY
 @import url('bootswatch_yeti.css'); 
-@import url('https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css');
+// @import url('https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css');
 
 // IMPORT COLOR VARIABLES
 /* Comment in/out one of the lines below to activate a dark or bright navigation */ 
 @import 'variables_bright';
-// @import 'variables_dark';
 
 
 // TYPOGRAPHY VARIABLES 
@@ -173,7 +172,7 @@ a {
     margin-bottom: 30px;
 }
 
-// SIDEBAR PROPOSAL 1
+// SIDEBAR PROPOSAL 1 - With box-shadow
 
 .wb_sidebar {
     // @include wb-sidebar-1;
@@ -205,11 +204,22 @@ a {
 .wb_sidebar {
     @include wb-sidebar-1-2;
 
+    .row > .col-sm-12 {
+        padding-left: 4px;
+    }
+
+    h4 {
+        font-size: 16px;
+        margin-bottom: 30px;
+        padding-left: 20px;
+    }
+
     .btn-primary {
         background: none;
         border-left: solid 5px $accent-hover;
         border-radius: 0px;
         color: $accent;
+        padding-left: 20px;
         text-align: left;
         @include default-transition;
 
@@ -226,6 +236,7 @@ a {
         background: none;
         border: none;
         border-radius: 0px;
+        padding-left: 20px;
         text-align: left;
         @include default-transition;
 
@@ -241,6 +252,7 @@ a {
         border: none;
         border-radius: 0px;
         color: darkorange;
+        padding-left: 20px;
         text-align: left;
         @include default-transition;
         
