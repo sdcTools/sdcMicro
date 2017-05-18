@@ -9,4 +9,5 @@ $( document ).ready(function() {
 $( document ).ajaxComplete(function() {
   $( ".log" ).text( "Triggered ajaxComplete handler." );
   $( "select" ).addClass( "form-control" );
+  $( "input[type=search]" ).addClass( "form-control" );
 });
