@@ -200,6 +200,11 @@ a {
 .wb_sidebar {
     @include wb-sidebar-1-2;
 
+    #ui_sel_script_btns .col-sm-12,
+    #ui_sel_resbtns_import .col-sm-12 {
+        margin-left: -11px;
+    }
+
     .row > .col-sm-12 {
         padding-left: 4px;
     }

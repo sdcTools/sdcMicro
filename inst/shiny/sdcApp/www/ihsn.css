@@ -91,6 +91,10 @@ a:hover {
   padding-bottom: 40px;
   border-right: solid 1px #e4e9ec;
 }
+.wb_sidebar #ui_sel_script_btns .col-sm-12,
+.wb_sidebar #ui_sel_resbtns_import .col-sm-12 {
+  margin-left: -11px;
+}
 .wb_sidebar .row > .col-sm-12 {
   padding-left: 4px;
 }
