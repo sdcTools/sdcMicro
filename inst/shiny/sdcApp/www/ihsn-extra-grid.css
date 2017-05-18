@@ -1,0 +1,20 @@
+/*
+ * Neutralize yeti and bootstrap
+ * Seach box should be style like any other textfield
+ */
+input[type=search] {
+    -webkit-appearance: textfield;
+}
+
+
+/*
+ * Style the page selected (top left)
+ */
+.dataTables_wrapper .dataTables_length label{
+  min-width: 150px;
+}
+
+.dataTables_wrapper .dataTables_length select.form-control{
+  width: 60px;
+  display: inline-block;
+}
