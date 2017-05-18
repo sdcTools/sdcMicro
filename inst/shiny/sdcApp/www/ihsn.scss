@@ -37,7 +37,8 @@ $line-height: calc(155% + 0.2vw);
 }
 
 @mixin wb-sidebar-1-2 {
-    background-color: white;
+    border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), #e4e9ec, rgba(0, 0, 0, 0)) 1 100%;
+    background-image: linear-gradient(to bottom, white, transparent);
     height: 100vh;
     padding: 1.5em;
     padding-top: 20px;
@@ -221,6 +222,7 @@ a {
         color: $accent;
         padding-left: 20px;
         text-align: left;
+        white-space: initial;
         @include default-transition;
 
         &:hover {
@@ -238,6 +240,7 @@ a {
         border-radius: 0px;
         padding-left: 20px;
         text-align: left;
+        white-space: initial;
         @include default-transition;
 
         &:hover {
@@ -254,6 +257,7 @@ a {
         color: darkorange;
         padding-left: 20px;
         text-align: left;
+        white-space: initial;
         @include default-transition;
         
         &:hover {
