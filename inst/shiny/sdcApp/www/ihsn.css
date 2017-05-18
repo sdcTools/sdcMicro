@@ -1,10 +1,11 @@
 /*
-**  
+**
 ** Theme name: IHSN
 ** Theme inspired by http://data.worldbank.org/
 **
 */
 @import url("bootswatch_yeti.css");
+
 /* Comment in/out one of the lines below to activate a dark or bright navigation */
 /* when body is not having a white background */
 /* for regular text */
@@ -214,5 +215,6 @@ tbody td {
     padding-bottom: 10px !important;
   }
 }
+@import url("ihsn-extra-grid.css");
 
 /*# sourceMappingURL=ihsn.css.map */
