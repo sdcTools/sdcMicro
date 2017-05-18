@@ -63,7 +63,7 @@ output$ui_import_data_main <- renderUI({
     val <- "stata"
   }
   out <- fluidRow(
-  column(12, h4("Uploading microdata", align="center")))
+  column(width = 8, offset = 2, h3("Uploading microdata", align="center")))
 
   if (val %in% c("R","csv","spss","sas","rdata","stata")) {
     # convert characters automatically to factors

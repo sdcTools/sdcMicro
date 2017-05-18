@@ -4,7 +4,6 @@
 ** Theme inspired by http://data.worldbank.org/
 **
 */
-@import url("bootswatch_yeti.css");
 /* Comment in/out one of the lines below to activate a dark or bright navigation */
 /* when body is not having a white background */
 /* for regular text */
@@ -39,6 +38,10 @@ a {
 }
 a:hover {
   color: #2baaf6;
+}
+
+.navbar {
+  min-height: 45px;
 }
 
 .navbar-default {
@@ -77,10 +80,6 @@ a:hover {
   margin-left: 0;
   margin-right: 10%;
   padding-left: 1%;
-}
-
-.tab-content {
-  margin-bottom: 30px;
 }
 
 .wb_sidebar {
@@ -147,7 +146,13 @@ a:hover {
   border-left: solid 5px darkorange;
 }
 
-.col-sm-10 .shiny-html-output {
+.tab-content {
+  margin-bottom: 30px;
+}
+
+.shiny-html-output h2:nth-of-type(1),
+.shiny-html-output h3:nth-of-type(1),
+.shiny-html-output h4:nth-of-type(1) {
   padding-top: 20px;
 }
 
