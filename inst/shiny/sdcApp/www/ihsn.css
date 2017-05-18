@@ -84,7 +84,7 @@ a:hover {
 }
 
 .wb_sidebar {
-  border-image: linear-gradient(to bottom, transparent, #e4e9ec, transparent) 1 100%;
+  border-image: linear-gradient(to bottom, #e4e9ec, transparent) 1 100%;
   background-image: linear-gradient(to bottom, white, transparent);
   height: 100vh;
   padding: 1.5em;
@@ -105,6 +105,7 @@ a:hover {
   border-left: solid 5px #2baaf6;
   border-radius: 0px;
   color: #0a92e4;
+  font-size: 0.9em;
   padding-left: 20px;
   text-align: left;
   white-space: initial;
@@ -120,6 +121,7 @@ a:hover {
   background: none;
   border: none;
   border-radius: 0px;
+  font-size: 0.9em;
   padding-left: 20px;
   text-align: left;
   white-space: initial;
@@ -135,6 +137,7 @@ a:hover {
   border: none;
   border-radius: 0px;
   color: darkorange;
+  font-size: 0.9em;
   padding-left: 20px;
   text-align: left;
   white-space: initial;

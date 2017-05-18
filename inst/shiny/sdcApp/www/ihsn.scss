@@ -37,7 +37,7 @@ $line-height: calc(155% + 0.2vw);
 }
 
 @mixin wb-sidebar-1-2 {
-    border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), #e4e9ec, rgba(0, 0, 0, 0)) 1 100%;
+    border-image: linear-gradient(to bottom, $primary, rgba(0, 0, 0, 0)) 1 100%;
     background-image: linear-gradient(to bottom, white, transparent);
     height: 100vh;
     padding: 1.5em;
@@ -220,6 +220,7 @@ a {
         border-left: solid 5px $accent-hover;
         border-radius: 0px;
         color: $accent;
+        font-size: 0.9em;
         padding-left: 20px;
         text-align: left;
         white-space: initial;
@@ -238,6 +239,7 @@ a {
         background: none;
         border: none;
         border-radius: 0px;
+        font-size: 0.9em;
         padding-left: 20px;
         text-align: left;
         white-space: initial;
@@ -255,6 +257,7 @@ a {
         border: none;
         border-radius: 0px;
         color: darkorange;
+        font-size: 0.9em;
         padding-left: 20px;
         text-align: left;
         white-space: initial;
