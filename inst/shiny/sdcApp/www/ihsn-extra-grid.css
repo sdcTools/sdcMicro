@@ -7,7 +7,7 @@ input[type=search] {
 }
 
 /*
- * Style the page selected (top left)
+ * Style the page selector (top left)
  */
 .dataTables_wrapper .dataTables_length label{
   min-width: 150px;
@@ -18,8 +18,14 @@ input[type=search] {
   display: inline-block;
 }
 
-
 .dataTables_wrapper .dataTables_filter input[type=search] {
     display: inline-block;
     width: 70%;
+}
+
+/*
+ * Style the Pager
+ */
+.dataTables_wrapper.no-footer .dataTables_scrollBody {
+    border-bottom: 0px;
 }

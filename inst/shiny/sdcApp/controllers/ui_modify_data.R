@@ -361,7 +361,7 @@ output$ui_set_to_na <- renderUI({
   helptxt <- paste0("The loaded dataset may contain different missing value codes, such as",code(9),",",code(999),",",code(-9),", etc. ")
   helptxt <- paste0(helptxt, "sdcMicro can only interpret missing values that are coded",code("NA"),". Here you can set other missing value")
   helptxt <- paste0(helptxt, "codes to",code("NA"),"(by missing value code). All records with that value in the variable will be recoded to NA. Alternatively one can set individual cells to",code("NA"),"by selecting the variable and record id (by record ID).")
-  helptxt <- paste0(helptxt, " Note that it impossible to later retrieve the original missing values. R does not allow for distinct missing value codes.")  
+  helptxt <- paste0(helptxt, " Note that it impossible to later retrieve the original missing values. R does not allow for distinct missing value codes.")
 
   out <- fluidRow(
     column(width = 8, offset = 2, h4("Set missing values to NA", align="center")),
@@ -585,13 +585,13 @@ output$ui_show_microdata <- renderUI({
     datatable(inputdata(),
               rownames = FALSE,
               selection="none",
-              options = list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=25))
+              options = list(scrollX=TRUE, scrollY=250, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=25))
   })
   #, options = list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=25), filter="top", rownames=FALSE
   output$tab_inputdata <- DT::renderDataTable({
     my_data_dt()
   })
-  
+
   #txt_microdata <- paste0("In this tab you can manipulate the data to prepare for setting up an object of class",code("sdcMicroObj"),"in the Anonymize tab. ")
   txt_microdata <- paste0("The loaded dataset is",code(obj$microfilename),"and consists of",code(nrow(obj$inputdata)),"observations and ",code(ncol(obj$inputdata)),"variables. ")
   if(is.null(attr(obj$inputdata, "dropped"))){
