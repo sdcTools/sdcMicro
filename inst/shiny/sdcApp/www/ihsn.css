@@ -85,7 +85,7 @@ a:hover {
 .wb_sidebar {
   border-image: linear-gradient(to bottom, #e4e9ec, transparent) 1 100%;
   background-image: linear-gradient(to bottom, white, transparent);
-  height: 100vh;
+  height: calc(100vh - 75px);
   padding: 1.5em;
   padding-top: 20px;
   padding-bottom: 40px;
