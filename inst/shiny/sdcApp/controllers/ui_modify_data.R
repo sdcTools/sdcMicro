@@ -318,7 +318,7 @@ output$ui_set_to_na <- renderUI({
     a <- obj$inputdata
     cbind(id=1:nrow(a),a)
   },
-    options=list(scrollX=TRUE, searching=FALSE, paging=TRUE, ordering=FALSE, bInfo=FALSE))
+    options=list(scrollX=TRUE, scrollY=250, searching=FALSE, paging=TRUE, ordering=FALSE, bInfo=FALSE))
   output$ui_nasuppvar <- renderUI({
     req(input$set_to_na_type)
     multiple <- FALSE
