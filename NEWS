@@ -1,3 +1,13 @@
+# 5.0.2
+- consistency improvements
+- code cleanup
+- fixes for non-ut8 encoded metadata using file import in graphical user interface
+- do not allow missing values in weight-variable
+- various small bugfixes and improvements
+
+# 5.0.1
+- This release includes some small improvements in the graphical user interface and preperations for new major R version.
+
 # 5.0.0
 - new argument 'excludeVars' in createSdcObj()
 - shiny-based GUI directly included in the package, can be started with sdcApp()
