@@ -28,11 +28,10 @@ data.frame(fk=f1$fk, Fk=f1$Fk)
 indivRisk(f1)
 
 }
-\author{
-Matthias Templ
-}
 \seealso{
 \code{\link{indivRisk}}
 }
+\author{
+Matthias Templ
+}
 \keyword{print}
-

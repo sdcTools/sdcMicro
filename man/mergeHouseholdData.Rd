@@ -45,4 +45,3 @@ x_full_anon <- extractManipData(sdc_full)
 \author{
 Thijs Benschop and Bernhard Meindl
 }
-

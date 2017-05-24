@@ -2,10 +2,10 @@
 % Please edit documentation in R/plotFunctions.R
 \docType{methods}
 \name{plot.sdcMicroObj}
-\alias{plot}
-\alias{plot,sdcMicroObj-method}
-\alias{plot-methods}
 \alias{plot.sdcMicroObj}
+\alias{plot-methods}
+\alias{plot,sdcMicroObj-method}
+\alias{plot}
 \title{Plotfunctions for objects of class \code{\link{sdcMicroObj-class}}}
 \usage{
 \S4method{plot}{sdcMicroObj}(x, type = "ls", ...)
@@ -48,4 +48,3 @@ plot(sdc, type="ls")
 Bernhard Meindl
 }
 \keyword{classes}
-

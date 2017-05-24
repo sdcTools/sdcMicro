@@ -2,11 +2,13 @@
 % Please edit documentation in R/0classes.r, R/aux_functions.r, R/methods.r
 \docType{class}
 \name{sdcMicroObj-class}
+\alias{sdcMicroObj-class}
 \alias{createSdcObj}
 \alias{sdcMicroObj-class}
+\alias{createSdcObj}
+\alias{undolast}
 \alias{strataVar<-}
 \alias{strataVar<-,sdcMicroObj,characterOrNULL-method}
-\alias{undolast}
 \title{Class \code{"sdcMicroObj"}}
 \usage{
 createSdcObj(dat, keyVars, numVars = NULL, pramVars = NULL,
@@ -83,6 +85,7 @@ techniques are applied independent for each characteristic of the defined strata
  Objects can be created by calls of the form
 \code{new("sdcMicroObj", ...)}.
 }
+
 \examples{
 
 showClass("sdcMicroObj")
@@ -217,4 +220,3 @@ colnames(get.sdcMicroObj(obj, "origData"))
 Bernhard Meindl, Alexander Kowarik, Matthias Templ, Elias Rut
 }
 \keyword{classes}
-

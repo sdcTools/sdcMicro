@@ -70,6 +70,8 @@ extractLabels <- function(dat){
     varLab <- as.data.frame(cbind(colnames(dat), lapply(dat, function(x){attr(x, "label")})))
     colnames(varLab) <- c("var.name", "var.label")
     rownames(varLab) <- NULL
+    # Set to NA values in var.label that have more than one element (value labels)
+    varLab[which(sapply(dat, function(x) { length(attr(x, "label")) }) > 1), 2] <- NA
     # Set to NULL values in var.label to NA
     varLab[which(sapply(sapply(dat, function(x) { attr(x, "label") }), is.null)), 2] <- NA
     # Check whether all strings are UTF-8 encoded    
@@ -119,10 +121,10 @@ selectHouseholdData <- function(dat, hhId, hhVars) {
 
   # Keep only one observation per household
   res <- res[which(!duplicated(res[,hhId])),]
-  
+
   # Sort hhVars on the order of the variables in dat
   hhVars <- colnames(dat)[which(colnames(dat) %in% hhVars)]
-  
+
   # Drop all variables that are not at the household level
   res <- res[,c(hhId, hhVars), drop=FALSE]
   invisible(res)
@@ -345,7 +347,7 @@ definition=function(obj, var) {
   }
   for (vv in var) {
     if("factor" %in% class(obj[[vv]])){
-      obj[[vv]] <- as.numeric(levels(obj[[vv]]))[obj[[vv]]] 
+      obj[[vv]] <- as.numeric(levels(obj[[vv]]))[obj[[vv]]]
     }else{
       obj[[vv]] <- as.numeric(obj[[vv]])
     }
@@ -563,7 +565,8 @@ subsetMicrodata <- function(obj, type, n) {
 #' \item {'rdata'}{ output will be saved in the R binary file-format.}
 #' \item {'sav'}{ output will be saved as SPSS-file.}
 #' \item {'dta'}{ ouput will be saved as STATA-file.}
-#' \item {'csv'}{ output will be saved as comma seperated (text)-file.}}
+#' \item {'csv'}{ output will be saved as comma seperated (text)-file.}
+#' \item {'sas'}{ output will be saved as SAS-file (sas7bdat).}}
 #' @param fileOut (character) file to which output should be written
 #' @param ... optional arguments used for \code{write.table} if argument \code{format} equals \code{csv}
 #' @return NULL
@@ -581,6 +584,9 @@ writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
   }
   if (format=="sav") {
     write_sav(data=dat, path=fileOut)
+  }
+  if (format=="sas") {
+    write_sas(data=dat, path=fileOut)
   }
   if (format=="dta") {
     # add label information
@@ -604,7 +610,7 @@ writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
   }
   if (format=="csv") {
     inp <- list(...)
-    write.table(dat, file=fileOut, col.names=inp$col.names, sep=inp$sep, dec=inp$dec)
+    write.table(dat, file=fileOut, col.names=as.logical(inp$col.names), sep=inp$sep, dec=inp$dec)
   }
   return(invisible(NULL))
 }

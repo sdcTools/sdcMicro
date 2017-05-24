@@ -80,9 +80,6 @@ sdc <- createSdcObj(testdata2,
 ## sdc <- dRiskRMD(sdc)
 ## and already stored in sdc
 }
-\author{
-Matthias Templ
-}
 \references{
 Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New
 Disclosure Risk Measures for Continuous Microdata Masking}, Lecture Notes in
@@ -97,5 +94,7 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 \seealso{
 \code{\link{dRisk}}
 }
+\author{
+Matthias Templ
+}
 \keyword{manip}
-

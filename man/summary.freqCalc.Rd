@@ -40,11 +40,10 @@ f2 <- freqCalc(localS$freqCalc, keyVars=c(4,5,6), w=8)
 summary(f2)
 
 }
-\author{
-Matthias Templ
-}
 \seealso{
 \code{\link{freqCalc}}
 }
+\author{
+Matthias Templ
+}
 \keyword{print}
-

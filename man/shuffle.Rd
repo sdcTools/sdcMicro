@@ -89,9 +89,6 @@ sdc <- createSdcObj(testdata2,
 sdc <- shuffle(sdc, method=c('ds'),regmethod= c('lm'), covmethod=c('spearman'),
 		form=savings+expend ~ urbrur+walls)
 }
-\author{
-Matthias Templ, Alexander Kowarik, Bernhard Meindl
-}
 \references{
 K. Muralidhar, R. Parsa, R. Saranthy (1999). A general additive
 data perturbation method for database security. \emph{Management Science},
@@ -108,5 +105,7 @@ Berlin/Heidelberg, 2008, ISBN: 978-3-540-87470-6, pp. 14-25.
 \seealso{
 \code{\link{rankSwap}, \link{lm}}
 }
+\author{
+Matthias Templ, Alexander Kowarik, Bernhard Meindl
+}
 \keyword{manip}
-

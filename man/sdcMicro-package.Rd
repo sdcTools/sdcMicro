@@ -2,8 +2,8 @@
 % Please edit documentation in R/sdcMicro-package.R
 \docType{package}
 \name{sdcMicro-package}
-\alias{sdcMicro}
 \alias{sdcMicro-package}
+\alias{sdcMicro}
 \title{Statistical Disclosure Control (SDC) for the generation of protected
 microdata for researchers and for public use.}
 \description{
@@ -224,11 +224,6 @@ sdc@risk$model
 }
 
 }
-\author{
-Matthias Templ, Alexander Kowarik, Bernhard Meindl
-
-Maintainer: Matthias Templ <templ@statistik.tuwien.ac.at>
-}
 \references{
 Templ, M. and Meindl, B. \emph{Practical Applications in
 Statistical Disclosure Control Using R}, Privacy and Anonymity in
@@ -249,5 +244,9 @@ Imputation: Robust Statistics Applied to Official Statistics},
 Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 264 pages.
 }
-\keyword{package}
+\author{
+Matthias Templ, Alexander Kowarik, Bernhard Meindl
 
+Maintainer: Matthias Templ <templ@statistik.tuwien.ac.at>
+}
+\keyword{package}

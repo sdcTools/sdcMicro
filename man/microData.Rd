@@ -19,4 +19,3 @@ summary(m1)
 
 }
 \keyword{datasets}
-

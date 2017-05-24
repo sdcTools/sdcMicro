@@ -66,9 +66,6 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- addNoise(sdc)
 }
-\author{
-Matthias Templ and Bernhard Meindl
-}
 \references{
 Domingo-Ferrer, J. and Sebe, F. and Castella, J., \dQuote{On the
 security of noise addition for privacy in statistical databases}, Lecture
@@ -102,5 +99,7 @@ Micro-Data Using the R Package sdcMicro}, Journal of Statistical Software,
 \seealso{
 \code{\link{sdcMicroObj-class}}, \code{\link{summary.micro}}
 }
+\author{
+Matthias Templ and Bernhard Meindl
+}
 \keyword{manip}
-

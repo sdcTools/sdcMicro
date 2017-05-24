@@ -40,11 +40,10 @@ plot(ls)
 plot(ls, showDetails=TRUE)
 
 }
-\author{
-Bernhard Meindl, Matthias Templ
-}
 \seealso{
 \code{\link{localSuppression}}
 }
+\author{
+Bernhard Meindl, Matthias Templ
+}
 \keyword{aplot}
-

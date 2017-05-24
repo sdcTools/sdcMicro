@@ -2,8 +2,8 @@
 % Please edit documentation in R/printFunctions.R
 \docType{methods}
 \name{print.sdcMicroObj}
-\alias{print,sdcMicroObj-method}
 \alias{print.sdcMicroObj}
+\alias{print,sdcMicroObj-method}
 \title{Print and Extractor Functions for objects of class \code{\link{sdcMicroObj-class}}}
 \usage{
 \S4method{print}{sdcMicroObj}(x, type = "kAnon", docat = TRUE, ...)
@@ -61,4 +61,3 @@ print(sdc, type="comp_numvars")
 Alexander Kowarik, Matthias Templ, Bernhard Meindl
 }
 \keyword{classes}
-

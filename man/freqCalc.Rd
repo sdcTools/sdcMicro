@@ -67,9 +67,6 @@ f3c <- freqCalc(x, keyVars=c(2,4,5,6), w=8, alpha=0.1)
 data.frame(fka=f3a$fk, fkb=f3b$fk, fkc=f3c$fk)
 data.frame(Fka=f3a$Fk, Fkb=f3b$Fk, Fkc=f3c$Fk)
 }
-\author{
-Bernhard Meindl
-}
 \references{
 look e.g. in \url{http://neon.vb.cbs.nl/casc/Deliv/12d1.pdf}
 Templ, M.  \emph{Statistical Disclosure Control for Microdata Using the
@@ -89,5 +86,7 @@ ISBN: 978-1-84996-237-7.
 \seealso{
 \code{\link{indivRisk}}, \code{\link{measure_risk}}
 }
+\author{
+Bernhard Meindl
+}
 \keyword{manip}
-

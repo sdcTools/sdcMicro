@@ -128,17 +128,6 @@ sdc <- microaggregation(sdc, variables=c("expend","income"))
 strataVar(sdc) <- "relat"
 sdc <- microaggregation(sdc, variables=c("savings"))
 }
-\author{
-Matthias Templ, Bernhard Meindl
-
-For method \dQuote{mdav}: This work is being supported by the International
-Household Survey Network (IHSN) and funded by a DGF Grant provided by the
-World Bank to the PARIS21 Secretariat at the Organisation for Economic
-Co-operation and Development (OECD).  This work builds on previous work
-which is elsewhere acknowledged.
-
-Author for the integration of the code for mdav in R: Alexander Kowarik.
-}
 \references{
 \url{http://www.springerlink.com/content/v257655u88w2/?sortorder=asc&p\_o=20}
 
@@ -163,5 +152,15 @@ Micro-Data Using the R Package sdcMicro}, Journal of Statistical Software,
 \code{\link{summary.micro}}, \code{\link{plotMicro}},
 \code{\link{valTable}}
 }
-\keyword{manip}
+\author{
+Matthias Templ, Bernhard Meindl
 
+For method \dQuote{mdav}: This work is being supported by the International
+Household Survey Network (IHSN) and funded by a DGF Grant provided by the
+World Bank to the PARIS21 Secretariat at the Organisation for Economic
+Co-operation and Development (OECD).  This work builds on previous work
+which is elsewhere acknowledged.
+
+Author for the integration of the code for mdav in R: Alexander Kowarik.
+}
+\keyword{manip}

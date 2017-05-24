@@ -2,9 +2,9 @@
 % Please edit documentation in R/maG.R
 \docType{methods}
 \name{sampleCat}
+\alias{sampleCat}
 \alias{maxCat}
 \alias{microaggrGower}
-\alias{sampleCat}
 \title{Microaggregation for numerical and categorical key variables based on a
 distance similar to the GOWER DISTANCE}
 \usage{
@@ -86,4 +86,3 @@ sdc <- microaggrGower(sdc)
 \author{
 Alexander Kowarik
 }
-

@@ -35,9 +35,6 @@ m2 <- microaggregation(free1[, 31:34], method="pca", aggr=3)
 plotMicro(m1, p=1, which.plot=1)
 
 }
-\author{
-Matthias Templ
-}
 \references{
 Templ, M. and Meindl, B., \emph{Software Development for SDC in
 R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,
@@ -46,5 +43,7 @@ vol. 4302, pp. 347-359, 2006.
 \seealso{
 \code{\link{microaggregation}}
 }
+\author{
+Matthias Templ
+}
 \keyword{aplot}
-

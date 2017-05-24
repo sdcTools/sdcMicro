@@ -67,16 +67,6 @@ sdc <- createSdcObj(testdata2,
 sdc <- suda2(sdc)
 }
 }
-\author{
-Alexander Kowarik and Bernhard Meindl (based on the C++ code from the Organisation For
-Economic Co-Operation And Development.
-
-For the C++ code: This work is being supported by the International
-Household Survey Network and funded by a DGF Grant provided by the World
-Bank to the PARIS21 Secretariat at the Organisation for Economic
-Co-operation and Development (OECD). This work builds on previous work which
-is elsewhere acknowledged.
-}
 \references{
 C. J. Skinner; M. J. Elliot (20xx) A Measure of Disclosure Risk
 for Microdata. \emph{Journal of the Royal Statistical Society: Series B
@@ -90,5 +80,14 @@ Anna M. Manning, David J. Haglin, John A. Keane (2008) A recursive search
 algorithm for statistical disclosure assessment. \emph{Data Min Knowl Disc}
 16:165 -- 196
 }
-\keyword{manip}
+\author{
+Alexander Kowarik and Bernhard Meindl (based on the C++ code from the Organisation For
+Economic Co-Operation And Development.
 
+For the C++ code: This work is being supported by the International
+Household Survey Network and funded by a DGF Grant provided by the World
+Bank to the PARIS21 Secretariat at the Organisation for Economic
+Co-operation and Development (OECD). This work builds on previous work which
+is elsewhere acknowledged.
+}
+\keyword{manip}

@@ -5,7 +5,7 @@ output$tabinfo_sb_results <- output$tabinfo_sb_anonymize <- renderUI({
   }
 
   fluidRow(
-    column(12, h4("Important variables"), align="center"),
+    column(12, h4("Variable selection"), align="center"),
     column(12, DT::renderDataTable({
       inp
     }, rownames=FALSE, colnames = c("Variable name", "Type", "Suppressions"), selection='none', style='bootstrap', class='table-condensed',
@@ -54,12 +54,12 @@ output$risk_sb_anonymize <- renderUI({
   v3_o <- paste0(n5_o," (",formatC(100*(n5_o/obs), format="f", digits=2),"%)")
 
   df <- data.table(
-    Measures=c("2-anonymity","3-anonymity","5-anonymity"),
-    Original=c(v1_o, v2_o, v3_o),
-    Modified=c(v1,v2,v3))
-
+    "k-anonimity"=c("2-anonymity","3-anonymity","5-anonymity"),
+    "Modified data"=c(v1,v2,v3),
+    "Original data"=c(v1_o, v2_o, v3_o))
+  
   fluidRow(
-    column(12, h4("Risk (k-anonymity)"), align="center"),
+    column(12, h4("k-anonymity"), align="center"),
     column(12, DT::renderDataTable({
       df
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
@@ -77,13 +77,13 @@ output$numrisk_sb_anonymize <- renderUI({
   if (is.null(x)) {
     return(invisible(NULL))
   }
-  dt <- data.table(data=c("orig","modified"), risk_min=paste0(c("100.00",x$risk_up),"%"), risk_max=paste0(c("100.00","100.00"),"%"))
+  dt <- data.table(data=c("modified","original"), risk_min=paste0(c("0.00","0.00"),"%"), risk_max=paste0(c(x$risk_up, "100.00"),"%"))
 
   fluidRow(
-    column(12, h4("Numeric Risk"), align="center"),
+    column(12, h4("Risk in numerical key variables"), align="center"),
     column(12, DT::renderDataTable({
       dt
-    }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+    }, rownames=FALSE, colnames =c("Data", "Minimum risk", "Maximum risk"), selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)))
   )
 })
@@ -103,12 +103,12 @@ output$loss_sb_anonymize <- renderUI({
   diff_eigen <- formatC(utility$eigen*100, format="f", digits=2)
 
   df <- data.frame(
-    Measure=c("IL1s","Difference of Eigenvalues"),
-    orig=c(0.00, 0.00),
-    modified=c(il1, diff_eigen))
+    Measure=c("IL1s","Difference in eigenvalues"),
+    "Modified data"=c(il1, diff_eigen),
+    "Original data"=c("0.00", "0.00"))
 
   fluidRow(
-    column(12, h4("Information Loss"), align="center"),
+    column(12, h4("Information loss"), align="center"),
     column(12, DT::renderDataTable({
       df
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
@@ -127,18 +127,18 @@ output$pram_sb_anonymize <- renderUI({
     return(NULL)
   }
 
-  out <- fluidRow(column(12, h4("Postrandomization"), align="center"))
+  out <- fluidRow(column(12, h4("PRAM summary"), align="center"))
 
   # check warnings!
   wn <- curObj@additionalResults$sdcMicro_warnings
   if (!is.null(wn) && "pram" %in% wn$method) {
-    out <- list(out, fluidRow(column(12, p("Note: Pram was applied on at least one categorical
-        key variable. Risk measures and k-anonymity assessment are not useful anymore!", align="center"))))
+    out <- list(out, fluidRow(column(12, p("Note: Pram was applied on at least one cate gorical
+        key variable. Risk measures for categorical key variables including k-anonymity are not useful anymore!", align="center"))))
   }
   out <- list(out, fluidRow(
     column(12, DT::renderDataTable({
       pI$summary
-    }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
+    }, rownames=FALSE, colnames = c("Variable name", "Number of changed values", "Percentage of changed values"), selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
   ))
 })
@@ -154,7 +154,7 @@ output$anonmeth_sb_risk <- renderUI({
       tags$li(sub(" (see above) ","",curMethods[x]))
     }
   ))
-  out <- fluidRow(column(12, h4("Anonymization Steps"), align="center"))
+  out <- fluidRow(column(12, h4("Anonymization steps"), align="center"))
   out <- list(out, fluidRow(column(12, res)))
   return(out)
 })

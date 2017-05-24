@@ -78,9 +78,6 @@ sdc <- createSdcObj(testdata2,
 sdc <- modRisk(sdc,form=~sex+water+roof)
 slot(sdc, "risk")$model
 }
-\author{
-Matthias Templ, Marius Totter, Bernhard Meindl
-}
 \references{
 Skinner, C.J. and Holmes, D.J. (1998) \emph{Estimating the
 re-identification risk per record in microdata}. Journal of Official
@@ -96,5 +93,7 @@ Clogg, C.C. and Eliasson, S.R. (1987). \emph{Some Common Problems in Log-Linear 
 \seealso{
 \code{\link{loglm}}, \code{\link{measure_risk}}
 }
+\author{
+Matthias Templ, Marius Totter, Bernhard Meindl
+}
 \keyword{manip}
-

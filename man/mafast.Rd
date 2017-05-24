@@ -60,11 +60,10 @@ system.time(xx <- mafast(x,variables=c("expend","income","savings"),aggr=50,by="
 }
 
 }
-\author{
-Alexander Kowarik
-}
 \seealso{
 \code{\link{microaggregation}}
 }
+\author{
+Alexander Kowarik
+}
 \keyword{manip}
-

@@ -68,11 +68,10 @@ sdc <- createSdcObj(testdata2,
 sdc <- globalRecode(sdc, column="water", breaks=3)
 table(get.sdcMicroObj(sdc, type="manipKeyVars")$water)
 }
-\author{
-Matthias Templ and Bernhard Meindl
-}
 \seealso{
 \code{\link{cut}}
 }
+\author{
+Matthias Templ and Bernhard Meindl
+}
 \keyword{manip}
-

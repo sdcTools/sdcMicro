@@ -30,9 +30,6 @@ x2
 summary(x2)
 
 }
-\author{
-Matthias Templ and Bernhard Meindl
-}
 \references{
 Templ, M.  \emph{Statistical Disclosure Control for Microdata
 Using the R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number
@@ -41,5 +38,7 @@ Using the R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number
 \seealso{
 \code{\link{pram}}
 }
+\author{
+Matthias Templ and Bernhard Meindl
+}
 \keyword{print}
-

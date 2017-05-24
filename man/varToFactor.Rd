@@ -32,4 +32,3 @@ sdc <- varToFactor(sdc, var="urbrur")
 
 }
 \keyword{methods}
-
