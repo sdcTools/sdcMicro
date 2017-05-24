@@ -55,7 +55,7 @@ sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN") {
   }
 
   if (theme=="IHSN") {
-    .GlobalEnv$.guitheme <- "ihsn.css"
+    .GlobalEnv$.guitheme <- "ihsn-root.css"
   }
 
   on.exit(rm(.guitheme, envir=.GlobalEnv))
