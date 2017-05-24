@@ -542,10 +542,13 @@ output$ui_view_var <- renderUI({
       column(12, code(lastError()))))
   }
 
-  out <- fluidRow(column(12, h4("Explore variables in original data", align="center")))
+  out <- fluidRow(
+    column(12, h3("Explore variables in original data"), class="wb-header")
+    )
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
 
   out <- list(out, fluidRow(
+    column(width = 12, offset = 0, p("Help or description text."), class="wb-header-hint"),
     column(6, uiOutput("ui_selvar1")),
     column(6, uiOutput("ui_selvar2"))))
 
@@ -572,8 +575,8 @@ output$ui_reset_var <- renderUI({
   txt_reset <- paste(txt_reset, "Resetting restores the variable to its original state and cancels any modifications.")
   list(
     fluidRow(
-      column(width = 8, offset = 2, h4("Reset variables"), align="center"),
-      column(width = 8, offset = 2, p(txt_reset)),
+      column(width = 12, offset = 0, h3("Reset variables"), class="wb-header"),
+      column(width = 12, offset = 0, p(txt_reset), class="wb-header-hint"),
       column(12, uiOutput("reset_microvar_var"), align="center"),
       column(12, uiOutput("reset_microvar_btn"), align="center")
     ))
@@ -602,10 +605,10 @@ output$ui_show_microdata <- renderUI({
     #attr(obj$inputdata, "dropped")
   }
   out <- fluidRow(
-    column(width = 8, offset = 2, h3("Loaded microdata"), align="center"))
+    column(width = 12, offset = 0, h3("Loaded microdata")), class="wb-header")
   if(is.null(attr(obj$inputdata, "dropped"))){
     out <- list(out, fluidRow(
-      column(width = 8, offset = 2, p(HTML(txt_microdata)))))
+      column(width = 12, offset = 0, p(HTML(txt_microdata))), class="wb-header-hint"))
   }else{
     out <- list(out, fluidRow(
       column(width = 8, offset = 2, list(HTML(txt_microdata), code(lapply(attr(obj$inputdata, "dropped"), function(x) {x}))))))
