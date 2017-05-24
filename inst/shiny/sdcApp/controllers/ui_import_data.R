@@ -63,7 +63,7 @@ output$ui_import_data_main <- renderUI({
     val <- "stata"
   }
   out <- fluidRow(
-  column(12, h4("Uploading microdata", align="center")))
+  column(width = 8, offset = 2, h3("Uploading microdata", align="center")))
 
   if (val %in% c("R","csv","spss","sas","rdata","stata")) {
     # convert characters automatically to factors
@@ -113,7 +113,7 @@ output$ui_import_data_sidebar_left <- renderUI({
   output$ui_sel_resbtns_import <- renderUI({
     cc <- c("Testdata/internal data", "R-dataset (.rdata)", "SPSS-file (.sav)", "SAS-file (.sasb7dat)",
       "CSV-file (.csv, .txt)", "STATA-file (.dta)")
-    out <- fluidRow(column(12, h4("Select data source"), align="center"))
+    out <- fluidRow(column(12, h4("Select data source")))
     for (i in 1:length(cc)) {
       id <- paste0("btn_import_data_", i)
       if (obj$cur_selection_import==id) {
@@ -134,7 +134,7 @@ output$ui_import_data_sidebar_left <- renderUI({
 })
 output$ui_import_data <- renderUI({
   fluidRow(
-    column(2, uiOutput("ui_import_data_sidebar_left")),
+    column(2, uiOutput("ui_import_data_sidebar_left"), class="wb_sidebar"),
     column(10, uiOutput("ui_import_data_main")))
 })
 

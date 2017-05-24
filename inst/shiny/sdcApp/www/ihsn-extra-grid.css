@@ -1,0 +1,31 @@
+/*
+ * Neutralize yeti and bootstrap
+ * Seach box should be style like any other textfield
+ */
+input[type=search] {
+    -webkit-appearance: textfield;
+}
+
+/*
+ * Style the page selector (top left)
+ */
+.dataTables_wrapper .dataTables_length label{
+  min-width: 150px;
+}
+
+.dataTables_wrapper .dataTables_length select.form-control{
+  width: 60px;
+  display: inline-block;
+}
+
+.dataTables_wrapper .dataTables_filter input[type=search] {
+    display: inline-block;
+    width: 70%;
+}
+
+/*
+ * Style the Pager
+ */
+.dataTables_wrapper.no-footer .dataTables_scrollBody {
+    border-bottom: 0px;
+}
