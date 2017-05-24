@@ -56,7 +56,7 @@ gowerD <- function(data.x, data.y=data.x, weights=NULL, numerical, factors, orde
   data.y <- apply(data.y, 2, maxplus1)
   levOrders <- as.numeric(levOrders)
 
-  out <- .Call("gowerD", data.x, data.y, weights[weightind], c(length(numerical), length(factors),
+  out <- .Call("gowerD_cpp", data.x, data.y, weights[weightind], c(length(numerical), length(factors),
     length(orders), length(mixed)), levOrders, mixed.constant, PACKAGE="sdcMicro")
   if (justone) {
     out <- out$delta[, 1, drop=FALSE]

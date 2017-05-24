@@ -49,7 +49,7 @@ enum EMatch
 };
 
 
-RcppExport SEXP LocalRecProg(SEXP data, SEXP K_Level_R, SEXP FindLowestK_R, SEXP ancestor_R, SEXP weight_R, SEXP range_R, SEXP categoryCount_R, SEXP LowMemory_R, SEXP g_MissingValue_R)
+RcppExport SEXP LocalRecProg_cpp(SEXP data, SEXP K_Level_R, SEXP FindLowestK_R, SEXP ancestor_R, SEXP weight_R, SEXP range_R, SEXP categoryCount_R, SEXP LowMemory_R, SEXP g_MissingValue_R)
 {
 BEGIN_RCPP
   int i, j;
