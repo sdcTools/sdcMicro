@@ -45,9 +45,6 @@ sdc <- createSdcObj(testdata2,
 ## this is already made internally: sdc <- dRisk(sdc)
 ## and already stored in sdc
 }
-\author{
-Matthias Templ
-}
 \references{
 see method SDID in
 \url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf}
@@ -55,5 +52,7 @@ see method SDID in
 \seealso{
 \code{\link{dUtility}}
 }
+\author{
+Matthias Templ
+}
 \keyword{manip}
-

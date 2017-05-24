@@ -4,7 +4,7 @@
 
 using namespace std;
 
-RcppExport SEXP gowerD(SEXP dataX, SEXP dataY,SEXP weights,SEXP ncolNUMFAC,SEXP levOrders,SEXP mixedConstants) {
+RcppExport SEXP gowerD_cpp(SEXP dataX, SEXP dataY,SEXP weights,SEXP ncolNUMFAC,SEXP levOrders,SEXP mixedConstants) {
   BEGIN_RCPP
   Rcpp::NumericMatrix xMat(dataX);	// creates Rcpp matrix from SEXP
   Rcpp::NumericMatrix yMat(dataY);	// creates Rcpp matrix from SEXP

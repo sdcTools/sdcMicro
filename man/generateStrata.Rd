@@ -30,4 +30,3 @@ head(x)
 \author{
 Alexander Kowarik
 }
-

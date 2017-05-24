@@ -26,11 +26,10 @@ m1 <- microaggregation(free1[, 31:34], method='onedims', aggr=3)
 m1
 
 }
-\author{
-Matthias Templ
-}
 \seealso{
 \code{\link{microaggregation}}
 }
+\author{
+Matthias Templ
+}
 \keyword{print}
-

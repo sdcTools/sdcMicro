@@ -57,9 +57,6 @@ sdc <- createSdcObj(testdata2,
 ## and already stored in sdc
 
 }
-\author{
-Matthias Templ
-}
 \references{
 for IL1s: see
 \url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf},
@@ -71,5 +68,7 @@ Science, Privacy in Statistical Databases, vol. 5262, pp. 113-126, 2008.
 \seealso{
 \code{\link{dRisk}}, \code{\link{dRiskRMD}}
 }
+\author{
+Matthias Templ
+}
 \keyword{manip}
-

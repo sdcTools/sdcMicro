@@ -26,4 +26,3 @@ sl <- slotNames(sdc)
 res <- sapply(sl, function(x) get.sdcMicroObj(sdc, type=x))
 str(res)
 }
-

@@ -232,7 +232,7 @@ measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_
   ind <- do.call(order, data.frame(dataX))
   dataX <- dataX[ind, , drop=FALSE]
   ind <- order(c(1:nrow(dataX))[ind])
-  # res <- .Call('measure_risk',dataX,weighted,n_key_vars,2,-99,missing)#
+  # res <- .Call('measure_risk_cpp',dataX,weighted,n_key_vars,2,-99,missing)#
   res <- list()
   res$Res <- Res
   colnames(res$Res) <- c("risk", "fk", "Fk")
@@ -369,7 +369,7 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2
     ldiv_index=-99
   if (length(ldiv_index) > 5)
     stop("Maximal number of sensitivity variables is 5")
-  res <- .Call("measure_risk", dataX, 0, n_key_vars, l_recurs_c, ldiv_index, missing)
+  res <- .Call("measure_risk_cpp", dataX, 0, n_key_vars, l_recurs_c, ldiv_index, missing)
   res$Fk <- res$Res[, 3]
   res$Res <- res$Res[ind, ]
   if (all(ldiv_index != -99)) {

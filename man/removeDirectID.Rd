@@ -30,4 +30,3 @@ sdc <- removeDirectID(sdc, var="age")
 Alexander Kowarik
 }
 \keyword{methods}
-

@@ -537,6 +537,7 @@
 #' @importFrom haven read_sas
 #' @importFrom haven write_sav
 #' @importFrom haven write_dta
+#' @importFrom haven write_sas
 #' @importFrom haven as_factor
 #' @importFrom prettydoc html_pretty
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))

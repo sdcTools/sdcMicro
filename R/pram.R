@@ -246,7 +246,7 @@ definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.
     pram <- list()
   }
   obj <- set.sdcMicroObj(obj, type="pram", input=list(pram))
-  pramVarInd <- c(obj@pramVars, standardizeInput(obj, pramVars))
+  pramVarInd <- unique(c(obj@pramVars, standardizeInput(obj, pramVars)))
   obj <- set.sdcMicroObj(obj, type="pramVars", input=list(pramVarInd))
   obj <- calcRisks(obj)
   obj

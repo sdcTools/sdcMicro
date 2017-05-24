@@ -26,4 +26,3 @@ head(free1)
 
 }
 \keyword{datasets}
-

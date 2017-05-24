@@ -54,9 +54,6 @@ LLmodGlobalRisk is depcrecated for \code{\link{modRisk}} and is only
 provided for compatibility with older versions of this package. It may be removed
 in future versions.
 }
-\author{
-Matthias Templ
-}
 \references{
 Skinner, C.J. and Holmes, D.J. (1998) \emph{Estimating the
 re-identification risk per record in microdata}. Journal of Official
@@ -72,5 +69,7 @@ Statistical Databases. Lecture Notes in Computer Science.  Springer-Verlag,
 
 \code{\link{modRisk}}
 }
+\author{
+Matthias Templ
+}
 \keyword{manip}
-

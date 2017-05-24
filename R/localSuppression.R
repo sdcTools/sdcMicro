@@ -245,26 +245,25 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
       ind.problem  <- ind.problem[order(rk$rk[ind.problem],decreasing=TRUE)]
       for (i in 1:length(ind.problem)) {
         res <- cpp_calcSuppInds(mat, mat[ind.problem[i],])
-        if (res$fk >= k) {
-          break;
-        }
-        ind <- res$ids
-        if (length(ind) > 0) {
-          colInd <- NULL
-          colIndsSorted <- keyVars[order(importanceI)]
-          while (is.null(colInd)) {
-            for (cc in colIndsSorted) {
-              z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
-              if (length(z) > 0) {
-                colInd <- cc
-                break;
+        if (res$fk < k) {
+          ind <- res$ids
+          if (length(ind) > 0) {
+            colInd <- NULL
+            colIndsSorted <- keyVars[order(importanceI)]
+            while (is.null(colInd)) {
+              for (cc in colIndsSorted) {
+                z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
+                if (length(z) > 0) {
+                  colInd <- cc
+                  break;
+                }
               }
             }
+            x[[colInd]][ind.problem[i]] <- NA
+            mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
+          } else {
+            stop("Error\n")
           }
-          x[[colInd]][ind.problem[i]] <- NA
-          mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
-        } else {
-          stop("Error\n")
         }
       }
       ff <- freqCalc(x, keyVars=keyVars, alpha=alpha)
@@ -461,7 +460,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   if (!is.null(strataVars)) {
     ss <- NAinKey[,lapply(.SD, function(x) sum(x)), .SDcols=setdiff(names(NAinKey), strataVars)]
     NAinKey <- rbind(NAinKey,ss,fill=TRUE)
-    NAinKey[[strataVars]] <- NULL
+    NAinKey[,paste(strataVars):=NULL]
     NAinKey <- as.data.frame(NAinKey)
     rownames(NAinKey) <- rownames(NAinKey)
   }

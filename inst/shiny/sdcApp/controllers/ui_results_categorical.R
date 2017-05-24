@@ -37,7 +37,7 @@ output$ui_rescat_riskinfo <- renderUI({
       if (is.null(input$sl_riskyobs)) {
         return(NULL)
       }
-      df <- as.data.frame(get_origData()[,get_keyVars()])
+      df <- get_manipKeyVars()
       N <- nrow(df)
       rk <- get_risk()
       df$fk <- rk$fk
@@ -276,7 +276,7 @@ output$ui_rescat_suda2 <- renderUI({
   # DisFraction
   output$suda2_disf <- renderUI({
     txt_tooltip <- "This is the sampling fraction for a simple random sample and the common sampling fraction for stratified samples. The defaut value is 0.1, which corresponds to a 10 percent sample. "
-    txt_tooltip <- paste0(txt_tooltip, "Note that SUDA is sensitive to the sampling fraction and a wrong value can produce distorted results.") 
+    txt_tooltip <- paste0(txt_tooltip, "Note that SUDA is sensitive to the sampling fraction and a wrong value can produce distorted results.")
     sliderInput("suda2_disf",
       label=h5("Specify the sampling fraction for the stratified sampling", tipify(icon("question"), title=txt_tooltip, placement="top")),
       min=0.01, max=0.5, step=0.01,value=0.1, width="100%")

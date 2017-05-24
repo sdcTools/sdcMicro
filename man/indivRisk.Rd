@@ -49,10 +49,6 @@ indivf <- indivRisk(f)
 indivf$rk
 
 }
-\author{
-Matthias Templ. Bug in method \dQuote{exact} fixed since version
-2.6.5. by Youri Baeyens.
-}
 \references{
 Franconi, L. and Polettini, S. (2004) \emph{Individual risk
 estimation in mu-Argus: a review}. Privacy in Statistical Databases, Lecture
@@ -67,5 +63,8 @@ additionally, have a look at the vignettes of sdcMicro for further reading.
 \seealso{
 \code{\link{measure_risk}}, \code{\link{freqCalc}}
 }
+\author{
+Matthias Templ. Bug in method \dQuote{exact} fixed since version
+2.6.5. by Youri Baeyens.
+}
 \keyword{manip}
-

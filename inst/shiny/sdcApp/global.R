@@ -191,7 +191,7 @@ msg_nodata <- function(tab_import=FALSE) {
   if ( tab_import ) {
     txt <- "Please select a dataset to upload"
   } else {
-    txt <- "Please upload data in tab 'data'!"
+    txt <- "Please upload data in the Microdata tab!"
   }
   fluidRow(
     column(12, h2("No data available", align="center")),
@@ -274,8 +274,8 @@ get_risk <- reactive({
 })
 
 noInputData <- function(prefix="btn_a_micro_", uri) {
-  txt <- "Please go back to 'Microdata' and choose a dataset or upload a file!"
-  btn <- myActionButton(paste0(prefix,uri),label=("Upload microdata"), "primary")
+  txt <- "Go back to the Microdata tab by clicking the button below and load a dataset."
+  btn <- myActionButton(paste0(prefix,uri),label=("Load microdata"), "primary")
   fluidRow(
     column(12, h2("No input data available!", align="center")),
     column(12, p(txt, align="center")),
@@ -283,10 +283,10 @@ noInputData <- function(prefix="btn_a_micro_", uri) {
 }
 
 noSdcProblem <- function(prefix="btn_a_setup_", uri) {
-  txt <- "Please go back to 'Anonymize' and start with a scenario!"
-  btn <- myActionButton(paste0(prefix,uri),label=("Create an SDC-Problem"), "primary")
+  txt <- "Go back to the Anonymize tab by clicking the button below and select variables"
+  btn <- myActionButton(paste0(prefix,uri),label=("Create an SDC problem"), "primary")
   fluidRow(
-    column(12, h2("No sdcProblem was specified!", align="center")),
+    column(12, h2("No SDC problem was specified", align="center")),
     column(12, p(txt, align="center")),
     column(12, div(btn, align="center")))
 }

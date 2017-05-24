@@ -31,4 +31,3 @@ data(francdat)
 francdat
 }
 \keyword{datasets}
-

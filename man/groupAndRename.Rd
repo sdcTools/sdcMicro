@@ -47,4 +47,3 @@ sdc <- groupAndRename(sdc, var="urbrur", before=c("1","2"), after=c("1"))
 Bernhard Meindl
 }
 \keyword{methods}
-

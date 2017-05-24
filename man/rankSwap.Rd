@@ -76,6 +76,11 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- rankSwap(sdc)
 }
+\references{
+Moore, Jr.R. (1996) Controlled data-swapping techniques for
+masking public use microdata, U.S. Bureau of the Census \emph{Statistical
+Research Division Report Series}, RR 96-04.
+}
 \author{
 Alexander Kowarik for the interface, Bernhard Meindl for improvements.
 
@@ -85,9 +90,3 @@ provided by the World Bank to the PARIS21 Secretariat at the Organisation
 for Economic Co-operation and Development (OECD).  This work builds on
 previous work which is elsewhere acknowledged.
 }
-\references{
-Moore, Jr.R. (1996) Controlled data-swapping techniques for
-masking public use microdata, U.S. Bureau of the Census \emph{Statistical
-Research Division Report Series}, RR 96-04.
-}
-

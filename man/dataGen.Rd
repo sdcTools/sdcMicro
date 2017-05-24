@@ -44,15 +44,14 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- dataGen(sdc)
 }
-\author{
-Matthias Templ
-}
 \references{
 Have a look at
-\url{http://crises2-deim.urv.cat/docs/publications/lncs/443.pdf}
+\url{https://web.archive.org/web/20110906030928/http://crises2-deim.urv.cat/docs/publications/lncs/443.pdf}
 }
 \seealso{
 \code{\link{sdcMicroObj-class}}, \code{\link{shuffle}}
 }
+\author{
+Matthias Templ
+}
 \keyword{manip}
-

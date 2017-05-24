@@ -17,13 +17,12 @@ absolute and relative frequencies of changed observations in each modified varia
 \description{
 Print method for objects from class pram
 }
+\seealso{
+\code{\link{pram}}
+}
 \author{
 Bernhard Meindl, Matthias Templ
 
 Matthias Templ and Bernhard Meindl
 }
-\seealso{
-\code{\link{pram}}
-}
 \keyword{print}
-

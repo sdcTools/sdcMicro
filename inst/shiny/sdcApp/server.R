@@ -179,7 +179,7 @@ shinyServer(function(session, input, output) {
       comment <- paste0("## Reduce dataset size - Select every n-th observations of the original dataset")
     }
     if (input$sel_sdcP_sample_type=="size_n") {
-      comment <- paste0("## Reduce dataset size - Selectn randomly drawn observations from the original dataset")
+      comment <- paste0("## Reduce dataset size - Select n randomly drawn observations from the original dataset")
     }
     return(list(cmd=cmd, comment=comment))
   })
@@ -189,7 +189,7 @@ shinyServer(function(session, input, output) {
     if (input$sel_custom_split=="no") {
       cmd <- paste0("inputdata <- varToFactor(obj=inputdata")
       cmd <- paste0(cmd, ", var=",VecToRStr(input$sel_num_glrec, quoted=TRUE),")")
-      comment <- "## Convert a numeric variable to factor with user-specified breaks"
+      comment <- "## Convert a numeric variable to factor (each distinct value becomes a factor level)"
     } else {
       cmd <- paste0("inputdata <- globalRecode(obj=inputdata")
       cmd <- paste0(cmd, ", column=",dQuote(input$rb_num_glrec))
@@ -233,7 +233,7 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", keyVar=",dQuote(input$sel_gv1))
     cmd <- paste0(cmd, ", ghostVars=",VecToRStr(input$sel_gv2, quoted=TRUE),")")
 
-    txt_action <- paste0("Linked ", VecToRStr_txt(input$sel_gv2), " to ", dQuote(input$sel_gv1), " as ghost variable")
+    txt_action <- paste0("Linked ", VecToRStr_txt(input$sel_gv2), " to ", dQuote(input$sel_gv1), " for local suppression.")
     return(list(cmd=cmd, txt_action=txt_action))
   })
 
@@ -266,7 +266,7 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd,"\nrownames(mat) <- colnames(mat) <- ", VecToRStr(rn, quoted=TRUE),";\n")
     cmd <- paste0(cmd,"sdcObj <- pram(sdcObj, variables=",dQuote(input$sel_pramvars_expert),", pd=mat)")
 
-    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars_expert), " with invariant transition matrix (see above)\n")
+    txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars_expert), " with user-specified transition matrix (see above)\n")
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
@@ -303,8 +303,12 @@ shinyServer(function(session, input, output) {
     if (kAnon_useImportance()) {
       cur_importance <- kAnon_impvec()
     } else {
-      # default: 1:n
-      cur_importance <- 1:length(get_keyVars())
+      # calculate importance just as in localSuppression()
+      # this is required because we want to show the order on the summary-page
+      # otherwise it would be possible just to set cur_importance to NULL
+      x <- as.data.table(get_manipKeyVars())
+      xx <- x[,lapply(.SD, function(y) { length(table(y))}), .SDcols=get_keyVars_names()]
+      cur_importance <- match(names(xx), names(sort(xx, decreasing=FALSE)))
     }
     cmd <- paste0(cmd,", importance=",VecToRStr(cur_importance, quoted=FALSE))
 
@@ -314,12 +318,12 @@ shinyServer(function(session, input, output) {
       k <- params$k
       txt_action <- NULL
       for (i in 1:length(k)) {
-        txt_action <- paste0(txt_action, "Establishing ",k[i],"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[as.numeric(cur_importance)]),") for all ",params$use[i],"-combinations of key variables.\n\n")
+        txt_action <- paste0(txt_action, "Establishing ",k[i],"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[order(as.numeric(cur_importance))]),") for all ",params$use[i],"-combinations of key variables.\n\n")
       }
     } else {
       cmd <- paste0(cmd, ", combs=NULL")
       k <- input$sl_kanon_k
-      txt_action <- paste0("Establishing ",k,"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[as.numeric(cur_importance)]),")")
+      txt_action <- paste0("Establishing ",k,"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[order(as.numeric(cur_importance))]),")")
     }
     cmd <- paste0(cmd, ", k=",VecToRStr(k, quoted=FALSE),")")
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
@@ -625,11 +629,21 @@ shinyServer(function(session, input, output) {
   # export/save the anonymized file
   code_export_anondata <- reactive({
     input$btn_export_anon_data # required for timestamp!
-    fout <- paste0("exportedData_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".",input$dat_exp_type)
+    if (input$dat_exp_type=="sas") {
+      fext <- "sas7bdat"
+    } else {
+      fext <- input$dat_exp_type
+    }
+    fout <- paste0("exportedData_sdcMicro_",format(Sys.time(), "%Y%m%d_%H%M"),".",fext)
     fout <- file.path(obj$path_export, fout)
     cmd <- paste0("writeSafeFile(obj=sdcObj, format=",dQuote(input$dat_exp_type), ", randomizeRecords=",dQuote(input$rb_export_randomizeorder))
     if (input$dat_exp_type=="dta") {
       cmd <- paste0(cmd,", lab=obj$stata_labs")
+    }
+    if (input$dat_exp_type=="csv") {
+      cmd <- paste0(cmd, ", col.names=",input$export_csv_header)
+      cmd <- paste0(cmd, ", sep=",dQuote(input$export_csv_sep))
+      cmd <- paste0(cmd, ", dec=",dQuote(input$export_csv_dec))
     }
     cmd <- paste0(cmd,", fileOut=",dQuote(fout),")\n")
     attributes(cmd)$evalAsIs <- TRUE
@@ -665,10 +679,9 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="reading in microdata (this might take a long time)...", value = 0)
+    progress$set(message="Loading microdata - please wait", value = 0)
     code <- code_readMicrodata()
     eval(parse(text=code))
-    progress$set(message="reading in microdata (this might take a long time)...", value = 1)
     if ("simpleError" %in% class(res)) {
       obj$last_error <- res$message
       obj$inputdata <- NULL
@@ -684,6 +697,7 @@ shinyServer(function(session, input, output) {
       }
       obj$last_error <- NULL
       obj$inputdata <- res
+      obj$utf8 <- !all(sapply(attr(obj$inputdata, "nonUTF"), is.null))
       code_out <- gsub(input$file1$datapath, input$file1$name, code)
       code_out <- gsub("res", "inputdata", code_out)
       obj$code_read_and_modify <- code_out
@@ -773,6 +787,7 @@ shinyServer(function(session, input, output) {
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
     obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
     obj$inputdataB <- obj$inputdata
+    obj$utf8 <- FALSE
     obj$sdcObj <- NULL # start fresh
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
@@ -952,6 +967,10 @@ shinyServer(function(session, input, output) {
     }
   })
 
+  observeEvent(input$btn_acc_utf8_conv, {
+    obj$utf8 <- FALSE
+  })
+
   observeEvent(input$btn_reset_sdc, {
     ptm <- proc.time()
     obj$sdcObj <- NULL
@@ -985,7 +1004,11 @@ shinyServer(function(session, input, output) {
     obj$hhdata_applied <- FALSE
     obj$hhdata_selected <- FALSE
     obj$sdcObj <- NULL
+    obj$code_anonymize <- c()
+    obj$code_setup <- c()
+    obj$anon_performed <- NULL
     obj$code_read_and_modify <- c()
+    obj$utf8 <- FALSE
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
     removeModal(session=session) # remove the modal
@@ -1053,7 +1076,7 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_pram_expert, {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="performing pram() (this might take a long time)...", value = 0)
+    progress$set(message="Performing PRAM - please wait", value = 0)
     ptm <- proc.time()
     res <- code_pram_expert()
 
@@ -1075,7 +1098,7 @@ shinyServer(function(session, input, output) {
     }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    progress$set(message="performing pram() (this might take a long time)...", value = 1)
+    progress$set(message="Performing PRAM - please wait", value = 1)
     if (is.null(lastError())) {
       obj$last_error <- NULL
       obj$lastaction <- res$txt_action
@@ -1092,7 +1115,7 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_pram_nonexpert, {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="performing pram() (this might take a long time)...", value = 0)
+    progress$set(message="Performing PRAM - please wait", value = 0)
     ptm <- proc.time()
     res <- code_pram_nonexpert()
     # temporarily set strata-variable
@@ -1114,7 +1137,7 @@ shinyServer(function(session, input, output) {
     }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    progress$set(message="performing pram() (this might take a long time)...", value = 1)
+    progress$set(message="Performing PRAM - please wait", value = 1)
     if (is.null(lastError())) {
       obj$last_error <- NULL
       obj$lastaction <- res$txt_action
@@ -1125,7 +1148,7 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_kanon, {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="performing kAnon() (this might take a long time)...", value = 0)
+    progress$set(message="Performing local suppression - please wait", value = 0)
     ptm <- proc.time()
     res <- code_kAnon()
     # temporarily set strata-variable
@@ -1144,7 +1167,7 @@ shinyServer(function(session, input, output) {
     }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    progress$set(message="performing kAnon() (this might take a long time)...", value = 1)
+    progress$set(message="Performing local suppression - please wait", value = 1)
     if (is.null(lastError())) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
@@ -1181,7 +1204,7 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_topbotcoding_num, {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="performing topBotCoding() (this might take a long time)...", value = 0)
+    progress$set(message="Performing top- or bottom-coding - please wait", value = 0)
     ptm <- proc.time()
     res <- code_topBotCoding_num()
     runEvalStr(cmd=res$cmd, comment="## Performing top/bottom-coding")
@@ -1191,14 +1214,14 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
-    progress$set(message="performing topBotCoding() (this might take a long time)...", value = 1)
+    progress$set(message="Performing top- or bottom-coding - please wait", value = 1)
   })
   # microaggregation()
   observeEvent(input$btn_microagg, {
     # Create a Progress object and close it on exit
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="performing Microaggregation (this might take a long time)...", value = 0)
+    progress$set(message="Performing microaggregation - please wait", value = 0)
     ptm <- proc.time()
     res <- code_microaggregation()
     # temporarily set strata-variable
@@ -1217,7 +1240,7 @@ shinyServer(function(session, input, output) {
     }
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
-    progress$set(message="performing Microaggregation (this might take a long time)...", value = 1)
+    progress$set(message="Performing microaggregation - please wait", value = 1)
     if (is.null(lastError())) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
@@ -1228,7 +1251,7 @@ shinyServer(function(session, input, output) {
   observeEvent(input$btn_noise, {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="performing addNoise() (this might take a long time)...", value = 0)
+    progress$set(message="Adding noise - please wait", value = 0)
     ptm <- proc.time()
     res <- code_addNoise()
     runEvalStr(cmd=res$cmd, comment="## Adding stochastic noise")
@@ -1238,14 +1261,14 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
-    progress$set(message="performing addNoise() (this might take a long time)...", value = 1)
+    progress$set(message="Adding noise - please wait", value = 1)
     obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
   # rankSwap()
   observeEvent(input$btn_rankswap, {
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="performing rankSwap() (this might take a long time)...", value = 0)
+    progress$set(message="Rank swapping - please wait", value = 0)
     ptm <- proc.time()
     res <- code_rankSwap()
     runEvalStr(cmd=res$cmd, comment="## Performing rankSwapping")
@@ -1256,7 +1279,7 @@ shinyServer(function(session, input, output) {
       obj$lastaction <- res$txt_action
       obj$anon_performed <- c(obj$anon_performed, res$txt_action)
     }
-    progress$set(message="performing rankSwap() (this might take a long time)...", value = 1)
+    progress$set(message="Rank swapping - please wait", value = 1)
     obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
   })
 
@@ -1276,10 +1299,10 @@ shinyServer(function(session, input, output) {
 
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="calculating l-diversity (this might take some time)...", value = 0)
+    progress$set(message="Computing l-diversity - please wait", value = 0)
 
     obj$ldiv_result <- calc_ldiv_result()
-    progress$set(message="calculating l-diversity (this might take some time)...", value = 1)
+    progress$set(message="Computing l-diversity - please wait", value = 1)
 
     obj$code_anonymize <- c(obj$code_anonymize, cmd)
     ptm <- proc.time()-ptm
@@ -1297,10 +1320,10 @@ shinyServer(function(session, input, output) {
     #runEvalStr(cmd=cmd, comment="## calculating suda2 risk-measure")
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    progress$set(message="calculating suda2 (this might take some time)...", value = 0)
+    progress$set(message="Calculating suda2 scores  - please wait", value = 0)
 
     obj$suda2_result <- calc_suda2_result()
-    progress$set(message="calculating suda2 (this might take some time)...", value = 1)
+    progress$set(message="Calculating suda2 scores - please wait", value = 1)
 
     cmd <- paste0("## calculating suda2 riskmeasure","\n",cmd)
     obj$code_anonymize <- c(obj$code_anonymize, cmd)

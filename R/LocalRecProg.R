@@ -130,7 +130,7 @@ LocalRecProgWORK <- function(data, categorical, numerical=NULL, ancestors=NULL, 
 
   dataX <- as.matrix(data[, c(categorical, numerical, ancestors), drop=FALSE])
 
-  res <- .Call("LocalRecProg", dataX, k_level, FindLowestK, ancestor_settings, weight, range,
+  res <- .Call("LocalRecProg_cpp", dataX, k_level, FindLowestK, ancestor_settings, weight, range,
     FALSE, lowMemory, missingValue)
   colnames(res$Res) <- paste(c(categorical, numerical), "_lr", sep="")
   cbind(data[, c(categorical, numerical)], res$Res)
