@@ -1,6 +1,6 @@
 library(shiny)
 shinyUI(
-  navbarPage(id="mainnav", theme="ihsn-root.css","sdcMicro GUI",
+  navbarPage(id="mainnav", theme=.guitheme,"sdcMicro GUI",
     tabPanel("About/Help", uiOutput("ui_about")),
     tabPanel("Microdata", uiOutput("ui_inputdata")),
     tabPanel("Anonymize", uiOutput("ui_anonymize")),
