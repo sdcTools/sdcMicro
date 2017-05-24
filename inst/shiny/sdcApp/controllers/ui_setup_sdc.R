@@ -527,7 +527,7 @@ output$setupTable <- DT::renderDataTable({
   sdcData()
 }, server=FALSE, escape=FALSE, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
 options = list(
-  searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE, autoWidth=FALSE,
+  scrollX=TRUE, scrollY=380, searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE, autoWidth=FALSE,
   columnDefs=list(list(width='400px', targets = c(2))),
   preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
   drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
@@ -791,7 +791,8 @@ output$sel_sdc_infovar <- renderUI({
 
 output$ui_sdcObj_create <- renderUI({
   out <- fluidRow(
-    column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
+    # column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
+    column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
     column(4, uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
   )
   out
