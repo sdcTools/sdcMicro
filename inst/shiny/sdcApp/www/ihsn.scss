@@ -20,26 +20,28 @@ $mono-font: Menlo, Monaco, Consolas, "Courier New", monospace;
 $serif-font: Georgia, serif;
 
 $font-size: calc(0.9em + 0.4vw);
-$line-height: calc(155% + 0.2vw);
+$line-height: 1.55;
 
 
 // MIXINS
 @mixin wb-sidebar-1 {
     border-width: 1px;
     border-style: solid;
-    border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), #e4e9ec, rgba(0, 0, 0, 0)) 1 100%;
-    background-image: linear-gradient(to bottom, transparent,white, transparent);
+    // border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), #e4e9ec, rgba(0, 0, 0, 0)) 1 100%;
+    background-image: linear-gradient(to bottom, transparent,white, rgba(255,255,255,0.001));
     box-shadow: 10px 0px 12px -10px rgba(0,0,0,0.2);
-    padding: 1.5em;
+    // padding: 1.5em;
+    padding: 24px;
     padding-top: 20px;
     padding-bottom: 40px;
 }
 
 @mixin wb-sidebar-1-2 {
-    border-image: linear-gradient(to bottom, $primary, rgba(0, 0, 0, 0)) 1 100%;
-    background-image: linear-gradient(to bottom, white, transparent);
+    // border-image: linear-gradient(to bottom, $primary, rgba(0, 0, 0, 0)) 1 100%;
+    background-image: linear-gradient(to bottom, white, rgba(255,255,255,0.001));
     height: calc(100vh - 75px);
-    padding: 1.5em;
+    // padding: 1.5em;
+    padding: 24px;
     padding-top: 20px;
     padding-bottom: 40px;
     border-right: solid 1px $primary;
@@ -200,9 +202,30 @@ a {
 .wb_sidebar {
     @include wb-sidebar-1-2;
 
-    #ui_sel_script_btns .col-sm-12,
-    #ui_sel_resbtns_import .col-sm-12 {
-        margin-left: -11px;
+    #ui_sel_script_btns .col-sm-12 {
+        margin-left: -13px;
+    }
+
+    #ui_results_sidebar_left .col-sm-12,
+    #ui_import_data_sidebar_left .col-sm-12 {
+      margin-left: -13px;
+    }
+
+    #ui_sel_resbtns_import .col-sm-12
+    #ui_export_sidebar_left .col-sm-12 {
+        margin-left: -13px;
+    }
+
+    #ui_anonymize_sidebar_left .col-sm-12 {
+      margin-left: -13px;
+    }
+
+    #ui_sel_export_btns .col-sm-12 {
+      margin-left: -13px;
+    }
+
+    #ui_sel_microdata_btns .col-sm-12 {
+        margin-left: -2px;
     }
 
     .row > .col-sm-12 {

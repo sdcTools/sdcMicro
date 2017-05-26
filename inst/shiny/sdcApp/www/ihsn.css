@@ -83,17 +83,32 @@ a:hover {
 }
 
 .wb_sidebar {
-  /*border-image: linear-gradient(to bottom, #e4e9ec, rgba(255, 255, 255, 0.001)) 1 100%;*/
   background-image: linear-gradient(to bottom, white, rgba(255, 255, 255, 0.001));
   height: calc(100vh - 75px);
-  padding: 1.5em;
+  padding: 24px;
   padding-top: 20px;
   padding-bottom: 40px;
   border-right: solid 1px #e4e9ec;
 }
-.wb_sidebar #ui_sel_script_btns .col-sm-12,
-.wb_sidebar #ui_sel_resbtns_import .col-sm-12 {
-  margin-left: -11px;
+.wb_sidebar #ui_sel_script_btns .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_results_sidebar_left .col-sm-12,
+.wb_sidebar #ui_import_data_sidebar_left .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_sel_resbtns_import .col-sm-12
+#ui_export_sidebar_left .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_anonymize_sidebar_left .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_sel_export_btns .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_sel_microdata_btns .col-sm-12 {
+  margin-left: -2px;
 }
 .wb_sidebar .row > .col-sm-12 {
   padding-left: 4px;
