@@ -17,7 +17,7 @@ body {
   color: #50595e;
   font-size: calc(0.9em + 0.4vw);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  line-height: calc(155% + 0.2vw);
+  line-height: 1.55;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -83,8 +83,8 @@ a:hover {
 }
 
 .wb_sidebar {
-  border-image: linear-gradient(to bottom, #e4e9ec, transparent) 1 100%;
-  background-image: linear-gradient(to bottom, white, transparent);
+  /*border-image: linear-gradient(to bottom, #e4e9ec, rgba(255, 255, 255, 0.001)) 1 100%;*/
+  background-image: linear-gradient(to bottom, white, rgba(255, 255, 255, 0.001));
   height: calc(100vh - 75px);
   padding: 1.5em;
   padding-top: 20px;
