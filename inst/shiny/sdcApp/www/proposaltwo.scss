@@ -1,0 +1,235 @@
+@import url('bootswatch_yeti.css');
+
+/*
+** Proposal 2
+**
+*/
+
+
+/*
+** VARIABLES
+*/
+
+// COLORS A
+$bg-color: #fff; /* when body is not having a white background */
+$text-color: #364152; /* for regular text */
+$dark-gray: #fafafa;
+$primary: #e4e9ec; /* borders, buttons */
+$primary-dark: darken($primary, 5%);
+$nav-bg: #374253;
+$nav-a: #93abb8; /* navigation */
+$nav-a-hover: darken($nav-bg, 5%); /* navigation */
+$accent: #0a92e4; /* for text-links and clickable elements */
+$accent-hover: #22a6f5; /* for text-links and clickable elements on hover */
+
+// TYPOGRAPHY
+$sans-font: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+$os-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+$mono-font: Menlo, Monaco, Consolas, "Courier New", monospace;
+$font-size: calc(0.9em + 0.4vw);
+$line-height: calc(155% + 0.2vw);
+
+// MIXINS
+@mixin wb-sidebar {
+    border-width: 1px;
+    border-style: solid;
+    border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), #e4e9ec, rgba(0, 0, 0, 0)) 1 100%;
+    background-image: linear-gradient(to bottom, transparent, white, transparent);
+    box-shadow: 10px 0px 12px -10px rgba(0, 0, 0, 0.2);
+    padding: 1.5em;
+    padding-top: 20px;
+    padding-bottom: 40px;
+}
+
+@mixin default-transition {
+    transition: all 0.25s;
+}
+
+
+/* 
+** OVERALL STYLE 
+*/
+
+body {
+    background-color: $bg-color;
+    line-height: $line-height;
+    font-size: $font-size;
+    color: $text-color;
+    font-family: $sans-font;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    color: $text-color;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-family: $sans-font;
+    font-weight: bold;
+}
+
+a {
+    color: $accent;
+    &:hover {
+        color: $accent-hover;
+    }
+}
+
+// NAVIGATION
+.navbar-default {
+    background-color: $nav-bg;
+    box-shadow: rgba(28, 56, 72, 0.1) 0px 2px 2px, rgba(28, 56, 72, 0.1) 0px 4px 4px, rgba(28, 56, 72, 0.1) 0px 8px 8px, rgba(28, 56, 72, 0.1) 0px 16px 16px, rgba(28, 56, 72, 0.1) 0px 32px 32px, rgba(28, 56, 72, 0.1) 0px 64px 64px;
+    // border-bottom: 1px solid $primary;
+    margin-bottom: 0px;
+
+    .navbar-nav > li > a {
+        color: $nav-a;
+        font-weight: 500;
+        padding: 10px 18px;
+        text-transform: uppercase;
+        font-size: 11px;
+        @include default-transition;
+    }
+
+    .navbar-nav > li > a:hover {
+        color: #fff;
+        background: $nav-a-hover;
+        box-shadow: rgba(28, 56, 72, 0.1) 0px 2px 2px, rgba(28, 56, 72, 0.1) 0px 4px 4px, rgba(28, 56, 72, 0.1) 0px 8px 8px, rgba(28, 56, 72, 0.1) 0px 16px 16px, rgba(28, 56, 72, 0.1) 0px 32px 32px, rgba(28, 56, 72, 0.1) 0px 64px 64px;
+    }
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+        // border-bottom: solid 2px $dark-gray;
+        color: #fff;
+        background: $nav-a-hover;
+        box-shadow: rgba(28, 56, 72, 0.1) 0px 2px 2px, rgba(28, 56, 72, 0.1) 0px 4px 4px, rgba(28, 56, 72, 0.1) 0px 8px 8px, rgba(28, 56, 72, 0.1) 0px 16px 16px, rgba(28, 56, 72, 0.1) 0px 32px 32px, rgba(28, 56, 72, 0.1) 0px 64px 64px;
+    }
+    .navbar-brand,
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        color: #fff;
+    }
+}
+
+.container-fluid > .navbar-header {
+    margin-left: 0;
+    margin-right: 10%;
+    padding-left: 1%;
+    font-weight: 700;
+}
+
+// MAIN CONTENT
+.tab-content {
+    margin-bottom: 30px;
+}
+
+// SIDEBAR
+.wb_sidebar {
+    // @include wb-sidebar;
+    min-height: 100vh;
+    background-color: #EBF1F5;
+    .btn {
+        border: none;
+        // background: none;
+        white-space: initial;
+        font-size: 80%;
+        font-weight: bold;
+        // border-bottom: solid 1px $nav-a-hover;
+    }
+    .btn-default {
+        // border: none;
+        background: none;
+        color: $accent;
+        @include default-transition;
+        &:hover {
+            background-color: $primary;
+        }
+    }
+}
+
+// BUTTONS
+.btn-primary {
+    background-color: $accent;
+    border: none;
+    @include default-transition;
+    &:hover {
+        background-color: $accent-hover;
+    }
+}
+
+.btn-primary,
+.btn-default,
+.btn-warning {
+    border-radius: 0;
+}
+
+.wb-btn-inline {
+    background: none;
+    color: $accent;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    border-bottom: solid 1px $accent;
+    font-size: inherit;
+    @include default-transition;
+    &:hover {
+        background-color: $accent;
+        color: #fff;
+        border: none;
+        border-bottom: solid 1px $accent;
+    }
+}
+
+// FORMS
+.form-control {
+    @include default-transition;
+    &:focus,
+    &:hover {
+        border-color: $accent;
+        outline: 0;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
+    }
+}
+
+// TABLES
+table.dataTable {
+    thead th {
+        border-bottom: 1px solid $primary !important;
+        border-top: 1px solid $primary !important;
+        background-color: #fff;
+        text-align: center !important;
+    }
+}
+
+tbody td {
+    font-family: $mono-font;
+    font-size: calc(0.8 * $font-size);
+}
+
+table.dataTable.stripe tbody tr.odd,
+table.dataTable.display tbody tr.odd {
+    background-color: #ebf1f5 !important;
+}
+
+// MEDIA QUERIES
+
+/* Portrait */
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 1) {
+    table.dataTable thead th,
+    table.dataTable thead td {
+        padding: initial !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+}

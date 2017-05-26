@@ -1,0 +1,398 @@
+/*
+**
+** Theme name: IHSN
+** Theme inspired by http://data.worldbank.org/
+**
+*/
+
+// Uses bootswatch as a starting point, aka bootswatch is a DEPENDENCY
+// @import url('bootswatch_yeti.css');
+
+// IMPORT COLOR VARIABLES
+/* Comment in/out one of the lines below to activate a dark or bright navigation */
+@import 'variables_bright';
+
+
+// TYPOGRAPHY VARIABLES
+$sans-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
+$os-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+$mono-font: Menlo, Monaco, Consolas, "Courier New", monospace;
+$serif-font: Georgia, serif;
+
+$font-size: calc(0.9em + 0.4vw);
+$line-height: calc(155% + 0.2vw);
+
+
+// MIXINS
+@mixin wb-sidebar-1 {
+    border-width: 1px;
+    border-style: solid;
+    border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), #e4e9ec, rgba(0, 0, 0, 0)) 1 100%;
+    background-image: linear-gradient(to bottom, transparent,white, transparent);
+    box-shadow: 10px 0px 12px -10px rgba(0,0,0,0.2);
+    padding: 1.5em;
+    padding-top: 20px;
+    padding-bottom: 40px;
+}
+
+@mixin wb-sidebar-1-2 {
+    border-image: linear-gradient(to bottom, $primary, rgba(0, 0, 0, 0)) 1 100%;
+    background-image: linear-gradient(to bottom, white, transparent);
+    height: calc(100vh - 75px);
+    padding: 1.5em;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    border-right: solid 1px $primary;
+}
+
+@mixin default-transition {
+    transition: all 0.25s;
+}
+
+
+// OVERALL STYLE
+
+body {
+    background-color: $bg-color;
+    color: $text-color;
+    font-size: $font-size;
+    font-family: $sans-font;
+    line-height: $line-height;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: $text-color;
+    font-family: $sans-font;
+    font-weight: bold;
+    margin-top: 24px;
+    margin-bottom: 12px;
+
+}
+
+p {
+    font-family: $sans-font;
+}
+
+a {
+    color: $accent;
+    @include default-transition;
+
+    &:hover {
+        color: $accent-hover;
+    }
+}
+
+// NAVIGATION - PROPOSAL 1 (Bright)
+
+.navbar {
+    min-height: 45px;
+}
+
+.navbar-default {
+    background-color: $nav-bg;
+    border-bottom: 1px solid $primary;
+    margin-bottom: 0px;
+
+    .navbar-nav > li > a {
+    	border-bottom: none;
+        color: $nav-a;
+    	font-weight: 500;
+        height: 44px;
+        padding: 11px 18px;
+        @include default-transition;
+    }
+
+    .navbar-nav > li > a:hover {
+        color: white;
+        background-color: $accent-hover;
+    }
+
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+        background: none;
+        border-bottom: solid 2px $nav-a-hover;
+        color: $dark-gray;
+
+    }
+
+    .navbar-brand,
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        color: #50595e;
+        height: 44px;
+    }
+}
+// END OF NAVIGATION - PROPOSAL 1 (Bright)
+
+// NAVIGATION - PROPOSAL 2 (Dark)
+
+// .navbar-default {
+//     background-color: $nav-bg;
+//     margin-bottom: 0px;
+
+//     .navbar-nav > li > a {
+//         color: $nav-a;
+//         font-weight: 500;
+//         padding: 10px 18px;
+//         text-transform: uppercase;
+//         font-size: 11px;
+//         @include default-transition;
+//     }
+
+//     .navbar-nav > li > a:hover {
+//         color: #fff;
+//         background: $nav-a-hover;
+
+//     }
+//     .navbar-nav > .active > a,
+//     .navbar-nav > .active > a:hover,
+//     .navbar-nav > .active > a:focus {
+//         color: #fff;
+//         background: $nav-a-hover;
+//     }
+//     .navbar-brand,
+//     .navbar-brand:hover,
+//     .navbar-brand:focus {
+//         color: #fff;
+//     }
+// }
+
+// END OF NAVIGATION - PROPOSAL 2 (Dark)
+
+
+.container-fluid > .navbar-header {
+    font-weight: 700;
+    margin-left: 0;
+    margin-right: 10%;
+    padding-left: 1%;
+}
+
+// SIDEBAR PROPOSAL 1 - With box-shadow
+
+.wb_sidebar {
+    // @include wb-sidebar-1;
+    // @include wb-sidebar-1-2;
+
+    // .btn {
+    //     font-size: 90%;
+    //     white-space: initial;
+    // }
+
+    // .btn-default {
+    //     border: none;
+    //     background-color: $primary-dark;
+    //     @include default-transition;
+
+    //     &:hover {
+    //         background-color: $accent-hover;
+    //         color: #fff;
+    //     }
+    // }
+
+    // .btn-warning {
+    //     border: none;
+    // }
+}
+
+
+// Sidebar Proposal 1 - Iteration 2 (flat, minimalistic)
+.wb_sidebar {
+    @include wb-sidebar-1-2;
+
+    #ui_sel_script_btns .col-sm-12,
+    #ui_sel_resbtns_import .col-sm-12 {
+        margin-left: -11px;
+    }
+
+    .row > .col-sm-12 {
+        padding-left: 4px;
+    }
+
+    h4 {
+        font-size: 16px;
+        margin-bottom: 30px;
+        padding-left: 20px;
+    }
+
+    .btn-primary {
+        background: none;
+        border-left: solid 5px $accent-hover;
+        border-radius: 0px;
+        color: $accent;
+        font-size: 0.9em;
+        padding-left: 20px;
+        text-align: left;
+        white-space: initial;
+        @include default-transition;
+
+        &:hover {
+            background: none;
+            border-left: solid 5px $accent-hover;
+            color: $accent-hover;
+        }
+    }
+
+
+    .btn-default {
+        background-color: #d5dde1;
+        background: none;
+        border: none;
+        border-radius: 0px;
+        font-size: 0.9em;
+        padding-left: 20px;
+        text-align: left;
+        white-space: initial;
+        @include default-transition;
+
+        &:hover {
+            border-left: solid 5px $accent-hover;
+            transition: all 0.25s;
+            color: $accent-hover;
+        }
+    }
+
+    .btn-warning {
+        background: none;
+        border: none;
+        border-radius: 0px;
+        color: darkorange;
+        font-size: 0.9em;
+        padding-left: 20px;
+        text-align: left;
+        white-space: initial;
+        @include default-transition;
+
+        &:hover {
+            border-left: solid 5px darkorange;
+        }
+    }
+}
+
+// END OF SIDEBAR PROPOSAL 1
+
+// SIDEBAR PROPOSAL 2
+// .wb_sidebar {
+//     min-height: 100vh;
+//     background-color: #e7e9ee;
+//     .btn {
+//         border: none;
+//         white-space: initial;
+//         font-size: 80%;
+//         font-weight: bold;
+//     }
+//     .btn-default {
+//         background: none;
+//         color: $accent;
+//         @include default-transition;
+//         &:hover {
+//             background-color: $primary;
+//         }
+//     }
+// }
+
+// END of SIDEBAR PROPOSAL 2
+
+
+// MAIN CONTENT
+
+.tab-content {
+    margin-bottom: 30px;
+}
+
+.shiny-html-output {
+
+    h2:nth-of-type(1),
+    h3:nth-of-type(1),
+    h4:nth-of-type(1) {
+        padding-top: 20px;
+    }
+}
+
+
+
+
+
+// BUTTONS
+
+.btn-primary {
+    background-color: $accent;
+    border: none;
+    @include default-transition;
+
+    &:hover {
+        background-color: $accent-hover;
+    }
+}
+
+.btn-primary,
+.btn-default,
+.btn-warning {
+    border-radius: 4px;
+}
+
+.wb-btn-inline {
+    background: none;
+    color: $accent;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    border-bottom: solid 1px $accent;
+    font-size: inherit;
+    @include default-transition;
+
+    &:hover {
+        background-color: $accent;
+        color: #fff;
+        border: none;
+        border-bottom: solid 1px $accent;
+    }
+}
+
+// FORMS
+
+.form-control {
+    @include default-transition;
+
+    &:focus,
+    &:hover {
+    border-color: $accent;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+    }
+}
+
+
+// TABLES
+
+table.dataTable {
+    thead th {
+        border-bottom: 1px solid $primary !important;
+        border-top: 1px solid $primary !important;
+        background-color: #fff;
+        text-align: center !important;
+    }
+}
+
+tbody td {
+    font-family: $mono-font;
+    font-size: calc(0.8 * $font-size);
+}
+
+
+// MEDIA QUERIES
+
+/* Portrait */
+@media only screen
+  and (min-device-width: 768px)
+  and (max-device-width: 1024px)
+  and (orientation: portrait)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    table.dataTable thead th,
+    table.dataTable thead td {
+    padding: initial !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    }
+}

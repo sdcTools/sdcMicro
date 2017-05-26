@@ -92,7 +92,7 @@ output$ui_script_main <- renderUI({
 output$ui_script_sidebar_left <- renderUI({
   output$ui_sel_script_btns <- renderUI({
     cc <- choices_import()
-    out <- fluidRow(column(12, h4("What do you want to do?"), align="center"))
+    out <- fluidRow(column(12, h4("What do you want to do?")))
     for (i in 1:length(cc)) {
       if (i==1) {
         style <- "primary"
@@ -119,7 +119,7 @@ output$ui_script <- renderUI({
     ))
   } else {
     out <- fluidRow(
-      column(2, uiOutput("ui_script_sidebar_left")),
+      column(2, uiOutput("ui_script_sidebar_left"), class="wb_sidebar"),
       column(10, uiOutput("ui_script_main")))
   }
   return(out)
