@@ -473,8 +473,11 @@ output$ui_bivariate_tab <- renderUI({
   })
   output$biv_tab_m <- renderTable({
     req(input$sel_catvar1)
-    #df <- cbind(get_manipKeyVars(), get_manipPramVars())
-    if (!is.null(get_manipPramVars())) {df <- cbind(get_manipKeyVars(), get_manipPramVars())} else {df <- get_manipKeyVars()}
+    if (!is.null(get_manipPramVars())) {
+      df <- cbind(get_manipKeyVars(), get_manipPramVars())
+    } else {
+      df <- get_manipKeyVars()
+    }
     vars <- c(input$sel_catvar1, input$sel_catvar2)
     if (vars[2]=="none") {
       tab <- addmargins(table(df[[vars[1]]], useNA="always"))
