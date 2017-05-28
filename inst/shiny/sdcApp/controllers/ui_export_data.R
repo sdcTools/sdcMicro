@@ -236,6 +236,6 @@ output$ui_export <- renderUI({
     ))
   }
   return(fluidRow(
-    column(2, uiOutput("ui_export_sidebar_left")),
+    column(2, uiOutput("ui_export_sidebar_left"), class="wb_sidebar"),
     column(10, uiOutput("ui_export_main"))))
 })

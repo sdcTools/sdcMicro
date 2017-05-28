@@ -121,12 +121,12 @@ output$ui_anonymize_noproblem <- renderUI({
 })
 output$ui_anonymize_summary <- renderUI({
   return(fluidRow(
-    column(2, uiOutput("ui_anonymize_sidebar_left")),
+    column(2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"),
     column(10, uiOutput("ui_sdcObj_summary"))))
 })
 output$ui_anonymize_withsidebar <- renderUI({
   return(fluidRow(
-    column(2, uiOutput("ui_anonymize_sidebar_left")),
+    column(2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"),
     column(7, uiOutput("ui_main_anon")),
     column(3, isolate(uiOutput("sb_info_anonymize")))
   ))

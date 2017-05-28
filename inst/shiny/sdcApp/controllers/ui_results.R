@@ -81,7 +81,7 @@ output$ui_results <- renderUI({
     ))
   } else {
     out <- fluidRow(
-      column(2, uiOutput("ui_results_sidebar_left")),
+      column(2, uiOutput("ui_results_sidebar_left"), class="wb_sidebar"),
       column(7, uiOutput("ui_results_main")),
       column(3, uiOutput("sb_info_results")))
   }
