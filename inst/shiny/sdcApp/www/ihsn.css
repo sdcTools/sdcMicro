@@ -1,10 +1,8 @@
 /*
 **
 ** Theme name: IHSN
-** Theme inspired by http://data.worldbank.org/
 **
 */
-/* Comment in/out one of the lines below to activate a dark or bright navigation */
 /* when body is not having a white background */
 /* for regular text */
 /* borders, buttons */
@@ -117,6 +115,7 @@ a:hover {
   font-size: 16px;
   margin-bottom: 30px;
   padding-left: 20px;
+  text-align: left;
 }
 .wb_sidebar .btn-primary {
   background: none;
