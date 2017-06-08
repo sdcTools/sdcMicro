@@ -5,12 +5,9 @@
 **
 */
 
-// Uses bootswatch as a starting point, aka bootswatch is a DEPENDENCY
-// @import url('bootswatch_yeti.css');
-
 // IMPORT COLOR VARIABLES
 /* Comment in/out one of the lines below to activate a dark or bright navigation */
-@import 'ishn-bright-nav';
+@import 'ihsn-color-vars';
 
 
 // TYPOGRAPHY VARIABLES
@@ -20,7 +17,7 @@ $mono-font: Menlo, Monaco, Consolas, "Courier New", monospace;
 $serif-font: Georgia, serif;
 
 $font-size: calc(0.9em + 0.4vw);
-$line-height: 1.55;
+$line-height: calc(0.9em + 0.8vw);
 
 
 // MIXINS
@@ -98,9 +95,9 @@ a {
     .navbar-nav > li > a {
     	border-bottom: none;
         color: $nav-a;
-    	font-weight: 500;
+    	  font-weight: 500;
         height: 44px;
-        padding: 11px 18px;
+        padding: 11px 16px;
         @include default-transition;
     }
 

@@ -17,7 +17,7 @@ body {
   color: #50595e;
   font-size: calc(0.9em + 0.4vw);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  line-height: 1.55;
+  line-height: calc(0.9em + 0.8vw);
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -54,7 +54,7 @@ a:hover {
   color: #819dad;
   font-weight: 500;
   height: 44px;
-  padding: 11px 18px;
+  padding: 11px 16px;
   transition: all 0.25s;
 }
 .navbar-default .navbar-nav > li > a:hover {
