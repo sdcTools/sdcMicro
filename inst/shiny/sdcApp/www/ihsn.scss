@@ -191,9 +191,11 @@ a {
 
     h4 {
         font-size: 16px;
-        margin-bottom: 30px;
+        line-height: 1.2;
+        margin-bottom: 12px;
         padding-left: 20px;
         text-align: left;
+
     }
 
     .btn-primary {
@@ -202,7 +204,11 @@ a {
         border-radius: 0px;
         color: $accent;
         font-size: 0.9em;
+
         padding-left: 20px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+
         text-align: left;
         white-space: initial;
         @include default-transition;
@@ -221,7 +227,11 @@ a {
         border: none;
         border-radius: 0px;
         font-size: 0.9em;
+
         padding-left: 20px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+
         text-align: left;
         white-space: initial;
         @include default-transition;

@@ -100,7 +100,9 @@ output$ui_script_sidebar_left <- renderUI({
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(paste0("btn_export_script_",i), label=names(cc)[i], block=TRUE, size="extra-small", style=style), tags$br())))
+        # TODO: see issue https://github.com/skounis/sdcMicro/issues/48
+        # column(12, bsButton(paste0("btn_export_script_",i), label=names(cc)[i], block=TRUE, size="extra-small", style=style), tags$br())))
+        column(12, bsButton(paste0("btn_export_script_",i), label=names(cc)[i], block=TRUE, size="extra-small", style=style))))
     }
     # required observers that update the color of the active button!
     eval(parse(text=genObserver_menus(pat="btn_export_script_", n=1:3, updateVal="cur_selection_script")))
@@ -124,4 +126,3 @@ output$ui_script <- renderUI({
   }
   return(out)
 })
-

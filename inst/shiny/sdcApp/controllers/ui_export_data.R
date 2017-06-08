@@ -217,7 +217,9 @@ output$ui_export_sidebar_left <- renderUI({
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style), tags$br())
+        # TODO: see issue https://github.com/skounis/sdcMicro/issues/48
+        # column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style), tags$br())
+        column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style))
       ))
     }
     return(out)
