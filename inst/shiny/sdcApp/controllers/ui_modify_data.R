@@ -371,9 +371,10 @@ output$ui_set_to_na <- renderUI({
   helptxt <- paste0(helptxt, " Note that it impossible to later retrieve the original missing values. R does not allow for distinct missing value codes.")
 
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Set missing values to NA", align="center")),
-    column(width = 8, offset = 2, HTML(helptxt)),
-    column(12, uiOutput("ui_nasupptype"), align="center"))
+    column(width = 12, offset = 0, h3("Set missing values to NA"), class="wb-header"),
+    column(width = 12, offset = 0, p(HTML(helptxt)), class="wb-header-hint"),
+    column(12, uiOutput("ui_nasupptype"), align="center")
+  )
 
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_nasuppvar"), align="center"),
