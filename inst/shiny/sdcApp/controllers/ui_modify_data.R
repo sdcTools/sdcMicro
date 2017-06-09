@@ -304,8 +304,9 @@ output$ui_modify_create_stratvar <- renderUI({
   helptxt <- paste(helptxt, "By default the variable name of the stratification variable consists of the variable names separated by  '_' . You can also specify")
   helptxt <- paste(helptxt, "the variable name by typing it into the text field. The new variable is added to the loaded micro data set and will be exported.")
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Create a stratification variable"), align="center"),
-    column(width = 8, offset = 2, p(helptxt)))
+    column(width = 12, offset = 0, h3("Create a stratification variable"), class="wb-header"),
+    column(width = 12, offset = 0, p(helptxt), class="wb-header-hint")
+  )
 
   out <- list(out, fluidRow(
     column(6, uiOutput("sel_genstrata"), align="center"),
