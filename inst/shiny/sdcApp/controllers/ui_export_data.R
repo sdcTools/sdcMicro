@@ -4,15 +4,17 @@ output$ui_export_report <- renderUI({
     choices=c("internal (detailed)"="internal", "external (short overview)"="external"),
     inline=TRUE, selected=input$rb_simple_report)
   out <- fluidRow(
-    column(12, h4("Create anonymization report"), align="center"))
+    column(12, h3("Create anonymization report")), class="wb-header")
 
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
       column(12, h4("Trying to generate a report returned the following error!", align="center")),
       column(12, verbatimTextOutput("ui_lasterror"))))
   }
+
   out <- list(out, fluidRow(
-    column(12, p("A report for internal use (more detailed) or a report for external use (less detailed) is saved to the export directory."), align="center")))
+    column(12, p("A report for internal use (more detailed) or a report for external use (less detailed) is saved to the export directory."), class="wb-header-hint")
+  ))
 
   out <- list(out, fluidRow(
     column(12, rb1, align="center"),
@@ -76,7 +78,9 @@ output$ui_export_data <- renderUI({
     width="100%", selected=input$dat_exp_type, inline=TRUE)
 
   out <- fluidRow(
-    column(12, h4("Export anonymized microdata"), align="center"))
+    column(12, h3("Export anonymized microdata"), class="wb-header"),
+    column(12, p("Choose a file format for export and select Save Dataset"), class="wb-header-hint")
+  )
 
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
