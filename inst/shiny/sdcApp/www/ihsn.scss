@@ -229,8 +229,8 @@ a {
         font-size: 0.9em;
 
         padding-left: 20px;
-        padding-top: 6px;
-        padding-bottom: 6px;
+        padding-top: 10px;
+        padding-bottom: 10px;
 
         text-align: left;
         white-space: initial;
@@ -249,7 +249,11 @@ a {
         border-radius: 0px;
         color: darkorange;
         font-size: 0.9em;
+
         padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
         text-align: left;
         white-space: initial;
         @include default-transition;
