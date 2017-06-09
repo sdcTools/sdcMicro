@@ -21,8 +21,8 @@ output$ui_modify_recode_to_numeric <- renderUI({
   helptxt <- paste(helptxt, "to type 'numeric' before selecting these as numerical key variables. Here you can convert variables of type 'character' and")
   helptxt <- paste(helptxt, "type 'factor' to type 'numeric'.")
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Convert character/factor variables to numeric variables"), align="center"),
-    column(width = 10, offset = 1, p(helptxt), align="center"),
+    column(width = 12, offset = 0, h3("Convert character/factor variables to numeric variables"), class="wb-header"),
+    column(width = 12, offset = 0, p(helptxt), class="wb-header-hint"),
     column(12, uiOutput("ui_to_num_var"), align="center"),
     column(12, uiOutput("ui_to_num_btn"), align="center"))
   out
@@ -166,8 +166,9 @@ output$ui_modify_recode_to_factor <- renderUI({
   helptxt <- paste(helptxt, "be combined into one factor level, customized breaks can be specified. Several algorithms are available to customize the breaks.")
 
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Convert numeric to factor", align="center"),
-    column(width = 10, offset = 1, p(helptxt))))
+    column(width = 12, offset = 0, h3("Convert numeric to factor"), class="wb-header"),
+    column(width = 12, offset = 0, p(helptxt), class="wb-header-hint")
+  )
 
   if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
     out <- list(out, fluidRow(
@@ -244,7 +245,12 @@ output$ui_modify_change_factor <- renderUI({
       value=paste0(input$cbg_factor, collapse="_"), width="100%")
   })
 
-  out <- fluidRow(column(12, h4("Group factor levels in factor variables in original data", align="center")))
+  # See: https://github.com/skounis/sdcMicro/issues/63
+  # out <- fluidRow(
+  #   column(12, h3("Group factor levels in factor variables in original data"), class="wb-header")
+  #   )
+  out <- column(12, h3("Group factor levels in factor variables in original data"), class="wb-header")
+
   if (length(facVars())==0) {
     out <- list(out, fluidRow(
       column(12, h5("There are no factor variables available that could be recoded!", align="center"))
@@ -252,8 +258,8 @@ output$ui_modify_change_factor <- renderUI({
     return(out)
   }
 
-  helptxt <- "Here you can group/combine the factor levels of categorical variables of type 'factor' before setting up the sdcMicro object."
-  out <- fluidRow(out, column(12, helptxt, align="center"))
+  helptxt <- p("Here you can group/combine the factor levels of categorical variables of type 'factor' before setting up the sdcMicro object.")
+  out <- fluidRow(out, column(12, helptxt, class="wb-header-hint"))
   out <- list(out, fluidRow(
     column(12, uiOutput("reclocfac_var"), align="center")))
   out <- list(out, fluidRow(
@@ -658,8 +664,8 @@ output$ui_sample_microdata <- renderUI({
   txt_subset <- paste(txt_subset, "Note: This is solely for testing purposes to reduce the computation time and not an anonymization method. To produce an anonymized dataset this should not be used.")
 
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Use only a subset of the dataset", align="center")),
-    column(width = 8, offset = 2, p(txt_subset)))
+    column(12, h3("Use only a subset of the dataset"), class="wb-header"),
+    column(width = 12, offset = 0, p(txt_subset), class="wb-header-hint"))
   out <- list(out, fluidRow(
     column(6, p(sel1, align="center")),
     column(6, p(sl1, align="center"))))
