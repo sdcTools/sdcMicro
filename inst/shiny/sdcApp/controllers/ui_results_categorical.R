@@ -62,7 +62,7 @@ output$ui_rescat_riskinfo <- renderUI({
       # table containing the corresponding observations
       output$tab_risk <- renderDataTable({
         df
-      }, options = list(pageLength = 10, searching=FALSE))
+      }, options = list(pageLength = 10, searching=FALSE, scrollX=TRUE, scrollY=250))
 
       res <- calc_riskyobs()
       if (is.null(res)) {

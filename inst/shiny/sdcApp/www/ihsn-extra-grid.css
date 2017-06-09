@@ -14,7 +14,7 @@ input[type=search] {
 }
 
 .dataTables_wrapper .dataTables_length select.form-control{
-  width: 60px;
+  width: 90px;
   display: inline-block;
 }
 
@@ -28,4 +28,39 @@ input[type=search] {
  */
 .dataTables_wrapper.no-footer .dataTables_scrollBody {
     border-bottom: 0px;
+}
+
+/*
+ * Control the font sizes
+ */
+table.dataTable th {
+  font-size: 11px;
+}
+
+table.dataTable td {
+  font-size: 11px;
+}
+
+div#tab_inputdata {
+    font-size: 12px;
+}
+
+/*
+ * Control layout within cells
+ */
+table.dataTable td .checkbox input[type=checkbox],
+table.dataTable td .checkbox-inline input[type=checkbox],
+table.dataTable td .radio input[type=radio],
+table.dataTable td .radio-inline input[type=radio] {
+  position: relative;
+}
+
+table.dataTable td .checkbox-inline+.checkbox-inline,
+table.dataTable td .radio-inline+.radio-inline {
+  margin-left: 0;
+}
+
+table.dataTable td .checkbox-inline,
+table.dataTable td .radio-inline {
+  margin-right: 10px;
 }

@@ -1,10 +1,8 @@
 /*
 **
 ** Theme name: IHSN
-** Theme inspired by http://data.worldbank.org/
 **
 */
-/* Comment in/out one of the lines below to activate a dark or bright navigation */
 /* when body is not having a white background */
 /* for regular text */
 /* borders, buttons */
@@ -17,7 +15,7 @@ body {
   color: #50595e;
   font-size: calc(0.9em + 0.4vw);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  line-height: 1.55;
+  line-height: calc(0.9em + 0.8vw);
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -54,7 +52,7 @@ a:hover {
   color: #819dad;
   font-weight: 500;
   height: 44px;
-  padding: 11px 18px;
+  padding: 11px 16px;
   transition: all 0.25s;
 }
 .navbar-default .navbar-nav > li > a:hover {
@@ -115,8 +113,10 @@ a:hover {
 }
 .wb_sidebar h4 {
   font-size: 16px;
-  margin-bottom: 30px;
+  line-height: 1.2;
+  margin-bottom: 12px;
   padding-left: 20px;
+  text-align: left;
 }
 .wb_sidebar .btn-primary {
   background: none;
@@ -125,6 +125,8 @@ a:hover {
   color: #0a92e4;
   font-size: 0.9em;
   padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   text-align: left;
   white-space: initial;
   transition: all 0.25s;
@@ -141,6 +143,8 @@ a:hover {
   border-radius: 0px;
   font-size: 0.9em;
   padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   text-align: left;
   white-space: initial;
   transition: all 0.25s;
@@ -157,6 +161,8 @@ a:hover {
   color: darkorange;
   font-size: 0.9em;
   padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   text-align: left;
   white-space: initial;
   transition: all 0.25s;

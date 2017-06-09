@@ -63,7 +63,9 @@ output$ui_import_data_main <- renderUI({
     val <- "stata"
   }
   out <- fluidRow(
-  column(width = 8, offset = 2, h3("Uploading microdata", align="center")))
+    column(width = 12, offset = 0, h3("Uploading microdata"), class="wb-header"),
+    column(width = 12, offset = 0, p("Select a test dataset or any object in your current workspace"), class="wb-header-hint")
+  )
 
   if (val %in% c("R","csv","spss","sas","rdata","stata")) {
     # convert characters automatically to factors
@@ -122,7 +124,8 @@ output$ui_import_data_sidebar_left <- renderUI({
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style), tags$br())
+        # column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style), tags$br())
+        column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style))
       ))
     }
     out
