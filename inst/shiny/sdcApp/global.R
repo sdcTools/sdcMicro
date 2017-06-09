@@ -277,7 +277,8 @@ noInputData <- function(prefix="btn_a_micro_", uri) {
   txt <- "Go back to the Microdata tab by clicking the button below and load a dataset."
   btn <- myActionButton(paste0(prefix,uri),label=("Load microdata"), "primary")
   fluidRow(
-    column(12, h2("No input data available!", align="center")),
+    column(12, h3("No input data available!"), class="wb-header"),
+    column(12, p("Please follow the instructions and load a dataset or upload a previously saved problem instance."), class="wb-header-hint"),
     column(12, p(txt, align="center")),
     column(12, div(btn, align="center")))
 }
@@ -287,7 +288,7 @@ noSdcProblem <- function(prefix="btn_a_setup_", uri) {
   btn <- myActionButton(paste0(prefix,uri),label=("Create an SDC problem"), "primary")
   fluidRow(
     column(12, h3("No SDC problem was specified"), class="wb-header"),
-    column(12, p("An SDC problem should first specified. Please follow the instructions that follow and select variables or upload a previously saved problem instance."), class="wb-header-hint"),
+    column(12, p("An SDC problem should first specified. Please follow the instructions and select variables or upload a previously saved problem instance."), class="wb-header-hint"),
     column(12, p(txt, align="center")),
     column(12, div(btn, align="center")))
 }
