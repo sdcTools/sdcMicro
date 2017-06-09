@@ -810,8 +810,9 @@ output$ui_hierarchical_data <- renderUI({
 
   out <- list(
     fluidRow(
-      column(width = 8, offset = 2, h4("Deal with hierarchical Data"), align="center"),
-      column(width = 8, offset = 2, p(HTML(helptxt)))),
+      column(width = 12, offset = 0, h3("Deal with hierarchical Data"), class="wb-header"),
+      column(width = 12, offset = 0, p(HTML(helptxt)), class="wb-header-hint")
+    ),
     fluidRow(column(12, rb1, align="center"))
   )
 
