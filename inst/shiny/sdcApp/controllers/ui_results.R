@@ -61,7 +61,9 @@ output$ui_results_sidebar_left <- renderUI({
         out <- list(out, fluidRow(column(12, h4(df$header[i]), align="center")))
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(id, label=df$lab[i], block=TRUE, size="extra-small", style=style), tags$br())
+        # TODO: See issue https://github.com/skounis/sdcMicro/issues/48
+        # column(12, bsButton(id, label=df$lab[i], block=TRUE, size="extra-small", style=style), tags$br())
+        column(12, bsButton(id, label=df$lab[i], block=TRUE, size="extra-small", style=style))
       ))
     }
     out

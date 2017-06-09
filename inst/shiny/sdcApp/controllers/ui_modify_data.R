@@ -895,7 +895,9 @@ output$ui_modify_data_sidebar_left <- renderUI({
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(id, label=names(cc)[i], block=TRUE, style=style), tags$br())))
+        # TODO: See issue https://github.com/skounis/sdcMicro/issues/48
+        # column(12, bsButton(id, label=names(cc)[i], block=TRUE, style=style), tags$br())))
+        column(12, bsButton(id, label=names(cc)[i], block=TRUE, style=style))))
     }
     # required observers that update the color of the active button!
     eval(parse(text=genObserver_menus(pat="btn_menu_microdata_", n=1:10, updateVal="cur_selection_microdata")))

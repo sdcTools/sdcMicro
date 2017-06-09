@@ -57,7 +57,9 @@ output$ui_anonymize_sidebar_left <- renderUI({
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(curid, label=df_choices$name[i], block=TRUE, size="extra-small", style=style), tags$br())))
+        # TODO: see https://github.com/skounis/sdcMicro/issues/48
+        # column(12, bsButton(curid, label=df_choices$name[i], block=TRUE, size="extra-small", style=style), tags$br())))
+        column(12, bsButton(curid, label=df_choices$name[i], block=TRUE, size="extra-small", style=style))))
     }
     eval(parse(text=genObserver_menus(pat="btn_sel_anon_", n=1:nrow(df_choices), updateVal="cur_selection_anon")))
     out
