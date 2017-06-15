@@ -73,7 +73,10 @@ output$ui_script_import <- renderUI({
       column(12, p(btn, align="center"))
     ))
   }
-  out <- fluidRow(column(12, h3("Import a previously exported sdcProblem"), class="wb-header"))
+  out <- fluidRow(
+      column(12, h3("Import a previously exported sdcProblem"), class="wb-header"),
+      column(12, p("Upload a previously saved sdcProblem."), class="wb-header-hint")
+    )
   if (!is.null(sdcObj())) {
     out <- list(out,
       fluidRow(
