@@ -64,7 +64,7 @@ output$ui_import_data_main <- renderUI({
   }
   out <- fluidRow(
     column(width = 12, offset = 0, h3("Uploading microdata"), class="wb-header"),
-    column(width = 12, offset = 0, p("Select a test dataset or any object in your current workspace"), class="wb-header-hint")
+    column(width = 12, offset = 0, p("Load the dataset to be anonymized."), class="wb-header-hint")
   )
 
   if (val %in% c("R","csv","spss","sas","rdata","stata")) {
