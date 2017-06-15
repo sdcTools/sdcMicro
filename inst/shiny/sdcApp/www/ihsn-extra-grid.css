@@ -64,3 +64,22 @@ table.dataTable td .checkbox-inline,
 table.dataTable td .radio-inline {
   margin-right: 10px;
 }
+
+/*
+ * Add thin boredr
+ */
+ .dataTables_wrapper .dataTables_scroll {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+/* Neutralize horizontal lines */
+table.dataTable thead th {
+  border-top: 0 !important;
+}
+
+.dataTables_wrapper.no-footer .dataTables_scrollBody {
+  border-bottom: 0 !important;
+  margin-bottom: 1px;
+}
