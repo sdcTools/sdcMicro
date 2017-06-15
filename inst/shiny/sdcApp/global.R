@@ -288,7 +288,7 @@ noSdcProblem <- function(prefix="btn_a_setup_", uri) {
   btn <- myActionButton(paste0(prefix,uri),label=("Create an SDC problem"), "primary")
   fluidRow(
     column(12, h3("No SDC problem was specified"), class="wb-header"),
-    column(12, p("An SDC problem should first specified. Please follow the instructions and select variables or upload a previously saved problem instance."), class="wb-header-hint"),
+    column(12, p("Please go to the Microdata tab to upload a dataset or upload a previously saved problem from the Reproducibility tab."), class="wb-header-hint"),
     column(12, p(txt, align="center")),
     column(12, div(btn, align="center")))
 }
