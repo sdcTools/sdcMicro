@@ -278,7 +278,7 @@ noInputData <- function(prefix="btn_a_micro_", uri) {
   btn <- myActionButton(paste0(prefix,uri),label=("Load microdata"), "primary")
   fluidRow(
     column(12, h3("No input data available!"), class="wb-header"),
-    column(12, p("Please follow the instructions and load a dataset or upload a previously saved problem instance."), class="wb-header-hint"),
+    column(12, p("Create an instance of an SDC problem by making the variable selection in the Anonymize tab or load a previously saved problem instance."), class="wb-header-hint"),
     column(12, p(txt, align="center")),
     column(12, div(btn, align="center")))
 }
