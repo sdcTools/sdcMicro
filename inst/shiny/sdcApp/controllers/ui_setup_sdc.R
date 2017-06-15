@@ -721,7 +721,7 @@ output$ui_sdcObj_create1 <- renderUI({
   txt_setup <- paste(txt_setup, tags$br(), tags$br(), "Tip - Before you start, make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor.")
 
   out <- list(out,
-    fluidRow(column(12, h4("Select variables", tipify(icon("question"), title=txt_setup, placement="bottom")), align="center")),
+    fluidRow(column(12, h4("Select variables", tipify(icon("question"), title=txt_setup, placement="bottom"), class="wb-block-title"), align="center")),
     fluidRow(column(12, DT::dataTableOutput("setupTable", height="100%"))))
   out
 })
@@ -786,11 +786,13 @@ output$ui_sdcObj_info <- renderUI({
 })
 
 output$sel_sdc_infovar <- renderUI({
-  selectInput("sel_infov", label=h4("Explore variables"), choices=allVars(), width="100%")
+  selectInput("sel_infov", label=h4("Explore variables", class="wb-block-title"), choices=allVars(), width="100%")
 })
 
 output$ui_sdcObj_create <- renderUI({
   out <- fluidRow(
+    column(width = 12, offset = 0, h3("Anonymize"), class="wb-header"),
+    column(width = 12, offset = 0, p("Select and export variables."), class="wb-header-hint"),
     # column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
     column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
     column(4, uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
