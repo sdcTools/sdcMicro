@@ -79,7 +79,7 @@ output$ui_export_data <- renderUI({
 
   out <- fluidRow(
     column(12, h3("Export anonymized microdata"), class="wb-header"),
-    column(12, p("Choose a file format for export and select Save Dataset"), class="wb-header-hint")
+    column(12, p("Select the file format to export the data to. If necessary, the order of the records can be randomized before exporting."), class="wb-header-hint")
   )
 
   if (!is.null(lastError())) {
