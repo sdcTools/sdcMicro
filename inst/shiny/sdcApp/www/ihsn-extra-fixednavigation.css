@@ -1,3 +1,6 @@
+/*
+ * Top navigation
+ */
 nav.navbar{
   position: fixed;
   top: 0;
@@ -18,4 +21,60 @@ body > div.container-fluid{
  */
 .container-fluid > .navbar-header {
   margin-right: 4%;
+}
+
+/*
+ * Side navigation
+ */
+
+ .wb_sidebar{
+   /*
+    * Override rules set in ihsn.scss
+    * TODO: Remove duplication. Edit ihsn(?) or move all the rules here(?)
+    *
+    * Inside the `.wb_sidebar` is the fixed vertical area. Borders
+    * and backround style should be move there. Otherwise they scroll.
+    */
+   background-image: none;
+   border-right: none;
+   /* We need a the whole vertical space minus the height of horizontal bar */
+   height: calc(100vh - 45px);
+   /* There is no need for padding. This is now just a container. */
+   padding: 0;
+   padding-top: 0;
+   padding-bottom: 0;
+ }
+
+div.col-sm-2.wb_sidebar{
+  padding-left: 0;
+  padding-right: 0;
+}
+
+div.col-sm-2.wb_sidebar .row{
+  margin-left: 0;
+  margin-right: 0;
+}
+
+div.col-sm-2.wb_sidebar > div {
+  background-image: linear-gradient(to bottom, white, rgba(255, 255, 255, 0.001));
+  border-right: solid 1px #e4e9ec;
+  position: fixed;
+  width: 16.6%;
+  top: 44px;
+  bottom: 0;
+  overflow: auto;
+  overflow-x: hidden;
+ }
+
+/*
+ * TODO: Provide a generic fix for the following two rules.
+ */
+ .wb_sidebar #ui_anonymize_sidebar_left .col-sm-12 {
+   /* margin-left: -13px; */
+  margin-left: 0;
+}
+
+.wb_sidebar .row > .col-sm-12 {
+  /* padding-left: 4px; */
+  padding-left: 0;
 }
