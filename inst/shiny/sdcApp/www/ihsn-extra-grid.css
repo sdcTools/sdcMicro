@@ -83,3 +83,11 @@ table.dataTable thead th {
   border-bottom: 0 !important;
   margin-bottom: 1px;
 }
+
+/*
+ * Radio options within a cell should not wrap
+ * see: https://github.com/skounis/sdcMicro/issues/85
+ */
+ table.dataTable td .form-group.shiny-input-radiogroup .shiny-options-group{
+   white-space: nowrap;
+ }
