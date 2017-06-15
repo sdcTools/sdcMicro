@@ -539,7 +539,7 @@ shinyServer(function(session, input, output) {
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
-  # code for microaggregation()
+  # code for addNoise()
   code_addNoise <- reactive({
     n_method <- input$sel_noise_method
     cmd <- paste0("sdcObj <- addNoise(obj=sdcObj")
