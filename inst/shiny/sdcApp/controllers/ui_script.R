@@ -24,7 +24,7 @@ output$current_code <- renderText({
 output$ui_script_view <- renderUI({
   out <- fluidRow(
     column(12, h3("View the current generated script"), class="wb-header"),
-    column(12, p("Review the gerenared script and save to a file."), class="wb-header-hint"),
+    column(12, p("Browse and download the script used to generate your results. These can be used later as a reminder of what you did or entered into R from command-line to reproduce results."), class="wb-header-hint"),
     column(12, myActionButton("btn_save_script", "Save Script to File", btn.style="primary"), align="center"),
     column(12, tags$br(), uiOutput("current_code"))
   )
