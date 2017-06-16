@@ -21,8 +21,8 @@ output$ui_modify_recode_to_numeric <- renderUI({
   helptxt <- paste(helptxt, "to type 'numeric' before selecting these as numerical key variables. Here you can convert variables of type 'character' and")
   helptxt <- paste(helptxt, "type 'factor' to type 'numeric'.")
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Convert character/factor variables to numeric variables"), align="center"),
-    column(width = 10, offset = 1, p(helptxt), align="center"),
+    column(width = 12, offset = 0, h3("Convert character/factor variables to numeric variables"), class="wb-header"),
+    column(width = 12, offset = 0, p(helptxt), class="wb-header-hint"),
     column(12, uiOutput("ui_to_num_var"), align="center"),
     column(12, uiOutput("ui_to_num_btn"), align="center"))
   out
@@ -166,8 +166,9 @@ output$ui_modify_recode_to_factor <- renderUI({
   helptxt <- paste(helptxt, "be combined into one factor level, customized breaks can be specified. Several algorithms are available to customize the breaks.")
 
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Convert numeric to factor", align="center"),
-    column(width = 10, offset = 1, p(helptxt))))
+    column(width = 12, offset = 0, h3("Convert numeric to factor"), class="wb-header"),
+    column(width = 12, offset = 0, p(helptxt), class="wb-header-hint")
+  )
 
   if (!is.null(input$sel_custom_split) && input$sel_custom_split=="yes") {
     out <- list(out, fluidRow(
@@ -244,7 +245,12 @@ output$ui_modify_change_factor <- renderUI({
       value=paste0(input$cbg_factor, collapse="_"), width="100%")
   })
 
-  out <- fluidRow(column(12, h4("Group factor levels in factor variables in original data", align="center")))
+  # See: https://github.com/skounis/sdcMicro/issues/63
+  # out <- fluidRow(
+  #   column(12, h3("Group factor levels in factor variables in original data"), class="wb-header")
+  #   )
+  out <- column(12, h3("Group factor levels in factor variables in original data"), class="wb-header")
+
   if (length(facVars())==0) {
     out <- list(out, fluidRow(
       column(12, h5("There are no factor variables available that could be recoded!", align="center"))
@@ -252,8 +258,8 @@ output$ui_modify_change_factor <- renderUI({
     return(out)
   }
 
-  helptxt <- "Here you can group/combine the factor levels of categorical variables of type 'factor' before setting up the sdcMicro object."
-  out <- fluidRow(out, column(12, helptxt, align="center"))
+  helptxt <- p("Here you can group/combine the factor levels of categorical variables of type 'factor' before setting up the sdcMicro object.")
+  out <- fluidRow(out, column(12, helptxt, class="wb-header-hint"))
   out <- list(out, fluidRow(
     column(12, uiOutput("reclocfac_var"), align="center")))
   out <- list(out, fluidRow(
@@ -298,8 +304,9 @@ output$ui_modify_create_stratvar <- renderUI({
   helptxt <- paste(helptxt, "By default the variable name of the stratification variable consists of the variable names separated by  '_' . You can also specify")
   helptxt <- paste(helptxt, "the variable name by typing it into the text field. The new variable is added to the loaded micro data set and will be exported.")
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Create a stratification variable"), align="center"),
-    column(width = 8, offset = 2, p(helptxt)))
+    column(width = 12, offset = 0, h3("Create a stratification variable"), class="wb-header"),
+    column(width = 12, offset = 0, p(helptxt), class="wb-header-hint")
+  )
 
   out <- list(out, fluidRow(
     column(6, uiOutput("sel_genstrata"), align="center"),
@@ -364,9 +371,10 @@ output$ui_set_to_na <- renderUI({
   helptxt <- paste0(helptxt, " Note that it impossible to later retrieve the original missing values. R does not allow for distinct missing value codes.")
 
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Set missing values to NA", align="center")),
-    column(width = 8, offset = 2, HTML(helptxt)),
-    column(12, uiOutput("ui_nasupptype"), align="center"))
+    column(width = 12, offset = 0, h3("Set missing values to NA"), class="wb-header"),
+    column(width = 12, offset = 0, p(HTML(helptxt)), class="wb-header-hint"),
+    column(12, uiOutput("ui_nasupptype"), align="center")
+  )
 
   out <- list(out, fluidRow(
     column(6, uiOutput("ui_nasuppvar"), align="center"),
@@ -542,10 +550,13 @@ output$ui_view_var <- renderUI({
       column(12, code(lastError()))))
   }
 
-  out <- fluidRow(column(12, h4("Explore variables in original data", align="center")))
+  out <- fluidRow(
+    column(12, h3("Explore variables in original data"), class="wb-header")
+    )
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
 
   out <- list(out, fluidRow(
+    column(width = 12, offset = 0, p("Help or description text."), class="wb-header-hint"),
     column(6, uiOutput("ui_selvar1")),
     column(6, uiOutput("ui_selvar2"))))
 
@@ -572,8 +583,8 @@ output$ui_reset_var <- renderUI({
   txt_reset <- paste(txt_reset, "Resetting restores the variable to its original state and cancels any modifications.")
   list(
     fluidRow(
-      column(width = 8, offset = 2, h4("Reset variables"), align="center"),
-      column(width = 8, offset = 2, p(txt_reset)),
+      column(width = 12, offset = 0, h3("Reset variables"), class="wb-header"),
+      column(width = 12, offset = 0, p(txt_reset), class="wb-header-hint"),
       column(12, uiOutput("reset_microvar_var"), align="center"),
       column(12, uiOutput("reset_microvar_btn"), align="center")
     ))
@@ -602,10 +613,10 @@ output$ui_show_microdata <- renderUI({
     #attr(obj$inputdata, "dropped")
   }
   out <- fluidRow(
-    column(width = 8, offset = 2, h3("Loaded microdata"), align="center"))
+    column(width = 12, offset = 0, h3("Loaded microdata")), class="wb-header")
   if(is.null(attr(obj$inputdata, "dropped"))){
     out <- list(out, fluidRow(
-      column(width = 8, offset = 2, p(HTML(txt_microdata)))))
+      column(width = 12, offset = 0, p(HTML(txt_microdata))), class="wb-header-hint"))
   }else{
     out <- list(out, fluidRow(
       column(width = 8, offset = 2, list(HTML(txt_microdata), code(lapply(attr(obj$inputdata, "dropped"), function(x) {x}))))))
@@ -655,8 +666,8 @@ output$ui_sample_microdata <- renderUI({
   txt_subset <- paste(txt_subset, "Note: This is solely for testing purposes to reduce the computation time and not an anonymization method. To produce an anonymized dataset this should not be used.")
 
   out <- fluidRow(
-    column(width = 8, offset = 2, h4("Use only a subset of the dataset", align="center")),
-    column(width = 8, offset = 2, p(txt_subset)))
+    column(12, h3("Use only a subset of the dataset"), class="wb-header"),
+    column(width = 12, offset = 0, p(txt_subset), class="wb-header-hint"))
   out <- list(out, fluidRow(
     column(6, p(sel1, align="center")),
     column(6, p(sl1, align="center"))))
@@ -799,8 +810,9 @@ output$ui_hierarchical_data <- renderUI({
 
   out <- list(
     fluidRow(
-      column(width = 8, offset = 2, h4("Deal with hierarchical Data"), align="center"),
-      column(width = 8, offset = 2, p(HTML(helptxt)))),
+      column(width = 12, offset = 0, h3("Deal with hierarchical Data"), class="wb-header"),
+      column(width = 12, offset = 0, p(HTML(helptxt)), class="wb-header-hint")
+    ),
     fluidRow(column(12, rb1, align="center"))
   )
 
@@ -892,7 +904,9 @@ output$ui_modify_data_sidebar_left <- renderUI({
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(id, label=names(cc)[i], block=TRUE, style=style), tags$br())))
+        # TODO: See issue https://github.com/skounis/sdcMicro/issues/48
+        # column(12, bsButton(id, label=names(cc)[i], block=TRUE, style=style), tags$br())))
+        column(12, bsButton(id, label=names(cc)[i], block=TRUE, style=style))))
     }
     # required observers that update the color of the active button!
     eval(parse(text=genObserver_menus(pat="btn_menu_microdata_", n=1:10, updateVal="cur_selection_microdata")))

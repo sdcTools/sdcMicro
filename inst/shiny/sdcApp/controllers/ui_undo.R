@@ -63,15 +63,16 @@ output$ui_undo <- renderUI({
   }
   if (is.null(curObj@prev)) {
     out <- fluidRow(
-      column(12, h4("Undo last step"), align="center"),
-      column(12, p("Currently, no step can be undone."), align="center"))
+      column(12, h3("Undo last step"), class="wb-header"),
+      column(12, p("Currently, no step can be undone."), class="wb-header-hint")
+    )
     out <- list(out, uiOutput("ui_export_problem1"), uiOutput("ui_script_import1"))
     return(out)
   } else {
     btn_undo <- myActionButton("btn_undo_xx", "Undo last Step", "danger")
     out <- fluidRow(
-      column(12, h4("Undo last step"), align="center"),
-      column(12, p("Clicking the button below will remove (if possible) the following anonymization step!"), align="center"),
+      column(12, h3("Undo last step"), class="wb-header"),
+      column(12, p("Clicking the button below will remove (if possible) the following anonymization step!"), class="wb-header-hint"),
       column(12, list(code(obj$lastaction), br(), br()), align="center"),
       column(12, btn_undo, align="center"))
     out <- list(out, uiOutput("ui_export_problem1"), uiOutput("ui_script_import1"))
