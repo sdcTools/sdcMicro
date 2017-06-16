@@ -442,12 +442,19 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
       "numVars"=numvars,
       "results"=list()
     )
+    anyChanges <- FALSE # Check if any changes
     for (i in 1:ncol(nv_o)) {
       if (identical(nv_o[,i], nv_m[,i])) {
+        # Add identical columns to output for GUI
+        summary_o <- summary_m <- summary(nv_o[,i])
+        dt <- as.data.table(rbind(c("orig",as.numeric(summary_o)), c("modified",as.numeric(summary_m))))
+        setnames(dt, c("Type",names(summary_o)))
+        out$results[[length(out$results)+1]] <- dt
         if (docat) {
           cat(paste0(tabsp,"Variable ", shQuote(numvars[i])," has not been modified.\n\n"))
         }
       } else {
+        anyChanges <- TRUE
         summary_o <- summary(nv_o[,i])
         summary_m <- summary(as.numeric(nv_m[,i]))
         val_cor <- cor(nv_o[,i], nv_m[,i], use="pairwise.complete.obs")
@@ -460,6 +467,9 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
         }
         out$results[[length(out$results)+1]] <- dt
       }
+    }
+    if (!anyChanges) {
+      out$results <- NULL
     }
     if (docat) {
       cat(hr,"\n\n")
