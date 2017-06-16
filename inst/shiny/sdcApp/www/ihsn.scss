@@ -1,16 +1,11 @@
 /*
 **
 ** Theme name: IHSN
-** Theme inspired by http://data.worldbank.org/
 **
 */
 
-// Uses bootswatch as a starting point, aka bootswatch is a DEPENDENCY
-// @import url('bootswatch_yeti.css');
-
 // IMPORT COLOR VARIABLES
-/* Comment in/out one of the lines below to activate a dark or bright navigation */
-@import 'variables_bright';
+@import 'ihsn-color-vars';
 
 
 // TYPOGRAPHY VARIABLES
@@ -20,27 +15,24 @@ $mono-font: Menlo, Monaco, Consolas, "Courier New", monospace;
 $serif-font: Georgia, serif;
 
 $font-size: calc(0.9em + 0.4vw);
-$line-height: 1.55;
+$line-height: calc(0.9em + 0.8vw);
 
 
 // MIXINS
-@mixin wb-sidebar-1 {
-    border-width: 1px;
-    border-style: solid;
-    // border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), #e4e9ec, rgba(0, 0, 0, 0)) 1 100%;
-    background-image: linear-gradient(to bottom, transparent,white, rgba(255,255,255,0.001));
-    box-shadow: 10px 0px 12px -10px rgba(0,0,0,0.2);
-    // padding: 1.5em;
-    padding: 24px;
-    padding-top: 20px;
-    padding-bottom: 40px;
-}
+
+// @mixin wb-sidebar-1 {
+//     border-width: 1px;
+//     border-style: solid;
+//     background-image: linear-gradient(to bottom, transparent,white, rgba(255,255,255,0.001));
+//     box-shadow: 10px 0px 12px -10px rgba(0,0,0,0.2);
+//     padding: 24px;
+//     padding-top: 20px;
+//     padding-bottom: 40px;
+// }
 
 @mixin wb-sidebar-1-2 {
-    // border-image: linear-gradient(to bottom, $primary, rgba(0, 0, 0, 0)) 1 100%;
     background-image: linear-gradient(to bottom, white, rgba(255,255,255,0.001));
     height: calc(100vh - 75px);
-    // padding: 1.5em;
     padding: 24px;
     padding-top: 20px;
     padding-bottom: 40px;
@@ -98,9 +90,9 @@ a {
     .navbar-nav > li > a {
     	border-bottom: none;
         color: $nav-a;
-    	font-weight: 500;
+    	  font-weight: 500;
         height: 44px;
-        padding: 11px 18px;
+        padding: 11px 16px;
         @include default-transition;
     }
 
@@ -127,41 +119,6 @@ a {
 }
 // END OF NAVIGATION - PROPOSAL 1 (Bright)
 
-// NAVIGATION - PROPOSAL 2 (Dark)
-
-// .navbar-default {
-//     background-color: $nav-bg;
-//     margin-bottom: 0px;
-
-//     .navbar-nav > li > a {
-//         color: $nav-a;
-//         font-weight: 500;
-//         padding: 10px 18px;
-//         text-transform: uppercase;
-//         font-size: 11px;
-//         @include default-transition;
-//     }
-
-//     .navbar-nav > li > a:hover {
-//         color: #fff;
-//         background: $nav-a-hover;
-
-//     }
-//     .navbar-nav > .active > a,
-//     .navbar-nav > .active > a:hover,
-//     .navbar-nav > .active > a:focus {
-//         color: #fff;
-//         background: $nav-a-hover;
-//     }
-//     .navbar-brand,
-//     .navbar-brand:hover,
-//     .navbar-brand:focus {
-//         color: #fff;
-//     }
-// }
-
-// END OF NAVIGATION - PROPOSAL 2 (Dark)
-
 
 .container-fluid > .navbar-header {
     font-weight: 700;
@@ -172,7 +129,7 @@ a {
 
 // SIDEBAR PROPOSAL 1 - With box-shadow
 
-.wb_sidebar {
+// .wb_sidebar {
     // @include wb-sidebar-1;
     // @include wb-sidebar-1-2;
 
@@ -195,7 +152,7 @@ a {
     // .btn-warning {
     //     border: none;
     // }
-}
+// }
 
 
 // Sidebar Proposal 1 - Iteration 2 (flat, minimalistic)
@@ -234,8 +191,11 @@ a {
 
     h4 {
         font-size: 16px;
-        margin-bottom: 30px;
+        line-height: 1.2;
+        margin-bottom: 12px;
         padding-left: 20px;
+        text-align: left;
+
     }
 
     .btn-primary {
@@ -244,7 +204,11 @@ a {
         border-radius: 0px;
         color: $accent;
         font-size: 0.9em;
+
         padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
         text-align: left;
         white-space: initial;
         @include default-transition;
@@ -263,7 +227,11 @@ a {
         border: none;
         border-radius: 0px;
         font-size: 0.9em;
+
         padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
         text-align: left;
         white-space: initial;
         @include default-transition;
@@ -281,7 +249,11 @@ a {
         border-radius: 0px;
         color: darkorange;
         font-size: 0.9em;
+
         padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
         text-align: left;
         white-space: initial;
         @include default-transition;
