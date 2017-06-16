@@ -89,6 +89,7 @@ extractLabels <- function(dat){
     }
   } else {
     varLab <- NULL
+    nonUTFvarlabel <- NULL
   }
 
   # Check whether there are value labels available

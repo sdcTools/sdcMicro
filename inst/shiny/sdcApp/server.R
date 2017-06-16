@@ -716,7 +716,11 @@ shinyServer(function(session, input, output) {
       if (obj$cur_selection_import=="btn_import_data_6") {
         obj$stata_labs <- attributes(obj$inputdata)$lab
         df <- obj$stata_labs[[1]]
-        obj$stata_varnames <- data.frame(var.names=unlist(df[[1]]), var.label=unlist(df[[2]]), stringsAsFactors=FALSE)
+        if (!is.null(df)) {
+          obj$stata_varnames <- data.frame(var.names=unlist(df[[1]]), var.label=unlist(df[[2]]), stringsAsFactors=FALSE)
+        } else {
+          obj$stata_varnames <- NULL
+        }
       } else {
         obj$stata_labs <- NULL
         obj$stata_varnames <- NULL
