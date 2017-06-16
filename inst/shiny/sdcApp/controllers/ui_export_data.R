@@ -174,6 +174,9 @@ output$ui_modify_stata_labels <- renderUI({
   out <- fluidRow(
     column(12, rHandsontableOutput("statlab_table"))
   )
+  if (is.null(stataVarnames())) {
+    out <- fluidRow(column(12, p("No variable labels available!"), align="center"))
+  }
   out
 })
 

@@ -369,7 +369,7 @@ shinyServer(function(session, input, output) {
     cmd_out$recode_to_factors <- NULL
     cmd_out$create_strata <- NULL
     cmd_out$setup_sdc <- NULL
-
+    cmd_out$update_options <- NULL
     vars <- allVars()
     nc <- length(vars)
     type <- dataTypes()
@@ -473,6 +473,13 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", \n\talpha=",VecToRStr(input$sl_alpha, quoted=FALSE))
     cmd <- paste0(cmd,")")
     cmd_out$setup_sdc <- cmd
+    
+    if (!is.null(obj$microfilename)) {
+      cmd <- paste0("opts <- get.sdcMicroObj(obj$sdcObj, type=",dQuote("options"),")\n")
+      cmd <- paste0(cmd, "opts$filename <- ", dQuote(obj$microfilename),"\n")
+      cmd <- paste0(cmd, "obj$sdcObj <- set.sdcMicroObj(obj$sdcObj, type=",dQuote("options"),", input=list(opts))\n")
+      cmd_out$update_options <- cmd
+    }
     cmd_out
   })
 
@@ -532,7 +539,7 @@ shinyServer(function(session, input, output) {
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
-  # code for microaggregation()
+  # code for addNoise()
   code_addNoise <- reactive({
     n_method <- input$sel_noise_method
     cmd <- paste0("sdcObj <- addNoise(obj=sdcObj")
@@ -709,7 +716,11 @@ shinyServer(function(session, input, output) {
       if (obj$cur_selection_import=="btn_import_data_6") {
         obj$stata_labs <- attributes(obj$inputdata)$lab
         df <- obj$stata_labs[[1]]
-        obj$stata_varnames <- data.frame(var.names=unlist(df[[1]]), var.label=unlist(df[[2]]), stringsAsFactors=FALSE)
+        if (!is.null(df)) {
+          obj$stata_varnames <- data.frame(var.names=unlist(df[[1]]), var.label=unlist(df[[2]]), stringsAsFactors=FALSE)
+        } else {
+          obj$stata_varnames <- NULL
+        }
       } else {
         obj$stata_labs <- NULL
         obj$stata_varnames <- NULL
@@ -876,6 +887,7 @@ shinyServer(function(session, input, output) {
   # setup the sdcMicroObj
   observeEvent(input$btn_setup_sdc, {
     cmd <- code_createSdcObj()
+    cmd_opts <- cmd$update_options
     toF <- cmd$recode_to_factors
     if (!is.null(toF)) {
       for (i in 1:length(toF)) {
@@ -902,6 +914,13 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()-ptm
     obj$comptime <- obj$comptime+ptm[3]
 
+    # if file was uploaded, update filename in options so that it is written to the report
+    if (!is.null(obj$microfilename)) {
+      eval(parse(text=cmd_opts))
+      cmd_opts <- gsub("obj[$]sdcObj","sdcObj", cmd_opts)
+      obj$code_setup <- paste0(obj$code_setup, "\n## Store name of uploaded file\n",cmd_opts,"\n")
+    }
+    
     # create slider-outputs for k-Anon by group
     # this is required because otherwise these sliders would always be updating
     nrKeyVars <- isolate(length(get_keyVars()))
