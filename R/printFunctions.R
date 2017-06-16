@@ -468,7 +468,9 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
         out$results[[length(out$results)+1]] <- dt
       }
     }
-    if(!anyChanges){out$results <- NULL} # if no changes, NULL
+    if (!anyChanges) {
+      out$results <- NULL
+    }
     if (docat) {
       cat(hr,"\n\n")
     }
