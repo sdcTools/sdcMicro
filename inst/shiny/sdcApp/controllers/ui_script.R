@@ -2,11 +2,11 @@ choices_import <- reactive({
   if(is.null(sdcObj())) {
     return(c(
       "View/Save the current script"="script_view",
-      "Import a previously saved sdcProblem"="script_import"))
+      "Import a previously saved problem"="script_import"))
   } else {
     return(c(
       "View the current script"="script_view",
-      "Import a previously saved sdcProblem"="script_import",
+      "Import a previously saved problem"="script_import",
       "Export/Save the current sdcProblem"="script_export"))
   }
 })
@@ -75,7 +75,7 @@ output$ui_script_import <- renderUI({
   }
   out <- fluidRow(
       column(12, h3("Import a previously exported sdcProblem"), class="wb-header"),
-      column(12, p("Upload a previously saved sdcProblem."), class="wb-header-hint")
+      column(12, p("To continue working on an existing problem upload a previously exported sdcApp problem."), class="wb-header-hint")
     )
   if (!is.null(sdcObj())) {
     out <- list(out,
