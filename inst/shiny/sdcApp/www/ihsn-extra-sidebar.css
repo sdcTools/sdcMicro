@@ -33,8 +33,11 @@
 .wb_sidebar h4 {
   font-size: 0.95em;
   line-height: 1.2;
-  margin-bottom: 12px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  padding-top: 10px !important;
   padding-left: 20px;
+  padding-right: 10px;
   text-align: left;
 }
 .wb_sidebar .btn-primary {
