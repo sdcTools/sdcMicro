@@ -1,0 +1,100 @@
+/* when body is not having a white background */
+/* for regular text */
+/* borders, buttons */
+/* navigation */
+/* navigation */
+/* for text-links and clickable elements */
+/* for text-links and clickable elements on hover */
+.wb_sidebar {
+  background-image: linear-gradient(to bottom, white, rgba(255, 255, 255, 0.001));
+  height: calc(100vh - 75px);
+  padding: 24px;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  border-right: solid 1px #e4e9ec;
+}
+.wb_sidebar #ui_sel_script_btns .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_results_sidebar_left .col-sm-12,
+.wb_sidebar #ui_import_data_sidebar_left .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_sel_resbtns_import .col-sm-12
+#ui_export_sidebar_left .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_anonymize_sidebar_left .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_sel_export_btns .col-sm-12 {
+  margin-left: -13px;
+}
+.wb_sidebar #ui_sel_microdata_btns .col-sm-12 {
+  margin-left: -2px;
+}
+.wb_sidebar .row > .col-sm-12 {
+  padding-left: 4px;
+}
+.wb_sidebar h4 {
+  font-size: 16px;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  padding-left: 20px;
+  text-align: left;
+}
+.wb_sidebar .btn-primary {
+  background: none;
+  border-left: solid 5px #2baaf6;
+  border-radius: 0px;
+  color: #0a92e4;
+  font-size: 0.9em;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: left;
+  white-space: initial;
+  transition: all 0.25s;
+}
+.wb_sidebar .btn-primary:hover {
+  background: none;
+  border-left: solid 5px #2baaf6;
+  color: #2baaf6;
+}
+.wb_sidebar .btn-default {
+  background-color: #d5dde1;
+  background: none;
+  border: none;
+  border-left: solid 5px transparent;
+  border-radius: 0px;
+  font-size: 0.9em;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: left;
+  white-space: initial;
+  transition: all 0.25s;
+}
+.wb_sidebar .btn-default:hover {
+  border-left: solid 5px #2baaf6;
+  transition: all 0.25s;
+  color: #2baaf6;
+}
+.wb_sidebar .btn-warning {
+  background: none;
+  border: none;
+  border-radius: 0px;
+  color: darkorange;
+  font-size: 0.9em;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: left;
+  white-space: initial;
+  transition: all 0.25s;
+}
+.wb_sidebar .btn-warning:hover {
+  border-left: solid 5px darkorange;
+}
+
+/*# sourceMappingURL=ihsn-extra-sidebar.css.map */
