@@ -114,7 +114,7 @@ output$ui_sdcObj_summary <- renderUI({
       column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population, as compared to",
                    code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications in the original data."), align="center"),
       column(12, p(code(riskyobs$mod)," observations have a higher risk than the risk in the main part of the data, as compared to ",
-                   code(riskyobs$orig)," observations in the original data.", tipify(icon("question"), title=txt_risk, placement="top")), align="center"))
+                   code(riskyobs$orig)," observations in the original data.", tipify(icon("info-circle"), title=txt_risk, placement="top")), align="center"))
     out
   })
   output$show_info_risk <- renderUI({
@@ -700,10 +700,10 @@ output$setup_moreparams <- renderUI({
   txt_alpha <- "The parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
   txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincides based on a missing value (NA) contributes to these frequencies.")
   sl_alpha <- sliderInput("sl_alpha",
-    label=h5("Parameter 'alpha'", tipify(icon("question"), title=txt_alpha, placement="top")),
+    label=h5("Parameter 'alpha'", tipify(icon("info-circle"), title=txt_alpha, placement="top")),
     value=1, min=0, max=1, step=0.01, width="90%")
   sl_seed <- sliderInput("sl_seed",
-    label=h5("Parameter 'seed'", tipify(icon("question"), title=txt_seed, placement="top")),
+    label=h5("Parameter 'seed'", tipify(icon("info-circle"), title=txt_seed, placement="top")),
     value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
   out <- list(
     fluidRow(column(6, sl_alpha, align="center"), column(6, sl_seed, align="center")))

@@ -123,9 +123,9 @@ output$ui_export_data <- renderUI({
         "Randomize by hierarchical identifier"="byHH", "Randomize by hierarchical identifier and within hierarchical units"="withinHH")
 
       if (!is.null(curObj@hhId)) {
-        rb <- radioButtons("rb_export_randomizeorder", label=h5("Randomize order of records", tipify(icon("question"), title=txt_randomize_hh, placement="top")), choices=choices[-2], inline=TRUE)
+        rb <- radioButtons("rb_export_randomizeorder", label=h5("Randomize order of records", tipify(icon("info-circle"), title=txt_randomize_hh, placement="top")), choices=choices[-2], inline=TRUE)
       } else {
-        rb <- radioButtons("rb_export_randomizeorder", label=h5("Randomize order of records", tipify(icon("question"), title=txt_randomize_ind, placement="top")), choices=choices[1:2], inline=TRUE)
+        rb <- radioButtons("rb_export_randomizeorder", label=h5("Randomize order of records", tipify(icon("info-circle"), title=txt_randomize_ind, placement="top")), choices=choices[1:2], inline=TRUE)
       }
       return(fluidRow(
         column(12, rb, align="center")

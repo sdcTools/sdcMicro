@@ -12,7 +12,7 @@ output$ui_rescat_riskinfo <- renderUI({
     out <- fluidRow(
       column(12, h5("Risk measures"), align="center"),
       column(12, p(code(rI$s),"observations (",code(rI$sorig),"in the original data) have an individual re-identification risk level higher than
-      the set benchmark value of",code(0.1),".", tipify(icon("question"), title=txt_tooltip, placement="top")), align="center"),
+      the set benchmark value of",code(0.1),".", tipify(icon("info-circle"), title=txt_tooltip, placement="top")), align="center"),
       column(12, p("Based on the individual re-identification risk, we expect",code(rI$exp_reident_m),"re-identifications (",code(paste0(rI$exp_reident_mp,"%")),")
       in the anonymized data set. In the original dataset we expected",code(rI$exp_reident_o),"(",code(paste0(rI$exp_reident_op,"%")),") re-identifications."), align="center")
     )
@@ -187,7 +187,7 @@ output$ui_rescat_ldiv <- renderUI({
   output$ldiv_recconst <- renderUI({
     txt_tooltip <- ""
     sliderInput("ldiv_recconst",
-      label=h5("Select a value for the recursive constant", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      label=h5("Select a value for the recursive constant", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       min=1, max=100, value=2, width="100%")
   })
   # button
@@ -278,7 +278,7 @@ output$ui_rescat_suda2 <- renderUI({
     txt_tooltip <- "This is the sampling fraction for a simple random sample and the common sampling fraction for stratified samples. The defaut value is 0.1, which corresponds to a 10 percent sample. "
     txt_tooltip <- paste0(txt_tooltip, "Note that SUDA is sensitive to the sampling fraction and a wrong value can produce distorted results.")
     sliderInput("suda2_disf",
-      label=h5("Specify the sampling fraction for the stratified sampling", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      label=h5("Specify the sampling fraction for the stratified sampling", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       min=0.01, max=0.5, step=0.01,value=0.1, width="100%")
   })
   # button
@@ -350,7 +350,7 @@ output$ui_rescat_violating_kanon <- renderUI({
   output$ui_kanon_selection <- renderUI({
     txt_tooltip <- "All records violating the k-anonymity for k equal to the set threshold are displayed."
     sl <- sliderInput("k_val_violating",
-      label=h5("Select value for 'k'", tipify(icon("question"), title=txt_tooltip, placement="top")),
+      label=h5("Select value for 'k'", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       value=3, min=1, max=50, step=1, width="100%")
     fluidRow(column(12, div(sl, align="center")))
   })
