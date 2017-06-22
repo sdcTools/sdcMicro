@@ -6,35 +6,29 @@
 /* for text-links and clickable elements */
 /* for text-links and clickable elements on hover */
 .wb_sidebar {
+  height: calc(100vh - 45px);
+  padding: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  /* neutralize the negative margin for all the row elements within the sidebar*/
+}
+.wb_sidebar > div {
   background-image: linear-gradient(to bottom, white, rgba(255, 255, 255, 0.001));
-  height: calc(100vh - 75px);
-  padding: 24px;
-  padding-top: 20px;
-  padding-bottom: 40px;
   border-right: solid 1px #e4e9ec;
+  position: fixed;
+  width: 16.6%;
+  top: 44px;
+  bottom: 0;
+  overflow: auto;
+  overflow-x: hidden;
 }
-.wb_sidebar #ui_sel_script_btns .col-sm-12 {
-  margin-left: -13px;
-}
-.wb_sidebar #ui_results_sidebar_left .col-sm-12,
-.wb_sidebar #ui_import_data_sidebar_left .col-sm-12 {
-  margin-left: -13px;
-}
-.wb_sidebar #ui_sel_resbtns_import .col-sm-12
-#ui_export_sidebar_left .col-sm-12 {
-  margin-left: -13px;
-}
-.wb_sidebar #ui_anonymize_sidebar_left .col-sm-12 {
-  margin-left: -13px;
-}
-.wb_sidebar #ui_sel_export_btns .col-sm-12 {
-  margin-left: -13px;
-}
-.wb_sidebar #ui_sel_microdata_btns .col-sm-12 {
-  margin-left: -2px;
+.wb_sidebar .row {
+  margin-left: 0;
+  margin-right: 0;
 }
 .wb_sidebar .row > .col-sm-12 {
-  padding-left: 4px;
+  padding-left: 0;
+  padding-right: 0;
 }
 .wb_sidebar h4 {
   font-size: 16px;
@@ -83,6 +77,7 @@
 .wb_sidebar .btn-warning {
   background: none;
   border: none;
+  border-left: solid 5px transparent;
   border-radius: 0px;
   color: darkorange;
   font-size: 0.9em;
