@@ -18,3 +18,5 @@ inst/shiny-examples/sdcGUI/issues*
 inst/doc
 notes_and_testdata
 inst/shiny/sdcApp/.vscode
+inst/shiny/sdcApp/www/.sass-cache
+ihsn-extra-sidebar.css.map
