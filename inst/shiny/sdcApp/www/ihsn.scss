@@ -30,14 +30,15 @@ $line-height: calc(0.9em + 0.8vw);
 //     padding-bottom: 40px;
 // }
 
-@mixin wb-sidebar-1-2 {
-    background-image: linear-gradient(to bottom, white, rgba(255,255,255,0.001));
-    height: calc(100vh - 75px);
-    padding: 24px;
-    padding-top: 20px;
-    padding-bottom: 40px;
-    border-right: solid 1px $primary;
-}
+// Moved to ihsn-extra-sidebar.scss/css
+// @mixin wb-sidebar-1-2 {
+//     background-image: linear-gradient(to bottom, white, rgba(255,255,255,0.001));
+//     height: calc(100vh - 75px);
+//     padding: 24px;
+//     padding-top: 20px;
+//     padding-bottom: 40px;
+//     border-right: solid 1px $primary;
+// }
 
 @mixin default-transition {
     transition: all 0.25s;
@@ -156,113 +157,114 @@ a {
 
 
 // Sidebar Proposal 1 - Iteration 2 (flat, minimalistic)
-.wb_sidebar {
-    @include wb-sidebar-1-2;
-
-    #ui_sel_script_btns .col-sm-12 {
-        margin-left: -13px;
-    }
-
-    #ui_results_sidebar_left .col-sm-12,
-    #ui_import_data_sidebar_left .col-sm-12 {
-      margin-left: -13px;
-    }
-
-    #ui_sel_resbtns_import .col-sm-12
-    #ui_export_sidebar_left .col-sm-12 {
-        margin-left: -13px;
-    }
-
-    #ui_anonymize_sidebar_left .col-sm-12 {
-      margin-left: -13px;
-    }
-
-    #ui_sel_export_btns .col-sm-12 {
-      margin-left: -13px;
-    }
-
-    #ui_sel_microdata_btns .col-sm-12 {
-        margin-left: -2px;
-    }
-
-    .row > .col-sm-12 {
-        padding-left: 4px;
-    }
-
-    h4 {
-        font-size: 16px;
-        line-height: 1.2;
-        margin-bottom: 12px;
-        padding-left: 20px;
-        text-align: left;
-
-    }
-
-    .btn-primary {
-        background: none;
-        border-left: solid 5px $accent-hover;
-        border-radius: 0px;
-        color: $accent;
-        font-size: 0.9em;
-
-        padding-left: 20px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-
-        text-align: left;
-        white-space: initial;
-        @include default-transition;
-
-        &:hover {
-            background: none;
-            border-left: solid 5px $accent-hover;
-            color: $accent-hover;
-        }
-    }
-
-
-    .btn-default {
-        background-color: #d5dde1;
-        background: none;
-        border: none;
-        border-radius: 0px;
-        font-size: 0.9em;
-
-        padding-left: 20px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-
-        text-align: left;
-        white-space: initial;
-        @include default-transition;
-
-        &:hover {
-            border-left: solid 5px $accent-hover;
-            transition: all 0.25s;
-            color: $accent-hover;
-        }
-    }
-
-    .btn-warning {
-        background: none;
-        border: none;
-        border-radius: 0px;
-        color: darkorange;
-        font-size: 0.9em;
-
-        padding-left: 20px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-
-        text-align: left;
-        white-space: initial;
-        @include default-transition;
-
-        &:hover {
-            border-left: solid 5px darkorange;
-        }
-    }
-}
+// .wb_sidebar {
+//     @include wb-sidebar-1-2;
+//     background: red;
+//
+//     #ui_sel_script_btns .col-sm-12 {
+//         margin-left: -13px;
+//     }
+//
+//     #ui_results_sidebar_left .col-sm-12,
+//     #ui_import_data_sidebar_left .col-sm-12 {
+//       margin-left: -13px;
+//     }
+//
+//     #ui_sel_resbtns_import .col-sm-12
+//     #ui_export_sidebar_left .col-sm-12 {
+//         margin-left: -13px;
+//     }
+//
+//     #ui_anonymize_sidebar_left .col-sm-12 {
+//       margin-left: -13px;
+//     }
+//
+//     #ui_sel_export_btns .col-sm-12 {
+//       margin-left: -13px;
+//     }
+//
+//     #ui_sel_microdata_btns .col-sm-12 {
+//         margin-left: -2px;
+//     }
+//
+//     .row > .col-sm-12 {
+//         padding-left: 4px;
+//     }
+//
+//     h4 {
+//         font-size: 16px;
+//         line-height: 1.2;
+//         margin-bottom: 12px;
+//         padding-left: 20px;
+//         text-align: left;
+//
+//     }
+//
+//     .btn-primary {
+//         background: none;
+//         border-left: solid 5px $accent-hover;
+//         border-radius: 0px;
+//         color: $accent;
+//         font-size: 0.9em;
+//
+//         padding-left: 20px;
+//         padding-top: 10px;
+//         padding-bottom: 10px;
+//
+//         text-align: left;
+//         white-space: initial;
+//         @include default-transition;
+//
+//         &:hover {
+//             background: none;
+//             border-left: solid 5px $accent-hover;
+//             color: $accent-hover;
+//         }
+//     }
+//
+//
+//     .btn-default {
+//         background-color: #d5dde1;
+//         background: none;
+//         border: none;
+//         border-radius: 0px;
+//         font-size: 0.9em;
+//
+//         padding-left: 20px;
+//         padding-top: 10px;
+//         padding-bottom: 10px;
+//
+//         text-align: left;
+//         white-space: initial;
+//         @include default-transition;
+//
+//         &:hover {
+//             border-left: solid 5px $accent-hover;
+//             transition: all 0.25s;
+//             color: $accent-hover;
+//         }
+//     }
+//
+//     .btn-warning {
+//         background: none;
+//         border: none;
+//         border-radius: 0px;
+//         color: darkorange;
+//         font-size: 0.9em;
+//
+//         padding-left: 20px;
+//         padding-top: 10px;
+//         padding-bottom: 10px;
+//
+//         text-align: left;
+//         white-space: initial;
+//         @include default-transition;
+//
+//         &:hover {
+//             border-left: solid 5px darkorange;
+//         }
+//     }
+// }
 
 // END OF SIDEBAR PROPOSAL 1
 
