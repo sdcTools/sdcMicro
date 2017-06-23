@@ -68,6 +68,7 @@ table.dataTable td .radio-inline {
 /*
  * Add thin boredr
  */
+ .dataTables_wrapper.form-inline.dt-bootstrap.no-footer,
  .dataTables_wrapper .dataTables_scroll {
   border: 1px solid #cccccc;
   border-radius: 4px;
@@ -77,6 +78,11 @@ table.dataTable td .radio-inline {
 /* Neutralize horizontal lines */
 table.dataTable thead th {
   border-top: 0 !important;
+}
+
+table.dataTable.no-footer {
+  border-bottom: 0 !important;
+  margin-bottom: 1px;
 }
 
 .dataTables_wrapper.no-footer .dataTables_scrollBody {
