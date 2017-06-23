@@ -3,14 +3,16 @@
 #' Fast generation of (primitive) synthetic multivariate normal data.
 #'
 #' Uses the cholesky decomposition to generate synthetic data with approx. the
-#' same means and covariances.  For details see at the reference.
+#' same means and covariances. For details see at the reference.
 #'
 #' @name dataGen
 #' @docType methods
 #' @param obj an \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}
 #' @param ... see possible arguments below
 #' \itemize{
-#' \item{n}{amount of observations for the generated data}}
+#' \item{n:}{ amount of observations for the generated data, defaults to 200}
+#' \item{use:}{ howto compute covariances in case of missing values, see also argument \code{use} in \code{\link{cov}}.
+#' The default choice is 'everything', other possible choices are 'all.obs', 'complete.obs', 'na.or.complete' or 'pairwise.complete.obs'.}}
 #' @return the generated synthetic data.
 #' @note With this method only multivariate normal distributed data with
 #' approxiomately the same covariance as the original data can be generated
@@ -19,7 +21,7 @@
 #' @author Matthias Templ
 #' @seealso \code{\link{sdcMicroObj-class}}, \code{\link{shuffle}}
 #' @references Have a look at
-#' \url{https://web.archive.org/web/20110906030928/http://crises2-deim.urv.cat/docs/publications/lncs/443.pdf}
+#' \url{http://crises2-deim.urv.cat/docs/publications/lncs/443.pdf}
 #' @keywords manip
 #' @export
 #' @examples
@@ -60,17 +62,19 @@ setMethod(f="dataGenX", signature=c("data.frame"), definition=function(obj, ...)
   dataGenWORK(x = obj, ...)
 })
 
-dataGenWORK <- function(x, n = 200) {
+dataGenWORK <- function(x, n=200, use="everything") {
+  stopifnot(use %in% c("everything", "all.obs", "complete.obs", "na.or.complete", "pairwise.complete.obs")) 
+
   ## Generate a random $n^{'} \times m$ matrix $A$ in such way that the covariance matrix
   ## $\Sigma_aa = I$.
   M <- matrix(rnorm(n * ncol(x)), ncol = ncol(x))
   ## Use the Cholesky decomposition on C to obtain $C = U^t U$,
   ## where $U$ is an upper triangular matrix.
-  C <- cov(x)
+  C <- cov(x, use=use)
   chC <- chol(C)
   ## Obtain the synthetic data set $X^{'} = A U$
   Xn <- M %*% chC
-  cm <- colMeans(x)
+  cm <- colMeans(x, na.rm=TRUE)
   Xn <- t(t(Xn) + cm)
   Xn
 }

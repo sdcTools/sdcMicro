@@ -12,7 +12,9 @@ dataGen(obj, ...)
 
 \item{...}{see possible arguments below
 \itemize{
-\item{n}{amount of observations for the generated data}}}
+\item{n:}{ amount of observations for the generated data, defaults to 200}
+\item{use:}{ howto compute covariances in case of missing values, see also argument \code{use} in \code{\link{cov}}.
+The default choice is 'everything', other possible choices are 'all.obs', 'complete.obs', 'na.or.complete' or 'pairwise.complete.obs'.}}}
 }
 \value{
 the generated synthetic data.
@@ -22,7 +24,7 @@ Fast generation of (primitive) synthetic multivariate normal data.
 }
 \details{
 Uses the cholesky decomposition to generate synthetic data with approx. the
-same means and covariances.  For details see at the reference.
+same means and covariances. For details see at the reference.
 }
 \note{
 With this method only multivariate normal distributed data with
@@ -46,7 +48,7 @@ sdc <- dataGen(sdc)
 }
 \references{
 Have a look at
-\url{https://web.archive.org/web/20110906030928/http://crises2-deim.urv.cat/docs/publications/lncs/443.pdf}
+\url{http://crises2-deim.urv.cat/docs/publications/lncs/443.pdf}
 }
 \seealso{
 \code{\link{sdcMicroObj-class}}, \code{\link{shuffle}}
