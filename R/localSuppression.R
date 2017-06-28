@@ -597,7 +597,6 @@ plot.localSuppression <- function(x, ...) {
   keyVar <- rep(x$keyVars, nrow(inp))
   if (any(nchar(keyVar) >= 12)) {
     warnMsg <- "Too long variable names are cutted!\n"
-    obj <- addWarning(obj, warnMsg=warnMsg, method="localSuppression", variable=NA)
     warning(warnMsg)
     keyVar <- substr(keyVar, 1, 12)
   }
