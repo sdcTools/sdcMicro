@@ -68,11 +68,17 @@ table.dataTable td .radio-inline {
 /*
  * Add thin boredr
  */
- .dataTables_wrapper.form-inline.dt-bootstrap.no-footer,
- .dataTables_wrapper .dataTables_scroll {
+.dataTables_wrapper.form-inline.dt-bootstrap.no-footer,
+.dataTables_wrapper > .dataTables_scroll {
   border: 1px solid #cccccc;
   border-radius: 4px;
   background: #ffffff;
+}
+
+/* There are cases where the one wrapper is rendered
+ * within the other. We do not need these border twice */
+.dataTables_wrapper .dataTables_wrapper > .dataTables_scroll{
+  border: 0;
 }
 
 /* Neutralize horizontal lines */
