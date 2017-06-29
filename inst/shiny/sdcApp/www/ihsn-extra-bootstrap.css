@@ -1,0 +1,6 @@
+/*
+ * Override bootstrap rules
+ */
+.tooltip-inner {
+  max-width: 400px;
+}
