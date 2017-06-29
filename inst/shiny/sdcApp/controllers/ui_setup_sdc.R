@@ -17,8 +17,8 @@ output$ui_sdcObj_summary <- renderUI({
     }
     x <- print(curObj, type="general", docat=FALSE)
     out <- fluidRow(
-      column(12, h4("Summary of dataset and variable selection"), align="center"),
-      column(12, p("The loaded dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), align="center"),
+      column(12, h3("Summary of dataset and variable selection"), class="wb-header"),
+      column(12, p("The loaded dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), class="wb-header-hint"),
       column(12, list("Categorical key variable(s):", lapply(x$keyVars, function(x) {code(x)})), align="center"))
 
     if (length(x$numVars)>0) {
