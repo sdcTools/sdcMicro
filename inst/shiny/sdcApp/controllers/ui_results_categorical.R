@@ -10,11 +10,11 @@ output$ui_rescat_riskinfo <- renderUI({
     txt_tooltip <- paste0(txt_tooltip, "its Median Absolute Deviation (MAD). The individual re-identification risk is computed based on the selected categorical key ")
     txt_tooltip <- paste0(txt_tooltip, "variables,  and reflects both the frequencies of the keys in the data and the individual sampling weights.")
     out <- fluidRow(
-      column(12, h5("Risk measures"), align="center"),
+      column(12, h5("Risk measures") ),
       column(12, p(code(rI$s),"observations (",code(rI$sorig),"in the original data) have an individual re-identification risk level higher than
-      the set benchmark value of",code(0.1),".", tipify(icon("info-circle"), title=txt_tooltip, placement="top")), align="center"),
+      the set benchmark value of",code(0.1),".", tipify(icon("info-circle"), title=txt_tooltip, placement="top")) ),
       column(12, p("Based on the individual re-identification risk, we expect",code(rI$exp_reident_m),"re-identifications (",code(paste0(rI$exp_reident_mp,"%")),")
-      in the anonymized data set. In the original dataset we expected",code(rI$exp_reident_o),"(",code(paste0(rI$exp_reident_op,"%")),") re-identifications."), align="center")
+      in the anonymized data set. In the original dataset we expected",code(rI$exp_reident_o),"(",code(paste0(rI$exp_reident_op,"%")),") re-identifications.") )
     )
     if (rI$hierrisk) {
       out <- list(out, fluidRow(
@@ -121,8 +121,8 @@ output$ui_rescat_riskinfo <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Risk measures"), align="center"),
-    column(12, p("The output on this page is based on the categorical key variables in the current problem."), align="center"),
+    column(12, h4("Risk measures") ),
+    column(12, p("The output on this page is based on the categorical key variables in the current problem.") ),
     column(12, uiOutput("ui_rescat_selection"), align="center"))
 
   if (!is.null(input$rb_riskselection)) {
@@ -368,8 +368,8 @@ output$ui_rescat_violating_kanon <- renderUI({
 
   out <- list(
     fluidRow(
-      column(12, h4("Observations violating k-anonymity"), align="center"),
-      column(12, p("Here you can browse the records that violate k-anonymity for a specified level of k."), align="center")),
+      column(12, h4("Observations violating k-anonymity") ),
+      column(12, p("Here you can browse the records that violate k-anonymity for a specified level of k.") )),
     uiOutput("ui_kanon_selection"),
     uiOutput("ui_kanon_result"),
     fluidRow(column(12, dataTableOutput("violating_obs_tab"))))
