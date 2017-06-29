@@ -1,11 +1,11 @@
 # UI-output for global recode
 output$ui_recode <- renderUI({
   out <- fluidRow(
-    column(12, h4("Recode categorical key variables", align="center")),
+    column(12, h4("Recode categorical key variables" )),
     column(12, p("To reduce risk, it is often useful to combine the levels of categorical key variables into a new, combined category.
       You need to select a categorical key variable and then choose two or more levels, which you want to combine.
-      Once this has been done, a new label for the new category can be assigned.", align="center")),
-    column(12, p("Note: If you only select only one level, you can rename the selected value.", align="center")))
+      Once this has been done, a new label for the new category can be assigned." )),
+    column(12, p("Note: If you only select only one level, you can rename the selected value." )))
 
   # current factor-levels
   curRecFacVals <- reactive({

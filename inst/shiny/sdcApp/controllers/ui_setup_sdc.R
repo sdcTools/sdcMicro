@@ -19,15 +19,15 @@ output$ui_sdcObj_summary <- renderUI({
     out <- fluidRow(
       column(12, h3("Summary of dataset and variable selection"), class="wb-header"),
       column(12, p("The loaded dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), class="wb-header-hint"),
-      column(12, list("Categorical key variable(s):", lapply(x$keyVars, function(x) {code(x)})), align="center"))
+      column(12, list("Categorical key variable(s):", lapply(x$keyVars, function(x) {code(x)})) ))
 
     if (length(x$numVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Numerical key variable(s):", lapply(x$numVars, function(x) {code(x)})), align="center")))
+        column(12, list("Numerical key variable(s):", lapply(x$numVars, function(x) {code(x)})) )))
     }
     if (length(x$weightVar)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Sampling weight:", lapply(x$weightVar, function(x) {code(x)})), align="center")))
+        column(12, list("Sampling weight:", lapply(x$weightVar, function(x) {code(x)})) )))
     }
     # cannot be selected when creating the sdc problem instance
     #if (length(x$strataVar)>0) {
@@ -36,24 +36,24 @@ output$ui_sdcObj_summary <- renderUI({
     #}
     if (length(x$householdId)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Hierarchical identifier:", lapply(x$householdId, function(x) {code(x)})), align="center")))
+        column(12, list("Hierarchical identifier:", lapply(x$householdId, function(x) {code(x)})) )))
     }
     if (length(x$delVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Deleted variable(s):", lapply(x$delVars, function(x) {code(x)})), align="center")))
+        column(12, list("Deleted variable(s):", lapply(x$delVars, function(x) {code(x)})) )))
     }
     gV <- x$ghostVars
     if (length(gV)>0) {
-      out <- list(out, fluidRow(column(12, tags$br(), list("Linked variables:"), align="center")))
+      out <- list(out, fluidRow(column(12, tags$br(), list("Linked variables:") )))
       for (i in 1:length(gV)) {
         out <- list(out, fluidRow(
           column(12, list("Variable(s)", lapply(gV[[i]][[2]], function(x) {
-            code(x)}),"are linked to key variable", code(gV[[i]][[1]])), align="center")))
+            code(x)}),"are linked to key variable", code(gV[[i]][[1]])) )))
       }
     }
     out <- list(out, fluidRow(
-      column(12, h4("Computation time"), align="center"),
-      column(12, p("The current computation time was ~",code(comptime()),".", align="center"))))
+      column(12, h4("Computation time") ),
+      column(12, p("The current computation time was ~",code(comptime()),"." ))))
     out
   })
   output$show_info_recodes <- renderUI({
@@ -73,8 +73,8 @@ output$ui_sdcObj_summary <- renderUI({
       "Average frequency"=paste(x$meansize$orig, x$meansize$mod),
       "Frequency of smallest level"=paste(x$minsize$orig, x$minsize$mod))
     out <- fluidRow(
-      column(12, h4("Information on categorical key variables"), align="center"),
-      column(12, p(txt), align="center"),
+      column(12, h4("Information on categorical key variables") ),
+      column(12, p(txt) ),
       column(12, renderTable(dt), align="center"))
     out
   })
@@ -94,8 +94,8 @@ output$ui_sdcObj_summary <- renderUI({
           paste0(x[["3anon"]]$orig," (",x[["3anon"]]$orig_p,"%)"),
           paste0(x[["5anon"]]$orig," (",x[["5anon"]]$orig_p,"%)")))
     out <- fluidRow(
-      column(12, h4("Information on k-anonymity"), align="center"),
-      column(12, p(txt), align="center"),
+      column(12, h4("Information on k-anonymity") ),
+      column(12, p(txt) ),
       column(12, renderTable(dt), align="center"))
     out
   })
@@ -110,11 +110,11 @@ output$ui_sdcObj_summary <- renderUI({
     txt_risk <- "Observations with a higher risk than the main part of the data are defined as observations with an individual risk higher than the median "
     txt_risk <- paste0(txt_risk, "plus twice the median absolute deviation of the individual risk of all records in the dataset. Only individuals with an individual risk higher than 0.1 are considered.")
     out <- fluidRow(
-      column(12, h4("Risk measures for categorical key variables"), align="center"),
+      column(12, h4("Risk measures for categorical key variables") ),
       column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population, as compared to",
-                   code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications in the original data."), align="center"),
+                   code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications in the original data.") ),
       column(12, p(code(riskyobs$mod)," observations have a higher risk than the risk in the main part of the data, as compared to ",
-                   code(riskyobs$orig)," observations in the original data.", tipify(icon("info-circle"), title=txt_risk, placement="top")), align="center"))
+                   code(riskyobs$orig)," observations in the original data.", tipify(icon("info-circle"), title=txt_risk, placement="top")) ))
     out
   })
   output$show_info_risk <- renderUI({
@@ -127,11 +127,11 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     out <- fluidRow(
-      column(12, h4("Risk measures for numerical key variables"), align="center"),
+      column(12, h4("Risk measures for numerical key variables") ),
       column(12, p("The disclosure risk is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),",
-      as compared to between",code("0%"),"and",code("100%"),"in the original data."), align="center"),
-      column(12, h4("Information loss"), align="center"),
-      column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
+      as compared to between",code("0%"),"and",code("100%"),"in the original data.") ),
+      column(12, h4("Information loss") ),
+      column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),".") )
     )
     out
   })
@@ -161,7 +161,7 @@ output$ui_sdcObj_summary <- renderUI({
     dt[,v2:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
     setnames(dt, c("Key variable", paste("Additional suppressions due to last run of",meth), "Total number of missing values (NA) in variable"))
     out <- list(fluidRow(
-      column(12, h4("Information on local suppression"), align="center"),
+      column(12, h4("Information on local suppression") ),
       column(12, p(txt), align="center"),
       column(12, renderTable(dt), align="center")))
   })
@@ -174,16 +174,16 @@ output$ui_sdcObj_summary <- renderUI({
     if (is.null(x)) {
       return(NULL)
     }
-    out <- fluidRow(column(12, h4("PRAM"), align="center"))
+    out <- fluidRow(column(12, h4("PRAM") ))
     dt <- x$pram_summary
     for (i in 1:nrow(dt)) {
       out <- list(out, fluidRow(
-        column(12, p("Variable",code(dt$variable[i])), align="center"),
+        column(12, p("Variable",code(dt$variable[i])) ),
         column(12, tags$i("transition matrix"), align="center"),
         column(12, uiOutput(paste0("transmat_pram_",i)), align="center")))
     }
     out <- list(out, fluidRow(
-      column(12, p("Summary of changed observations due to PRAM"), align="center"),
+      column(12, p("Summary of changed observations due to PRAM") ),
       column(12, renderTable(dt), align="center")))
     out
   })
@@ -209,12 +209,12 @@ output$ui_sdcObj_summary <- renderUI({
   })
   output$anonMethods <- renderUI({
     anon_methods <- unique(anonPerformed())
-    out <- fluidRow(column(12, h4("Anonymization steps"),align="center"))
+    out <- fluidRow(column(12, h4("Anonymization steps") ))
     if (is.null(anon_methods)) {
       out <- list(out, fluidRow(column(12, code("No methods have been applied"),align="center")))
       return(out)
     } else {
-      out <- fluidRow(column(12, h4("Anonymization steps"),align="center"))
+      out <- fluidRow(column(12, h4("Anonymization steps") ))
       for (i in 1:length(anon_methods)) {
         out <- list(out, fluidRow(column(12, code(anon_methods[i]),align="center")))
       }
@@ -450,8 +450,8 @@ output$ui_sdcObj_addghostvars <- renderUI({
   helptxt <- paste(helptxt, "categorical key variables. Any suppression in the key variable will lead to a suppression in the variable(s) linked")
   helptxt <- paste(helptxt, "to that key variable. Several variables can be linked to one key variable.")
   out <- fluidRow(
-    column(12, h4("Add linked variables"), align="center"),
-    column(12, p(helptxt), align="center"))
+    column(12, h4("Add linked variables") ),
+    column(12, p(helptxt) ))
   out <- list(out, fluidRow(
     column(6, uiOutput("addgv_v1"), align="center"),
     column(6, uiOutput("addgv_v2"), align="center")
