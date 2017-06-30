@@ -8,6 +8,18 @@ has_numkeyvars <- reactive({
 })
 
 # UI-output for top/bottom-coding of numerical variables
+output$ui_topbotcoding_num_header <- renderUI({
+  helptxt <- "Here you can recode all values in a variable below (bottom coding) or above (top coding) a certain threshold. These values are replaced"
+  helptxt <- paste(helptxt, "with the specified replacement value. The boxplot below shows the distribution of the data before top/bottom coding. ")
+  helptxt <- paste(helptxt, "The bottom of the box is the 25th percentile and the top of the box the 75th percentile. The bar in the boxplot is the median. ")
+  helptxt <- paste(helptxt, "The length of the whiskers is 1.5 times the interquartile range (IQR), unless the smallest/largest obeservation is closer to the box. Any value below/above the whiskers is indicated as outlier.")
+  out <- fluidRow(
+    column(12, h4("Apply top/bottom coding"), offset = 0, class = "wb-header"),
+    column(12, p(helptxt), offset = 0, class = "wb-header-hint")
+  )
+  out
+})
+
 output$ui_topbotcoding_num <- renderUI({
   output$ui_topbot_plot_num <- renderPlot({
     req(input$sel_topbot_var_num)
@@ -82,15 +94,7 @@ output$ui_topbotcoding_num <- renderUI({
     }
   })
 
-  helptxt <- "Here you can recode all values in a variable below (bottom coding) or above (top coding) a certain threshold. These values are replaced"
-  helptxt <- paste(helptxt, "with the specified replacement value. The boxplot below shows the distribution of the data before top/bottom coding. ")
-  helptxt <- paste(helptxt, "The bottom of the box is the 25th percentile and the top of the box the 75th percentile. The bar in the boxplot is the median. ")
-  helptxt <- paste(helptxt, "The length of the whiskers is 1.5 times the interquartile range (IQR), unless the smallest/largest obeservation is closer to the box. Any value below/above the whiskers is indicated as outlier.")
-  out <- fluidRow(
-    column(12, h4("Apply top/bottom coding", align="center")),
-    column(12, p(helptxt), align="center")
-  )
-  out <- list(out, uiOutput("ui_topbot_params_num"))
+  out <- uiOutput("ui_topbot_params_num")
   out <- list(out, uiOutput("ui_topbot_btn_num"))
   out <- list(out, fluidRow(
     column(12, plotOutput("ui_topbot_plot_num"))
@@ -99,6 +103,13 @@ output$ui_topbotcoding_num <- renderUI({
 })
 
 # GUI-output for microaggregation()
+output$ui_microaggregation_header <- renderUI({
+  out <- fluidRow(
+    column(12, h4("Microaggregation for numerical variables"), offset = 0, class = "wb-header"),
+    column(12, p("Many different algorithms to microaggregate numeric key variables can be applied here. The most important
+                 parameter is the",code("aggregation level"), "because it specifies how many observations are grouped together before replacing actual values with some kind of aggregate."), offset = 0, class = "wb-header-hint"))
+  out 
+})
 output$ui_microaggregation <- renderUI({
   # returns possible methods for microaggregation
   choices_aggmethods <- reactive({
@@ -219,12 +230,7 @@ output$ui_microaggregation <- renderUI({
       choices=get_allNumericVars_name(), selected=input$sel_microagg_varsort, width="100%")
   })
 
-  out <- fluidRow(
-    column(12, h4("Microaggregation for numerical variables", align="center")),
-    column(12, p("Many different algorithms to microaggregate numeric key variables can be applied here. The most important
-      parameter is the",code("aggregation level"), "because it specifies how many observations are grouped together before replacing actual values with some kind of aggregate.", align="center")))
-
-  out <- list(out, fluidRow(
+  out <- list(fluidRow(
     column(4, uiOutput("ui_microagg_use_cluster"), align="center"),
     column(4, uiOutput("ui_microagg_method"), align="center"),
     column(4, uiOutput("ui_microagg_strata"), align="center")
@@ -263,6 +269,12 @@ output$ui_microaggregation <- renderUI({
 })
 
 # GUI-output for addNoise()
+output$ui_noise_header <- renderUI({
+  out <- fluidRow(
+    column(12, h4("Adding Stochastic Noise"), offset = 0, class = "wb-header"),
+    column(12, p("Here you can use various methods to add noise in order to perturb continuous variables. Note: stochastic noise is a probabilistic method and the results differ depending on the current seed for the random number generator."), offset = 0, class = "wb-header-hint"))
+  out
+})  
 output$ui_noise <- renderUI({
   # returns possible methods for addNoise()
   # 'correlated' needs at least two columns=variables
@@ -347,12 +359,8 @@ output$ui_noise <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Adding Stochastic Noise", align="center")),
-    column(12, p("Here you can use various methods to add noise in order to perturb continuous variables. Note: stochastic noise is a probabilistic method and the results differ depending on the current seed for the random number generator.", align="center")))
-
-  out <- list(out, fluidRow(
     column(6, uiOutput("ui_noise_vars"), align="center"),
-    column(6, uiOutput("ui_noise_method"), align="center")))
+    column(6, uiOutput("ui_noise_method"), align="center"))
 
   out <- list(out, fluidRow(column(12, uiOutput("ui_noise_slider"), align="center")))
   out <- list(out, fluidRow(column(12, uiOutput("ui_noise_btn"), align="center")))
@@ -365,6 +373,14 @@ output$ui_shuffling <- renderUI({
 })
 
 # GUI-output for rankSwap()
+output$ui_rankswap_header <- renderUI({
+  out <- fluidRow(
+    column(12, h4("Rank Swapping"), offset = 0, class = "wb-header"),
+    column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
+                 so that correlation structure of original variables is preserved and some perturbation is applied. Note: rank swapping is a probabilistic method
+                 and therefore the results differ depending on the current seed for the random number generator."), offset = 0, class = "wb-header-hint"))
+  out
+})
 output$ui_rankswap <- renderUI({
   if (!has_numkeyvars()) {
     return(fluidRow(
@@ -424,15 +440,9 @@ output$ui_rankswap <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Rank Swapping"), align="center"),
-    column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
-      so that correlation structure of original variables is preserved and some perturbation is applied. Note: rank swapping is a probabilistic method
-      and therefore the results differ depending on the current seed for the random number generator."), align="center"))
-
-  out <- list(out, fluidRow(
     column(4, uiOutput("ui_rankswap_vars"), align="center"),
     column(4, uiOutput("sl_rankswap_bot"), align="center"),
-    column(4, uiOutput("sl_rankswap_top"), align="center")))
+    column(4, uiOutput("sl_rankswap_top"), align="center"))
 
   out <- list(out, fluidRow(
     column(4, uiOutput("sl_rankswap_k0"), align="center"),

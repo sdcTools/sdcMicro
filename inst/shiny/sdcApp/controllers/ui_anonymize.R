@@ -68,7 +68,52 @@ output$ui_anonymize_sidebar_left <- renderUI({
   out
 })
 
-# center column
+# center column main
+output$ui_main_anon_header <- renderUI({
+  val <- obj$cur_selection_anon
+  if (val=="btn_sel_anon_2") {
+    return(uiOutput("ui_sdcObj_explorevars_header"))
+  }
+  if (val=="btn_sel_anon_3") {
+    return(uiOutput("ui_sdcObj_addghostvars_header"))
+  }
+  if (val=="btn_sel_anon_4") {
+    return(uiOutput("ui_sdcObj_randIds_header"))
+  }
+
+  ## categorical methods
+  if (val=="btn_sel_anon_5") {
+    return(uiOutput("ui_recode_header"))
+  }
+  if (val=="btn_sel_anon_6") {
+    return(uiOutput("ui_kAnon_header"))
+  }
+  if (val=="btn_sel_anon_7") {
+    return(uiOutput("ui_pram_simple_header"))
+  }
+  if (val=="btn_sel_anon_8") {
+    return(uiOutput("ui_pram_expert_header"))
+  }
+  if (val=="btn_sel_anon_9") {
+    return(uiOutput("ui_supp_threshold_header"))
+  }
+  ## numerical methods
+  if (val=="btn_sel_anon_10") {
+    return(uiOutput("ui_topbotcoding_num_header"))
+  }
+  if (val=="btn_sel_anon_11") {
+    return(uiOutput("ui_microaggregation_header"))
+  }
+  if (val=="btn_sel_anon_12") {
+    return(uiOutput("ui_noise_header"))
+  }
+  if (val=="btn_sel_anon_13") {
+    return(uiOutput("ui_rankswap_header"))
+  }
+  return(invisible(NULL))
+})
+
+# center column header
 output$ui_main_anon <- renderUI({
   val <- obj$cur_selection_anon
   if (val=="btn_sel_anon_2") {
@@ -80,7 +125,7 @@ output$ui_main_anon <- renderUI({
   if (val=="btn_sel_anon_4") {
     return(uiOutput("ui_sdcObj_randIds"))
   }
-
+  
   ## categorical methods
   if (val=="btn_sel_anon_5") {
     return(uiOutput("ui_recode"))
@@ -113,7 +158,6 @@ output$ui_main_anon <- renderUI({
   return(invisible(NULL))
 })
 
-
 output$ui_anonymize_noproblem <- renderUI({
   return(list(
     noInputData(uri="ui_anonymize"),
@@ -127,13 +171,12 @@ output$ui_anonymize_summary <- renderUI({
     column(10, uiOutput("ui_sdcObj_summary"))))
 })
 output$ui_anonymize_withsidebar <- renderUI({
-  return(fluidRow(
-    column(2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"),
-    column(7, uiOutput("ui_main_anon")),
-    column(3, isolate(uiOutput("sb_info_anonymize")))
+  return(fluidRow(column(width = 2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"), 
+         list(column(width = 10, uiOutput("ui_main_anon_header")),
+              fluidRow(column(width = 7, uiOutput("ui_main_anon")),
+                       column(width = 2, isolate(uiOutput("sb_info_anonymize")))))
   ))
 })
-
 
 output$ui_anonymize <- renderUI({
   if (is.null(obj$inputdata)) {

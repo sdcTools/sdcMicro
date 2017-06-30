@@ -248,6 +248,10 @@ output$ui_sdcObj_summary <- renderUI({
 })
 
 ## explore current variables
+output$ui_sdcObj_explorevars_header <- renderUI({
+  out <- fluidRow(column(12, h4("Explore variables in modified data"), offset = 0, class = "wb-header"))
+  out
+})
 output$ui_sdcObj_explorevars <- renderUI({
   output$ui_selanonvar1 <- renderUI({
     selectInput("view_selanonvar1", choices=allVars(), label=h5("Choose a variable"), multiple=FALSE, selected=obj$inp_sel_anonvar1, width="100%")
@@ -410,10 +414,9 @@ output$ui_sdcObj_explorevars <- renderUI({
       column(12, code(lastError()))))
   }
 
-  out <- fluidRow(column(12, h4("Explore variables in modified data"), align="center"))
-  out <- list(out, fluidRow(
+  out <- fluidRow(
     column(6, uiOutput("ui_selanonvar1")),
-    column(6, uiOutput("ui_selanonvar2"))))
+    column(6, uiOutput("ui_selanonvar2")))
 
   out <- list(out, fluidRow(
     column(12, plotOutput("view_plot_anon", height="500px"))
@@ -423,6 +426,18 @@ output$ui_sdcObj_explorevars <- renderUI({
 })
 
 ## add Ghost-Vars
+output$ui_sdcObj_addghostvars_header <- renderUI({
+  helptxt <- "The ID in microdata as well as the order of records can be used to reconstruct suppressed values."
+  helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
+  helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
+  helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
+  
+  out <- fluidRow(
+    column(12, h4("Add a new random ID variable"), offset = 0, class = "wb-header"),
+    column(12, p(helptxt), offset = 0, class = "wb-header-hint"),
+    column(12, p(helptxt2), offset = 0, class = "wb-header-hint"))
+  out
+})
 output$ui_sdcObj_addghostvars <- renderUI({
   output$addgv_btn <- renderUI({
     req(input$sel_gv2)
@@ -461,6 +476,10 @@ output$ui_sdcObj_addghostvars <- renderUI({
 })
 
 ## add new random ID-variable
+output$ui_sdcObj_randIds_header <- renderUI({
+  out <-fluidRow(
+    column(12, h4("This one needs attention"), offset = 0, class = "wb-header")) 
+})
 output$ui_sdcObj_randIds <- renderUI({
   output$randid_newid <- renderUI({
     textInput("txt_randid_newid", label=h5("Specify name for the new ID variable"), width="100%")
@@ -480,19 +499,11 @@ output$ui_sdcObj_randIds <- renderUI({
     myActionButton("btn_addRandID", label=("Add new ID variable"), "primary")
   })
 
-  helptxt <- "The ID in microdata as well as the order of records can be used to reconstruct suppressed values."
-  helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
-  helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
-  helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
 
   out <- fluidRow(
-    column(12, h4("Add a new random ID variable"), align="center"),
-    column(12, p(helptxt), align="center"),
-    column(12, p(helptxt2), align="center"))
-  out <- list(out, fluidRow(
     column(6, uiOutput("randid_newid"), align="center"),
     column(6, uiOutput("randid_withinvar"), align="center")
-  ))
+  )
   out <- list(out, fluidRow(
     column(12, uiOutput("randid_btn"), align="center")
   ))
