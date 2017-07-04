@@ -1,3 +1,10 @@
+# UI output with info on risk for categorical key variables
+output$ui_rescat_riskinfo_header <- renderUI({
+  out <- fluidRow(
+    column(12, h4("Risk measures"), offset = 0, class = "wb-header"),
+    column(12, p("The output on this page is based on the categorical key variables in the current problem."), offset = 0, class = "wb-header-hint"))
+  out
+})  
 output$ui_rescat_riskinfo <- renderUI({
   output$ui_rescat_selection <- renderUI({
     radioButtons("rb_riskselection", label=h5("What kind of results do you want to show?"),
@@ -121,9 +128,7 @@ output$ui_rescat_riskinfo <- renderUI({
   })
 
   out <- fluidRow(
-    column(12, h4("Risk measures") ),
-    column(12, p("The output on this page is based on the categorical key variables in the current problem.") ),
-    column(12, uiOutput("ui_rescat_selection"), align="center"))
+      column(12, uiOutput("ui_rescat_selection"), align="center"))
 
   if (!is.null(input$rb_riskselection)) {
     if (input$rb_riskselection=="rescat_riskymeasures") {
@@ -139,7 +144,16 @@ output$ui_rescat_riskinfo <- renderUI({
   out
 })
 
-# display information on recodings
+# UI oputput displaying information on recodings
+output$ui_rescat_recodes_header <- renderUI({
+  out <- fluidRow(
+    column(12, h4("Display information loss based on recodings of categorical key variables", offset = 0, class = "wb-header")),
+    column(12, p("For each categorical key variable, the following key figures are computed:", offset = 0, class = "wb-header-hint")),
+    column(12, p("a) The number of categories in original and modified variables.", offset = 0, class = "wb-header-hint")),
+    column(12, p("b) The mean size of groups in original and modified variables.", offset = 0, class = "wb-header-hint")),
+    column(12, p("c) The size of the smallest category/group in original and modified variables.", offset = 0, class = "wb-header-hint")))
+  out
+})
 output$ui_rescat_recodes <- renderUI({
   # calculate recoding information-loss measures
   output$tab_recodes <- DT::renderDataTable({
@@ -168,15 +182,20 @@ output$ui_rescat_recodes <- renderUI({
   }, rownames=FALSE, options = list(scrollX=TRUE, pageLength = 10, searching=FALSE))
 
   fluidRow(
-    column(12, h4("Display information loss based on recodings of categorical key variables", align="center")),
-    column(12, p("For each categorical key variable, the following key figures are computed:", align="center")),
-    column(12, p("a) The number of categories in original and modified variables.", align = "left")),
-    column(12, p("b) The mean size of groups in original and modified variables.", align = "left")),
-    column(12, p("c) The size of the smallest category/group in original and modified variables.", align = "left")),
     column(12, dataTableOutput("tab_recodes")))
 })
 
-# display information on l-diversity risk-measure
+# UI output displaying information on l-diversity risk-measure
+output$ui_rescat_ldiv_header <- renderUI({
+  txt <- paste0("Here you can compute the ",tags$i("l"),"-diversity of sensitive variables. A dataset ")
+  txt <- paste0(txt, "satisfies ",tags$i("l"),"-diversity if for every key ",tags$i("k")," there are at least ")
+  txt <- paste0(txt, tags$i("l"), "different values for each of the sensitive variables. The statistics refer to the value of ",tags$i("l")," for each record.")
+  out <- fluidRow(
+    column(12, h4("l-diversity risk measure"), offset = 0, class = "wb-header"),
+    column(12, p(HTML(txt)), offset = 0, class = "wb-header-hint"))
+  out
+})
+
 output$ui_rescat_ldiv <- renderUI({
   # sensitive variable
   output$ldiv_sensvar <- renderUI({
@@ -242,24 +261,17 @@ output$ui_rescat_ldiv <- renderUI({
     }
     out
   })
-
-  txt <- paste0("Here you can compute the ",tags$i("l"),"-diversity of sensitive variables. A dataset ")
-  txt <- paste0(txt, "satisfies ",tags$i("l"),"-diversity if for every key ",tags$i("k")," there are at least ")
-  txt <- paste0(txt, tags$i("l"), "different values for each of the sensitive variables. The statistics refer to the value of ",tags$i("l")," for each record.")
-  out <- fluidRow(
-    column(12, h4("l-diversity risk measure"), align="center"),
-    column(12, p(HTML(txt)), align="center"))
-
+  
   res <- get_ldiv_result()
 
   if (is.null(res)) {
-    out <- list(out, fluidRow(
+    out <- fluidRow(
       column(6, uiOutput("ldiv_sensvar"), align="center"),
       column(6, uiOutput("ldiv_recconst"), align="center")
-    ))
+    )
     out <- list(out, fluidRow(column(12, uiOutput("ldiv_btn"), align="center")))
   } else {
-    out <- list(out, fluidRow(column(12, uiOutput("ldiv_resetbtn"), align="center")))
+    out <- fluidRow(column(12, uiOutput("ldiv_resetbtn"), align="center"))
   }
 
   if (!is.null(res)) {
@@ -271,7 +283,15 @@ output$ui_rescat_ldiv <- renderUI({
   return(out)
 })
 
-# display suda2-risk measure
+# UI output for suda2-risk measure
+output$ui_rescat_suda2_header <- renderUI({
+  out <- fluidRow(
+    column(12, h4("SUDA2 risk measure"), offset = 0, class = "wb-header"),
+    column(12, p("The SUDA algorithm is used to search for Minimum Sample Uniques (MSU) in the data among the sample uniques to determine
+               which sample uniques are also special uniques i.e., have subsets that are also unique. See the help files for more
+               information on SUDA scores."), offset = 0, class = "wb-header-hint"))
+  out
+})
 output$ui_rescat_suda2 <- renderUI({
   # DisFraction
   output$suda2_disf <- renderUI({
@@ -314,27 +334,27 @@ output$ui_rescat_suda2 <- renderUI({
     ))
   }
 
-  out <- fluidRow(
-    column(12, h4("suda2 risk measure", align="center")),
-    column(12, p("The SUDA algorithm is used to search for Minimum Sample Uniques (MSU) in the data among the sample uniques to determine
-      which sample uniques are also special uniques i.e., have subsets that are also unique. See the help files for more
-      information on SUDA scores."), align="center"))
-
   if (is.null(get_suda2_result())) {
-    out <- list(out, fluidRow(
+    out <- fluidRow(
       column(12, uiOutput("suda2_disf"), align="center"),
       column(12, uiOutput("suda2_btn"), align="center")
-    ))
+    )
   } else {
-    out <- list(out, fluidRow(
+    out <- fluidRow(
       column(12, uiOutput("suda2_resetbtn"), align="center"),
       column(12, uiOutput("suda2_result"), align="center")
-    ))
+    )
   }
   return(out)
 })
 
 # information on k-anonymity
+output$ui_rescat_violating_kanon_header <- renderUI({
+  out <- fluidRow(
+    column(12, h4("Observations violating k-anonymity"), offset = 0, class = "wb-header"),
+    column(12, p("Here you can browse the records that violate k-anonymity for a specified level of k."), offset = 0, class = "wb-header-hint"))
+  out
+})
 output$ui_rescat_violating_kanon <- renderUI({
   output$violating_obs_tab <- renderDataTable({
     risks <- get_risk()
@@ -367,9 +387,6 @@ output$ui_rescat_violating_kanon <- renderUI({
   })
 
   out <- list(
-    fluidRow(
-      column(12, h4("Observations violating k-anonymity") ),
-      column(12, p("Here you can browse the records that violate k-anonymity for a specified level of k.") )),
     uiOutput("ui_kanon_selection"),
     uiOutput("ui_kanon_result"),
     fluidRow(column(12, dataTableOutput("violating_obs_tab"))))
@@ -405,7 +422,12 @@ output$ui_catvar2 <- renderUI({
   selectInput("sel_catvar2", label=h5("Variable 2"), choices=kv, selected=sel, width="100%")
 })
 
-# mosaicplot of one or two categorical key-variables
+# UI output for mosaicplot of one or two categorical key-variables
+output$ui_rescat_mosaicplot_header <- renderUI({
+  out <- fluidRow(
+    column(12, h4("Graphical representation of original and modified data"), offset = 0, class = "wb-header"))
+  out
+})
 output$ui_rescat_mosaicplot <- renderUI({
   output$ui_mosaic_selection <- renderUI({
     fluidRow(
@@ -437,7 +459,6 @@ output$ui_rescat_mosaicplot <- renderUI({
     }
   })
   out <- list(
-    fluidRow(column(12, h4("Graphical representation of original and modified data"), align="center")),
     uiOutput("ui_mosaic_selection"),
     fluidRow(column(12, h4("Original data"), align="center")),
     fluidRow(column(12, plotOutput("mosaicplot_o", height="600px"))),
@@ -446,9 +467,13 @@ output$ui_rescat_mosaicplot <- renderUI({
   out
 })
 
-# bivariate tabulation of (modified) key variables
+# UI output for bivariate tabulation of (modified) key variables
+output$ui_bivariate_tab_header <- renderUI({
+  out <- fluidRow(column(12, h4("Tabular representation of original and modified data"), offset = 0, class = "wb-header"))
+  out
+})
 output$ui_bivariate_tab <- renderUI({
-  output$ui_biv_selection <- renderUI({
+    output$ui_biv_selection <- renderUI({
     fluidRow(
       column(6, uiOutput("ui_catvar1"), align="center"),
       column(6, uiOutput("ui_catvar2"), align="center"))
@@ -494,9 +519,7 @@ output$ui_bivariate_tab <- renderUI({
     tab
   })
 
-  out <- list(
-    fluidRow(column(12, h4("Tabular representation of original and modified data"), align="center")),
-    uiOutput("ui_biv_selection"))
+  out <- uiOutput("ui_biv_selection")
 
   out <- list(out, fluidRow(
     column(6, h4("Original data"), align="center"),

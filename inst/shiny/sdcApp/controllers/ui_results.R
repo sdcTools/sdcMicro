@@ -1,3 +1,42 @@
+output$ui_results_main_header <- renderUI({
+  out <- NULL
+  val <- obj$cur_selection_results
+  ## Categorical (defined in controller/ui_results_categorical.R)
+  if (val=="btn_results_1") {
+    return(uiOutput("ui_rescat_riskinfo_header"))
+  }
+  if (val=="btn_results_2") {
+    return(uiOutput("ui_rescat_suda2_header"))
+  }
+  if (val=="btn_results_3") {
+    return( uiOutput("ui_rescat_ldiv_header"))
+  }
+  
+  if (val=="btn_results_4") {
+    return(uiOutput("ui_rescat_mosaicplot_header"))
+  }
+  if (val=="btn_results_5") {
+    return(uiOutput("ui_bivariate_tab_header"))
+  }
+  if (val=="btn_results_6") {
+    return(uiOutput("ui_rescat_recodes_header"))
+  }
+  if (val=="btn_results_7") {
+    return(uiOutput("ui_rescat_violating_kanon_header"))
+  }
+  ## Numerical (defined in controller/ui_results_numerical.R)
+  if (val=="btn_results_8") {
+    return(uiOutput("ui_resnum_comparison_header"))
+  }
+  if (val=="btn_results_9") {
+    return(uiOutput("ui_resnum_numrisk_header"))
+  }
+  if (val=="btn_results_10") {
+    return(uiOutput("ui_resnum_infoloss_header"))
+  }
+  out
+})
+
 output$ui_results_main <- renderUI({
   out <- NULL
   val <- obj$cur_selection_results
@@ -83,9 +122,10 @@ output$ui_results <- renderUI({
     ))
   } else {
     out <- fluidRow(
-      column(2, uiOutput("ui_results_sidebar_left"), class="wb_sidebar"),
-      column(7, uiOutput("ui_results_main")),
-      column(3, uiOutput("sb_info_results")))
+      column(width = 2, uiOutput("ui_results_sidebar_left"), class="wb_sidebar"), 
+      list(column(width = 10, uiOutput("ui_results_main_header")),
+           fluidRow(column(width = 7, uiOutput("ui_results_main")),
+                    column(width = 2, isolate(uiOutput("sb_info_results"))))))
   }
   out
 })
