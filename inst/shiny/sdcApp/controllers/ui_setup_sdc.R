@@ -75,7 +75,7 @@ output$ui_sdcObj_summary <- renderUI({
     out <- fluidRow(
       column(12, h4("Information on categorical key variables") ),
       column(12, p(txt) ),
-      column(12, renderTable(dt), align="center"))
+      column(12, renderTable(dt), class="wn-info-table"))
     out
   })
   output$show_info_kanon <- renderUI({
@@ -96,7 +96,7 @@ output$ui_sdcObj_summary <- renderUI({
     out <- fluidRow(
       column(12, h4("Information on k-anonymity") ),
       column(12, p(txt) ),
-      column(12, renderTable(dt), align="center"))
+      column(12, renderTable(dt), class="wn-info-table"))
     out
   })
   output$show_info_catrisk <- renderUI({
@@ -163,7 +163,7 @@ output$ui_sdcObj_summary <- renderUI({
     out <- list(fluidRow(
       column(12, h4("Information on local suppression") ),
       column(12, p(txt), align="center"),
-      column(12, renderTable(dt), align="center")))
+      column(12, renderTable(dt), class="wn-info-table")))
   })
   output$show_info_pram <- renderUI({
     curObj <- sdcObj()
@@ -184,7 +184,7 @@ output$ui_sdcObj_summary <- renderUI({
     }
     out <- list(out, fluidRow(
       column(12, p("Summary of changed observations due to PRAM") ),
-      column(12, renderTable(dt), align="center")))
+      column(12, renderTable(dt), class="wn-info-table")))
     out
   })
   output$show_info_comp_numvars <- renderUI({
@@ -203,7 +203,7 @@ output$ui_sdcObj_summary <- renderUI({
     dt <- cbind(data.table(Variable=rep(x$numVars, each=2)), dt)
     out <- fluidRow(column(12, h4("Compare numerical key variables"), align="center"))
     out <- list(out, fluidRow(
-      column(12, renderTable(dt), align="center")
+      column(12, renderTable(dt), class="wn-info-table")
     ))
     out
   })
@@ -351,14 +351,14 @@ output$ui_sdcObj_explorevars <- renderUI({
 
     out <- NULL
     if (is.null(res$tab1)) {
-      out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), align="center")))
+      out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
     } else {
       out <- list(out, fluidRow(
         column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))), align="center")),
         column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))), align="center")),
-        column(12, renderTable(res$tab1, include.rownames=FALSE), align="center"),
+        column(12, renderTable(res$tab1, include.rownames=FALSE), class="wn-info-table"),
         column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))), align="center")),
-        column(12, renderTable(res$tab2, include.rownames=FALSE), align="center")))
+        column(12, renderTable(res$tab2, include.rownames=FALSE), class="wn-info-table")))
     }
 
     nainfo <- data.frame(variable=c(v1, v2))
@@ -792,7 +792,7 @@ output$ui_sdcObj_info <- renderUI({
       colnames(tt) <- c("Level", "Frequency")
       out <- list(out, fluidRow(
         column(12, ui_nrLevs, align="center"),
-        column(12, renderTable(tt))))
+        column(12, renderTable(tt), class="wn-info-table")))
     } else {
       out <- list(out, fluidRow(
         column(12, ui_nrLevs, align="center"),
