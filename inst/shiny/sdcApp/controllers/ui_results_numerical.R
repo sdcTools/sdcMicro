@@ -10,7 +10,7 @@ output$nonumkey_continous_results <- renderUI({
 # UI output displaying information on numerical risk
 output$ui_resnum_numrisk_header <- renderUI({
   out <- fluidRow(
-    column(12, h4("Information on risk for numerical key variables"), offset = 0, class = "wb-header"),
+    column(12, h3("Information on risk for numerical key variables"), offset = 0, class = "wb-header"),
     column(12, p("The upper bound of the risk-interval is assumed to be 100% in the original data. Once the numeric key variables are modified,
                the upper bound may reduce. The larger the deviations from the original data, the lower the upper risk bound will be. However, this has also an
                impact on data utility."), offset = 0, class = "wb-header-hint"))
@@ -39,7 +39,7 @@ output$ui_resnum_infoloss_header <- renderUI({
   txt1 <- paste(tags$strong("IL1"),"is the sum of the absolute distances between the corresponding observations in the raw and anonymized datasets, which")
   txt1 <- paste(txt1, "are standardized by the standard deviation of the variables in the original data.")
   out <- fluidRow(
-    column(12, h4("Information-loss criteria based on numerical key variables"), offset = 0, class = "wb-header"),
+    column(12, h3("Information-loss criteria based on numerical key variables"), offset = 0, class = "wb-header"),
     column(12, p(HTML(txt1)), offset = 0, class = "wb-header-hint"))
   out
 })
@@ -62,7 +62,7 @@ output$ui_resnum_infoloss <- renderUI({
   txt2 <- paste("where",tags$i("p"),"is the number of continuous variables;",tags$i("n"),"is the number of records in the dataset;")
   txt2 <- paste(txt2,tags$i("x_ij"),"and",tags$i("z_ij"),", respectively, are the values before and after anonymization for variable",tags$i("j"))
   txt2 <- paste(txt2, "and individual",tags$i("i"),"; and",tags$i("S_j"),"is the standard deviation of variable",tags$i("j"),"in the original data (Yancey, Winkler and Creecy, 2002).")
-  
+
   txt3 <- paste("The",tags$strong("difference in eigenvalues"),"is a comparison of the robust eigenvalues of the data before and after anonymization.")
   out <- fluidRow(
     column(12, p(HTML(txt1)), align="center"),
@@ -79,7 +79,9 @@ output$ui_resnum_infoloss <- renderUI({
 # UI output displaying comparison (before-after) about numeric variables
 output$ui_resnum_comparison_header <- renderUI({
   out <- fluidRow(
-    column(12, h4("Compare summary statistics of numerical key variables"), offset = 0, class = "wb-header"))
+    column(12, h3("Compare summary statistics of numerical key variables"), offset = 0, class = "wb-header"),
+    column(12, p("Compare summary statistics of numerical key variables"), offset = 0, class = "wb-header-hint")
+  )
   out
 })
 output$ui_resnum_comparison <- renderUI({
