@@ -14,7 +14,7 @@ output$ui_topbotcoding_num_header <- renderUI({
   helptxt <- paste(helptxt, "The bottom of the box is the 25th percentile and the top of the box the 75th percentile. The bar in the boxplot is the median. ")
   helptxt <- paste(helptxt, "The length of the whiskers is 1.5 times the interquartile range (IQR), unless the smallest/largest obeservation is closer to the box. Any value below/above the whiskers is indicated as outlier.")
   out <- fluidRow(
-    column(12, h4("Apply top/bottom coding"), offset = 0, class = "wb-header"),
+    column(12, h3("Apply top/bottom coding"), offset = 0, class = "wb-header"),
     column(12, p(helptxt), offset = 0, class = "wb-header-hint")
   )
   out
@@ -108,7 +108,7 @@ output$ui_microaggregation_header <- renderUI({
     column(12, h4("Microaggregation for numerical variables"), offset = 0, class = "wb-header"),
     column(12, p("Many different algorithms to microaggregate numeric key variables can be applied here. The most important
                  parameter is the",code("aggregation level"), "because it specifies how many observations are grouped together before replacing actual values with some kind of aggregate."), offset = 0, class = "wb-header-hint"))
-  out 
+  out
 })
 output$ui_microaggregation <- renderUI({
   # returns possible methods for microaggregation
@@ -274,7 +274,7 @@ output$ui_noise_header <- renderUI({
     column(12, h4("Adding Stochastic Noise"), offset = 0, class = "wb-header"),
     column(12, p("Here you can use various methods to add noise in order to perturb continuous variables. Note: stochastic noise is a probabilistic method and the results differ depending on the current seed for the random number generator."), offset = 0, class = "wb-header-hint"))
   out
-})  
+})
 output$ui_noise <- renderUI({
   # returns possible methods for addNoise()
   # 'correlated' needs at least two columns=variables

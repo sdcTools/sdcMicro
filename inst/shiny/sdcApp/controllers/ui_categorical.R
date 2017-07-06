@@ -1,11 +1,13 @@
 # UI-output for global recode
 output$ui_recode_header <- renderUI({
   out <- fluidRow(
-    column(12, h4("Recode categorical key variables" ), offset = 0, class = "wb-header"),
+    column(12, h3("Recode categorical key variables" ), offset = 0, class = "wb-header"),
     column(12, p("To reduce risk, it is often useful to combine the levels of categorical key variables into a new, combined category.
                  You need to select a categorical key variable and then choose two or more levels, which you want to combine.
-                 Once this has been done, a new label for the new category can be assigned." ), offset = 0, class = "wb-header-hint"),
-    column(12, p("Note: If you only select only one level, you can rename the selected value." ), offset = 0, class = "wb-header-hint"))
+                 Once this has been done, a new label for the new category can be assigned." ),
+               p("Note: If you only select only one level, you can rename the selected value." ),
+                 offset = 0, class = "wb-header-hint"))
+    # column(12, p("Note: If you only select only one level, you can rename the selected value." ), offset = 0, class = "wb-header-hint"))
     out
 })
 output$ui_recode <- renderUI({
@@ -70,13 +72,18 @@ output$ui_recode <- renderUI({
 
 # UI-output for postrandomization (expert-useage)
 output$ui_pram_expert_header <- renderUI({
-  out <- fluidRow(column(12, h4("Postrandomization (PRAM) (expert usage)"), offset = 0, class = "wb-header"))
+  out <- fluidRow(column(12, h3("Postrandomization (PRAM) (expert usage)"), offset = 0, class = "wb-header"))
   out <- list(out, fluidRow(
-    column(12, p("The PRAM algorithm randomly changes the values of selected variables in some records according to a custom-defined transition matrix."), offset = 0, class = "wb-header-hint")),
-    column(12, p("The user can freely specify a transition matrix, which will be used for the post-randomization of a single variable. The requirement
-                 is that all row sums of the specified matrix sum up to 100!"), offset = 0, class = "wb-header-hint"))
+    column(12, p("The PRAM algorithm randomly changes the values of selected variables in some records according to a custom-defined transition matrix."),
+               p("The user can freely specify a transition matrix, which will be used for the post-randomization of a single variable. The requirement
+                  is that all row sums of the specified matrix sum up to 100!"),
+
+               offset = 0, class = "wb-header-hint")))
+
+    # column(12, p("The user can freely specify a transition matrix, which will be used for the post-randomization of a single variable. The requirement
+    #              is that all row sums of the specified matrix sum up to 100!"), offset = 0, class = "wb-header-hint"))
   out
-})  
+})
 output$ui_pram_expert <- renderUI({
   # update obj$transmat if table has been changed
   observe({
@@ -155,7 +162,7 @@ output$ui_pram_expert <- renderUI({
     ))
   }
 
-  out <- fluidRow(column(12, h4("Postrandomization (PRAM) (expert usage)"), align="center"))
+  out <- fluidRow(column(12, h3("Postrandomization (PRAM) (expert usage)"), align="center"))
   out <- list(uiOutput("pram_expert_error"), uiOutput("pram_expert_warning"))
 
   out <- list(out, fluidRow(
@@ -176,11 +183,13 @@ output$ui_pram_expert <- renderUI({
 
 # UI-output for postrandomization (simple-useage)
 output$ui_pram_simple_header <- renderUI({
-  out <- fluidRow(column(12, h4("Postrandomization (PRAM)"), offset = 0, class = "wb-header"))
+  out <- fluidRow(column(12, h3("Postrandomization (PRAM)"), offset = 0, class = "wb-header"))
   out <- list(out, fluidRow(
     column(12, p("The PRAM algorithm randomly changes the values of selected variables in some records according
-                 to an invariant probability transition matrix."), offset = 0, class = "wb-header-hint"),
-    column(12, p("The invariant probability transition matrix is set by specifying two parameters (",code("pd"),"and",code("alpha"),")."), offset = 0, class = "wb-header-hint")))
+                 to an invariant probability transition matrix."),
+               p("The invariant probability transition matrix is set by specifying two parameters (",code("pd"),"and",code("alpha"),")."),
+               offset = 0, class = "wb-header-hint")))
+    # column(12, p("The invariant probability transition matrix is set by specifying two parameters (",code("pd"),"and",code("alpha"),")."), offset = 0, class = "wb-header-hint")))
   out
 })
 output$ui_pram_simple <- renderUI({
@@ -306,13 +315,21 @@ kAnon_useImportance <- reactive({
 # UI-output for kAnon()
 output$ui_kAnon_header <- renderUI({
 out <- fluidRow(
-  column(12, h4("Establish k-anonymity", align="center"), offset = 0, class = "wb-header"),
-  column(12, p("k-anonymity will be established by suppressing or rather setting some values in the selected categorical key variables to",code("NA"),"."), offset = 0, class = "wb-header-hint"),
-  column(12, p("By default, the key variables will be considered for suppression in the order of their number of distinct categories. A variable with
-               many categories is less likely to have values suppressed than a variable with few categories. It is also possible to set the order by
-               specifying an importance vector."), offset = 0, class = "wb-header-hint"),
-  column(12, p("You may also decide to apply the procedure for all possible subsets of key variables. This is useful, if you have many key variables
-               and can reduce computation time. You can set a different value for the parameter",code("k"),"for each size of subsets."), offset = 0, class = "wb-header-hint"))
+  column(12, h3("Establish k-anonymity"), offset = 0, class = "wb-header"),
+  column(12, p("k-anonymity will be established by suppressing or rather setting some values in the selected categorical key variables to",code("NA"),"."),
+             p("By default, the key variables will be considered for suppression in the order of their number of distinct categories. A variable with
+                many categories is less likely to have values suppressed than a variable with few categories. It is also possible to set the order by
+                specifying an importance vector."),
+             p("You may also decide to apply the procedure for all possible subsets of key variables. This is useful, if you have many key variables
+                and can reduce computation time. You can set a different value for the parameter",code("k"),"for each size of subsets."),
+
+            offset = 0, class = "wb-header-hint"))
+
+  # column(12, p("By default, the key variables will be considered for suppression in the order of their number of distinct categories. A variable with
+  #              many categories is less likely to have values suppressed than a variable with few categories. It is also possible to set the order by
+  #              specifying an importance vector."), offset = 0, class = "wb-header-hint"),
+  # column(12, p("You may also decide to apply the procedure for all possible subsets of key variables. This is useful, if you have many key variables
+  #              and can reduce computation time. You can set a different value for the parameter",code("k"),"for each size of subsets."), offset = 0, class = "wb-header-hint"))
   out
 })
 output$ui_kAnon <- renderUI({
@@ -466,11 +483,11 @@ output$ui_kAnon <- renderUI({
 # GUI-output for suppression of values in key variables with risk > than threshold
 output$ui_supp_threshold_header <- renderUI({
   out <- fluidRow(
-    column(12, h4("Suppress values with high risk"), offset = 0, class = "wb-header"),
+    column(12, h3("Suppress values with high risk"), offset = 0, class = "wb-header"),
     column(12, p("This method allows to suppress (set to NA) values in the selected key variables for records that have an
                  individual risk higher than the specified threshold."), offset = 0, class = "wb-header-hint"))
   out
-})  
+})
 output$ui_supp_threshold <- renderUI({
   output$ui_supp_th <- renderUI({
     txt_tooltip <- "Any value in the selected key variable of a record with an individual risk higher than this threshold is suppressed."

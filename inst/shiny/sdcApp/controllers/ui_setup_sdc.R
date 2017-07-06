@@ -249,7 +249,10 @@ output$ui_sdcObj_summary <- renderUI({
 
 ## explore current variables
 output$ui_sdcObj_explorevars_header <- renderUI({
-  out <- fluidRow(column(12, h4("Explore variables in modified data"), offset = 0, class = "wb-header"))
+  out <- fluidRow(
+    column(12, h3("Explore variables in modified data"), offset = 0, class = "wb-header"),
+    column(12, p("Explore variables in modified data"), offset = 0, class = "wb-header-hint")
+  )
   out
 })
 output$ui_sdcObj_explorevars <- renderUI({
@@ -431,13 +434,14 @@ output$ui_sdcObj_addghostvars_header <- renderUI({
   helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
   helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
   helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
-  
+
   out <- fluidRow(
-    column(12, h4("Add a new random ID variable"), offset = 0, class = "wb-header"),
-    column(12, p(helptxt), offset = 0, class = "wb-header-hint"),
-    column(12, p(helptxt2), offset = 0, class = "wb-header-hint"))
+    column(12, h3("Add a new random ID variable"), offset = 0, class = "wb-header"),
+    column(12, p(helptxt), p(helptxt2), offset = 0, class = "wb-header-hint")
+  )
   out
 })
+
 output$ui_sdcObj_addghostvars <- renderUI({
   output$addgv_btn <- renderUI({
     req(input$sel_gv2)
@@ -478,7 +482,9 @@ output$ui_sdcObj_addghostvars <- renderUI({
 ## add new random ID-variable
 output$ui_sdcObj_randIds_header <- renderUI({
   out <-fluidRow(
-    column(12, h4("This one needs attention"), offset = 0, class = "wb-header")) 
+    column(12, h3("This one needs attention"), offset = 0, class = "wb-header"),
+    column(12, p("This one needs attention"), offset = 0, class = "wb-header-hint")
+    )
 })
 output$ui_sdcObj_randIds <- renderUI({
   output$randid_newid <- renderUI({
