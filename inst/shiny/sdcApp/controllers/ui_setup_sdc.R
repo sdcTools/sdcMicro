@@ -430,18 +430,14 @@ output$ui_sdcObj_explorevars <- renderUI({
 
 ## add Ghost-Vars
 output$ui_sdcObj_addghostvars_header <- renderUI({
-  helptxt <- "The ID in microdata as well as the order of records can be used to reconstruct suppressed values."
-  helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
-  helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
-  helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
-
-  out <- fluidRow(
-    column(12, h3("Add a new random ID variable"), offset = 0, class = "wb-header"),
-    column(12, p(helptxt), p(helptxt2), offset = 0, class = "wb-header-hint")
+  helptxt <- "Often datasets contain variables that are related to the key variables used for local suppression and could be used to reconstruct suppressed values. Here you can link variables to"
+  helptxt <- paste(helptxt, "categorical key variables. Any suppression in the key variable will lead to a suppression in the variable(s) linked")
+  helptxt <- paste(helptxt, "to that key variable. Several variables can be linked to one key variable.")
+  out <-fluidRow(
+    column(12, h3("Add linked variables"), offset = 0, class = "wb-header"),
+    column(12, p(helptxt), offset = 0, class = "wb-header-hint")
   )
-  out
 })
-
 output$ui_sdcObj_addghostvars <- renderUI({
   output$addgv_btn <- renderUI({
     req(input$sel_gv2)
@@ -464,27 +460,27 @@ output$ui_sdcObj_addghostvars <- renderUI({
     return(fluidRow(column(12,
       h4("No variables are available that could be used as",code("linked variables"),".", align="center"))))
   }
-
-  helptxt <- "Often datasets contain variables that are related to the key variables used for local suppression and could be used to reconstruct suppressed values. Here you can link variables to"
-  helptxt <- paste(helptxt, "categorical key variables. Any suppression in the key variable will lead to a suppression in the variable(s) linked")
-  helptxt <- paste(helptxt, "to that key variable. Several variables can be linked to one key variable.")
+  
   out <- fluidRow(
-    column(12, h4("Add linked variables") ),
-    column(12, p(helptxt) ))
-  out <- list(out, fluidRow(
     column(6, uiOutput("addgv_v1"), align="center"),
     column(6, uiOutput("addgv_v2"), align="center")
-  ))
+  )
   out <- list(out, fluidRow(column(12, uiOutput("addgv_btn"), align="center")))
   out
 })
 
 ## add new random ID-variable
 output$ui_sdcObj_randIds_header <- renderUI({
-  out <-fluidRow(
-    column(12, h3("This one needs attention"), offset = 0, class = "wb-header"),
-    column(12, p("This one needs attention"), offset = 0, class = "wb-header-hint")
-    )
+  helptxt <- "The ID in microdata as well as the order of records can be used to reconstruct suppressed values."
+  helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
+  helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
+  helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
+    
+  out <- fluidRow(
+    column(12, h3("Add a new random ID variable"), offset = 0, class = "wb-header"),
+    column(12, p(helptxt), p(helptxt2), offset = 0, class = "wb-header-hint")
+  )
+  out
 })
 output$ui_sdcObj_randIds <- renderUI({
   output$randid_newid <- renderUI({
