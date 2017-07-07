@@ -428,7 +428,7 @@ output$ui_catvar2 <- renderUI({
 output$ui_rescat_mosaicplot_header <- renderUI({
   out <- fluidRow(
     column(12, h3("Graphical representation of original and modified data"), offset = 0, class = "wb-header"),
-    column(12, p("Graphical representation of original and modified data"), offset = 0, class = "wb-header-hint")
+    column(12, p("Here you can view univariate bar plots and bivariate mosaic plots of categorical variables to compare the variables before and after applying anonymization methods."), offset = 0, class = "wb-header-hint")
   )
   out
 })
@@ -475,7 +475,7 @@ output$ui_rescat_mosaicplot <- renderUI({
 output$ui_bivariate_tab_header <- renderUI({
   out <- fluidRow(
     column(12, h3("Tabular representation of original and modified data"), offset = 0, class = "wb-header"),
-    column(12, p("Tabular representation of original and modified data"), offset = 0, class = "wb-header-hint")
+    column(12, p("Here you can view univariate and bivariate tabulations of categorical key variables to compare the variables before and after applying anonymization methods."), offset = 0, class = "wb-header-hint")
   )
   out
 })

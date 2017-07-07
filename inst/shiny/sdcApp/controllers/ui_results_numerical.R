@@ -80,7 +80,7 @@ output$ui_resnum_infoloss <- renderUI({
 output$ui_resnum_comparison_header <- renderUI({
   out <- fluidRow(
     column(12, h3("Compare summary statistics of numerical key variables"), offset = 0, class = "wb-header"),
-    column(12, p("Compare summary statistics of numerical key variables"), offset = 0, class = "wb-header-hint")
+    column(12, p("Here you can view the summary statistics of numeric key variables to compare the variables before and after applying anonymization methods."), offset = 0, class = "wb-header-hint")
   )
   out
 })
