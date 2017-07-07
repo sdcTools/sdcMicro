@@ -7,7 +7,6 @@ output$ui_recode_header <- renderUI({
                  Once this has been done, a new label for the new category can be assigned." ),
                p("Note: If you only select only one level, you can rename the selected value." ),
                  offset = 0, class = "wb-header-hint"))
-    # column(12, p("Note: If you only select only one level, you can rename the selected value." ), offset = 0, class = "wb-header-hint"))
     out
 })
 output$ui_recode <- renderUI({
@@ -77,11 +76,7 @@ output$ui_pram_expert_header <- renderUI({
     column(12, p("The PRAM algorithm randomly changes the values of selected variables in some records according to a custom-defined transition matrix."),
                p("The user can freely specify a transition matrix, which will be used for the post-randomization of a single variable. The requirement
                   is that all row sums of the specified matrix sum up to 100!"),
-
                offset = 0, class = "wb-header-hint")))
-
-    # column(12, p("The user can freely specify a transition matrix, which will be used for the post-randomization of a single variable. The requirement
-    #              is that all row sums of the specified matrix sum up to 100!"), offset = 0, class = "wb-header-hint"))
   out
 })
 output$ui_pram_expert <- renderUI({
@@ -189,7 +184,6 @@ output$ui_pram_simple_header <- renderUI({
                  to an invariant probability transition matrix."),
                p("The invariant probability transition matrix is set by specifying two parameters (",code("pd"),"and",code("alpha"),")."),
                offset = 0, class = "wb-header-hint")))
-    # column(12, p("The invariant probability transition matrix is set by specifying two parameters (",code("pd"),"and",code("alpha"),")."), offset = 0, class = "wb-header-hint")))
   out
 })
 output$ui_pram_simple <- renderUI({
@@ -322,14 +316,7 @@ out <- fluidRow(
                 specifying an importance vector."),
              p("You may also decide to apply the procedure for all possible subsets of key variables. This is useful, if you have many key variables
                 and can reduce computation time. You can set a different value for the parameter",code("k"),"for each size of subsets."),
-
             offset = 0, class = "wb-header-hint"))
-
-  # column(12, p("By default, the key variables will be considered for suppression in the order of their number of distinct categories. A variable with
-  #              many categories is less likely to have values suppressed than a variable with few categories. It is also possible to set the order by
-  #              specifying an importance vector."), offset = 0, class = "wb-header-hint"),
-  # column(12, p("You may also decide to apply the procedure for all possible subsets of key variables. This is useful, if you have many key variables
-  #              and can reduce computation time. You can set a different value for the parameter",code("k"),"for each size of subsets."), offset = 0, class = "wb-header-hint"))
   out
 })
 output$ui_kAnon <- renderUI({
