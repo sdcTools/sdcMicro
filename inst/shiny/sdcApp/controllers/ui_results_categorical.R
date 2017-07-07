@@ -154,10 +154,6 @@ output$ui_rescat_recodes_header <- renderUI({
                p("c) The size of the smallest category/group in original and modified variables."),
                offset = 0, class = "wb-header-hint")
     )
-
-    # column(12, p("a) The number of categories in original and modified variables.", offset = 0, class = "wb-header-hint")),
-    # column(12, p("b) The mean size of groups in original and modified variables.", offset = 0, class = "wb-header-hint")),
-    # column(12, p("c) The size of the smallest category/group in original and modified variables.", offset = 0, class = "wb-header-hint")))
   out
 })
 output$ui_rescat_recodes <- renderUI({
