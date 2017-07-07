@@ -124,8 +124,8 @@ output$ui_results <- renderUI({
     out <- fluidRow(
       column(width = 2, uiOutput("ui_results_sidebar_left"), class="wb_sidebar"), 
       list(column(width = 10, uiOutput("ui_results_main_header")),
-           fluidRow(column(width = 7, uiOutput("ui_results_main")),
-                    column(width = 2, isolate(uiOutput("sb_info_results"))))))
+           column(width = 7, uiOutput("ui_results_main")),
+                    column(width = 3, isolate(uiOutput("sb_info_results")))))
   }
   out
 })

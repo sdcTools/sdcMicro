@@ -173,8 +173,8 @@ output$ui_anonymize_summary <- renderUI({
 output$ui_anonymize_withsidebar <- renderUI({
   return(fluidRow(column(width = 2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"), 
          list(column(width = 10, uiOutput("ui_main_anon_header")),
-              fluidRow(column(width = 7, uiOutput("ui_main_anon")),
-                       column(width = 2, isolate(uiOutput("sb_info_anonymize")))))
+              column(width = 7, uiOutput("ui_main_anon")),
+                       column(width = 3, isolate(uiOutput("sb_info_anonymize"))))
   ))
 })
 
