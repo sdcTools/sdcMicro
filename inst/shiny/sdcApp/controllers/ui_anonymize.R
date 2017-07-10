@@ -161,7 +161,7 @@ output$ui_main_anon <- renderUI({
 output$ui_anonymize_noproblem <- renderUI({
   return(list(
     noInputData(uri="ui_anonymize"),
-    fluidRow(column(12, tags$br(), p("or go back to the Undo tab and upload a previously saved problem instance"), align="center")),
+    fluidRow(column(12, tags$br(), p("or go to the Undo tab and upload a previously saved problem instance."), align="center")),
     fluidRow(column(12, myActionButton("nodata_anonymize_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))
   ))
 })

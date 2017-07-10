@@ -187,9 +187,15 @@ output$ui_modify_stata_labels <- renderUI({
 
 # UI-Output for Tab 'Export Data'
 output$ui_export_main <- renderUI({
-  out <- NULL
+  if (is.null(inputdata())) {
+    return(list(
+      noInputData(uri="ui_export_data"),
+      fluidRow(column(12, tags$br(), p("or go to the Undo tab and upload a previously saved problem instance."), align="center")),
+      fluidRow(column(12, myActionButton("nodata_script_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))))
+  }  
   if (is.null(sdcObj())) {
-    return(list(out, noSdcProblem(uri="ui_export_data")))
+    return(list(
+      noSdcProblem(uri="ui_export_data")))
   }
   val <- obj$cur_selection_exports
   if (val=="btn_export_results_1") {
@@ -237,10 +243,16 @@ output$ui_export_sidebar_left <- renderUI({
 })
 
 output$ui_export <- renderUI({
+  if (is.null(inputdata())) {
+    return(list(
+      noInputData(uri="ui_export_data"),
+      fluidRow(column(12, tags$br(), p("or go to the Undo tab and upload a previously saved problem instance."), align="center")),
+      fluidRow(column(12, myActionButton("nodata_script_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))))
+  } 
   if (is.null(sdcObj())) {
     return(list(
       noSdcProblem(uri="ui_export_data"),
-      fluidRow(column(12, tags$br(), p("or go to Undo tab by clicking the button below and upload a previously saved problem instance"), align="center")),
+      fluidRow(column(12, tags$br(), p("or go to the Undo tab and upload a previously saved problem instance."), align="center")),
       fluidRow(column(12, myActionButton("nodata_export_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))
     ))
   }

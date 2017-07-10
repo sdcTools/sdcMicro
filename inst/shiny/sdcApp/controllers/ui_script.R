@@ -130,7 +130,7 @@ output$ui_script <- renderUI({
   if (is.null(obj$inputdata)) {
     return(list(
       noInputData(uri="ui_script"),
-      fluidRow(column(12, tags$br(), p("or go back to tab 'Undo' and upload a previously saved problem instance"), align="center")),
+      fluidRow(column(12, tags$br(), p("or go to the Undo tab and upload a previously saved problem instance."), align="center")),
       fluidRow(column(12, myActionButton("nodata_script_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))
     ))
   } else {
