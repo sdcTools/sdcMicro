@@ -11,6 +11,7 @@
   border: 1px solid #cccccc;
   border-radius: 4px;
   border-collapse: initial;
+  min-width: 180px;
 }
 
 .shiny-html-output .table.shiny-table > thead > tr > th {
