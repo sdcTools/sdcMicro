@@ -162,7 +162,7 @@ output$ui_sdcObj_summary <- renderUI({
     setnames(dt, c("Key variable", paste("Additional suppressions due to last run of",meth), "Total number of missing values (NA) in variable"))
     out <- list(fluidRow(
       column(12, h4("Information on local suppression") ),
-      column(12, p(txt), align="center"),
+      column(12, p(txt)),
       column(12, renderTable(dt), class="wn-info-table")))
   })
   output$show_info_pram <- renderUI({
@@ -179,8 +179,8 @@ output$ui_sdcObj_summary <- renderUI({
     for (i in 1:nrow(dt)) {
       out <- list(out, fluidRow(
         column(12, p("Variable",code(dt$variable[i])) ),
-        column(12, tags$i("transition matrix"), align="center"),
-        column(12, uiOutput(paste0("transmat_pram_",i)), align="center")))
+        column(12, tags$i("transition matrix")),
+        column(12, uiOutput(paste0("transmat_pram_",i)))))
     }
     out <- list(out, fluidRow(
       column(12, p("Summary of changed observations due to PRAM") ),
@@ -201,7 +201,7 @@ output$ui_sdcObj_summary <- renderUI({
       dt[is.na(`NA's`),`NA's`:="0"]
     }
     dt <- cbind(data.table(Variable=rep(x$numVars, each=2)), dt)
-    out <- fluidRow(column(12, h4("Compare numerical key variables"), align="center"))
+    out <- fluidRow(column(12, h4("Compare numerical key variables")))
     out <- list(out, fluidRow(
       column(12, renderTable(dt), class="wn-info-table")
     ))
@@ -211,12 +211,12 @@ output$ui_sdcObj_summary <- renderUI({
     anon_methods <- unique(anonPerformed())
     out <- fluidRow(column(12, h4("Anonymization steps") ))
     if (is.null(anon_methods)) {
-      out <- list(out, fluidRow(column(12, code("No methods have been applied"),align="center")))
+      out <- list(out, fluidRow(column(12, code("No methods have been applied"))))
       return(out)
     } else {
       out <- fluidRow(column(12, h4("Anonymization steps") ))
       for (i in 1:length(anon_methods)) {
-        out <- list(out, fluidRow(column(12, code(anon_methods[i]),align="center")))
+        out <- list(out, fluidRow(column(12, code(anon_methods[i]))))
       }
     }
     out
@@ -226,12 +226,12 @@ output$ui_sdcObj_summary <- renderUI({
   out <- NULL
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
-      column(12, h4("Application of the last method resulted in the following error!", align="center")),
+      column(12, h4("Application of the last method resulted in the following error!")),
       column(12, verbatimTextOutput("ui_lasterror"))))
   }
   if (!is.null(lastWarning())) {
     out <- list(out, fluidRow(
-      column(12, inp=h4("Application of the last method resulted in the following warning!", align="center")),
+      column(12, inp=h4("Application of the last method resulted in the following warning!")),
       column(12, inp=verbatimTextOutput("ui_lastwarning"))))
   }
   out <- list(out, fluidRow(
@@ -354,10 +354,10 @@ output$ui_sdcObj_explorevars <- renderUI({
       out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
     } else {
       out <- list(out, fluidRow(
-        column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))), align="center")),
-        column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))), align="center")),
+        column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))))),
+        column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))))),
         column(12, renderTable(res$tab1, include.rownames=FALSE), class="wn-info-table"),
-        column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))), align="center")),
+        column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))))),
         column(12, renderTable(res$tab2, include.rownames=FALSE), class="wn-info-table")))
     }
 
@@ -365,10 +365,10 @@ output$ui_sdcObj_explorevars <- renderUI({
     nainfo$nr_na <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
     nainfo$perc_na <- formatC(100*(nainfo$nr_na/nrow(df)), format="f", digits=2)
     out <- list(out,
-      fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.", align="center")))
+      fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.")))
     if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
       out <- list(out,
-      fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.", align="center")))
+      fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.")))
     }
     out
   })
@@ -413,7 +413,7 @@ output$ui_sdcObj_explorevars <- renderUI({
 
   if (!is.null(lastError())) {
     return(fluidRow(
-      column(12, h4("The following error has occured!", align="center")),
+      column(12, h4("The following error has occured!")),
       column(12, code(lastError()))))
   }
 
@@ -458,9 +458,9 @@ output$ui_sdcObj_addghostvars <- renderUI({
   res <- possGhostVars()
   if (length(res$gv) == 0) {
     return(fluidRow(column(12,
-      h4("No variables are available that could be used as",code("linked variables"),".", align="center"))))
+      h4("No variables are available that could be used as",code("linked variables"),"."))))
   }
-  
+
   out <- fluidRow(
     column(6, uiOutput("addgv_v1"), align="center"),
     column(6, uiOutput("addgv_v2"), align="center")
@@ -475,7 +475,7 @@ output$ui_sdcObj_randIds_header <- renderUI({
   helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
   helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
   helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
-    
+
   out <- fluidRow(
     column(12, h3("Add a new random ID variable"), offset = 0, class = "wb-header"),
     column(12, p(helptxt), p(helptxt2), offset = 0, class = "wb-header-hint")
