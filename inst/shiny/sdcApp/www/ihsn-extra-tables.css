@@ -1,7 +1,10 @@
+.shiny-html-output{
+  margin: 10px 0;
+}
+
 .wn-info-table .shiny-html-output table{
   margin-left: 30px;
 }
-
 
 .shiny-html-output .table.shiny-table{
   background: #ffffff;
