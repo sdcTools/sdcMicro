@@ -367,7 +367,7 @@ output$ui_rescat_violating_kanon <- renderUI({
     df <- cbind(get_origData()[ii, get_keyVars()], risks[ii,])
     df$risk <- formatC(df$risk, format="f", digits=3)
     df[order(df$fk),]
-  })
+  }, options = list(scrollX=TRUE))
 
   output$ui_kanon_selection <- renderUI({
     txt_tooltip <- "All records violating the k-anonymity for k equal to the set threshold are displayed."
