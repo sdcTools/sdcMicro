@@ -11,7 +11,7 @@ output$ui_results_main_header <- renderUI({
   if (val=="btn_results_3") {
     return( uiOutput("ui_rescat_ldiv_header"))
   }
-  
+
   if (val=="btn_results_4") {
     return(uiOutput("ui_rescat_mosaicplot_header"))
   }
@@ -128,9 +128,9 @@ output$ui_results <- renderUI({
     ))
   } else {
     out <- fluidRow(
-      column(width = 2, uiOutput("ui_results_sidebar_left"), class="wb_sidebar"), 
-      list(column(width = 10, uiOutput("ui_results_main_header")),
-           column(width = 7, uiOutput("ui_results_main")),
+      column(width = 2, uiOutput("ui_results_sidebar_left"), class="wb_sidebar"),
+      list(column(width = 10, uiOutput("ui_results_main_header"), class="wb-maincolumn"),
+           column(width = 7, uiOutput("ui_results_main"), class="wb-secondary-column"),
                     column(width = 3, isolate(uiOutput("sb_info_results")))))
   }
   out

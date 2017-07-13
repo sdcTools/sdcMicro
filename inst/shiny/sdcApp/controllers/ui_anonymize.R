@@ -125,7 +125,7 @@ output$ui_main_anon <- renderUI({
   if (val=="btn_sel_anon_4") {
     return(uiOutput("ui_sdcObj_randIds"))
   }
-  
+
   ## categorical methods
   if (val=="btn_sel_anon_5") {
     return(uiOutput("ui_recode"))
@@ -168,13 +168,13 @@ output$ui_anonymize_noproblem <- renderUI({
 output$ui_anonymize_summary <- renderUI({
   return(fluidRow(
     column(2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"),
-    column(10, uiOutput("ui_sdcObj_summary"))))
+    column(10, uiOutput("ui_sdcObj_summary"), class="wb-maincolumn")))
 })
 output$ui_anonymize_withsidebar <- renderUI({
-  return(fluidRow(column(width = 2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"), 
-         list(column(width = 10, uiOutput("ui_main_anon_header")),
-              column(width = 7, uiOutput("ui_main_anon")),
-                       column(width = 3, isolate(uiOutput("sb_info_anonymize"))))
+  return(fluidRow(column(width = 2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"),
+         list(column(width = 10, uiOutput("ui_main_anon_header"), class="wb-maincolumn"),
+              column(width = 7, uiOutput("ui_main_anon"), class="wb-maincolumn"),
+                       column(width = 3, isolate(uiOutput("sb_info_anonymize")), class="wb-maincolumn"))
   ))
 })
 

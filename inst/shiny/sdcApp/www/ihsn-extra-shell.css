@@ -1,0 +1,10 @@
+.tab-content > .tab-pane > .shiny-html-output,
+.tab-content > .tab-pane > .shiny-html-output > .shiny-html-output{
+  margin: 0;
+}
+
+.wb_sidebar > .shiny-html-output,
+.wb-maincolumn > .shiny-html-output,
+.wb-maincolumn > .shiny-html-output > .shiny-html-output{
+  margin: 0;
+}

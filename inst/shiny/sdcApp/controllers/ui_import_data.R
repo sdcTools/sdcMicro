@@ -138,7 +138,7 @@ output$ui_import_data_sidebar_left <- renderUI({
 output$ui_import_data <- renderUI({
   fluidRow(
     column(2, uiOutput("ui_import_data_sidebar_left"), class="wb_sidebar"),
-    column(10, uiOutput("ui_import_data_main")))
+    column(10, uiOutput("ui_import_data_main"), class="wb-maincolumn"))
 })
 
 output$ui_show_changed_labels <- renderUI({

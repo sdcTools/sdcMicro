@@ -136,7 +136,7 @@ output$ui_script <- renderUI({
   } else {
     out <- fluidRow(
       column(2, uiOutput("ui_script_sidebar_left"), class="wb_sidebar"),
-      column(10, uiOutput("ui_script_main")))
+      column(10, uiOutput("ui_script_main"), class="wb-maincolumn"))
   }
   return(out)
 })

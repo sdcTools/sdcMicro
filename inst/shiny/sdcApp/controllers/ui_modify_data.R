@@ -922,5 +922,5 @@ output$ui_modify_data_sidebar_left <- renderUI({
 output$ui_modify_data <- renderUI({
   fluidRow(
     column(2, uiOutput("ui_modify_data_sidebar_left"), class="wb_sidebar"),
-    column(10, uiOutput("ui_modify_data_main")))
+    column(10, uiOutput("ui_modify_data_main"), class="wb-maincolumn"))
 })

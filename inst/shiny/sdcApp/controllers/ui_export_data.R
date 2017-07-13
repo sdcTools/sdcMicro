@@ -242,7 +242,7 @@ output$ui_export <- renderUI({
       noInputData(uri="ui_export_data"),
       fluidRow(column(12, tags$br(), p("or go to the Undo tab and upload a previously saved problem instance."), align="center")),
       fluidRow(column(12, myActionButton("nodata_script_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))))
-  } 
+  }
   if (is.null(sdcObj())) {
     return(list(
       noSdcProblem(uri="ui_export_data"),
@@ -252,5 +252,5 @@ output$ui_export <- renderUI({
   }
   return(fluidRow(
     column(2, uiOutput("ui_export_sidebar_left"), class="wb_sidebar"),
-    column(10, uiOutput("ui_export_main"))))
+    column(10, uiOutput("ui_export_main"), class="wb-maincolumn")))
 })
