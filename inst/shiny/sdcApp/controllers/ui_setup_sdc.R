@@ -179,8 +179,8 @@ output$ui_sdcObj_summary <- renderUI({
     for (i in 1:nrow(dt)) {
       out <- list(out, fluidRow(
         column(12, p("Variable",code(dt$variable[i])) ),
-        column(12, tags$i("transition matrix"), align="center"),
-        column(12, uiOutput(paste0("transmat_pram_",i)), align="center")))
+        column(12, tags$i("transition matrix")),
+        column(12, uiOutput(paste0("transmat_pram_",i)), class="wn-info-table")))
     }
     out <- list(out, fluidRow(
       column(12, p("Summary of changed observations due to PRAM") ),
@@ -201,7 +201,7 @@ output$ui_sdcObj_summary <- renderUI({
       dt[is.na(`NA's`),`NA's`:="0"]
     }
     dt <- cbind(data.table(Variable=rep(x$numVars, each=2)), dt)
-    out <- fluidRow(column(12, h4("Compare numerical key variables"), align="center"))
+    out <- fluidRow(column(12, h4("Compare numerical key variables")))
     out <- list(out, fluidRow(
       column(12, renderTable(dt), class="wn-info-table")
     ))
@@ -211,12 +211,12 @@ output$ui_sdcObj_summary <- renderUI({
     anon_methods <- unique(anonPerformed())
     out <- fluidRow(column(12, h4("Anonymization steps") ))
     if (is.null(anon_methods)) {
-      out <- list(out, fluidRow(column(12, code("No methods have been applied"),align="center")))
+      out <- list(out, fluidRow(column(12, code("No methods have been applied"))))
       return(out)
     } else {
       out <- fluidRow(column(12, h4("Anonymization steps") ))
       for (i in 1:length(anon_methods)) {
-        out <- list(out, fluidRow(column(12, code(anon_methods[i]),align="center")))
+        out <- list(out, fluidRow(column(12, code(anon_methods[i]))))
       }
     }
     out
@@ -460,7 +460,7 @@ output$ui_sdcObj_addghostvars <- renderUI({
     return(fluidRow(column(12,
       h4("No variables are available that could be used as",code("linked variables"),".", align="center"))))
   }
-  
+
   out <- fluidRow(
     column(6, uiOutput("addgv_v1"), align="center"),
     column(6, uiOutput("addgv_v2"), align="center")
@@ -475,7 +475,7 @@ output$ui_sdcObj_randIds_header <- renderUI({
   helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
   helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
   helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
-    
+
   out <- fluidRow(
     column(12, h3("Add a new random ID variable"), offset = 0, class = "wb-header"),
     column(12, p(helptxt), p(helptxt2), offset = 0, class = "wb-header-hint")
