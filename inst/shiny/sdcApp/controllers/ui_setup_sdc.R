@@ -162,7 +162,7 @@ output$ui_sdcObj_summary <- renderUI({
     setnames(dt, c("Key variable", paste("Additional suppressions due to last run of",meth), "Total number of missing values (NA) in variable"))
     out <- list(fluidRow(
       column(12, h4("Information on local suppression") ),
-      column(12, p(txt), align="center"),
+      column(12, p(txt)),
       column(12, renderTable(dt), class="wn-info-table")))
   })
   output$show_info_pram <- renderUI({
@@ -226,12 +226,12 @@ output$ui_sdcObj_summary <- renderUI({
   out <- NULL
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
-      column(12, h4("Application of the last method resulted in the following error!", align="center")),
+      column(12, h4("Application of the last method resulted in the following error!")),
       column(12, verbatimTextOutput("ui_lasterror"))))
   }
   if (!is.null(lastWarning())) {
     out <- list(out, fluidRow(
-      column(12, inp=h4("Application of the last method resulted in the following warning!", align="center")),
+      column(12, inp=h4("Application of the last method resulted in the following warning!")),
       column(12, inp=verbatimTextOutput("ui_lastwarning"))))
   }
   out <- list(out, fluidRow(
@@ -354,10 +354,10 @@ output$ui_sdcObj_explorevars <- renderUI({
       out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
     } else {
       out <- list(out, fluidRow(
-        column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))), align="center")),
-        column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))), align="center")),
+        column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))))),
+        column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))))),
         column(12, renderTable(res$tab1, include.rownames=FALSE), class="wn-info-table"),
-        column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))), align="center")),
+        column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))))),
         column(12, renderTable(res$tab2, include.rownames=FALSE), class="wn-info-table")))
     }
 
@@ -365,10 +365,10 @@ output$ui_sdcObj_explorevars <- renderUI({
     nainfo$nr_na <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
     nainfo$perc_na <- formatC(100*(nainfo$nr_na/nrow(df)), format="f", digits=2)
     out <- list(out,
-      fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.", align="center")))
+      fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.")))
     if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
       out <- list(out,
-      fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.", align="center")))
+      fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.")))
     }
     out
   })
@@ -413,7 +413,7 @@ output$ui_sdcObj_explorevars <- renderUI({
 
   if (!is.null(lastError())) {
     return(fluidRow(
-      column(12, h4("The following error has occured!", align="center")),
+      column(12, h4("The following error has occured!")),
       column(12, code(lastError()))))
   }
 
@@ -458,7 +458,7 @@ output$ui_sdcObj_addghostvars <- renderUI({
   res <- possGhostVars()
   if (length(res$gv) == 0) {
     return(fluidRow(column(12,
-      h4("No variables are available that could be used as",code("linked variables"),".", align="center"))))
+      h4("No variables are available that could be used as",code("linked variables"),"."))))
   }
 
   out <- fluidRow(
