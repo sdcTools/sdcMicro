@@ -201,7 +201,7 @@ output$ui_sdcObj_summary <- renderUI({
       dt[is.na(`NA's`),`NA's`:="0"]
     }
     dt <- cbind(data.table(Variable=rep(x$numVars, each=2)), dt)
-    out <- fluidRow(column(12, h4("Compare numerical key variables"), align="center"))
+    out <- fluidRow(column(12, h4("Compare numerical key variables")))
     out <- list(out, fluidRow(
       column(12, renderTable(dt), class="wn-info-table")
     ))
