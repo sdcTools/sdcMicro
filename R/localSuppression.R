@@ -243,8 +243,9 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     while (runInd) {
       ind.problem <- which(ff$fk < k)
       ind.problem  <- ind.problem[order(rk$rk[ind.problem],decreasing=TRUE)]
-      for (i in 1:length(ind.problem)) {
-        res <- cpp_calcSuppInds(mat, mat[ind.problem[i],])
+      for (i in seq_along(ind.problem)) {
+        params <- list(alpha=alpha, id=as.integer(ind.problem[i]))
+        res <- cpp_calcSuppInds(mat, mat[ind.problem[i],], params=params)
         if (res$fk < k) {
           ind <- res$ids
           if (length(ind) > 0) {
@@ -252,7 +253,12 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
             colIndsSorted <- keyVars[order(importanceI)]
             while (is.null(colInd)) {
               for (cc in colIndsSorted) {
-                z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
+                # special case where we have to suppress values in the problematic instance itself because no other candidates are available
+                if (length(ind)==1 && ind==ind.problem[i]) {
+                  z <- which(!is.na(mat[ind, cc]))
+                } else {
+                  z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
+                }
                 if (length(z) > 0) {
                   colInd <- cc
                   break;
