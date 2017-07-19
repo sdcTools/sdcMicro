@@ -17,7 +17,11 @@ index of the variables to be used for risk measurement.}
 \item{\code{missing}: }{Missing value coding in the given data set.}
 \item{\code{DisFraction}: }{It is the sampling fraction for the simple random
 sampling, and the common sampling fraction for stratified sampling. By
-default, it's set to 0.01.}}}
+default, it's set to 0.01.}
+\item{\code{original_scores}: }{if \code{TRUE}, the suda-scores are computed as described in paper
+"SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE} (the default), the computation of the scores
+is slightly different as it was done in the original implementation of the algorithm by the IHSN.}
+}}
 }
 \value{
 A modified \code{\link{sdcMicroObj-class}} object or the following list
@@ -64,7 +68,7 @@ data(testdata2)
 sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
-sdc <- suda2(sdc)
+sdc <- suda2(sdc, original_scores=FALSE)
 }
 }
 \references{

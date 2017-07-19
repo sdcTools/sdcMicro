@@ -18,7 +18,11 @@
 #' \item{\code{missing}: }{Missing value coding in the given data set.}
 #' \item{\code{DisFraction}: }{It is the sampling fraction for the simple random
 #' sampling, and the common sampling fraction for stratified sampling. By
-#' default, it's set to 0.01.}}
+#' default, it's set to 0.01.}
+#' \item{\code{original_scores}: }{if \code{TRUE}, the suda-scores are computed as described in paper
+#' "SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE} (the default), the computation of the scores
+#' is slightly different as it was done in the original implementation of the algorithm by the IHSN.}
+#' }
 #' @return A modified \code{\link{sdcMicroObj-class}} object or the following list
 #' \itemize{
 #' \item{\code{ContributionPercent}: }{The contribution of each key variable to the SUDA
@@ -74,7 +78,7 @@
 #' sdc <- createSdcObj(testdata2,
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
-#' sdc <- suda2(sdc)
+#' sdc <- suda2(sdc, original_scores=FALSE)
 #' }
 suda2 <- function(obj, ...) {
   suda2X(obj=obj, ...)
@@ -99,7 +103,10 @@ setMethod(f="suda2X", signature=c("data.frame"), definition = function(obj, ...)
   suda2WORK(data = obj, ...)
 })
 
-suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01) {
+suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01, original_scores=FALSE) {
+  stopifnot(is.logical(original_scores))
+  stopifnot(length(original_scores)==1)
+
   if (is.null(variables))
     variables <- colnames(data)
   dataX <- data[, variables, drop = FALSE]
@@ -112,7 +119,7 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
   }
   dataX <- as.matrix(dataX)
   dataX[is.na(dataX)] <- missing
-  dat <- .Call("Suda2", dataX, missing, ncol(dataX), DisFraction)$Res
+  dat <- .Call("Suda2", dataX, missing, ncol(dataX), DisFraction, original_scores)$Res
   if (length(variables) == 2)
     dat <- dat[, -3] else if (length(variables) == 1)
     dat <- dat[, c(-2, -3)]
