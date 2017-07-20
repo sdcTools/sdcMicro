@@ -707,21 +707,21 @@ output$setupbtn <- renderUI({
   }
 })
 
-# show additional parameters
-output$setup_moreparams <- renderUI({
-  txt_seed <- "The seed is used to initialize the random number generator used for probabilistic methods."
-  txt_alpha <- "The parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
-  txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincides based on a missing value (NA) contributes to these frequencies.")
-  sl_alpha <- sliderInput("sl_alpha",
-    label=h5("Parameter 'alpha'", tipify(icon("info-circle"), title=txt_alpha, placement="top")),
-    value=1, min=0, max=1, step=0.01, width="90%")
-  sl_seed <- sliderInput("sl_seed",
-    label=h5("Parameter 'seed'", tipify(icon("info-circle"), title=txt_seed, placement="top")),
-    value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
-  out <- list(
-    fluidRow(column(6, sl_alpha, align="center"), column(6, sl_seed, align="center")))
-  out
-})
+# # show additional parameters
+# output$setup_moreparams <- renderUI({
+#   txt_seed <- "The seed is used to initialize the random number generator used for probabilistic methods."
+#   txt_alpha <- "The parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
+#   txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincides based on a missing value (NA) contributes to these frequencies.")
+#   sl_alpha <- sliderInput("sl_alpha",
+#     label=h5("Parameter 'alpha'", tipify(icon("info-circle"), title=txt_alpha, placement="top")),
+#     value=1, min=0, max=1, step=0.01, width="90%")
+#   sl_seed <- sliderInput("sl_seed",
+#     label=h5("Parameter 'seed'", tipify(icon("info-circle"), title=txt_seed, placement="top")),
+#     value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
+#   out <- list(
+#     fluidRow(column(6, sl_alpha, align="center"), column(6, sl_seed, align="center")))
+#   out
+# })
 
 output$ui_sdcObj_create1 <- renderUI({
   input$btn_reset_sdc # dependency so that variable-types will get updated!
@@ -799,7 +799,41 @@ output$ui_sdcObj_info <- renderUI({
 })
 
 output$sel_sdc_infovar <- renderUI({
+  out <- selectInput("sel_infov", label=h4("Explore variables", class="wb-block-title"), choices=allVars(), width="100%")
+  # show additional parameters
+    txt_seed <- "The seed is used to initialize the random number generator used for probabilistic methods."
+    txt_alpha <- "The parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
+    txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincides based on a missing value (NA) contributes to these frequencies.")
+    sl_alpha <- sliderInput("sl_alpha",
+      label=h5("Parameter 'alpha'", tipify(icon("info-circle"), title=txt_alpha, placement="top")),
+      value=1, min=0, max=1, step=0.01, width="90%")
+    sl_seed <- sliderInput("sl_seed",
+      label=h5("Parameter 'seed'", tipify(icon("info-circle"), title=txt_seed, placement="top")),
+      value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
+    out <- list(out, 
+                column(12, h4("Set parameters", class="wb-block-title"), align="center"),
+                column(12, sl_alpha, align="center"), column(12, sl_seed, align="center"))
+    out
+})
+
+output$sel_sdc_infovar <- renderUI({
   selectInput("sel_infov", label=h4("Explore variables", class="wb-block-title"), choices=allVars(), width="100%")
+})
+
+output$sel_add_param <- renderUI({
+  # show additional parameters
+  txt_seed <- "The seed is used to initialize the random number generator used for probabilistic methods."
+  txt_alpha <- "The parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
+  txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincides based on a missing value (NA) contributes to these frequencies.")
+  sl_alpha <- sliderInput("sl_alpha",
+                          label=h5("Parameter 'alpha'", tipify(icon("info-circle"), title=txt_alpha, placement="top")),
+                          value=1, min=0, max=1, step=0.01, width="90%")
+  sl_seed <- sliderInput("sl_seed",
+                         label=h5("Parameter 'seed'", tipify(icon("info-circle"), title=txt_seed, placement="top")),
+                         value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
+  out <- list(column(12, h4("Set parameters", class="wb-block-title"), align="center"),
+              column(12, sl_alpha, align="center"), column(12, sl_seed, align="center"))
+  out
 })
 
 output$ui_sdcObj_create <- renderUI({
@@ -807,8 +841,9 @@ output$ui_sdcObj_create <- renderUI({
     column(width = 12, offset = 0, h3("Anonymize"), class="wb-header"),
     column(width = 12, offset = 0, p("Select and export variables."), class="wb-header-hint"),
     # column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
-    column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
-    column(4, uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
+   # column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
+    column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
+    column(4, uiOutput("sel_add_param"), uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
   )
   out
 })
