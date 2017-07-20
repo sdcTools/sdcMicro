@@ -74,17 +74,22 @@ output$ui_script_import <- renderUI({
     ))
   }
   out <- fluidRow(
-      column(12, h3("Import a previously exported sdcProblem"), class="wb-header"),
-      column(12, p("To continue working on an existing problem upload a previously exported sdcApp problem."), class="wb-header-hint")
-    )
+      column(12, h3("Import a previously exported sdcProblem"), class="wb-header")
+  )
   if (!is.null(sdcObj())) {
     out <- list(out,
       fluidRow(
         column(12,
-          p("The file must be an",code(".rdata"),"File. Please note that uploading a previously saved problem, will overwrite any existing current sdcProblem-instance!"),
+               p("To continue working on an existing problem upload a previously exported sdcApp problem."),
+               p("The file must be an",code(".rdata"),"file. Please note that uploading a previously saved problem, will overwrite any existing current sdcProblem-instance!"),
           class="wb-header-hint")
     ))
+  } else {
+    out <- list(out,
+                fluidRow(column(12, p("To continue working on an existing problem upload a previously exported sdcApp problem."), class="wb-header-hint")
+                ))
   }
+  
   fI <- fileInput("file_importProblem", strong("Select previously exported sdcProblem (.rdata)"), width="50%", accept=".rdata")
   out <- list(out, fluidRow(column(12, fI, align="center")))
   out
