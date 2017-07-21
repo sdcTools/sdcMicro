@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // cpp_calcSuppInds
 List cpp_calcSuppInds(NumericMatrix inp, NumericVector checkVals, List params);
-RcppExport SEXP sdcMicro_cpp_calcSuppInds(SEXP inpSEXP, SEXP checkValsSEXP, SEXP paramsSEXP) {
+RcppExport SEXP _sdcMicro_cpp_calcSuppInds(SEXP inpSEXP, SEXP checkValsSEXP, SEXP paramsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;

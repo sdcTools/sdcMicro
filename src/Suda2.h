@@ -1092,7 +1092,6 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
     g_ab = new double[g_NbVarALEX];
     if (like_elliot[0]==true) {
       ForLoop (i, g_NbVarALEX) {
-        int n = (g_NbVarALEX - (i+1));
         long double result = 1.0;
         for (j = i+1; j < g_NbVarALEX; ++j) {
           result *= (g_NbVarALEX-j);

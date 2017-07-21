@@ -16,7 +16,7 @@ extern SEXP gowerD_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP measure_hierachical(SEXP);
 extern SEXP measure_risk_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP measure_threshold(SEXP, SEXP);
-extern SEXP sdcMicro_cpp_calcSuppInds(SEXP, SEXP, SEXP);
+extern SEXP _sdcMicro_cpp_calcSuppInds(SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"LocalRecProg_cpp",          (DL_FUNC) &LocalRecProg_cpp,          9},
@@ -27,7 +27,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"measure_hierachical",       (DL_FUNC) &measure_hierachical,       1},
     {"measure_risk_cpp",          (DL_FUNC) &measure_risk_cpp,          6},
     {"measure_threshold",         (DL_FUNC) &measure_threshold,         2},
-    {"sdcMicro_cpp_calcSuppInds", (DL_FUNC) &sdcMicro_cpp_calcSuppInds, 3},
+    {"_sdcMicro_cpp_calcSuppInds", (DL_FUNC) &_sdcMicro_cpp_calcSuppInds, 3},
     {NULL, NULL, 0}
 };
 
