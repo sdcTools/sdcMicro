@@ -540,6 +540,7 @@
 #' @importFrom haven write_sas
 #' @importFrom haven as_factor
 #' @importFrom prettydoc html_pretty
+#' @importFrom VIM sampleCat maxCat gowerD
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))
 setClassUnion("numericOrNULL", c("numeric", "NULL"))
 setClassUnion("characterOrNULL", c("character", "NULL"))

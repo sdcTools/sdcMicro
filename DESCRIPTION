@@ -42,7 +42,8 @@ Imports:
     rhandsontable,
     DT,
     shinyBS,
-    prettydoc
+    prettydoc,
+    VIM(>= 4.7.0)
 License: GPL-2
 URL: https://github.com/sdcTools/sdcMicro
 Collate:
