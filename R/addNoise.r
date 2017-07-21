@@ -137,6 +137,8 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
     }
     N <- nrow(x)
     x + mvrnorm(N, rep(0, ncol(x)), Sigma=noise/100 * cov(na.omit(x)))
+    # better?
+    #x + mvrnorm(N, rep(0, ncol(x)), Sigma=noise/100 * cov(x, use="pairwise.complete.obs"))
   }
   addNoise_correlated2 <- function(x, delta) {
     N <- nrow(x)
