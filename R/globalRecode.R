@@ -123,10 +123,20 @@ globalRecodeWORK <- function(x, breaks, labels=NULL, method="equidistant") {
     }
     b1
   }
+  
+  stopifnot(method %in% c("equidistant","logEqui","equalAmount"))
+  
   if (length(breaks)==1) {
-    gr <- cut(x, breaks=get(method)(x), labels=labels, dig.lab=8)
+    breaks <- round(breaks)
+    stopifnot(breaks>=1)
+    if (breaks==1) {
+      gr <- cut(x, breaks=c(min(x)-1, max(x)+1), labels=labels, dig.lab=8)
+    } else {
+      gr <- cut(x, breaks=get(method)(x), labels=labels, dig.lab=8, include.lowest = TRUE)
+    }
   }  else {
     gr <- cut(x, breaks=breaks, labels=labels, dig.lab=8)
   }
   invisible(gr)
 }
+
