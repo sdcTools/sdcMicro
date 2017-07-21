@@ -127,6 +127,22 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
   dat_without_na <- na.omit(agg, cols=keyVars_n)
   dat_with_na <- na.omit(agg, cols=keyVars_n, invert=TRUE)
 
+  # special treatment - one key variable containing missings
+  if (length(keyVars_n)==1) {
+    dat_without_na[,fk:=fk+sum(dat_with_na[,fk])*alpha]
+    dat_without_na[,Fk:=Fk+sum(dat_with_na[,Fk])*alpha]
+    dat_with_na[,fk:=sum(agg[,fk])]
+    dat_with_na[,Fk:=sum(agg[,Fk])]
+    new <- rbind(dat_without_na, dat_with_na)
+    new <- setkeyv(new, keyVars_n)
+    new <- new[dt]
+    setkey(new, sortidforfreqcalc)
+    z <- list(freqCalc=x, keyVars=keyVars, w=w, fk=new$fk, Fk=new$Fk,
+      n1=sum(new$fk==1, na.rm=TRUE), n2=sum(new$fk==2, na.rm=TRUE), alpha=alpha)
+    class(z) <- "freqCalc"
+    return(z)
+  }  
+  
   nr_kv <- length(keyVars_n)
   naind <- dat_with_na[,lapply(.SD, function(x) {
     !is.na(x)
@@ -184,9 +200,13 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
       setkeyv(dat_without_na, cur_sortVars)
     }
 
-    ids_complete <- dat_without_na[as.list(dat_with_na[i, cur_sortVars, with=F]),id]
-    if (is.na(ids_complete)[1]) {
+    if (nrow(dat_without_na)==0) {
       ids_complete <- NULL
+    } else {
+      ids_complete <- dat_without_na[as.list(dat_with_na[i, cur_sortVars, with=F]),id]
+      if (is.na(ids_complete)[1]) {
+        ids_complete <- NULL
+      }      
     }
 
     # update dataset containing NA's
