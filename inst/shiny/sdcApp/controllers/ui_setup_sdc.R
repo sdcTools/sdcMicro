@@ -239,9 +239,9 @@ output$ui_sdcObj_summary <- renderUI({
     column(12, uiOutput("show_info_recodes")),
     column(12, uiOutput("show_info_catrisk")),
     column(12, uiOutput("show_info_kanon")),
-    column(12, uiOutput("show_info_pram")),
-    column(12, uiOutput("show_info_localsuppression")),
-    column(12, uiOutput("show_info_comp_numvars")),
+    column(12, uiOutput("show_info_pram"), class = "wb-column-empty"),
+    column(12, uiOutput("show_info_localsuppression"), class = "wb-column-empty"),
+    column(12, uiOutput("show_info_comp_numvars"), class = "wb-column-empty"),
     column(12, uiOutput("show_info_risk")),
     column(12, uiOutput("anonMethods"))))
   out
