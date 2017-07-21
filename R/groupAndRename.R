@@ -76,6 +76,9 @@ setMethod(f="groupAndRenameX", signature=c("sdcMicroObj"),
 definition=function(obj, var, before, after, addNA=FALSE) {
   obj <- nextSdcObj(obj)
   manipKey <- get.sdcMicroObj(obj, type="manipKeyVars")
+  if (!var %in% colnames(manipKey)) {
+    stop("variable specified in 'var' is not available in 'obj'!\n")
+  }
   manipKey[[var]] <- groupAndRename(manipKey[[var]], var=var, before=before, after=after, addNA=addNA)
   obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(manipKey))
   # calculate risk
