@@ -717,9 +717,13 @@ output$setup_moreparams <- renderUI({
     value=1, min=0, max=1, step=0.01, width="90%")
   sl_seed <- sliderInput("sl_seed",
     label=h5("Parameter 'seed'", tipify(icon("info-circle"), title=txt_seed, placement="top")),
-    value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
+    value = 0, min = 0, max= 500, step = 1, round=FALSE, width="90%")
   out <- list(
-    fluidRow(column(6, sl_alpha, align="center"), column(6, sl_seed, align="center")))
+    fluidRow(
+      column(12, h4("Set additional parameters", class="wb-block-title")), 
+      column(12, sl_alpha, align="center"), 
+      column(12, sl_seed, align="center"))
+    )
   out
 })
 
@@ -807,8 +811,8 @@ output$ui_sdcObj_create <- renderUI({
     column(width = 12, offset = 0, h3("Anonymize"), class="wb-header"),
     column(width = 12, offset = 0, p("Select and export variables."), class="wb-header-hint"),
     # column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
-    column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
-    column(4, uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
+    column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
+    column(4, uiOutput("setup_moreparams"), uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
   )
   out
 })
