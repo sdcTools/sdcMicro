@@ -433,7 +433,7 @@ output$ui_view_var <- renderUI({
       return(NULL)
     }
 
-    if (!is.null(v2) && v2!="none") {
+    if (!is.null(v2) && v2 != "none") {
       df <- data.frame(inputdata[[v1]], inputdata[[v2]])
       colnames(df) <- c(v1, v2)
       cl1 <- class(df[[1]]) %in% c("factor", "character")
@@ -443,20 +443,24 @@ output$ui_view_var <- renderUI({
       colnames(df) <- v1
       cl1 <- class(df[[1]]) %in% c("factor", "character")
     }
-    if (!is.null(v2) && v2=="none") {
+    if (!is.null(v2) && v2 == "none") {
       if (cl1) {
-        res <- list(tab=summaryfn(inputdata[[v1]]))
+        res <- list(tab = summaryfn(inputdata[[v1]]))
         colnames(res$tab) <- c(v1, "Frequency", "Percentage")
       } else {
-        res <- list(tab=as.data.frame(t(summaryfn(inputdata[[v1]]))))
+        res <- list(tab = as.data.frame(t(summaryfn(inputdata[[v1]]))))
       }
     } else {
-      # 2 factors
+      # two factors
       if (cl1 & cl2) {
-        res <- list(tab=as.data.frame.table(addmargins(table(df[[1]], df[[2]], useNA="always"))), var=c(v1, v2))
-        colnames(res$tab) <- c(res$var, "Frequency")
-        res$tab$Frequency <- as.integer(res$tab$Frequency)
-        res$tab$Percentage <- formatC(100*(res$tab$Frequency/nrow(df)), format="f", digits=2)
+        tabdf <- addmargins(table(df[[1]], df[[2]], useNA = "always"))
+        colnames(tabdf)[is.na(colnames(tabdf))] <- "NA"
+        rownames(tabdf)[is.na(rownames(tabdf))] <- "NA"
+        tabdfp <- prop.table(tabdf)
+        tabdfc <- as.data.frame(matrix(paste0(tabdf, paste0(" (", formatC(100 * tabdfp, format = "f", digits = 2),"%)")), nrow = dim(tabdf)[1], ncol = dim(tabdf)[2]))
+        colnames(tabdfc) <- colnames(tabdf)
+        rownames(tabdfc) <- rownames(tabdf)
+        res <- list(tab = as.data.frame.matrix(tabdfc), var = c(v1, v2))
       } else if (cl1 & !cl2) {
         res <- tapply(df[[2]], df[[1]], summaryfn)
         res <- do.call("rbind", res)
@@ -478,25 +482,31 @@ output$ui_view_var <- renderUI({
         tab1 <- as.data.frame(t(summaryfn(df[[1]])))
         tab2 <- as.data.frame(t(summaryfn(df[[2]])))
         vcor <- round(cor(df[[1]], df[[2]], use="pairwise.complete.obs"),3)
-        res <- list(vars=c(v1,v2),tab1=tab1, tab2=tab2, vcor=vcor)
+        res <- list(vars=c(v1,v2), tab1=tab1, tab2=tab2, vcor=vcor)
       }
     }
 
     out <- NULL
     if (is.null(res$tab1)) {
-      out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), align="center")))
+      if (!is.null(v2) && v2 == "none"){
+        out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), align="center")))
+      } else {
+        out <- list(out, fluidRow(
+          column(12, h5(HTML(paste("Cross-tabulation of", code(res$var[1]), "and", code(res$var[2]))), align="center")),
+          column(12, renderTable(res$tab, include.rownames=TRUE), align="center")))
+      }
     } else {
       out <- list(out, fluidRow(
-        column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))), align="center")),
-        column(12, h5(HTML(paste("Summary of Variable",code(res$vars[1]))), align="center")),
+        column(12, h5(HTML(paste("Correlation between", code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))), align="center")),
+        column(12, h5(HTML(paste("Summary of variable", code(res$vars[1]))), align="center")),
         column(12, renderTable(res$tab1, include.rownames=FALSE), align="center"),
-        column(12, h5(HTML(paste("Summary of Variable",code(res$vars[2]))), align="center")),
+        column(12, h5(HTML(paste("Summary of variable", code(res$vars[2]))), align="center")),
         column(12, renderTable(res$tab2, include.rownames=FALSE), align="center")))
     }
 
     nainfo <- data.frame(variable=c(v1, v2))
     nainfo$nr_na <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
-    nainfo$perc_na <- formatC(100*(nainfo$nr_na/nrow(df)), format="f", digits=2)
+    nainfo$perc_na <- formatC(100 * (nainfo$nr_na/nrow(df)), format = "f", digits = 2)
     out <- list(out,
       fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.", align="center")))
     if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
