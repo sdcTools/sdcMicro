@@ -606,7 +606,8 @@ output$ui_show_microdata <- renderUI({
     datatable(inputdata(),
               rownames = FALSE,
               selection="none",
-              options = list(scrollX=TRUE, scrollY=250, lengthMenu=list(c(20, 50, 100, -1), c('20', '50', '100', 'All')), pageLength=20))
+              options = list(scrollX=TRUE, scrollY=250, lengthMenu=list(c(20, 50, 100, -1), c('20', '50', '100', 'All')), pageLength=20),
+              style = 'bootstrap')
   })
   #, options = list(scrollX=TRUE, lengthMenu=list(c(10, 25, 100, -1), c('10', '20', '100', 'All')), pageLength=25), filter="top", rownames=FALSE
   output$tab_inputdata <- DT::renderDataTable({
