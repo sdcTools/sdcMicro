@@ -566,7 +566,7 @@ output$ui_view_var <- renderUI({
   rb <- radioButtons("view_rbchoice", choices=c("Plot","Summary"), selected=input$view_rbchoice, label=h5("What should be displayed?"), inline=TRUE, width="100%")
 
   out <- list(out, fluidRow(
-    column(width = 12, offset = 0, p("Help or description text."), class="wb-header-hint"),
+    column(width = 12, offset = 0, p("Explore variables in original data."), class="wb-header-hint"),
     column(6, uiOutput("ui_selvar1")),
     column(6, uiOutput("ui_selvar2"))))
 
