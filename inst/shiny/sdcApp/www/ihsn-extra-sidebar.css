@@ -10,10 +10,11 @@
   padding: 0;
   padding-top: 0;
   padding-bottom: 0;
+  z-index: 999;
   /* neutralize the negative margin for all the row elements within the sidebar*/
 }
 .wb_sidebar > div {
-  background-image: linear-gradient(to bottom, white, rgba(255, 255, 255, 0.001));
+  background-image: linear-gradient(to bottom, white, #F2F3F6);
   border-right: solid 1px #e4e9ec;
   position: fixed;
   width: 16.6%;

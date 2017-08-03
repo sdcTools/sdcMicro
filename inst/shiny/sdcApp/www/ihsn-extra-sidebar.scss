@@ -6,6 +6,7 @@
     padding: 0;
     padding-top: 0;
     padding-bottom: 0;
+    z-index: 999;
     // border-right: solid 1px $primary;
 }
 
@@ -17,7 +18,7 @@
     @include wb-sidebar-1-2;
 
     & > div {
-      background-image: linear-gradient(to bottom, white, rgba(255, 255, 255, 0.001));
+      background-image: linear-gradient(to bottom, white, #F2F3F6);
       border-right: solid 1px $primary;
       position: fixed;
       width: 16.6%;
