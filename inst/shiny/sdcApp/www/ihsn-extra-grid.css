@@ -38,7 +38,8 @@ table.dataTable th {
 }
 
 table.dataTable td {
-  font-size: 11px;
+  font-size: 13px;
+  line-height: 120% !important;
 }
 
 div#tab_inputdata {
