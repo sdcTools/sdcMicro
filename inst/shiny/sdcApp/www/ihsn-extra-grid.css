@@ -103,3 +103,28 @@ table.dataTable.no-footer {
  table.dataTable td .form-group.shiny-input-radiogroup .shiny-options-group{
    white-space: nowrap;
  }
+
+/*
+ * Style the bootrap enabled style
+ */
+ .dataTables_wrapper.form-inline.dt-bootstrap.no-footer {
+   border: 0;
+   background: transparent;
+ }
+
+.dataTables_wrapper.dt-bootstrap .dataTables_scroll {
+   border: 1px solid #cccccc;
+   border-radius: 4px;
+   background: #ffffff;
+}
+
+.dataTables_wrapper.dt-bootstrap .dataTables_paginate{
+  border: 0;
+  background: transparent;
+}
+
+.dataTables_wrapper.dt-bootstrap .dataTables_paginate .paginate_button,
+.dataTables_wrapper.dt-bootstrap .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper.dt-bootstrap .dataTables_paginate .paginate_button:hover {
+    border: 0 !important;
+}
