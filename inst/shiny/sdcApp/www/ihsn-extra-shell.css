@@ -23,5 +23,9 @@
 .wb-maincolumn > .shiny-html-output > .shiny-html-output{
   margin: 0;
 }
+
+#show_info_general.shiny-html-output{
+  margin: 0;
+}
 /*
  * **/
