@@ -4,3 +4,8 @@
 .tooltip-inner {
   max-width: 400px;
 }
+
+
+label > p {
+  font-weight: normal;
+}

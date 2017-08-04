@@ -69,10 +69,10 @@ output$ui_import_data_main <- renderUI({
 
   if (val %in% c("R","csv","spss","sas","rdata","stata")) {
     # convert characters automatically to factors
-    rb1 <- radioButtons("rb_convert_c_to_f", label=h5("Convert string variables (character vectors) to factor variables?"), choices=c(TRUE, FALSE), inline=TRUE)
-    rb2 <- radioButtons("rb_drop_all_missings", label=h5("Drop variables with only missing values (NA)?"), choices=c(TRUE, FALSE), inline=TRUE)
+    rb1 <- radioButtons("rb_convert_c_to_f", label=p("Convert string variables (character vectors) to factor variables?"), choices=c(TRUE, FALSE), inline=TRUE)
+    rb2 <- radioButtons("rb_drop_all_missings", label=p("Drop variables with only missing values (NA)?"), choices=c(TRUE, FALSE), inline=TRUE)
 
-    out <- list(out, fluidRow(column(12, h5("Set additional options for the data import", align="center"))))
+    out <- list(out, fluidRow(column(12, h4("Set additional options for the data import"))))
 
     out <- list(out, fluidRow(
       column(6, rb1, align="center"),
@@ -102,7 +102,7 @@ output$ui_import_data_main <- renderUI({
       column(12, p("Note: the selected file is loaded immediately upon selecting. Set the above options before selecting the file."), align="center")
     ))
 
-    fI <- fileInput("file1", h5(paste0("Select file (allowed types are '",paste0(allowed, collapse="', '"),"')")),
+    fI <- fileInput("file1", p(paste0("Select file (allowed types are '",paste0(allowed, collapse="', '"),"')")),
       width="75%", accept=allowed)
     out <- list(out, fluidRow(column(12, fI, align="center")))
   } else {
