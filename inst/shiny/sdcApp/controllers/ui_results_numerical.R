@@ -90,11 +90,11 @@ output$ui_resnum_comparison <- renderUI({
     if (length(nv)==0) {
       return(NULL)
     }
-    selectInput("sel_res_numvar1", label=h5("Choose a numerical key variable"), choices=nv, width="100%", multiple=FALSE)
+    selectInput("sel_res_numvar1", label=p("Choose a numerical key variable"), choices=nv, width="100%", multiple=FALSE)
   })
   output$ui_catvar_numres <- renderUI({
     byv <- c("none", get_keyVars_names(), get_strataVar_names())
-    selectInput("sel_res_catvar1", label=h5("Optionally choose a categorical variable"), choices=byv, width="100%")
+    selectInput("sel_res_catvar1", label=p("Optionally choose a categorical variable"), choices=byv, width="100%")
   })
   output$ui_numvar_modtab <- DT::renderDataTable({
     if (is.null(input$sel_res_numvar1)) {

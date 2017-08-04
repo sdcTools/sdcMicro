@@ -52,9 +52,9 @@ output$ui_export_data <- renderUI({
   # specific (gui)-options for csv-export
   output$ui_export_csv <- renderUI({
     txt <- list("Set options for exporting a", code("csv"), "file")
-    rb1 <- radioButtons("export_csv_header", label=h5("Include variable names in first row?"), choices=c("Yes"=TRUE,"No"=FALSE), inline=TRUE)
-    rb2 <- radioButtons("export_csv_sep", label=h5("Field separator"), choices=c(Comma=",", Semicolon=";", Tab="\t"), inline=TRUE)
-    rb3 <- radioButtons("export_csv_dec", label=h5("Decimal separator"), choices=c("Decimal point"=".", "Decimal comma"=","), inline=TRUE)
+    rb1 <- radioButtons("export_csv_header", label=p("Include variable names in first row?"), choices=c("Yes"=TRUE,"No"=FALSE), inline=TRUE)
+    rb2 <- radioButtons("export_csv_sep", label=p("Field separator"), choices=c(Comma=",", Semicolon=";", Tab="\t"), inline=TRUE)
+    rb3 <- radioButtons("export_csv_dec", label=p("Decimal separator"), choices=c("Decimal point"=".", "Decimal comma"=","), inline=TRUE)
     return(fluidRow(
       column(12, p(txt, align="center")),
       column(4, rb1, align="center"),
@@ -73,7 +73,7 @@ output$ui_export_data <- renderUI({
     txt <- list("The file will be exported using", code("write_dta()"), "from package", code("haven"),".")
     fluidRow(column(12, p(txt, align="center")))
   })
-  rb_exptype <- radioButtons("dat_exp_type", label=h5("Select file format for export", align="center"),
+  rb_exptype <- radioButtons("dat_exp_type", label=p("Select file format for export", align="center"),
     choices=c("R-dataset (.RData)"="rdata","SPSS-file (.sav)"="sav","CSV-file (.csv)"="csv", "STATA-file (.dta)"="dta", "SAS-file (.sas7bdat)"="sas"),
     width="100%", selected=input$dat_exp_type, inline=TRUE)
 
@@ -123,9 +123,9 @@ output$ui_export_data <- renderUI({
         "Randomize by hierarchical identifier"="byHH", "Randomize by hierarchical identifier and within hierarchical units"="withinHH")
 
       if (!is.null(curObj@hhId)) {
-        rb <- radioButtons("rb_export_randomizeorder", label=h5("Randomize order of records", tipify(icon("info-circle"), title=txt_randomize_hh, placement="top")), choices=choices[-2], inline=TRUE)
+        rb <- radioButtons("rb_export_randomizeorder", label=p("Randomize order of records", tipify(icon("info-circle"), title=txt_randomize_hh, placement="top")), choices=choices[-2], inline=TRUE)
       } else {
-        rb <- radioButtons("rb_export_randomizeorder", label=h5("Randomize order of records", tipify(icon("info-circle"), title=txt_randomize_ind, placement="top")), choices=choices[1:2], inline=TRUE)
+        rb <- radioButtons("rb_export_randomizeorder", label=p("Randomize order of records", tipify(icon("info-circle"), title=txt_randomize_ind, placement="top")), choices=choices[1:2], inline=TRUE)
       }
       return(fluidRow(
         column(12, rb, align="center")

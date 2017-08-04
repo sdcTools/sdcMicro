@@ -257,7 +257,7 @@ output$ui_sdcObj_explorevars_header <- renderUI({
 })
 output$ui_sdcObj_explorevars <- renderUI({
   output$ui_selanonvar1 <- renderUI({
-    selectInput("view_selanonvar1", choices=allVars(), label=h5("Choose a variable"), multiple=FALSE, selected=obj$inp_sel_anonvar1, width="100%")
+    selectInput("view_selanonvar1", choices=allVars(), label=p("Choose a variable"), multiple=FALSE, selected=obj$inp_sel_anonvar1, width="100%")
   })
   # This is required so that usual changes of the dropdown-select are also reflected in the reactive variable obj$inp_sel_anonvar1
   observeEvent(input$ui_selanonvar1, {
@@ -265,7 +265,7 @@ output$ui_sdcObj_explorevars <- renderUI({
   })
   output$ui_selanonvar2 <- renderUI({
     vv <- setdiff(allVars(), input$view_selanonvar1)
-    selectInput("view_selanonvar2", choices=c("none", vv), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
+    selectInput("view_selanonvar2", choices=c("none", vv), label=p("Choose a second variable (optional)"), multiple=FALSE, width="100%")
   })
 
   observeEvent(input$view_selanonvar1, {
@@ -448,11 +448,11 @@ output$ui_sdcObj_addghostvars <- renderUI({
   })
   output$addgv_v1 <- renderUI({
     res <- possGhostVars()
-    selectInput("sel_gv1", label=h5("Select categorical key variable"), choices=res$kv, width="100%")
+    selectInput("sel_gv1", label=p("Select categorical key variable"), choices=res$kv, width="100%")
   })
   output$addgv_v2 <- renderUI({
     res <- possGhostVars()
-    selectInput("sel_gv2", label=h5("Select linked variable(s)"), choices=res$gv,  multiple=TRUE, width="100%")
+    selectInput("sel_gv2", label=p("Select linked variable(s)"), choices=res$gv,  multiple=TRUE, width="100%")
   })
 
   res <- possGhostVars()
@@ -484,10 +484,10 @@ output$ui_sdcObj_randIds_header <- renderUI({
 })
 output$ui_sdcObj_randIds <- renderUI({
   output$randid_newid <- renderUI({
-    textInput("txt_randid_newid", label=h5("Specify name for the new ID variable"), width="100%")
+    textInput("txt_randid_newid", label=p("Specify name for the new ID variable"), width="100%")
   })
   output$randid_withinvar <- renderUI({
-    selectInput("sel_randid_withinvar", label=h5("If used, the ID will be the same for equal values of the selected variable"),
+    selectInput("sel_randid_withinvar", label=p("If used, the ID will be the same for equal values of the selected variable"),
       choices=c("none",allVars()), multiple=FALSE, width="100%")
   })
   output$randid_btn <- renderUI({

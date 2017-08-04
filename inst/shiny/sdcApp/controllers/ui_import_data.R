@@ -1,7 +1,7 @@
 # specific (gui)-options for csv-import
 output$ui_import_csv <- renderUI({
-  rb1 <- radioButtons("import_csv_header", label=h5("Does the first row contain the variable names?"), choices=c(TRUE,FALSE), inline=TRUE)
-  rb2 <- radioButtons("import_csv_sep", label=h5("Select the field separator"), choices=c(Comma=",", Semicolon=";", Tab="\t"), inline=TRUE)
+  rb1 <- radioButtons("import_csv_header", label=p("Does the first row contain the variable names?"), choices=c(TRUE,FALSE), inline=TRUE)
+  rb2 <- radioButtons("import_csv_sep", label=p("Select the field separator"), choices=c(Comma=",", Semicolon=";", Tab="\t"), inline=TRUE)
   return(fluidRow(
     column(6, rb1, align="center"),
     column(6, rb2, align="center")))
@@ -13,7 +13,7 @@ output$ui_import_rdf <- renderUI({
     selected=input$sel_choose_df, width="50%")
   btn <- myActionButton("btn_chooose_df",label=("Load data"), "primary")
   return(fluidRow(
-    column(12, h5("Select a test dataset or any object in your current workspace", align="center")),
+    column(12, p("Select a test dataset or any object in your current workspace", align="center")),
     column(12, div(selDF, align="center")),
     column(12, p(btn, align="center"))))
 })
@@ -69,8 +69,8 @@ output$ui_import_data_main <- renderUI({
 
   if (val %in% c("R","csv","spss","sas","rdata","stata")) {
     # convert characters automatically to factors
-    rb1 <- radioButtons("rb_convert_c_to_f", label=h5("Convert string variables (character vectors) to factor variables?"), choices=c(TRUE, FALSE), inline=TRUE)
-    rb2 <- radioButtons("rb_drop_all_missings", label=h5("Drop variables with only missing values (NA)?"), choices=c(TRUE, FALSE), inline=TRUE)
+    rb1 <- radioButtons("rb_convert_c_to_f", label=p("Convert string variables (character vectors) to factor variables?"), choices=c(TRUE, FALSE), inline=TRUE)
+    rb2 <- radioButtons("rb_drop_all_missings", label=p("Drop variables with only missing values (NA)?"), choices=c(TRUE, FALSE), inline=TRUE)
 
     out <- list(out, fluidRow(column(12, h5("Set additional options for the data import", align="center"))))
 

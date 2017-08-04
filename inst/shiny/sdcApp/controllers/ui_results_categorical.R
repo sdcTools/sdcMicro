@@ -7,7 +7,7 @@ output$ui_rescat_riskinfo_header <- renderUI({
 })
 output$ui_rescat_riskinfo <- renderUI({
   output$ui_rescat_selection <- renderUI({
-    radioButtons("rb_riskselection", label=h5("What kind of results do you want to show?"),
+    radioButtons("rb_riskselection", label=p("What kind of results do you want to show?"),
       choices=c("Risk measures"="rescat_riskymeasures", "Risky observations"="rescat_riskyobs", "Plot of risk"="rescat_riskplot"),
       selected=input$rb_riskselection, inline=TRUE, width="100%")
   })
@@ -63,7 +63,7 @@ output$ui_rescat_riskinfo <- renderUI({
     })
     # slider for minimal risk
     output$riskyobs_slider <- renderUI({
-      sliderInput("sl_riskyobs", label=h5("Minimum risk for to be shown in the table"), min=0, max=max(get_risk()$risk), value=0, width="100%")
+      sliderInput("sl_riskyobs", label=p("Minimum risk for to be shown in the table"), min=0, max=max(get_risk()$risk), value=0, width="100%")
     })
     output$riskyobs_result <- renderUI({
       # table containing the corresponding observations
@@ -202,13 +202,13 @@ output$ui_rescat_ldiv <- renderUI({
   # sensitive variable
   output$ldiv_sensvar <- renderUI({
     vv <- setdiff(allVars(), c(get_weightVar_name(), get_keyVars_names()))
-    selectInput("ldiv_sensvar", label=h5("Select one or more sensitive variables"), selected=input$ldiv_sensvar, choices=vv, multiple=TRUE, width="100%")
+    selectInput("ldiv_sensvar", label=p("Select one or more sensitive variables"), selected=input$ldiv_sensvar, choices=vv, multiple=TRUE, width="100%")
   })
   # recursive constant
   output$ldiv_recconst <- renderUI({
     txt_tooltip <- ""
     sliderInput("ldiv_recconst",
-      label=h5("Select a value for the recursive constant", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Select a value for the recursive constant", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       min=1, max=100, value=2, width="100%")
   })
   # button
@@ -300,7 +300,7 @@ output$ui_rescat_suda2 <- renderUI({
     txt_tooltip <- "This is the sampling fraction for a simple random sample and the common sampling fraction for stratified samples. The defaut value is 0.1, which corresponds to a 10 percent sample. "
     txt_tooltip <- paste0(txt_tooltip, "Note that SUDA is sensitive to the sampling fraction and a wrong value can produce distorted results.")
     sliderInput("suda2_disf",
-      label=h5("Specify the sampling fraction for the stratified sampling", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Specify the sampling fraction for the stratified sampling", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       min=0.01, max=0.5, step=0.01,value=0.1, width="100%")
   })
   # button
@@ -372,7 +372,7 @@ output$ui_rescat_violating_kanon <- renderUI({
   output$ui_kanon_selection <- renderUI({
     txt_tooltip <- "All records violating the k-anonymity for k equal to the set threshold are displayed."
     sl <- sliderInput("k_val_violating",
-      label=h5("Select value for 'k'", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Select value for 'k'", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       value=3, min=1, max=50, step=1, width="100%")
     fluidRow(column(12, div(sl, align="center")))
   })
@@ -405,7 +405,7 @@ output$ui_catvar1 <- renderUI({
   } else {
     sel <- input$sel_catvar1
   }
-  selectInput("sel_catvar1", label=h5("Variable 1"), choices=kv, selected=sel, width="100%")
+  selectInput("sel_catvar1", label=p("Variable 1"), choices=kv, selected=sel, width="100%")
 })
 output$ui_catvar2 <- renderUI({
   kv <- c("none",setdiff(c(get_keyVars_names(), get_pramVars_names()), input$sel_catvar1))
@@ -421,7 +421,7 @@ output$ui_catvar2 <- renderUI({
       sel <- input$sel_catvar2
     }
   }
-  selectInput("sel_catvar2", label=h5("Variable 2"), choices=kv, selected=sel, width="100%")
+  selectInput("sel_catvar2", label=p("Variable 2"), choices=kv, selected=sel, width="100%")
 })
 
 # UI output for mosaicplot of one or two categorical key-variables
@@ -495,16 +495,13 @@ output$ui_bivariate_tab <- renderUI({
     df <- get_origData()
     vars <- c(input$sel_catvar1, input$sel_catvar2)
     if (vars[2]=="none") {
-      tab <- addmargins(table(df[[vars[1]]], useNA="always"))
-    } else {
-      tab <- addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA="always"))
-    }
-    tab <- as.data.frame.table(tab)
-    tab$Freq <- as.integer(tab$Freq)
-    if (ncol(tab)==2) {
+      tab <- as.data.frame.table(addmargins(table(df[[vars[1]]], useNA="always")))
+      tab$Freq <- as.integer(tab$Freq)
       colnames(tab) <- c(vars[1], "Freq")
     } else {
-      colnames(tab) <- c(vars, "Freq")
+      tab <- as.data.frame.matrix(formatC(addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA = "always")), format = "f", digits = 0))
+      #colnames(tab)[is.na(colnames(tabdf))] <- "NA"
+      #rownames(tab)[is.na(rownames(tabdf))] <- "NA"
     }
     tab
   })
@@ -517,30 +514,33 @@ output$ui_bivariate_tab <- renderUI({
     }
     vars <- c(input$sel_catvar1, input$sel_catvar2)
     if (vars[2]=="none") {
-      tab <- addmargins(table(df[[vars[1]]], useNA="always"))
-    } else {
-      tab <- addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA="always"))
-    }
-    tab <- as.data.frame.table(tab)
-    tab$Freq <- as.integer(tab$Freq)
-    if (ncol(tab)==2) {
+      tab <- as.data.frame.table(addmargins(table(df[[vars[1]]], useNA="always")))
+      tab$Freq <- as.integer(tab$Freq)
       colnames(tab) <- c(vars[1], "Freq")
-    } else {
-      colnames(tab) <- c(vars, "Freq")
+      } else {
+      tab <- as.data.frame.matrix(formatC(addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA = "always")), format = "f", digits = 0))
+      #colnames(tab)[is.na(colnames(tabdf))] <- "NA"
+      #rownames(tab)[is.na(rownames(tabdf))] <- "NA"
     }
     tab
   })
-
   out <- uiOutput("ui_biv_selection")
-
   out <- list(out, fluidRow(
     column(6, h4("Original data"), align="center"),
     column(6, h4("Modified data"), align="center")
   ))
+  
+  if(TRUE){ #input$sel_catvar2 == "none"
+    out <- list(out, fluidRow(
+      column(12, tableOutput("biv_tab_o"), align="center"),
+      column(12, tableOutput("biv_tab_m"), align="center")
+    ))
+  } else {
+    out <- list(out, fluidRow(
+      column(6, tableOutput("biv_tab_o"), align="center"),
+      column(6, tableOutput("biv_tab_m"), align="center")
+    ))
+  }
 
-  out <- list(out, fluidRow(
-    column(6, tableOutput("biv_tab_o"), align="center"),
-    column(6, tableOutput("biv_tab_m"), align="center")
-  ))
   out
 })

@@ -38,10 +38,10 @@ output$ui_recode <- renderUI({
   output$recfac_selfac1 <- renderUI({
     # current categorical key variables
     kv <- get_keyVars_names()
-    selectInput("sel_recfac",label=h5("Choose factor variable"), choices=kv, selected=input$sel_recfac, width="50%")
+    selectInput("sel_recfac",label=p("Choose factor variable"), choices=kv, selected=input$sel_recfac, width="50%")
   })
   output$recfac_cbgr <- renderUI({
-    cbgr <- selectInput("cbg_recfac",label=h5("Select levels to recode/combine"), multiple=TRUE, selectize=TRUE,
+    cbgr <- selectInput("cbg_recfac",label=p("Select levels to recode/combine"), multiple=TRUE, selectize=TRUE,
       choices=curRecFacVals(), width="100%")
   })
   output$recfac_addna <- renderUI({
@@ -54,7 +54,7 @@ output$ui_recode <- renderUI({
   })
   output$recfac_txtval <- renderUI({
     req(input$cbg_recfac)
-    txtval <- textInput("inp_newlevname_rec",label=h5("New label for recoded values"),
+    txtval <- textInput("inp_newlevname_rec",label=p("New label for recoded values"),
       value=paste0(input$cbg_recfac, collapse="_"), width="100%")
   })
   out <- fluidRow(
@@ -110,13 +110,13 @@ output$ui_pram_expert <- renderUI({
   output$pram_expert_strata <- renderUI({
     txt_tooltip <- "By default PRAM is applied on the complete dataset. To apply the algorithm within strata, select a variable for stratification. The algorithm is then applied within the strata defined by the factor levels of that variable."
     selectInput("pram_expert_strataV",
-      label=h5("Postrandomize within different groups (stratification)?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Postrandomize within different groups (stratification)?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%")
   })
   output$pram_expert_var <- renderUI({
     txt_tooltip <- "The expert mode allows specifying the transition matrix manually."
     selectInput("sel_pramvars_expert", choices=pramVars(),
-      label=h5("Select variable for PRAM", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Select variable for PRAM", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       selected=input$sel_pramvars_expert, width="100%", multiple=FALSE)
   })
   output$pram_expert_btn <- renderUI({
@@ -190,23 +190,23 @@ output$ui_pram_simple <- renderUI({
   output$pram_simple_var <- renderUI({
     txt_tooltip <- "An invariant transition matrix is used, which guarantees that the univariate distribution of the variables in unchanged in probability."
     selectInput("sel_pramvars_simple", choices=pramVars(),
-      label=h5("Select variable(s) for PRAM", tipify(icon("info-circle"), title=txt_tooltip, placement="top")), width="100%", multiple=TRUE)
+      label=p("Select variable(s) for PRAM", tipify(icon("info-circle"), title=txt_tooltip, placement="top")), width="100%", multiple=TRUE)
   })
   output$pram_simple_strata <- renderUI({
     txt_tooltip <- "By default PRAM is applied on the complete dataset. To apply the algorithm within strata, select a variable for stratification. The algorithm is then applied within the strata defined by the factor levels of that variable."
     selectInput("pram_strataV_simple",
-      label=h5("Postrandomize within different groups (stratification)?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Postrandomize within different groups (stratification)?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", poss_strataVarP()), multiple=FALSE, width="100%")
   })
   output$pram_simple_pd <- renderUI({
     txt_tooltip <- "pd refers to the minimum diagonal values in the (internally) generated transition matrix. The higher this value is, the more likely it is that values are not changed."
     sliderInput("pram_simple_pd", min=0.01, max=1.00, step=0.01, value=0.8,
-      label=h5("Choose value for 'pd'", tipify(icon("info-circle"), title=txt_tooltip, placement="top")), width="100%")
+      label=p("Choose value for 'pd'", tipify(icon("info-circle"), title=txt_tooltip, placement="top")), width="100%")
   })
   output$pram_simple_alpha <- renderUI({
     txt_tooltip <- "alpha allows to add some perturbation to the calculated transition matrix. The lower alpha, the less perturbed the matrix will get."
     sliderInput("pram_simple_alpha", min=0.01, max=1.00, step=0.01, value=0.5,
-      label=h5("Choose value for 'alpha'", tipify(icon("info-circle"), title=txt_tooltip, placement="top")), width="100%")
+      label=p("Choose value for 'alpha'", tipify(icon("info-circle"), title=txt_tooltip, placement="top")), width="100%")
   })
   output$pram_simple_btn <- renderUI({
     req(input$sel_pramvars_simple, input$pram_strataV_simple)
@@ -410,7 +410,7 @@ output$ui_kAnon <- renderUI({
     } else {
       txt_tooltip <- "The choice of k is guided by the need for anonymization. A higher parameter will lead to more suppressions."
       sl <- sliderInput("sl_kanon_k",
-        label=h5("Please specify the k-anonymity parameter", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+        label=p("Please specify the k-anonymity parameter", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
         min=2, max=50, value=3, step=1, width="100%")
       out <- fluidRow(column(12, sl, align="center"))
     }
@@ -434,14 +434,14 @@ output$ui_kAnon <- renderUI({
   output$kanon_strata <- renderUI({
     txt_tooltip <- "By default k-anonymity is established on the complete dataset. To apply the algorithm within strata, select a variable for stratification. The algorithm is then applied within the strata defined by the factor levels of that variable."
     selectInput("kanon_strataV",
-      label=h5("Do you want to apply the method for each group defined by the selected variable?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Do you want to apply the method for each group defined by the selected variable?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       choices=c("no stratification", setdiff(poss_strataVarP(), c(get_all_numericvars_name(), get_keyVars_names()))), multiple=FALSE, width="75%")
   })
 
   output$kanon_use_importance <- renderUI({
     txt_tooltip <- "Values in variables with high importance (low values) are less likely to be suppressed than values in variables with low importance (high values)"
     radioButtons(inputId="rb_show_importance",
-      label=h5("Do you want to modify importance of key variables for suppression?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Do you want to modify importance of key variables for suppression?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       selected=input$rb_show_importance, width="100%", inline=TRUE, choices=c("No", "Yes"))
   })
 
@@ -450,7 +450,7 @@ output$ui_kAnon <- renderUI({
     txt_tooltip <- paste(txt_tooltip, "key variables. The level of k-anonymity can be set for each subset size. In case several sizes are chosen, the algorithm establishes k-anonymity first on the smaller subsets.")
     radioButtons("rb_kanon_useCombs", choices=c("No","Yes"), width="100%", inline=TRUE,
       selected=input$rb_kanon_useCombs,
-      label=h5("Apply k-anonymity to subsets of key variables?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")))
+      label=p("Apply k-anonymity to subsets of key variables?", tipify(icon("info-circle"), title=txt_tooltip, placement="top")))
   })
 
   out <- fluidRow(column(12, uiOutput("kanon_strata"), align="center"))
@@ -479,7 +479,7 @@ output$ui_supp_threshold <- renderUI({
   output$ui_supp_th <- renderUI({
     txt_tooltip <- "Any value in the selected key variable of a record with an individual risk higher than this threshold is suppressed."
     up <- round(max(get_risk()$risk),3)+0.005
-    sl <- sliderInput("sl_supp_threshold", label=h5("Threshold for individual risk", tipify(icon("info-circle"),title=txt_tooltip, placement="top")),
+    sl <- sliderInput("sl_supp_threshold", label=p("Threshold for individual risk", tipify(icon("info-circle"),title=txt_tooltip, placement="top")),
       min=0, max=up, value=0, step=0.001, width="100%")
     sl
   })
@@ -497,7 +497,7 @@ output$ui_supp_threshold <- renderUI({
     nr_risk
   })
   output$ui_supp_th_var <- renderUI({
-    selectInput("sel_supp_th_var", label=h5("Select key variable for suppression"), choices=get_keyVars_names(), selected=input$sel_supp_th_var, width="100%")
+    selectInput("sel_supp_th_var", label=p("Select key variable for suppression"), choices=get_keyVars_names(), selected=input$sel_supp_th_var, width="100%")
   })
   output$ui_supp_th_btn <- renderUI({
     req(input$sel_supp_th_var)
