@@ -713,15 +713,15 @@ output$setup_moreparams <- renderUI({
   txt_alpha <- "The parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
   txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincides based on a missing value (NA) contributes to these frequencies.")
   sl_alpha <- sliderInput("sl_alpha",
-    label=h5("Parameter 'alpha'", tipify(icon("info-circle"), title=txt_alpha, placement="top")),
+    label=p("Parameter 'alpha'", tipify(icon("info-circle"), title=txt_alpha, placement="top")),
     value=1, min=0, max=1, step=0.01, width="90%")
   sl_seed <- sliderInput("sl_seed",
-    label=h5("Parameter 'seed'", tipify(icon("info-circle"), title=txt_seed, placement="top")),
+    label=p("Parameter 'seed'", tipify(icon("info-circle"), title=txt_seed, placement="top")),
     value = 0, min = 0, max= 500, step = 1, round=FALSE, width="90%")
   out <- list(
     fluidRow(
-      column(12, h4("Set additional parameters", class="wb-block-title")), 
-      column(12, sl_alpha, align="center"), 
+      column(12, h4("Set additional parameters", class="wb-block-title")),
+      column(12, sl_alpha, align="center"),
       column(12, sl_seed, align="center"))
     )
   out
