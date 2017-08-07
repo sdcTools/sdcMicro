@@ -5,7 +5,9 @@
   max-width: 400px;
 }
 
-label p {
+label > p {
+  opacity: 0.8;
+  font-weight: 500;
   margin: 0;
   padding: 0;
   line-height: 100%;
