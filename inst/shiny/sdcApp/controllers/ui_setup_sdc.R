@@ -533,7 +533,7 @@ sdcData <- reactive({
   )
   df$nrCodes <- sapply(inputdata, function(x) { length(unique(x))} )
   df$nrNA <- sapply(inputdata, function(x) { sum(is.na(x))} )
-  colnames(df) <- c("Variable name", "Type", "Key variables", "Weight", "Hierarchical identifier", "PRAM", "Delete", "Number of levels", "Number of missing")
+  colnames(df) <- c("Variable name", "Type", "Key variables", "Weight", "Hierarchical<br>identifier", "PRAM", "Delete", "Number of levels", "Number of missing")
   rownames(df) <- NULL
   df
 })
@@ -543,7 +543,8 @@ output$setupTable <- DT::renderDataTable({
 }, server=FALSE, escape=FALSE, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
 options = list(
   scrollX=TRUE, scrollY=380, searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE, autoWidth=FALSE,
-  columnDefs=list(list(width='400px', targets = c(2))),
+  # columnDefs=list(list(width='400px', targets = c(2))),
+  columnDefs=list(list()),
   preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
   drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
 ))
