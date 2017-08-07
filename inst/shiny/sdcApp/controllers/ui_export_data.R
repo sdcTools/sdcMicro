@@ -1,6 +1,6 @@
 # UI-Output for exporting the report
 output$ui_export_report <- renderUI({
-  rb1 <- radioButtons("rb_simple_report", h5("Type of Report"),
+  rb1 <- radioButtons("rb_simple_report", label=p("Select type of report"),
     choices=c("internal (detailed)"="internal", "external (short overview)"="external"),
     inline=TRUE, selected=input$rb_simple_report)
   out <- fluidRow(

@@ -94,7 +94,7 @@ output$ui_resnum_comparison <- renderUI({
   })
   output$ui_catvar_numres <- renderUI({
     byv <- c("none", get_keyVars_names(), get_strataVar_names())
-    selectInput("sel_res_catvar1", label=p("Optionally choose a categorical variable"), choices=byv, width="100%")
+    selectInput("sel_res_catvar1", label=p("Choose a categorical variable (optional)"), choices=byv, width="100%")
   })
   output$ui_numvar_modtab <- DT::renderDataTable({
     if (is.null(input$sel_res_numvar1)) {

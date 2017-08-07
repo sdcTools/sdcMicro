@@ -46,7 +46,7 @@ output$ui_recode <- renderUI({
   })
   output$recfac_addna <- renderUI({
     req(input$cbg_recfac)
-    radioButtons("rb_recfac_micro_addna", h5("Add missing values to new factor level?"), choices=c("no", "yes"), inline=TRUE)
+    radioButtons("rb_recfac_micro_addna", label=p("Add missing values to new factor level?"), choices=c("no", "yes"), inline=TRUE)
   })
   output$recfac_btn <- renderUI({
     req(input$cbg_recfac)
@@ -54,7 +54,7 @@ output$ui_recode <- renderUI({
   })
   output$recfac_txtval <- renderUI({
     req(input$cbg_recfac)
-    txtval <- textInput("inp_newlevname_rec",label=p("New label for recoded values"),
+    txtval <- textInput("inp_newlevname_rec",label=p("Specify new label for recoded values"),
       value=paste0(input$cbg_recfac, collapse="_"), width="100%")
   })
   out <- fluidRow(
@@ -408,9 +408,9 @@ output$ui_kAnon <- renderUI({
           column(6, obj$sls[[i]], align="center")))
       }
     } else {
-      txt_tooltip <- "The choice of k is guided by the need for anonymization. A higher parameter will lead to more suppressions."
+      txt_tooltip <- "The choice of k is guided by the need for anonymization. A higher level of this parameter will lead to more suppressions."
       sl <- sliderInput("sl_kanon_k",
-        label=p("Please specify the k-anonymity parameter", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+        label=p("Set the k-anonymity parameter", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
         min=2, max=50, value=3, step=1, width="100%")
       out <- fluidRow(column(12, sl, align="center"))
     }
@@ -479,7 +479,7 @@ output$ui_supp_threshold <- renderUI({
   output$ui_supp_th <- renderUI({
     txt_tooltip <- "Any value in the selected key variable of a record with an individual risk higher than this threshold is suppressed."
     up <- round(max(get_risk()$risk),3)+0.005
-    sl <- sliderInput("sl_supp_threshold", label=p("Threshold for individual risk", tipify(icon("info-circle"),title=txt_tooltip, placement="top")),
+    sl <- sliderInput("sl_supp_threshold", label=p("Set threshold for individual risk", tipify(icon("info-circle"),title=txt_tooltip, placement="top")),
       min=0, max=up, value=0, step=0.001, width="100%")
     sl
   })

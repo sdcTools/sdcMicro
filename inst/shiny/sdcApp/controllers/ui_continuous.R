@@ -47,9 +47,9 @@ output$ui_topbotcoding_num <- renderUI({
     sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), selected=obj$inp_sel_topbot_var_num, multiple=FALSE, label=p("Select variable"), width="75%")
     sel_kind <- radioButtons("sel_topbot_kind_num", choices=c("top","bottom"),
       label=p("Apply top/bottom coding?", tipify(icon("info-circle"), title=txt_tooltip1, placement="top")), inline=TRUE)
-    txt_val <- textInput("num_topbot_val_num", label=p("Threshold value", tipify(icon("info-circle"), title=txt_tooltip2, placement="top")),
+    txt_val <- textInput("num_topbot_val_num", label=p("Set threshold value", tipify(icon("info-circle"), title=txt_tooltip2, placement="top")),
       placeholder="Please enter a number", width="75%")
-    txt_replace <- textInput("num_topbot_replacement_num", label=p("Replacement Value", tipify(icon("info-circle"), title=txt_tooltip3, placement="top")),
+    txt_replace <- textInput("num_topbot_replacement_num", label=p("Set replacement value", tipify(icon("info-circle"), title=txt_tooltip3, placement="top")),
       placeholder="Please enter a number", width="75%")
     out <- fluidRow(column(6, sel_var, align="center"), column(6, sel_kind, align="center"))
     out <- list(out, fluidRow(column(6, txt_val, align="center"), column(6, txt_replace, align="center")))
@@ -301,27 +301,27 @@ output$ui_noise <- renderUI({
     req(input$sel_noise_method)
     if (input$sel_noise_method=="correlated2") {
       txt_tooltip <- "Delta is the parameter that determines the level of noise. The larger delta, the higher the noise level. Please refer to the literature for a more detailed description of the effect of delta."
-      lab <- h5("Amount of noise (parameter 'delta')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
+      lab <- p("Set amount of noise (parameter 'delta')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
       par <- c(value=0.1, min=0.1, max=2, step=0.01)
     } else if (input$sel_noise_method=="ROMM") {
       txt_tooltip <- 'Parameter "p" is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes.'
-      lab <- h5("Amount of noise (parameter 'p')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
+      lab <- p("Set amount of noise (parameter 'p')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
       par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
     } else if (input$sel_noise_method=="correlated"){
       txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the covariance matrix of the noise. For example, for the default value 150, the covariance matrix of the noise is 1.5 times the covariance matrix of the data. The added noise is generated from a multivariate normal distribution."
-      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
+      lab <- p("Set amount of noise (parameter 'noise')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     } else if (input$sel_noise_method=="restr"){
       txt_tooltip <- "The size of the noise depends on the parameter noise and the sample size. The higher this parameter, the larger the noise."
-      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
+      lab <- p("Set amount of noise (parameter 'noise')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     } else if (input$sel_noise_method=="outdect"){
       txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data."
-      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
+      lab <- p("Set amount of noise (parameter 'noise')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     } else {
       txt_tooltip <- "The added noise is proportional to the variance in the data. The specified amount of noise is the multiplier for the standard deviation of the noise. For example, for the default value 150, the standard deviation of the noise is 1.5 times the standard deviation in the data. The added noise is generated from a univariate normal distribution."
-      lab <- h5("Amount of noise (parameter 'noise')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
+      lab <- p("Set amount of noise (parameter 'noise')", tipify(icon("info-circle"), title=txt_tooltip, placement="top"))
       par <- c(value=150, min=0, max=300, step=1)
     }
     sliderInput("sl_noise_noise", label=lab, min=par["min"], max=par["max"], step=par["step"], value=par["value"], width="100%")
@@ -407,13 +407,13 @@ output$ui_rankswap <- renderUI({
   output$sl_rankswap_top <- renderUI({
     txt_tooltip <- "The highest values can be top coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be top coded as percentage of the sample size. By default no values are top coded."
     sliderInput("sl_rankswap_top",
-      label=p("Percentage of highest values that are grouped together before rank swapping", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Set percentage of highest values that are grouped together before rank swapping", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       min=0, max=25, step=1, value=0, width="100%")
   })
   output$sl_rankswap_bot <- renderUI({
     txt_tooltip <- "The lowest values can be bottom coded before applying rank-swapping in order to protect outliers. This parameter specifies the number of values to be bottom coded as percentage of the sample size. By default no values are bottom coded."
     sliderInput("sl_rankswap_bot",
-      label=p("Percentage of lowest values that are grouped together before rank swapping", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Set percentage of lowest values that are grouped together before rank swapping", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       min=0, max=25, step=1, value=0, width="100%")
 
   })
@@ -422,20 +422,20 @@ output$ui_rankswap <- renderUI({
     txt_tooltip <- paste0(txt_tooltip, "The absolute difference between the variable mean before and swapping (abs(X_1 - X_2), where X_1 is the (subset) sample mean before swapping ")
     txt_tooltip <- paste0(txt_tooltip, "and X_2 is the (subset) sample mean after swapping) is kept smaller than or equal to 2 * K_0 * X_1 / sqrt(N_S), where N_S is the sample size of the subset under consideration. Therefore, larger values of K_0 allow larger deviations.")
     sliderInput("sl_rankswap_k0",
-      label=p("Subset-mean preservation factor", tipify(icon("info-circle"), title=txt_tooltip, placement="bottom")),
+      label=p("Set subset-mean preservation factor", tipify(icon("info-circle"), title=txt_tooltip, placement="bottom")),
       min=0, max=1, step=0.01, value=0, width="100%")
   })
   output$sl_rankswap_r0 <- renderUI({
     txt_tooltip <- "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_1/R_2 > R_0 where R_1 is the correlation coefficient of the two variables after swapping, "
     txt_tooltip <- paste0(txt_tooltip, "and R_2 is the correlation coefficient of the two variables before swapping.")
     sliderInput("sl_rankswap_r0",
-      label=p("Multivariate preservation factor", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Set multivariate preservation factor", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       min=0, max=1, step=0.01, value=0.95, width="100%")
   })
   output$sl_rankswap_p <- renderUI({
     txt_tooltip <- "This parameter (P) describes the size of the rank range as percentage of the total sample size. So two records are eligible for swapping if their ranks, i and j respectively, satisfy abs(i-j) < P*N/100, where N is the total sample size."
     sliderInput("sl_rankswap_p",
-      label=p("Rank range as percentage of total sample size.", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+      label=p("Set rank range as percentage of total sample size.", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       min=0, max=100, step=1, value=0, width="100%")
   })
 

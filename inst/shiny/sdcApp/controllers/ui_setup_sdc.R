@@ -486,8 +486,10 @@ output$ui_sdcObj_randIds <- renderUI({
   output$randid_newid <- renderUI({
     textInput("txt_randid_newid", label=p("Specify name for the new ID variable"), width="100%")
   })
+  #
   output$randid_withinvar <- renderUI({
-    selectInput("sel_randid_withinvar", label=p("If used, the ID will be the same for equal values of the selected variable"),
+  txt_tooltip <- "If used, the ID will be the same for equal values of the selected variable."
+    selectInput("sel_randid_withinvar", label=p("Set grouping variable (optional)", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       choices=c("none",allVars()), multiple=FALSE, width="100%")
   })
   output$randid_btn <- renderUI({
