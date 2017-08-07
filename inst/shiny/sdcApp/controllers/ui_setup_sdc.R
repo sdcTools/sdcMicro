@@ -813,7 +813,8 @@ output$ui_sdcObj_create <- renderUI({
     column(width = 12, offset = 0, h3("Anonymize"), class="wb-header"),
     column(width = 12, offset = 0, p("Select and export variables."), class="wb-header-hint"),
     # column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
-    column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
+    # column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
+    column(8, div(style='',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
     column(4, uiOutput("setup_moreparams"), uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
   )
   out

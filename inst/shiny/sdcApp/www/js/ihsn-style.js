@@ -18,6 +18,8 @@ var addEvent = function(object, type, callback) {
 var VIEW_ID_MICRODATA_DISPLAY = '#ui_show_microdata';
 var VIEW_ID_MICRODATA_SETVALUESNA = '#ui_set_to_na';
 
+var VIEW_ID_ANONYMIZE_DISPLAY = '#ui_anonymize.shiny-html-output';
+
 var setHeightForTables = function(){
   //
   // TABLE_ID_MICRODATA_DISPLAY: Full coverage
@@ -33,16 +35,28 @@ var setHeightForTables = function(){
   //
   // TABLE_ID_MICRODATA_SETVALUESNA: No Action
   //
-}
+
+  //
+  // TABLE_ID_ANONYMIZE_DISPLAY: Full height
+  //
+  if ($(VIEW_ID_ANONYMIZE_DISPLAY).length > 0){
+    var windowH_1 = $(window).height();
+    var tableH_1 = $(VIEW_ID_ANONYMIZE_DISPLAY +' .dataTables_scrollBody').height();
+    var tableTop_1 =  $(VIEW_ID_ANONYMIZE_DISPLAY +' .dataTables_scrollBody').offset().top;
+    var margin_1 = 180;
+    var targetH_1 = windowH_1 - tableTop_1 - margin_1;
+    $(VIEW_ID_ANONYMIZE_DISPLAY + ' .dataTables_scrollBody').height(targetH_1);
+  }
+};
 
 var addFormControlClassForDataTables = function(){
   $( "select" ).addClass( "form-control" );
   $( "input[type=search]" ).addClass( "form-control" );
-}
+};
 
 var addFormControlClassForSelectize = function(){
   $(".selectize-input").addClass("form-control");
-}
+};
 
 addEvent(window, "resize", function(event) {
   console.log('resized');
@@ -71,7 +85,7 @@ $( document ).change(function() {
 });
 
 /*
- * Monitor DOM changes 
+ * Monitor DOM changes
  * https://stackoverflow.com/questions/3219758/detect-changes-in-the-dom
  */
 (function (window) {
@@ -185,7 +199,7 @@ $( document ).change(function() {
     window.onDomChange = onDomChange;
 })(window);
 
-onDomChange(function(){ 
+onDomChange(function(){
   addFormControlClassForSelectize();
   console.log("The Times They Are a-Changin'");
 });
