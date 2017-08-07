@@ -288,7 +288,7 @@ noSdcProblem <- function(prefix="btn_a_setup_", uri) {
   fluidRow(
     column(12, h3("No SDC problem was specified"), class="wb-header"),
     column(12, p("Please go to the Microdata tab to upload a dataset or upload a previously saved problem from the Reproducibility tab."), class="wb-header-hint"),
-    column(12, p(txt, align="center")),
+    column(12, p(txt)),
     column(12, div(btn, align="center")))
 }
 
