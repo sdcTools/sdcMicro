@@ -51,7 +51,7 @@ output$ui_script_import1 <- renderUI({
 })
 
 
-output$ui_undo <- renderUI({
+output$ui_undo_main <- renderUI({
   if (is.null(inputdata())) {
     return(list(noInputData(uri="ui_undo"),
       fluidRow(column(12, tags$br(), p("or"), align="center")), uiOutput("ui_script_import1") ))
@@ -78,4 +78,9 @@ output$ui_undo <- renderUI({
     out <- list(out, uiOutput("ui_export_problem1"), uiOutput("ui_script_import1"))
     return(out)
   }
+})
+
+output$ui_undo <- renderUI({
+  return(fluidRow(
+    column(12, uiOutput("ui_undo_main"), class="wb-maincolumn")))
 })
