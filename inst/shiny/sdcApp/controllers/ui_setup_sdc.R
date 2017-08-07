@@ -251,7 +251,7 @@ output$ui_sdcObj_summary <- renderUI({
 output$ui_sdcObj_explorevars_header <- renderUI({
   out <- fluidRow(
     column(12, h3("Explore variables in modified data"), offset = 0, class = "wb-header"),
-    column(12, p("Explore variables in modified data"), offset = 0, class = "wb-header-hint")
+    column(12, p("Here you can view tabulations, summary statistics and graphic representations of variables and pairs of variables to explore the modified data."), offset = 0, class = "wb-header-hint")
   )
   out
 })
