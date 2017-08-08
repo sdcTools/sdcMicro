@@ -13,6 +13,10 @@
 #' @param column variable name in case the input is a \code{data.frame} or an object of class \code{\link{sdcMicroObj-class}}.
 #' @return Top or bottom coded data or modified \code{\link{sdcMicroObj-class}}.
 #' @author Matthias Templ and Bernhard Meindl
+#' @references 
+#' Templ, M. and Kowarik, A. and Meindl, B. 
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #' @seealso \code{\link{indivRisk}}
 #' @keywords manip
 #' @note top-/bottom coding of factors is no longer possible as of sdcMicro >=4.7.0
