@@ -11,6 +11,10 @@
 #' \code{@keyVars}, \code{@numVars}, \code{@pramVars}, \code{@weightVar}, \code{@hhId} or \code{@strataVar} in \code{obj}.
 #' @return a modified \code{\link{sdcMicroObj-class}} object.
 #' @author Bernhard Meindl
+#' @references 
+#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' \doi{10.1007/978-3-319-50272-4}
 #' @keywords manip
 #' @export
 #' @examples

@@ -58,6 +58,11 @@
 #' Anna M. Manning, David J. Haglin, John A. Keane (2008) A recursive search
 #' algorithm for statistical disclosure assessment. \emph{Data Min Knowl Disc}
 #' 16:165 -- 196
+#' 
+#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' \doi{10.1007/978-3-319-50272-4}
+#' 
 #' @keywords manip
 #' @rdname suda2
 #' @export

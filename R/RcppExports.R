@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 cpp_calcSuppInds <- function(inp, checkVals) {
-    .Call(sdcMicro_cpp_calcSuppInds, inp, checkVals)
+    .Call(`_sdcMicro_cpp_calcSuppInds`, inp, checkVals)
 }
 
