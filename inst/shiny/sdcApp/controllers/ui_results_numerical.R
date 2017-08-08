@@ -65,11 +65,11 @@ output$ui_resnum_infoloss <- renderUI({
 
   txt3 <- paste("The",tags$strong("difference in eigenvalues"),"is a comparison of the robust eigenvalues of the data before and after anonymization.")
   out <- fluidRow(
-    column(12, p(HTML(txt1)), align="center"),
-    column(12, uiOutput("ui_formula1"),align="center"),
-    column(12, p(HTML(txt2)), align="center"),
-    column(12, p(HTML(txt3)), align="center"),
-    column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
+    column(12, p(HTML(txt1))),
+    column(12, uiOutput("ui_formula1")),
+    column(12, p(HTML(txt2))),
+    column(12, p(HTML(txt3))),
+    column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."))
   )
   out
 })
