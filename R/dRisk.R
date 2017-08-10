@@ -19,6 +19,10 @@
 #' @seealso \code{\link{dUtility}}
 #' @references see method SDID in
 #' \url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf}
+#' 
+#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' \doi{10.1007/978-3-319-50272-4}
 #' @keywords manip
 #' @export
 #' @examples
