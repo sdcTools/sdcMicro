@@ -32,6 +32,10 @@
 #' @note \code{globalRecode} can not be applied to vectors stored as factors from sdcMicro >= 4.7.0!
 #' @keywords manip
 #' @author Matthias Templ and Bernhard Meindl
+#' @references 
+#' #' Templ, M. and Kowarik, A. and Meindl, B. 
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #' @export
 #' @examples
 #' data(free1)

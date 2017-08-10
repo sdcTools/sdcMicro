@@ -21,6 +21,10 @@
 #' @return the modified \code{\link{sdcMicroObj-class}}
 #' @keywords methods
 #' @author Bernhard Meindl
+#' @references 
+#' Templ, M. and Kowarik, A. and Meindl, B. 
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #' @export
 #' @examples
 #' ## for objects of class sdcMicro:

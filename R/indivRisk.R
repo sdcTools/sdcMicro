@@ -22,6 +22,10 @@
 #' Capobianchi and Franconi
 #' @author Matthias Templ. Bug in method \dQuote{exact} fixed since version
 #' 2.6.5. by Youri Baeyens.
+#' @references 
+#' Templ, M. and Kowarik, A. and Meindl, B. 
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #' @seealso \code{\link{measure_risk}}, \code{\link{freqCalc}}
 #' @references Franconi, L. and Polettini, S. (2004) \emph{Individual risk
 #' estimation in mu-Argus: a review}. Privacy in Statistical Databases, Lecture
