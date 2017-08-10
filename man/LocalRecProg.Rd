@@ -74,6 +74,13 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- LocalRecProg(sdc)
 }
+\references{
+Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
+\emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
+in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
+(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77. 
+\doi{10.1007/978-3-642-33627-0_6}
+}
 \author{
 Alexander Kowarik, Bernd Prantner, IHSN C++ source, Akimichi Takemura
 }

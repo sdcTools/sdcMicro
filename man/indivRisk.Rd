@@ -50,6 +50,10 @@ indivf$rk
 
 }
 \references{
+Templ, M. and Kowarik, A. and Meindl, B. 
+Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+\emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+
 Franconi, L. and Polettini, S. (2004) \emph{Individual risk
 estimation in mu-Argus: a review}. Privacy in Statistical Databases, Lecture
 Notes in Computer Science, 262--272. Springer

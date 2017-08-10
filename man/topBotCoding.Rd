@@ -47,6 +47,11 @@ sdc <- createSdcObj(testdata2, keyVars=c('urbrur','roof','walls','water','electc
 sdc <- topBotCoding(sdc, value=500000, replacement=1000, column="income")
 testdataout <- extractManipData(sdc)
 }
+\references{
+Templ, M. and Kowarik, A. and Meindl, B. 
+Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+\emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+}
 \seealso{
 \code{\link{indivRisk}}
 }
