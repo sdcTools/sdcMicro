@@ -18,8 +18,8 @@ index of the variables to be used for risk measurement.}
 \item{\code{DisFraction}: }{It is the sampling fraction for the simple random
 sampling, and the common sampling fraction for stratified sampling. By
 default, it's set to 0.01.}
-\item{\code{original_scores}: }{if this argument is \code{TRUE}, the suda-scores are computed as described in paper
-"SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE} (the default), the computation of the scores
+\item{\code{original_scores}: }{if this argument is \code{TRUE} (the default), the suda-scores are computed as described in paper
+"SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE}, the computation of the scores
 is slightly different as it was done in the original implementation of the algorithm by the IHSN.}
 }}
 }
@@ -54,6 +54,10 @@ algorithm generates all possible variable subsets of defined categorical key
 variables and scans them for unique patterns in the subsets of variables.
 The lower the amount of variables needed to receive uniqueness, the higher
 the risk of the corresponding observation.
+}
+\note{
+Since version >5.0.2, the computation of suda-scores has changed and is now by default as described in
+the original paper by Elliot et al.
 }
 \examples{
 \dontrun{
