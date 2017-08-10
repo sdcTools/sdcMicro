@@ -76,7 +76,14 @@
 #' (2007) \emph{l-Diversity: Privacy Beyond k-Anonymity}.  ACM Trans. Knowl.
 #' Discov. Data, 1(1)
 #'
-#' additionally, have a look at the vignettes of sdcMicro for further reading.
+#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' \doi{10.1007/978-3-319-50272-4}.
+#' 
+#' #' Templ, M. and Kowarik, A. and Meindl, B. 
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+#'
 #' @keywords manip
 #' @export
 #' @examples

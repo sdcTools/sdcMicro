@@ -1,3 +1,14 @@
+# 5.0.3
+- improvement: show name of uploaded file in report when using sdcApp() (fixes #209)
+- correct summary statistics in GUI in case not all variables have been changed
+- fixes for file-imports of datasets containing labels (eg. stata-files)
+- allow to change computation of suda2-scores by adding a parameter to suda2()
+- use some functions (gowerD,..) from VIM
+- bugfix for special case of only one dim-variable in freqCalc()
+- bugfix for edge-cases in localSuppression()/kAnon()
+- update references and improve documentation
+
+
 # 5.0.2
 - consistency improvements
 - code cleanup

@@ -32,6 +32,10 @@
 #' @note \code{globalRecode} can not be applied to vectors stored as factors from sdcMicro >= 4.7.0!
 #' @keywords manip
 #' @author Matthias Templ and Bernhard Meindl
+#' @references 
+#' #' Templ, M. and Kowarik, A. and Meindl, B. 
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #' @export
 #' @examples
 #' data(free1)
@@ -123,10 +127,20 @@ globalRecodeWORK <- function(x, breaks, labels=NULL, method="equidistant") {
     }
     b1
   }
+  
+  stopifnot(method %in% c("equidistant","logEqui","equalAmount"))
+  
   if (length(breaks)==1) {
-    gr <- cut(x, breaks=get(method)(x), labels=labels, dig.lab=8)
+    breaks <- round(breaks)
+    stopifnot(breaks>=1)
+    if (breaks==1) {
+      gr <- cut(x, breaks=c(min(x)-1, max(x)+1), labels=labels, dig.lab=8)
+    } else {
+      gr <- cut(x, breaks=get(method)(x), labels=labels, dig.lab=8, include.lowest = TRUE)
+    }
   }  else {
     gr <- cut(x, breaks=breaks, labels=labels, dig.lab=8)
   }
   invisible(gr)
 }
+

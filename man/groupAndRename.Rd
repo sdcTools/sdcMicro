@@ -43,6 +43,11 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- groupAndRename(sdc, var="urbrur", before=c("1","2"), after=c("1"))
 }
+\references{
+Templ, M. and Kowarik, A. and Meindl, B. 
+Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+\emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+}
 \author{
 Bernhard Meindl
 }

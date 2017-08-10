@@ -47,6 +47,15 @@
 #' respect to specified key-variables or the manipulated data stored in the
 #' \code{\link{sdcMicroObj-class}}.
 #' @author Bernhard Meindl, Matthias Templ
+#' @references
+#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' \doi{10.1007/978-3-319-50272-4}
+#' 
+#' Templ, M. and Kowarik, A. and Meindl, B. 
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+#'
 #' @keywords manip
 #' @export
 #' @note Deprecated methods 'localSupp2' and 'localSupp2Wrapper' are no longer available
@@ -243,8 +252,9 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     while (runInd) {
       ind.problem <- which(ff$fk < k)
       ind.problem  <- ind.problem[order(rk$rk[ind.problem],decreasing=TRUE)]
-      for (i in 1:length(ind.problem)) {
-        res <- cpp_calcSuppInds(mat, mat[ind.problem[i],])
+      for (i in seq_along(ind.problem)) {
+        params <- list(alpha=alpha, id=as.integer(ind.problem[i]))
+        res <- cpp_calcSuppInds(mat, mat[ind.problem[i],], params=params)
         if (res$fk < k) {
           ind <- res$ids
           if (length(ind) > 0) {
@@ -252,7 +262,12 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
             colIndsSorted <- keyVars[order(importanceI)]
             while (is.null(colInd)) {
               for (cc in colIndsSorted) {
-                z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
+                # special case where we have to suppress values in the problematic instance itself because no other candidates are available
+                if (length(ind)==1 && ind==ind.problem[i]) {
+                  z <- which(!is.na(mat[ind, cc]))
+                } else {
+                  z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
+                }
                 if (length(z) > 0) {
                   colInd <- cc
                   break;
@@ -597,7 +612,6 @@ plot.localSuppression <- function(x, ...) {
   keyVar <- rep(x$keyVars, nrow(inp))
   if (any(nchar(keyVar) >= 12)) {
     warnMsg <- "Too long variable names are cutted!\n"
-    obj <- addWarning(obj, warnMsg=warnMsg, method="localSuppression", variable=NA)
     warning(warnMsg)
     keyVar <- substr(keyVar, 1, 12)
   }

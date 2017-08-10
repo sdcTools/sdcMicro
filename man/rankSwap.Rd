@@ -80,6 +80,12 @@ sdc <- rankSwap(sdc)
 Moore, Jr.R. (1996) Controlled data-swapping techniques for
 masking public use microdata, U.S. Bureau of the Census \emph{Statistical
 Research Division Report Series}, RR 96-04.
+
+Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
+\emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
+in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
+(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77. 
+\doi{10.1007/978-3-642-33627-0_6}
 }
 \author{
 Alexander Kowarik for the interface, Bernhard Meindl for improvements.

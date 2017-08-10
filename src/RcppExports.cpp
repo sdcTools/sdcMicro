@@ -6,14 +6,15 @@
 using namespace Rcpp;
 
 // cpp_calcSuppInds
-List cpp_calcSuppInds(NumericMatrix inp, NumericVector checkVals);
-RcppExport SEXP sdcMicro_cpp_calcSuppInds(SEXP inpSEXP, SEXP checkValsSEXP) {
+List cpp_calcSuppInds(NumericMatrix inp, NumericVector checkVals, List params);
+RcppExport SEXP _sdcMicro_cpp_calcSuppInds(SEXP inpSEXP, SEXP checkValsSEXP, SEXP paramsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type inp(inpSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type checkVals(checkValsSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_calcSuppInds(inp, checkVals));
+    Rcpp::traits::input_parameter< List >::type params(paramsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_calcSuppInds(inp, checkVals, params));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -342,7 +342,7 @@ output$ui_rescat_violating_kanon <- renderUI({
     if (length(ii)==0) {
       return(NULL)
     }
-    df <- cbind(get_origData()[ii, get_keyVars()], risks[ii,])
+    df <- cbind(get_manipKeyVars()[ii,], risks[ii,])
     df$risk <- formatC(df$risk, format="f", digits=3)
     df[order(df$fk),]
   })
@@ -426,7 +426,12 @@ output$ui_rescat_mosaicplot <- renderUI({
   })
   output$mosaicplot_m <- renderPlot({
     req(input$sel_catvar1)
-    df <- cbind(get_manipKeyVars(), get_manipPramVars())
+    pV <- get_manipPramVars()
+    if (!is.null(pV)) {
+      df <- cbind(get_manipKeyVars(), pV)
+    } else {
+      df <- get_manipKeyVars()
+    }
     vars <- c(input$sel_catvar1, input$sel_catvar2)
     if (input$sel_catvar2=="none") {
       barplot(table(df[[vars[1]]]))

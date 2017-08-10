@@ -21,6 +21,10 @@
 #' @return the modified \code{\link{sdcMicroObj-class}}
 #' @keywords methods
 #' @author Bernhard Meindl
+#' @references 
+#' Templ, M. and Kowarik, A. and Meindl, B. 
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #' @export
 #' @examples
 #' ## for objects of class sdcMicro:
@@ -76,6 +80,9 @@ setMethod(f="groupAndRenameX", signature=c("sdcMicroObj"),
 definition=function(obj, var, before, after, addNA=FALSE) {
   obj <- nextSdcObj(obj)
   manipKey <- get.sdcMicroObj(obj, type="manipKeyVars")
+  if (!var %in% colnames(manipKey)) {
+    stop("variable specified in 'var' is not available in 'obj'!\n")
+  }
   manipKey[[var]] <- groupAndRename(manipKey[[var]], var=var, before=before, after=after, addNA=addNA)
   obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(manipKey))
   # calculate risk

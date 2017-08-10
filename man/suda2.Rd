@@ -17,7 +17,11 @@ index of the variables to be used for risk measurement.}
 \item{\code{missing}: }{Missing value coding in the given data set.}
 \item{\code{DisFraction}: }{It is the sampling fraction for the simple random
 sampling, and the common sampling fraction for stratified sampling. By
-default, it's set to 0.01.}}}
+default, it's set to 0.01.}
+\item{\code{original_scores}: }{if this argument is \code{TRUE} (the default), the suda-scores are computed as described in paper
+"SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE}, the computation of the scores
+is slightly different as it was done in the original implementation of the algorithm by the IHSN.}
+}}
 }
 \value{
 A modified \code{\link{sdcMicroObj-class}} object or the following list
@@ -51,6 +55,10 @@ variables and scans them for unique patterns in the subsets of variables.
 The lower the amount of variables needed to receive uniqueness, the higher
 the risk of the corresponding observation.
 }
+\note{
+Since version >5.0.2, the computation of suda-scores has changed and is now by default as described in
+the original paper by Elliot et al.
+}
 \examples{
 \dontrun{
 data(testdata2)
@@ -64,7 +72,7 @@ data(testdata2)
 sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
-sdc <- suda2(sdc)
+sdc <- suda2(sdc, original_scores=FALSE)
 }
 }
 \references{
@@ -79,6 +87,10 @@ Classification of Special Uniques
 Anna M. Manning, David J. Haglin, John A. Keane (2008) A recursive search
 algorithm for statistical disclosure assessment. \emph{Data Min Knowl Disc}
 16:165 -- 196
+
+Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+\emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+\doi{10.1007/978-3-319-50272-4}
 }
 \author{
 Alexander Kowarik and Bernhard Meindl (based on the C++ code from the Organisation For

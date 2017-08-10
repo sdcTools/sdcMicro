@@ -32,6 +32,11 @@ sdc <- addGhostVars(sdc, keyVar="urbrur", ghostVars=c("hhcivil"))
 ## we want to link the anonymization status of key variabe 'roof' to 'represent'
 sdc <- addGhostVars(sdc, keyVar="roof", ghostVars=c("represent"))
 }
+\references{
+Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+\emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+\doi{10.1007/978-3-319-50272-4}
+}
 \author{
 Bernhard Meindl
 }

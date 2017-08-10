@@ -225,15 +225,24 @@ sdc@risk$model
 
 }
 \references{
+Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+\emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+\doi{10.1007/978-3-319-50272-4}
+
+Templ, M. and Kowarik, A. and Meindl, B. 
+Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+\emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+
 Templ, M. and Meindl, B. \emph{Practical Applications in
 Statistical Disclosure Control Using R}, Privacy and Anonymity in
 Information Management Systems, Bookchapter, Springer London, pp. 31-62,
-2010
+2010. \doi{10.1007/978-1-84996-238-4_3}
 
 Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 \emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
 in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
-(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77.
+(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77. 
+\doi{10.1007/978-3-642-33627-0_6}
 
 Templ, M.  \emph{Statistical Disclosure Control for Microdata Using the
 R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number 2, pp.

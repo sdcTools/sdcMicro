@@ -43,6 +43,11 @@
 #' Smoothing Model for Sample Disclosure Risk Estimation}. Privacy in
 #' Statistical Databases. Lecture Notes in Computer Science.  Springer-Verlag,
 #' 82--93.
+#' 
+#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' \doi{10.1007/978-3-319-50272-4}
+#' 
 #' @keywords manip
 #' @note LLmodGlobalRisk is depcrecated for \code{\link{modRisk}} and is only
 #' provided for compatibility with older versions of this package. It may be removed

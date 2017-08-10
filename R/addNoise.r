@@ -36,7 +36,8 @@
 #' \item{noise}{amount of noise}
 #' @author Matthias Templ and Bernhard Meindl
 #' @seealso \code{\link{sdcMicroObj-class}}, \code{\link{summary.micro}}
-#' @references Domingo-Ferrer, J. and Sebe, F. and Castella, J., \dQuote{On the
+#' @references 
+#' Domingo-Ferrer, J. and Sebe, F. and Castella, J., \dQuote{On the
 #' security of noise addition for privacy in statistical databases}, Lecture
 #' Notes in Computer Science, vol. 3050, pp. 149-161, 2004.  ISSN 0302-9743.
 #' Vol. Privacy in Statistical Databases, eds. J. Domingo-Ferrer and V. Torra,
@@ -63,7 +64,11 @@
 #'
 #' Templ, M. and Meindl, B. and Kowarik, A.: \emph{Statistical Disclosure Control for
 #' Micro-Data Using the R Package sdcMicro}, Journal of Statistical Software,
-#' 67 (4), 1--36, 2015.
+#' 67 (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+#' 
+#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' \doi{10.1007/978-3-319-50272-4}
 #' @keywords manip
 #' @export
 #' @rdname addNoise
@@ -137,6 +142,8 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
     }
     N <- nrow(x)
     x + mvrnorm(N, rep(0, ncol(x)), Sigma=noise/100 * cov(na.omit(x)))
+    # better?
+    #x + mvrnorm(N, rep(0, ncol(x)), Sigma=noise/100 * cov(x, use="pairwise.complete.obs"))
   }
   addNoise_correlated2 <- function(x, delta) {
     N <- nrow(x)

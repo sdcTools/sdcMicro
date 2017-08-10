@@ -1008,12 +1008,13 @@ void ClearGlobalVariables(void)
 //* ======================================================================== *
 //*                              Main
 //* ======================================================================== *
-RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP DisFraction_R)
+RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP DisFraction_R, SEXP elliot_scores)
 //,SEXP SudaScore_R, SEXP DisSudaScore_R, SEXP ContributionPercent_R, SEXP SavePerRow_R)
 {
   int i, j, k, l;
   float DisFraction = 0.5f;
 
+  Rcpp::LogicalVector like_elliot = elliot_scores;
 
   // data
   Rcpp::NumericMatrix Mat(data);  // creates Rcpp matrix from SEXP
@@ -1089,37 +1090,39 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
     float *pContribution = new float[g_NbVarALEX];
 
     g_ab = new double[g_NbVarALEX];
+    if (like_elliot[0]==true) {
+      ForLoop (i, g_NbVarALEX) {
+        long double result = 1.0;
+        for (j = i+1; j < g_NbVarALEX; ++j) {
+          result *= (g_NbVarALEX-j);
+        }
+        g_ab[i] = result;
+      }
+    } else {
+      long double FactNbVar = 1.0;
 
-    long double FactNbVar = 1.0;
+      ForLoop (i, g_NbVarALEX)
+        FactNbVar *= i + 1;
 
-    ForLoop (i, g_NbVarALEX)
-      FactNbVar *= i + 1;
+      ForLoop (i, g_NbVarALEX) {
+        int n = (g_NbVarALEX - (i+1));
 
-    ForLoop (i, g_NbVarALEX)
-    {
-      int n = (g_NbVarALEX - (i+1));
+        long double a = pow(2.0, n) - 1;
 
-      //long double a = pow(2.0, n + 1) - 1;
-      long double a = pow(2.0, n) - 1;
+        long double Factorial = 1.0;
+        for (j = 2; j <= i + 1; ++j)
+          Factorial *= j;
 
-      long double Factorial = 1.0;
-      for (j = 2; j <= i + 1; ++j)
-        Factorial *= j;
+        long double FactBis = 1.0;
+        for (j = 2; j <= n; ++j)
+          FactBis *= j;
 
-      long double FactBis = 1.0;
-      for (j = 2; j <= n; ++j)
-        FactBis *= j;
+        long double MulI = FactNbVar;
+        long double b = Factorial * FactBis / MulI;
 
-      long double MulI = FactNbVar;
-      long double b = Factorial * FactBis / MulI;
-
-      g_ab[i] = a * b;
-
-//      if (g_Debug)
-//        OS_Printf("a[%d] = %g;\tb[%d] = %g ( = %g * %g / %g); ab[%d] = %g\n",
-//                i+1, a, i+1, b, Factorial, FactBis, MulI, i+1, g_ab[i]);
+        g_ab[i] = a * b;
+      }
     }
-
     CleanDeleteT(pContribution);
   }
 

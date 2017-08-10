@@ -1,76 +1,8 @@
-#' @rdname microaggrGower
-#' @export
-sampleCat <- function(x) {
-  # sample with probabilites corresponding to there number in the NNs
-  if (!is.factor(x))
-    x <- as.factor(x)
-  s <- summary(x)
-  s <- s[s != 0]
-  sample(names(s), 1, prob=s)
-}
-
-#' @rdname microaggrGower
-#' @export
-maxCat <- function(x) {
-  # choose cat with max prob, random if max is not unique
-  if (!is.factor(x))
-    x <- as.factor(x)
-  s <- summary(x)
-  s <- s[s != 0]
-  if (sum(s > 0) > 1)
-    s <- sample(s)
-  names(s)[which.max(s)]
-}
-
-which.minN <- function(x, n) {
-  n <- min(n, length(x))
-  out <- vector()
-  for (i in 1:n) {
-    out[i] <- which.min(x)
-    x[which.min(x)] <- Inf
-  }
-  as.numeric(out)
-}
-
-## Wrapper function for gowerD
-gowerD <- function(data.x, data.y=data.x, weights=NULL, numerical, factors, orders, mixed, levOrders, mixed.constant) {
-  maxplus1 <- function(x) {
-    x[is.na(x)] <- max(x, na.rm=TRUE) + 1
-    x
-  }
-  # weights <- rep(1,ncol(data.x))
-  for (i in 1:ncol(data.x)) {
-    data.x[, i] <- as.numeric(data.x[, i])
-    data.y[, i] <- as.numeric(data.y[, i])
-  }
-  weightind <- order(match(colnames(data.x), c(numerical, factors, orders, mixed)))
-  data.x <- data.x[, c(numerical, factors, orders, mixed), drop=FALSE]
-  data.y <- data.y[, c(numerical, factors, orders, mixed), drop=FALSE]
-
-  justone <- FALSE
-  if (nrow(data.y) == 1) {
-    data.y <- rbind(data.y, data.y)
-    justone <- TRUE
-  }
-  data.x <- apply(data.x, 2, maxplus1)
-  data.y <- apply(data.y, 2, maxplus1)
-  levOrders <- as.numeric(levOrders)
-
-  out <- .Call("gowerD_cpp", data.x, data.y, weights[weightind], c(length(numerical), length(factors),
-    length(orders), length(mixed)), levOrders, mixed.constant, PACKAGE="sdcMicro")
-  if (justone) {
-    out <- out$delta[, 1, drop=FALSE]
-  } else {
-    out <- out$delta
-  }
-  out
-}
-
 ## Fuer data.frame, kNN-Suche auf Basis der Gowerdistance und Aggregation mit numFun bzw.
 ## catFun
 maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variables, by=NULL,
   mixed=NULL, mixed.constant=NULL, trace=FALSE, weights=NULL, numFun=mean,
-  catFun=sampleCat, addRandom=FALSE) {
+  catFun=VIM::sampleCat, addRandom=FALSE) {
 
   if (!is.null(by)) {
     if (!all(by %in% colnames(data)))
@@ -140,16 +72,13 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
   if (is.null(mixed.constant))
     mixed.constant <- rep(0, length(mixedX))
   spl <- lapply(spl, function(dataSpl) {
-    gd <- gowerD(dataSpl[, dist_var], dataSpl[, dist_var], weights=weights, numericalX,
-      factorsX, ordersX, mixedX, levOrdersX, mixed.constant=mixed.constant)
-    which.minNk <- function(x) 1
-    cmd <- paste("which.minNk <- function(x)which.minN(x,", aggr, ")", sep="")
-    eval(parse(text=cmd))
-    mindi <- apply(gd, 2, which.minNk)
-    erg <- as.matrix(mindi)
+    erg <- gowerD(dataSpl[, dist_var],dataSpl[, dist_var],weights=weights,numericalX,
+                 factorsX,ordersX,mixedX,levOrdersX,mixed.constant=mixed.constant,returnIndex=TRUE,
+                 nMin=as.integer(aggr));
+    
     if (addRandom)
       dataSpl <- dataSpl[, -which(colnames(dataSpl) == "RandomVariableForImputation")]
-    dataSpl[, variables] <- do.call("rbind", apply(erg, 2, function(x) {
+    dataSpl[, variables] <- do.call("rbind", apply(erg$ind, 2, function(x) {
       as.data.frame(lapply(dataSpl[x, variables], function(x) {
         if (is.factor(x))
           return(catFun(x)) else return(numFun(x))
@@ -162,9 +91,9 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
   row.names(data) <- rn
   return(data)
 }
-
+#' 
 #' Microaggregation for numerical and categorical key variables based on a
-#' distance similar to the GOWER DISTANCE
+#' distance similar to the Gower Distance
 #'
 #' The microaggregation is based on the distances computed similar to the Gower
 #' distance. The distance function makes distinction between the variable types
@@ -195,14 +124,14 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
 #' @param catFun function: to be used to aggregated categorical variables
 #' @param addRandom TRUE/FALS if a random value should be added for the
 #' distance computation.
-#' @param x a factor vector
 #' @return The function returns the updated sdcMicroObj or simply an altered
 #' data frame.
 #' @note In each by group all distance are computed, therefore introducing more
 #' by-groups significantly decreases the computation time and memory
 #' consumption.
+#' @seealso \code{\link[VIM]{sampleCat}} and \code{\link[VIM]{maxCat}}
 #' @author Alexander Kowarik
-#' @export
+#' @export microaggrGower
 #' @examples
 #'
 #' data(testdata,package="sdcMicro")
@@ -219,7 +148,7 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
 
 microaggrGower <- function(obj, variables=NULL, aggr=3, dist_var=NULL, by=NULL,
   mixed=NULL, mixed.constant=NULL, trace=FALSE, weights=NULL, numFun=mean,
-  catFun=sampleCat, addRandom=FALSE) {
+  catFun=VIM::sampleCat, addRandom=FALSE) {
   microaggrGowerX(obj=obj, variables=variables, aggr=aggr, dist_var=dist_var, by=by,
     mixed=mixed, mixed.constant=mixed.constant, trace=trace, weights=weights, numFun=numFun,
     catFun=catFun, addRandom=addRandom)
@@ -227,14 +156,14 @@ microaggrGower <- function(obj, variables=NULL, aggr=3, dist_var=NULL, by=NULL,
 
 setGeneric("microaggrGowerX", function(obj, variables=NULL, aggr=3, dist_var=NULL, by=NULL,
   mixed=NULL, mixed.constant=NULL, trace=FALSE, weights=NULL, numFun=mean,
-  catFun=sampleCat, addRandom=FALSE) {
+  catFun=VIM::sampleCat, addRandom=FALSE) {
 
   standardGeneric("microaggrGowerX")
 })
 
 setMethod(f="microaggrGowerX", signature=c("sdcMicroObj"),
   definition=function(obj, variables=NULL, aggr=3, dist_var=NULL, by=NULL, mixed=NULL,
-  mixed.constant=NULL, trace=FALSE, weights=NULL, numFun=mean, catFun=sampleCat, addRandom=FALSE) {
+  mixed.constant=NULL, trace=FALSE, weights=NULL, numFun=mean, catFun=VIM::sampleCat, addRandom=FALSE) {
   o <- extractManipData(obj)
   if (is.null(by) && "sdcGUI_strataVar" %in% colnames(o))
     by <- "sdcGUI_strataVar"
@@ -259,7 +188,7 @@ setMethod(f="microaggrGowerX", signature=c("sdcMicroObj"),
 setMethod(f="microaggrGowerX", signature=c("data.frame"),
   definition=function(obj, variables=colnames(data), aggr=3, dist_var=variables, by=NULL,
   mixed=NULL, mixed.constant=NULL, trace=FALSE, weights=NULL, numFun=mean,
-  catFun=sampleCat, addRandom=FALSE) {
+  catFun=VIM::sampleCat, addRandom=FALSE) {
 
   maGowerWORK(data=obj, variables=variables, dist_var=dist_var, by=by, mixed=mixed,
     mixed.constant=mixed.constant, trace=trace, weights=weights, numFun=numFun,
