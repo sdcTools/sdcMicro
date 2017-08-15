@@ -16,6 +16,7 @@
   margin-bottom: 11px;
 }
 
-h4.wb-block-title i{
+h4 i,
+h5 i{
   margin-left: 10px;
 }

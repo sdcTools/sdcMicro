@@ -7,7 +7,15 @@ output$nonumkey_continous_results <- renderUI({
   }
 })
 
-# display information on numerical risk
+# UI output displaying information on numerical risk
+output$ui_resnum_numrisk_header <- renderUI({
+  out <- fluidRow(
+    column(12, h3("Information on risk for numerical key variables"), offset = 0, class = "wb-header"),
+    column(12, p("The upper bound of the risk-interval is assumed to be 100% in the original data. Once the numeric key variables are modified,
+               the upper bound may reduce. The larger the deviations from the original data, the lower the upper risk bound will be. However, this has also an
+               impact on data utility."), offset = 0, class = "wb-header-hint"))
+    out
+})
 output$ui_resnum_numrisk <- renderUI({
   if (!has_numkeyvars()) {
     return(uiOutput("nonumkey_continous_results"))
@@ -21,16 +29,20 @@ output$ui_resnum_numrisk <- renderUI({
     return(invisible(NULL))
   }
   out <- fluidRow(
-    column(12, h4("Information on risk for numerical key variables"), align="center"),
-    column(12, p("The upper bound of the risk-interval is assumed to be 100% in the original data. Once the numeric key variables are modified,
-      the upper bound may reduce. The larger the deviations from the original data, the lower the upper risk bound will be. However, this has also an
-      impact on data utility."),align="center"),
     column(12, p("The disclosure risk in the anonymized dataset is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),"."), align="center"),
     column(12, p("In the original data the risk is assumed to be between",code("0%"),"and",code("100%"),"."), align="center"))
   out
 })
 
-# display information about information-loss
+# UI output displaying information about information-loss
+output$ui_resnum_infoloss_header <- renderUI({
+  txt1 <- paste(tags$strong("IL1"),"is the sum of the absolute distances between the corresponding observations in the raw and anonymized datasets, which")
+  txt1 <- paste(txt1, "are standardized by the standard deviation of the variables in the original data.")
+  out <- fluidRow(
+    column(12, h3("Information-loss criteria based on numerical key variables"), offset = 0, class = "wb-header"),
+    column(12, p(HTML(txt1)), offset = 0, class = "wb-header-hint"))
+  out
+})
 output$ui_resnum_infoloss <- renderUI({
 
   output$ui_formula1 <- renderUI({
@@ -45,42 +57,44 @@ output$ui_resnum_infoloss <- renderUI({
   }
   x <- print(curObj, type="numrisk", docat=FALSE)
 
-  txt1 <- paste(tags$strong("IL1"),"is the sum of the absolute distances between the corresponding observations in the raw and anonymized datasets, which")
-  txt1 <- paste(txt1, "are standardized by the standard deviation of the variables in the original data. For the continuous variables in the dataset, the")
-  txt1 <- paste(txt1, "IL1 measure is defined as:")
+  txt1 <- "For the continuous variables in the dataset, the IL1s measure is defined as:"
 
   txt2 <- paste("where",tags$i("p"),"is the number of continuous variables;",tags$i("n"),"is the number of records in the dataset;")
   txt2 <- paste(txt2,tags$i("x_ij"),"and",tags$i("z_ij"),", respectively, are the values before and after anonymization for variable",tags$i("j"))
   txt2 <- paste(txt2, "and individual",tags$i("i"),"; and",tags$i("S_j"),"is the standard deviation of variable",tags$i("j"),"in the original data (Yancey, Winkler and Creecy, 2002).")
 
-  #where  is the number of continuous variables;  is the number of records in the dataset;  and , respectively, are the values before and after anonymization for variable  and individual ; and  is the standard deviation of variable  in the original data (Yancey, Winkler and Creecy, 2002).#
-
   txt3 <- paste("The",tags$strong("difference in eigenvalues"),"is a comparison of the robust eigenvalues of the data before and after anonymization.")
   out <- fluidRow(
-    column(12, h4("Information-loss criteria based on numerical key variables"), align="center"),
-    column(12, p(HTML(txt1)), align="center"),
-    column(12, uiOutput("ui_formula1"),align="center"),
-    column(12, p(HTML(txt2)), align="center"),
-    column(12, p(HTML(txt3)), align="center"),
-    column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
+    column(12, p(HTML(txt1))),
+    column(12, uiOutput("ui_formula1")),
+    column(12, p(HTML(txt2))),
+    column(12, p(HTML(txt3))),
+    column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."))
   )
   out
 })
 
 
 
-# display comparison (before-after) about numeric variables
+# UI output displaying comparison (before-after) about numeric variables
+output$ui_resnum_comparison_header <- renderUI({
+  out <- fluidRow(
+    column(12, h3("Compare summary statistics of numerical key variables"), offset = 0, class = "wb-header"),
+    column(12, p("Here you can view the summary statistics of numeric key variables to compare the variables before and after applying anonymization methods."), offset = 0, class = "wb-header-hint")
+  )
+  out
+})
 output$ui_resnum_comparison <- renderUI({
   output$ui_numvar_numres <- renderUI({
     nv <- get_numVars_names()
     if (length(nv)==0) {
       return(NULL)
     }
-    selectInput("sel_res_numvar1", label=h5("Choose a numerical key variable"), choices=nv, width="100%", multiple=FALSE)
+    selectInput("sel_res_numvar1", label=p("Choose a numerical key variable"), choices=nv, width="100%", multiple=FALSE)
   })
   output$ui_catvar_numres <- renderUI({
     byv <- c("none", get_keyVars_names(), get_strataVar_names())
-    selectInput("sel_res_catvar1", label=h5("Optionally choose a categorical variable"), choices=byv, width="100%")
+    selectInput("sel_res_catvar1", label=p("Choose a categorical variable (optional)"), choices=byv, width="100%")
   })
   output$ui_numvar_modtab <- DT::renderDataTable({
     if (is.null(input$sel_res_numvar1)) {
@@ -156,7 +170,6 @@ output$ui_resnum_comparison <- renderUI({
   }
 
   res <- fluidRow(
-    column(12, h4("Compare summary statistics of numerical key variables"), align="center"),
     column(6, uiOutput("ui_numvar_numres"), align="center"),
     column(6, uiOutput("ui_catvar_numres"), align="center"))
 

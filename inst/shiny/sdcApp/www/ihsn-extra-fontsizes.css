@@ -1,0 +1,34 @@
+/*  Reset the font size */
+p, h1, h2, h3, h4, h5 {
+  font-size: 1em;
+}
+/*
+ * Re-calculate the font sizes based on the width of the screen
+ *
+ * Point of Reference
+ * For p: 14px we should get
+ *  - h5: 14px (same with p but stronger)
+ *  - h4: 18px
+ *  - h3: 24px
+ *  - h2: 30px
+ *  - h1: 36px
+ */
+p { }
+
+h5 { }
+
+h4 {
+  font-size: 1.28em
+}
+
+h3 {
+  font-size: 1.71em
+}
+
+h2 {
+  font-size: 2.14em
+}
+
+h1 {
+  font-size: 2.57em
+}

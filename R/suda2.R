@@ -19,8 +19,13 @@
 #' \item{\code{DisFraction}: }{It is the sampling fraction for the simple random
 #' sampling, and the common sampling fraction for stratified sampling. By
 #' default, it's set to 0.01.}
+<<<<<<< HEAD
 #' \item{\code{original_scores}: }{if this argument is \code{TRUE} (the default), the suda-scores are computed as described in paper
 #' "SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE}, the computation of the scores
+=======
+#' \item{\code{original_scores}: }{if this argument is \code{TRUE}, the suda-scores are computed as described in paper
+#' "SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE} (the default), the computation of the scores
+>>>>>>> proposal
 #' is slightly different as it was done in the original implementation of the algorithm by the IHSN.}
 #' }
 #' @return A modified \code{\link{sdcMicroObj-class}} object or the following list
@@ -110,7 +115,11 @@ setMethod(f="suda2X", signature=c("data.frame"), definition = function(obj, ...)
   suda2WORK(data = obj, ...)
 })
 
+<<<<<<< HEAD
 suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01, original_scores=TRUE) {
+=======
+suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01, original_scores=FALSE) {
+>>>>>>> proposal
   stopifnot(is.logical(original_scores))
   stopifnot(length(original_scores)==1)
 

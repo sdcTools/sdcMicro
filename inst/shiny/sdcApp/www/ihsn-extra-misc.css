@@ -1,0 +1,6 @@
+/* hide empty elements
+ * see: https://github.com/skounis/sdcMicro/issues/126
+ */
+.wb-column-empty{
+  display: none;
+}
