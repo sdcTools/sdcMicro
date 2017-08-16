@@ -18,13 +18,8 @@ index of the variables to be used for risk measurement.}
 \item{\code{DisFraction}: }{It is the sampling fraction for the simple random
 sampling, and the common sampling fraction for stratified sampling. By
 default, it's set to 0.01.}
-<<<<<<< HEAD
 \item{\code{original_scores}: }{if this argument is \code{TRUE} (the default), the suda-scores are computed as described in paper
 "SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE}, the computation of the scores
-=======
-\item{\code{original_scores}: }{if this argument is \code{TRUE}, the suda-scores are computed as described in paper
-"SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE} (the default), the computation of the scores
->>>>>>> proposal
 is slightly different as it was done in the original implementation of the algorithm by the IHSN.}
 }}
 }
