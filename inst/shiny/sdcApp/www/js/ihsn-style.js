@@ -41,14 +41,14 @@ var setHeightForTables = function(){
   //
   if ($(VIEW_ID_ANONYMIZE_DISPLAY).length > 0){
     // Some tile .offset is not yet available
-    if (!$(VIEW_ID_ANONYMIZE_DISPLAY +' .dataTables_scrollBody').offset()) { return; }
+    if (!$(VIEW_ID_ANONYMIZE_DISPLAY + ' #setupTable .dataTables_scrollBody').offset()) { return; }
 
     var windowH_1 = $(window).height();
-    var tableH_1 = $(VIEW_ID_ANONYMIZE_DISPLAY +' .dataTables_scrollBody').height();
-    var tableTop_1 =  $(VIEW_ID_ANONYMIZE_DISPLAY +' .dataTables_scrollBody').offset().top;
-    var margin_1 = 180;
+    var tableH_1 = $(VIEW_ID_ANONYMIZE_DISPLAY +' #setupTable .dataTables_scrollBody').height();
+    var tableTop_1 =  $(VIEW_ID_ANONYMIZE_DISPLAY +' #setupTable .dataTables_scrollBody').offset().top;
+    var margin_1 = 100;
     var targetH_1 = windowH_1 - tableTop_1 - margin_1;
-    $(VIEW_ID_ANONYMIZE_DISPLAY + ' .dataTables_scrollBody').height(targetH_1);
+    $(VIEW_ID_ANONYMIZE_DISPLAY + ' #setupTable .dataTables_scrollBody').height(targetH_1);
   }
 };
 
