@@ -42,7 +42,7 @@ var setHeightForTables = function(){
   if ($(VIEW_ID_ANONYMIZE_DISPLAY).length > 0){
     // Some tile .offset is not yet available
     if (!$(VIEW_ID_ANONYMIZE_DISPLAY +' .dataTables_scrollBody').offset()) { return; }
-    
+
     var windowH_1 = $(window).height();
     var tableH_1 = $(VIEW_ID_ANONYMIZE_DISPLAY +' .dataTables_scrollBody').height();
     var tableTop_1 =  $(VIEW_ID_ANONYMIZE_DISPLAY +' .dataTables_scrollBody').offset().top;
@@ -69,6 +69,11 @@ addEvent(window, "resize", function(event) {
 $( document ).ready(function() {
   console.log( "ready!" );
   $( ".log" ).text( "Triggered document handler." );
+
+  document.addEventListener("AnonymizeDrawnEvent", function(e) {
+    setHeightForTables();
+  });
+
   addFormControlClassForDataTables();
   setHeightForTables();
 });
