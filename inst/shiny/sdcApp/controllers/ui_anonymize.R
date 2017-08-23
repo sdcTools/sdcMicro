@@ -37,10 +37,9 @@ output$ui_anonymize_sidebar_left <- renderUI({
     if (is.null(sdcObj())) {
       return(NULL)
     }
-    btn_reset <- bsButton("btn_reset_sdc1", label=("Reset SDC problem"), style="warning", size="extra-small", block="TRUE")
+    btn_reset <- myActionButton("btn_reset_sdc1", label="Reset SDC problem", "danger")
     fluidRow(
-      column(12, h4("Reset SDC problem"), align="center"),
-      column(12, btn_reset))
+      column(12, btn_reset, align = "center"))
   })
   output$ui_sel_anon_btns <- renderUI({
 

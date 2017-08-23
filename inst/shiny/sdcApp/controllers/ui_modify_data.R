@@ -879,10 +879,9 @@ output$ui_modify_data_sidebar_left <- renderUI({
     if (is.null(inputdata())) {
       return(NULL)
     }
-    btn <- bsButton("btn_reset_inputdata_xx",label=("Reset inputdata"), block=TRUE, style="warning")
+    btn <- myActionButton("btn_reset_inputdata_xx",label=("Reset inputdata"), "danger")
     fluidRow(
-      #column(12, h4("Reset the inputdata"), align="center"),
-      column(12, btn)
+      column(12, btn, align = "center")
     )
   })
 
