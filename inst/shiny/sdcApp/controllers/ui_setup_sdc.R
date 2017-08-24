@@ -546,7 +546,7 @@ options = list(
   # columnDefs=list(list(width='400px', targets = c(2))),
   columnDefs=list(list()),
   preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
-  drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
+  drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); var event = new Event("AnonymiseDrawnEvent"); document.dispatchEvent(event);} ')
 ))
 
 # show the setup-button or an error-message
@@ -812,7 +812,7 @@ output$sel_sdc_infovar <- renderUI({
 output$ui_sdcObj_create <- renderUI({
   out <- fluidRow(
     column(width = 12, offset = 0, h3("Anonymize"), class="wb-header"),
-    column(width = 12, offset = 0, p("Select and export variables."), class="wb-header-hint"),
+    column(width = 12, offset = 0, p("Select variables and set parameters to create the SDC problem."), class="wb-header-hint"),
     # column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
     # column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
     column(8, div(style='',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
