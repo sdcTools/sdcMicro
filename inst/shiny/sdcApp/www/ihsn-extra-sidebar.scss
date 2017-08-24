@@ -115,4 +115,12 @@
             border-left: solid 5px darkorange;
         }
     }
+
+    .wb-action-button {
+      &.wb-action-button-top {
+        margin-top: 20px;
+      }
+      margin: auto;
+      text-align: center;
+    }
 }

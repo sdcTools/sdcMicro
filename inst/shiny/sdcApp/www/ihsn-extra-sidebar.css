@@ -96,4 +96,12 @@
   border-left: solid 5px darkorange;
 }
 
+.wb_sidebar .wb-action-button {
+  margin: auto;
+  text-align: center;
+}
+
+.wb_sidebar .wb-action-button.wb-action-button-top {
+  margin-top: 20px;
+}
 /*# sourceMappingURL=ihsn-extra-sidebar.css.map */
