@@ -205,7 +205,7 @@ output$ui_show_changed_labels_main <- renderUI({
 })
 output$ui_show_changed_labels_sidebar_left <- renderUI({
   fluidRow(
-    column(12, bsButton("btn_reset_inputdata_xx",label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small"))
+    column(12, myActionButton("btn_reset_inputdata_xx",label=("Reset inputdata"), "danger"), class="wb-action-button")
   )
 })
 output$ui_show_changed_labels <- renderUI({
