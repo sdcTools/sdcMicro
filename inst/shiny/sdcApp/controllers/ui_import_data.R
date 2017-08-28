@@ -138,7 +138,7 @@ output$ui_import_data <- renderUI({
     column(10, uiOutput("ui_import_data_main")))
 })
 
-output$ui_show_changed_labels <- renderUI({
+output$ui_show_changed_labels_main <- renderUI({
   # Show changed labels
   txtChangedLabels1 <- "Some strings in the variable names, variable labels and/or value labels in the loaded dataset do not comply with UTF-8 encoding. This application requires strings to be UTF-8 encoded or UTF-8 compatible. The application has attempted to convert the non-compliant characters to UTF-8. "
   txtChangedLabels2 <- "Below is a summary of the strings containing characters that are not compliant with UTF-8 encoding after been automatically converted to UTF-8 encoding. While the auto conversion process attempts to do the best it can to fix the issues, results are often uneven. To avoid the auto conversion of characters it is advised that the problems first be corrected in the original dataset and then reloaded into this application. Doing so will prevent unnecessary loss of information. "
@@ -189,6 +189,16 @@ output$ui_show_changed_labels <- renderUI({
     ))
   }
   out
+})
+output$ui_show_changed_labels_sidebar_left <- renderUI({
+  fluidRow(
+    column(12, bsButton("btn_reset_inputdata_utf8labs_xx",label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small"))
+  )
+})
+output$ui_show_changed_labels <- renderUI({
+  fluidRow(
+    column(2, uiOutput("ui_show_changed_labels_sidebar_left")),
+    column(10, uiOutput("ui_show_changed_labels_main")))
 })
 
 output$ui_inputdata <- renderUI({

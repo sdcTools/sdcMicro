@@ -473,7 +473,7 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", \n\talpha=",VecToRStr(input$sl_alpha, quoted=FALSE))
     cmd <- paste0(cmd,")")
     cmd_out$setup_sdc <- cmd
-    
+
     if (!is.null(obj$microfilename)) {
       cmd <- paste0("opts <- get.sdcMicroObj(obj$sdcObj, type=",dQuote("options"),")\n")
       cmd <- paste0(cmd, "opts$filename <- ", dQuote(obj$microfilename),"\n")
@@ -920,7 +920,7 @@ shinyServer(function(session, input, output) {
       cmd_opts <- gsub("obj[$]sdcObj","sdcObj", cmd_opts)
       obj$code_setup <- paste0(obj$code_setup, "\n## Store name of uploaded file\n",cmd_opts,"\n")
     }
-    
+
     # create slider-outputs for k-Anon by group
     # this is required because otherwise these sliders would always be updating
     nrKeyVars <- isolate(length(get_keyVars()))
@@ -1015,6 +1015,19 @@ shinyServer(function(session, input, output) {
     }
   })
 
+  ## show confirmation modal window before resetting inputdata
+  observeEvent(input$btn_reset_inputdata_utf8labs_xx, {
+    if (!is.null(inputdata())) {
+      txt <- p("By clicking the button below, you really delete the current inputdata")
+      btn <- myActionButton("btn_reset_inputdata_utf8labs",label=("Delete current inputdata"), "danger")
+      inp <- fluidRow(
+        column(12, txt, align="center"),
+        column(12, btn, align="center")
+      )
+      showModal(modalDialog(inp, title="Confirm to delete the current inputdata", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
+    }
+  })
+
   observeEvent(input$btn_reset_inputdata, {
     #cat(paste("'btn_reset_inputdata' was clicked",input$btn_reset_inputdata,"times..!\n"))
     ptm <- proc.time()
@@ -1032,6 +1045,24 @@ shinyServer(function(session, input, output) {
     obj$comptime <- obj$comptime+ptm[3]
     removeModal(session=session) # remove the modal
   })
+
+  observeEvent(input$btn_reset_inputdata_utf8labs, {
+    ptm <- proc.time()
+    obj$inputdata <- NULL
+    obj$hhdata <- NULL
+    obj$hhdata_applied <- FALSE
+    obj$hhdata_selected <- FALSE
+    obj$sdcObj <- NULL
+    obj$code_anonymize <- c()
+    obj$code_setup <- c()
+    obj$anon_performed <- NULL
+    obj$code_read_and_modify <- c()
+    obj$utf8 <- FALSE
+    ptm <- proc.time()-ptm
+    obj$comptime <- obj$comptime+ptm[3]
+    removeModal(session=session) # remove the modal
+  })
+
   # reset errors while reading data
   observeEvent(input$btn_reset_inputerror, {
     ptm <- proc.time()
