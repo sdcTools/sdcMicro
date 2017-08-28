@@ -1016,7 +1016,7 @@ shinyServer(function(session, input, output) {
   })
 
   ## show confirmation modal window before resetting inputdata
-  observeEvent(input$btn_reset_inputdata_utf8labs, {
+  observeEvent(input$btn_reset_inputdata_utf8labs_xx, {
     if (!is.null(inputdata())) {
       txt <- p("By clicking the button below, you really delete the current inputdata")
       btn <- myActionButton("btn_reset_inputdata_utf8labs",label=("Delete current inputdata"), "danger")
