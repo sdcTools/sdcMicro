@@ -1,0 +1,19 @@
+.wb-maincolumn h4 {
+  padding-top: 0 !important;
+}
+
+.wb-maincolumn h1,
+.wb-maincolumn h2,
+.wb-maincolumn h3,
+.wb-maincolumn h4,
+.wb-maincolumn h5,
+.wb-maincolumn h6,
+.wb-maincolumn .h1,
+.wb-maincolumn .h2,
+.wb-maincolumn .h3,
+.wb-maincolumn .h4,
+.wb-maincolumn .h5,
+.wb-maincolumn .h6 {
+    margin-top: 12px;
+    margin-bottom: 8px;
+}

@@ -1,6 +1,6 @@
 # UI-Output for exporting the report
 output$ui_export_report <- renderUI({
-  rb1 <- radioButtons("rb_simple_report", h5("Type of Report"),
+  rb1 <- radioButtons("rb_simple_report", label=p("Select type of report"),
     choices=c("internal (detailed)"="internal", "external (short overview)"="external"),
     inline=TRUE, selected=input$rb_simple_report)
   out <- fluidRow(
@@ -52,9 +52,9 @@ output$ui_export_data <- renderUI({
   # specific (gui)-options for csv-export
   output$ui_export_csv <- renderUI({
     txt <- list("Set options for exporting a", code("csv"), "file")
-    rb1 <- radioButtons("export_csv_header", label=h5("Include variable names in first row?"), choices=c("Yes"=TRUE,"No"=FALSE), inline=TRUE)
-    rb2 <- radioButtons("export_csv_sep", label=h5("Field separator"), choices=c(Comma=",", Semicolon=";", Tab="\t"), inline=TRUE)
-    rb3 <- radioButtons("export_csv_dec", label=h5("Decimal separator"), choices=c("Decimal point"=".", "Decimal comma"=","), inline=TRUE)
+    rb1 <- radioButtons("export_csv_header", label=p("Include variable names in first row?"), choices=c("Yes"=TRUE,"No"=FALSE), inline=TRUE)
+    rb2 <- radioButtons("export_csv_sep", label=p("Field separator"), choices=c(Comma=",", Semicolon=";", Tab="\t"), inline=TRUE)
+    rb3 <- radioButtons("export_csv_dec", label=p("Decimal separator"), choices=c("Decimal point"=".", "Decimal comma"=","), inline=TRUE)
     return(fluidRow(
       column(12, p(txt, align="center")),
       column(4, rb1, align="center"),
@@ -73,7 +73,7 @@ output$ui_export_data <- renderUI({
     txt <- list("The file will be exported using", code("write_dta()"), "from package", code("haven"),".")
     fluidRow(column(12, p(txt, align="center")))
   })
-  rb_exptype <- radioButtons("dat_exp_type", label=h5("Select file format for export", align="center"),
+  rb_exptype <- radioButtons("dat_exp_type", label=p("Select file format for export", align="center"),
     choices=c("R-dataset (.RData)"="rdata","SPSS-file (.sav)"="sav","CSV-file (.csv)"="csv", "STATA-file (.dta)"="dta", "SAS-file (.sas7bdat)"="sas"),
     width="100%", selected=input$dat_exp_type, inline=TRUE)
 
@@ -123,9 +123,9 @@ output$ui_export_data <- renderUI({
         "Randomize by hierarchical identifier"="byHH", "Randomize by hierarchical identifier and within hierarchical units"="withinHH")
 
       if (!is.null(curObj@hhId)) {
-        rb <- radioButtons("rb_export_randomizeorder", label=h5("Randomize order of records", tipify(icon("question"), title=txt_randomize_hh, placement="top")), choices=choices[-2], inline=TRUE)
+        rb <- radioButtons("rb_export_randomizeorder", label=p("Randomize order of records", tipify(icon("info-circle"), title=txt_randomize_hh, placement="top")), choices=choices[-2], inline=TRUE)
       } else {
-        rb <- radioButtons("rb_export_randomizeorder", label=h5("Randomize order of records", tipify(icon("question"), title=txt_randomize_ind, placement="top")), choices=choices[1:2], inline=TRUE)
+        rb <- radioButtons("rb_export_randomizeorder", label=p("Randomize order of records", tipify(icon("info-circle"), title=txt_randomize_ind, placement="top")), choices=choices[1:2], inline=TRUE)
       }
       return(fluidRow(
         column(12, rb, align="center")
@@ -187,9 +187,9 @@ output$ui_modify_stata_labels <- renderUI({
 
 # UI-Output for Tab 'Export Data'
 output$ui_export_main <- renderUI({
-  out <- NULL
   if (is.null(sdcObj())) {
-    return(list(out, noSdcProblem(uri="ui_export_data")))
+    return(list(
+      noSdcProblem(uri="ui_export_data")))
   }
   val <- obj$cur_selection_exports
   if (val=="btn_export_results_1") {
@@ -237,14 +237,20 @@ output$ui_export_sidebar_left <- renderUI({
 })
 
 output$ui_export <- renderUI({
+  if (is.null(inputdata())) {
+    return(list(
+      noInputData(uri="ui_export_data"),
+      fluidRow(column(12, tags$br(), p("or go to the Undo tab and upload a previously saved problem instance."), align="center")),
+      fluidRow(column(12, myActionButton("nodata_script_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))))
+  }
   if (is.null(sdcObj())) {
     return(list(
       noSdcProblem(uri="ui_export_data"),
-      fluidRow(column(12, tags$br(), p("or go to Undo tab by clicking the button below and upload a previously saved problem instance"), align="center")),
+      fluidRow(column(12, tags$br(), p("or go to the Undo tab and upload a previously saved problem instance."), align="center")),
       fluidRow(column(12, myActionButton("nodata_export_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))
     ))
   }
   return(fluidRow(
     column(2, uiOutput("ui_export_sidebar_left"), class="wb_sidebar"),
-    column(10, uiOutput("ui_export_main"))))
+    column(10, uiOutput("ui_export_main"), class="wb-maincolumn")))
 })

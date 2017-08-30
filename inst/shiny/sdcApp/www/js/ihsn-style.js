@@ -18,6 +18,8 @@ var addEvent = function(object, type, callback) {
 var VIEW_ID_MICRODATA_DISPLAY = '#ui_show_microdata';
 var VIEW_ID_MICRODATA_SETVALUESNA = '#ui_set_to_na';
 
+var VIEW_ID_ANONYMIZE_DISPLAY = '#ui_anonymize.shiny-html-output';
+
 var setHeightForTables = function(){
   //
   // TABLE_ID_MICRODATA_DISPLAY: Full coverage
@@ -33,16 +35,31 @@ var setHeightForTables = function(){
   //
   // TABLE_ID_MICRODATA_SETVALUESNA: No Action
   //
-}
+
+  //
+  // TABLE_ID_ANONYMIZE_DISPLAY: Full height
+  //
+  if ($(VIEW_ID_ANONYMIZE_DISPLAY).length > 0){
+    // Some tile .offset is not yet available
+    if (!$(VIEW_ID_ANONYMIZE_DISPLAY + ' #setupTable .dataTables_scrollBody').offset()) { return; }
+
+    var windowH_1 = $(window).height();
+    var tableH_1 = $(VIEW_ID_ANONYMIZE_DISPLAY +' #setupTable .dataTables_scrollBody').height();
+    var tableTop_1 =  $(VIEW_ID_ANONYMIZE_DISPLAY +' #setupTable .dataTables_scrollBody').offset().top;
+    var margin_1 = 100;
+    var targetH_1 = windowH_1 - tableTop_1 - margin_1;
+    $(VIEW_ID_ANONYMIZE_DISPLAY + ' #setupTable .dataTables_scrollBody').height(targetH_1);
+  }
+};
 
 var addFormControlClassForDataTables = function(){
   $( "select" ).addClass( "form-control" );
   $( "input[type=search]" ).addClass( "form-control" );
-}
+};
 
 var addFormControlClassForSelectize = function(){
   $(".selectize-input").addClass("form-control");
-}
+};
 
 addEvent(window, "resize", function(event) {
   console.log('resized');
@@ -52,6 +69,11 @@ addEvent(window, "resize", function(event) {
 $( document ).ready(function() {
   console.log( "ready!" );
   $( ".log" ).text( "Triggered document handler." );
+
+  document.addEventListener("AnonymizeDrawnEvent", function(e) {
+    setHeightForTables();
+  });
+
   addFormControlClassForDataTables();
   setHeightForTables();
 });
@@ -71,7 +93,7 @@ $( document ).change(function() {
 });
 
 /*
- * Monitor DOM changes 
+ * Monitor DOM changes
  * https://stackoverflow.com/questions/3219758/detect-changes-in-the-dom
  */
 (function (window) {
@@ -185,7 +207,7 @@ $( document ).change(function() {
     window.onDomChange = onDomChange;
 })(window);
 
-onDomChange(function(){ 
+onDomChange(function(){
   addFormControlClassForSelectize();
   console.log("The Times They Are a-Changin'");
 });
