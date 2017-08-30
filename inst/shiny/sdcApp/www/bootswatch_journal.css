@@ -6846,3 +6846,44 @@ button.close {
 .panel-info .panel-title {
   color: #fff;
 }
+
+/*
+ * All the rules here is an attempt to re-style the yeti
+ * theme after all the inline style information was pulled out
+ * from the HTML and the R code
+ */
+
+#ui_about h1,
+#ui_about h2,
+#ui_about h4,
+#ui_about h5 {
+  font-weight: bold;
+}
+
+body{
+  text-align: center;
+}
+
+.form-group.shiny-input-container {
+  margin: auto;
+}
+
+.wb_sidebar { }
+
+.wb_sidebar h1,
+.wb_sidebar h2,
+.wb_sidebar h4,
+.wb_sidebar h5 {
+  font-weight: 300;
+}
+
+.wb_sidebar .row .col-sm-12 button {
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  font-size: 12px;
+}
+
+.wn-info-table table {
+  margin: auto;
+}
