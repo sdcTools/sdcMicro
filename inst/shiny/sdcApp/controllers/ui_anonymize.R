@@ -63,7 +63,7 @@ output$ui_anonymize_sidebar_left <- renderUI({
     eval(parse(text=genObserver_menus(pat="btn_sel_anon_", n=1:nrow(df_choices), updateVal="cur_selection_anon")))
     out
   })
-  out <- list(uiOutput("ui_sdcObj_reset"), uiOutput("ui_sel_anon_btns"))
+  out <- list(uiOutput("ui_sel_anon_btns"), uiOutput("ui_sdcObj_reset"))
   out
 })
 
