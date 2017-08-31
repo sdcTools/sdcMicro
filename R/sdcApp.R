@@ -21,7 +21,7 @@
 #' sdcApp(theme="flatly")
 #' }
 sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN") {
-  .startdir <- .guitheme <- NULL
+  .startdir <- .guitheme <- .guijsfile <- NULL
   if (!is.numeric(maxRequestSize)) {
     stop("argument 'maxRequestSize' must be numeric!\n")
   }
@@ -56,6 +56,7 @@ sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN") {
 
   if (theme=="IHSN") {
     .GlobalEnv$.guitheme <- "ihsn-root.css"
+    .GlobalEnv$.guijsfile <- "js/ihsn-style.js"
   }
 
   on.exit(rm(.guitheme, envir=.GlobalEnv))

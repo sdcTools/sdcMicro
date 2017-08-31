@@ -8,6 +8,6 @@ shinyUI(
     tabPanel("Export Data", uiOutput("ui_export")),
     tabPanel("Reproducibility", uiOutput("ui_script")),
     tabPanel("Undo", uiOutput("ui_undo")),
-    tags$head(tags$script(src="js/ihsn-style.js"))
+    tags$head(tags$script(src=.guijsfile))
     )
 )
