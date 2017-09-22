@@ -245,11 +245,9 @@ output$ui_modify_change_factor <- renderUI({
       value=paste0(input$cbg_factor, collapse="_"), width="100%")
   })
 
-  # See: https://github.com/skounis/sdcMicro/issues/63
-  # out <- fluidRow(
-  #   column(12, h3("Group factor levels in factor variables in original data"), class="wb-header")
-  #   )
-  out <- column(12, h3("Group factor levels in factor variables in original data"), class="wb-header")
+  out <- fluidRow(
+     column(12, h3("Group factor levels in factor variables in original data"), class="wb-header")
+  )
 
   if (length(facVars())==0) {
     out <- list(out, fluidRow(
@@ -259,7 +257,8 @@ output$ui_modify_change_factor <- renderUI({
   }
 
   helptxt <- p("Here you can group/combine the factor levels of categorical variables of type 'factor' before setting up the sdcMicro object.")
-  out <- fluidRow(out, column(12, helptxt, class="wb-header-hint"))
+  out <- list(out, fluidRow(
+    column(12, helptxt, class="wb-header-hint")))
   out <- list(out, fluidRow(
     column(12, uiOutput("reclocfac_var"), align="center")))
   out <- list(out, fluidRow(
