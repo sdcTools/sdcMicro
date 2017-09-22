@@ -45,13 +45,16 @@ sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN") {
 
   if (theme=="yeti") {
     .GlobalEnv$.guitheme <- "bootswatch_yeti.css"
+    .GlobalEnv$.guijsfile <- NULL
   }
 
   if (theme=="journal") {
     .GlobalEnv$.guitheme <- "bootswatch_journal.css"
+    .GlobalEnv$.guijsfile <- NULL
   }
   if (theme=="flatly") {
     .GlobalEnv$.guitheme <- "bootswatch_flatly.css"
+    .GlobalEnv$.guijsfile <- NULL
   }
 
   if (theme=="IHSN") {
