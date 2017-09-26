@@ -799,7 +799,7 @@ output$ui_sdcObj_info <- renderUI({
     } else {
       out <- list(out, fluidRow(
         column(12, ui_nrLevs, align="center"),
-        column(12, renderPrint(summary(inp)))))
+        column(12, renderTable(as.data.frame(t(summaryfn(inp))), include.rownames=FALSE))))
     }
     out
   })
