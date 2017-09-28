@@ -1,0 +1,28 @@
+.wb-error-toast {
+  text-align: left;
+  position: fixed;
+  top: 90px;
+  right: 30px;
+  border: 1px solid #d43f3a;
+  z-index: 9999;
+  width: 40%;
+  border-radius: 4px;
+
+  color: #fff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+
+.wb-error-toast h4,
+.wb-error-toast h5 {
+  color: #fff;
+  font-size: 0.9em;
+  text-align: left;
+}
+
+.wb-error-toast pre{
+  font-size: 0.8em;
+  white-space: normal;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.4);
+}

@@ -227,7 +227,8 @@ output$ui_sdcObj_summary <- renderUI({
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
       column(12, h4("Application of the last method resulted in the following error!")),
-      column(12, verbatimTextOutput("ui_lasterror"))))
+      column(12, verbatimTextOutput("ui_lasterror"))
+      ,class = "wb-error-toast"))
   }
   if (!is.null(lastWarning())) {
     out <- list(out, fluidRow(
