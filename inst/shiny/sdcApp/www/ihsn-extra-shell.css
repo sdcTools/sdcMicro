@@ -27,5 +27,9 @@
 #show_info_general.shiny-html-output{
   margin: 0;
 }
+
+#ui_show_changed_labels_header.shiny-html-output{
+  margin: 0;
+}
 /*
  * **/
