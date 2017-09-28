@@ -15,6 +15,18 @@
 }
 
 .shiny-html-output .table.shiny-table > thead > tr > th {
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    background: rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.1);
+}
+
+
+.wn-info-table .shiny-html-output {
+  overflow-x: auto;
+  margin-left: 30px;
+  margin-bottom: 20px;
+}
+
+.wn-info-table .shiny-html-output table {
+  margin-left: 0;
+  margin-bottom: 0;
 }
