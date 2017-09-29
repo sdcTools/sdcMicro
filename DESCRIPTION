@@ -77,6 +77,7 @@ Collate:
     'rankSwap.R'
     'RcppExports.R'
     'report.R'
+    'riskyCells.R'
     'sdcMicro-package.R'
     'shuffle.R'
     'suda2.R'
