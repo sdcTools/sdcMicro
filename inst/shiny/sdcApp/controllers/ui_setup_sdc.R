@@ -239,10 +239,20 @@ output$ui_sdcObj_summary <- renderUI({
     column(12, uiOutput("show_info_general")),
     column(12, uiOutput("show_info_recodes")),
     column(12, uiOutput("show_info_catrisk")),
-    column(12, uiOutput("show_info_kanon")),
-    column(12, uiOutput("show_info_pram"), class = "wb-column-empty"),
-    column(12, uiOutput("show_info_localsuppression"), class = "wb-column-empty"),
-    column(12, uiOutput("show_info_comp_numvars"), class = "wb-column-empty"),
+    column(12, uiOutput("show_info_kanon"))))
+  if(!is.null(sdcObj()) & !is.null(print(sdcObj(), type="pram", docat=FALSE))){
+    out <- list(out, fluidRow(
+      column(12, uiOutput("show_info_pram"))))
+  }
+  if(!is.null(sdcObj()) & !is.null(print(sdcObj(), type="ls", docat=FALSE))){
+    out <- list(out, fluidRow(
+      column(12, uiOutput("show_info_localsuppression"))))
+  }
+  if(!is.null(sdcObj()) & !is.null(print(sdcObj(), type="comp_numvars", docat=FALSE)) & !(length(print(sdcObj(), type="comp_numvars", docat=FALSE)$results)==0)){
+    out <- list(out, fluidRow(
+      column(12, uiOutput("show_info_comp_numvars"))))
+  }
+  out <- list(out, fluidRow(
     column(12, uiOutput("show_info_risk")),
     column(12, uiOutput("anonMethods"))))
   out
@@ -321,10 +331,14 @@ output$ui_sdcObj_explorevars <- renderUI({
     } else {
       # 2 factors
       if (cl1 & cl2) {
-        res <- list(tab=as.data.frame.table(addmargins(table(df[[1]], df[[2]], useNA="always"))), var=c(v1, v2))
-        colnames(res$tab) <- c(res$var, "Frequency")
-        res$tab$Frequency <- as.integer(res$tab$Frequency)
-        res$tab$Percentage <- formatC(100*(res$tab$Frequency/nrow(df)), format="f", digits=2)
+        tabdf <- addmargins(table(df[[1]], df[[2]], useNA = "always"))
+        colnames(tabdf)[is.na(colnames(tabdf))] <- "NA"
+        rownames(tabdf)[is.na(rownames(tabdf))] <- "NA"
+        tabdfp <- prop.table(tabdf)
+        tabdfc <- as.data.frame(matrix(paste0(tabdf, paste0(" (", formatC(100 * tabdfp, format = "f", digits = 2),"%)")), nrow = dim(tabdf)[1], ncol = dim(tabdf)[2]))
+        colnames(tabdfc) <- colnames(tabdf)
+        rownames(tabdfc) <- rownames(tabdf)
+        res <- list(tab = as.data.frame.matrix(tabdfc), var = c(v1, v2))
       } else if (cl1 & !cl2) {
         res <- tapply(df[[2]], df[[1]], summaryfn)
         res <- do.call("rbind", res)
@@ -352,7 +366,13 @@ output$ui_sdcObj_explorevars <- renderUI({
 
     out <- NULL
     if (is.null(res$tab1)) {
-      out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
+      if (!is.null(v2) && v2 == "none"){
+        out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
+      } else {
+        out <- list(out, fluidRow(
+          column(12, h5(HTML(paste("Cross-tabulation of", code(res$var[1]), "and", code(res$var[2]))))),
+          column(12, renderTable(res$tab, include.rownames=TRUE), class="wn-info-table")))
+      }
     } else {
       out <- list(out, fluidRow(
         column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))))),
