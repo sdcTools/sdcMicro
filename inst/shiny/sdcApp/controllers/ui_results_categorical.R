@@ -525,7 +525,8 @@ output$ui_bivariate_tab <- renderUI({
     tab
   }, include.rownames = TRUE)
   output$biv_tab_res <- renderPrint({
-    if(input$sel_catvar2 == "none"){
+    req(input$sel_catvar2)
+    if(!is.null(input$sel_catvar2) & input$sel_catvar2 == "none"){
       tabs <- fluidRow(column(6, h4("Original data"), align="center"),
                        column(6, h4("Modified data"), align="center"),column(6, tableOutput("biv_tab_o"), align="center"),
                        column(6, tableOutput("biv_tab_m"), align="center"))
