@@ -485,7 +485,7 @@ output$ui_bivariate_tab_header <- renderUI({
   out
 })
 output$ui_bivariate_tab <- renderUI({
-    output$ui_biv_selection <- renderUI({
+  output$ui_biv_selection <- renderUI({
     fluidRow(
       column(6, uiOutput("ui_catvar1"), align="center"),
       column(6, uiOutput("ui_catvar2"), align="center"))
@@ -500,11 +500,11 @@ output$ui_bivariate_tab <- renderUI({
       colnames(tab) <- c(vars[1], "Freq")
     } else {
       tab <- as.data.frame.matrix(formatC(addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA = "always")), format = "f", digits = 0))
-      #colnames(tab)[is.na(colnames(tabdf))] <- "NA"
-      #rownames(tab)[is.na(rownames(tabdf))] <- "NA"
+      colnames(tab)[is.na(colnames(tab))] <- "NA"
+      rownames(tab)[is.na(rownames(tab))] <- "NA"
     }
     tab
-  })
+  }, include.rownames = TRUE)
   output$biv_tab_m <- renderTable({
     req(input$sel_catvar1)
     if (!is.null(get_manipPramVars())) {
@@ -517,30 +517,27 @@ output$ui_bivariate_tab <- renderUI({
       tab <- as.data.frame.table(addmargins(table(df[[vars[1]]], useNA="always")))
       tab$Freq <- as.integer(tab$Freq)
       colnames(tab) <- c(vars[1], "Freq")
-      } else {
+    } else {
       tab <- as.data.frame.matrix(formatC(addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA = "always")), format = "f", digits = 0))
-      #colnames(tab)[is.na(colnames(tabdf))] <- "NA"
-      #rownames(tab)[is.na(rownames(tabdf))] <- "NA"
+      colnames(tab)[is.na(colnames(tab))] <- "NA"
+      rownames(tab)[is.na(rownames(tab))] <- "NA"
     }
     tab
+  }, include.rownames = TRUE)
+  output$biv_tab_res <- renderPrint({
+    if(input$sel_catvar2 == "none"){
+      tabs <- fluidRow(column(6, h4("Original data"), align="center"),
+                       column(6, h4("Modified data"), align="center"),column(6, tableOutput("biv_tab_o"), align="center"),
+                       column(6, tableOutput("biv_tab_m"), align="center"))
+    } else {
+      tabs <- fluidRow(column(12, h4("Original data"), align="center"),
+                       column(12, tableOutput("biv_tab_o"), align="center"),column(12, h4("Modified data"), align="center"),
+                       column(12, tableOutput("biv_tab_m"), align="center"))
+    }
+    tabs
   })
-  out <- uiOutput("ui_biv_selection")
-  out <- list(out, fluidRow(
-    column(6, h4("Original data"), align="center"),
-    column(6, h4("Modified data"), align="center")
-  ))
   
-  if(TRUE){ #input$sel_catvar2 == "none"
-    out <- list(out, fluidRow(
-      column(12, tableOutput("biv_tab_o"), align="center"),
-      column(12, tableOutput("biv_tab_m"), align="center")
-    ))
-  } else {
-    out <- list(out, fluidRow(
-      column(6, tableOutput("biv_tab_o"), align="center"),
-      column(6, tableOutput("biv_tab_m"), align="center")
-    ))
-  }
-
+  out <- list(uiOutput("ui_biv_selection"), uiOutput("biv_tab_res"))
+  
   out
 })
