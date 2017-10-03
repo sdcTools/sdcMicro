@@ -128,7 +128,7 @@ output$ui_pram_expert <- renderUI({
       return(myActionButton("btn_pram_expert_notworking", label="Error: Not all row-sums of the transition matrix equal 100", btn="danger"))
     }
     if (input$pram_expert_strataV %in% input$sel_pramvars_expert) {
-      txt <- "You have selected a variable relevant for stratification that should also be pramed. This is not possible. Please remove the variable from one of the inputs"
+      txt <- "You have selected a variable relevant for stratification that should also be pramed. This is not possible. Please remove the variable from one of the inputs."
       return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
     return(myActionButton("btn_pram_expert", label="Postrandomize", btn="primary"))
@@ -138,7 +138,7 @@ output$ui_pram_expert <- renderUI({
       return(NULL)
     }
     fluidRow(
-      column(12, h5("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, h5("Application of the postrandomization attempt resulted in the following warning!", align="center")),
       column(12, verbatimTextOutput("ui_lastwarning"))
       , class = "wb-error-toast")
   })
@@ -147,7 +147,7 @@ output$ui_pram_expert <- renderUI({
       return(NULL)
     }
     fluidRow(
-      column(12, h5("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, h5("Application of the postrandomization attempt resulted in the following warning!", align="center")),
       column(12, verbatimTextOutput("ui_lasterror"))
       , class = "wb-error-toast")
   })
@@ -155,7 +155,7 @@ output$ui_pram_expert <- renderUI({
     return(fluidRow(
       column(12, h4("Postrandomization of categorical variables", align="center")),
       column(12, h5("No variables have been specified for postrandomization during the initialization of the current problem or
-        all possible variables already have been post-randomized!", align="center"))
+        all possible variables already have been postrandomized!", align="center"))
     ))
   }
 
@@ -216,7 +216,7 @@ output$ui_pram_simple <- renderUI({
       return(NULL)
     }
     if (input$pram_strataV_simple %in% input$sel_pramvars_simple) {
-      txt <- "You have selected a variable relevant for stratification that should also be pramed. This is not possible. Please remove the variable from one of the inputs"
+      txt <- "You have selected a variable relevant for stratification that should also be postrandomized. This is not possible. Please remove the variable from one of the inputs."
       return(modalDialog(list(p(txt)), title="Error", footer=modalButton("Dismiss"), size="m", easyClose=TRUE, fade=TRUE))
     }
     myActionButton("btn_pram_nonexpert", label="Postrandomize", btn="primary")
@@ -226,7 +226,7 @@ output$ui_pram_simple <- renderUI({
       return(NULL)
     }
     fluidRow(
-      column(12, h5("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, h5("Application of the postrandomization attempt resulted in the following warning!", align="center")),
       column(12, verbatimTextOutput("ui_lastwarning"))
       , class = "wb-error-toast")
   })
