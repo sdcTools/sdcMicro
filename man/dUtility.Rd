@@ -12,8 +12,8 @@ dUtility(obj, ...)
 
 \item{...}{see arguments below
 \itemize{
-\item{xm}{perturbed data}
-\item{method}{method IL1 or eigen. More methods are implemented in
+\item{xm: }{perturbed data}
+\item{method: }{method IL1 or eigen. More methods are implemented in
 summary.micro()}}}
 }
 \value{
