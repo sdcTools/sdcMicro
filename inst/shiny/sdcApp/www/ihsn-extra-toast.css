@@ -1,7 +1,8 @@
 .wb-error-toast {
   text-align: left;
   position: fixed;
-  top: 90px;
+  /*top: 90px;*/
+  bottom: 30px;
   right: 30px;
   border: 1px solid #d43f3a;
   z-index: 9999;
