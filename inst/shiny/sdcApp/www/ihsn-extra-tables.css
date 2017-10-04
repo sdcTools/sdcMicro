@@ -34,3 +34,7 @@
 td.wn-cell-title {
   background: rgba(0,0,0,0.1);
 }
+
+.wn-info-table.wn-row-title tr td:first-child{
+  background: rgba(0,0,0,0.1);
+}
