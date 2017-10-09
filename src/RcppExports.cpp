@@ -18,3 +18,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// microaggregation_argus_cpp
+List microaggregation_argus_cpp(NumericMatrix inp, NumericVector k, NumericVector useOptimal);
+RcppExport SEXP _sdcMicro_microaggregation_argus_cpp(SEXP inpSEXP, SEXP kSEXP, SEXP useOptimalSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type inp(inpSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type k(kSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type useOptimal(useOptimalSEXP);
+    rcpp_result_gen = Rcpp::wrap(microaggregation_argus_cpp(inp, k, useOptimal));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rankSwap_argus_cpp
+List rankSwap_argus_cpp(NumericMatrix inp, IntegerVector perc);
+RcppExport SEXP _sdcMicro_rankSwap_argus_cpp(SEXP inpSEXP, SEXP percSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type inp(inpSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type perc(percSEXP);
+    rcpp_result_gen = Rcpp::wrap(rankSwap_argus_cpp(inp, perc));
+    return rcpp_result_gen;
+END_RCPP
+}

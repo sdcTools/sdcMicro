@@ -71,6 +71,7 @@ Collate:
     'methods.r'
     'microaggregation.R'
     'modRisk.R'
+    'muargus_compatibility_functions.R'
     'plotFunctions.R'
     'plotMicro.R'
     'pram.R'

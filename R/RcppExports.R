@@ -5,3 +5,11 @@ cpp_calcSuppInds <- function(inp, checkVals, params) {
     .Call(`_sdcMicro_cpp_calcSuppInds`, inp, checkVals, params)
 }
 
+microaggregation_argus_cpp <- function(inp, k, useOptimal) {
+    .Call(`_sdcMicro_microaggregation_argus_cpp`, inp, k, useOptimal)
+}
+
+rankSwap_argus_cpp <- function(inp, perc) {
+    .Call(`_sdcMicro_rankSwap_argus_cpp`, inp, perc)
+}
+
