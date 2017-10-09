@@ -140,14 +140,14 @@ output$ui_pram_expert <- renderUI({
     fluidRow(
       column(12, h5("Application of the postrandomization attempt resulted in the following warning!", align="center")),
       column(12, verbatimTextOutput("ui_lastwarning"))
-      , class = "wb-error-toast")
+      , class = "wb-warning-toast")
   })
   output$pram_expert_error <- renderUI({
     if (is.null(lastError())) {
       return(NULL)
     }
     fluidRow(
-      column(12, h5("Application of the postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, h5("Application of the postrandomization attempt resulted in the following error!", align="center")),
       column(12, verbatimTextOutput("ui_lasterror"))
       , class = "wb-error-toast")
   })
@@ -228,14 +228,14 @@ output$ui_pram_simple <- renderUI({
     fluidRow(
       column(12, h5("Application of the postrandomization attempt resulted in the following warning!", align="center")),
       column(12, verbatimTextOutput("ui_lastwarning"))
-      , class = "wb-error-toast")
+      , class = "wb-warning-toast")
   })
   output$pram_simple_error <- renderUI({
     if (is.null(lastError())) {
       return(NULL)
     }
     fluidRow(
-      column(12, h5("Application of the Postrandomization attempt resulted in the following warning!", align="center")),
+      column(12, h5("Application of the postrandomization attempt resulted in the following warning!", align="center")),
       column(12, verbatimTextOutput("ui_lasterror"))
       , class = "wb-error-toast")
   })

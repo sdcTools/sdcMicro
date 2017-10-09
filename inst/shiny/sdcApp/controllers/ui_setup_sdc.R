@@ -233,7 +233,8 @@ output$ui_sdcObj_summary <- renderUI({
   if (!is.null(lastWarning())) {
     out <- list(out, fluidRow(
       column(12, inp=h4("Application of the last method resulted in the following warning!")),
-      column(12, inp=verbatimTextOutput("ui_lastwarning"))))
+      column(12, inp=verbatimTextOutput("ui_lastwarning"))
+      , class = "wb-warning-toast"))
   }
   out <- list(out, fluidRow(
     column(12, uiOutput("show_info_general")),
@@ -435,7 +436,7 @@ output$ui_sdcObj_explorevars <- renderUI({
   if (!is.null(lastError())) {
     return(fluidRow(
       column(12, h4("The following error has occured!")),
-      column(12, code(lastError()))))
+      column(12, code(lastError()))), class = "wb-error-toast")
   }
 
   out <- fluidRow(
@@ -755,7 +756,7 @@ output$ui_sdcObj_create1 <- renderUI({
   input$btn_reset_sdc # dependency so that variable-types will get updated!
   out <- NULL
   if (!is.null(obj$last_error)) {
-    out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror"))))
+    out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror")), class = "wb-error-toast"))
   }
 
   txt_setup <- "Select the following variables for setting up the SDC problem instance: categorical key variables, continuous key variables (optional), variables selected for PRAM (optional), sample weight (optional), hierarchical identifier (optional), variables to be deleted (optional). Also, specify the parameter alpha and set a seed at the bottom of this page."

@@ -9,7 +9,7 @@ output$ui_export_report <- renderUI({
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
       column(12, h4("Trying to generate a report returned the following error!", align="center")),
-      column(12, verbatimTextOutput("ui_lasterror"))))
+      column(12, verbatimTextOutput("ui_lasterror")), class = "wb-error-toast"))
   }
 
   out <- list(out, fluidRow(
@@ -85,7 +85,7 @@ output$ui_export_data <- renderUI({
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
       column(12, h4("Trying to export the anonymized data resulted in the following error!", align="center")),
-      column(12, verbatimTextOutput("ui_lasterror"))))
+      column(12, verbatimTextOutput("ui_lasterror"))), class = "wb-error-toast")
   }
   out <- list(out, fluidRow(
     column(12, h5("View anonymized data"), align="center"),

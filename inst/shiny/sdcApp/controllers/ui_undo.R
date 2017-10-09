@@ -4,7 +4,7 @@ output$ui_export_problem1 <- renderUI({
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
       column(12, h4("Trying to export the current problem instance resulted in the following error!")),
-      column(12, verbatimTextOutput("ui_lasterror"))))
+      column(12, verbatimTextOutput("ui_lasterror")), class = "wb-error-toast"))
   }
   out <- list(out, fluidRow(
     column(12, p("The undo button can only be used to go one step back. For experimenting with SDC methods, parameters and settings, it can be

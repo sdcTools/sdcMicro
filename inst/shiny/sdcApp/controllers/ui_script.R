@@ -44,7 +44,7 @@ output$ui_script_export <- renderUI({
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
       column(12, h4("Trying to export the current problem instance resulted in the following error!", align="center")),
-      column(12, verbatimTextOutput("ui_lasterror"))))
+      column(12, verbatimTextOutput("ui_lasterror")), class = "wb-error-toast"))
   }
 
   out <- list(out, fluidRow(
