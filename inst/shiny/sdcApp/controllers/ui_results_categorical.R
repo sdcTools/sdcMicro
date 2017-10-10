@@ -502,9 +502,11 @@ output$ui_bivariate_tab <- renderUI({
       tab <- as.data.frame.matrix(formatC(addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA = "always")), format = "f", digits = 0))
       colnames(tab)[is.na(colnames(tab))] <- "NA"
       rownames(tab)[is.na(rownames(tab))] <- "NA"
+      tab <- cbind(rownames(tab), tab)
+      colnames(tab)[1] <- ""
     }
     tab
-  }, include.rownames = TRUE)
+  }, include.rownames = FALSE)
   output$biv_tab_m <- renderTable({
     req(input$sel_catvar1)
     if (!is.null(get_manipPramVars())) {
@@ -521,9 +523,11 @@ output$ui_bivariate_tab <- renderUI({
       tab <- as.data.frame.matrix(formatC(addmargins(table(df[[vars[1]]], df[[vars[2]]], useNA = "always")), format = "f", digits = 0))
       colnames(tab)[is.na(colnames(tab))] <- "NA"
       rownames(tab)[is.na(rownames(tab))] <- "NA"
+      tab <- cbind(rownames(tab), tab)
+      colnames(tab)[1] <- ""
     }
     tab
-  }, include.rownames = TRUE)
+  }, include.rownames = FALSE)
   output$biv_tab_res <- renderPrint({
     req(input$sel_catvar2)
     if(!is.null(input$sel_catvar2) & input$sel_catvar2 == "none"){
