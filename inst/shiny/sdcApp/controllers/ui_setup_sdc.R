@@ -366,25 +366,26 @@ output$ui_sdcObj_explorevars <- renderUI({
     }
 
     out <- NULL
-    if (is.null(res$tab1)) {
-      if (!is.null(v2) && v2 == "none"){
-        out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
-      } else {
+    if (!is.null(v2) && v2 == "none") { # univariate
+      out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
+    } else { # bivariate
+      if (cl1 & cl2){ # both factor
         out <- list(out, fluidRow(
           column(12, h5(HTML(paste("Cross-tabulation of", code(res$var[1]), "and", code(res$var[2]))))),
           column(12, renderTable(res$tab, include.rownames=TRUE), class="wn-info-table")))
-      }
-    } else {
-      out <- list(out, fluidRow(
-        column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))))),
-        column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))))),
-        column(12, renderTable(res$tab1, include.rownames=FALSE), class="wn-info-table"),
-        column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))))),
-        column(12, renderTable(res$tab2, include.rownames=FALSE), class="wn-info-table")))
+      } else if ((cl1 & !cl2) | (!cl1 & cl2)){ # one factor, one numeric
+        out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
+      } else { # both numeric
+        out <- list(out, fluidRow(
+          column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))))),
+          column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))))),
+          column(12, renderTable(res$tab1, include.rownames=FALSE), class="wn-info-table"),
+          column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))))),
+          column(12, renderTable(res$tab2, include.rownames=FALSE), class="wn-info-table")))      }
     }
 
-    nainfo <- data.frame(variable=c(v1, v2))
-    nainfo$nr_na <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
+    nainfo         <- data.frame(variable=c(v1, v2))
+    nainfo$nr_na   <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
     nainfo$perc_na <- formatC(100*(nainfo$nr_na/nrow(df)), format="f", digits=2)
     out <- list(out,
       fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.")))
