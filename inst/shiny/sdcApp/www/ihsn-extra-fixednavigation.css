@@ -1,0 +1,24 @@
+/*
+ * Top navigation
+ */
+nav.navbar{
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 44px;
+
+  /* prevent from wrapping */
+  min-width: 1000px;
+}
+
+body > div.container-fluid{
+  margin-top: 44px;
+}
+
+/*
+ * TODO: remove(?) https://github.com/skounis/sdcMicro/issues/86
+ */
+.container-fluid > .navbar-header {
+  margin-right: 4%;
+}

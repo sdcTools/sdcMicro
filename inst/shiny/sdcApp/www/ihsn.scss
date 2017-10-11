@@ -1,0 +1,214 @@
+/*
+**
+** Theme name: IHSN
+**
+*/
+
+//
+// IMPORT COLOR VARIABLES
+//
+@import 'ihsn-color-vars';
+
+//
+// TYPOGRAPHY VARIABLES
+//
+$sans-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
+$os-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+$mono-font: Menlo, Monaco, Consolas, "Courier New", monospace;
+$serif-font: Georgia, serif;
+
+$font-size: calc(0.9em + 0.4vw);
+$line-height: calc(0.9em + 0.8vw);
+
+//
+// MIXINS
+//
+@mixin default-transition {
+    transition: all 0.25s;
+}
+
+//
+// OVERALL STYLE
+//
+body {
+    background-color: $bg-color;
+    color: $text-color;
+    font-size: $font-size;
+    font-family: $sans-font;
+    line-height: $line-height;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: $text-color;
+    font-family: $sans-font;
+    font-weight: bold;
+    margin-top: 24px;
+    margin-bottom: 12px;
+
+}
+
+p {
+    font-family: $sans-font;
+}
+
+a {
+    color: $accent;
+    @include default-transition;
+
+    &:hover {
+        color: $accent-hover;
+    }
+}
+
+//
+// NAVIGATION - PROPOSAL 1 (Bright)
+//
+.navbar {
+    min-height: 45px;
+}
+
+.navbar-default {
+    background-color: $nav-bg;
+    border-bottom: 1px solid $primary;
+    margin-bottom: 0px;
+
+    .navbar-nav > li > a {
+    	border-bottom: none;
+        color: $nav-a;
+    	  font-weight: 500;
+        height: 44px;
+        padding: 11px 16px;
+        @include default-transition;
+    }
+
+    .navbar-nav > li > a:hover {
+        color: white;
+        background-color: $accent-hover;
+    }
+
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+        background: none;
+        border-bottom: solid 2px $nav-a-hover;
+        color: $dark-gray;
+
+    }
+
+    .navbar-brand,
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        color: #50595e;
+        height: 44px;
+    }
+}
+// END OF NAVIGATION - PROPOSAL 1 (Bright)
+
+
+.container-fluid > .navbar-header {
+    font-weight: 700;
+    margin-left: 0;
+    margin-right: 10%;
+    padding-left: 1%;
+}
+
+//
+// MAIN CONTENT
+//
+.tab-content {
+    margin-bottom: 30px;
+}
+
+.shiny-html-output {
+
+    h2:nth-of-type(1),
+    h3:nth-of-type(1),
+    h4:nth-of-type(1) {
+        padding-top: 20px;
+    }
+}
+
+//
+// BUTTONS
+//
+.btn-primary {
+    background-color: $accent;
+    border: none;
+    @include default-transition;
+
+    &:hover {
+        background-color: $accent-hover;
+    }
+}
+
+.btn-primary,
+.btn-default,
+.btn-warning {
+    border-radius: 4px;
+}
+
+.wb-btn-inline {
+    background: none;
+    color: $accent;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    border-bottom: solid 1px $accent;
+    font-size: inherit;
+    @include default-transition;
+
+    &:hover {
+        background-color: $accent;
+        color: #fff;
+        border: none;
+        border-bottom: solid 1px $accent;
+    }
+}
+
+//
+// FORMS
+//
+.form-control {
+    @include default-transition;
+
+    &:focus,
+    &:hover {
+    border-color: $accent;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+    }
+}
+
+//
+// TABLES
+//
+table.dataTable {
+    thead th {
+        border-bottom: 1px solid $primary !important;
+        border-top: 1px solid $primary !important;
+        background-color: #fff;
+        text-align: center !important;
+    }
+}
+
+tbody td {
+    font-family: $mono-font;
+    font-size: calc(0.8 * $font-size);
+}
+
+// MEDIA QUERIES
+
+/* Portrait */
+@media only screen
+  and (min-device-width: 768px)
+  and (max-device-width: 1024px)
+  and (orientation: portrait)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    table.dataTable thead th,
+    table.dataTable thead td {
+    padding: initial !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    }
+}

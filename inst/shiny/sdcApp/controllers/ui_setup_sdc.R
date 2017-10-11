@@ -17,17 +17,17 @@ output$ui_sdcObj_summary <- renderUI({
     }
     x <- print(curObj, type="general", docat=FALSE)
     out <- fluidRow(
-      column(12, h4("Summary of dataset and variable selection"), align="center"),
-      column(12, p("The loaded dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), align="center"),
-      column(12, list("Categorical key variable(s):", lapply(x$keyVars, function(x) {code(x)})), align="center"))
+      column(12, h3("Summary of dataset and variable selection"), class="wb-header"),
+      column(12, p("The loaded dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), class="wb-header-hint"),
+      column(12, list("Categorical key variable(s):", lapply(x$keyVars, function(x) {code(x)})) ))
 
     if (length(x$numVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Numerical key variable(s):", lapply(x$numVars, function(x) {code(x)})), align="center")))
+        column(12, list("Numerical key variable(s):", lapply(x$numVars, function(x) {code(x)})) )))
     }
     if (length(x$weightVar)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Sampling weight:", lapply(x$weightVar, function(x) {code(x)})), align="center")))
+        column(12, list("Sampling weight:", lapply(x$weightVar, function(x) {code(x)})) )))
     }
     # cannot be selected when creating the sdc problem instance
     #if (length(x$strataVar)>0) {
@@ -36,24 +36,24 @@ output$ui_sdcObj_summary <- renderUI({
     #}
     if (length(x$householdId)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Hierarchical identifier:", lapply(x$householdId, function(x) {code(x)})), align="center")))
+        column(12, list("Hierarchical identifier:", lapply(x$householdId, function(x) {code(x)})) )))
     }
     if (length(x$delVars)>0) {
       out <- list(out, fluidRow(
-        column(12, list("Deleted variable(s):", lapply(x$delVars, function(x) {code(x)})), align="center")))
+        column(12, list("Deleted variable(s):", lapply(x$delVars, function(x) {code(x)})) )))
     }
     gV <- x$ghostVars
     if (length(gV)>0) {
-      out <- list(out, fluidRow(column(12, tags$br(), list("Linked variables:"), align="center")))
+      out <- list(out, fluidRow(column(12, tags$br(), list("Linked variables:") )))
       for (i in 1:length(gV)) {
         out <- list(out, fluidRow(
           column(12, list("Variable(s)", lapply(gV[[i]][[2]], function(x) {
-            code(x)}),"are linked to key variable", code(gV[[i]][[1]])), align="center")))
+            code(x)}),"are linked to key variable", code(gV[[i]][[1]])) )))
       }
     }
     out <- list(out, fluidRow(
-      column(12, h4("Computation time"), align="center"),
-      column(12, p("The current computation time was ~",code(comptime()),".", align="center"))))
+      column(12, h4("Computation time") ),
+      column(12, p("The current computation time was ~",code(comptime()),"." ))))
     out
   })
   output$show_info_recodes <- renderUI({
@@ -73,9 +73,9 @@ output$ui_sdcObj_summary <- renderUI({
       "Average frequency"=paste(x$meansize$orig, x$meansize$mod),
       "Frequency of smallest level"=paste(x$minsize$orig, x$minsize$mod))
     out <- fluidRow(
-      column(12, h4("Information on categorical key variables"), align="center"),
-      column(12, p(txt), align="center"),
-      column(12, renderTable(dt), align="center"))
+      column(12, h4("Information on categorical key variables") ),
+      column(12, p(txt) ),
+      column(12, renderTable(dt), class="wn-info-table"))
     out
   })
   output$show_info_kanon <- renderUI({
@@ -94,9 +94,9 @@ output$ui_sdcObj_summary <- renderUI({
           paste0(x[["3anon"]]$orig," (",x[["3anon"]]$orig_p,"%)"),
           paste0(x[["5anon"]]$orig," (",x[["5anon"]]$orig_p,"%)")))
     out <- fluidRow(
-      column(12, h4("Information on k-anonymity"), align="center"),
-      column(12, p(txt), align="center"),
-      column(12, renderTable(dt), align="center"))
+      column(12, h4("Information on k-anonymity") ),
+      column(12, p(txt) ),
+      column(12, renderTable(dt), class="wn-info-table"))
     out
   })
   output$show_info_catrisk <- renderUI({
@@ -110,11 +110,11 @@ output$ui_sdcObj_summary <- renderUI({
     txt_risk <- "Observations with a higher risk than the main part of the data are defined as observations with an individual risk higher than the median "
     txt_risk <- paste0(txt_risk, "plus twice the median absolute deviation of the individual risk of all records in the dataset. Only individuals with an individual risk higher than 0.1 are considered.")
     out <- fluidRow(
-      column(12, h4("Risk measures for categorical key variables"), align="center"),
+      column(12, h4("Risk measures for categorical key variables") ),
       column(12, p("We expect",code(reident$mod),"(",code(paste0(reident$mod_p,"%")),") re-identifications in the population, as compared to",
-                   code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications in the original data."), align="center"),
+                   code(reident$orig),"(",code(paste0(reident$orig_p,"%")),") re-identifications in the original data.") ),
       column(12, p(code(riskyobs$mod)," observations have a higher risk than the risk in the main part of the data, as compared to ",
-                   code(riskyobs$orig)," observations in the original data.", tipify(icon("question"), title=txt_risk, placement="top")), align="center"))
+                   code(riskyobs$orig)," observations in the original data.", tipify(icon("info-circle"), title=txt_risk, placement="top")) ))
     out
   })
   output$show_info_risk <- renderUI({
@@ -127,11 +127,11 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     out <- fluidRow(
-      column(12, h4("Risk measures for numerical key variables"), align="center"),
+      column(12, h4("Risk measures for numerical key variables") ),
       column(12, p("The disclosure risk is currently between",code("0%"),"and",code(paste0(x$risk_up,"%")),",
-      as compared to between",code("0%"),"and",code("100%"),"in the original data."), align="center"),
-      column(12, h4("Information loss"), align="center"),
-      column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),"."), align="center")
+      as compared to between",code("0%"),"and",code("100%"),"in the original data.") ),
+      column(12, h4("Information loss") ),
+      column(12, p("Measure",strong("IL1s"),"is",code(x$il1),"and the",strong("differences of eigenvalues"),"are",code(paste0(x$diff_eigen,"%")),".") )
     )
     out
   })
@@ -161,9 +161,9 @@ output$ui_sdcObj_summary <- renderUI({
     dt[,v2:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
     setnames(dt, c("Key variable", paste("Additional suppressions due to last run of",meth), "Total number of missing values (NA) in variable"))
     out <- list(fluidRow(
-      column(12, h4("Information on local suppression"), align="center"),
-      column(12, p(txt), align="center"),
-      column(12, renderTable(dt), align="center")))
+      column(12, h4("Information on local suppression") ),
+      column(12, p(txt)),
+      column(12, renderTable(dt), class="wn-info-table")))
   })
   output$show_info_pram <- renderUI({
     curObj <- sdcObj()
@@ -174,17 +174,17 @@ output$ui_sdcObj_summary <- renderUI({
     if (is.null(x)) {
       return(NULL)
     }
-    out <- fluidRow(column(12, h4("PRAM"), align="center"))
+    out <- fluidRow(column(12, h4("PRAM") ))
     dt <- x$pram_summary
     for (i in 1:nrow(dt)) {
       out <- list(out, fluidRow(
-        column(12, p("Variable",code(dt$variable[i])), align="center"),
-        column(12, tags$i("transition matrix"), align="center"),
-        column(12, uiOutput(paste0("transmat_pram_",i)), align="center")))
+        column(12, p("Variable",code(dt$variable[i])) ),
+        column(12, tags$i("transition matrix")),
+        column(12, uiOutput(paste0("transmat_pram_",i)), class="wn-info-table")))
     }
     out <- list(out, fluidRow(
-      column(12, p("Summary of changed observations due to PRAM"), align="center"),
-      column(12, renderTable(dt), align="center")))
+      column(12, p("Summary of changed observations due to PRAM") ),
+      column(12, renderTable(dt), class="wn-info-table")))
     out
   })
   output$show_info_comp_numvars <- renderUI({
@@ -201,22 +201,22 @@ output$ui_sdcObj_summary <- renderUI({
       dt[is.na(`NA's`),`NA's`:="0"]
     }
     dt <- cbind(data.table(Variable=rep(x$numVars, each=2)), dt)
-    out <- fluidRow(column(12, h4("Compare numerical key variables"), align="center"))
+    out <- fluidRow(column(12, h4("Compare numerical key variables")))
     out <- list(out, fluidRow(
-      column(12, renderTable(dt), align="center")
+      column(12, renderTable(dt), class="wn-info-table")
     ))
     out
   })
   output$anonMethods <- renderUI({
     anon_methods <- unique(anonPerformed())
-    out <- fluidRow(column(12, h4("Anonymization steps"),align="center"))
+    out <- fluidRow(column(12, h4("Anonymization steps") ))
     if (is.null(anon_methods)) {
-      out <- list(out, fluidRow(column(12, code("No methods have been applied"),align="center")))
+      out <- list(out, fluidRow(column(12, code("No methods have been applied"))))
       return(out)
     } else {
-      out <- fluidRow(column(12, h4("Anonymization steps"),align="center"))
+      out <- fluidRow(column(12, h4("Anonymization steps") ))
       for (i in 1:length(anon_methods)) {
-        out <- list(out, fluidRow(column(12, code(anon_methods[i]),align="center")))
+        out <- list(out, fluidRow(column(12, code(anon_methods[i]))))
       }
     }
     out
@@ -226,31 +226,50 @@ output$ui_sdcObj_summary <- renderUI({
   out <- NULL
   if (!is.null(lastError())) {
     out <- list(out, fluidRow(
-      column(12, h4("Application of the last method resulted in the following error!", align="center")),
-      column(12, verbatimTextOutput("ui_lasterror"))))
+      column(12, h4("Application of the last method resulted in the following error!")),
+      column(12, verbatimTextOutput("ui_lasterror"))
+      , class = "wb-error-toast"))
   }
   if (!is.null(lastWarning())) {
     out <- list(out, fluidRow(
-      column(12, inp=h4("Application of the last method resulted in the following warning!", align="center")),
-      column(12, inp=verbatimTextOutput("ui_lastwarning"))))
+      column(12, inp=h4("Application of the last method resulted in the following warning!")),
+      column(12, inp=verbatimTextOutput("ui_lastwarning"))
+      , class = "wb-warning-toast"))
   }
   out <- list(out, fluidRow(
     column(12, uiOutput("show_info_general")),
     column(12, uiOutput("show_info_recodes")),
     column(12, uiOutput("show_info_catrisk")),
-    column(12, uiOutput("show_info_kanon")),
-    column(12, uiOutput("show_info_pram")),
-    column(12, uiOutput("show_info_localsuppression")),
-    column(12, uiOutput("show_info_comp_numvars")),
+    column(12, uiOutput("show_info_kanon"))))
+  if(!is.null(sdcObj()) & !is.null(print(sdcObj(), type="pram", docat=FALSE))){
+    out <- list(out, fluidRow(
+      column(12, uiOutput("show_info_pram"))))
+  }
+  if(!is.null(sdcObj()) & !is.null(print(sdcObj(), type="ls", docat=FALSE))){
+    out <- list(out, fluidRow(
+      column(12, uiOutput("show_info_localsuppression"))))
+  }
+  if(!is.null(sdcObj()) & !is.null(print(sdcObj(), type="comp_numvars", docat=FALSE)) & !(length(print(sdcObj(), type="comp_numvars", docat=FALSE)$results)==0)){
+    out <- list(out, fluidRow(
+      column(12, uiOutput("show_info_comp_numvars"))))
+  }
+  out <- list(out, fluidRow(
     column(12, uiOutput("show_info_risk")),
     column(12, uiOutput("anonMethods"))))
   out
 })
 
 ## explore current variables
+output$ui_sdcObj_explorevars_header <- renderUI({
+  out <- fluidRow(
+    column(12, h3("Explore variables in modified data"), offset = 0, class = "wb-header"),
+    column(12, p("Here you can view tabulations, summary statistics and graphic representations of variables and pairs of variables to explore the modified data."), offset = 0, class = "wb-header-hint")
+  )
+  out
+})
 output$ui_sdcObj_explorevars <- renderUI({
   output$ui_selanonvar1 <- renderUI({
-    selectInput("view_selanonvar1", choices=allVars(), label=h5("Choose a variable"), multiple=FALSE, selected=obj$inp_sel_anonvar1, width="100%")
+    selectInput("view_selanonvar1", choices=allVars(), label=p("Choose a variable"), multiple=FALSE, selected=obj$inp_sel_anonvar1, width="100%")
   })
   # This is required so that usual changes of the dropdown-select are also reflected in the reactive variable obj$inp_sel_anonvar1
   observeEvent(input$ui_selanonvar1, {
@@ -258,7 +277,7 @@ output$ui_sdcObj_explorevars <- renderUI({
   })
   output$ui_selanonvar2 <- renderUI({
     vv <- setdiff(allVars(), input$view_selanonvar1)
-    selectInput("view_selanonvar2", choices=c("none", vv), label=h5("Choose a second variable (optional)"), multiple=FALSE, width="100%")
+    selectInput("view_selanonvar2", choices=c("none", vv), label=p("Choose a second variable (optional)"), multiple=FALSE, width="100%")
   })
 
   observeEvent(input$view_selanonvar1, {
@@ -313,10 +332,14 @@ output$ui_sdcObj_explorevars <- renderUI({
     } else {
       # 2 factors
       if (cl1 & cl2) {
-        res <- list(tab=as.data.frame.table(addmargins(table(df[[1]], df[[2]], useNA="always"))), var=c(v1, v2))
-        colnames(res$tab) <- c(res$var, "Frequency")
-        res$tab$Frequency <- as.integer(res$tab$Frequency)
-        res$tab$Percentage <- formatC(100*(res$tab$Frequency/nrow(df)), format="f", digits=2)
+        tabdf <- addmargins(table(df[[1]], df[[2]], useNA = "always"))
+        colnames(tabdf)[is.na(colnames(tabdf))] <- "NA"
+        rownames(tabdf)[is.na(rownames(tabdf))] <- "NA"
+        tabdfp <- prop.table(tabdf)
+        tabdfc <- as.data.frame(matrix(paste0(tabdf, paste0(" (", formatC(100 * tabdfp, format = "f", digits = 2),"%)")), nrow = dim(tabdf)[1], ncol = dim(tabdf)[2]))
+        colnames(tabdfc) <- colnames(tabdf)
+        rownames(tabdfc) <- rownames(tabdf)
+        res <- list(tab = as.data.frame.matrix(tabdfc), var = c(v1, v2))
       } else if (cl1 & !cl2) {
         res <- tapply(df[[2]], df[[1]], summaryfn)
         res <- do.call("rbind", res)
@@ -343,25 +366,32 @@ output$ui_sdcObj_explorevars <- renderUI({
     }
 
     out <- NULL
-    if (is.null(res$tab1)) {
-      out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), align="center")))
-    } else {
-      out <- list(out, fluidRow(
-        column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))), align="center")),
-        column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))), align="center")),
-        column(12, renderTable(res$tab1, include.rownames=FALSE), align="center"),
-        column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))), align="center")),
-        column(12, renderTable(res$tab2, include.rownames=FALSE), align="center")))
+    if (!is.null(v2) && v2 == "none") { # univariate
+      out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
+    } else { # bivariate
+      if (cl1 & cl2){ # both factor
+        out <- list(out, fluidRow(
+          column(12, h5(HTML(paste("Cross-tabulation of", code(res$var[1]), "and", code(res$var[2]))))),
+          column(12, renderTable(res$tab, include.rownames=TRUE), class="wn-info-table wn-row-title")))
+      } else if ((cl1 & !cl2) | (!cl1 & cl2)){ # one factor, one numeric
+        out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
+      } else { # both numeric
+        out <- list(out, fluidRow(
+          column(12, h5(HTML(paste("Correlation between",code(res$vars[1]),"and",code(res$vars[2]),":",code(res$vcor))))),
+          column(12, h5(HTML(paste("Summary of variable",code(res$vars[1]))))),
+          column(12, renderTable(res$tab1, include.rownames=FALSE), class="wn-info-table"),
+          column(12, h5(HTML(paste("Summary of variable",code(res$vars[2]))))),
+          column(12, renderTable(res$tab2, include.rownames=FALSE), class="wn-info-table")))      }
     }
 
-    nainfo <- data.frame(variable=c(v1, v2))
-    nainfo$nr_na <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
+    nainfo         <- data.frame(variable=c(v1, v2))
+    nainfo$nr_na   <- as.integer(unlist(lapply(df, function(x) { sum(is.na(x)) })))
     nainfo$perc_na <- formatC(100*(nainfo$nr_na/nrow(df)), format="f", digits=2)
     out <- list(out,
-      fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.", align="center")))
+      fluidRow(column(12, "Variable",code(nainfo$variable[1]),"has",code(nainfo$nr_na[1]),"(",code(paste0(nainfo$perc_na[1],"%")),") missing values.")))
     if (nrow(nainfo)==2 & nainfo$variable[2]!="none") {
       out <- list(out,
-      fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.", align="center")))
+      fluidRow(column(12, "Variable",code(nainfo$variable[2]),"has",code(nainfo$nr_na[2]),"(",code(paste0(nainfo$perc_na[2],"%")),") missing values.")))
     }
     out
   })
@@ -406,14 +436,13 @@ output$ui_sdcObj_explorevars <- renderUI({
 
   if (!is.null(lastError())) {
     return(fluidRow(
-      column(12, h4("The following error has occured!", align="center")),
-      column(12, code(lastError()))))
+      column(12, h4("The following error has occured!")),
+      column(12, code(lastError()))), class = "wb-error-toast")
   }
 
-  out <- fluidRow(column(12, h4("Explore variables in modified data"), align="center"))
-  out <- list(out, fluidRow(
+  out <- fluidRow(
     column(6, uiOutput("ui_selanonvar1")),
-    column(6, uiOutput("ui_selanonvar2"))))
+    column(6, uiOutput("ui_selanonvar2")))
 
   out <- list(out, fluidRow(
     column(12, plotOutput("view_plot_anon", height="500px"))
@@ -423,6 +452,15 @@ output$ui_sdcObj_explorevars <- renderUI({
 })
 
 ## add Ghost-Vars
+output$ui_sdcObj_addghostvars_header <- renderUI({
+  helptxt <- "Often datasets contain variables that are related to the key variables used for local suppression and could be used to reconstruct suppressed values. Here you can link variables to"
+  helptxt <- paste(helptxt, "categorical key variables. Any suppression in the key variable will lead to a suppression in the variable(s) linked")
+  helptxt <- paste(helptxt, "to that key variable. Several variables can be linked to one key variable.")
+  out <-fluidRow(
+    column(12, h3("Add linked variables"), offset = 0, class = "wb-header"),
+    column(12, p(helptxt), offset = 0, class = "wb-header-hint")
+  )
+})
 output$ui_sdcObj_addghostvars <- renderUI({
   output$addgv_btn <- renderUI({
     req(input$sel_gv2)
@@ -433,40 +471,48 @@ output$ui_sdcObj_addghostvars <- renderUI({
   })
   output$addgv_v1 <- renderUI({
     res <- possGhostVars()
-    selectInput("sel_gv1", label=h5("Select categorical key variable"), choices=res$kv, width="100%")
+    selectInput("sel_gv1", label=p("Select categorical key variable"), choices=res$kv, width="100%")
   })
   output$addgv_v2 <- renderUI({
     res <- possGhostVars()
-    selectInput("sel_gv2", label=h5("Select linked variable(s)"), choices=res$gv,  multiple=TRUE, width="100%")
+    selectInput("sel_gv2", label=p("Select linked variable(s)"), choices=res$gv,  multiple=TRUE, width="100%")
   })
 
   res <- possGhostVars()
   if (length(res$gv) == 0) {
     return(fluidRow(column(12,
-      h4("No variables are available that could be used as",code("linked variables"),".", align="center"))))
+      h4("No variables are available that could be used as",code("linked variables"),"."))))
   }
 
-  helptxt <- "Often datasets contain variables that are related to the key variables used for local suppression and could be used to reconstruct suppressed values. Here you can link variables to"
-  helptxt <- paste(helptxt, "categorical key variables. Any suppression in the key variable will lead to a suppression in the variable(s) linked")
-  helptxt <- paste(helptxt, "to that key variable. Several variables can be linked to one key variable.")
   out <- fluidRow(
-    column(12, h4("Add linked variables"), align="center"),
-    column(12, p(helptxt), align="center"))
-  out <- list(out, fluidRow(
     column(6, uiOutput("addgv_v1"), align="center"),
     column(6, uiOutput("addgv_v2"), align="center")
-  ))
+  )
   out <- list(out, fluidRow(column(12, uiOutput("addgv_btn"), align="center")))
   out
 })
 
 ## add new random ID-variable
+output$ui_sdcObj_randIds_header <- renderUI({
+  helptxt <- "The ID in microdata as well as the order of records can be used to reconstruct suppressed values."
+  helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
+  helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
+  helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
+
+  out <- fluidRow(
+    column(12, h3("Add a new random ID variable"), offset = 0, class = "wb-header"),
+    column(12, p(helptxt), p(helptxt2), offset = 0, class = "wb-header-hint")
+  )
+  out
+})
 output$ui_sdcObj_randIds <- renderUI({
   output$randid_newid <- renderUI({
-    textInput("txt_randid_newid", label=h5("Specify name for the new ID variable"), width="100%")
+    textInput("txt_randid_newid", label=p("Specify name for the new ID variable"), width="100%")
   })
+  #
   output$randid_withinvar <- renderUI({
-    selectInput("sel_randid_withinvar", label=h5("If used, the ID will be the same for equal values of the selected variable"),
+  txt_tooltip <- "If used, the ID will be the same for equal values of the selected variable."
+    selectInput("sel_randid_withinvar", label=p("Set grouping variable (optional)", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
       choices=c("none",allVars()), multiple=FALSE, width="100%")
   })
   output$randid_btn <- renderUI({
@@ -480,19 +526,11 @@ output$ui_sdcObj_randIds <- renderUI({
     myActionButton("btn_addRandID", label=("Add new ID variable"), "primary")
   })
 
-  helptxt <- "The ID in microdata as well as the order of records can be used to reconstruct suppressed values."
-  helptxt <- paste(helptxt, "Here you create a new randomized ID that can be used to replace the existing ID. To create a new household ID")
-  helptxt <- paste(helptxt, "you can select the household ID as a variable for which the new ID should be the same for equal values.")
-  helptxt2 <- "Note: Do not forget to remove the existing ID after exporting the data."
 
   out <- fluidRow(
-    column(12, h4("Add a new random ID variable"), align="center"),
-    column(12, p(helptxt), align="center"),
-    column(12, p(helptxt2), align="center"))
-  out <- list(out, fluidRow(
     column(6, uiOutput("randid_newid"), align="center"),
     column(6, uiOutput("randid_withinvar"), align="center")
-  ))
+  )
   out <- list(out, fluidRow(
     column(12, uiOutput("randid_btn"), align="center")
   ))
@@ -518,7 +556,7 @@ sdcData <- reactive({
   )
   df$nrCodes <- sapply(inputdata, function(x) { length(unique(x))} )
   df$nrNA <- sapply(inputdata, function(x) { sum(is.na(x))} )
-  colnames(df) <- c("Variable name", "Type", "Key variables", "Weight", "Hierarchical identifier", "PRAM", "Delete", "Number of levels", "Number of missing")
+  colnames(df) <- c("Variable name", "Type", "Key variables", "Weight", "Hierarchical<br>identifier", "PRAM", "Delete", "Number of levels", "Number of missing")
   rownames(df) <- NULL
   df
 })
@@ -527,10 +565,11 @@ output$setupTable <- DT::renderDataTable({
   sdcData()
 }, server=FALSE, escape=FALSE, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
 options = list(
-  searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE, autoWidth=FALSE,
-  columnDefs=list(list(width='400px', targets = c(2))),
+  scrollX=TRUE, scrollY=380, searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE, autoWidth=FALSE,
+  # columnDefs=list(list(width='400px', targets = c(2))),
+  columnDefs=list(list()),
   preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
-  drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
+  drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); var event = new Event("AnonymiseDrawnEvent"); document.dispatchEvent(event);} ')
 ))
 
 # show the setup-button or an error-message
@@ -700,13 +739,17 @@ output$setup_moreparams <- renderUI({
   txt_alpha <- "The parameter alpha is used to compute the frequencies of keys, which is used to compute risk"
   txt_alpha <- paste(txt_alpha, "measures for categorical key variables. Alpha is the weight with which a key that coincides based on a missing value (NA) contributes to these frequencies.")
   sl_alpha <- sliderInput("sl_alpha",
-    label=h5("Parameter 'alpha'", tipify(icon("question"), title=txt_alpha, placement="top")),
+    label=p("Parameter 'alpha'", tipify(icon("info-circle"), title=txt_alpha, placement="top")),
     value=1, min=0, max=1, step=0.01, width="90%")
   sl_seed <- sliderInput("sl_seed",
-    label=h5("Parameter 'seed'", tipify(icon("question"), title=txt_seed, placement="top")),
-    value=0, min=-250, max=250, step=1, round=FALSE, width="90%")
+    label=p("Parameter 'seed'", tipify(icon("info-circle"), title=txt_seed, placement="top")),
+    value = 0, min = 0, max= 500, step = 1, round=FALSE, width="90%")
   out <- list(
-    fluidRow(column(6, sl_alpha, align="center"), column(6, sl_seed, align="center")))
+    fluidRow(
+      column(12, h4("Set additional parameters", class="wb-block-title")),
+      column(12, sl_alpha, align="center"),
+      column(12, sl_seed, align="center"))
+    )
   out
 })
 
@@ -714,14 +757,14 @@ output$ui_sdcObj_create1 <- renderUI({
   input$btn_reset_sdc # dependency so that variable-types will get updated!
   out <- NULL
   if (!is.null(obj$last_error)) {
-    out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror"))))
+    out <- list(out, fluidRow(column(12, verbatimTextOutput("ui_lasterror")), class = "wb-error-toast"))
   }
 
   txt_setup <- "Select the following variables for setting up the SDC problem instance: categorical key variables, continuous key variables (optional), variables selected for PRAM (optional), sample weight (optional), hierarchical identifier (optional), variables to be deleted (optional). Also, specify the parameter alpha and set a seed at the bottom of this page."
   txt_setup <- paste(txt_setup, tags$br(), tags$br(), "Tip - Before you start, make sure that variable types are appropriate. If not, go to the Microdata tab and convert variables to numeric or factor.")
 
   out <- list(out,
-    fluidRow(column(12, h4("Select variables", tipify(icon("question"), title=txt_setup, placement="bottom")), align="center")),
+    fluidRow(column(12, h4("Select variables", tipify(icon("info-circle"), title=txt_setup, placement="bottom"), class="wb-block-title"), align="center")),
     fluidRow(column(12, DT::dataTableOutput("setupTable", height="100%"))))
   out
 })
@@ -775,24 +818,28 @@ output$ui_sdcObj_info <- renderUI({
       colnames(tt) <- c("Level", "Frequency")
       out <- list(out, fluidRow(
         column(12, ui_nrLevs, align="center"),
-        column(12, renderTable(tt))))
+        column(12, renderTable(tt), class="wn-info-table")))
     } else {
       out <- list(out, fluidRow(
         column(12, ui_nrLevs, align="center"),
-        column(12, renderPrint(summary(inp)))))
+        column(12, renderTable(as.data.frame(t(summaryfn(inp))), include.rownames=FALSE), class="wn-info-table")))
     }
     out
   })
 })
 
 output$sel_sdc_infovar <- renderUI({
-  selectInput("sel_infov", label=h4("Explore variables"), choices=allVars(), width="100%")
+  selectInput("sel_infov", label=h4("Explore variables", class="wb-block-title"), choices=allVars(), width="100%")
 })
 
 output$ui_sdcObj_create <- renderUI({
   out <- fluidRow(
-    column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
-    column(4, uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
+    column(width = 12, offset = 0, h3("Anonymize"), class="wb-header"),
+    column(width = 12, offset = 0, p("Select variables and set parameters to create the SDC problem."), class="wb-header-hint"),
+    # column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
+    # column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
+    column(8, div(style='',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
+    column(4, uiOutput("setup_moreparams"), uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
   )
   out
 })

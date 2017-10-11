@@ -1,0 +1,22 @@
+/*
+ * The title of a block that contains a widget
+ * See: https://github.com/skounis/sdcMicro/issues/81
+ */
+.shiny-html-output h4.wb-block-title,
+.shiny-html-output label h4.wb-block-title {
+  padding-top: 0px;
+  margin: 12px 0 6px 0;
+}
+
+/*
+ * Equalise the distance between the block/label title and the element that follows
+ * see https://github.com/skounis/sdcMicro/issues/84
+ */
+.shiny-html-output h4.wb-block-title{
+  margin-bottom: 11px;
+}
+
+h4 i,
+h5 i{
+  margin-left: 10px;
+}

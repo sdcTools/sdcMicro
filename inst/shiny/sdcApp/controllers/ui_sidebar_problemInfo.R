@@ -9,7 +9,7 @@ output$tabinfo_sb_results <- output$tabinfo_sb_anonymize <- renderUI({
     column(12, DT::renderDataTable({
       inp
     }, rownames=FALSE, colnames = c("Variable name", "Type", "Suppressions"), selection='none', style='bootstrap', class='table-condensed',
-    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
+    options = list(searching=FALSE, scrollX=TRUE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
   )
 })
 
@@ -23,7 +23,7 @@ output$tabparam_sb_results <- output$tabparam_sb_anonymize <- renderUI({
     column(12, DT::renderDataTable({
       inp
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
-    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
+    options = list(searching=FALSE, scrollX=TRUE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
   )
 })
 
@@ -57,13 +57,13 @@ output$risk_sb_anonymize <- renderUI({
     "k-anonimity"=c("2-anonymity","3-anonymity","5-anonymity"),
     "Modified data"=c(v1,v2,v3),
     "Original data"=c(v1_o, v2_o, v3_o))
-  
+
   fluidRow(
     column(12, h4("k-anonymity"), align="center"),
     column(12, DT::renderDataTable({
       df
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
-    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
+    options = list(searching=FALSE, scrollX=TRUE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
   )
 })
 
@@ -84,7 +84,7 @@ output$numrisk_sb_anonymize <- renderUI({
     column(12, DT::renderDataTable({
       dt
     }, rownames=FALSE, colnames =c("Data", "Minimum risk", "Maximum risk"), selection='none', style='bootstrap', class='table-condensed',
-    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)))
+    options = list(searching=FALSE, scrollX=TRUE, paging=FALSE, ordering=FALSE, bInfo=FALSE)))
   )
 })
 
@@ -112,7 +112,7 @@ output$loss_sb_anonymize <- renderUI({
     column(12, DT::renderDataTable({
       df
     }, rownames=FALSE, selection='none', style='bootstrap', class='table-condensed',
-    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)),align="center")
+    options = list(searching=FALSE, scrollX=TRUE, paging=FALSE, ordering=FALSE, bInfo=FALSE)),align="center")
   )
 })
 
@@ -139,7 +139,7 @@ output$pram_sb_anonymize <- renderUI({
     column(12, DT::renderDataTable({
       pI$summary
     }, rownames=FALSE, colnames = c("Variable name", "Number of changed values", "Percentage of changed values"), selection='none', style='bootstrap', class='table-condensed',
-    options = list(searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
+    options = list(searching=FALSE, scrollX=TRUE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
   ))
 })
 

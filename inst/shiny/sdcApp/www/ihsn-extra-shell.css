@@ -1,0 +1,35 @@
+/*
+ * Do not display the navigation for really small screens
+ */
+
+ @media only screen and (max-width: 767px){
+     .navbar-nav {
+       display: none;
+     }
+ }
+
+/*
+ * Neutralize margins for shell wrappers
+ * do not add margins for the html-output used for the shell
+ * of the app: Main areas where the sidebar, main column etc are hosted.
+ */
+.tab-content > .tab-pane > .shiny-html-output,
+.tab-content > .tab-pane > .shiny-html-output > .shiny-html-output{
+  margin: 0;
+}
+
+.wb_sidebar > .shiny-html-output,
+.wb-maincolumn > .shiny-html-output,
+.wb-maincolumn > .shiny-html-output > .shiny-html-output{
+  margin: 0;
+}
+
+#show_info_general.shiny-html-output{
+  margin: 0;
+}
+
+#ui_show_changed_labels_header.shiny-html-output{
+  margin: 0;
+}
+/*
+ * **/

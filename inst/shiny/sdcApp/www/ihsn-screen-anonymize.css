@@ -1,0 +1,10 @@
+/*
+ * Anonymize Screen
+ * Special rules apply of to this screen
+ */
+
+#recfac_cbgr .selectize-control.multi .selectize-input{
+  height: auto;
+  max-height: 155px;
+  overflow: auto;
+ }

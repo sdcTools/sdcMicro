@@ -37,10 +37,9 @@ output$ui_anonymize_sidebar_left <- renderUI({
     if (is.null(sdcObj())) {
       return(NULL)
     }
-    btn_reset <- bsButton("btn_reset_sdc1", label=("Reset SDC problem"), style="warning", size="extra-small", block="TRUE")
+    btn_reset <- myActionButton("btn_reset_sdc1", label="Reset SDC problem", "danger")
     fluidRow(
-      column(12, h4("Reset SDC problem"), align="center"),
-      column(12, btn_reset))
+      column(12, btn_reset, class="wb-action-button wb-action-button-top"))
   })
   output$ui_sel_anon_btns <- renderUI({
 
@@ -57,16 +56,63 @@ output$ui_anonymize_sidebar_left <- renderUI({
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(curid, label=df_choices$name[i], block=TRUE, size="extra-small", style=style), tags$br())))
+        # TODO: see https://github.com/skounis/sdcMicro/issues/48
+        # column(12, bsButton(curid, label=df_choices$name[i], block=TRUE, size="extra-small", style=style), tags$br())))
+        column(12, bsButton(curid, label=df_choices$name[i], block=TRUE, size="extra-small", style=style))))
     }
     eval(parse(text=genObserver_menus(pat="btn_sel_anon_", n=1:nrow(df_choices), updateVal="cur_selection_anon")))
     out
   })
-  out <- list(uiOutput("ui_sdcObj_reset"), uiOutput("ui_sel_anon_btns"))
+  out <- list(uiOutput("ui_sel_anon_btns"), uiOutput("ui_sdcObj_reset"))
   out
 })
 
-# center column
+# center column main
+output$ui_main_anon_header <- renderUI({
+  val <- obj$cur_selection_anon
+  if (val=="btn_sel_anon_2") {
+    return(uiOutput("ui_sdcObj_explorevars_header"))
+  }
+  if (val=="btn_sel_anon_3") {
+    return(uiOutput("ui_sdcObj_addghostvars_header"))
+  }
+  if (val=="btn_sel_anon_4") {
+    return(uiOutput("ui_sdcObj_randIds_header"))
+  }
+
+  ## categorical methods
+  if (val=="btn_sel_anon_5") {
+    return(uiOutput("ui_recode_header"))
+  }
+  if (val=="btn_sel_anon_6") {
+    return(uiOutput("ui_kAnon_header"))
+  }
+  if (val=="btn_sel_anon_7") {
+    return(uiOutput("ui_pram_simple_header"))
+  }
+  if (val=="btn_sel_anon_8") {
+    return(uiOutput("ui_pram_expert_header"))
+  }
+  if (val=="btn_sel_anon_9") {
+    return(uiOutput("ui_supp_threshold_header"))
+  }
+  ## numerical methods
+  if (val=="btn_sel_anon_10") {
+    return(uiOutput("ui_topbotcoding_num_header"))
+  }
+  if (val=="btn_sel_anon_11") {
+    return(uiOutput("ui_microaggregation_header"))
+  }
+  if (val=="btn_sel_anon_12") {
+    return(uiOutput("ui_noise_header"))
+  }
+  if (val=="btn_sel_anon_13") {
+    return(uiOutput("ui_rankswap_header"))
+  }
+  return(invisible(NULL))
+})
+
+# center column header
 output$ui_main_anon <- renderUI({
   val <- obj$cur_selection_anon
   if (val=="btn_sel_anon_2") {
@@ -111,27 +157,25 @@ output$ui_main_anon <- renderUI({
   return(invisible(NULL))
 })
 
-
 output$ui_anonymize_noproblem <- renderUI({
   return(list(
     noInputData(uri="ui_anonymize"),
-    fluidRow(column(12, tags$br(), p("or go back to the Undo tab and upload a previously saved problem instance"), align="center")),
+    fluidRow(column(12, tags$br(), p("or go to the Undo tab and upload a previously saved problem instance."), align="center")),
     fluidRow(column(12, myActionButton("nodata_anonymize_uploadproblem", label="Upload a previously saved problem", btn.style="primary"), align="center"))
   ))
 })
 output$ui_anonymize_summary <- renderUI({
   return(fluidRow(
-    column(2, uiOutput("ui_anonymize_sidebar_left")),
-    column(10, uiOutput("ui_sdcObj_summary"))))
+    column(2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"),
+    column(10, uiOutput("ui_sdcObj_summary"), class="wb-maincolumn")))
 })
 output$ui_anonymize_withsidebar <- renderUI({
-  return(fluidRow(
-    column(2, uiOutput("ui_anonymize_sidebar_left")),
-    column(7, uiOutput("ui_main_anon")),
-    column(3, isolate(uiOutput("sb_info_anonymize")))
+  return(fluidRow(column(width = 2, uiOutput("ui_anonymize_sidebar_left"), class="wb_sidebar"),
+         list(column(width = 10, uiOutput("ui_main_anon_header"), class="wb-maincolumn"),
+              column(width = 7, uiOutput("ui_main_anon"), class="wb-maincolumn"),
+                       column(width = 3, isolate(uiOutput("sb_info_anonymize")), class="wb-maincolumn"))
   ))
 })
-
 
 output$ui_anonymize <- renderUI({
   if (is.null(obj$inputdata)) {

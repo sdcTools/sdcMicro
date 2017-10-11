@@ -1,0 +1,40 @@
+.shiny-html-output{
+  margin: 10px 0;
+}
+
+.wn-info-table .shiny-html-output table{
+  margin-left: 30px;
+}
+
+.shiny-html-output .table.shiny-table{
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  border-collapse: initial;
+  min-width: 180px;
+}
+
+.shiny-html-output .table.shiny-table > thead > tr > th {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.1);
+}
+
+
+.wn-info-table .shiny-html-output {
+  overflow-x: auto;
+  margin-left: 30px;
+  margin-bottom: 20px;
+}
+
+.wn-info-table .shiny-html-output table {
+  margin-left: 0;
+  margin-bottom: 0;
+}
+
+td.wn-cell-title {
+  background: rgba(0,0,0,0.1);
+}
+
+.wn-info-table.wn-row-title tr td:first-child{
+  background: rgba(0,0,0,0.1);
+}

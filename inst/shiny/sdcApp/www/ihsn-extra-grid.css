@@ -1,0 +1,131 @@
+/*
+ * Neutralize yeti and bootstrap
+ * Seach box should be style like any other textfield
+ */
+input[type=search] {
+    -webkit-appearance: textfield;
+}
+
+/*
+ * Style the page selector (top left)
+ */
+.dataTables_wrapper .dataTables_length label{
+  min-width: 150px;
+}
+
+.dataTables_wrapper .dataTables_length select.form-control{
+  width: 90px;
+  display: inline-block;
+}
+
+.dataTables_wrapper .dataTables_filter input[type=search] {
+    display: inline-block;
+    width: 70%;
+}
+
+/*
+ * Style the Pager
+ */
+.dataTables_wrapper.no-footer .dataTables_scrollBody {
+    border-bottom: 0px;
+}
+
+/*
+ * Control the font sizes
+ */
+table.dataTable th {
+  font-size: 13px;
+}
+
+table.dataTable td {
+  font-size: 13px;
+  line-height: 120% !important;
+}
+
+div#tab_inputdata {
+    font-size: 12px;
+}
+
+/*
+ * Control layout within cells
+ */
+table.dataTable td .checkbox input[type=checkbox],
+table.dataTable td .checkbox-inline input[type=checkbox],
+table.dataTable td .radio input[type=radio],
+table.dataTable td .radio-inline input[type=radio] {
+  position: relative;
+}
+
+table.dataTable td .checkbox-inline+.checkbox-inline,
+table.dataTable td .radio-inline+.radio-inline {
+  margin-left: 0;
+}
+
+table.dataTable td .checkbox-inline,
+table.dataTable td .radio-inline {
+  margin-right: 10px;
+}
+
+/*
+ * Add thin boredr
+ */
+.dataTables_wrapper.form-inline.dt-bootstrap.no-footer,
+.dataTables_wrapper > .dataTables_scroll {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+/* There are cases where the one wrapper is rendered
+ * within the other. We do not need these border twice */
+.dataTables_wrapper .dataTables_wrapper > .dataTables_scroll{
+  border: 0;
+}
+
+/* Neutralize horizontal lines */
+table.dataTable thead th {
+  border-top: 0 !important;
+}
+
+table.dataTable.no-footer {
+  border-bottom: 0 !important;
+  margin-bottom: 1px;
+}
+
+.dataTables_wrapper.no-footer .dataTables_scrollBody {
+  border-bottom: 0 !important;
+  margin-bottom: 1px;
+}
+
+/*
+ * Radio options within a cell should not wrap
+ * see: https://github.com/skounis/sdcMicro/issues/85
+ */
+ table.dataTable td .form-group.shiny-input-radiogroup .shiny-options-group{
+   white-space: nowrap;
+ }
+
+/*
+ * Style the bootrap enabled style
+ */
+ .dataTables_wrapper.form-inline.dt-bootstrap.no-footer {
+   border: 0;
+   background: transparent;
+ }
+
+.dataTables_wrapper.dt-bootstrap .dataTables_scroll {
+   border: 1px solid #cccccc;
+   border-radius: 4px;
+   background: #ffffff;
+}
+
+.dataTables_wrapper.dt-bootstrap .dataTables_paginate{
+  border: 0;
+  background: transparent;
+}
+
+.dataTables_wrapper.dt-bootstrap .dataTables_paginate .paginate_button,
+.dataTables_wrapper.dt-bootstrap .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper.dt-bootstrap .dataTables_paginate .paginate_button:hover {
+    border: 0 !important;
+}

@@ -1,0 +1,12 @@
+// COLORS A
+
+$bg-color: #F2F3F6; /* when body is not having a white background */
+$text-color: #50595e; /* for regular text */
+$dark-gray: #555;
+$primary: #e4e9ec; /* borders, buttons */
+$primary-dark: darken($primary, 5%);
+$nav-bg: #fff;
+$nav-a: #819dad; /* navigation */
+$nav-a-hover: darken($nav-a, 15%); /* navigation */
+$accent: #0a92e4; /* for text-links and clickable elements */
+$accent-hover: lighten($accent,10%); /* for text-links and clickable elements on hover */
