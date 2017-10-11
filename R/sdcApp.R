@@ -12,6 +12,7 @@
 #' \item 'yeti'
 #' \item 'flatly'
 #' \item 'journal'
+#' \item 'IHSN'
 #' }
 #' @export
 #'
@@ -19,8 +20,8 @@
 #' \dontrun{
 #' sdcApp(theme="flatly")
 #' }
-sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="yeti") {
-  .startdir <- .guitheme <- NULL
+sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN") {
+  .startdir <- .guitheme <- .guijsfile <- NULL
   if (!is.numeric(maxRequestSize)) {
     stop("argument 'maxRequestSize' must be numeric!\n")
   }
@@ -38,20 +39,29 @@ sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="yeti") {
   .GlobalEnv$.startdir <- getwd()
   on.exit(rm(.startdir, envir=.GlobalEnv))
 
-  if (!theme %in% c("yeti","journal","flatly")) {
+  if (!theme %in% c("yeti","journal","flatly", "IHSN")) {
     stop("Invalid value for argument 'theme'\n")
   }
 
   if (theme=="yeti") {
     .GlobalEnv$.guitheme <- "bootswatch_yeti.css"
+    .GlobalEnv$.guijsfile <- NULL
   }
 
   if (theme=="journal") {
     .GlobalEnv$.guitheme <- "bootswatch_journal.css"
+    .GlobalEnv$.guijsfile <- NULL
   }
   if (theme=="flatly") {
     .GlobalEnv$.guitheme <- "bootswatch_flatly.css"
+    .GlobalEnv$.guijsfile <- NULL
   }
+
+  if (theme=="IHSN") {
+    .GlobalEnv$.guitheme <- "ihsn-root.css"
+    .GlobalEnv$.guijsfile <- "js/ihsn-style.js"
+  }
+
   on.exit(rm(.guitheme, envir=.GlobalEnv))
 
   shiny::runApp(appDir, display.mode="normal", launch.browser=TRUE)

@@ -1,0 +1,132 @@
+/*
+**
+** Theme name: IHSN
+**
+*/
+/* when body is not having a white background */
+/* for regular text */
+/* borders, buttons */
+/* navigation */
+/* navigation */
+/* for text-links and clickable elements */
+/* for text-links and clickable elements on hover */
+body {
+  background-color: #F2F3F6;
+  color: #50595e;
+  font-size: calc(0.9em + 0.4vw);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: calc(0.9em + 0.8vw); }
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  color: #50595e;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  margin-top: 24px;
+  margin-bottom: 12px; }
+
+p {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+a {
+  color: #0a92e4;
+  transition: all 0.25s; }
+  a:hover {
+    color: #2baaf6; }
+
+.navbar {
+  min-height: 45px; }
+
+.navbar-default {
+  background-color: #fff;
+  border-bottom: 1px solid #e4e9ec;
+  margin-bottom: 0px; }
+  .navbar-default .navbar-nav > li > a {
+    border-bottom: none;
+    color: #819dad;
+    font-weight: 500;
+    height: 44px;
+    padding: 11px 16px;
+    transition: all 0.25s; }
+  .navbar-default .navbar-nav > li > a:hover {
+    color: white;
+    background-color: #2baaf6; }
+  .navbar-default .navbar-nav > .active > a,
+  .navbar-default .navbar-nav > .active > a:hover,
+  .navbar-default .navbar-nav > .active > a:focus {
+    background: none;
+    border-bottom: solid 2px #597789;
+    color: #555; }
+  .navbar-default .navbar-brand,
+  .navbar-default .navbar-brand:hover,
+  .navbar-default .navbar-brand:focus {
+    color: #50595e;
+    height: 44px; }
+
+.container-fluid > .navbar-header {
+  font-weight: 700;
+  margin-left: 0;
+  margin-right: 10%;
+  padding-left: 1%; }
+
+.tab-content {
+  margin-bottom: 30px; }
+
+.shiny-html-output h2:nth-of-type(1),
+.shiny-html-output h3:nth-of-type(1),
+.shiny-html-output h4:nth-of-type(1) {
+  padding-top: 20px; }
+
+.btn-primary {
+  background-color: #0a92e4;
+  border: none;
+  transition: all 0.25s; }
+  .btn-primary:hover {
+    background-color: #2baaf6; }
+
+.btn-primary,
+.btn-default,
+.btn-warning {
+  border-radius: 4px; }
+
+.wb-btn-inline {
+  background: none;
+  color: #0a92e4;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  border-bottom: solid 1px #0a92e4;
+  font-size: inherit;
+  transition: all 0.25s; }
+  .wb-btn-inline:hover {
+    background-color: #0a92e4;
+    color: #fff;
+    border: none;
+    border-bottom: solid 1px #0a92e4; }
+
+.form-control {
+  transition: all 0.25s; }
+  .form-control:focus, .form-control:hover {
+    border-color: #0a92e4;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
+
+table.dataTable thead th {
+  border-bottom: 1px solid #e4e9ec !important;
+  border-top: 1px solid #e4e9ec !important;
+  background-color: #fff;
+  text-align: center !important; }
+
+tbody td {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: calc(0.8 * $font-size); }
+
+/* Portrait */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 1) {
+  table.dataTable thead th,
+  table.dataTable thead td {
+    padding: initial !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important; } }
+
+/*# sourceMappingURL=ihsn.css.map */

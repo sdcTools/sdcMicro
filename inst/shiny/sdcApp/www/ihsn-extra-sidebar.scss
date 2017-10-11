@@ -1,0 +1,126 @@
+@import 'ihsn-color-vars';
+
+@mixin wb-sidebar-1-2 {
+    // background-image: linear-gradient(to bottom, white, rgba(255,255,255,0.001));
+    height: calc(100vh - 45px);
+    padding: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    z-index: 999;
+    // border-right: solid 1px $primary;
+}
+
+@mixin default-transition {
+    transition: all 0.25s;
+}
+
+.wb_sidebar {
+    @include wb-sidebar-1-2;
+
+    & > div {
+      background-image: linear-gradient(to bottom, white, #F2F3F6);
+      border-right: solid 1px $primary;
+      position: fixed;
+      width: 16.6%;
+      top: 44px;
+      bottom: 0;
+      overflow: auto;
+      overflow-x: hidden;
+    }
+
+    /* neutralize the negative margin for all the row elements within the sidebar*/
+    .row{
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .row > .col-sm-12 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    h4 {
+        font-size: 0.95em;
+        line-height: 1.2;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        padding-top: 10px !important;
+        padding-left: 20px;
+        padding-right: 10px;
+        text-align: left;
+    }
+
+    .btn-primary {
+        background: none;
+        border-left: solid 5px $accent-hover;
+        border-radius: 0px;
+        color: $accent;
+        font-size: 0.9em;
+
+        padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        text-align: left;
+        white-space: initial;
+        @include default-transition;
+
+        &:hover {
+            background: none;
+            border-left: solid 5px $accent-hover;
+            color: $accent-hover;
+        }
+    }
+
+    .btn-default {
+        background-color: #d5dde1;
+        background: none;
+        border: none;
+        border-left: solid 5px transparent;
+        border-radius: 0px;
+        font-size: 0.9em;
+
+        padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        text-align: left;
+        white-space: initial;
+        @include default-transition;
+
+        &:hover {
+            border-left: solid 5px $accent-hover;
+            transition: all 0.25s;
+            color: $accent-hover;
+        }
+    }
+
+    .btn-warning {
+        background: none;
+        border: none;
+        border-left: solid 5px transparent;
+        border-radius: 0px;
+        color: darkorange;
+        font-size: 0.9em;
+
+        padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        text-align: left;
+        white-space: initial;
+        @include default-transition;
+
+        &:hover {
+            border-left: solid 5px darkorange;
+        }
+    }
+
+    .wb-action-button {
+      &.wb-action-button-top {
+        margin-top: 20px;
+      }
+      margin: auto;
+      text-align: center;
+    }
+}

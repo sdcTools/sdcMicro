@@ -1,7 +1,7 @@
 # specific (gui)-options for csv-import
 output$ui_import_csv <- renderUI({
-  rb1 <- radioButtons("import_csv_header", label=h5("Does the first row contain the variable names?"), choices=c(TRUE,FALSE), inline=TRUE)
-  rb2 <- radioButtons("import_csv_sep", label=h5("Select the field separator"), choices=c(Comma=",", Semicolon=";", Tab="\t"), inline=TRUE)
+  rb1 <- radioButtons("import_csv_header", label=p("Does the first row contain the variable names?"), choices=c(TRUE,FALSE), inline=TRUE)
+  rb2 <- radioButtons("import_csv_sep", label=p("Select the field separator"), choices=c(Comma=",", Semicolon=";", Tab="\t"), inline=TRUE)
   return(fluidRow(
     column(6, rb1, align="center"),
     column(6, rb2, align="center")))
@@ -13,7 +13,7 @@ output$ui_import_rdf <- renderUI({
     selected=input$sel_choose_df, width="50%")
   btn <- myActionButton("btn_chooose_df",label=("Load data"), "primary")
   return(fluidRow(
-    column(12, h5("Select a test dataset or any object in your current workspace", align="center")),
+    column(12, p("Select a test dataset or any object in your current workspace", align="center")),
     column(12, div(selDF, align="center")),
     column(12, p(btn, align="center"))))
 })
@@ -63,14 +63,16 @@ output$ui_import_data_main <- renderUI({
     val <- "stata"
   }
   out <- fluidRow(
-  column(12, h4("Uploading microdata", align="center")))
+    column(width = 12, offset = 0, h3("Uploading microdata"), class="wb-header"),
+    column(width = 12, offset = 0, p("Load the dataset to be anonymized."), class="wb-header-hint")
+  )
 
   if (val %in% c("R","csv","spss","sas","rdata","stata")) {
     # convert characters automatically to factors
-    rb1 <- radioButtons("rb_convert_c_to_f", label=h5("Convert string variables (character vectors) to factor variables?"), choices=c(TRUE, FALSE), inline=TRUE)
-    rb2 <- radioButtons("rb_drop_all_missings", label=h5("Drop variables with only missing values (NA)?"), choices=c(TRUE, FALSE), inline=TRUE)
+    rb1 <- radioButtons("rb_convert_c_to_f", label=p("Convert string variables (character vectors) to factor variables?"), choices=c(TRUE, FALSE), inline=TRUE)
+    rb2 <- radioButtons("rb_drop_all_missings", label=p("Drop variables with only missing values (NA)?"), choices=c(TRUE, FALSE), inline=TRUE)
 
-    out <- list(out, fluidRow(column(12, h5("Set additional options for the data import", align="center"))))
+    out <- list(out, fluidRow(column(12, h4("Set additional options for the data import"))))
 
     out <- list(out, fluidRow(
       column(6, rb1, align="center"),
@@ -100,7 +102,7 @@ output$ui_import_data_main <- renderUI({
       column(12, p("Note: the selected file is loaded immediately upon selecting. Set the above options before selecting the file."), align="center")
     ))
 
-    fI <- fileInput("file1", h5(paste0("Select file (allowed types are '",paste0(allowed, collapse="', '"),"')")),
+    fI <- fileInput("file1", p(paste0("Select file (allowed types are '",paste0(allowed, collapse="', '"),"')")),
       width="75%", accept=allowed)
     out <- list(out, fluidRow(column(12, fI, align="center")))
   } else {
@@ -113,7 +115,7 @@ output$ui_import_data_sidebar_left <- renderUI({
   output$ui_sel_resbtns_import <- renderUI({
     cc <- c("Testdata/internal data", "R-dataset (.rdata)", "SPSS-file (.sav)", "SAS-file (.sasb7dat)",
       "CSV-file (.csv, .txt)", "STATA-file (.dta)")
-    out <- fluidRow(column(12, h4("Select data source"), align="center"))
+    out <- fluidRow(column(12, h4("Select data source")))
     for (i in 1:length(cc)) {
       id <- paste0("btn_import_data_", i)
       if (obj$cur_selection_import==id) {
@@ -122,7 +124,8 @@ output$ui_import_data_sidebar_left <- renderUI({
         style <- "default"
       }
       out <- list(out, fluidRow(
-        column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style), tags$br())
+        # column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style), tags$br())
+        column(12, bsButton(id, label=cc[i], block=TRUE, size="extra-small", style=style))
       ))
     }
     out
@@ -134,31 +137,45 @@ output$ui_import_data_sidebar_left <- renderUI({
 })
 output$ui_import_data <- renderUI({
   fluidRow(
-    column(2, uiOutput("ui_import_data_sidebar_left")),
-    column(10, uiOutput("ui_import_data_main")))
+    column(2, uiOutput("ui_import_data_sidebar_left"), class="wb_sidebar"),
+    column(10, uiOutput("ui_import_data_main"), class="wb-maincolumn"))
 })
+<<<<<<< HEAD
 
+=======
+output$ui_show_changed_labels_header <- renderUI({
+  out <- fluidRow(
+    column(12, h3("Strings not in UTF-8 encoding"), offset = 0, class = "wb-header"),
+    column(12, p("Some strings in the variable names, variable labels and/or value labels in the loaded dataset do not comply with UTF-8 encoding. This application requires strings to be UTF-8 encoded or UTF-8 compatible."), 
+           p("It is advised that the problems first be corrected in the original dataset and then reloaded into this application. 
+             Alternatively, you can allow the application to auto convert the characters. To continue, make a selection below."),
+           offset = 0, class = "wb-header-hint"))
+  out
+})
+>>>>>>> proposal
 output$ui_show_changed_labels_main <- renderUI({
   # Show changed labels
-  txtChangedLabels1 <- "Some strings in the variable names, variable labels and/or value labels in the loaded dataset do not comply with UTF-8 encoding. This application requires strings to be UTF-8 encoded or UTF-8 compatible. The application has attempted to convert the non-compliant characters to UTF-8. "
-  txtChangedLabels2 <- "Below is a summary of the strings containing characters that are not compliant with UTF-8 encoding after been automatically converted to UTF-8 encoding. While the auto conversion process attempts to do the best it can to fix the issues, results are often uneven. To avoid the auto conversion of characters it is advised that the problems first be corrected in the original dataset and then reloaded into this application. Doing so will prevent unnecessary loss of information. "
-  txtChangedLabels3 <- "Alternatively, you can continue and allow the application to auto convert the characters. The summary below shows the strings after auto conversion. Continuing with the converted characters may result in changed variable names and variable labels in the exported anonymized dataset. "
-  txtChangedLabels4 <- "Note: The application will not allow the automatic conversion of values contained in string variables as this may result in changes to the actual data. In this case the data will need to be fixed before reloading into the application."
-  btn1 <- bsButton("btn_reset_inputdata_xx", label=("Reset inputdata"), block=TRUE, style="default", size="extra-small")
-  btn2 <- bsButton("btn_acc_utf8_conv", label=("Continue with converted strings"), block=TRUE, style="default", size="extra-small")
+  txtChangedLabels1 <- "The application has attempted to convert the non-compliant characters to UTF-8. 
+    Below is a summary of the strings containing characters that are not compliant with 
+    UTF-8 encoding after been automatically converted to UTF-8 encoding. While the auto conversion process attempts 
+    to do the best it can to fix the issues, results are often uneven. To avoid the auto conversion of characters it 
+    is advised that the problems first be corrected in the original dataset and then reloaded into this application. 
+    Doing so will prevent unnecessary loss of information. "
+  txtChangedLabels2 <- "Alternatively, you can continue and allow the application to auto convert the characters. 
+    The summary below shows the strings after auto conversion. Continuing with the converted characters may result in 
+    changed variable names and variable labels in the exported anonymized dataset. 
+    Note: The application will not allow the automatic conversion of values contained in string 
+    variables as this may result in changes to the actual data. In this case the data will need to be fixed before reloading into the application."
+  btn1 <- myActionButton("btn_reset_inputdata_xx", label=("Reset inputdata"), btn.style = "primary")#, block=TRUE, style="default", size="extra-small")
+  btn2 <- myActionButton("btn_acc_utf8_conv", label=("Continue with converted strings"), btn.style = "primary")#, block=TRUE, style="default", size="extra-small")
   out <- fluidRow(
-      column(12, h3("Strings not in UTF-8 encoding", align="center")),
-      column(12, txtChangedLabels1, align="center"),
+      column(12, txtChangedLabels1),
       column(12, tags$br()),
-      column(12, txtChangedLabels2, align="center"),
-      column(12, tags$br()),
-      column(12, txtChangedLabels3, align="center"),
-      column(12, tags$br()),
-      column(12, txtChangedLabels4, align="center"),
+      column(12, txtChangedLabels2),
       column(12, tags$br())
       )
   if (is.null(attr(obj$inputdata, "nonUTF")[[2]])) { # only show accept button if no changes to actual values are made
-    out <- list(out, fluidRow(column(6, btn1), column(6, btn2)))
+    out <- list(out, fluidRow(column(6, btn1, align="center"), column(6, btn2, align="center")))
   } else {
     out <- list(out, fluidRow(column(12, btn1, align="center")))
   }
@@ -190,6 +207,7 @@ output$ui_show_changed_labels_main <- renderUI({
   }
   out
 })
+<<<<<<< HEAD
 output$ui_show_changed_labels_sidebar_left <- renderUI({
   fluidRow(
     column(12, bsButton("btn_reset_inputdata_utf8labs_xx",label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small"))
@@ -199,6 +217,12 @@ output$ui_show_changed_labels <- renderUI({
   fluidRow(
     column(2, uiOutput("ui_show_changed_labels_sidebar_left")),
     column(10, uiOutput("ui_show_changed_labels_main")))
+=======
+output$ui_show_changed_labels <- renderUI({
+  fluidRow(
+    column(12, uiOutput("ui_show_changed_labels_header")),
+    column(12, uiOutput("ui_show_changed_labels_main")))
+>>>>>>> proposal
 })
 
 output$ui_inputdata <- renderUI({

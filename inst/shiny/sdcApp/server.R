@@ -926,12 +926,12 @@ shinyServer(function(session, input, output) {
     nrKeyVars <- isolate(length(get_keyVars()))
     obj$sls <- lapply(1:nrKeyVars, function(i) {
       id <- paste0("sl_kanon_combs_", i)
-      sliderInput(id, label=h5(paste("k-Anonymity-parameter for", i, "combs")),
+      sliderInput(id, label=p(paste("Set k-anonymity parameter for combinations of", i, "variables")),
         value=input[[id]], width="100%", min=2, max=50, step=1)
     })
     obj$rbs <- lapply(1:nrKeyVars, function(i) {
       id <- paste0("rb_kanon_usecombs_", i)
-      radioButtons(id, label=h5(paste("Apply k-Anon to all subsets of",i,"key variables?")),
+      radioButtons(id, label=p(paste("Apply k-anonimity to all subsets of",i,"key variables?")),
         selected=input[[id]], width="100%", inline=TRUE, choices=c("No", "Yes"))
     })
     # reset all menu items to first choice

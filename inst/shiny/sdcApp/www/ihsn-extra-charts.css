@@ -1,0 +1,8 @@
+.shiny-plot-output img{
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+}
+
+.shiny-plot-output{
+  margin: 10px 0;
+}

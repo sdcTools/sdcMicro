@@ -1,0 +1,107 @@
+/* when body is not having a white background */
+/* for regular text */
+/* borders, buttons */
+/* navigation */
+/* navigation */
+/* for text-links and clickable elements */
+/* for text-links and clickable elements on hover */
+.wb_sidebar {
+  height: calc(100vh - 45px);
+  padding: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  z-index: 999;
+  /* neutralize the negative margin for all the row elements within the sidebar*/
+}
+.wb_sidebar > div {
+  background-image: linear-gradient(to bottom, white, #F2F3F6);
+  border-right: solid 1px #e4e9ec;
+  position: fixed;
+  width: 16.6%;
+  top: 44px;
+  bottom: 0;
+  overflow: auto;
+  overflow-x: hidden;
+}
+.wb_sidebar .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+.wb_sidebar .row > .col-sm-12 {
+  padding-left: 0;
+  padding-right: 0;
+}
+.wb_sidebar h4 {
+  font-size: 0.95em;
+  line-height: 1.2;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  padding-top: 10px !important;
+  padding-left: 20px;
+  padding-right: 10px;
+  text-align: left;
+}
+.wb_sidebar .btn-primary {
+  background: none;
+  border-left: solid 5px #2baaf6;
+  border-radius: 0px;
+  color: #0a92e4;
+  font-size: 0.9em;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: left;
+  white-space: initial;
+  transition: all 0.25s;
+}
+.wb_sidebar .btn-primary:hover {
+  background: none;
+  border-left: solid 5px #2baaf6;
+  color: #2baaf6;
+}
+.wb_sidebar .btn-default {
+  background-color: #d5dde1;
+  background: none;
+  border: none;
+  border-left: solid 5px transparent;
+  border-radius: 0px;
+  font-size: 0.9em;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: left;
+  white-space: initial;
+  transition: all 0.25s;
+}
+.wb_sidebar .btn-default:hover {
+  border-left: solid 5px #2baaf6;
+  transition: all 0.25s;
+  color: #2baaf6;
+}
+.wb_sidebar .btn-warning {
+  background: none;
+  border: none;
+  border-left: solid 5px transparent;
+  border-radius: 0px;
+  color: darkorange;
+  font-size: 0.9em;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: left;
+  white-space: initial;
+  transition: all 0.25s;
+}
+.wb_sidebar .btn-warning:hover {
+  border-left: solid 5px darkorange;
+}
+
+.wb_sidebar .wb-action-button {
+  margin: auto;
+  text-align: center;
+}
+
+.wb_sidebar .wb-action-button.wb-action-button-top {
+  margin-top: 20px;
+}
+/*# sourceMappingURL=ihsn-extra-sidebar.css.map */
