@@ -4,7 +4,7 @@
 #include <R_ext/Rdynload.h>
 
 /* FIXME:
-Check these declarations against the C/Fortran source code.
+   Check these declarations against the C/Fortran source code.
 */
 
 /* .Call calls */
@@ -35,6 +35,6 @@ static const R_CallMethodDef CallEntries[] = {
 
 void R_init_sdcMicro(DllInfo *dll)
 {
-  R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-  R_useDynamicSymbols(dll, FALSE);
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }
