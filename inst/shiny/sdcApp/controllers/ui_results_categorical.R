@@ -331,8 +331,7 @@ output$ui_rescat_suda2 <- renderUI({
   # suda2 can only be calculated for sdcProblems with >= 3 categorical key variables
   if (length(get_keyVars())<=2) {
     return(fluidRow(
-      column(12, h3("Suda2 risk measure", align="center")),
-      column(12, p("Suda2 scores can only be computed for scenarios with",code(">= 3"),"categorical key variables!", align="center"))
+      column(12, p("Suda2 scores can only be computed for scenarios with",code(">= 3"),"categorical key variables!", align="center"), class = "wb-warning-toast")
     ))
   }
 
@@ -532,12 +531,14 @@ output$ui_bivariate_tab <- renderUI({
     req(input$sel_catvar2)
     if(!is.null(input$sel_catvar2) & input$sel_catvar2 == "none"){
       tabs <- fluidRow(column(6, h4("Original data"), align="center"),
-                       column(6, h4("Modified data"), align="center"),column(6, tableOutput("biv_tab_o"), align="center"),
+                       column(6, h4("Modified data"), align="center"),
+                       column(6, tableOutput("biv_tab_o"), align="center"),
                        column(6, tableOutput("biv_tab_m"), align="center"))
     } else {
       tabs <- fluidRow(column(12, h4("Original data"), align="center"),
-                       column(12, tableOutput("biv_tab_o"), align="center"),column(12, h4("Modified data"), align="center"),
-                       column(12, tableOutput("biv_tab_m"), align="center"))
+                       column(12, tableOutput("biv_tab_o"), align="center", class="wn-info-table wn-row-title"),
+                       column(12, h4("Modified data"), align="center"),
+                       column(12, tableOutput("biv_tab_m"), align="center", class="wn-info-table wn-row-title"))
     }
     tabs
   })
