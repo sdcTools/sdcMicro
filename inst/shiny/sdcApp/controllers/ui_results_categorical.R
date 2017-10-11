@@ -331,8 +331,7 @@ output$ui_rescat_suda2 <- renderUI({
   # suda2 can only be calculated for sdcProblems with >= 3 categorical key variables
   if (length(get_keyVars())<=2) {
     return(fluidRow(
-      column(12, h3("Suda2 risk measure", align="center")),
-      column(12, p("Suda2 scores can only be computed for scenarios with",code(">= 3"),"categorical key variables!", align="center"))
+      column(12, p("Suda2 scores can only be computed for scenarios with",code(">= 3"),"categorical key variables!", align="center"), class = "wb-warning-toast")
     ))
   }
 
