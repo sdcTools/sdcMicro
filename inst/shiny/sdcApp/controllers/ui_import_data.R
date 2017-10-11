@@ -140,9 +140,7 @@ output$ui_import_data <- renderUI({
     column(2, uiOutput("ui_import_data_sidebar_left"), class="wb_sidebar"),
     column(10, uiOutput("ui_import_data_main"), class="wb-maincolumn"))
 })
-<<<<<<< HEAD
 
-=======
 output$ui_show_changed_labels_header <- renderUI({
   out <- fluidRow(
     column(12, h3("Strings not in UTF-8 encoding"), offset = 0, class = "wb-header"),
@@ -152,7 +150,7 @@ output$ui_show_changed_labels_header <- renderUI({
            offset = 0, class = "wb-header-hint"))
   out
 })
->>>>>>> proposal
+
 output$ui_show_changed_labels_main <- renderUI({
   # Show changed labels
   txtChangedLabels1 <- "The application has attempted to convert the non-compliant characters to UTF-8. 
@@ -207,22 +205,11 @@ output$ui_show_changed_labels_main <- renderUI({
   }
   out
 })
-<<<<<<< HEAD
-output$ui_show_changed_labels_sidebar_left <- renderUI({
-  fluidRow(
-    column(12, bsButton("btn_reset_inputdata_utf8labs_xx",label=("Reset inputdata"), block=TRUE, style="warning", size="extra-small"))
-  )
-})
-output$ui_show_changed_labels <- renderUI({
-  fluidRow(
-    column(2, uiOutput("ui_show_changed_labels_sidebar_left")),
-    column(10, uiOutput("ui_show_changed_labels_main")))
-=======
+
 output$ui_show_changed_labels <- renderUI({
   fluidRow(
     column(12, uiOutput("ui_show_changed_labels_header")),
     column(12, uiOutput("ui_show_changed_labels_main")))
->>>>>>> proposal
 })
 
 output$ui_inputdata <- renderUI({
