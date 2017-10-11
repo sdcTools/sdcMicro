@@ -14,13 +14,15 @@
 #' \item 'journal'
 #' \item 'IHSN'
 #' }
+#' @param ... arguments (e.g \code{host}) that are passed through \code{\link[shiny]{runApp}} when
+#' starting the shiny application
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' sdcApp(theme="flatly")
 #' }
-sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN") {
+sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN", ...) {
   .startdir <- .guitheme <- .guijsfile <- NULL
   if (!is.numeric(maxRequestSize)) {
     stop("argument 'maxRequestSize' must be numeric!\n")
@@ -64,5 +66,5 @@ sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN") {
 
   on.exit(rm(.guitheme, envir=.GlobalEnv))
 
-  shiny::runApp(appDir, display.mode="normal", launch.browser=TRUE)
+  shiny::runApp(appDir, display.mode="normal", launch.browser=TRUE, ...)
 }

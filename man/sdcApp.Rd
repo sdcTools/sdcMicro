@@ -4,7 +4,7 @@
 \alias{sdcApp}
 \title{sdcApp}
 \usage{
-sdcApp(maxRequestSize = 50, debug = FALSE, theme = "yeti")
+sdcApp(maxRequestSize = 50, debug = FALSE, theme = "IHSN", ...)
 }
 \arguments{
 \item{maxRequestSize}{(numeric) number defining the maximum allowed filesize (in megabytes)
@@ -17,7 +17,11 @@ for uploaded files, defaults to 50MB}
 \item 'yeti'
 \item 'flatly'
 \item 'journal'
+\item 'IHSN'
 }}
+
+\item{...}{arguments (e.g \code{host}) that are passed through \code{\link[shiny]{runApp}} when
+starting the shiny application}
 }
 \value{
 starts the interactive graphical user interface which may be used to perform the
