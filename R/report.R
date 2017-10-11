@@ -220,12 +220,9 @@ definition=function(obj, internal, title, outdir) {
     indivRisk$expRIp <- niceF(risk$global$risk_pct)
     indivRisk$expRI <- niceF(indivRisk$expRI)
 
-    ## TODO: save risk of original data and not renewly calculate it:
-    if (weightcn=="not defined") {
-      weightcn <- NULL
-    }
-    ro <- measure_risk(x, keyVars=y1cn, w=weightcn)
-    indivRisk$expRIop <- ro$global_risk_pct
+    ## use slot @originalRisk where initial risks were stored
+    origRisk <- get.sdcMicroObj(obj, type="originalRisk")
+    indivRisk$expRIop <- origRisk$global_risk_pct
     indivRisk$expRIo <- indivRisk$expRIop/100 * nrow(x)
     indivRisk$expRIop <- niceF(indivRisk$expRIop)
     indivRisk$expRIo <- niceF(indivRisk$expRIo)
