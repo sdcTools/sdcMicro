@@ -222,10 +222,8 @@ definition=function(obj, internal, title, outdir) {
 
     ## use slot @originalRisk where initial risks were stored
     origRisk <- get.sdcMicroObj(obj, type="originalRisk")
-    indivRisk$expRIop <- origRisk$global_risk_pct
-    indivRisk$expRIo <- indivRisk$expRIop/100 * nrow(x)
-    indivRisk$expRIop <- niceF(indivRisk$expRIop)
-    indivRisk$expRIo <- niceF(indivRisk$expRIo)
+    indivRisk$expRIop <- niceF(origRisk$global$risk_pct)
+    indivRisk$expRIo <- niceF(origRisk$global$risk_ER)
 
     # 10 combinations with highest risks
     or <- cbind(y1, risk$individual)
