@@ -372,7 +372,7 @@ output$ui_sdcObj_explorevars <- renderUI({
       if (cl1 & cl2){ # both factor
         out <- list(out, fluidRow(
           column(12, h5(HTML(paste("Cross-tabulation of", code(res$var[1]), "and", code(res$var[2]))))),
-          column(12, renderTable(res$tab, include.rownames=TRUE), class="wn-info-table")))
+          column(12, renderTable(res$tab, include.rownames=TRUE), class="wn-info-table wn-row-title")))
       } else if ((cl1 & !cl2) | (!cl1 & cl2)){ # one factor, one numeric
         out <- list(out, fluidRow(column(12, renderTable(res$tab, include.rownames=FALSE), class="wn-info-table")))
       } else { # both numeric

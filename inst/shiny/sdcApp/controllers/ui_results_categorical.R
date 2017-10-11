@@ -531,12 +531,14 @@ output$ui_bivariate_tab <- renderUI({
     req(input$sel_catvar2)
     if(!is.null(input$sel_catvar2) & input$sel_catvar2 == "none"){
       tabs <- fluidRow(column(6, h4("Original data"), align="center"),
-                       column(6, h4("Modified data"), align="center"),column(6, tableOutput("biv_tab_o"), align="center"),
+                       column(6, h4("Modified data"), align="center"),
+                       column(6, tableOutput("biv_tab_o"), align="center"),
                        column(6, tableOutput("biv_tab_m"), align="center"))
     } else {
       tabs <- fluidRow(column(12, h4("Original data"), align="center"),
-                       column(12, tableOutput("biv_tab_o"), align="center"),column(12, h4("Modified data"), align="center"),
-                       column(12, tableOutput("biv_tab_m"), align="center"))
+                       column(12, tableOutput("biv_tab_o"), align="center", class="wn-info-table wn-row-title"),
+                       column(12, h4("Modified data"), align="center"),
+                       column(12, tableOutput("biv_tab_m"), align="center", class="wn-info-table wn-row-title"))
     }
     tabs
   })
