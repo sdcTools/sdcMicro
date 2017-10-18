@@ -138,7 +138,7 @@ void CRankSwap::rankswap_vector(double vector[], long n_columns, long n_regs, lo
 
   free(swap);
   free(temp);
-};
+}
 
 /* ========================================================================= */
 void CRankSwap::generate_swap(long swap[],long n_columns, long n_regs,long percent, long *prog) {
@@ -175,7 +175,7 @@ void CRankSwap::generate_swap(long swap[],long n_columns, long n_regs,long perce
     *prog = *prog + 1;
     //	  printf ("\nProgress %.2f percent", ((*prog)*100.0)/(n_regs*n_columns));
   }
-};
+}
 
 /* ========================================================================= */
 void CRankSwap::unsort_with_info(double vector[], long n_regs, long sort_info[]) {
@@ -191,7 +191,7 @@ void CRankSwap::unsort_with_info(double vector[], long n_regs, long sort_info[])
     vector[sort_info[i]] = temp[i];
 
   free(temp);
-};
+}
 
 /* ========================================================================= */
 /*                                   Min                                     */
