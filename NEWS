@@ -1,3 +1,12 @@
+# 5.0.4
+- new default theme "IHSN" for sdcApp()
+- fixing an issue in report() where  disclosure risk for original data was wrongly displayed if alpha-parameter was set
+- allow passing through of arguments in sdcApp()
+- add functions argus_rankswap() and argus_microaggregation() that use c++-code directly from mu-argus
+- bugfix in dUtility()
+- new function riskyCells() that allow to compute "unsafe cells" as in mu-argus
+- several code-optimizations and cleanup
+
 # 5.0.3
 - improvement: show name of uploaded file in report when using sdcApp() (fixes #209)
 - correct summary statistics in GUI in case not all variables have been changed
