@@ -1467,6 +1467,7 @@ shinyServer(function(session, input, output) {
         for (nn in names(res)) {
           obj[[nn]] <- res[[nn]]
         }
+        obj$cur_selection_script <- "btn_export_script_1" # was 3 when exporting the problem
         obj$last_error <- NULL
         obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
         updateNavbarPage(session, "mainnav", selected="Anonymize")
@@ -1490,6 +1491,7 @@ shinyServer(function(session, input, output) {
         for (nn in names(res)) {
           obj[[nn]] <- res[[nn]]
         }
+        obj$cur_selection_script <- "btn_export_script_1" # was 3 when exporting the problem
         obj$last_error <- NULL
         rm(res)
         obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
