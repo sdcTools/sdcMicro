@@ -1,3 +1,4 @@
+---
 title: "Using the interactive GUI - sdcApp"
 author: "Bernhard Meindl"
 date: "`r Sys.Date()`"
@@ -7,10 +8,14 @@ output:
     toc_depth: 5
     number_sections: false
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Using the interactive GUI - sdcApp}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r, echo=FALSE}
+library(rmarkdown)
+```
 
 # Introduction and Main Features
 Package `sdcMicro` contains a [shiny](https://cran.r-project.org/package=shiny) app that should help users that are non-experts in R (command-line) to apply disclosure limitation techniques. For this reason, users may upload (micro)data files from different software products into the app and then start to anonymize the dataset by working within the interactive, graphical user interface (GUI). This document will give an overview of the functionalities of the graphical user interface which can be started with `sdcApp()`. The main functionality of the GUI is:
