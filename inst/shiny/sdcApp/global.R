@@ -79,7 +79,7 @@ runEvalStrMicrodat_no_errorchecking <- function(cmd, comment=NULL) {
 # runEvaluationString and update Objects for microdata-modifications
 runEvalStrMicrodat <- function(cmd, comment=NULL) {
   # evaluate using tryCatchFn()
-  cmdeval <- gsub("inputdata","obj$inputdata", cmd)
+  cmdeval <- sub("inputdata","obj$inputdata", cmd)
   cmdeval <- strsplit(cmdeval, "<-")[[1]][2]
   evalstr <- paste0("res <- sdcMicro:::tryCatchFn({",cmdeval,"})")
   #cat("evalstr:", evalstr,"\n")
