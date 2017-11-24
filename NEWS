@@ -1,3 +1,6 @@
+# 5.0.5
+- bugfix in sdcApp() when using R-objects as data input
+
 # 5.0.4
 - new default theme "IHSN" for sdcApp()
 - fixing an issue in report() where  disclosure risk for original data was wrongly displayed if alpha-parameter was set
