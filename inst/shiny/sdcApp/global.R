@@ -6,6 +6,20 @@ library(haven)
 library(DT)
 library(shinyBS)
 library(data.table)
+
+if (sys.calls()[[1]]!="sdcApp()") {### Beginning required code for deployment
+  .startdir <- .guitheme <- .guijsfile <- NULL
+  maxRequestSize <- 50
+  options(shiny.maxRequestSize=ceiling(maxRequestSize)*1024^2)
+  
+  .GlobalEnv$.startdir <- getwd()
+  
+  theme="IHSN"
+  .GlobalEnv$.guitheme <- "ihsn-root.css"
+  .GlobalEnv$.guijsfile <- "js/ihsn-style.js"
+}## End of deployment code
+
+
 # required that 'dQuote()' works nicely when
 # outputting R-Code
 options(useFancyQuotes=FALSE)
