@@ -186,7 +186,7 @@ definition = function(object, type, ...) {
     } else {
       k <- 1
     }
-    return(sum(fk <= k))
+    return(sum(fk < k))
   }
 })
 
@@ -264,7 +264,7 @@ definition=function(object, weighted, k) {
     vv <- freq(object, type="fk")
   }
   k <- round(k)
-  res <- sum(vv <= k)
+  res <- sum(vv < k)
   attr(res,'k') <- k
   attr(res,'weighted') <- weighted
   return(res)
