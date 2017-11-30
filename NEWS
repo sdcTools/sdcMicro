@@ -1,5 +1,7 @@
 # 5.0.5
 - bugfix in sdcApp() when using R-objects as data input
+- support shiny server for the GUI
+- new method "kAnon_violations()" returning the number of records violating k-anonymity in the sample or the population
 
 # 5.0.4
 - new default theme "IHSN" for sdcApp()
