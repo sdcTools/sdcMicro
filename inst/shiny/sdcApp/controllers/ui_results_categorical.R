@@ -54,7 +54,7 @@ output$ui_rescat_riskinfo <- renderUI({
       df[order(df$indivRisk, decreasing=TRUE),]
       df <- df[df$indivRisk > input$sl_riskyobs,,drop=F]
       if (nrow(df)>0) {
-        df$indivRisk <- formatC(df$indivRisk, format="fg", digits=3)
+        df$indivRisk <- formatC(df$indivRisk, format="f", digits=6)
       }
       n <- nrow(df)
       p <- paste0(formatC(100*(n/N), format="f", digits=2),"%")
