@@ -148,147 +148,155 @@ setGeneric("pramX", function(obj, variables=NULL, strata_variables=NULL, pd=0.8,
 })
 
 setMethod(f="pramX", signature=c("sdcMicroObj"),
-definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
-  obj <- nextSdcObj(obj)
-  pramVars <- get.sdcMicroObj(obj, type="pramVars")
-  if (length(pramVars) == 0 && is.null(variables)) {
-    stop("Error: slot pramVars is NULL and argument 'variables' was not specified!\nDefine one of them to use pram on these variables\n")
-  }
-  if (is.null(variables)) {
-    pramVars <- colnames(obj@origData)[get.sdcMicroObj(obj, type="pramVars")]
-  } else {
-    pramVars <- variables
-  }
-
-  pp <- get.sdcMicroObj(obj, type="pram")
-  if (!is.null(pp)) {
-    if ( any(pramVars%in%pp$summary$variable)) {
-      stop("pram() was already applied on at least one variable!\n")
-    }
-  }
-
-  ### Get data from manipPramVars
-  manipPramVars <- get.sdcMicroObj(obj, type="manipPramVars")
-  strataVars <- get.sdcMicroObj(obj, type="strataVar")
-  manipKeyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
-  kVar <- pramVars[pramVars %in% colnames(manipKeyVars)]
-  pVar <- pramVars[pramVars %in% colnames(manipPramVars)]
-  rVar <- pramVars[!pramVars %in% c(kVar, pVar)]
-
-  if (length(kVar) > 0) {
-    warnMsg <- "If pram is applied on key variables, the k-anonymity and risk assessment are not useful anymore.\n"
-    obj <- addWarning(obj, warnMsg=warnMsg, method="pram", variable=kVar[1])
-    warning(warnMsg)
-    manipData <- manipKeyVars[, kVar, drop=FALSE]
-  }
-  if (length(pVar) > 0) {
-    if (exists("manipData")) {
-      manipData <- cbind(manipData, manipPramVars[, pVar, drop=FALSE])
-    } else {
-      manipData <- manipPramVars[, pVar, drop=FALSE]
-    }
-  }
-  if (length(rVar) > 0) {
-    if (exists("manipData")) {
-      manipData <- cbind(manipData, obj@origData[, rVar, drop=FALSE])
-    } else {
-      manipData <- obj@origData[, rVar, drop=FALSE]
-    }
-  }
-  if (!exists("manipData")) {
-    manipData <- obj@origData[, pramVars, drop=FALSE]
-  }
-
-  if (!is.null(strata_variables)) {
-    # case 1: character vector
-    if (is.character(strata_variables)) {
-      sData <- get.sdcMicroObj(obj, type="origData")[, strata_variables, drop=FALSE]
-    }
-    if (class(strata_variables) %in% c("integer","numeric","factor")) {
-      sData <- data.table(strat=strata_variables)
-      if (nrow(sData) != nrow(manipData)) {
-        stop("Dimension of 'strata_variables' does not match with dimension of dataset!\n")
-      }
-    }
-    manipData <- cbind(manipData, sData)
-    strataVars <- c((length(pramVars)+1):length(manipData))
-  } else if (length(strataVars) > 0) {
-    sData <- get.sdcMicroObj(obj, type="origData")[, strataVars, drop=FALSE]
-    manipData <- cbind(manipData, sData)
-    strataVars <- c((length(pramVars)+1):length(manipData))
-  }
-
-  levList <- lapply(manipData[,pramVars,drop=FALSE], levels)
-  params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
-  res_pram <- pramWORK(data=manipData, variables=pramVars,
-    strata_variables=strataVars, params=params)
-
-  if ( is.null(pp)) {
-    pram_inp <- list()
-    pram_inp$params <- attr(res_pram, "pram_params")
-    pram_inp$transitions <- attr(res_pram, "transitions")
-    pram_inp$comparison <- attr(res_pram, "compdat")
-    pram_inp$summary <- attr(res_pram,"summary")
-  } else {
-    pram_inp <- pp
-    pram_inp$params <- c(pram_inp$params, attr(res_pram, "pram_params"))
-    pram_inp$transitions <- c(pram_inp$transitions, attr(res_pram, "transitions"))
-    pram_inp$comparison <- c(pram_inp$comparison, attr(res_pram, "compdat"))
-    pram_inp$summary <- rbind(pram_inp$summary, attr(res_pram,"summary"))
-  }
-  obj <- set.sdcMicroObj(obj, type="pram", input=list(pram_inp))
-
-  manipData[, pramVars] <- res_pram[, paste0(pramVars, "_pram"), drop=FALSE]
-
-  if (length(pVar) > 0) {
-    manipPramVars[, pVar] <- manipData[, pVar]
-  }
-  if (length(rVar) > 0) {
-    if (is.null(manipPramVars)) {
-      manipPramVars <- manipData[, rVar, drop=FALSE]
-    } else {
-      manipPramVars <- cbind(manipPramVars, manipData[, rVar, drop=FALSE])
-    }
-  }
-  obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))
-
-  if (length(kVar) > 0) {
-    manipKeyVars[, kVar] <- manipData[, kVar]
-    obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(manipKeyVars))
-  }
-  pram <- get.sdcMicroObj(obj, type="pram")
-  if (is.null(pram)) {
-    pram <- list()
-  }
-  obj <- set.sdcMicroObj(obj, type="pram", input=list(pram))
-  pramVarInd <- unique(c(obj@pramVars, standardizeInput(obj, pramVars)))
-  obj <- set.sdcMicroObj(obj, type="pramVars", input=list(pramVarInd))
-  obj <- calcRisks(obj)
-  obj
-})
+          definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
+            obj <- nextSdcObj(obj)
+            pramVars <- get.sdcMicroObj(obj, type="pramVars")
+            if (length(pramVars) == 0 && is.null(variables)) {
+              stop("Error: slot pramVars is NULL and argument 'variables' was not specified!\nDefine one of them to use pram on these variables\n")
+            }
+            if (is.null(variables)) {
+              pramVars <- colnames(obj@origData)[get.sdcMicroObj(obj, type="pramVars")]
+            } else {
+              pramVars <- variables
+            }
+            
+            pp <- get.sdcMicroObj(obj, type="pram")
+            if (!is.null(pp)) {
+              if ( any(pramVars%in%pp$summary$variable)) {
+                stop("pram() was already applied on at least one variable!\n")
+              }
+            }
+            
+            ### Get data from manipPramVars
+            manipPramVars <- get.sdcMicroObj(obj, type="manipPramVars")
+            strataVars <- get.sdcMicroObj(obj, type="strataVar")
+            manipKeyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
+            kVar <- pramVars[pramVars %in% colnames(manipKeyVars)]
+            pVar <- pramVars[pramVars %in% colnames(manipPramVars)]
+            rVar <- pramVars[!pramVars %in% c(kVar, pVar)]
+            
+            if (length(kVar) > 0) {
+              warnMsg <- "If pram is applied on key variables, the k-anonymity and risk assessment are not useful anymore.\n"
+              obj <- addWarning(obj, warnMsg=warnMsg, method="pram", variable=kVar[1])
+              warning(warnMsg)
+              manipData <- manipKeyVars[, kVar, drop=FALSE]
+            }
+            if (length(pVar) > 0) {
+              if (exists("manipData")) {
+                manipData <- cbind(manipData, manipPramVars[, pVar, drop=FALSE])
+              } else {
+                manipData <- manipPramVars[, pVar, drop=FALSE]
+              }
+            }
+            if (length(rVar) > 0) {
+              if (exists("manipData")) {
+                manipData <- cbind(manipData, obj@origData[, rVar, drop=FALSE])
+              } else {
+                manipData <- obj@origData[, rVar, drop=FALSE]
+              }
+            }
+            if (!exists("manipData")) {
+              manipData <- obj@origData[, pramVars, drop=FALSE]
+            }
+            
+            if (!is.null(strata_variables)) {
+              # case 1: character vector
+              if (is.character(strata_variables)) {
+                sData <- get.sdcMicroObj(obj, type="origData")[, strata_variables, drop=FALSE]
+              }
+              if (class(strata_variables) %in% c("integer","numeric","factor")) {
+                sData <- data.table(strat=strata_variables)
+                if (nrow(sData) != nrow(manipData)) {
+                  stop("Dimension of 'strata_variables' does not match with dimension of dataset!\n")
+                }
+              }
+              manipData <- cbind(manipData, sData)
+              strataVars <- c((length(pramVars)+1):length(manipData))
+            } else if (length(strataVars) > 0) {
+              sData <- get.sdcMicroObj(obj, type="origData")[, strataVars, drop=FALSE]
+              manipData <- cbind(manipData, sData)
+              strataVars <- c((length(pramVars)+1):length(manipData))
+            }
+            
+            levList <- lapply(manipData[,pramVars,drop=FALSE], levels)
+            params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
+            res_pram <- pramWORK(data=manipData, variables=pramVars,
+                                 strata_variables=strataVars, params=params)
+            
+            if ( is.null(pp)) {
+              pram_inp <- list()
+              pram_inp$params <- attr(res_pram, "pram_params")
+              pram_inp$transitions <- attr(res_pram, "transitions")
+              pram_inp$comparison <- attr(res_pram, "compdat")
+              pram_inp$summary <- attr(res_pram,"summary")
+            } else {
+              pram_inp <- pp
+              pram_inp$params <- c(pram_inp$params, attr(res_pram, "pram_params"))
+              pram_inp$transitions <- c(pram_inp$transitions, attr(res_pram, "transitions"))
+              pram_inp$comparison <- c(pram_inp$comparison, attr(res_pram, "compdat"))
+              pram_inp$summary <- rbind(pram_inp$summary, attr(res_pram,"summary"))
+            }
+            obj <- set.sdcMicroObj(obj, type="pram", input=list(pram_inp))
+            
+            manipData[, pramVars] <- res_pram[, paste0(pramVars, "_pram"), drop=FALSE]
+            
+            if (length(pVar) > 0) {
+              manipPramVars[, pVar] <- manipData[, pVar]
+            }
+            if (length(rVar) > 0) {
+              if (is.null(manipPramVars)) {
+                manipPramVars <- manipData[, rVar, drop=FALSE]
+              } else {
+                manipPramVars <- cbind(manipPramVars, manipData[, rVar, drop=FALSE])
+              }
+            }
+            obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))
+            
+            if (length(kVar) > 0) {
+              manipKeyVars[, kVar] <- manipData[, kVar]
+              obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(manipKeyVars))
+            }
+            pram <- get.sdcMicroObj(obj, type="pram")
+            if (is.null(pram)) {
+              pram <- list()
+            }
+            obj <- set.sdcMicroObj(obj, type="pram", input=list(pram))
+            pramVarInd <- unique(c(obj@pramVars, standardizeInput(obj, pramVars)))
+            obj <- set.sdcMicroObj(obj, type="pramVars", input=list(pramVarInd))
+            obj <- calcRisks(obj)
+            obj
+          })
+setMethod(f="pramX", signature=c(obj="data.table"),
+          definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
+            levList <- lapply(obj[,variables,drop=FALSE,with=FALSE], levels)
+            params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
+            res <- pramWORK(data=obj, variables=variables, strata_variables=strata_variables, params=params)
+            class(res) <- "pram"
+            res
+          })
 
 setMethod(f="pramX", signature=c(obj="data.frame"),
-definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
-  levList <- lapply(obj[,variables,drop=FALSE], levels)
-  params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
-  res <- pramWORK(data=obj, variables=variables, strata_variables=strata_variables, params=params)
-  class(res) <- "pram"
-  res
-})
+          definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
+            levList <- lapply(obj[,variables,drop=FALSE], levels)
+            params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
+            res <- pramWORK(data=obj, variables=variables, strata_variables=strata_variables, params=params)
+            class(res) <- "pram"
+            res
+          })
 
 setMethod(f="pramX", signature=c(obj="factor"),
-definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
-  if (!is.null(strata_variables)) {
-    xx <- data.frame(x=obj, strata=strata_variables, stringsAsFactors=FALSE)
-  } else {
-    xx <- data.frame(x=obj, stringsAsFactors=FALSE)
-  }
-  levList <- list(levels(obj))
-  params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
-  res <- pramWORK(data=xx, variables="x", strata_variables=strata_variables, params=params)
-  class(res) <- "pram"
-  res
-})
+          definition=function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
+            if (!is.null(strata_variables)) {
+              xx <- data.frame(x=obj, strata=strata_variables, stringsAsFactors=FALSE)
+            } else {
+              xx <- data.frame(x=obj, stringsAsFactors=FALSE)
+            }
+            levList <- list(levels(obj))
+            params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
+            res <- pramWORK(data=xx, variables="x", strata_variables=strata_variables, params=params)
+            class(res) <- "pram"
+            res
+          })
 
 # handling of NA and NULL Values for weight-vector with strata x <-
 # .Call('Pram',as.matrix(dat),-999,2,1,-1) only frequency x <-
@@ -312,16 +320,16 @@ inputs_pram <- function(pd, alpha, levList) {
     }
     TRUE
   }
-
+  
   if (any(sapply(levList, is.null))) {
     stop("at least one variable is not coded as a factor.\n")
   }
-
+  
   if ( is.matrix(pd) & length(levList)==1) {
     checkMat(pd, levList[[1]])
     return(list(pd=list(pd), alpha=NA))
   }
-
+  
   nrPramVars <- length(levList)
   if (is.vector(alpha)) {
     if ( !is.numeric(alpha)) {
@@ -338,7 +346,7 @@ inputs_pram <- function(pd, alpha, levList) {
   } else {
     stop("'alpha' needs to be a vector!\n")
   }
-
+  
   # at least one element should be a transition-matrix
   # we check if levels match
   if (is.list(pd)) {
@@ -391,7 +399,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
       }
       return(pd)
     }
-
+    
     P <- matrix(, ncol=L, nrow=L)
     pds <- runif(L, min=pd, max=1)
     tri <- (1 - pds)/(L - 1)
@@ -413,7 +421,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     rownames(Rs) <- colnames(Rs) <- levs
     return(Rs)
   }
-
+  
   # pram on a simple vector
   # x: input vector
   # Rs: transition matrix
@@ -424,7 +432,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     }
     xpramed <- x
     levs <- levels(xpramed)
-
+    
     # perform sampling
     for ( i in 1:length(levs) ) {
       ii <- which(xpramed==levs[i])
@@ -435,24 +443,24 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     xpramed <- factor(xpramed, levels=levs)
     return(list(x=x, xpramed=xpramed))
   }
-
+  
   idvarpram <- tmpfactor_for_pram <- NULL
-
+  
   if (is.null(variables)) {
     stop("Please define valid variables to pram!\n")
   }
-
+  
   data <- as.data.table(data)
   # all variables must be factors (new in sdcMicro >= 4.7.0)
   if (!all(sapply(data, class)[variables]=="factor")) {
     stop("all variables that should be pramed must be factors!\n")
   }
-
+  
   # calculate stratification variable in any case;
   # even if it is only a 'pseudo' one
   data[,idvarpram:=1:.N]
   if (length(strata_variables) > 0) {
-    f <- as.factor(apply(data[,strata_variables,with=F],1, paste0, collapse="_"))
+    f <- as.factor(data[,apply(.SD,1,paste0,collapse="_"),.SDcols=strata_variables])
   } else {
     f <- factor(rep(1, nrow(data)))
   }
@@ -468,12 +476,12 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     v <- variables[i]
     pV <- data[[v]]
     levs <- levels(pV)
-
+    
     s <- split(data[, c(variables, "idvarpram"), with=FALSE], f)
     cmd <- paste0("data[,",v,"_pram:=factor(NA, levels=levs)]")
     eval(parse(text=cmd))
     ll <- levels(data$tmpfactor_for_pram)
-
+    
     # calculate or check and use transition-matrix
     Rs <- calcTransitionMatrix(xvec=data[[v]], pd=pd[[i]], alpha=alpha[[i]])
     for (si in ll) {
@@ -482,7 +490,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
       cmd <- paste0("data[ii,",v,"_pram:=res]")
       eval(parse(text=cmd))
     }
-
+    
     # transitions
     dat_o <- data[[v]]
     dat_p <- data[[paste0(v,"_pram")]]
@@ -492,7 +500,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     colnames(result) <- c("transition", "Frequency")
     out$params[[length(out$params)+1]] <- list(Rs=Rs, pd=pd[[i]], alpha=alpha[[i]])
     transitions[[length(transitions)+1]] <- result
-
+    
     # frequency-comparison
     to <- table(dat_o, useNA="always")
     tp <- table(dat_p, useNA="always")
@@ -509,7 +517,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
   data[,tmpfactor_for_pram:=NULL]
   data[,idvarpram:=NULL]
   data <- as.data.frame(data)
-
+  
   x <- data
   x <- apply(x, 2, as.character)
   x[is.na(x)] <- "."  # NA comparisons -> cast to character (better solution?)
