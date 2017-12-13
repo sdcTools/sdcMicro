@@ -61,7 +61,7 @@ shinyServer(function(session, input, output) {
   # 1: modifications for microdata
   # code to read in microdata
   code_useRObj <- reactive({
-    cmd <- paste0("inputdata <- readMicrodata(")
+    cmd <- paste0("obj$inputdata <- readMicrodata(")
     cmd <- paste0(cmd, "path=",dQuote(input$sel_choose_df))
     cmd <- paste0(cmd, ", type=",dQuote("rdf"))
     cmd <- paste0(cmd, ", convertCharToFac=FALSE")
