@@ -365,8 +365,8 @@ measure_riskComp <- reactive({
   res <- list()
   risk <- obj$sdcObj@risk
   originalRisk <- obj$sdcObj@originalRisk
-  res$s <- sum((risk$individual[,1] > median(risk$individual[,1])+2*mad(risk$individual[,1])) & (risk$indiviual[,1] > bm))
-  res$sorig <- sum((originalRisk$individual[,1] > median(originalRisk$individual[,1])+2*mad(originalRisk$individual[,1])) & (originalRisk$indiviual[,1] > bm))
+  res$s <- sum((risk$individual[,1] > median(risk$individual[,1])+2*mad(risk$individual[,1])) & (risk$individual[,1] > bm))
+  res$sorig <- sum((originalRisk$individual[,1] > median(originalRisk$individual[,1])+2*mad(originalRisk$individual[,1])) & (originalRisk$individual[,1] > bm))
   res$benchmark <- bm
 
   res$exp_reident_m <- round(risk$global$risk_ER,2)
