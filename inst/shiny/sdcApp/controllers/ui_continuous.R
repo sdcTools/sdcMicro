@@ -13,6 +13,7 @@ output$ui_topbotcoding_num_header <- renderUI({
   helptxt <- paste(helptxt, "with the specified replacement value. The boxplot below shows the distribution of the data before top/bottom coding. ")
   helptxt <- paste(helptxt, "The bottom of the box is the 25th percentile and the top of the box the 75th percentile. The bar in the boxplot is the median. ")
   helptxt <- paste(helptxt, "The length of the whiskers is 1.5 times the interquartile range (IQR), unless the smallest/largest obeservation is closer to the box. Any value below/above the whiskers is indicated as outlier.")
+  helptxt <- paste(helptxt, "The summary statistics help to select the threshold and replacement value.")
   out <- fluidRow(
     column(12, h3("Apply top/bottom coding"), offset = 0, class = "wb-header"),
     column(12, p(helptxt), offset = 0, class = "wb-header-hint")
@@ -21,6 +22,68 @@ output$ui_topbotcoding_num_header <- renderUI({
 })
 
 output$ui_topbotcoding_num <- renderUI({
+  output$ui_topbotcoding_largest_values <- renderTable({
+    req(input$sel_topbot_var_num)
+    
+    curV <- obj$inp_sel_topbot_var_num
+    if (is.null(curV)) {
+      return(NULL)
+    }
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(NULL)
+    }
+    
+    vv <- curObj@origData[[curV]]
+    df <- as.data.frame(tail(sort(vv), n = min(10, sum(!is.na(vv)))))
+    colnames(df) <- paste(min(10, sum(!is.na(vv))), "largest values")
+    #if (input$sel_topbot_kind_num=="top") {
+    #n <- sum(vv >= num1, na.rm=TRUE)
+    #} else {
+    #}
+    #min(is.na())
+    #out <- list(out, renderTable(data.frame(
+    #  x = tail(sort(vv), n = 5)
+    #)))
+    df
+  })
+  output$ui_topbotcoding_sumstat <- renderTable({
+    req(input$sel_topbot_var_num)
+    
+    curV <- obj$inp_sel_topbot_var_num
+    if (is.null(curV)) {
+      return(NULL)
+    }
+    curObj <- sdcObj()
+    if (is.null(curObj)) {
+      return(NULL)
+    }
+    
+    vv <- curObj@origData[[curV]]
+    temp <- vv[!is.na(vv)]
+    
+    if (length(temp) == 0) {
+      return(NULL)
+    }
+    df <- data.frame(Summarystatistics = c("Number of non-missing values", 
+                                           "Mean + 1 st.dev.",
+                                           "Mean + 2 st.dev.",
+                                           "Mean + 3 st.dev.",
+                                           "90 percentile",
+                                           "95 percentile",
+                                           "96 percentile",
+                                           "97 percentile",
+                                           "98 percentile",
+                                           "99 percentile"),
+                     Values1 = c(length(temp), mean(temp) + sd(temp), mean(temp) + 2 * sd(temp),  mean(temp) + 3 * sd(temp), 
+                     quantile(temp, c(90, 95, 96, 97, 98, 99) / 100)),
+                     Values2 = c(NA, mean(temp[temp > mean(temp) + sd(temp)]), 
+                                 mean(temp[temp > mean(temp) + 2 * sd(temp)]), 
+                                 mean(temp[temp > mean(temp) + 3 * sd(temp)]),
+                                 sapply(quantile(temp, c(90, 95, 96, 97, 98, 99) / 100, na.rm = T), function(x){mean(temp[temp > x])})))
+    colnames(df) <- c("Summary statistic", "Threshold", "Average")
+    df
+  })
   output$ui_topbot_plot_num <- renderPlot({
     req(input$sel_topbot_var_num)
 
@@ -44,6 +107,7 @@ output$ui_topbotcoding_num <- renderUI({
     txt_tooltip1 <- "In case of top, all values above the threshold are replaced, in the case of bottom, all values below the threshold are replaced."
     txt_tooltip2 <- "All values below (bottom) or above (top) this threshold are replaced with the replacement value."
     txt_tooltip3 <- "The replacement value is the value that replaces all the values below (bottom) or above (top) the specified threshold. Often the replacement value is the same as the threshold value."
+    txt_tooltip4 <- "The values of the summary statistics are based on the non-missing values. The column Threshold shows the value of the summary statistic that could be used as threshold. The column Average shows the mean of the values above this threshold that could be used as replacement value."
     sel_var <- selectInput("sel_topbot_var_num", choices=numVars(), selected=obj$inp_sel_topbot_var_num, multiple=FALSE, label=p("Select variable"), width="75%")
     sel_kind <- radioButtons("sel_topbot_kind_num", choices=c("top","bottom"),
       label=p("Apply top/bottom coding?", tipify(icon("info-circle"), title=txt_tooltip1, placement="top")), inline=TRUE)
@@ -53,6 +117,9 @@ output$ui_topbotcoding_num <- renderUI({
       placeholder="Please enter a number", width="75%")
     out <- fluidRow(column(6, sel_var, align="center"), column(6, sel_kind, align="center"))
     out <- list(out, fluidRow(column(6, txt_val, align="center"), column(6, txt_replace, align="center")))
+    out <- list(out, column(12, h5("Summary statistics to select threshold value and replacement value", tipify(icon("info-circle"), title=txt_tooltip4, placement="top")), align="center"),
+                column(6, tableOutput("ui_topbotcoding_sumstat"), align="center"),
+                column(6, tableOutput("ui_topbotcoding_largest_values"), align="center"))
     out
   })
   observeEvent(input$sel_topbot_var_num,{
@@ -86,7 +153,7 @@ output$ui_topbotcoding_num <- renderUI({
       N <- length(na.omit(vv))
       p <- formatC(100*(n/N), format="f", digits=2)
       return(fluidRow(
-        column(12, p(code(n),"(out of",code(N),") values will be replaced! This equals",code(p),"percent of the data."), align="center"),
+        column(12, p(code(n),"(out of",code(N),") values will be replaced. This equals",code(p),"percent of the data."), align="center"),
         column(12, myActionButton("btn_topbotcoding_num",label=("Apply Top/Bottom-Coding"), "primary"), align="center")
       ))
     } else {
