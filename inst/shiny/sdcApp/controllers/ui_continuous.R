@@ -152,8 +152,22 @@ output$ui_topbotcoding_num <- renderUI({
       }
       N <- length(na.omit(vv))
       p <- formatC(100*(n/N), format="f", digits=2)
+      
+      vv_before <- curObj@origData[[input$sel_topbot_var_num]]
+      if(length(get_weightVar_name()) > 0){ weight_gini <- curObj@origData[[get_weightVar_name()]]}else{ weight_gini <- rep(1, length(vv))} 
+      gini_before <- round(laeken::gini(vv_before, weights = weight_gini, na.rm = TRUE)$value, digits = 3)
+      vv_after <- vv
+      if (input$sel_topbot_kind_num=="top") {
+        vv_after[!is.na(vv) & vv >= num1] <- num2
+      } else {
+        vv_after[!is.na(vv) & vv <= num1] <- num2
+      }
+      gini_after  <- round(laeken::gini(vv_after, weights = weight_gini, na.rm = TRUE)$value, digits = 3)
       return(fluidRow(
         column(12, p(code(n),"(out of",code(N),") values will be replaced. This equals",code(p),"percent of the data."), align="center"),
+        column(12, p("The weighted Gini coefficient of the original variable is", code(gini_before),
+                     ". After top or bottom coding with the selected threshold and replacement value, the Gini coefficient will change to", code(gini_after),
+                     "."), align="center"),
         column(12, myActionButton("btn_topbotcoding_num",label=("Apply Top/Bottom-Coding"), "primary"), align="center")
       ))
     } else {
