@@ -54,7 +54,7 @@ output$risk_sb_anonymize <- renderUI({
   v3_o <- paste0(n5_o," (",formatC(100*(n5_o/obs), format="f", digits=2),"%)")
 
   df <- data.table(
-    "k-anonimity"=c("2-anonymity","3-anonymity","5-anonymity"),
+    "k-anonymity"=c("2-anonymity","3-anonymity","5-anonymity"),
     "Modified data"=c(v1,v2,v3),
     "Original data"=c(v1_o, v2_o, v3_o))
 
