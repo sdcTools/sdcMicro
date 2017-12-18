@@ -670,8 +670,7 @@ writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
     write_dta(data=dat, path=fileOut)
   }
   if (format=="csv") {
-    inp <- list(...)
-    write.table(dat, file=fileOut, col.names=as.logical(inp$col.names), sep=inp$sep, dec=inp$dec)
+    write.table(dat, file=fileOut, ...)
   }
   return(invisible(NULL))
 }
