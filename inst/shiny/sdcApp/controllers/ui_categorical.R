@@ -271,6 +271,11 @@ kAnon_impvec <- reactive({
   if (length(cn)==0) {
     return(c(""))
   }
+  
+  # we need to sort the inputs properly 
+  # in case >= 10 key vars have been specified
+  ii <- as.numeric(sapply(strsplit(cn, "_"), tail, 1))
+  cn <- cn[order(ii)]    
   vals <- unlist(lapply(cn, function(x) {
     input[[x]]
   }))
@@ -286,11 +291,17 @@ kAnon_comb_params <- reactive({
   if (length(cn1)==0) {
     return(NULL)
   }
+  
+  # we need to sort the inputs properly 
+  # in case >= 10 key vars have been specified
+  ii <- as.numeric(sapply(strsplit(cn1, "_"), tail, 1))
+  cn1 <- cn1[order(ii)]  
   vals1 <- unlist(lapply(cn1, function(x) {
     input[[x]]
   }))
 
   cn2 <- cn[grep("sl_kanon_combs_", cn)]
+  cn2 <- cn2[order(ii)]  
   vals2 <- unlist(lapply(cn2, function(x) {
     input[[x]]
   }))
