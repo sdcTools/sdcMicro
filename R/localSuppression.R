@@ -51,9 +51,9 @@
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
 #' \doi{10.1007/978-3-319-50272-4}
-#' 
-#' Templ, M. and Kowarik, A. and Meindl, B. 
-#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#'
+#' Templ, M. and Kowarik, A. and Meindl, B.
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 #' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #'
 #' @keywords manip
@@ -255,30 +255,28 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
       for (i in seq_along(ind.problem)) {
         params <- list(alpha=alpha, id=as.integer(ind.problem[i]))
         res <- cpp_calcSuppInds(mat, mat[ind.problem[i],], params=params)
-        if (res$fk < k) {
-          ind <- res$ids
-          if (length(ind) > 0) {
-            colInd <- NULL
-            colIndsSorted <- keyVars[order(importanceI)]
-            while (is.null(colInd)) {
-              for (cc in colIndsSorted) {
-                # special case where we have to suppress values in the problematic instance itself because no other candidates are available
-                if (length(ind)==1 && ind==ind.problem[i]) {
-                  z <- which(!is.na(mat[ind, cc]))
-                } else {
-                  z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
-                }
-                if (length(z) > 0) {
-                  colInd <- cc
-                  break;
-                }
+        ind <- res$ids
+        if (length(ind) > 0) {
+          colInd <- NULL
+          colIndsSorted <- keyVars[order(importanceI)]
+          while (is.null(colInd)) {
+            for (cc in colIndsSorted) {
+              # special case where we have to suppress values in the problematic instance itself because no other candidates are available
+              if (length(ind)==1 && ind==ind.problem[i]) {
+                z <- which(!is.na(mat[ind, cc]))
+              } else {
+                z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
+              }
+              if (length(z) > 0) {
+                colInd <- cc
+                break;
               }
             }
-            x[[colInd]][ind.problem[i]] <- NA
-            mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
-          } else {
-            stop("Error\n")
           }
+          x[[colInd]][ind.problem[i]] <- NA
+          mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
+        } else {
+          stop("Error\n")
         }
       }
       ff <- freqCalc(x, keyVars=keyVars, alpha=alpha)
@@ -326,10 +324,14 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   if (is.numeric(keyVars)) {
     keyVarsNum <- keyVars
     keyVars <- names(x)[keyVars]
+  } else {
+    keyVarsNum <- match(keyVars, colnames(x))
   }
   if (is.numeric(strataVars)) {
     strataVarsNum <- strataVars
     strataVars <- names(x)[strataVars]
+  } else {
+    strataVarsNum <- match(strataVars, colnames(x))
   }
 
   # checks and preparations if we apply localSuppression on
@@ -389,6 +391,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
         #log <- paste0(log, "of ",combs[gr]," key variables.\n")
         #cat(log)
         for (comb in 1:ncol(tree[[gr]])) {
+          #cat("combination",comb,"|",ncol(tree[[gr]]),"\n")
           counter <- counter+1
           kV <- tree[[gr]][,comb]
           cur_importance <- rank(importance[kV], ties.method="min")
@@ -402,9 +405,10 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
       }
       # prepare output
       xAnon <- tmpDat
-      supps <- as.data.frame(t(apply(tmpDat, 2, function(x) {
-        sum(is.na(x))
-      })))
+      #supps <- as.data.frame(t(apply(tmpDat, 2, function(x) {
+      #  sum(is.na(x))
+      #})))
+      supps <- as.data.frame(tmpDat[,lapply(.SD, function(x) sum(is.na(x))), .SDcols=keyVars])
       totalSupps <- sum(supps)
     }
   } else {
