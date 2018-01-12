@@ -70,6 +70,8 @@
 #' data.frame(fka=f3a$fk, fkb=f3b$fk, fkc=f3c$fk)
 #' data.frame(Fka=f3a$Fk, Fkb=f3b$Fk, Fkc=f3c$Fk)
 freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
+  addAllNAtoKeys <- FALSE
+
   . <- Fk <- fk <- id <- keyid <- na_ids <- sortidforfreqcalc <- sortvar <- weight <- NULL
   xxxxx_tmpweight_xxxxx <- NULL
   if (alpha <0 | alpha>1) {
@@ -141,8 +143,8 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
       n1=sum(new$fk==1, na.rm=TRUE), n2=sum(new$fk==2, na.rm=TRUE), alpha=alpha)
     class(z) <- "freqCalc"
     return(z)
-  }  
-  
+  }
+
   nr_kv <- length(keyVars_n)
   naind <- dat_with_na[,lapply(.SD, function(x) {
     !is.na(x)
@@ -206,7 +208,7 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
       ids_complete <- dat_without_na[as.list(dat_with_na[i, cur_sortVars, with=F]),id]
       if (is.na(ids_complete)[1]) {
         ids_complete <- NULL
-      }      
+      }
     }
 
     # update dataset containing NA's
@@ -218,6 +220,17 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
     add_fks_nona[ids_complete] <- add_fks_nona[ids_complete] + fks_na[i]*alpha
     add_Fks_nona[ids_complete] <- add_Fks_nona[ids_complete] + Fks_na[i]*alpha
   }
+
+  ## TODO: CHECK IF THIS IS NEEDED
+  # in case we have NA-only keys, we add their (weighted) fks/Fks to all keys with no missing values
+  if (addAllNAtoKeys) {
+    ii <- which(rowSums(is.na(dat_with_na[,keyVars_n, with=FALSE]))==nr_kv)
+    if (length(ii)==1) {
+      add_fks_nona <- add_fks_nona + dat_with_na[ii,fk]*alpha
+      add_Fks_nona <- add_Fks_nona + dat_with_na[ii,Fk]*alpha
+    }
+  }
+
   setkeyv(dat_without_na, keyVars_n)
   dat_without_na[,fk:=fk+add_fks_nona]
   dat_without_na[,Fk:=Fk+add_Fks_nona]
