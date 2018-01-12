@@ -300,23 +300,19 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
       x <- rbind(x,xKeys)
       setkey(x,"idvarextraforsls")
       x[,idvarextraforsls:=NULL]
-      x <- as.data.frame(x)
-      if(any(NABefore)) {
-        x[NABefore] <- NA
-      }
     } else {
       setkey(x,"idvarextraforsls")
       x[,idvarextraforsls:=NULL]
     }
-    ## preparing the output:
-    supps <- as.data.table(t(apply(x, 2, function(x) {
-      sum(is.na(x))
-    }))) - NAinKey
-
-    totalSupps <- sum(supps)
-    out <- list(xAnon=x, supps=supps, totalSupps=totalSupps)
+    out <- list(xAnon=x)#, supps=supps, totalSupps=totalSupps)
     return(out)
   }
+
+  # compute number of missings
+  sum_na <- function(x) {
+    sum(is.na(x))
+  }
+
   strata <- NULL
   if (!"data.table" %in% class(x)) {
     x <- as.data.table(x)
@@ -369,8 +365,17 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
   # calculate number of suppressions for each keyVar
   # before trying to achieve k-anonymity
   NABefore <- is.na(x)
-  NAinKey <- x[,lapply(.SD, function(x) sum(is.na(x))), .SDcols=keyVars, by=strataVars]
-  totalNABefore <- sum(x[,lapply(.SD, function(x) sum(is.na(x))), .SDcols=keyVars])
+  if (is.null(strataVars)) {
+    NAinKey <- x[,lapply(.SD, sum_na), .SDcols=keyVars, by=strataVars]
+  } else {
+    x[,strata:=apply(x[,strataVars,with=F],1,paste,collapse="-")]
+    NAinKey <- x[,lapply(.SD, sum_na), .SDcols=keyVars, by="strata"]
+    NAinKey_tot <- x[,lapply(.SD, sum_na), .SDcols=keyVars]
+    NAinKey_tot[,strata:="Total"]
+    NAinKey_tot <- NAinKey_tot[,c("strata", keyVars), with=F]
+    NAinKey <- rbind(NAinKey, NAinKey_tot)
+    x[,strata:=NULL]
+  }
 
   # performing the k-Anon algorithm
   # no stratification required
@@ -378,8 +383,6 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     if (is.null(combs)) {
       inpDat <- x[,keyVars,with=F]
       res <- suppSubset(x=inpDat, k=k, importance=importance, alpha=alpha)
-      supps <- res$supps
-      totalSupps <- res$totalSupps
       xAnon <- res$xAnon
     } else {
       # no strata but subsets of key variables (combs)
@@ -405,11 +408,6 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
       }
       # prepare output
       xAnon <- tmpDat
-      #supps <- as.data.frame(t(apply(tmpDat, 2, function(x) {
-      #  sum(is.na(x))
-      #})))
-      supps <- as.data.frame(tmpDat[,lapply(.SD, function(x) sum(is.na(x))), .SDcols=keyVars])
-      totalSupps <- sum(supps)
     }
   } else {
     ## we want k-anonymity in each strata!
@@ -429,9 +427,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
       # todo: using parallel/mclapply?
       for (i in seq_along(spl)) {
         res <- suppSubset(spl[[i]][,keyVars, with=F], k=k, importance=importance, alpha=alpha)
-        supps[[i]] <- res$supps
         xAnon[[i]] <- res$xAnon
-        totalSupps[i] <- res$totalSupps
       }
     } else {
       # local Suppression by strata and combination of subsets!
@@ -456,37 +452,45 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
           }
         }
         # prepare output
-        tmpDat[,strata:=NULL]
         tmpDat[,sortid:=NULL]
         xAnon[[i]] <- tmpDat
-        supps[[i]] <- as.data.frame(t(apply(tmpDat, 2, function(x) {
-          sum(is.na(x))
-        })))
-        totalSupps[i] <- res$totalSupps
       }
     }
-    supps <- as.data.frame(rbindlist(supps))
-    supps <- rbind(supps, colSums(supps))
-    rownames(supps) <- c(names(spl),"Total")
     xAnon <- rbindlist(xAnon)
     xAnon[,sortid:=sortid]
     setkey(xAnon, sortid)
     xAnon[,sortid:=NULL]
-    totalSupps <- sum(supps[nrow(supps),])
   }
 
-  # totalSupps after kAnon
-  if (!is.null(strataVars)) {
-    ss <- NAinKey[,lapply(.SD, function(x) sum(x)), .SDcols=setdiff(names(NAinKey), strataVars)]
-    NAinKey <- rbind(NAinKey,ss,fill=TRUE)
-    NAinKey[,paste(strataVars):=NULL]
-    NAinKey <- as.data.frame(NAinKey)
-    rownames(NAinKey) <- rownames(NAinKey)
+  ## compute number of suppressions
+  if (is.null(strataVars)) {
+    totalSupps <- xAnon[,lapply(.SD, sum_na), .SDcols=keyVars]
+    supps <- totalSupps - NAinKey
+    totalSupps <- as.data.frame(totalSupps)
+    supps <- as.data.frame(supps)
+  } else {
+    if (is.null(combs)) {
+      xAnon[,strata:=inpDat[,strata]]
+    }
+    totalSupps <- xAnon[,lapply(.SD, sum_na), .SDcols=keyVars, by="strata"]
+    totalSupps_tot <- xAnon[,lapply(.SD, sum_na), .SDcols=keyVars]
+    totalSupps_tot[,strata:="Total"]
+    totalSupps_tot <- totalSupps_tot[,c("strata", keyVars), with=F]
+    totalSupps <- rbind(totalSupps, totalSupps_tot)
+    xAnon[,strata:=NULL]
+
+    supps <- copy(totalSupps)
+    supps[, c(keyVars):=totalSupps[,keyVars, with=FALSE] - NAinKey[,keyVars, with=FALSE]]
+
+    supps <- as.data.frame(supps)
+    rownames(supps) <- supps$strata; supps$strata <- NULL
+    totalSupps <- as.data.frame(totalSupps)
+    rownames(totalSupps) <- totalSupps$strata; totalSupps$strata <- NULL
   }
-  total_supps <- as.data.frame(as.data.frame(supps)+as.data.frame(NAinKey))
-  totalSupps <- tail(rowSums(total_supps),1)
+
+  newSupps <- tail(rowSums(supps), 1)
   res <- list(xAnon=as.data.frame(xAnon), supps=supps,
-    totalSupps=total_supps, newSupps=totalSupps-totalNABefore, anonymity=TRUE, keyVars=keyVars,
+    totalSupps=totalSupps, newSupps=newSupps, anonymity=TRUE, keyVars=keyVars,
     strataVars=strataVars, importance=importance, k=k, threshold=NA, combs=combs)
   class(res) <- "localSuppression"
   invisible(res)
@@ -543,15 +547,31 @@ print.localSuppression <- function(x, ...) {
   print(dt)
 
   if (byStrata==TRUE) {
-    if (all(x$anonymity)) {
-      pp <- paste0("\n", x$k, "-anonymity == TRUE in all strata!\n")
+    if (is.null(x$combs)) {
+      if (all(x$anonymity)) {
+        pp <- paste0("\n", x$k, "-anonymity == TRUE in all strata!\n")
+      } else {
+        prob <- rownames(x$supps)[which(!x$anonymity)]
+        pp <- paste0("\n", x$k, "-anonymity == FALSE in the following strata:\n")
+        pp <- paste0(pp, paste0(rownames(x$supps)[which(!x$anonymity)], collapse=", "))
+      }
     } else {
-      prob <- rownames(x$supps)[which(!x$anonymity)]
-      pp <- paste0("\n", x$k, "-anonymity == FALSE in the following strata:\n")
-      pp <- paste0(pp, paste0(rownames(x$supps)[which(!x$anonymity)], collapse=", "))
+      pp <- "\nk-anonymity has been achieved within strata and for combinations of key-variables!"
+      for (i in 1:length(x$combs)) {
+        pp <- paste(pp, paste0("\n", x$k[i], "-anonymity == ", all(x$anonymity)," for all ",x$combs[i],"-dimensional subsets of key variables within stratas"))
+      }
+      pp <- paste0(pp,"\n")
     }
   } else {
-    pp <- paste0("\n", x$k, "-anonymity == ", all(x$anonymity),"\n")
+    if (!is.null(x$combs)) {
+      pp <- NULL
+      for (i in 1:length(x$combs)) {
+        pp <- paste(pp, paste0("\n", x$k[i], "-anonymity == ", all(x$anonymity)," for all ",x$combs[i],"-dimensional subsets of key variables"))
+      }
+      pp <- paste(pp, "\n")
+    } else {
+      pp <- paste0("\n", x$k, "-anonymity == ", all(x$anonymity),"\n")
+    }
   }
   pp <- paste0(pp, "-----------------------\n")
   cat(pp)
