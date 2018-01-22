@@ -1,6 +1,6 @@
 \documentclass[12pt]{scrartcl}
 \usepackage{da1}
-\usepackage[nogin]{Sweave}
+
 \usepackage{pdfpages}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -198,7 +198,7 @@ be chosen for method 1 and a parameter value above 10 might be chosen for method
 \setkeys{Gin}{width=0.8\textwidth}
 \begin{figure}[ht!]
 \begin{center}
-<<fig=TRUE, echo=FALSE, results=hide>>=
+<<echo=FALSE, results='hide'>>=
 #require(sdcMicro)
 #load("../Daten/ses.RData")
 f1 <- function(x){
@@ -419,7 +419,7 @@ df <- xtable(df, digits=c(0,0,0,0,0,1,3,0,1), align = "|l|llll|l|l|ll|",
 @
 
 \begin{small}
-<<freqprint, echo=FALSE, results=tex>>=
+<<freqprint, echo=FALSE, results='asis'>>=
 print(df,include.rownames = getOption("xtable.include.rownames", TRUE), caption.placement="top")
 @
 \end{small}
@@ -1048,7 +1048,7 @@ df <- xtable(df, digits=c(0,2,3,0,2,2,1), align = "|l|lll|lll|",
 @
 
 \begin{small}
-<<allprint, echo=FALSE, results=tex>>=
+<<allprint, echo=FALSE, results='asis'>>=
 print(df,include.rownames = getOption("xtable.include.rownames", TRUE), caption.placement="top")
 @
 \end{small}
@@ -1392,7 +1392,7 @@ data quality can be found in section \ref{utilityT}.
 \appendix
 
 \section{A brief example on SES data}
-<<results=hide, echo=FALSE, eval=TRUE>>=
+<<results='hide', echo=FALSE, eval=TRUE>>=
 require(laeken, quiet=TRUE)
 data(ses)
 @
