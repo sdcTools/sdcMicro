@@ -54,10 +54,10 @@
 #'
 #' ## sdcMicroObj-method / using identification levels
 #' riskyCells(sdc, useIdentificationLevel=TRUE, threshold=10, level=c(c(1,1,3,4,5,5,5)))
-riskyCells <- function(obj, ...) {
-  riskyCellsX(obj=obj, ...)
+riskyCells <- function(obj, useIdentificationLevel=FALSE, ...) {
+  riskyCellsX(obj=obj, useIdentificationLevel=useIdentificationLevel, ...)
 }
-setGeneric("riskyCellsX", function(obj, ...) {
+setGeneric("riskyCellsX", function(obj, useIdentificationLevel, ...) {
   standardGeneric("riskyCellsX")
 })
 
@@ -82,7 +82,7 @@ definition = function(obj, keyVars, useIdentificationLevel, ...) {
 })
 
 setMethod(f="riskyCellsX", signature=c(obj="sdcMicroObj"),
-definition=function(obj, useIdentificationLevel=useIdentificationLevel, ...) {
+definition=function(obj, useIdentificationLevel, ...) {
   params <- list(...)
   if (!is.null(params$keyVars)) {
     stop("argument 'keyVars' has been specified, but is ignored because argument 'obj' is not a data.frame!")
@@ -183,8 +183,15 @@ riskyCellsWork <- function(df, keyVars, useIdentificationLevel=FALSE, ...) {
   stopifnot(all(threshold==as.integer(threshold)))
   if (useIdentificationLevel) {
     level <- params$level
-    stopifnot(is.numeric(level))
-    stopifnot(length(level)==length(keyVars))
+    if (!is.numeric(level)) {
+      stop("you need to specify argument 'level' in case 'useIdentificationLevel' is TRUE!\n")
+    }
+    if (length(level)!=length(keyVars)) {
+      stop("length(level) must match the number of key-variables!\n")
+    }
+    if (length(level)!=length(keyVars)) {
+      stop("length(level) must match the number of key-variables!\n")
+    }
     stopifnot(all(level==as.integer(level)))
     res <- riskycells_using_identification_level(dat=df, keyVars=keyVars, level=level, threshold=threshold)
   } else {
