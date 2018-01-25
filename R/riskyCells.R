@@ -6,19 +6,20 @@
 #' @name riskyCells
 #' @docType methods
 #' @param obj a \code{data.frame}, \code{data.table} or an object of class \code{\link{sdcMicroObj-class}}
+#' @param useIdentificationLevel (logical) specifies if tabulation should be done up to a specific
+#' dimension (\code{useIdentificationLevel=FALSE} using argument \code{maxDim}) or taking identification
+#' levels (\code{useIdentificationLevel=FALSE} using argument \code{level}) into account.
+#' @param threshold a numeric vector specifiying the thresholds at which cells are considered to be unsafe. In case a
+#' tabulation is done up to a specific level (\code{useIdentificationLevel=FALSE}), the thresholds may be
+#' specified differently for each dimension. In the other case, the same threshold is used for all tables.
 #' @param ... see possible arguments below
 #' \itemize{
 #' \item{keyVars: }{index or variable-names within \code{obj} that should be used for tabulation. In case \code{obj} is
 #' of class \code{\link{sdcMicroObj-class}}, this argument is not used and the pre-defined key-variables are used.}
-#' \item{useIdentificationLevel: }{logical, specifies if tabulation should be done up to a specific
-#' dimension (\code{useIdentificationLevel=FALSE} using argument \code{maxDim}) or taking identification
-#' levels (\code{useIdentificationLevel=FALSE} using argument \code{level}) into account.}
 #' \item{level: }{in case \code{useIdentificationLevel=TRUE}, this numeric vector specifies the importance of the key variables.
-#' The construction of output tables follows the implementation in mu-argus, see e.g \url{http://neon.vb.cbs.nl/casc/Software/MUmanual5.1.pdf}.}
+#' The construction of output tables follows the implementation in mu-argus, see e.g \url{http://neon.vb.cbs.nl/casc/Software/MUmanual5.1.pdf}.
+#' The length of this numeric vector must match the number of key variables.}
 #' \item{maxDim: }{in case \code{useIdentificationLevel=FALSE}, this number specifies maximal number of variables to tablulate.}
-#' \item{threshold: }{a numeric vector specifiying the thresholds at which cells are considered to be unsafe. In case a
-#' tabulation is done up to a specific level (\code{useIdentificationLevel=FALSE}), the thresholds my be
-#' specified differently for each dimension. In the other case, the same threshold is used for all tables.}
 #' }
 #' @return a \code{data.table} showing the number of unsafe cells, thresholds for any combination of the key variables. If
 #' the input was a \code{\link{sdcMicroObj-class}} object and some modifications have been already applied to the categorical
@@ -54,55 +55,104 @@
 #'
 #' ## sdcMicroObj-method / using identification levels
 #' riskyCells(sdc, useIdentificationLevel=TRUE, threshold=10, level=c(c(1,1,3,4,5,5,5)))
-riskyCells <- function(obj, ...) {
-  riskyCellsX(obj=obj, ...)
+riskyCells <- function(obj, useIdentificationLevel=FALSE, threshold, ...) {
+
+  # checks
+  stopifnot(is.logical(useIdentificationLevel))
+  stopifnot(length(useIdentificationLevel)==1)
+
+  params <- list(...)
+  if (class(obj)=="sdcMicroObj") {
+    if (!is.null(params$keyVars)) {
+      warning("argument 'keyVars' has been specified, but is ignored because argument 'obj' is not a data.frame!")
+    }
+    keyVars <- obj@keyVars
+  } else {
+    keyVars <- params$keyVars
+
+    if (is.character(keyVars)) {
+      stopifnot(all(keyVars %in% colnames(obj)))
+      keyVars <- match(keyVars, colnames(obj))
+    }
+    if (is.numeric(keyVars)) {
+      stopifnot(all(keyVars %in% 1:ncol(obj)))
+    }
+    if (!is.data.table(obj)) {
+      obj <- as.data.table(obj)
+    }
+  }
+
+  if (useIdentificationLevel==TRUE) {
+    if (!is.null(params$maxDim)) {
+      stop("you can either specify 'maxDim' or set 'useIdentificationLevel' to TRUE!\n")
+    }
+    # check level argument
+    level <- params$level
+    if (!is.numeric(level)) {
+      stop("you need to specify argument 'level' in case 'useIdentificationLevel' is TRUE!\n")
+    }
+    if (length(level)!=length(keyVars)) {
+      stop("length(level) must match the number of key-variables!\n")
+    }
+    if (!all(level==as.integer(level))) {
+      stop("argument 'levels' must be whole numbers!\n")
+    }
+    if (!all(level>0)) {
+      stop("argument 'levels' must be whole numbers > 0!\n")
+    }
+  } else {
+    ## checks for useIdentificationLevel==FALSE
+    if (!is.null(params$level)) {
+      stop("you can either specify 'level' or set 'useIdentificationLevel' to FALSE!\n")
+    }
+    maxDim <- params$maxDim
+    if (!is.numeric(maxDim)) {
+      stop("argument 'maxDim' needs to be numeric!\n")
+    }
+    if (maxDim != as.integer(maxDim)) {
+      stop("argument 'maxDim' must be an integer!\n")
+    }
+    if (maxDim > length(keyVars)) {
+      stop("argument 'maxDim' needs to be <= the number of key variables!\n")
+    }
+  }
+
+  if (!is.numeric(threshold)) {
+    stop("argument 'threshold' needs to be numeric!\n")
+  }
+  if (!all(threshold==as.integer(threshold))) {
+    stop("argument 'threshold' needs to be whole numbers!\n")
+  }
+  riskyCellsX(obj=obj, useIdentificationLevel=useIdentificationLevel, threshold=threshold, ...)
 }
-setGeneric("riskyCellsX", function(obj, ...) {
+setGeneric("riskyCellsX", function(obj, useIdentificationLevel, threshold, ...) {
   standardGeneric("riskyCellsX")
 })
 
 setMethod(f="riskyCellsX", signature=c(obj="data.frame"),
-definition = function(obj, keyVars, useIdentificationLevel, ...) {
-  stopifnot(is.logical(useIdentificationLevel))
-  stopifnot(length(useIdentificationLevel)==1)
-
-  if (is.character(keyVars)) {
-    stopifnot(all(keyVars %in% colnames(obj)))
-    keyVars <- match(keyVars, colnames(obj))
-  }
-  if (is.numeric(keyVars)) {
-    stopifnot(all(keyVars %in% 1:ncol(obj)))
-  }
-
-  if (!is.data.table(obj)) {
-    obj <- as.data.table(obj)
-  }
-  res <- riskyCellsWork(df=obj, keyVars=keyVars, useIdentificationLevel=useIdentificationLevel, ...)
+definition = function(obj, keyVars, useIdentificationLevel, threshold, ...) {
+  res <- riskyCellsWork(df=obj, keyVars=keyVars, useIdentificationLevel=useIdentificationLevel, threshold=threshold, ...)
   res
 })
 
 setMethod(f="riskyCellsX", signature=c(obj="sdcMicroObj"),
-definition=function(obj, useIdentificationLevel=useIdentificationLevel, ...) {
+definition=function(obj, useIdentificationLevel, threshold, ...) {
   params <- list(...)
-  if (!is.null(params$keyVars)) {
-    stop("argument 'keyVars' has been specified, but is ignored because argument 'obj' is not a data.frame!")
-  }
-
   unsafe_cells <- NULL
   mod_keyvars <- !identical(obj@manipKeyVars, obj@origData[,obj@keyVars])
-  res <- riskyCellsX(obj=obj@origData, keyVars=obj@keyVars, useIdentificationLevel=useIdentificationLevel, ...)
+  res <- riskyCellsX(obj=obj@origData, keyVars=obj@keyVars, useIdentificationLevel=useIdentificationLevel, threshold=threshold, ...)
   if (mod_keyvars) {
     setnames(res,ncol(res),c("unsafe_cells_orig"))
   }
 
   if (!identical(obj@manipKeyVars, obj@origData[,obj@keyVars])) {
-    res2 <- riskyCellsX(obj=obj@manipKeyVars, keyVars=obj@keyVars, useIdentificationLevel=useIdentificationLevel, ...)
+    res2 <- riskyCellsX(obj=obj@manipKeyVars, keyVars=obj@keyVars, useIdentificationLevel=useIdentificationLevel, threshold=threshold, ...)
     res$unsafe_cells_manip <- res2[,unsafe_cells]
   }
   res
 })
 
-riskyCellsWork <- function(df, keyVars, useIdentificationLevel=FALSE, ...) {
+riskyCellsWork <- function(df, keyVars, useIdentificationLevel=FALSE, threshold, ...) {
   N <- th <- NULL
 
   riskycells_upto_dimension <- function(dat, keyVars, maxDim, threshold) {
@@ -176,23 +226,11 @@ riskyCellsWork <- function(df, keyVars, useIdentificationLevel=FALSE, ...) {
   if (!is.data.table(df)) {
     df <- as.data.table(df)
   }
-
   params <- list(...)
-  threshold <- params$threshold
-  stopifnot(is.numeric(threshold))
-  stopifnot(all(threshold==as.integer(threshold)))
   if (useIdentificationLevel) {
-    level <- params$level
-    stopifnot(is.numeric(level))
-    stopifnot(length(level)==length(keyVars))
-    stopifnot(all(level==as.integer(level)))
-    res <- riskycells_using_identification_level(dat=df, keyVars=keyVars, level=level, threshold=threshold)
+    res <- riskycells_using_identification_level(dat=df, keyVars=keyVars, level=params$level, threshold=threshold)
   } else {
-    maxDim <- params$maxDim
-    stopifnot(is.numeric(maxDim))
-
-    stopifnot(maxDim<=length(keyVars))
-    res <- riskycells_upto_dimension(dat=df, keyVars=keyVars, maxDim=maxDim, threshold=threshold)
+    res <- riskycells_upto_dimension(dat=df, keyVars=keyVars, maxDim=params$maxDim, threshold=threshold)
   }
   res <- res[,c(2:ncol(res),1), with=F]
   res[]
