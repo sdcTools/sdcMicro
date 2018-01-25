@@ -56,7 +56,6 @@
 #' ## sdcMicroObj-method / using identification levels
 #' riskyCells(sdc, useIdentificationLevel=TRUE, threshold=10, level=c(c(1,1,3,4,5,5,5)))
 riskyCells <- function(obj, useIdentificationLevel=FALSE, threshold, ...) {
-
   # checks
   stopifnot(is.logical(useIdentificationLevel))
   stopifnot(length(useIdentificationLevel)==1)
