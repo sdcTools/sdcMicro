@@ -32,17 +32,19 @@
 
 \title{
 	\vspace{1cm}
- 	{\Large \textbf{Introduction to Statistical Disclosure Control (SDC)} %\\ (Version 2.0)
-    }}
+ 	{\Large \textbf{Introduction to Statistical Disclosure Control (SDC)} %\\ (Version 2.1)
+  }}
 
-	\author{Authors:  \vspace{0.5cm}\\ Matthias Templ, Bernhard Meindl and Alexander Kowarik \\
+	\author{Authors: \vspace{0.5cm}\\ Matthias Templ, Bernhard Meindl and Alexander Kowarik \\
     \vspace{1cm}
     \href{http://www.data-analysis.at}{http://www.data-analysis.at} } \date{Vienna, \today
 	\vspace{2cm}\\
 	\vspace{2cm}
-	Acknowledgement: International Household Survey Network
-	(IHSN)\footnote{Special thanks to Francois Fontenau for his support and Shuang (Yo-Yo) CHEN for English proofreading}
-	\vspace{9cm}
+	\textbf{NOTE}: These guidelines were written using sdcMicro version < \textit{5.0.0} and have not yet been revised/updated to newer versions of the package.
+	\vspace{1cm}\\
+	\vspace{1cm}
+	Acknowledgement: International Household Survey Network	(IHSN)\footnote{Special thanks to Francois Fontenau for his support and Shuang (Yo-Yo) CHEN for English proofreading}
+	\vspace{5cm}
 	}
 
 \pagestyle{fancy}
