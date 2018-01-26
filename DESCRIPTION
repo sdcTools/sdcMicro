@@ -3,7 +3,7 @@ Type: Package
 Title: Statistical Disclosure Control Methods for Anonymization of Microdata and
     Risk Estimation
 Version: 5.1.0
-Date: 2018-26-01
+Date: 2018-01-26
 Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl
 Maintainer: Matthias Templ <matthias.templ@gmail.com>
 Description: Data from statistical agencies and other institutions are mostly
