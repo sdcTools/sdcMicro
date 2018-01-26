@@ -5,24 +5,27 @@
 \alias{riskyCells}
 \title{riskyCells}
 \usage{
-riskyCells(obj, ...)
+riskyCells(obj, useIdentificationLevel = FALSE, threshold, ...)
 }
 \arguments{
 \item{obj}{a \code{data.frame}, \code{data.table} or an object of class \code{\link{sdcMicroObj-class}}}
 
+\item{useIdentificationLevel}{(logical) specifies if tabulation should be done up to a specific
+dimension (\code{useIdentificationLevel=FALSE} using argument \code{maxDim}) or taking identification
+levels (\code{useIdentificationLevel=FALSE} using argument \code{level}) into account.}
+
+\item{threshold}{a numeric vector specifiying the thresholds at which cells are considered to be unsafe. In case a
+tabulation is done up to a specific level (\code{useIdentificationLevel=FALSE}), the thresholds may be
+specified differently for each dimension. In the other case, the same threshold is used for all tables.}
+
 \item{...}{see possible arguments below
 \itemize{
-\item{keyVars: }{index or variable-names within \code{obj} that should be used for tabulation. In case \code{obj} is 
+\item{keyVars: }{index or variable-names within \code{obj} that should be used for tabulation. In case \code{obj} is
 of class \code{\link{sdcMicroObj-class}}, this argument is not used and the pre-defined key-variables are used.}
-\item{useIdentificationLevel: }{logical, specifies if tabulation should be done up to a specific 
-dimension (\code{useIdentificationLevel=FALSE} using argument \code{maxDim}) or taking identification 
-levels (\code{useIdentificationLevel=FALSE} using argument \code{level}) into account.}
 \item{level: }{in case \code{useIdentificationLevel=TRUE}, this numeric vector specifies the importance of the key variables.
-The construction of output tables follows the implementation in mu-argus, see e.g \url{http://neon.vb.cbs.nl/casc/Software/MUmanual5.1.pdf}.}
+The construction of output tables follows the implementation in mu-argus, see e.g \url{http://neon.vb.cbs.nl/casc/Software/MUmanual5.1.pdf}.
+The length of this numeric vector must match the number of key variables.}
 \item{maxDim: }{in case \code{useIdentificationLevel=FALSE}, this number specifies maximal number of variables to tablulate.}
-\item{threshold: }{a numeric vector specifiying the thresholds at which cells are considered to be unsafe. In case a 
-tabulation is done up to a specific level (\code{useIdentificationLevel=FALSE}), the thresholds my be 
-specified differently for each dimension. In the other case, the same threshold is used for all tables.}
 }}
 }
 \value{
@@ -36,22 +39,22 @@ identification level. This mimics the approach taken in mu-argus.
 }
 \examples{
 ## data.frame method / all combinations up to maxDim
-riskyCells(testdata2, keyVars=c(1:5), threshold=c(50,25,10,5), 
+riskyCells(testdata2, keyVars=c(1:5), threshold=c(50,25,10,5),
   useIdentificationLevel=FALSE, maxDim=4)
-riskyCells(testdata2, keyVars=c(1:5), threshold=10, 
+riskyCells(testdata2, keyVars=c(1:5), threshold=10,
   useIdentificationLevel=FALSE, maxDim=3)
 
 ## data.frame method / using identification levels
-riskyCells(testdata2, keyVars=c(1:6), threshold=20, 
+riskyCells(testdata2, keyVars=c(1:6), threshold=20,
   useIdentificationLevel=TRUE, level=c(1,1,2,3,3,5))
-riskyCells(testdata2, keyVars=c(1,3,4,6), threshold=10, 
+riskyCells(testdata2, keyVars=c(1,3,4,6), threshold=10,
   useIdentificationLevel=TRUE, level=c(1,2,2,4))
 
 ## sdcMicroObj-method / all combinations up to maxDim
-testdata2[1:6] <- lapply(1:6, function(x) { 
-  testdata2[[x]] <- as.factor(testdata2[[x]]) 
+testdata2[1:6] <- lapply(1:6, function(x) {
+  testdata2[[x]] <- as.factor(testdata2[[x]])
 })
-sdc <- createSdcObj(testdata2, 
+sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
 

@@ -1,6 +1,6 @@
 \documentclass[12pt]{scrartcl}
 \usepackage{da1}
-\usepackage[nogin]{Sweave}
+
 \usepackage{pdfpages}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -32,24 +32,25 @@
 
 \title{
 	\vspace{1cm}
- 	{\Large \textbf{Introduction to Statistical Disclosure Control (SDC)} %\\ (Version 2.0)
-    }}
+ 	{\Large \textbf{Introduction to Statistical Disclosure Control (SDC)} %\\ (Version 2.1)
+  }}
 
-	\author{Authors:  \vspace{0.5cm}\\ Matthias Templ, Bernhard Meindl and
-	Alexander Kowarik \\
+	\author{Authors: \vspace{0.5cm}\\ Matthias Templ, Bernhard Meindl and Alexander Kowarik \\
     \vspace{1cm}
     \href{http://www.data-analysis.at}{http://www.data-analysis.at} } \date{Vienna, \today
 	\vspace{2cm}\\
 	\vspace{2cm}
-	Acknowledgement: International Household Survey Network
-	(IHSN)\footnote{Special thanks to Francois Fontenau for his support and Shuang
-	(Yo-Yo) CHEN for English proofreading}
-	\vspace{9cm}
+	\textbf{NOTE}: These guidelines were written using sdcMicro version < \textit{5.0.0} and have not yet been revised/updated to newer versions of the package.
+	\vspace{1cm}\\
+	\vspace{1cm}
+	Acknowledgement: International Household Survey Network	(IHSN)\footnote{Special thanks to Francois Fontenau for his support and Shuang (Yo-Yo) CHEN for English proofreading}
+	\vspace{5cm}
 	}
 
 \pagestyle{fancy}
 \begin{document}
 
+%\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{Guidelines for statistical disclosure control using sdcMicro} \\
 %\VignetteKeywords{sdcMicro,sdc,disclosure control,perturbation,suppression} \\
 %\VignettePackage{sdcMicro} \\
@@ -58,167 +59,74 @@
 \maketitle
 
 \newpage
-
-This document provides an introduction to statistical disclosure control (SDC)
-and guidelines on how to apply SDC methods to microdata.
-Section~\ref{overview:methods} introduces basic concepts and presents a general
-workflow. Section~\ref{method:risk_utility}  discusses methods of  measuring
-disclosure risks for a given micro dataset and disclosure scenario.
-Section~\ref{sec:methods} presents some common anonymization methods.
-Section~\ref{sub:ut} introduces how to assess utility of a micro dataset after
-applying disclosure limitation methods.
-
-
+This document provides an introduction to statistical disclosure control (SDC) and guidelines on how to apply SDC methods to microdata. Section~\ref{overview:methods} introduces basic concepts and presents a general workflow. Section~\ref{method:risk_utility}  discusses methods of  measuring disclosure risks for a given micro dataset and disclosure scenario. Section~\ref{sec:methods} presents some common anonymization methods. Section~\ref{sub:ut} introduces how to assess utility of a micro dataset after applying disclosure limitation methods.
 
 \section{Concepts}\label{overview:methods}
-
-A microdata file is a dataset that holds information collected on individual
-units; examples of units include people, households or enterprises. For each
-unit, a set of variables is recorded and available in the dataset. This section
-discusses concepts related to disclosure and SDC methods, and provides a
-workflow that shows how to apply SDC methods to microdata.
-
+A microdata file is a dataset that holds information collected on individual units; examples of units include people, households or enterprises. For each unit, a set of variables is recorded and available in the dataset. This section discusses concepts related to disclosure and SDC methods, and provides a workflow that shows how to apply SDC methods to microdata.
 
 \subsection{Categorization of Variables} \label{sec:catergorization}
-In accordance with disclosure risks, variables can be classified into three
-groups, which are not necessarily disjunctive:
+In accordance with disclosure risks, variables can be classified into three groups, which are not necessarily disjunctive:
 
 \begin{description}
-	\item[Direct Identifiers] are variables that precisely identify statistical
-	units. For example, social insurance numbers, names of companies or persons and
-	addresses are direct identifiers.
-	\item[Key variables]
-    are a set of variables that, when considered together, can be used to
-    identify individual units. For example, it may be possible to identify
-    individuals by using a combination of variables such as gender, age, region
-    and occupation. Other examples of key variables are income,
-    health status, nationality or political preferences.
-    Key variables are also called implicit identifiers or quasi-identifiers.
-    When discussing SDC methods, it is preferable to distinguish between
-    categorical and continuous key variables based on the scale of the
-    corresponding variables.
-    \item[Non-identifying variables] are variables that are not direct
-    identifiers or key variables.
+\item[Direct Identifiers] are variables that precisely identify statistical units. For example, social insurance numbers, names of companies or persons and addresses are direct identifiers.
+\item[Key variables] are a set of variables that, when considered together, can be used to identify individual units. For example, it may be possible to identify individuals by using a combination of variables such as gender, age, region and occupation. Other examples of key variables are income, health status, nationality or political preferences. Key variables are also called implicit identifiers or quasi-identifiers. When discussing SDC methods, it is preferable to distinguish between categorical and continuous key variables based on the scale of the corresponding variables.
+\item[Non-identifying variables] are variables that are not direct identifiers or key variables.
 \end{description}
 
-For specific methods such as $l$-diversity, another group of sensitive variables
-is defined in Section~\ref{method:l_diversity}).
+For specific methods such as $l$-diversity, another group of sensitive variables is defined in Section~\ref{method:l_diversity}).
 
 \subsection{What is disclosure?}
-
-In general, disclosure occurs when an intruder uses the released data to reveal
-previously unknown information about a respondent. There are three different
-types of disclosure:
-
-%For the application of those methods, a workflow is presented in Section \ref{workflow}.
-%This workflow shows how the process to anonymize micro data can possibly be performed.
-%Subsequently, the concept of measuring associated disclosure risks given a disclosure scenario
-%is discussed in Section \ref{method:risk_utility}. In Section \ref{sec:methods},
-%the main ideas of popular anonymisation methods are discussed.
+In general, disclosure occurs when an intruder uses the released data to reveal previously unknown information about a respondent. There are three different types of disclosure:
 
 \begin{description}
-	\item[Identity disclosure:] In this case, the intruder associates an individual
-	with a released data record that contains sensitive information, i.e. linkage
-	with external available data is possible.
-	Identity disclosure is possible through direct identifiers, rare combinations of values
-	in the key variables and exact knowledge of continuous key variable values in
-	external databases. For the latter, extreme data values (e.g., extremely high
-	turnover values for an enterprise) lead to high re-identification risks, i.e. it is likely that
-  responends with extreme data values are disclosed.
-	\item[Attribute disclosure:] In this case, the intruder is able to determine
-	some characteristics of an individual based on information available in the
-	released data. For example, if all people aged 56 to 60 who identify their race
-	as black in region 12345 are unemployed, the intruder can determine the value
-	of the variable \textit{labor status}.
-   	\item[Inferential disclosure:] In this case, the intruder, though with some
-   	uncertainty, can predict the value of some characteristics of an
-   	\textbf{individual} more accurately with the released data.
+\item[Identity disclosure:] In this case, the intruder associates an individual with a released data record that contains sensitive information, i.e. linkage with external available data is possible. Identity disclosure is possible through direct identifiers, rare combinations of values in the key variables and exact knowledge of continuous key variable values in external databases. For the latter, extreme data values (e.g., extremely high turnover values for an enterprise) lead to high re-identification risks, i.e. it is likely that responends with extreme data values are disclosed.
+\item[Attribute disclosure:] In this case, the intruder is able to determine some characteristics of an individual based on information available in the released data. For example, if all people aged 56 to 60 who identify their race as black in region 12345 are unemployed, the intruder can determine the value of the variable \textit{labor status}.
+\item[Inferential disclosure:] In this case, the intruder, though with some uncertainty, can predict the value of some characteristics of an \textbf{individual} more accurately with the released data.
 \end{description}
 
-If linkage is successful based on a number of identifiers, the intruder will
-have access to all of the information related to a specific corresponding unit
-in the released data. This means that a subset of critical variables can be
-exploited to disclose everything about a unit in the dataset.
-
+If linkage is successful based on a number of identifiers, the intruder will have access to all of the information related to a specific corresponding unit in the released data. This means that a subset of critical variables can be exploited to disclose everything about a unit in the dataset.
 
 
 \subsection{Remarks on SDC Methods}
-In general, SDC methods borrow techniques from other fields. For instance,
-multivariate (robust) statistics are used to modify or simulate continuous
-variables and to quantify information loss. Distribution-fitting methods are
-used to quantify disclosure risks. Statistical modeling methods form the basis
-of perturbation algorithms, to simulate synthetic data, to quantify risk and
-information loss. Linear programming is used to modify data but minimize the impact on data
-quality.
+In general, SDC methods borrow techniques from other fields. For instance, multivariate (robust) statistics are used to modify or simulate continuous variables and to quantify information loss. Distribution-fitting methods are used to quantify disclosure risks. Statistical modeling methods form the basis of perturbation algorithms, to simulate synthetic data, to quantify risk and information loss. Linear programming is used to modify data but minimize the impact on data quality.
 
-Problems and challenges arise from large datasets and the need for efficient algorithms and implementations.
-Another layer of complexity is produced by complex structures of hierarchical,
-multidimensional data sampled with complex survey designs. Missing values are a
-challenge, especially for computation time issues; structural zeros (values
-that are by definition zero) also have impact on the application of SDC methods.
-Furthermore, the compositional nature of many components should always be considered, but adds even more complexity.
+Problems and challenges arise from large datasets and the need for efficient algorithms and implementations. Another layer of complexity is produced by complex structures of hierarchical, multidimensional data sampled with complex survey designs. Missing values are a challenge, especially for computation time issues; structural zeros (values that are by definition zero) also have impact on the application of SDC methods. Furthermore, the compositional nature of many components should always be considered, but adds even more complexity.
 
 SDC techniques can be divided into three broad topics:
 \begin{itemize}
-	\item Measuring disclosure risk  (see Section~\ref{method:risk_utility})
-	\item Methods to anonymize micro-data   (see Section~\ref{sec:methods})
-	\item Comparing original and modified data (information loss) (see
-	Section~\ref{sub:ut})
+\item Measuring disclosure risk  (see Section~\ref{method:risk_utility})
+\item Methods to anonymize micro-data   (see Section~\ref{sec:methods})
+\item Comparing original and modified data (information loss) (see Section~\ref{sub:ut})
 \end{itemize}
 
 \subsection{Risk Versus Data Utility and Information Loss}
-The goal of SDC is always to release a safe micro dataset with high data utility
-and a low risk of linking confidential information to individual respondents.
-Figure~\ref{fig:rumap} shows the trade-off between disclosure risk and data utility. We
-applied two SDC methods with different parameters to the European
-Union Structure of Earnings Statistics (SES) data \citep[see][for more on
-anonymization of this dataset]{caseStudies}.
+The goal of SDC is always to release a safe micro dataset with high data utility and a low risk of linking confidential information to individual respondents. Figure~\ref{fig:rumap} shows the trade-off between disclosure risk and data utility. We applied two SDC methods with different parameters to the European Union Structure of Earnings Statistics (SES) data \citep[see][for more on anonymization of this dataset]{caseStudies}.
 
-
-For Method 1 (in this example adding noise), the parameter varies between 10 (small perturbation) to 100
-(perturbation is 10 times higher). When the parameter value is 100, the
-disclosure risk is low since the data are heavily perturbed, but the information
-loss is very high, which also corresponds to very low data utility. When only
-low perturbation is applied to a dataset, both risk and data utility are high.
-It is easy to see that data anonymized with Method 2 (we used microaggregation with different aggregation levels) have considerably lower
-risk; therefore, this method is preferable. In addition, information loss
-increases only slightly if the parameter value          increases; therefore,
-Method 2  with parameter value of approximately 7 would be a good choice in this case since this
-provides both, low disclosure risk and low information loss.
-For higher values, the perturbation is higher but the gain is only minimal, lower values
-reports higher disclosure risk. Method 1 should not be chosen since the disclosure risk and
-the information loss is higher than for method 2. However, if for some reasons method 1 is chosen,
-the parameter for perturbation might be chosen around 40 if 0.1 risk is already considered to be
-safe. For data sets concerning very sensible information (like cancer) the might
-be, however, to high risk and a perturbation value of 100 or above should then
-be chosen for method 1 and a parameter value above 10 might be chosen for method
-2.
-
+For Method 1 (in this example adding noise), the parameter varies between 10 (small perturbation) to 100 (perturbation is 10 times higher). When the parameter value is 100, the disclosure risk is low since the data are heavily perturbed, but the information loss is very high, which also corresponds to very low data utility. When only low perturbation is applied to a dataset, both risk and data utility are high. It is easy to see that data anonymized with Method 2 (we used microaggregation with different aggregation levels) have considerably lower risk; therefore, this method is preferable. In addition, information loss increases only slightly if the parameter value increases; therefore, Method 2  with parameter value of approximately 7 would be a good choice in this case since this provides both, low disclosure risk and low information loss. For higher values, the perturbation is higher but the gain is only minimal, lower values reports higher disclosure risk. Method 1 should not be chosen since the disclosure risk and the information loss is higher than for method 2. However, if for some reasons method 1 is chosen, the parameter for perturbation might be chosen around 40 if 0.1 risk is already considered to be safe. For data sets concerning very sensible information (like cancer) the might be, however, to high risk and a perturbation value of 100 or above should then be chosen for method 1 and a parameter value above 10 might be chosen for method 2.
 
 \setkeys{Gin}{width=0.8\textwidth}
 \begin{figure}[ht!]
 \begin{center}
-<<fig=TRUE, echo=FALSE, results=hide>>=
-#require(sdcMicro)
-#load("../Daten/ses.RData")
+<<echo=FALSE, results='hide'>>=
 f1 <- function(x){
-	truth <- weighted.mean(x$earningsMonth, x$GrossingUpFactor.x)
-	SEQ <- seq(10,100,10)
-	risk <- risk2 <- utility <- utility2 <- perturbed <- perturbed2 <- numeric(length(SEQ))
-	j <- 0
-	for(i in SEQ){
-		j=j+1
-		ad <- addNoise(x[,c("earnings","earningsMonth")], noise=i, method="restr")
-		ad2 <- microaggregation(x[,c("earnings","earningsMonth")], aggr=j+1, method="pca")
-		perturbed[j] <- weighted.mean(ad$xm[,2], x$GrossingUpFactor.x)
-		perturbed2[j] <- weighted.mean(ad2$mx[,2], x$GrossingUpFactor.x)
-		utility[j] <- dUtility(ad$x, ad$xm)
-		risk[j] <- dRisk(ad$x, ad$xm, k=0.01)
-		utility2[j] <- dUtility(ad$x, ad2$mx)
-		risk2[j] <- dRisk(ad$x, ad2$mx, k=0.01)
-	}
-	list(truth=truth, perturbed=perturbed, utility=utility, risk=risk,
-			perturbed2=perturbed2, utility2=utility2, risk2=risk2, SEQ=SEQ)
+  library(sdcMicro)
+  truth <- weighted.mean(x$earningsMonth, x$GrossingUpFactor.x)
+  SEQ <- seq(10,100,10)
+  risk <- risk2 <- utility <- utility2 <- perturbed <- perturbed2 <- numeric(length(SEQ))
+  j <- 0
+  for(i in SEQ){
+    j=j+1
+    ad <- addNoise(x[,c("earnings","earningsMonth")], noise=i, method="restr")
+    ad2 <- microaggregation(x[,c("earnings","earningsMonth")], aggr=j+1, method="pca")
+    perturbed[j] <- weighted.mean(ad$xm[,2], x$GrossingUpFactor.x)
+    perturbed2[j] <- weighted.mean(ad2$mx[,2], x$GrossingUpFactor.x)
+    utility[j] <- dUtility(ad$x, ad$xm)
+    risk[j] <- dRisk(ad$x, ad$xm, k=0.01)
+    utility2[j] <- dUtility(ad$x, ad2$mx)
+    risk2[j] <- dRisk(ad$x, ad2$mx, k=0.01)
+  }
+  list(truth=truth, perturbed=perturbed, utility=utility, risk=risk,
+       perturbed2=perturbed2, utility2=utility2, risk2=risk2, SEQ=SEQ)
 }
 #set.seed(123)
 #res <- f1(x)
@@ -226,8 +134,8 @@ f1 <- function(x){
 load("res.RData")
 par(cex.lab=1.5, mar=c(5,4.5,1,0.1))
 plot(cbind(res$risk, res$utility), type="l",
-	xlab="disclosure risk", ylab="information loss",
-	xlim=c(0.08,0.26), ylim=c(0.1,1.95))
+     xlab="disclosure risk", ylab="information loss",
+     xlim=c(0.08,0.26), ylim=c(0.1,1.95))
 lines(cbind(res$risk2, res$utility2), lty=2)
 text(x=res$risk, y=res$utility, res$SEQ)
 text(x=res$risk2, y=res$utility2, 2:11)
@@ -237,252 +145,80 @@ text(x=0.1,y=0.5, "good", cex=1.5)
 text(x=0.11,y=1.8, "worst data", cex=1.5)
 legend("right", legend=c("method1","method2"), lty=c(1,2))
 @
-\caption{\label{fig:rumap}Risk versus information loss obtained for two specific perturbation methods and
-different parameter choices applied to SES data on continuous scaled variables.
-Note that the information loss for the original data is 0 and the disclosure
-risk is 1 respecively, i.e. the two curves starts from (1,0).}
+
+\caption{\label{fig:rumap}Risk versus information loss obtained for two specific perturbation methods and different parameter choices applied to SES data on continuous scaled variables. Note that the information loss for the original data is 0 and the disclosure risk is 1 respecively, i.e. the two curves starts from (1,0).}
 \end{center}
 \vspace{-0.4cm}
 \end{figure}
 
-In real-world examples, things are often not as clear, so data anonymization
-specialists should base their decisions regarding risk and data utility on the
-following considerations:
-\paragraph{What is the legal situation regarding data privacy?}
-Laws on data privacy vary between countries; some have quite restrictive laws,
-some don't, and laws often differ for different kinds of data (e.g., business
-statistics, labor force statistics, social statistics, and medical data).
-\paragraph{How sensitive is the data information and who has access to the
-anonymized data file?}
-Usually, laws consider two kinds of data users: users from universities and
-other research organizations, and general users, i.e., the public. In the first
-case, special contracts are often made between data users and data producers.
-Usually these contracts restrict the usage of the data to very
-specific purposes, and allow data saving only within safe work environments. For these users, anonymized microdata files are called scientific use files, whereas data for the public are called public use files. Of course, the disclosure risk of a public use file needs to be very low, much lower than the corresponding risks in scientific use files. For scientific use files, data utility is typically considerably higher than data utility of public use files.
+In real-world examples, things are often not as clear, so data anonymization specialists should base their decisions regarding risk and data utility on the following considerations:
 
-Another aspect that must be considered is the sensitivity of the dataset. Data
-on individuals' medical treatments are more sensitive than an establishment's
-turnover values and number of employees. If the data contains very sensitive information, the microdata should have greater security than data that only contain information that is not likely to be attacked by intruders.
+\paragraph{What is the legal situation regarding data privacy?}
+Laws on data privacy vary between countries; some have quite restrictive laws, some don't, and laws often differ for different kinds of data (e.g., business statistics, labor force statistics, social statistics, and medical data).
+
+\paragraph{How sensitive is the data information and who has access to the anonymized data file?}
+Usually, laws consider two kinds of data users: users from universities and other research organizations, and general users, i.e., the public. In the first case, special contracts are often made between data users and data producers. Usually these contracts restrict the usage of the data to very specific purposes, and allow data saving only within safe work environments. For these users, anonymized microdata files are called scientific use files, whereas data for the public are called public use files. Of course, the disclosure risk of a public use file needs to be very low, much lower than the corresponding risks in scientific use files. For scientific use files, data utility is typically considerably higher than data utility of public use files.
+
+Another aspect that must be considered is the sensitivity of the dataset. Data on individuals' medical treatments are more sensitive than an establishment's turnover values and number of employees. If the data contains very sensitive information, the microdata should have greater security than data that only contain information that is not likely to be attacked by intruders.
 
 \paragraph{Which method is suitable for which purpose?}
-Methods for Statistical Disclosure Control  always imply to remove or to modify
-selected variables. The data utility is reduced in exchange of more protection.
-While the application of some specific methods results in low disclosure risk and
-large information loss, other methods may provide data with acceptable, low
-disclosure risks.
-General recommendations can not be given here since the strenghtness and weakness of methods
-depends on the underlying data set used.
-Decisions on which variables will be
-modified and which method is to be used result are partly arbitrary and partly
-result from a prior knowledge of what the users will do with the data.
+Methods for Statistical Disclosure Control  always imply to remove or to modify selected variables. The data utility is reduced in exchange of more protection. While the application of some specific methods results in low disclosure risk and large information loss, other methods may provide data with acceptable, low disclosure risks.
 
-Generally, when having only few categorical key variables in the data set,
-recoding and local suppression to achieve low disclosure risk for categorical
-key variables is recommended. In addition, in case of continous scaled key
-variables, microaggregation is easy to apply and to understand and gives good
-results. For more experienced users, shuffling may often give the best results
-as long a strong relationship between the key variables to other variables in
-the data set is present.
+General recommendations can not be given here since the strenghtness and weakness of methods depends on the underlying data set used. Decisions on which variables will be modified and which method is to be used result are partly arbitrary and partly result from a prior knowledge of what the users will do with the data.
 
-In case of many categorical key variables, post-randomization might be applied to several of these variables.
-Still methods, such as post-randomization
-(PRAM), may provide high or low disclosure risks and data utility, depending on
-the specific choice of parameter values, e.g. the swapping rate.
+Generally, when having only few categorical key variables in the data set, recoding and local suppression to achieve low disclosure risk for categorical key variables is recommended. In addition, in case of continous scaled key variables, microaggregation is easy to apply and to understand and gives good results. For more experienced users, shuffling may often give the best results as long a strong relationship between the key variables to other variables in the data set is present.
 
-Beside these recommendations,
-in any case, data holders should always estimate the disclosure risk for their original datasets as well as the disclosure risks and data utility for anonymized versions of the data.
-To achieve good results (i.e., low disclosure risk, high data utility), it is necessary to anonymize in an explanatory manner by applying different methods using different parameter settings until a suitable trade-off between risk and data utility has been achieved.
+In case of many categorical key variables, post-randomization might be applied to several of these variables. Still methods, such as post-randomization (PRAM), may provide high or low disclosure risks and data utility, depending on the specific choice of parameter values, e.g. the swapping rate.
 
-
+Beside these recommendations, in any case, data holders should always estimate the disclosure risk for their original datasets as well as the disclosure risks and data utility for anonymized versions of the data. To achieve good results (i.e., low disclosure risk, high data utility), it is necessary to anonymize in an explanatory manner by applying different methods using different parameter settings until a suitable trade-off between risk and data utility has been achieved.
 
 \subsection{R-Package sdcMicro and sdcMicroGUI}
-SDC methods introduced in this guideline can be implemented by the
-\textbf{R}-Package \sdcMicro . Users who are not familiar with the native
-\textbf{R}  command line interface can use \sdcMicroGUI , an easy-to-use and
-interactive application. For details, see \cite{guitutorial,sdcMicro}.
-
+SDC methods introduced in this guideline can be implemented by the \textbf{R}-Package \sdcMicro . Users who are not familiar with the native \textbf{R}  command line interface can use \sdcMicroGUI , an easy-to-use and interactive application. For details, see \cite{guitutorial,sdcMicro}. Please note, in packageVersions $>=$ 5.0.0, the interactive functionality is provided within a shiny app that can be started with \texttt{sdcApp()}.
 
 \section{Measuring the Disclosure Risk}\label{method:risk_utility}
+Measuring risk in a micro dataset is a key task. Risk measurements are essential to determine if the dataset is secure enough to be released. To assess disclosure risk, one must make realistic assumptions about the information data users might have at hand to match against the micro dataset; these assumptions are called disclosure risk scenarios. This goes hand in hand with the selection of categorical key variables because the choice these identifying variables defines a specific disclosure risk scenario. The specific set of chosen key variables has direct influence on the risk assessment because their distribution is a key input for the calculation of both individual and global risk measures as it is now discussed.
 
-Measuring risk in a micro dataset is a key task. Risk measurements are essential to
-determine if the dataset is secure enough to be released. To assess disclosure risk,
-one must make realistic assumptions about the information data users might have
-at hand to match against the micro dataset; these assumptions are called disclosure
-risk scenarios. This goes hand in hand with the selection of categorical key variables because
-the choice these identifying variables defines a specific disclosure risk scenario.
-The specific set of chosen key variables has direct influence on the risk assessment because
-their distribution is a key input for the calculation of both individual and global risk
-measures as it is now discussed.
+Measuring risk in a micro dataset is a key task. Risk measurements are essential to determine if the dataset is secure enough to be released. To assess disclosure risk, one must make realistic assumptions about the information data users might have at hand to match against the micro dataset; these assumptions are called disclosure risk scenarios. This goes hand in hand with the selection of categorical key variables because the choice these identifying variables defines a specific disclosure risk scenario. The specific set of chosen key variables has direct influence on the risk assessment because their distribution is a key input for the estimation of both individual and global risk measures as it is now discussed. For example, for a disclosure scenario for the European Union Structure of Earnings Statistics we can assume that information on company size, economic activity, age and earnings of employees are available in available data bases. Based on a specific disclosure risk scenario, it is necessary to define a set of key variables (i.e., identifying variables) that can be used as input for the risk evaluation procedure. Usually different scenarios are considered. For example, for the European Union Structure of Earnings Statistics a second scenario based on an additional key varibles is of interest to look at, e.g. occupation might be considered as well as an categorical key variable. The resulting risk might now be higher than for the previous scenario. It needs discussion with subject matter specialists which scenario is most realistic and an evaluation of different scenarios helps to get a broader picture about the disclosure risk in the data.
 
-Measuring risk in a micro dataset is a key task. Risk measurements are
-essential to determine if the dataset is secure enough to be released. To assess
-disclosure risk, one must make realistic assumptions about the information data
-users might have at hand to match against the micro dataset; these assumptions
-are called disclosure risk scenarios.
-This goes hand in hand with the selection of categorical key variables because
-the choice these identifying variables defines a specific disclosure risk scenario.
-The specific set of chosen key variables has direct influence on the risk assessment because
-their distribution is a key input for the estimation of both individual and
-global risk measures as it is now discussed.
-For example, for a disclosure scenario for the European Union
-Structure of Earnings Statistics we can assume that information on company size,
-economic activity, age and earnings of employees are available in available data
-bases. Based on a specific disclosure risk scenario, it is necessary to define a
-set of key variables (i.e., identifying variables) that can be used as
-input for the risk evaluation procedure.
-Usually different scenarios are considered. For example, for the European Union
-Structure of Earnings Statistics a second scenario based on an additional key
-varibles is of interest to look at, e.g. occupation might be considered as well
-as an categorical key variable. The resulting risk might now be higher than for
-the previous scenario. It needs discussion with subject matter specialists which
-scenario is most realistic and an evaluation of different scenarios helps to get a broader picture about the disclosure risk in
-the data.
-%The choice of key variables is somehow arbitrary and depend on many factors.
+\subsection{Population Frequencies and the Individual Risk Appoach}\label{method:Freq}
+Typically, risk evaluation is based on the concept of uniqueness in the sample and/or in the population. The focus is on individual units that possess rare combinations of selected key variables. The assumption is that units having rare combinations of key variables can be more easily identified and thus have a higher risk of re-identification/disclosure. It is possible to cross-tabulate all identifying variables and view their cast. Keys possessed by only very few individuals are considered risky, especially if these observations also have small sampling weights. This means that the expected number of individuals with these patterns is expected to be low in the population as well.
 
+To assess whether a unit is at risk, a threshold approach is typically used. If the risk of re-identification for an individual is above a certain threshold value, the unit is said to be at risk. To compute individual risks, it is necessary to estimate the frequency of a given key pattern in the population. Let us define frequency counts in a mathematical notation. Consider a random sample of size $n$ drawn from a finite population of size $N$. Let $\pi_{j}, \ j = 1, \ldots, N$ be the (first order) inclusion probabilities -- the probability that element $u_j$ of a population of the size $N$ is chosen in a sample of size $n$.
 
+All possible combinations of categories in the key variables (i.e., \textit{keys} or \textit{patterns}) can be calculated by cross-tabulation of these variables. Let $f_i, \ i=1,\ldots,n$ be the frequency counts obtained by cross-tabulation and let $F_i$ be the frequency counts of the population which belong to the same pattern. If $f_i = 1$ applies, the corresponding observation is unique in the sample given the key-variables. If $F_i = 1$, then the observation is unique in the population as well and automatically unique or zero in the sample. $F_i$ is usually not known, since, in statistics, information on samples is collected to make inferences about populations.
 
-\subsection{Population Frequencies and the Individual Risk
-Appoach}\label{method:Freq}
+In Table~\ref{listingFreq} a very simple data set is used to explain the calulation of sample frequency counts and the (first rough) estimation of population frequency counts. One can easily see that observation $1$ and $8$ are equal, given the key-variables \textit{Age Class}, \textit{Location}, \textit{Sex} and \textit{Education}. Because the values of observations $1$ and $8$ are equal and therefore the sample frequency counts are $f_1=2$ and $f_8=2$. Estimated population frequencies are obtained by summing up the sample weights for equal observations. Population frequencies  $\hat{F}_1$ and $\hat{F}_8$ can then be estimated by summation over the corresponding sampling weights, $w_1$ and $w_8$. In summary, two observations with the pattern (key) $(1,2,5,1)$ exist in the sample and $110$ observations with this pattern (key) can be expected to exist in the population.
 
-Typically, risk evaluation is based on the concept of uniqueness in the sample
-and/or in the population. The focus is on individual units that possess rare
-combinations of selected key variables. The assumption is that units having rare
-combinations of key variables can be more easily identified and thus have a
-higher risk of re-identification/disclosure. It is possible to cross-tabulate all
-identifying variables and view their cast. Keys possessed by only very few
-individuals are considered risky, especially if these observations also have
-small sampling weights. This means that the expected number of individuals with
-these patterns is expected to be low in the population as well.
-
-To assess whether a unit is at risk, a threshold approach is typically used. If
-the risk of re-identification for an individual is above a certain threshold
-value, the unit is said to be at risk. To compute individual risks, it is
-necessary to estimate the frequency of a given key pattern in the population.
-Let us define frequency counts in a mathematical notation. Consider a random
-sample of size $n$ drawn from a finite population of size          $N$. Let
-$\pi_{j}, \ j = 1, \ldots, N$ be the (first order) inclusion probabilities --
-the probability that element $u_j$ of a population of the size $N$ is chosen in a
-sample of size $n$.
-
-All possible combinations of categories in the key variables (i.e.,
-\textit{keys} or \textit{patterns}) can be calculated by cross-tabulation of
-these variables. Let $f_i, \ i=1,\ldots,n$ be the frequency counts obtained by
-cross-tabulation and let $F_i$ be the frequency counts of the population which
-belong to the same pattern. If $f_i = 1$ applies, the corresponding observation
-is unique in the sample given the key-variables. If $F_i = 1$, then the
-observation is unique in the population as well and automatically unique or zero
-in the sample.
-
-$F_i$ is usually not known, since, in statistics, information on samples is
-collected to make inferences about populations.
-
-%Here, a small example data set is loaded and an object of class \textit{sdcMicroObj}
-%is created from it. Automatically these object already contains all necessary information about
-%frequency counts (and a lot of more). This information is extracted from the \textit{sdcMicroObj} by
-%the accessor function \lstinline{get.sdcMicroObj}, and for explanatory issues this information is combinded
-%with the original data (Listing~\ref{listingFreq}).
-%%and the basic
-%%function for calculating sample frequencies  - \lstinline{freqCalc()} - is applied.
-%Doing so, o
-
-In Table~\ref{listingFreq} a very simple data set is used to explain the
-calulation of sample frequency counts and the (first rough) estimation of
-population frequency counts.
-One can easily see that observation $1$ and $8$ are equal, given the
-key-variables \textit{Age Class} , \textit{Location}, \textit{Sex} and \textit{Education}.
-Because the values of observations $1$ and $8$ are equal and therefore the
-sample frequency counts are $f_1=2$ and $f_8=2$.
-Estimated population frequencies are obtained by summing up the sample weights
-for equal observations. Population frequencies  $\hat{F}_1$ and $\hat{F}_8$
-can then be estimated by summation over the corresponding sampling weights,
-$w_1$ and $w_8$. In summary, two observations with the pattern (key)
-$(1,2,5,1)$ exist in the sample and $110$ observations with this pattern (key)
-can be expected to exist in the population.
-
-
-
-<<freq, echo=FALSE>>=
-#require(devtools)
-require(sdcMicro)
-require(xtable)
-data(francdat)   ## toy data set
+<<freq, echo=FALSE, results='hide'>>=
+library(sdcMicro)
+library(xtable, quietly=TRUE)
+data(francdat, package="sdcMicro")   ## toy data set
 sdc <- createSdcObj(francdat, keyVars=c('Key1','Key2','Key3','Key4'), numVars=c('Num1','Num2','Num3'), w='w')
 df <- cbind(francdat[,c(2,4,5,6,8)], get.sdcMicroObj(sdc, "risk")$individual)
 df$Key3[df$Key3==5] <- 2
 
 colnames(df)[1:4] <- c("Age", "Location", "Sex", "Education")
 
-#colnames(df)[ncol(df)] <- expression(hat(F)[k])
-df <- xtable(df, digits=c(0,0,0,0,0,1,3,0,1), align = "|l|llll|l|l|ll|",
-		caption="Example of sample and estimated population frequency counts.",
-		label="listingFreq")
+df <- xtable::xtable(df, digits=c(0,0,0,0,0,1,3,0,1), align = "|l|llll|l|l|ll|",
+caption="Example of sample and estimated population frequency counts.",
+label="listingFreq")
 @
 
 \begin{small}
-<<freqprint, echo=FALSE, results=tex>>=
+<<freqprint, echo=FALSE, results='asis'>>=
 print(df,include.rownames = getOption("xtable.include.rownames", TRUE), caption.placement="top")
 @
 \end{small}
 
-%\begin{lstlisting}[captionpos=b, caption={Example for sample and estimated
-% population frequency counts based on a toy data set.}, label=listingFreq] Key1 Key2 Key3 Key4     w       risk fk    Fk
-%1    1    2    5    1  18.0 0.01705402  2 110.0
-%2    1    2    1    1  45.5 0.02195396  2  84.5
-%3    1    2    1    1  39.0 0.02195396  2  84.5
-%4    3    3    1    5  17.0 0.17686217  1  17.0
-%5    4    3    1    4 541.0 0.01112028  1 541.0
-%6    4    3    1    1   8.0 0.29690573  1   8.0
-%7    6    2    1    5   5.0 0.40223299  1   5.0
-%8    1    2    5    1  92.0 0.01705402  2 110.0
-%\end{lstlisting}
-
-%\lstinline{freqCalc()} includes basically three parameters which could be displayed in \R \
-%either by using
-%\begin{lstlisting}[frame=single, label=code:sdcMicro6,
-%caption={Displaying the arguments of function \texttt{freqCalc()}.}]
-%args(freqCalc)
-%  function (x, keyVars = 1:3, w = 4, ...)
-%\end{lstlisting}
-%or typing \texttt{?freqCalc} which displays the whole help file.
-%\texttt{x} is an object of class data.frame or matrix, \texttt{keyVars} is a
-%vector specifying the column index of the key variables and \texttt{w}
-%defines the column index of the weight variable. The resulting output of the
-%function are the frequency counts of the sample and the estimated frequency
-%counts of the population.
-
-One can show, however, that these estimates almost always overestimate small
-population frequency counts \citep[see, e.g.,][]{templ11book}. A better approach
-is to use so-called super-population models, in which population frequency
-counts are modeled given certain distributions. For example, the estimation
-procedure of sample counts given the population counts can be modeled by
-assuming a negative binomial distribution \citep[see][]{Rinott06} and is
-implemented in \sdcMicro~in function \lstinline{measure_risk()}
-\citep[see][]{sdcMicro} and called by the \sdcMicroGUI \
-\citep{sdcMicroGUI}.
+One can show, however, that these estimates almost always overestimate small population frequency counts \citep[see, e.g.,][]{templ11book}. A better approach is to use so-called super-population models, in which population frequency counts are modeled given certain distributions. For example, the estimation procedure of sample counts given the population counts can be modeled by assuming a negative binomial distribution \citep[see][]{Rinott06} and is implemented in \sdcMicro~in function \lstinline{measure_risk()} \citep[see][]{sdcMicro} and called by the \sdcMicroGUI \ \citep{sdcMicroGUI}.
 
 \subsection{$k$-Anonymity}\label{method:k_anonymity}
-Based on a set of key variables, one desired characteristic of a protected micro
-dataset is often to achieve $k$-anonymity \citep{Samarati98,Samarati01,Sweeney02}.
-This means that each possible pattern of key variables contains at least k units
-in the microdata. This is equal to $f_i \geq k \ , i=1,...,n$. A typical
-value is $k=3$. \\
+Based on a set of key variables, one desired characteristic of a protected micro dataset is often to achieve $k$-anonymity \citep{Samarati98,Samarati01,Sweeney02}. This means that each possible pattern of key variables contains at least $k$ units in the microdata. This is equal to $f_i \geq k \ , i=1,...,n$. A typical value is $k=3$. \\
 
-$k$-anonymity is typically achieved by recoding categorical key variables into
-fewer categories and by suppressing specific values of key variables for some units; see
-Section~\ref{method:recoding} and \ref{method:localsupp}.
+$k$-anonymity is typically achieved by recoding categorical key variables into fewer categories and by suppressing specific values of key variables for some units; see Section~\ref{method:recoding} and \ref{method:localsupp}.
 
 \subsection{$l$-Diversity}\label{method:l_diversity}
-An extension of $k$-anonymity is $l$-diversity \citep{Machanava07}. Consider a
-group of observations with the same pattern/keys in the key variables and let
-the group fulfill $k$-anonymity. A data intruder can therefore by definition not
-identify an individual within this group. If all observations have the same
-entries in an additional sensitive variable, however (e.g., cancer in the
-variable medical diagnosis), an attack will be successful if the attacker can
-identify at least one individual of the group, as the attacker knows that this
-individual has cancer with certainty. The distribution of the target-sensitive
-variable is referred to as $l$-diversity.
-%\begin{lstlisting}[captionpos=b, caption={k-anonymity and l-diversity on a toy
-% data set.}, label=listingFreq2] key1 key2 sens1 fcounts ldivDistinct
+An extension of $k$-anonymity is $l$-diversity \citep{Machanava07}. Consider a group of observations with the same pattern/keys in the key variables and let the group fulfill $k$-anonymity. A data intruder can therefore by definition not identify an individual within this group. If all observations have the same entries in an additional sensitive variable, however (e.g., cancer in the variable medical diagnosis), an attack will be successful if the attacker can identify at least one individual of the group, as the attacker knows that this individual has cancer with certainty. The distribution of the target-sensitive variable is referred to as $l$-diversity.
 
 \begin{small}
 \begin{table}
@@ -503,566 +239,182 @@ variable is referred to as $l$-diversity.
 \end{table}
 \end{small}
 
-Table~\ref{listingFreq2} considers a small example dataset that highlights the
-calculations of $l$-diversity. It also points out the slight difference compared
-to $k$-anonymity. The first two columns present the categorical key variables. The
-third column of the data defines a variable containing sensitive information.
-Sample frequency counts $f_i$ appear in the fourth column. They equal $3$ for the
-first three observations; the fourth observation is unique and frequency counts
-$f_i$ are $2$ for the last two observations. Only the fourth observation violates
-$2$-anonymity.
-Looking closer at the first three observations, we see that only two different
-values are present in the sensitive variable. Thus the $l$-(distinct) diversity is
-just $2$. For the last two observations, $2$-anonymity is achieved, but the intruder
-still knows the exact information of the sensitive variable. For these
-observations, the $l$-diversity measure is $1$, indicating that sensitive
-information can be disclosed, since the value of the sensitive variable is $= 62$
-for both of these observations.
+Table~\ref{listingFreq2} considers a small example dataset that highlights the calculations of $l$-diversity. It also points out the slight difference compared to $k$-anonymity. The first two columns present the categorical key variables. The third column of the data defines a variable containing sensitive information. Sample frequency counts $f_i$ appear in the fourth column. They equal $3$ for the first three observations; the fourth observation is unique and frequency counts $f_i$ are $2$ for the last two observations. Only the fourth observation violates $2$-anonymity.
 
+Looking closer at the first three observations, we see that only two different values are present in the sensitive variable. Thus the $l$-(distinct) diversity is just $2$. For the last two observations, $2$-anonymity is achieved, but the intruder still knows the exact information of the sensitive variable. For these observations, the $l$-diversity measure is $1$, indicating that sensitive information can be disclosed, since the value of the sensitive variable is $= 62$ for both of these observations.
 
-Diversity in values of sensitive variables can be measured differently. We
-present here the distinct diversity that counts how many different values exist
-within a pattern. Additional methods such as entropy, recursive and
-multi-recursive are implemented in \sdcMicro . For more information, see the
-help files of \sdcMicro \ \citep{sdcMicro}.
+Diversity in values of sensitive variables can be measured differently. We present here the distinct diversity that counts how many different values exist within a pattern. Additional methods such as entropy, recursive and multi-recursive are implemented in \sdcMicro . For more information, see the help files of \sdcMicro \ \citep{sdcMicro}.
 
 \subsection{Sample Frequencies on Subsets: SUDA}\label{method:suda}
-The Special Uniques Detection Algorithm (SUDA) is an often discussed method to
-estimate the risk, but  applications of this method can be rarely found.
-For the sake of completeness this algorithm is implemented in \sdcMicro \ (but
-not in \sdcMicroGUI ) and explained in this document, but to evaluate the
-usefulness of this method it needs more research. In the following the interested reader will see that the
-SUDA approach is more than the sample frequency estimation shown before. It
-consider also subsets of key variables.
-SUDA estimates disclosure risks for each unit. SUDA2~\citep[e.g.,][]{manning08}
-is the computationally improved version of SUDA. It
-is a recursive algorithm to find Minimal Sample Uniques (MSUs). SUDA2 generates all possible variable subsets of
-selected categorical key variables and scans for unique patterns within subsets
-of these variables. The risk of an observation primarily depends on two aspects:
+The Special Uniques Detection Algorithm (SUDA) is an often discussed method to estimate the risk, but  applications of this method can be rarely found. For the sake of completeness this algorithm is implemented in \sdcMicro \ (but not in \sdcMicroGUI ) and explained in this document, but to evaluate the usefulness of this method it needs more research. In the following the interested reader will see that the SUDA approach is more than the sample frequency estimation shown before. It consider also subsets of key variables. SUDA estimates disclosure risks for each unit. SUDA2~\citep[e.g.,][]{manning08} is the computationally improved version of SUDA. It is a recursive algorithm to find Minimal Sample Uniques (MSUs). SUDA2 generates all possible variable subsets of selected categorical key variables and scans for unique patterns within subsets of these variables. The risk of an observation primarily depends on two aspects:
 
 \begin{itemize}
-\item[(a)] 	The lower the number of variables needed to receive uniqueness,
-the higher the risk (and the higher the SUDA score) of the corresponding
-observation.
-\item[(b)] 	The larger the number of minimal sample uniqueness contained
-within an observation, the higher the risk of this observation.
+\item[(a)] The lower the number of variables needed to receive uniqueness, the higher the risk (and the higher the SUDA score) of the corresponding observation.
+\item[(b)] The larger the number of minimal sample uniqueness contained within an observation, the higher the risk of this observation.
 \end{itemize}
 
-Item (a) is considered by calculating for each observation $i$ by $l_i =
-\prod_{k=MSUmin_i}^{m-1} (m-k) \quad, i=1,...,n$. In this formula, $m$ corresponds to the \textit{depth},
-which is the maximum size of variable subsets of the key variables,
-$MSUmin_i$ is the number of MSUs of observation and i and n are the number of
-observations of the dataset.
-Since each observation is treated independently, a specific value $l_i$ belonging
-to a specific pattern are summed up. This results in a common SUDA score for
-each of the observations contained in this pattern; this summation is the
-contribution mentioned in item (b).
+Item (a) is considered by calculating for each observation $i$ by $l_i = \prod_{k=MSUmin_i}^{m-1} (m-k) \quad, i=1,...,n$. In this formula, $m$ corresponds to the \textit{depth}, which is the maximum size of variable subsets of the key variables, $MSUmin_i$ is the number of MSUs of observation and i and n are the number of observations of the dataset. Since each observation is treated independently, a specific value $l_i$ belonging to a specific pattern are summed up. This results in a common SUDA score for each of the observations contained in this pattern; this summation is the contribution mentioned in item (b).
 
-The final SUDA score is calculated by normalizing these SUDA scores by dividing them by
-$p!$, with $p$ being the number of key variables. To receive the so-called Data
-Intrusion Simulation (DIS) score, loosely speaking, an iterative algorithm based
-on sampling of the data and matching of subsets of the sampled data with the
-original data is applied. This algorithm calculates the probabilities of correct
-matches given unique matches. It is, however, out of scope to precisely describe
-this algorithm here; reference \cite{Elliot00} for details. The DIS SUDA score
-is calculated from the SUDA and DIS scores, and is available in
-\sdcMicro \ as \texttt{disScore}).
+The final SUDA score is calculated by normalizing these SUDA scores by dividing them by $p!$, with $p$ being the number of key variables. To receive the so-called Data Intrusion Simulation (DIS) score, loosely speaking, an iterative algorithm based on sampling of the data and matching of subsets of the sampled data with the original data is applied. This algorithm calculates the probabilities of correct matches given unique matches. It is, however, out of scope to precisely describe this algorithm here; reference \cite{Elliot00} for details. The DIS SUDA score is calculated from the SUDA and DIS scores, and is available in \sdcMicro \ as \texttt{disScore}).
 
-Note that this method does not consider population frequencies in general, but
-does consider sample frequencies on subsets. The DIS SUDA scores approximate
-uniqueness by simulation based on the sample information population, but to our
-knowledge, they generally do not consider sampling weights, and biased estimates
-may therefore result.
-
+Note that this method does not consider population frequencies in general, but does consider sample frequencies on subsets. The DIS SUDA scores approximate uniqueness by simulation based on the sample information population, but to our knowledge, they generally do not consider sampling weights, and biased estimates may therefore result.
 
 \begin{small}
-% latex table generated in R 3.1.0 by xtable 1.7-3 package
-% Fri Jul 18 14:04:13 2014
 \begin{table}[ht]
 \centering
 \caption{Example of SUDA scores (scores) and DIS SUDA scores (disScores).}
 \label{listingsuda}
 \begin{tabular}{|l|llll|l|ll|}
-  \hline
- & Age & Location & Sex & Education & fk & scores & disScores \\
-  \hline
+\hline
+& Age & Location & Sex & Education & fk & scores & disScores \\
+\hline
 1 & 1 & 2 & 2 & 1 & 2 & 0.00 & 0.0000 \\
-  2 & 1 & 2 & 1 & 1 & 2 & 0.00 & 0.0000 \\
-  3 & 1 & 2 & 1 & 1 & 2 & 0.00 & 0.0000 \\
-  4 & 3 & 3 & 1 & 5 & 1 & 2.25 & 0.0149 \\
-  5 & 4 & 3 & 1 & 4 & 1 & 1.75 & 0.0111 \\
-  6 & 4 & 3 & 1 & 1 & 1 & 1.00 & 0.0057 \\
-  7 & 6 & 2 & 1 & 5 & 1 & 2.25 & 0.0149 \\
-  8 & 1 & 2 & 2 & 1 & 2 & 0.00 & 0.0000 \\
-   \hline
+2 & 1 & 2 & 1 & 1 & 2 & 0.00 & 0.0000 \\
+3 & 1 & 2 & 1 & 1 & 2 & 0.00 & 0.0000 \\
+4 & 3 & 3 & 1 & 5 & 1 & 2.25 & 0.0149 \\
+5 & 4 & 3 & 1 & 4 & 1 & 1.75 & 0.0111 \\
+6 & 4 & 3 & 1 & 1 & 1 & 1.00 & 0.0057 \\
+7 & 6 & 2 & 1 & 5 & 1 & 2.25 & 0.0149 \\
+8 & 1 & 2 & 2 & 1 & 2 & 0.00 & 0.0000 \\
+\hline
 \end{tabular}
 \end{table}\end{small}
-%<<suda, echo=FALSE>>=
-%data(francdat)   ## toy data set
-%sdc <- createSdcObj(francdat, keyVars=c('Key1','Key2','Key3','Key4'),
-% numVars=c('Num1','Num2','Num3'), w='w') df <- cbind(francdat[,c(2,4,5,6,8)], get.sdcMicroObj(sdc, "risk")$individual)
-%df$Key3[df$Key3==5] <- 2
-%colnames(df)[1:4] <- c("Age", "Location", "Sex", "Education")
 
-%s <- suda2(df, variables=1:4)
-%ff <- freqCalc(df, keyVars=1:4)
+In Table~\ref{listingsuda}, we use the same test dataset as in Section~\ref{method:Freq}. Sample frequency counts  $f_i$ as well as the SUDA and DIS SUDA scores have been calculated. The SUDA scores have the largest value for observation $4$ and $6$ since subsets of key variables of these observation are also unique, while for observations $1-3$, $5$ and $8$, less subsets are unique.
 
-%df <- cbind(df[,1:4], fk=ff$fk, scores=s$score, disScores=s$disScore)
-%df <- xtable(df, digits=c(0,0,0,0,0,0,2,4), align = "|l|llll|l|ll|",
-%	caption="Example of SUDA scores (scores) and DIS SUDA scores (disScores).",
-%	label="listingsuda")
-%@
-%\begin{small}
-%<<freqprint, echo=FALSE, results=tex>>=
-%print(df,include.rownames = getOption("xtable.include.rownames", TRUE),
-% caption.placement="top") @
-%\end{small}
+In \sdcMicro \ (function \lstinline{suda2()}) additional output, such as the contribution percentages of each variable to the score, are available. The contribution to the SUDA score is calculated by assessing how often a category of a key variable contributes to the score.
 
-In Table~\ref{listingsuda}, we use the same test dataset as in
-Section~\ref{method:Freq}. Sample frequency counts  $f_i$ as well as the SUDA
-and DIS SUDA scores have been calculated. The SUDA scores have the largest value
-for observation $4$ and $6$ since subsets of key variables of these observation
-are also unique, while for observations $1-3$, $5$ and $8$, less subsets are
-unique.
+\subsection{Calculating Cluster (Household) Risks} \label{sub:householdrisk}
+Micro datasets often contain hierarchical cluster structures; an example is social surveys, when individuals are clustered in households. The risk of re-identifying an individual within a household may also affect the probability of disclosure of other members in the same household. Thus, the household or cluster-structure of the data must be taken into account when calculating risks.
 
-In \sdcMicro \ (function \lstinline{suda2()})
-additional output, such as the
-contribution percentages of each variable to the score, are available. The contribution to the
-SUDA score is calculated by assessing how often a category of a key variable
-contributes to the score.
-
-
-
-%In Table~\ref{listingIndiv}, all concepts previously discussed have been
-%applied. The table lists estimations of frequency counts for the sample and
-%population, which corresponds to the sum of sampling weights for each group, the
-%$l$-diversity measure, the SUDA algorithm and the individual risk estimation. Note
-%that the individual risk is low for observation $5$, since the sampling weight of
-%this unit is quite high. Thus, one can assume that this observation is not
-%likely to be unique in the population. On the other hand, the individual risk of
-%observations that are sample uniques
-%($f_i=1$) in combination with small sampling weights is relatively high. This
-%means that the inclusion probability of each individual is taken into account
-%when estimating the individual risks.
-%
-%<<all, echo=FALSE>>=
-%sdc <- createSdcObj(francdat, keyVars=c('Key1','Key2','Key3','Key4'), numVars=c('Num1','Num2','Num3'), w='w')
-%df <- cbind(francdat[,c(2,4,5,6,8)], get.sdcMicroObj(sdc, "risk")$individual)
-%df$Key3[df$Key3==5] <- 2
-%colnames(df)[1:8] <- c("Age", "Location", "Sex", "Education","w","risk","fk","Fk")
-%sdc <- ldiversity(sdc,ldiv_index="Num3")
-%sdc <- suda2(sdc)
-%df <- cbind(df, ""=francdat[,"Num3"])
-%df <- df[,c(1:4,9,5:8)]
-%df <- cbind(df, ldiv=sdc@risk$ldiversity[,1])
-%df <- cbind(df, suda=sdc@risk$suda$score)
-%df <- cbind(df, get.sdcMicroObj(sdc, "risk")$individual)
-%df <- df[,1:11]
-%#df <- df[,c(1:6, 10:11, 7,8,9)]
-%df <- xtable(df, digits=c(0,0,0,0,0,0,0,4,0,0,0,2), align = "|l|llll|l|l|l|lll|l|",
-%	caption="Display of individual risks, frequency counts, l-diversity and SUDA scores.
-%The variable senstiv1 was chosen as sensitive variable for $l$-diversity.",
-%	label="listingIndiv")
-%@
-%
-%\begin{footnotesize}
-%<<allprint, echo=FALSE, results=tex>>=
-%print(df,include.rownames = getOption("xtable.include.rownames", TRUE), caption.placement="top")
-%@
-%\end{footnotesize}
-
-\subsection{Calculating Cluster (Household) Risks}
-
-
-\label{sub:householdrisk}
-Micro datasets often contain hierarchical cluster structures; an example is
-social surveys, when individuals are clustered in households. The risk of
-re-identifying an individual within a household may also affect the probability
-of disclosure of other members in the same household. Thus, the household or
-cluster-structure of the data must be taken into account when calculating risks.
-
-It is commonly assumed that the risk of re-identfication of a household is the risk
-that at least one member of the household can be disclosed. Thus this probability
-can be simply estimated from individual risks as 1 minus the probability that
-no member of the household can be identfied. Thus, if we consider a single household
-with three persons that have individual risks of re-identification of 0.1, 0.05 and 0.01,
-respectively, the risk-measure for the entire household will be calculated as
-1-(0.1+0.05+0.01). This is also the implementation strategy from \sdcMicro.
+It is commonly assumed that the risk of re-identfication of a household is the risk that at least one member of the household can be disclosed. Thus this probability can be simply estimated from individual risks as 1 minus the probability that no member of the household can be identfied. Thus, if we consider a single household with three persons that have individual risks of re-identification of 0.1, 0.05 and 0.01, respectively, the risk-measure for the entire household will be calculated as 1-(0.1+0.05+0.01). This is also the implementation strategy from \sdcMicro.
 
 \subsection{Measuring the Global Risk}
-Sections \ref{method:Freq} through  \ref{sub:householdrisk} discuss the theory
-of individual risks and the extension of this approach to clusters such as
-households. In many applications, however, estimating a measure of global risk
-is preferred. Any global risk measure is result in one single number that can be used to assess
-the risk of an entire micro dataset.
-The following global risk measures are available in \sdcMicroGUI , except the last one presented in
-Section~\ref{secOut} that is computationally expensive is only made available in \sdcMicro .
-%We note that both approaches are implemented in
-%\pkg{sdcMicro}, however only the first approach is also available in \pkg{sdcMicroGUI}.
+Sections \ref{method:Freq} through  \ref{sub:householdrisk} discuss the theory of individual risks and the extension of this approach to clusters such as households. In many applications, however, estimating a measure of global risk is preferred. Any global risk measure is result in one single number that can be used to assess the risk of an entire micro dataset. The following global risk measures are available in \sdcMicroGUI , except the last one presented in Section~\ref{secOut} that is computationally expensive is only made available in \sdcMicro .
 
 \subsubsection{Measuring the global risk using individual risks}
 Two approaches can be used to determine the global risk for a dataset using individual risks:
+
 \begin{description}
-	\item[Benchmark:] This approach counts the number of observations that can be considered risky and
-    also have higher risk as the main part of the data. For example, we consider
-    units with individual risks being  both $\geq 0.1$ and twice as
-	large as the median of all individual risks $+$ 2 times the median absolute
-	deviation (MAD) of all unit risks.
-    This statistics in also shown in the \sdcMicroGUI .
-	\item[Global risk:] The sum of the individual risks in the dataset gives the
-	expected number of re-identifications \citep[see][]{muargus}.
-    %a threshold for the individual % risk and to calculate the percentage of
-    % individuals that have larger individual risk than this threshold.
+\item[Benchmark:] This approach counts the number of observations that can be considered risky and also have higher risk as the main part of the data. For example, we consider units with individual risks being  both $\geq 0.1$ and twice as large as the median of all individual risks $+$ 2 times the median absolute deviation (MAD) of all unit risks. This statistics in also shown in the \sdcMicroGUI .
+\item[Global risk:] The sum of the individual risks in the dataset gives the expected number of re-identifications \citep[see][]{muargus}.
 \end{description}
 
-The benchmark approach indicates whether the distribution of individual risk
-occurrences contains extreme values; it is a relative measure that depends on
-the distribution of individual risks. It is not valid to conclude that
-observations with higher risk as this benchmark are of very high risk; it
-evaluates whether some unit risks behave differently compared to most of the
-other individual risks. The global risk approach is based on an absolute measure
-of risk. Following is the print output of the corresponding function from
-\sdcMicro , which shows both measures (see the example in the manual of
-\sdcMicro \ \citep{sdcMicro}):
+The benchmark approach indicates whether the distribution of individual risk occurrences contains extreme values; it is a relative measure that depends on the distribution of individual risks. It is not valid to conclude that observations with higher risk as this benchmark are of very high risk; it evaluates whether some unit risks behave differently compared to most of the other individual risks. The global risk approach is based on an absolute measure of risk. Following is the print output of the corresponding function from \sdcMicro , which shows both measures (see the example in the manual of \sdcMicro \ \citep{sdcMicro}):
 
 <<echo=FALSE>>=
 data(testdata)
 sdc <- createSdcObj(testdata,
-		keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-		numVars=c('expend','income','savings'), w='sampling_weight', hhId ='ori_hid')
+keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+numVars=c('expend','income','savings'), w='sampling_weight', hhId ='ori_hid')
 print(sdc, "risk")
 @
 
-The global risk
-measurement taking into account this hierarchical structure if a variable
-expressing it is defined.
+The global risk measurement taking into account this hierarchical structure if a variable expressing it is defined.
 
 \subsubsection{Measuring the global risk using log-linear models} \label{sec:GR}
-Sample frequencies, considered for each of $M$ patterns $m$, $f_m \ , m=1,...,M$
-can be modeled by a Poisson distribution. In this case, global risk can be
-defined as the following \citep[see also][]{Skinner98}:
+Sample frequencies, considered for each of $M$ patterns $m$, $f_m \ , m=1,...,M$ can be modeled by a Poisson distribution. In this case, global risk can be defined as the following \citep[see also][]{Skinner98}:
+
 \begin{equation}
 \tau_1 = \sum\limits_{m=1}^{M} \exp\left( -\frac{\mu_m (1 - \pi_m)}{\pi_m}\right), \quad \ \mbox{with} \ \mu_m=\pi_m \lambda_m. \quad
 \end{equation}
-For simplicity, the (first order) inclusion probabilities are assumed to be equal,
-$\pi_m=\pi \ , m=1,...,M$. $\tau_1$ can be estimated by log-linear models that
-include both the primary effects and possible interactions. This model is
-defined as:
+
+For simplicity, the (first order) inclusion probabilities are assumed to be equal, $\pi_m=\pi \ , m=1,...,M$. $\tau_1$ can be estimated by log-linear models that include both the primary effects and possible interactions. This model is defined as:
 \begin{displaymath}
 \log (\pi_m \lambda_m) = \log (\mu_m) = \mathbf{x}_m \mathbf{\beta}.
 \end{displaymath}
 
-To estimate the $\mu_m$'s, the regression coefficients $\mathbf{\beta}$ have to
-be estimated using, for example, iterative proportional fitting. The quality of
-this risk measurement approach depends on the number of different keys that
-result from cross-tabulating all key variables. If the cross-tabulated key
-variables are sparse in terms of how many observations have the same patterns,
-predicted values might be of low quality. It must also be considered that if the
-model for prediction is weak, the quality of the prediction of the frequency
-counts is also weak. Thus, the risk measurement with log-linear models may lead
-to acceptable estimates of global risk only if not too many key variables are
-selected and if good predictors are available in the dataset.
+To estimate the $\mu_m$'s, the regression coefficients $\mathbf{\beta}$ have to be estimated using, for example, iterative proportional fitting. The quality of this risk measurement approach depends on the number of different keys that result from cross-tabulating all key variables. If the cross-tabulated key variables are sparse in terms of how many observations have the same patterns, predicted values might be of low quality. It must also be considered that if the model for prediction is weak, the quality of the prediction of the frequency counts is also weak. Thus, the risk measurement with log-linear models may lead to acceptable estimates of global risk only if not too many key variables are selected and if good predictors are available in the dataset.
 
-In \sdcMicro , global risk measurement using log-linear models can be completed
-with function LLmodGlobalRisk(). This function is experimental and needs further
-testing, however. It should be used only by expert users.
+In \sdcMicro , global risk measurement using log-linear models can be completed with function LLmodGlobalRisk(). This function is experimental and needs further testing, however. It should be used only by expert users.
 
 \subsection{Measuring Risk for Continuous Key Variables}
-The concepts of uniqueness and $k$-anonymity cannot be directly applied to
-continuous key variables because almost every unit in the dataset will be
-identified as unique. As a result, this approach will fail. The following
-sections present methods to measure risk for continuous key variables.
+The concepts of uniqueness and $k$-anonymity cannot be directly applied to continuous key variables because almost every unit in the dataset will be identified as unique. As a result, this approach will fail. The following sections present methods to measure risk for continuous key variables.
 
 \subsubsection{Distance-based record linkage}
-If detailed information about a value of a continuous variable is available,
-i.e. the risk comes from the fact that multiple datasets can be available to the
-attacker, one of which contains
-identifiers like income, for example, attackers may be able to identify
-and eventually obtain further information about an individual.
-Thus, an intruder may identify statistical units by applying, for example,
-linking or matching algorithms. The anonymization of continuous key variables
-should avoid the possibility of successfully merging the underlying microdata
-with other external data sources.
+If detailed information about a value of a continuous variable is available, i.e. the risk comes from the fact that multiple datasets can be available to the attacker, one of which contains identifiers like income, for example, attackers may be able to identify and eventually obtain further information about an individual. Thus, an intruder may identify statistical units by applying, for example, linking or matching algorithms. The anonymization of continuous key variables should avoid the possibility of successfully merging the underlying microdata with other external data sources.
 
-We assume that an intruder has information about a statistical unit included in
-the microdata; the intruder's information overlaps on some variables with the
-information in the data. In simpler terms, we assume that the intruder's
-information can be merged with microdata that should be secured. In addition, we
-also assume that the intruder is sure that the link to the data is correct,
-except for micro-aggregated data   (see Section \ref{method:microagg}).
-\cite{Domingo01} showed that these methods
-outperform probabilistic methods.
-%Such probabilistic methods are often based on
-%the EM-algorithm, which is highly influenced by outliers.
+We assume that an intruder has information about a statistical unit included in the microdata; the intruder's information overlaps on some variables with the information in the data. In simpler terms, we assume that the intruder's information can be merged with microdata that should be secured. In addition, we also assume that the intruder is sure that the link to the data is correct, except for micro-aggregated data   (see Section \ref{method:microagg}). \cite{Domingo01} showed that these methods outperform probabilistic methods.
 
-\cite{Mateo04} introduced distance-based record linkage and interval disclosure.
-In the first approach, they look for the nearest neighbor from each observation
-of the masked data value to the original data points. Then they mark those units
-for which the nearest neighbor is the corresponding original value. In the
-second approach, they check if the original value falls within an interval
-centered on the masked value. Then they calculate the length of the intervals
-based on the standard deviation of the variable under consideration
-(see Figure~\ref{intervals},  upper left graphic; the boxes expresses the
-intervals).
+\cite{Mateo04} introduced distance-based record linkage and interval disclosure. In the first approach, they look for the nearest neighbor from each observation of the masked data value to the original data points. Then they mark those units for which the nearest neighbor is the corresponding original value. In the second approach, they check if the original value falls within an interval centered on the masked value. Then they calculate the length of the intervals based on the standard deviation of the variable under consideration (see Figure~\ref{intervals},  upper left graphic; the boxes expresses the intervals).
 
 \subsubsection{Special treatment of outliers when calculating disclosure risks} \label{secOut}
-It is worth to show alternatives to the previous distance-based risk measure.
-Such alternatives took either distances between every observation into account or
-are based on covariance estimation (as shown here). Thus, they are computationlly more intensive, which is also the reason why they are not
-available in \sdcMicroGUI \ but only in \sdcMicro \ for experienced users.
+It is worth to show alternatives to the previous distance-based risk measure. Such alternatives took either distances between every observation into account or are based on covariance estimation (as shown here). Thus, they are computationlly more intensive, which is also the reason why they are not available in \sdcMicroGUI \ but only in \sdcMicro \ for experienced users.
 
-Almost all datasets used in official statistics contain units whose values in at
-least one variable are quite different from the general observations. As a
-result, these variables are very asymmetrically distributed. Examples of such
-outliers might be enterprises with a very high value for turnover or persons
-with extremely high income. In addition, multivariate outliers exist
-\citep[see][]{Templ08d}.
+Almost all datasets used in official statistics contain units whose values in at least one variable are quite different from the general observations. As a result, these variables are very asymmetrically distributed. Examples of such outliers might be enterprises with a very high value for turnover or persons with extremely high income. In addition, multivariate outliers exist \citep[see][]{Templ08d}.
 
-Unfortunately, intruders may want to disclose a large enterprise or an
-enterprise with specific characteristics. Since enterprises are often sampled
-with certainty or have a sampling weight close to 1, intruders can often be very
-confident that the enterprise they want to disclose has been sampled. In
-contrast, an intruder may not be as interested to disclose statistical units
-that exhibit the same behavior as most other observations. For these reasons, it
-is good practice to define measures of disclosure risk that take the
-outlyingness of an observation into account. For details, see
-\cite{Templ08d}. Outliers should be much more perturbed than non-outliers
-because these units are easier to re-identify even when the distance from the
-masked observation to its original observation is relatively large.
+Unfortunately, intruders may want to disclose a large enterprise or an enterprise with specific characteristics. Since enterprises are often sampled with certainty or have a sampling weight close to 1, intruders can often be very confident that the enterprise they want to disclose has been sampled. In contrast, an intruder may not be as interested to disclose statistical units that exhibit the same behavior as most other observations. For these reasons, it is good practice to define measures of disclosure risk that take the outlyingness of an observation into account. For details, see \cite{Templ08d}. Outliers should be much more perturbed than non-outliers because these units are easier to re-identify even when the distance from the masked observation to its original observation is relatively large.
 
-This method for risk estimation (called RMDID2 in Figure~\ref{intervals}) is
-also included in the \sdcMicro \ package. It works as described in  \cite{Templ08d}
-and is listed as follows:
+This method for risk estimation (called RMDID2 in Figure~\ref{intervals}) is also included in the \sdcMicro \ package. It works as described in  \cite{Templ08d} and is listed as follows:
+
 \begin{enumerate}
-  \item Robust mahalanobis distances (\textit{RMD})
-  \citep[see, for example][]{Maronna06} are estimated between observations
-  (continuous variables) to obtain a robust, multivariate distance for each
-  unit.
-  \item Intervals are estimated for each observation around every data point
-  of the original data points. The length of the intervals depends on squared
-  distances calculated in step 1 and an additional scale parameter. The higher
-  the \textit{RMD} of an observation, the larger the corresponding intervals.
-  \item Check whether the corresponding masked values of a unit fall into the
-  intervals around the original values. If the masked value lies within such an
-  interval, the entire observation is considered unsafe. We obtain a vector
-  indicating which observations are safe or which are not. For all unsafe units,
-  at least $m$ other observations from the masked data should be very close. Close
-  is quantified by specifying a parameter for the length of the intervals around
-  this observation using Euclidean distances. If more than $m$ points lie within
-  these small intervals, we can conclude that the observation is \textit{safe}.
+\item Robust mahalanobis distances (\textit{RMD}) \citep[see, for example][]{Maronna06} are estimated between observations
+(continuous variables) to obtain a robust, multivariate distance for each unit.
+\item Intervals are estimated for each observation around every data point of the original data points. The length of the intervals depends on squared distances calculated in step 1 and an additional scale parameter. The higher the \textit{RMD} of an observation, the larger the corresponding intervals.
+\item Check whether the corresponding masked values of a unit fall into the intervals around the original values. If the masked value lies within such an interval, the entire observation is considered unsafe. We obtain a vector indicating which observations are safe or which are not. For all unsafe units, at least $m$ other observations from the masked data should be very close. Close is quantified by specifying a parameter for the length of the intervals around this observation using Euclidean distances. If more than $m$ points lie within these small intervals, we can conclude that the observation is \textit{safe}.
 \end{enumerate}
 
 \begin{figure}[!ht]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{imgs/intervals}
-\caption{Original and corresponding masked observations (perturbed by adding
-additive noise). In the bottom right graphic, small additional regions are plotted around
-the masked values for \textit{RMDID2} procedures. The larger the intervals the
-more the observations is an outlier for the latter two methods.}
+\caption{Original and corresponding masked observations (perturbed by adding additive noise). In the bottom right graphic, small additional regions are plotted around the masked values for \textit{RMDID2} procedures. The larger the intervals the more the observations is an outlier for the latter two methods.}
 \label{intervals}
 \end{center}
 \vspace{-0.4cm}
 \end{figure}
 
-Figure \ref{intervals} depicts the idea of weighting disclosure risk intervals.
-For simple methods (top left and right graphics), the rectangular regions around
-each value are the same size for each observation. Our proposed methods take the
-\textit{RMD}s of each observation into account. The difference between the
-bottom right and left graphics is that, for method \textit{RMDID2}, rectangular regions
-are calculated around each masked variable as well. If an observation of the masked variable
-falls into an interval around the original value, check whether this observation
-has close neighbors. If the values of at least $m$ other masked observations can
-be found inside a second interval around this masked observation, these
-observations are considered \textit{safe}.
+Figure \ref{intervals} depicts the idea of weighting disclosure risk intervals. For simple methods (top left and right graphics), the rectangular regions around each value are the same size for each observation. Our proposed methods take the \textit{RMD}s of each observation into account. The difference between the bottom right and left graphics is that, for method \textit{RMDID2}, rectangular regions are calculated around each masked variable as well. If an observation of the masked variable falls into an interval around the original value, check whether this observation has close neighbors. If the values of at least $m$ other masked observations can be found inside a second interval around this masked observation, these observations are considered \textit{safe}.
 
-These methods are also implemented and available in sdcMicro as
-\lstinline{dRisk()} and \lstinline{dRiskRMD()}. The former is automatically applied to objects of class \textit{sdcMicroObj}, while the
-latter has to be specified explicitly and can currently not be applied using the
-graphical user interface.
+These methods are also implemented and available in sdcMicro as \lstinline{dRisk()} and \lstinline{dRiskRMD()}. The former is automatically applied to objects of class \textit{sdcMicroObj}, while the latter has to be specified explicitly and can currently not be applied using the graphical user interface.
 
 \section{Anonymisation Methods} \label{sec:methods}
-In general, there are two kinds of anonymization methods: deterministic and
-probabilistic. For categorical variables, recoding and local suppression are
-deterministic procedures (they are not influenced by randomness), while
-swapping and PRAM \citep{Gouweleeuw98} are based on randomness and considered
-probabilistic methods. For continuous variables, micro-aggregation is a deterministic
-method, while adding correlated noise \citep{Brand04} and shuffling \citep{Muh99} are
-probabilistic procedures.
-Whenever probabilistic methods are applied, the random seed of the software's
-pseudo random number generator should be fixed to ensure reproducibility of the
-results.
+In general, there are two kinds of anonymization methods: deterministic and probabilistic. For categorical variables, recoding and local suppression are deterministic procedures (they are not influenced by randomness), while swapping and PRAM \citep{Gouweleeuw98} are based on randomness and considered probabilistic methods. For continuous variables, micro-aggregation is a deterministic method, while adding correlated noise \citep{Brand04} and shuffling \citep{Muh99} are probabilistic procedures. Whenever probabilistic methods are applied, the random seed of the software's pseudo random number generator should be fixed to ensure reproducibility of the results.
 
 \subsection{Recoding}\label{method:recoding}
+Global recoding is a non-perturbative method that can be applied to both categorical and continuous key variables. The basic idea of recoding a categorical variable is to combine several categories into a new, less informative category. A frequent use case is the recoding of age given in years into age-groups. If the method is applied to a continuous variable, it means to discretize the variable. An application would be the to split a variable containing incomes some income groups.
 
-Global recoding is a non-perturbative method that can be applied to both
-categorical and continuous key variables. The basic idea of recoding a
-categorical variable is to combine several categories into a new, less
-informative category. A frequent use case is the recoding of age given in years
-into age-groups. If the method is applied to a continuous variable, it
-means to discretize the variable. An application would be the to split
-a variable containing incomes some income groups.
+The goal in both cases is to reduce the total number of possible outcomes of a variable. Typically, recoding is applied to categorical variables where the number of categories with only few observations (i.e., extreme categories such as persons being older than 100 years) is reduced. A typical example would be to combine certain economic branches or to build age classes from the variable age.
 
-The goal in both cases is to reduce the total number of possible outcomes of a
-variable. Typically, recoding is applied to categorical variables where the number
-of categories with only few observations (i.e., extreme categories such as persons
-being older than 100 years) is reduced. A typical example would be to combine certain
-economic branches or to build age classes from the variable age.
+A special case of global recoding is top and bottom coding, which can be applied to ordinal and categorical variables. The idea for this approach is that all values above (i.e., top coding) and/or below (i.e., bottom coding) a pre-specified threshold value are combined into a new category. A typical use case for top-coding is to recode all values of a variable containing age in years that are above 80 into a new category 80+.
 
-
-A special case of global recoding is top and bottom coding, which can be applied
-to ordinal and categorical variables. The idea for this approach is that all
-values above (i.e., top coding) and/or below (i.e., bottom coding) a
-pre-specified threshold value are combined into a new category. A typical use case
-for top-coding is to recode all values of a variable containing age in years that
-are above 80 into a new category 80+.
-
-Function \lstinline{globalRecode()} can be applied in \sdcMicro \ to perform both global
-recoding and top/bottom coding. The \sdcMicroGUI \ offers a more user-friendly way of applying global
-recoding.
-
+Function \lstinline{globalRecode()} can be applied in \sdcMicro \ to perform both global recoding and top/bottom coding. The \sdcMicroGUI \ offers a more user-friendly way of applying global recoding.
 
 \subsection{Local Suppression}\label{method:localsupp}
-Local suppression is a non-perturbative method that is typically applied to
-categorical variables to suppress certain values in at least one variable.
-Normally, the input variables are part of the set of key variables that is also
-used for calculation of individual risks, as described in Section
-\ref{method:risk_utility}. Individual values are suppressed in a way that the
-set of variables with a specific pattern are increased. Local suppression is
-often used to achieve      $k$-Anonymity, as described in
-Section~\ref{method:k_anonymity}.
+Local suppression is a non-perturbative method that is typically applied to categorical variables to suppress certain values in at least one variable. Normally, the input variables are part of the set of key variables that is also used for calculation of individual risks, as described in Section \ref{method:risk_utility}. Individual values are suppressed in a way that the set of variables with a specific pattern are increased. Local suppression is often used to achieve $k$-Anonymity, as described in Section~\ref{method:k_anonymity}.
 
-Using function \lstinline{localSupp()} of \sdcMicro , it is possible to suppress
-the values of a key variable for all units having individual risks above a
-pre-defined threshold, given a disclosure scenario. This procedure requires user
-intervention by setting the threshold. To automatically suppress a minimum
-amount of values in the key variables to achieve $k$-anonymity, one can use
-function         \lstinline{localSuppression()}. This algorithm also allows
-specification of a user-dependent reference that determines which key variables
-are preferred when choosing values that need to be suppressed.
-In this implementation, a heuristic
-algorithm is called to suppress as few values as possible. It is possible to
-specify a desired ordering of key variables in terms of importance, which the
-algorithm takes into account. It is even possible to specify key variables that
-are considered of such importance that almost no values for these variables are
-suppressed. This function can also be used in the graphical user interface of
-the          \sdcMicroGUI \ package \citep{sdcMicroGUI,guitutorial}.
-
-
-%\begin{lstlisting}[captionpos=b, caption={Local Suppression to achieve k-anonymity.}, label=listingGR]
-%data(francdat)
-%## Local Suppression
-%localS <- localSuppression(francdat, keyVar=c(4,5,6))
-%localS
-% -----------------------
-%[1] "Total Suppressions in the key variables -2"
-%[1] "Number of suppressions in the key variables "
-%
-% 0 0 2
-% ------------
-%[1] "2-anonymity == TRUE"
-% -----------------------
-%\end{lstlisting}
-
-%This is
-%useful if, for example, a scientific use file with specific requirements must
-% be produced. Still, it is possible to achieve $k$-anonymity for selected key
-%variables in almost all cases.
+Using function \lstinline{localSupp()} of \sdcMicro , it is possible to suppress the values of a key variable for all units having individual risks above a pre-defined threshold, given a disclosure scenario. This procedure requires user intervention by setting the threshold. To automatically suppress a minimum amount of values in the key variables to achieve $k$-anonymity, one can use function \lstinline{localSuppression()}. This algorithm also allows specification of a user-dependent reference that determines which key variables are preferred when choosing values that need to be suppressed. In this implementation, a heuristic algorithm is called to suppress as few values as possible. It is possible to specify a desired ordering of key variables in terms of importance, which the algorithm takes into account. It is even possible to specify key variables that are considered of such importance that almost no values for these variables are suppressed. This function can also be used in the graphical user interface of the \sdcMicroGUI \ package \citep{sdcMicroGUI,guitutorial}.
 
 \subsection{Post-randomization (PRAM)}\label{method:pram}
 Post-randomization \citep{Gouweleeuw98} PRAM is a perturbation, probabilistic method that can be applied to categorical variables. The idea is that the values of a categorical variable in the original microdata file are changed into other categories, taking into account pre-defined transition probabilities. This process is usually modeled using a known transition matrix. For each category of a categorical variable, this matrix lists probabilities to change into other possible categories.
 
-As an example, consider a variable with only 3 categories: A1, A2 and A3. The
-transition of a value from category A1 to category A1 is, for example, fixed
-with probability $p_1 = 0.85$, which means that only with probability $p_1 = 0.15$ can
-a value of A1 be changed to either A2 or A3. The probability of a change from
-category A1 to A2 might be fixed with probability $p_2 = 0.1$ and changes from A1
-to A3 with $p_3 = 0.05$. Probabilities to change values from class A2 to other
-classes and for A3, respectively, must be specified beforehand. All transition
-probabilities must be stored in a matrix that is the main input to function
-\lstinline{pram()} in sdcMicro.
-%This following example uses the default parameters of \lstinline{pram()} rather than a
-%custom transition matrix. We can observe from the following output that exactly
-%one value changed the category. One observation having A3 in the original data
-%has value A1 in the masked data.
-%To explain the concept, following data is used:
-%
-%<<echo=FALSE>>=
-%set.seed(1234)
-%A <- as.factor(rep(c("A1","A2","A3"), each=5))
-%A
-%@
-%
-%\noindent We apply \lstinline{pram()} on vector \texttt{A} and print the result:
-%
-%<<>>=
-%Apramed <- pram(A)
-%Apramed
-%@
-%
-%\noindent This summary provides more details. It shows a table of original
-%frequencies as well as the corresponding table after applying the PRAM
-%procedure. All transitions that took place are also listed:
-%
-%<<>>=
-%summary(Apramed)
-%@
+As an example, consider a variable with only 3 categories: A1, A2 and A3. The transition of a value from category A1 to category A1 is, for example, fixed with probability $p_1 = 0.85$, which means that only with probability $p_1 = 0.15$ can a value of A1 be changed to either A2 or A3. The probability of a change from category A1 to A2 might be fixed with probability $p_2 = 0.1$ and changes from A1 to A3 with $p_3 = 0.05$. Probabilities to change values from class A2 to other classes and for A3, respectively, must be specified beforehand. All transition probabilities must be stored in a matrix that is the main input to function \lstinline{pram()} in sdcMicro.
 
-PRAM is applied to each observation independently and randomly. This means that
-different solutions are obtained for every run of PRAM if no seed is specified
-for the random number generator. A main advantage of the PRAM procedure is the
-flexibility of the method. Since the transition matrix can be specified freely
-as a function parameter, all desired effects can be modeled. For example, it is
-possible to prohibit changes from one category to another by setting the
-corresponding probability in the transition matrix to $0$.
+PRAM is applied to each observation independently and randomly. This means that different solutions are obtained for every run of PRAM if no seed is specified for the random number generator. A main advantage of the PRAM procedure is the flexibility of the method. Since the transition matrix can be specified freely as a function parameter, all desired effects can be modeled. For example, it is possible to prohibit changes from one category to another by setting the corresponding probability in the transition matrix to $0$.
 
-In \sdcMicro \ and \sdcMicroGUI , \lstinline{pram_strat()} allows PRAM to be performed. The
-corresponding help file can be accessed by typing \lstinline{?pram} into an
-\R \ console or using the help-menu of \sdcMicroGUI. When using
-\lstinline{pram_strat()}, it is possible to apply PRAM to sub-groups of the micro
-dataset independently. In this case, the user needs to select the stratification
-variable defining the sub-groups. If the specification of this variable is
-omitted, the PRAM procedure is applied to all observations in the dataset.
-We note that the output of PRAM is slightly different in \pkg{sdcMicroGUI}. In this case
-for each variable values \textit{nrChanges} shows the total number of changed values for a given
-variable while \textit{percChanges} lists the percentage of changed values any variable
-for which PRAM has been applied.
-
+In \sdcMicro \ and \sdcMicroGUI , \lstinline{pram_strat()} allows PRAM to be performed. The corresponding help file can be accessed by typing \lstinline{?pram} into an \R \ console or using the help-menu of \sdcMicroGUI. When using \lstinline{pram_strat()}, it is possible to apply PRAM to sub-groups of the micro dataset independently. In this case, the user needs to select the stratification variable defining the sub-groups. If the specification of this variable is omitted, the PRAM procedure is applied to all observations in the dataset. We note that the output of PRAM is slightly different in \pkg{sdcMicroGUI}. In this case for each variable values \textit{nrChanges} shows the total number of changed values for a given variable while \textit{percChanges} lists the percentage of changed values any variable for which PRAM has been applied.
 
 \subsection{Microaggregation}\label{method:microagg}
-Micro-aggregation is a perturbative method that is typically applied to
-continuous variables. The idea is that records are partitioned into groups;
-within each group, the values of each variable are aggregated. Typically, the
-arithmetic mean is used to aggregate the values, but other robust methods are
-also possible. Individual values of the records for each variable are replaced
-by the group aggregation value, which is often the mean; as an example,
-see  Table~\ref{listingMicroaggregation}, where two values that are most similar
-are replaced by their column-wise means.
+Micro-aggregation is a perturbative method that is typically applied to continuous variables. The idea is that records are partitioned into groups; within each group, the values of each variable are aggregated. Typically, the arithmetic mean is used to aggregate the values, but other robust methods are also possible. Individual values of the records for each variable are replaced by the group aggregation value, which is often the mean; as an example, see  Table~\ref{listingMicroaggregation}, where two values that are most similar are replaced by their column-wise means.
 
 <<microaggregation, echo=FALSE>>=
 df <- francdat[,c(1,3,7)]
 df <- cbind(df, microaggregation(df, aggr=2)$mx)
 colnames(df)[4:6] <- paste("Mic",1:3, sep="")
 df <- xtable(df, digits=c(0,2,3,0,2,2,1), align = "|l|lll|lll|",
-	caption="Example of micro-aggregation. Columns 1-3 contain the original variables, columns 4-6 the micro-aggregated values.",
-	label="listingMicroaggregation")
+caption="Example of micro-aggregation. Columns 1-3 contain the original variables, columns 4-6 the micro-aggregated values.",
+label="listingMicroaggregation")
 @
 
 \begin{small}
-<<allprint, echo=FALSE, results=tex>>=
+<<allprint, echo=FALSE, results='asis'>>=
 print(df,include.rownames = getOption("xtable.include.rownames", TRUE), caption.placement="top")
 @
 \end{small}
 
-Depending on the method chosen in function \lstinline{microaggregation()},
-additional parameters can be specified. For example, it is possible to specify
-the number of observations that should be aggregated as well as the statistic
-used to calculate the aggregation. It is also possible to perform micro-aggregation independently to
-pre-defined clusters or to use cluster methods to achieve the grouping.
+Depending on the method chosen in function \lstinline{microaggregation()}, additional parameters can be specified. For example, it is possible to specify the number of observations that should be aggregated as well as the statistic used to calculate the aggregation. It is also possible to perform micro-aggregation independently to pre-defined clusters or to use cluster methods to achieve the grouping.
 
-However, computationally it is the most challenging task to find a good
-partition of the observations to groups.
-In \pkg{sdcMicroGUI}, five different methods for micro-aggregation can be
-selected:
+However, computationally it is the most challenging task to find a good partition of the observations to groups. In \pkg{sdcMicroGUI}, five different methods for micro-aggregation can be selected:
+
 \begin{itemize}
 \item \textbf{mdav:} grouping is based on classical (Euclidean) distance measures.
 \item \textbf{rmd:} grouping is based on robust multivariate (Mahalanobis) distance measures.
@@ -1071,19 +423,9 @@ selected:
 \item \textbf{influence:} grouping is based on clustering and aggregation is performed within clusters.
 \end{itemize}
 
-%\sdcMicro~features a set of different algorithms to specify the algorithm. It is possible to
-%form the groups using multivariate distances with classical or robust methods \citep{Templ08d}.
-%It is also possible to perform the grouping using different clustering algorithms,
-%principal component analysis or to use classical or robust projection methods.
-%The user can define the group sizes and of course specify the proximity measure. \\
+For computational reasons it is recommended to use the highly efficient implementation of method \texttt{mdav}. It is almost as fast as the pca method, but performs better. For data of moderate or small size, method \texttt{rmd} is favorable since the grouping is based on multivariate (robust) distances.
 
-For computational reasons it is recommended to use the highly efficient implementation of method \texttt{mdav}.
-It is almost as fast as the pca method, but performs better. For data of moderate or small size, method
-\texttt{rmd} is favorable since the grouping is based on multivariate (robust) distances.
-
-All of the previous settings (and many more) can be applied in  \sdcMicro ,
-using function \lstinline{microaggregation()}. The corresponding help file can
-be viewed with command \lstinline{?microaggregation}
+All of the previous settings (and many more) can be applied in  \sdcMicro , using function \lstinline{microaggregation()}. The corresponding help file can be viewed with command \lstinline{?microaggregation}
 or by using the help-menu in \sdcMicroGUI.
 
 \subsection{Adding Noise}\label{method:noise}
@@ -1091,195 +433,66 @@ Adding noise is a perturbative protection method for microdata, which is typical
 
 While this approach sounds simple in principle, many different algorithms can be used to overlay data with stochastic noise. It is possible to add uncorrelated random noise. In this case, the noise is usually distributed and the variance of the noise term is proportional to the variance of the original data vector. Adding uncorrelated noise preserves means, but variances and correlation coefficients between variables are not preserved. This statistical property is respected, however, if correlated noise method(s) are applied.
 
-For the correlated noise method \citep{Brand04}, ), the noise term is derived
-from a distribution having a covariance matrix that is proportional to the
-co-variance matrix of the original microdata. In the case of correlated noise
-addition, correlation coefficients are preserved and at least the co-variance
-matrix can be consistently estimated from the perturbed data. The data structure
-may differ a great deal, however, if the assumption of normality is violated.
-Since this is virtually always the case when working with real-world datasets, a
-robust version of the correlated noise method is included in \sdcMicro . This
-method allows departures from model assumptions and is described in detail in
-\cite{Templ08f}).
-More information can be found in the help file by calling
-\lstinline{?addNoise} or using the graphical user interface help menu.
+For the correlated noise method \citep{Brand04}), the noise term is derived from a distribution having a covariance matrix that is proportional to the co-variance matrix of the original microdata. In the case of correlated noise addition, correlation coefficients are preserved and at least the co-variance matrix can be consistently estimated from the perturbed data. The data structure may differ a great deal, however, if the assumption of normality is violated. Since this is virtually always the case when working with real-world datasets, a robust version of the correlated noise method is included in \sdcMicro . This method allows departures from model assumptions and is described in detail in \cite{Templ08f}). More information can be found in the help file by calling \lstinline{?addNoise} or using the graphical user interface help menu.
 
-In \sdcMicro , several other algorithms are implemented that can be used to add
-noise to continuous variables. For example, it is possible to add noise only to
-outlying observations. In this case, it is assumed that such observations
-possess higher risks than non-outlying observations. Other methods ensure that
-the amount of noise added takes into account the underlying sample size and
-sampling weights. Noise can be added to variables in \sdcMicro \ using function
-\lstinline{addNoise()} or by using \sdcMicroGUI.
-  %The help file can be shown by typing \lstinline{?addNoise}.
-
-%Listing~\ref{listingADD} shows how this function can be applied with \sdcMicro .
-%
-%\begin{lstlisting}[captionpos=b, caption={Example for adding correlated noise to continuous variables.}, label=listingADD]
-%a <- addNoise(x, method="correlated2")$xm
-%\end{lstlisting}
+In \sdcMicro , several other algorithms are implemented that can be used to add noise to continuous variables. For example, it is possible to add noise only to outlying observations. In this case, it is assumed that such observations possess higher risks than non-outlying observations. Other methods ensure that the amount of noise added takes into account the underlying sample size and sampling weights. Noise can be added to variables in \sdcMicro \ using function \lstinline{addNoise()} or by using \sdcMicroGUI.
 
 \subsection{Shuffling}\label{shuffling}
-Various masking techniques based on linear models have been developed in
-literature, such as multiple imputation \citep{rubin93}, general additive
-data perturbation \citep{Muh99} and the information preserving statistical
-obfuscation synthetic data generators \citep{Burridge03}. These methods
-are capable of maintaining linear relationships between variables but fail
-to maintain marginal distributions or non-linear relationships between variables.
+Various masking techniques based on linear models have been developed in literature, such as multiple imputation \citep{rubin93}, general additive data perturbation \citep{Muh99} and the information preserving statistical obfuscation synthetic data generators \citep{Burridge03}. These methods are capable of maintaining linear relationships between variables but fail to maintain marginal distributions or non-linear relationships between variables.
 
-Several methods are available for shuffling in \sdcMicro \ and \sdcMicroGUI ,
-whereas the first (default) one (\texttt{ds}) is
-recommended to use. The explanation of all these methods goes far beyond this guidelines
-and interested readers might read the original paper from \cite{Muh06}.
-In the following only a brief introduction to shuffling is given.
+Several methods are available for shuffling in \sdcMicro \ and \sdcMicroGUI , whereas the first (default) one (\texttt{ds}) is recommended to use. The explanation of all these methods goes far beyond this guidelines and interested readers might read the original paper from \cite{Muh06}. In the following only a brief introduction to shuffling is given.
 
-Shuffling \citep{Muh06} simulates a synthetic value of the continuous key
-variables conditioned on independent, non-confidential variables. After the
-simulation of the new values for the continuous key variables, reverse mapping
-(shuffling) is applied. This means that ranked values of the simulated values
-are replaced by the ranked values of the original data (columnwise).
+Shuffling \citep{Muh06} simulates a synthetic value of the continuous key variables conditioned on independent, non-confidential variables. After the simulation of the new values for the continuous key variables, reverse mapping (shuffling) is applied. This means that ranked values of the simulated values are replaced by the ranked values of the original data (columnwise).
 
-To explain this theoretical concept more practically we can assume that we have
-two continuous variables containing sensitive information on income and savings.
-These variables are used as regressors in a regression model where suitable
-variables are taken as predictors, like age, occupation, race, education. Of
-course it is of crucial to find a good model having good predictive power. New
-values for the continuous key variables, income and savings, are simulated based
-on this model \citep[for details, have a look at][]{Muh06}.
-However, these expected values are not used to replace the original values, but
-a shuffling of the original values using the generated values is carried out.
-This approach (reverse mapping) is applied to each sensitive variable can be
-summarized in the following steps:
+To explain this theoretical concept more practically we can assume that we have two continuous variables containing sensitive information on income and savings. These variables are used as regressors in a regression model where suitable variables are taken as predictors, like age, occupation, race, education. Of course it is of crucial to find a good model having good predictive power. New values for the continuous key variables, income and savings, are simulated based on this model \citep[for details, have a look at][]{Muh06}. However, these expected values are not used to replace the original values, but a shuffling of the original values using the generated values is carried out. This approach (reverse mapping) is applied to each sensitive variable can be summarized in the following steps:
+
 \begin{itemize}
 \item[1] rank original variable
 \item[2] rank generated variable
-\item[3] for all observations, replace the value of the modified variable with
-rank $i$ with the value of the original sensitive variable with rank $i$.
-\item[4] once finished, the modified variable contains only original values and
-is finally used to replace the original sensitive variable.
+\item[3] for all observations, replace the value of the modified variable with rank $i$ with the value of the original sensitive variable with rank $i$.
+\item[4] once finished, the modified variable contains only original values and is finally used to replace the original sensitive variable.
 \end{itemize}
 
-It can be shown that the structure of the data is preserved when the model fit
-is of good quality. In the implementation of sdcMicro, a model of almost any
-form and complexity can be specified (see \lstinline{?shuffling} for details).
-
-%
-%\section{Conclusions} \label{sec:conclusions}
-%In this guidelines we have shown basic concepts of how microdata may be modified in
-%order to generate confidential data that can be released.
-% We also showed how to practically implement these concepts using the free a
-% nd open source \R~package \pkg{sdcMicro}.
-% For this reason these guidelines may prove helpful to subject matter experts that have to deal with the task of preparing safe microdata.
-%
-%Additional methods are available and described in detail in the \proglang{R} package \pkg{sdcMicro}, such as the suda2 algorithm to
-%find unique observations on subsets, further recoding facilities as well as a GUI, implemented in \pkg{sdcMicroGUI} \citep{Templ09tdp}.
-%
-%In general, the inclusion of \texttt{C++} code from the OECD leads to significant performance in computational
-%speed of the implementation
-%\citep[see][]{Kowarik12del1}. In addition, the package can be used for free without paying
-%licences of a statisitical software such as SPSS or STATA.
-
+It can be shown that the structure of the data is preserved when the model fit is of good quality. In the implementation of sdcMicro, a model of almost any form and complexity can be specified (see \lstinline{?shuffling} for details).
 
 \section{Measuring Data Utility and Information Loss} \label{sub:ut}
-Measuring data utility of the microdata set after disclosure limitation methods
-have been applied is encouraged to assess the impact of these methods.
+Measuring data utility of the microdata set after disclosure limitation methods have been applied is encouraged to assess the impact of these methods.
 
 \subsection{General applicable methods}\label{general_methods}
-Anonymized data should have almost the same structure of the original data and
-should allow any analysis with high precision.
+Anonymized data should have almost the same structure of the original data and should allow any analysis with high precision.
 
-To evaluate the precision, use various classical estimates such as means and
-co-variances. Using function     \lstinline{dUtility()}, it is possible to
-calculate different measures based on classical or robust distances for
-continuous scaled variables. Estimates are computed for both the original and
-perturbed data and then compared. Following are three important information loss
-measures: %, whereas the first two are made available in \sdcMicroGUI :
+To evaluate the precision, use various classical estimates such as means and co-variances. Using function \lstinline{dUtility()}, it is possible to calculate different measures based on classical or robust distances for continuous scaled variables. Estimates are computed for both the original and perturbed data and then compared. Following are three important information loss measures:
+
 \begin{itemize}
-\item \textbf{IL1s} is a measures introduced by \citep{Mateo04}. This
-measure is given as $IL1 = \frac{1}{p} \sum\limits_{j=1}^p \sum\limits_{i=1}^n
-\frac{ | x_{ij} - x_{ij}^{'} | }{ \sqrt{2} S_j}$ and can be interpreted as
-scaled distances between original and perturbed values for all $p$ continuous
-key variables.
-\item \textbf{eig} is a measure calculating relative absolute differences
-between eigenvalues of the co-variances from standardized continuous key
-variables of the original and perturbed variables. Eigenvalues can be estimated
-from a robust or classical version of the co-variance matrix.
-\item \textbf{lm} is a measure based on regression models. It is defined as
-$|(\bar{\hat{y}}_w^o-\bar{\hat{y}}_w^m)/\bar{\hat{y}}_w^o|$, with
-$\bar{\hat{y}}_w$ being fitted values from a pre-specified model obtained from
-the original (index $o$) and the modified data (index $m$). Index $w$ indicates that
-the survey weights should be considered when fitting the model.
+\item \textbf{IL1s} is a measures introduced by \citep{Mateo04}. This measure is given as $IL1 = \frac{1}{p} \sum\limits_{j=1}^p \sum\limits_{i=1}^n \frac{ | x_{ij} - x_{ij}^{'} | }{ \sqrt{2} S_j}$ and can be interpreted as scaled distances between original and perturbed values for all $p$ continuous key variables.
+\item \textbf{eig} is a measure calculating relative absolute differences between eigenvalues of the co-variances from standardized continuous key variables of the original and perturbed variables. Eigenvalues can be estimated from a robust or classical version of the co-variance matrix.
+\item \textbf{lm} is a measure based on regression models. It is defined as $|(\bar{\hat{y}}_w^o-\bar{\hat{y}}_w^m)/\bar{\hat{y}}_w^o|$, with $\bar{\hat{y}}_w$ being fitted values from a pre-specified model obtained from the original (index $o$) and the modified data (index $m$). Index $w$ indicates that the survey weights should be considered when fitting the model.
 \end{itemize}
 
-%For evaluating the multivariate structure of perturbed data, %comparisons based on eigenvalues and robust eigenvalues %can be also made with function \lstinline{dUtility()}.
-
-Note that these measures are automatically estimated in \sdcMicro \ when an
-object of class \textit{sdcMicroObj} is generated or whenever continuous key
-variables are modified in such an object. Thus, no user input is required. We note however
-that only the former two measures are automatically presented in the GUI in
-tab \textit{Continuous)} as \textit{IL1} and \textit{Difference Eigenvalues} respectively.
+Note that these measures are automatically estimated in \sdcMicro \ when an object of class \textit{sdcMicroObj} is generated or whenever continuous key variables are modified in such an object. Thus, no user input is required. We note however that only the former two measures are automatically presented in the GUI in tab \textit{Continuous)} as \textit{IL1} and \textit{Difference Eigenvalues} respectively.
 
 \subsection{Specific tools} \label{utilityT}
-In practice, it is not possible to create an anonymized file with the same
-structure as the original file. An important goal, however, should always be
-that the difference in results of the most important statistics based on
-anonymized and original data should be very small or even zero. Thus, the goal
-is to measure the data utility based on benchmarking indicators
-\citep{ichim10,templ11ses}, which is in general a better approach to assess
-data quality than applying general tools.
+In practice, it is not possible to create an anonymized file with the same structure as the original file. An important goal, however, should always be that the difference in results of the most important statistics based on anonymized and original data should be very small or even zero. Thus, the goal is to measure the data utility based on benchmarking indicators \citep{ichim10,templ11ses}, which is in general a better approach to assess data quality than applying general tools.
 
-%\subsubsection{Preservation of the most important indicators}
+The first step in quality assessment is to evaluate what users of the underlying data are analyzing and then try to determine the most important estimates, or \textit{benchmarking indicators} \citep[see, e.g.,][]{templ11unece,templ11ses}. Special emphasis should be put on benchmarking indicators that take into account the most important variables of the micro dataset. Indicators that refer to the most sensitive variables within the microdata should also be calculated. The general procedure is quite simple and can be described in the following steps:
 
-The first step in quality assessment is to evaluate what users of the underlying
-data are analyzing and then try to determine the most important estimates, or
-\textit{benchmarking indicators} \citep[see, e.g.,][]{templ11unece,templ11ses}.
-Special emphasis should be put on benchmarking indicators that take into account
-the most important variables of the micro dataset. Indicators that refer to the
-most sensitive variables within the microdata should also be calculated. The
-general procedure is quite simple and can be described in the following steps:
 \begin{itemize}
-  \item Selection of a set of (benchmarking) indicators
-  \item Choice of a set of criteria as to how to compare the indicators
-  \item Calculation of all benchmarking indicators of the original micro data
-  \item Calculation of the benchmarking indicators on the protected micro data set
-  \item Comparison of statistical properties such as point estimates,
-  variances or overlaps in confidence intervals for each benchmarking indicator
-  \item Assessment as to whether the data utility of the protected micro
-  dataset is good enough to be used by researchers
+\item Selection of a set of (benchmarking) indicators
+\item Choice of a set of criteria as to how to compare the indicators
+\item Calculation of all benchmarking indicators of the original micro data
+\item Calculation of the benchmarking indicators on the protected micro data set
+\item Comparison of statistical properties such as point estimates, variances or overlaps in confidence intervals for each benchmarking indicator
+\item Assessment as to whether the data utility of the protected micro dataset is good enough to be used by researchers
 \end{itemize}
 
 If the quality assessment in the last step of the sketched algorithm is satisfactory, the anonymized micro dataset is ready to be published. If the deviations of the main indicators calculated from the original and the protected data are too large, the anonymization procedure should be restarted and modified. It is possible to either change some parameters of the applied procedures or start from scratch and completely change the anonymization process.
 
-Usually the evaluation is focused on the properties of numeric variables, given
-unmodified and modified microdata. It is of course also possible to review the
-impact of local suppression or recoding that has been conducted to reduce
-individual re-identification risks. Another possibility to evaluate the data
-utility of numerical variables is to define a model that is fitted on the
-original, unmodified microdata. The idea is to predict important, sensitive
-variables using this model both for the original and protected micro dataset as
-a first step. In a second step, statistical properties of the model results,
-such as the differences in point estimates or variances, are compared for the
-predictions, given original and modified microdata, then the resulting quality
-is assessed. If the deviations are small enough, one may go on to publish the
-safe and protected micro dataset. Otherwise, adjustments must be made in the
-protection procedure. This idea is similar to the information loss measure
-\textbf{lm} described in
-Section~\ref{general_methods}.
+Usually the evaluation is focused on the properties of numeric variables, given unmodified and modified microdata. It is of course also possible to review the impact of local suppression or recoding that has been conducted to reduce individual re-identification risks. Another possibility to evaluate the data utility of numerical variables is to define a model that is fitted on the original, unmodified microdata. The idea is to predict important, sensitive variables using this model both for the original and protected micro dataset as a first step. In a second step, statistical properties of the model results, such as the differences in point estimates or variances, are compared for the predictions, given original and modified microdata, then the resulting quality is assessed. If the deviations are small enough, one may go on to publish the safe and protected micro dataset. Otherwise, adjustments must be made in the protection procedure. This idea is similar to the information loss measure \textbf{lm} described in Section~\ref{general_methods}.
 
-
-
-In addition, it is interesting to evaluate the set of benchmarking indicators
-not only for the entire dataset but also independently for subsets of the data.
-In this case, the microdata are partitioned into a set of $h$ groups. The
-evaluation of benchmarking indicators is then performed for each of the groups
-and the results are evaluated by reviewing differences between indicators for
-original and modified data in each group. \cite{caseStudies} gives a detailed
-description of benchmarking indicators for the SES data. An   excerpt of this study is
-shown in the appendix.
+In addition, it is interesting to evaluate the set of benchmarking indicators not only for the entire dataset but also independently for subsets of the data. In this case, the microdata are partitioned into a set of $h$ groups. The evaluation of benchmarking indicators is then performed for each of the groups and the results are evaluated by reviewing differences between indicators for original and modified data in each group. \cite{caseStudies} gives a detailed description of benchmarking indicators for the SES data. An   excerpt of this study is shown in the appendix.
 
 \subsection{Workflow}\label{workflow}
-Figure~\ref{fig:ablauf} outlines the most common tasks, practices and steps
-required to obtain confidential data. The steps are summarized here:
+Figure~\ref{fig:ablauf} outlines the most common tasks, practices and steps required to obtain confidential data. The steps are summarized here:
 
 \begin{figure}[ht]
 \begin{center}
@@ -1291,474 +504,231 @@ The most important methods are included in the \sdcMicroGUI , such as basic risk
 \end{figure}
 
 \begin{enumerate}
-  \item
-  The first step is actually to make an inventory of other datasets
-  available to users, to decide on what an acceptable level of risk will be,
-  and to identify the key users of the anonymized data to make decisions on
-  anonymisation to achieve high precision on their estimates on the anonymized
-  data.
-	\item The first step in anonyimization is always to remove all direct
-	identification variables and variables that contain direct information about units from the microdata
-	set.
-	\item
-    Second, determine the key variables to use for all risk calculations.
-    This decision is subjective and often involves discussions with subject
-    matter specialists and interpretation of related national laws. Please see
-    \cite{caseStudies} for practical applications on how to define key
-    variables. Note that for the simulation of fully synthetic data, choosing
-    key variables is not necessary since all variables are produced
-     synthetically, see for example~\cite{alfons11b}.
-    \item
-    After the selection of key variables, measure disclosure risks of
-    individual units. This includes the analysis of sample frequency counts as
-    well as the application of probability methods to estimate corresponding
-    individual re-identification risks by taking population frequencies into
-    account.
-    	\item
-        Next, modify observations with high individual risks. Techniques such
-        as recoding and local suppression, recoding and swapping, or PRAM can be
-        applied to categorical key variables. In principle, PRAM or swapping can
-        also be applied without prior recoding of key variables; a lower
-        swapping rate might be possible, however, if recoding is applied before.
-        The decision as to which method to apply also depends on the structure
-        of the key variables. In general, one can use recoding together with
-        local suppression if the amount of unique combinations of key variables
-        is low. PRAM should be used if the number of key variables is large and
-        the number of unique combinations is high; for details, see
-        Sections~\ref{method:recoding} and \ref{method:pram} and for practical
-        applications \cite{caseStudies}. The values of continuously scaled key
-        variables must be perturbed as well.
-        In this case, micro-aggregation is always a good choice
-        (see Section~\ref{method:microagg}). More sophisticated methods such as
-        shuffling (see Section~\ref{shuffling}) often provide promising results but are more complicated to apply.
-        \item After modifying categorical and numerical key variables of the
-        microdata, estimate information loss and disclosure risk measures. The
-        goal is to release a safe micro dataset with low risk of linking
-        confidential information to individuals and high data utility. If the
-        risks is below a tolerable risk and the data utility is high, the anonymized
-        dataset is ready for release. Note that the tolerable risk depends on
-        various factors like national laws and sensitivity of data, but also
-        subjective arbitrary factors play a role and the risk depends on the
-        selected key variables - the disclosure scenario.
-        If the risk is too high or the data utility is too low, the entire
-        anonymization process must be repeated, either with additional perturbations if the remaining
-        re-identification risks are too high, or with actions that will increase
-        the data utility.
+\item The first step is actually to make an inventory of other datasets available to users, to decide on what an acceptable level of risk will be, and to identify the key users of the anonymized data to make decisions on anonymisation to achieve high precision on their estimates on the anonymized data.
+\item The first step in anonyimization is always to remove all direct identification variables and variables that contain direct information about units from the microdata set.
+\item Second, determine the key variables to use for all risk calculations. This decision is subjective and often involves discussions with subject matter specialists and interpretation of related national laws. Please see \cite{caseStudies} for practical applications on how to define key variables. Note that for the simulation of fully synthetic data, choosing key variables is not necessary since all variables are produced synthetically, see for example~\cite{alfons11b}.
+\item After the selection of key variables, measure disclosure risks of individual units. This includes the analysis of sample frequency counts as well as the application of probability methods to estimate corresponding individual re-identification risks by taking population frequencies into account.
+\item Next, modify observations with high individual risks. Techniques such as recoding and local suppression, recoding and swapping, or PRAM can be applied to categorical key variables. In principle, PRAM or swapping can also be applied without prior recoding of key variables; a lower swapping rate might be possible, however, if recoding is applied before. The decision as to which method to apply also depends on the structure of the key variables. In general, one can use recoding together with local suppression if the amount of unique combinations of key variables is low. PRAM should be used if the number of key variables is large and the number of unique combinations is high; for details, see Sections~\ref{method:recoding} and \ref{method:pram} and for practical applications \cite{caseStudies}. The values of continuously scaled key variables must be perturbed as well. In this case, micro-aggregation is always a good choice (see Section~\ref{method:microagg}). More sophisticated methods such as shuffling (see Section~\ref{shuffling}) often provide promising results but are more complicated to apply.
+\item After modifying categorical and numerical key variables of the microdata, estimate information loss and disclosure risk measures. The goal is to release a safe micro dataset with low risk of linking confidential information to individuals and high data utility. If the risks is below a tolerable risk and the data utility is high, the anonymized dataset is ready for release. Note that the tolerable risk depends on various factors like national laws and sensitivity of data, but also subjective arbitrary factors play a role and the risk depends on the selected key variables - the disclosure scenario. If the risk is too high or the data utility is too low, the entire anonymization process must be repeated, either with additional perturbations if the remaining re-identification risks are too high, or with actions that will increase the data utility.
 \end{enumerate}
 
 In general, the following recommendations hold:
-\paragraph{Recommendation 1:} Carefully choose the set of key variables using knowledge of both subject matter experts and disclosure control experts. As already mentioned,
-the key variables are those variables for which
-an intruder may possible have data/information, e.g. age and region from persons or turnover of enterprises. Which external data are available containing information on key variables is usually known by subject matter specialist.
-\paragraph{Recommendation 2:} Always perform a frequency and risk estimation to
-evaluate how many observations have a high risk of disclosure given the
-selection of key variables.
-\paragraph{Recommendation 3:} Apply recoding to reduce uniqueness given the set
-of categorical key variables. This approach should be done in an exploratory
-manner. Recoding on a variable, however, should also be based on expert
-knowledge to combine appropriate categories. Alternatively, swapping procedures
-may be applied on categorical key variables so that data intruders cannot be
-certain if an observation has or has not been perturbed.
-\paragraph{Recommendation 4:} If recoding is applied, apply local suppression to
-achieve $k$-anonymity. In practice, parameter $k$ is often set to $3$.
-\paragraph{Recommendation 5:} Apply micro-aggregation to continuously scaled key
-variables. This automatically provides $k$-anonymity for these variables.
-\paragraph{Recommendation 6:} Quantify the data utility not only by using
-typical estimates such as quantiles or correlations, but also by using the most
-important data-specific benchmarking indicators (see Section~\ref{utilityT}).\\
 
+\paragraph{Recommendation 1:} Carefully choose the set of key variables using knowledge of both subject matter experts and disclosure control experts. As already mentioned, the key variables are those variables for which an intruder may possible have data/information, e.g. age and region from persons or turnover of enterprises. Which external data are available containing information on key variables is usually known by subject matter specialist.
+\paragraph{Recommendation 2:} Always perform a frequency and risk estimation to evaluate how many observations have a high risk of disclosure given the selection of key variables.
+\paragraph{Recommendation 3:} Apply recoding to reduce uniqueness given the set of categorical key variables. This approach should be done in an exploratory manner. Recoding on a variable, however, should also be based on expert knowledge to combine appropriate categories. Alternatively, swapping procedures may be applied on categorical key variables so that data intruders cannot be certain if an observation has or has not been perturbed.
+\paragraph{Recommendation 4:} If recoding is applied, apply local suppression to achieve $k$-anonymity. In practice, parameter $k$ is often set to $3$.
+\paragraph{Recommendation 5:} Apply micro-aggregation to continuously scaled key variables. This automatically provides $k$-anonymity for these variables.
+\paragraph{Recommendation 6:} Quantify the data utility not only by using typical estimates such as quantiles or correlations, but also by using the most important data-specific benchmarking indicators (see Section~\ref{utilityT}).\\
 
-Recoding and micro-aggregation work well to obtain non-confidential data with
-high data quality. While the disclosure risks cannot be calculated in a meaningful
-way if probabilistic methods (e.g. PRAM) have been applied, these
-methods are advantageous whenever a large number of key variables is selected.
-This is because a high number of key variables leads to a high number of unique
-combinations that cannot be significantly reduced by applying recoding. More on assessing
-data quality can be found in section \ref{utilityT}.
-
-%This means that the estimates on anonymized data should not differ much from the original estimates.
-%This means that results user perform on the protected microdata set do not differ significantly
-% which results they would have obtained if the analysis was done on original data. \\
-
-
+Recoding and micro-aggregation work well to obtain non-confidential data with high data quality. While the disclosure risks cannot be calculated in a meaningful way if probabilistic methods (e.g. PRAM) have been applied, these methods are advantageous whenever a large number of key variables is selected. This is because a high number of key variables leads to a high number of unique combinations that cannot be significantly reduced by applying recoding. More on assessing data quality can be found in section \ref{utilityT}.
 
 \section*{References}
-
-
 \bibliographystyle{plainnat}
 \bibliography{references}
 
 
 \appendix
-
 \section{A brief example on SES data}
-<<results=hide, echo=FALSE, eval=TRUE>>=
+<<results='hide', echo=FALSE, eval=TRUE>>=
 require(laeken, quiet=TRUE)
 data(ses)
 @
 
-%\subsection{One brief example}
-The European Union Structure of Earnings Statistics (SES) is conducted in almost all European
-countries and it includes variables on earnings of employees and other
-(demographic) variables on employees and their employment status (e.g. region,
-size and economic activity of the current enterprise, gender and age of the employees, \ldots).
+The European Union Structure of Earnings Statistics (SES) is conducted in almost all European countries and it includes variables on earnings of employees and other (demographic) variables on employees and their employment status (e.g. region, size and economic activity of the current  enterprise, gender and age of the employees, \ldots).
 
-SES is a complex survey of Enterprises and Establishments with more than 10
-employees (11600 enterprises in Austria in year 2006) in several business
-sectors (NACE C-O), including a large sample of employees (Austria: 207.000).
-In many countries, a two-stage design is used whereas
-in the first stage a stratified sample of enterprises and establishments on NACE
-(economic activity) 1-digit level, NUTS (regional level) 1 and employment size
-range is drawn with large enterprises commonly having higher inclusion
-probabilities. In stage 2, systematic sampling or simple random sampling of
-employees is applied in each enterprise. Often, unequal inclusion probabilities
-regarding employment size range categories are used.
-%Of course, calibration is applied to represent some population
-%characteristics corresponding to NUTS 1 and NACE 1-digit level, but also
-%calibration is carried out for gender (amount of men and womens in the
-%population).\\
+SES is a complex survey of Enterprises and Establishments with more than 10 employees (11600 enterprises in Austria in year 2006) in several business sectors (NACE C-O), including a large sample of employees (Austria: 207.000). In many countries, a two-stage design is used whereas in the first stage a stratified sample of enterprises and establishments on NACE (economic activity) 1-digit level, NUTS (regional level) 1 and employment size range is drawn with large enterprises commonly having higher inclusion probabilities. In stage 2, systematic sampling or simple random sampling of employees is applied in each enterprise. Often, unequal inclusion probabilities regarding employment size range categories are used.
 
-\noindent SES contains information of different perspectives and sources. In
-the Austrian case this belongs to:
+\noindent SES contains information of different perspectives and sources. In the Austrian case this belongs to:
+
 \begin{description}
-\item[Information on enterprise level:]
-Question batteries are asked to enterprises like if an
-enterprise is private or public or if an enterprise has a collective bargaining
-agreement (both binary variables). As a multinomial variable, the kind of
-collective agreement is included in the questionnaire.
-\item[Information on individual employment level:]
-The following questions for employees comes with the standard questionnaire:
-social security number, start date of employment, weekly working time,
-kind of work agreement, occupation, time for holidays, place of work, gross earning, earning for overtime and amount of overtime.
-\item[Information from registers:]
-All other information may come from registers like information about
-age, size of enterprise, occupation, education, amount of employees, NACE and
-NUTS classifications.
+\item[Information on enterprise level:] Question batteries are asked to enterprises like if an enterprise is private or public or if an enterprise has a collective bargaining agreement (both binary variables). As a multinomial variable, the kind of collective agreement is included in the questionnaire.
+\item[Information on individual employment level:] The following questions for employees comes with the standard questionnaire: social security number, start date of employment, weekly working time, kind of work agreement, occupation, time for holidays, place of work, gross earning, earning for overtime and amount of overtime.
+\item[Information from registers:] All other information may come from registers like information about age, size of enterprise, occupation, education, amount of employees, NACE and NUTS classifications.
 \end{description}
 
 \noindent We now summarize the most important variables on enterprise level:
 \begin{enumerate}
 \item \texttt{Location}: The geographical location of the statistical units is cut into three areas based on NUTS 1-digit level. The three areas are AT1 (eastern Austria), AT2 (southern Austria) and AT3 (western Austria).
-\item \texttt{NACE1}: The economic activity of enterprises on NACE 1-digit
-level (C-K, M,N and a residual class O). %The classes are
-% shown in table \ref{tab:2}.
-\item \texttt{Size}: The employment size range, split into
-\Sexpr{length(unique(ses$size))} categories with the following size-categories:
+\item \texttt{NACE1}: The economic activity of enterprises on NACE 1-digit level (C-K, M,N and a residual class O).
+\item \texttt{Size}: The employment size range, split into \Sexpr{length(unique(ses$size))} categories with the following size-categories:
 \begin{itemize}
-  \item 10-49 employees
-  \item 50-249 employees
-  \item 250-499 employees
-  \item 500-999 employees
-  \item 1000 and more employees
+\item 10-49 employees
+\item 50-249 employees
+\item 250-499 employees
+\item 500-999 employees
+\item 1000 and more employees
 \end{itemize}
 
-\item \texttt{payAgreement}: The form of collective pay agreement consists of
-seven different levels.
-\item \texttt{EconomicFinanc}: The form of economic and financial control has
-two levels
+\item \texttt{payAgreement}: The form of collective pay agreement consists of seven different levels.
+\item \texttt{EconomicFinanc}: The form of economic and financial control has two levels
 \begin{itemize}
-  \item A (public control)
-  \item B (private control).
+\item A (public control)
+\item B (private control).
 \end{itemize}
 \end{enumerate}
 
 \noindent The most important variables on employment level are
 \begin{enumerate}
 \item \texttt{Sex}: The gender of the sampled person
-\item \texttt{Occupation}: This variable is coded according to the International
-Standard Classification of Occupations, 1988 version at two-digit
-level. % (ISCO-88(COM))  %Table \ref{tab:1} shows these levels.
+\item \texttt{Occupation}: This variable is coded according to the International Standard Classification of Occupations, 1988 version at two-digit level.
 \item \texttt {education}: a total of six categories of the highest
-successfully completed level of education and training coded according to the International
-Standard Classification of Education, 1997 version %(ISCED 97) (Table
-% \ref{tab:1}).
-\item \texttt{FullPart}: indicates if an employee is a full-time worker or
-part-time worker.
-\item \texttt{contract}: contains type of the employment contract %are listed in Table \ref{tab:1}.
+successfully completed level of education and training coded according to the International Standard Classification of Education, 1997 version
+\item \texttt{FullPart}: indicates if an employee is a full-time worker or part-time worker.
+\item \texttt{contract}: contains type of the employment contract
 \item \texttt{birth}: year of birth.
-\item  \texttt{Length}: the total length of service in the enterprises in the
-reference month is based on the number of completed years of service.
+\item  \texttt{Length}: the total length of service in the enterprises in the reference month is based on the number of completed years of service.
 \item  \texttt{ShareNormalHours}: the share of a full timer's normal hours. The hours contractually worked of a part-time employee should be expressed as a percentage of the number of  normal hours worked by a full-time employee in the local unit.
 \item \texttt{weeks}: represents the number of weeks in the reference year to which the gross annual earnings relate. That is the employee's working time actually paid during the year which should correspond to the actual gross annual earnings. (2 decimal places).
 \item \texttt{hoursPaid}: The number of hours paid in the reference month which means these hours actually paid including all normal and overtime hours worked and remunerated by the employee during the month.
 \item \texttt{overtimeHours}: contains the number of overtime hours paid in the reference month. Overtime hours are those worked in addition to those of the normal working month.
 \item \texttt{holiday}: shows the annual days of holiday leave (in full days).
-%\item \texttt{paidAbsence}
 \item \texttt{earnings}: Let \texttt{earnings} be gross annual earnings in the reference year. The actual gross earnings for the calender year are supplied and not the gross annual salary featured in the contract.
-\item \texttt{notPaid}: examples of annual bonuses and allowances
- are Christmas and holiday bonuses, 13th and 14th month payments and productivity bonuses, hence any periodic, irregular and exceptional bonuses and other payments that do not feature every pay period. Besides the main difference between annual earnings and monthly earnings is the inclusion of payments that do not regularly occur in each pay period.
+\item \texttt{notPaid}: examples of annual bonuses and allowances are Christmas and holiday bonuses, 13th and 14th month payments and productivity bonuses, hence any periodic, irregular and exceptional bonuses and other payments that do not feature every pay period. Besides the main difference between annual earnings and monthly earnings is the inclusion of payments that do not regularly occur in each pay period.
 \item \texttt{earningsMonth}: the gross earnings in the reference month covers renumeration in cash paid during the reference month before any tax deductions and social security deductions and social security contributions payable by wage earners and retained by the employer.
 \item \texttt{earningsOvertime}: It is also necessary to refer to earnings related to overtime. The amount of overtime earnings paid for overtime hours is required.
 \item \texttt{paymentsShiftWork}: These special payments for shift work are premium payments during the reference month for shirt work, night work or weekend work where they are not treated as overtime.
 \end{enumerate}
 
 \subsection{Selection of variables}
+No direct identifiers like social insurance number or names or exact addresses are included in the data. However, if they are included, it would be the first step to remove these direct identifying variables as soon as possible from the data set.
 
-No direct identifiers like social insurance number or names or exact addresses
-are included in the data. However, if they are included, it would be the first
-step to remove these direct identifying variables as soon as possible from the data set.
+First we have to determine the key variables. The identification of an enterprise may allow an attacker to learn new information about (some) of their employees and, of course, the identification of an employee would disclose all the information about this employee.
 
-First we have to determine the key variables.
-The identification of an enterprise may allow an attacker to learn
-new information about (some) of their employees and, of course, the
-identification of an employee would disclose all the information about this
-employee.
+After discussion with subject matter specialists we assume that the following variables as categorical key variables on enterprise level:
 
-After discussion with subject matter specialists we assume that the following
-variables as categorical key variables on enterprise level:
 \begin{itemize}
-  \item Size
-  \item Location
-  \item Economic Activity
-\end{itemize}
-This choice can be motivated because it can be assumed that information on
-this variables is readily available to possible attackers from other data
-sources.
-
-In the following we concentrate on the anonymization on employee level where it
-can be assumed that also information on these three variables is available in
-public data bases and thatin addition the Sex and age is available \citep[see
-also][for a similar scenario]{ichim07}:
-
-% brauchen wir nicht nocheinmal erklaeren
-\begin{itemize}
-  \item \textbf{Size} %size of the enterprise
-  \item \textbf{Age} %age in years
-  \item \textbf{Sex}
-	\item \textbf{Location} %geographic location with 3 categories
-	\item \textbf{Economic Activity}: % the economic branch of the corresponding work
-	% centre given as NACE Rev. 2 - Statistical classification of economic activities
+\item Size
+\item Location
+\item Economic Activity
 \end{itemize}
 
-As continuous key variables at employment level the following variables are
-selected after careful discussions with subject matter specialists who are
-aware about the availability of external information on this data set:
+This choice can be motivated because it can be assumed that information on this variables is readily available to possible attackers from other data sources.
+
+In the following we concentrate on the anonymization on employee level where it can be assumed that also information on these three variables is available in public data bases and thatin addition the Sex and age is available \citep[see also][for a similar scenario]{ichim07}:
+
 \begin{itemize}
-	\item \textbf{Earnings}%: gross earnings
-%   \item \textbf{special payments}:
-%special payments
-   \item \textbf{Overtime Earinings}%: generated from earnings and hours paid in
-   % Listing~\ref{listing:sesrecode1}.
+\item \textbf{Size}
+\item \textbf{Age}
+\item \textbf{Sex}
+\item \textbf{Location}
+\item \textbf{Economic Activity}
 \end{itemize}
-Thus it is assumed that possible data intruders have information on earnings of
-employees and that they can estimate earnings very precise.
 
-% In Listing \ref{listing:freq1} it is shown how to set up the disclosure scenario for the SES data.
-% First an object of class \textit{sdcMicroObj} using \lstinline{createSdcObj()} is created that
-% includes the information on the disclosure scenario.
-% In the resulting object,
-% the disclosure risk of our data corresponding to the key variables is already available.
-% \index{frequency counts}
+As continuous key variables at employment level the following variables are selected after careful discussions with subject matter specialists who are aware about the availability of external information on this data set:
 
+\begin{itemize}
+\item \textbf{Earnings}
+\item \textbf{Overtime Earinings}
+\end{itemize}
 
-The data set contains also a vector of sampling weights
-(\textit{grossingUpFactor.y}), which have to be specified. %and a cluster
-% indentifier (\textit{IDunit}) that categorize the enterprise of employees. Both have to be specified in
-\sdcMicroGUI \ (or \sdcMicro ). The economic activity is chosen as a
-stratification varialbe.
+Thus it is assumed that possible data intruders have information on earnings of employees and that they can estimate earnings very precise. The data set contains also a vector of sampling weights (\textit{grossingUpFactor.y}), which have to be specified in \sdcMicroGUI \ (or \sdcMicro ). The economic activity is chosen as a stratification variable.
 
 \subsection{Risk estimation}
-After careful selection of key variables, the risk have to be estimated.
-For this task, the individual risk approach (described in
-Section~\ref{method:Freq}) is chosen.
-The following output is obtained by the \sdcMicroGUI \ (or \sdcMicro ) after defining the key
-variables~\citep[see][how to do this with the GUI]{guitutorial}.
+After careful selection of key variables, the risk have to be estimated. For this task, the individual risk approach (described in Section~\ref{method:Freq}) is chosen. The following output is obtained by the \sdcMicroGUI \ (or \sdcMicro ) after defining the key variables~\citep[see][how to do this with the GUI]{guitutorial}.
 
 \begin{lstlisting}[numbers=none,captionpos=b, caption={Frequency and risk estimation of the raw SES data.}, label=listing:seskey]
 Number of observations violating
 
- -  2-anonymity:  11212
- -  3-anonymity:  23682
+-  2-anonymity:  11212
+-  3-anonymity:  23682
 --------------------------
 
 Percentage of observations violating
- -  2-anonymity:  5.61 %
- -  3-anonymity:  11.85 %
+-  2-anonymity:  5.61 %
+-  3-anonymity:  11.85 %
 
 --------------------------
 0 obs. with higher risk than the main part
+
 Expected no. of re-identifications:
- 8496.45 [ 4.25 %]
+8496.45 [ 4.25 %]
 --------------------------
 \end{lstlisting}
 \index{disclosure risk!individual risk}
 
-From the output in Listing~\ref{listing:seskey} it is easy to see the
-large number of unique combinations from cross-tabulating the
-categorical key variables (\texttt{fk$=1$}) (about $5.61\%$ of the observations,
-see Listing~\ref{listing:seskey}).
-All in all, 4.25 \%  of the
-observations may have a considerable large risk.
+From the output in Listing~\ref{listing:seskey} it is easy to see the large number of unique combinations from cross-tabulating the categorical key variables (\texttt{fk$=1$}) (about $5.61\%$ of the observations, see Listing~\ref{listing:seskey}).
+All in all, 4.25 \%  of the observations may have a considerable large risk.
 
-%Here, a measure of global risk is printed that is simple the number
-%of observations having higher risk as the chosen threshold (\texttt{max\_global\_risk}).
+In addition, the global risk can also be estimated using log-linear models. We note that the global risk is 2.22\% in the original data.
 
-In addition, the global risk can also be estimated using log-linear models .
-We note that the global risk is 2.22\% in the original data.
-
-The risk on continuous variables is between 0 and 100\% under the chosen
-scenario. This is reported by \sdcMicroGUI \ automatically.
+The risk on continuous variables is between 0 and 100\% under the chosen scenario. This is reported by \sdcMicroGUI \ automatically.
 
 
 \subsection{Anonymization of the categorical key variables}
+It is therefore necessary to recode some categories of the key variables to receive a lower number of uniqueness. This is done by recoding the NACE classification from 2-digit codes to 1-digit codes, whereas the aggregation of the classifications are based on expert knowledge, i.e. those categories are combined where the economic branches are similar. Finally, the age of the employees are categorized in six age classes ((0,15] (15,29]  (29,39]  (39,49]  (49,59] (59,120]).
 
-It is therefore necessary to recode some categories of the key variables to receive a lower number of uniqueness.
-This is done by recoding the NACE classification from 2-digit codes to 1-digit codes, whereas
-the aggregation of the classifications are based on expert knowledge, i.e. those categories are combined where the economic branches
-are similar.
-%Next, the categories of the size of the enterprises is reduced.
-Finally, the age of the employees are categorized in six age classes ((0,15]
-(15,29]  (29,39]  (39,49]  (49,59] (59,120]).
-
-After performing the recoding of key variables we can calculate the new
-frequencies as it is shown in the following
+After performing the recoding of key variables we can calculate the new frequencies as it is shown in the following
 \index{frequency counts}
 
 \begin{lstlisting}[numbers=none,captionpos=b, caption={Frequency calculation after recoding}]
 Number of observations violating
 
- -  2-anonymity:  12
- -  3-anonymity:  22
+-  2-anonymity:  12
+-  3-anonymity:  22
 --------------------------
 
 Percentage of observations violating
- -  2-anonymity:  0.01 %
- -  3-anonymity:  0.01 %
+-  2-anonymity:  0.01 %
+-  3-anonymity:  0.01 %
 
 --------------------------
 0 obs. with higher risk than the main part
+
 Expected no. of re-identifications:
- 51.01 [ 0.03 %]
+51.01 [ 0.03 %]
 --------------------------
 \end{lstlisting}
 \index{disclosure risk!individual risk} \index{disclosure risk!global risk}
 
-We see that the risk recuded dramatically.
-When re-estimating the global risk with linear models we obtain a global risk of 0.
+We see that the risk recuded dramatically. When re-estimating the global risk with linear models we obtain a global risk of 0.
 
-However, still 22 observations violates the $3$-anonymity assumption.
-In general there are at least four possibilities to achieve $k$-anonymity.
-$k$-anonymity can be achieved by applying \sdcMicro 's (or \sdcMicroGUI 's) local suppression
-algorithm, whereas as few as possible suppression are carried out.
-After local suppression, 4 values are suppressed in variable \textit{Size} and
-14 values are suppressed in \textit{age}.
+However, still 22 observations violates the $3$-anonymity assumption. In general there are at least four possibilities to achieve $k$-anonymity. $k$-anonymity can be achieved by applying \sdcMicro 's (or \sdcMicroGUI 's) local suppression algorithm, whereas as few as possible suppression are carried out. After local suppression, 4 values are suppressed in variable \textit{Size} and 14 values are suppressed in \textit{age}.
 
-Note: as an alternative to local suppresion and recoding, post randomization can
-be applied to the data. Hereby, the risk cannot be estimated reasonable after anonymization and
-the chosen probabilities to swapp a value to another category determines the risk --
-the higher the probabilities the less can an intruder be sure that an identification is correct or not.
+Note: as an alternative to local suppresion and recoding, post randomization can be applied to the data. Hereby, the risk cannot be estimated reasonable after anonymization and the chosen probabilities to swapp a value to another category determines the risk -- the higher the probabilities the less can an intruder be sure that an identification is correct or not.
 
-%The first possibility is to randomize the values of a categorical variable
-%with the help of function \lstinline{pram()}, as shown in Section~\ref{method:pram}.
-%An alternative way could be to delete some values randomly and impute those values in a proceeding step.
-
-%Another possibility is to apply further recodings, for example, to
-%allow fewer categories for the economic activity.
-%The last possibility is to apply
-%local suppression. With the implemented function in \sdcMicroGUI \ and \sdcMicro ,
-%$k$-anonymity is achieved after local suppresion in an heuristic-optimal manner.
-%as it was already shown in Listing \ref{listing:3-anonymity} and especially in Listing~\ref{listLS}.
-
-% However, for the sake of completeness we list the two functions of
-% \sdcMicro~that can used to perform local suppression. Function \lstinline{localSupp()} can be used to suppress all
-% values for a given key variable for all units which have a risk that is
-%  higer a specified threshold value. This value can be set when calling the function.
-%  \index{local suppression}
-
-%The other function is\lstinline{localSuppression()} that works slightly different.
-%This function provides a heuristic algorithm that performs
-%With this method, local suppression are repeatedly until
-%$k$-anonymity is reached. It is also possible to specify an importance vector that is
-%taken into account when suppressing values in the key variables. It is therefore even
-%possible to specify the importance of key variables in a way that - if possible -
-%no information at all is removed for certain dependent on the importance vector. \\
-
-Note that also the $l$-diverstiy (\lstinline{ldiversity()}) can easily be estimated as
-soon one define which variables are the sensitive ones.
-
+Note that also the $l$-ldiversity (\lstinline{ldiversity()}) can easily be estimated as soon one define which variables are the sensitive ones.
 
 \subsection{Anonymization of the continous key variables}
-
 A bunch of methods are available to perturb continuously scaled (key) variables.
 
-%In the Listing~\ref{listing:sesNum1} it is shown how to apply microaggregation
-%as well as adding (correlated) stochastic noise to continuously scaled variables.
-We use the \texttt{mdav} microaggregation method that can be selected in
-\sdcMicroGUI \ and \sdcMicro .
-%In this example the \textit{mdav} method for microaggregation is used.
-The aggregation level determines how many observations are
-aggregated together when performing the aggregation.
-\index{microaggregation}
+We use the \texttt{mdav} microaggregation method that can be selected in \sdcMicroGUI \ and \sdcMicro . The aggregation level determines how many observations are aggregated together when performing the aggregation. \index{microaggregation}
 
-% \begin{lstlisting}[numbers=none,captionpos=b, caption={Microaggregation and addition of stochastic noise applied to continuous key variables of the SES data.}, label=listing:sesNum1]
-% ## perform microaggregation
-% sdc <- microaggregation(sdc)
-%
-% ## add correlated noise
-% sdc <- addNoise(sdc, method='correlated')
-% \end{lstlisting}
+The risk of the continuous key variables is reduced since the intruder cannot be sure if the link is correct when at least 6 observations have the same values in the continuous key variables after microaggregation.
 
-The risk of the continuous key variables is reduced since the intruder cannot
-be sure if the link is correct when at least 6 observations have the same values
-in the continuous key variables after microaggregation.
-
-
-As an alternative, also adding noise can be used (method \textit{correlated2} is
-the default method for adding noise and recommended).
-%In Listing~\ref{listing:sesNum1} we show how to use function
-%\lstinline{addNoise()} to add correlated noise to numerical key variables.
-%In this case it is required to set parameter \texttt{method='correlated'} when calling the function/method.
-%We note that quite a few different methods for noise-addition - even methods that takes the
-%structure of outlying observations into account - can be selected in function \lstinline{addNoise()}.
-
-Also shuffling can be applied alternatively. For example, the two continous key
-variables are predicted with variables sex,  age  and education as predictors.
-
-
+As an alternative, also adding noise can be used (method \textit{correlated2} is the default method for adding noise and recommended). Also shuffling can be applied alternatively. For example, the two continous key variables are predicted with variables sex,  age  and education as predictors.
 
 \subsection{Most relevant information to preserve}
+For the European Union Structure of Earnings Survey the most important indicator is the Gender Pay Gap, i.e. the difference in hourly earnings between men and women. The estimate of the Gender Pay Gap from the anonymized data should be very close to the estimate from the original data, which have to be evaluated.
 
-For the European Union Structure of Earnings Survey the most important
-indicator is the Gender Pay Gap, i.e. the difference in hourly earnings between men and women.
-The estimate of the Gender Pay Gap from the anonymized data should be very close to the
-estimate from the original data, which have to be evaluated.
-
-In addition, the regression model given by log hourly earnings predicted by sex, age, location,
-economic activity, education is often applied to this data set.
-Therefore the resulting regression coefficients from the anonymized data
-should be very close to the original estimates.
+In addition, the regression model given by log hourly earnings predicted by sex, age, location, economic activity, education is often applied to this data set. Therefore the resulting regression coefficients from the anonymized data should be very close to the original estimates.
 
 Exemplarely, we show the utility of the anonymized data on this model fit.
 
-The regression coefficients and their estimated confidence intervals are
-visualized in Figure~\ref{fig:ciplots} whereas the original estimates (in black) are
-compared with the estimates from anonymized data (in grey).
+The regression coefficients and their estimated confidence intervals are visualized in Figure~\ref{fig:ciplots} whereas the original estimates (in black) are compared with the estimates from anonymized data (in grey).
 
 \begin{figure}[ht]
- \centering
- \subfigure[Recoding, local suppression and microaggregation.]{
+\centering
+\subfigure[Recoding, local suppression and microaggregation.]{
   \includegraphics[width=0.45\textwidth]{eins}
-   \label{fig:p1}
-   }
- \subfigure[Recoding, local suppression and adding correlated noise.]{
+  \label{fig:p1}
+}
+\subfigure[Recoding, local suppression and adding correlated noise.]{
   \includegraphics[width=0.45\textwidth]{zwei}
-   \label{fig:p2}
-   }
- \subfigure[Invariant pram and microaggregation.]{
+  \label{fig:p2}
+}
+\subfigure[Invariant pram and microaggregation.]{
   \includegraphics[width=0.45\textwidth]{drei}
-   \label{fig:p3}
-   }
- \subfigure[Recoding, local suppression and shuffling.]{
+  \label{fig:p3}
+}
+\subfigure[Recoding, local suppression and shuffling.]{
   \includegraphics[width=0.45\textwidth]{vier}
-   \label{fig:p4}
-   }
- \caption[]{%
-   \label{fig:ciplots}Confidence intervals for the regression coefficients for the
-   original data (black lines) and the perturbed/anonymized data (grey dotted lines).}
+  \label{fig:p4}
+}
+\caption[]{
+  \label{fig:ciplots}Confidence intervals for the regression coefficients for the original data (black lines) and the perturbed/anonymized data (grey dotted lines).}
 \end{figure}
 
 We applied different anonymization methods independently.
-The anonymization by Recoding $+$ local suppression $+$ microaggregation performs best and the confidence intervals obtained from the anonymised data cover the confidence intervals obtained from the original data almost always completely.
-Almost as good is the quality of data anonymized by recoding $+$ local suppression $+$ adding correlated noise. The results from invariant pram $+$ microaggregation are good for all coefficients except those are related to \textit{economic activitiy}. This is not surprising since this variable was one of the variables which was pramed.
-Some few coefficients are well perserved from the recoding $+$ local suppression $+$ shuffling anonymized data, but others are not. The reason is that even if the distribution of the continuous shuffled variables are well perserved, the relation to other variables that are not included in the shuffling model might be not preserved. A better model would probably lead to better results.
+The anonymization by Recoding $+$ local suppression $+$ microaggregation performs best and the confidence intervals obtained from the anonymised data cover the confidence intervals obtained from the original data almost always completely. Almost as good is the quality of data anonymized by recoding $+$ local suppression $+$ adding correlated noise. The results from invariant pram $+$ microaggregation are good for all coefficients except those are related to \textit{economic activitiy}. This is not surprising since this variable was one of the variables which was pramed. Some few coefficients are well perserved from the recoding $+$ local suppression $+$ shuffling anonymized data, but others are not. The reason is that even if the distribution of the continuous shuffled variables are well perserved, the relation to other variables that are not included in the shuffling model might be not preserved. A better model would probably lead to better results.
 \end{document}

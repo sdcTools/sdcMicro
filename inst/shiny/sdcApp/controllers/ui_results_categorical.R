@@ -18,8 +18,8 @@ output$ui_rescat_riskinfo <- renderUI({
     txt_tooltip <- paste0(txt_tooltip, "variables,  and reflects both the frequencies of the keys in the data and the individual sampling weights.")
     out <- fluidRow(
       column(12, h5("Risk measures") ),
-      column(12, p(code(rI$s),"observations (",code(rI$sorig),"in the original data) have an individual re-identification risk level higher than
-      the set benchmark value of",code(0.1),".", tipify(icon("info-circle"), title=txt_tooltip, placement="top")) ),
+      column(12, p(code(rI$s),"observations have a higher risk than the risk in the main part of the data, as compared to",code(rI$sorig),"observations in the original data",
+        tipify(icon("info-circle"), title=txt_tooltip, placement="top")) ),
       column(12, p("Based on the individual re-identification risk, we expect",code(rI$exp_reident_m),"re-identifications (",code(paste0(rI$exp_reident_mp,"%")),")
       in the anonymized data set. In the original dataset we expected",code(rI$exp_reident_o),"(",code(paste0(rI$exp_reident_op,"%")),") re-identifications.") )
     )
@@ -54,7 +54,7 @@ output$ui_rescat_riskinfo <- renderUI({
       df[order(df$indivRisk, decreasing=TRUE),]
       df <- df[df$indivRisk > input$sl_riskyobs,,drop=F]
       if (nrow(df)>0) {
-        df$indivRisk <- formatC(df$indivRisk, format="fg", digits=3)
+        df$indivRisk <- formatC(df$indivRisk, format="f", digits=6)
       }
       n <- nrow(df)
       p <- paste0(formatC(100*(n/N), format="f", digits=2),"%")
@@ -542,8 +542,8 @@ output$ui_bivariate_tab <- renderUI({
     }
     tabs
   })
-  
+
   out <- list(uiOutput("ui_biv_selection"), uiOutput("biv_tab_res"))
-  
+
   out
 })

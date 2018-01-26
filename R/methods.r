@@ -176,10 +176,9 @@ definition = function(object, type, ...) {
   if (!type %in% c("violateKAnon")) {
     stop("set.sdcMicroObj:: check argument 'type'!\n")
   }
-
-  ### how many observations violate k-Anonymity
-  if (type == "violateKAnon") {
-    fk <- get.sdcMicroObj(object, type = "fk")
+  ### how many observations violate k-Anonymity (unweighted)
+  if (type=="violateKAnon") {
+    fk <- freq(object, type="fk")
     args <- list(...)
     m <- match("k", names(args))
     if (!is.na(m)) {
@@ -187,7 +186,7 @@ definition = function(object, type, ...) {
     } else {
       k <- 1
     }
-    return(length(which(fk <= k)))
+    return(sum(fk < k))
   }
 })
 
@@ -231,3 +230,42 @@ definition = function(object, value) {
  return(object)
 })
 
+
+#' \code{kAnon_violations} 
+#' 
+#' returns the number of observations violating k-anonymity.
+#' 
+#' @param object a \code{\link{sdcMicroObj-class}} object
+#' @param weighted \code{TRUE} or \code{FALSE} defining if sampling weights should be taken into account
+#' @param k a positive number defining parameter k
+#' @return the number of records that are violating k-anonymity based on 
+#' unweighted sample data only (in case parameter \code{weighted} is \code{FALSE}) or computing
+#' the number of observations that are estimated to violate k-anonymity in the population in case 
+#' parameter \code{weighted} equals \code{TRUE}. 
+#'
+#' @export
+#' @rdname kAnon_violations
+#' @docType methods
+setGeneric("kAnon_violations", function(object, weighted, k) {
+  standardGeneric("kAnon_violations")
+})
+
+#' @rdname kAnon_violations
+#' @export
+setMethod(f="kAnon_violations", signature=c("sdcMicroObj", "logical", "numeric"),
+definition=function(object, weighted, k) {
+  stopifnot(k>0)
+  stopifnot(length(k)==1)
+  stopifnot(length(weighted)==1)
+  
+  if (weighted==TRUE) {
+    vv <- freq(object, type="Fk")
+  } else {
+    vv <- freq(object, type="fk")
+  }
+  k <- round(k)
+  res <- sum(vv < k)
+  attr(res,'k') <- k
+  attr(res,'weighted') <- weighted
+  return(res)
+})

@@ -1,3 +1,15 @@
+# 5.0.5
+- bugfix in sdcApp() when using R-objects as data input
+- bugfix in sdcApp() when button to perform kAnon() was "lost"
+- bugfix in sdcApp() when >= 10 keyvars were used in localSuppression
+- bugfix in sdcApp(): sort table of risky observations correctly
+- support shiny server for the GUI
+- new method kAnon_violations() returning the number of records violating k-anonymity in the sample or the population
+- fixes and improvements in parametrisation and error-handling in riskyCells()
+- minor fixes in sdc_guidelines vignette including a comment, that the guidelines have not yet been revised for sdcMicro version >= 5.0.0
+- pass (...) in writeSafeFile(..., format="csv")
+- fixes and improvements in localSuppression()
+
 # 5.0.4
 - new default theme "IHSN" for sdcApp()
 - fixing an issue in report() where  disclosure risk for original data was wrongly displayed if alpha-parameter was set

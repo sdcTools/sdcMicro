@@ -61,7 +61,7 @@ shinyServer(function(session, input, output) {
   # 1: modifications for microdata
   # code to read in microdata
   code_useRObj <- reactive({
-    cmd <- paste0("inputdata <- readMicrodata(")
+    cmd <- paste0("obj$inputdata <- readMicrodata(")
     cmd <- paste0(cmd, "path=",dQuote(input$sel_choose_df))
     cmd <- paste0(cmd, ", type=",dQuote("rdf"))
     cmd <- paste0(cmd, ", convertCharToFac=FALSE")
@@ -1467,6 +1467,7 @@ shinyServer(function(session, input, output) {
         for (nn in names(res)) {
           obj[[nn]] <- res[[nn]]
         }
+        obj$cur_selection_script <- "btn_export_script_1" # was 3 when exporting the problem
         obj$last_error <- NULL
         obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!
         updateNavbarPage(session, "mainnav", selected="Anonymize")
@@ -1490,6 +1491,7 @@ shinyServer(function(session, input, output) {
         for (nn in names(res)) {
           obj[[nn]] <- res[[nn]]
         }
+        obj$cur_selection_script <- "btn_export_script_1" # was 3 when exporting the problem
         obj$last_error <- NULL
         rm(res)
         obj$cur_selection_anon <- "btn_sel_anon_1" # jump to summary!

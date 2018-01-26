@@ -11,9 +11,9 @@ if (sys.calls()[[1]]!="sdcApp()") {### Beginning required code for deployment
   .startdir <- .guitheme <- .guijsfile <- NULL
   maxRequestSize <- 50
   options(shiny.maxRequestSize=ceiling(maxRequestSize)*1024^2)
-  
+
   .GlobalEnv$.startdir <- getwd()
-  
+
   theme="IHSN"
   .GlobalEnv$.guitheme <- "ihsn-root.css"
   .GlobalEnv$.guijsfile <- "js/ihsn-style.js"
@@ -93,7 +93,14 @@ runEvalStrMicrodat_no_errorchecking <- function(cmd, comment=NULL) {
 # runEvaluationString and update Objects for microdata-modifications
 runEvalStrMicrodat <- function(cmd, comment=NULL) {
   # evaluate using tryCatchFn()
-  cmdeval <- gsub("inputdata","obj$inputdata", cmd)
+  # if we read an existing object from R, we need to use sub (in case the obj is called inputdata)
+  is_from_df <- grep('type="rdf"', cmd)
+  if (length(is_from_df)>0) {
+    cmdeval <- sub("inputdata","obj$inputdata", cmd)
+  } else {
+    cmdeval <- gsub("inputdata","obj$inputdata", cmd)
+  }
+
   cmdeval <- strsplit(cmdeval, "<-")[[1]][2]
   evalstr <- paste0("res <- sdcMicro:::tryCatchFn({",cmdeval,"})")
   #cat("evalstr:", evalstr,"\n")
@@ -102,7 +109,6 @@ runEvalStrMicrodat <- function(cmd, comment=NULL) {
   if (!"simpleError" %in% class(res)) {
     obj$last_error <- NULL
     obj$inputdata <- res; rm(res)
-
     if (!is.null(comment)) {
       cmd <- paste0(comment,"\n",cmd)
     }
