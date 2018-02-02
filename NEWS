@@ -1,4 +1,4 @@
-# 5.0.5
+# 5.1.0
 - bugfix in sdcApp() when using R-objects as data input
 - bugfix in sdcApp() when button to perform kAnon() was "lost"
 - bugfix in sdcApp() when >= 10 keyvars were used in localSuppression
