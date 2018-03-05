@@ -13,7 +13,7 @@ dUtility(obj, ...)
 \item{...}{see arguments below
 \itemize{
 \item{xm: }{perturbed data}
-\item{method: }{method IL1 or eigen. More methods are implemented in
+\item{method: }{method IL1, IL1s or eigen. More methods are implemented in
 summary.micro()}}}
 }
 \value{
@@ -43,9 +43,10 @@ x <- Tarragona[, 5:7]
 y <- addNoise(x)$xm
 dRiskRMD(x, xm=y)
 dRisk(x, xm=y)
-dUtility(x, xm=y)
-dUtility(x, xm=y, method="eigen")
-dUtility(x, xm=y, method="robeigen")
+dUtility(x, xm = y, method = " IL1")
+dUtility(x, xm = y, method = " IL1s")
+dUtility(x, xm = y, method = "eigen")
+dUtility(x, xm = y, method = "robeigen")
 
 ## for objects of class sdcMicro:
 data(testdata2)
@@ -58,7 +59,7 @@ sdc <- createSdcObj(testdata2,
 
 }
 \references{
-for IL1s: see
+for IL1 and IL1s: see
 \url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf},
 
 Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New Disclosure
