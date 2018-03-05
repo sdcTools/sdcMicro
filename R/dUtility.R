@@ -14,12 +14,12 @@
 #' @param ... see arguments below
 #' \itemize{
 #' \item{xm: }{perturbed data}
-#' \item{method: }{method IL1 or eigen. More methods are implemented in
+#' \item{method: }{method IL1, IL1s or eigen. More methods are implemented in
 #' summary.micro()}}
 #' @return data utility or modified entry for data utility the \code{\link{sdcMicroObj-class}}.
 #' @author Matthias Templ
 #' @seealso \code{\link{dRisk}}, \code{\link{dRiskRMD}}
-#' @references for IL1s: see
+#' @references for IL1 and IL1s: see
 #' \url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf},
 #'
 #' Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New Disclosure
@@ -41,9 +41,10 @@
 #' y <- addNoise(x)$xm
 #' dRiskRMD(x, xm=y)
 #' dRisk(x, xm=y)
-#' dUtility(x, xm=y)
-#' dUtility(x, xm=y, method="eigen")
-#' dUtility(x, xm=y, method="robeigen")
+#' dUtility(x, xm = y, method = " IL1")
+#' dUtility(x, xm = y, method = " IL1s")
+#' dUtility(x, xm = y, method = "eigen")
+#' dUtility(x, xm = y, method = "robeigen")
 #'
 #' ## for objects of class sdcMicro:
 #' data(testdata2)
@@ -67,6 +68,7 @@ setMethod(f="dUtilityX", signature=c("sdcMicroObj"), definition=function(obj, ..
   xm <- get.sdcMicroObj(obj, type = "manipNumVars")
   utility <- get.sdcMicroObj(obj, type = "utility")
   utility$il1 <- dUtilityWORK(x = x, xm = xm, method = "IL1", ...)
+  utility$il1s <- dUtilityWORK(x = x, xm = xm, method = "IL1s", ...)
   utility$eigen <- dUtilityWORK(x = x, xm = xm, method = "eigen", ...)
   # utility$robeigen <- dUtilityWORK(x=x, xm=xm, method='robeigen',...)
   obj <- set.sdcMicroObj(obj, type = "utility", input = list(utility))
@@ -77,7 +79,7 @@ setMethod(f="dUtilityX", signature=c("data.frame"), definition=function(obj, ...
   dUtilityWORK(x = obj, ...)
 })
 
-dUtilityWORK <- function(x, xm, method = "IL1") {
+dUtilityWORK <- function(x, xm, method = "IL1s") {
   if (dim(x)[1] != dim(xm)[1]) {
     warnMsg <- "dimension of perturbed data and original data are different\n"
     obj <- addWarning(obj, warnMsg=warnMsg, method="dUtility", variable=NA)
@@ -87,9 +89,25 @@ dUtilityWORK <- function(x, xm, method = "IL1") {
   if (method == "IL1") {
     a <- x
     for (i in 1:dim(x)[2]) {
+      a[[i]] <- 100 * abs(x[[i]] - xm[[i]]) / (abs(x[[i]]))
+    }
+    infLoss1 <- sum(a, na.rm = TRUE)
+    return(infLoss1)
+  }
+  if (method == "IL1old") {
+    a <- x
+    for (i in 1:dim(x)[2]) {
       a[[i]] <- abs(x[[i]] - xm[[i]])/(sd(x[[i]], na.rm = TRUE) * sqrt(2))
     }
     infLoss1 <- 1/(dim(x)[2] * dim(x)[1]) * sum(a, na.rm = TRUE)
+    return(infLoss1)
+  }
+  if (method == "IL1s") {
+    a <- x
+    for (i in 1:dim(x)[2]) {
+      a[[i]] <- abs(x[[i]] - xm[[i]]) / (sd(x[[i]], na.rm = TRUE) * sqrt(2))
+    }
+    infLoss1 <- sum(a, na.rm = TRUE)
     return(infLoss1)
   }
   if (method == "eigen") {
