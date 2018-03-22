@@ -29,6 +29,8 @@
 
 <meta property="og:description" content="Various methods for adding noise to perturb continuous scaled variables." />
 <meta name="twitter:card" content="summary" />
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -51,8 +53,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">sdcMicro</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">sdcMicro</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.1</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -88,7 +94,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Adding noise to perturb data</h1>
-    <small>Source: <a href='https:/github.com/sdcTools/sdcMicro/blob/master/R/addNoise.r'><code>R/addNoise.r</code></a></small>
+    <small>Source: <a href='https://github.com/sdcTools/sdcMicro/blob/master/R/addNoise.r'><code>R/addNoise.r</code></a></small>
     </div>
 
     
@@ -97,7 +103,7 @@
 
     <pre class="usage"><span class='fu'>addNoise</span>(<span class='no'>obj</span>, <span class='kw'>variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>noise</span> <span class='kw'>=</span> <span class='fl'>150</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"additive"</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -422,7 +428,7 @@ doi: <a href='http://doi.org/10.1007/978-3-319-50272-4'>10.1007/978-3-319-50272-
 #&gt; 74               -137          250        182
 #&gt; 75              -6658         1909       1240
 #&gt; 76              -1103          262        184
-#&gt;  [ reached getOption("max.print") -- omitted 758 rows ]
+#&gt;  [ erreichte getOption("max.print") --  758 Zeilen ausgelassen ]
 #&gt; 
 #&gt; $xm
 #&gt;     FIXED.ASSETS CURRENT.ASSETS      TREASURY UNCOMMITTED.FUNDS PAID.UP.CAPITAL
@@ -656,7 +662,7 @@ doi: <a href='http://doi.org/10.1007/978-3-319-50272-4'>10.1007/978-3-319-50272-
 #&gt; 74        42566.51419  120385.1239  -88912.0323
 #&gt; 75      -113163.50618 -107141.4500   90025.6204
 #&gt; 76         4397.98600   32335.9558  207677.0316
-#&gt;  [ reached getOption("max.print") -- omitted 758 rows ]
+#&gt;  [ erreichte getOption("max.print") --  758 Zeilen ausgelassen ]
 #&gt; 
 #&gt; $method
 #&gt; [1] "addNoise: additive"

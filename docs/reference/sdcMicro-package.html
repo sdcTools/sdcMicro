@@ -38,6 +38,8 @@ at the source code and that there are no time-consuming meta-data management
 is necessary. However, the user should have a detailed knowledge about SDC
 when applying the methods on data." />
 <meta name="twitter:card" content="summary" />
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -60,8 +62,12 @@ when applying the methods on data." />
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">sdcMicro</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">sdcMicro</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.1</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -98,7 +104,7 @@ when applying the methods on data." />
     <div class="page-header">
     <h1>Statistical Disclosure Control (SDC) for the generation of protected
 microdata for researchers and for public use.</h1>
-    <small>Source: <a href='https:/github.com/sdcTools/sdcMicro/blob/master/R/sdcMicro-package.R'><code>R/sdcMicro-package.R</code></a></small>
+    <small>Source: <a href='https://github.com/sdcTools/sdcMicro/blob/master/R/sdcMicro-package.R'><code>R/sdcMicro-package.R</code></a></small>
     </div>
 
     
@@ -129,14 +135,14 @@ anonymization step carried out within the GUI is saved in a script which can
 then be easily modified and reloaded.</p>
 <table><tr><td> Package: </td>
 <td> sdcMicro</td>
-</tr><tr><td> Type: </td>
+</tr><tr><td><br /> Type: </td>
 <td> Package</td>
-</tr><tr><td> Version: </td>
+</tr><tr><td><br /> Version: </td>
 <td>
 2.5.9</td>
-</tr><tr><td> Date: </td>
+</tr><tr><td><br /> Date: </td>
 <td> 2009-07-22</td>
-</tr><tr><td> License: </td>
+</tr><tr><td><br /> License: </td>
 <td> GPL 2.0 </td>
 </tr></table>
     
@@ -354,7 +360,7 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 #&gt; </div><div class='input'><span class='fu'><a href='plotMicro.html'>plotMicro</a></span>(<span class='no'>m1</span>, <span class='fl'>1</span>, <span class='kw'>which.plot</span><span class='kw'>=</span><span class='fl'>1</span>)  <span class='co'># too less observations...</span>
 <span class='fu'>data</span>(<span class='no'>free1</span>)
 <span class='no'>free1</span> <span class='kw'>&lt;-</span> <span class='fu'>as.data.frame</span>(<span class='no'>free1</span>)
-<span class='fu'><a href='plotMicro.html'>plotMicro</a></span>(<span class='fu'><a href='microaggregation.html'>microaggregation</a></span>(<span class='no'>free1</span>[,<span class='fl'>31</span>:<span class='fl'>34</span>], <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"onedims"</span>), <span class='fl'>1</span>, <span class='kw'>which.plot</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='img'><img src='sdcMicro-package-1.png' alt='' width='700' height='432.632880098887' /></div><div class='img'><img src='sdcMicro-package-2.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+<span class='fu'><a href='plotMicro.html'>plotMicro</a></span>(<span class='fu'><a href='microaggregation.html'>microaggregation</a></span>(<span class='no'>free1</span>[,<span class='fl'>31</span>:<span class='fl'>34</span>], <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"onedims"</span>), <span class='fl'>1</span>, <span class='kw'>which.plot</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='img'><img src='sdcMicro-package-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='sdcMicro-package-2.png' alt='' width='700' height='433' /></div><div class='input'>
 
 <span class='co'>## disclosure risk (interval) and data utility:</span>
 <span class='no'>m1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='microaggregation.html'>microaggregation</a></span>(<span class='no'>Tarragona</span>, <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"onedims"</span>, <span class='kw'>aggr</span><span class='kw'>=</span><span class='fl'>3</span>)
@@ -372,7 +378,7 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 #&gt; wt     44.19266  -0.3727207  0.9573790</div><div class='input'><span class='fu'>cov</span>(<span class='fu'><a href='dataGen.html'>dataGen</a></span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>],<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>200</span>))</div><div class='output co'>#&gt;              hp        drat         wt
 #&gt; hp   4271.54581 -13.4881411 37.7222498
 #&gt; drat  -13.48814   0.2598361 -0.3013966
-#&gt; wt     37.72225  -0.3013966  0.8463775</div><div class='input'><span class='fu'>pairs</span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>])</div><div class='img'><img src='sdcMicro-package-3.png' alt='' width='700' height='432.632880098887' /></div><div class='input'><span class='fu'>pairs</span>(<span class='fu'><a href='dataGen.html'>dataGen</a></span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>],<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>200</span>))</div><div class='img'><img src='sdcMicro-package-4.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+#&gt; wt     37.72225  -0.3013966  0.8463775</div><div class='input'><span class='fu'>pairs</span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>])</div><div class='img'><img src='sdcMicro-package-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>pairs</span>(<span class='fu'><a href='dataGen.html'>dataGen</a></span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>],<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>200</span>))</div><div class='img'><img src='sdcMicro-package-4.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## PRAM</span>
 
 <span class='fu'>set.seed</span>(<span class='fl'>123</span>)

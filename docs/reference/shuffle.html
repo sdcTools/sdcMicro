@@ -29,6 +29,8 @@
 
 <meta property="og:description" content="Data shuffling and General Additive Data Perturbation." />
 <meta name="twitter:card" content="summary" />
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -51,8 +53,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">sdcMicro</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">sdcMicro</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.1</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -88,7 +94,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Shuffling and EGADP</h1>
-    <small>Source: <a href='https:/github.com/sdcTools/sdcMicro/blob/master/R/shuffle.R'><code>R/shuffle.R</code></a></small>
+    <small>Source: <a href='https://github.com/sdcTools/sdcMicro/blob/master/R/shuffle.R'><code>R/shuffle.R</code></a></small>
     </div>
 
     
@@ -98,7 +104,7 @@
     <pre class="usage"><span class='fu'>shuffle</span>(<span class='no'>obj</span>, <span class='no'>form</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"ds"</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covmethod</span> <span class='kw'>=</span> <span class='st'>"spearman"</span>,
   <span class='kw'>regmethod</span> <span class='kw'>=</span> <span class='st'>"lm"</span>, <span class='kw'>gadp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -197,7 +203,7 @@ Berlin/Heidelberg, 2008, ISBN: 978-3-540-87470-6, pp. 14-25.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>Prestige</span>,<span class='kw'>package</span><span class='kw'>=</span><span class='st'>"car"</span>)
 <span class='no'>form</span> <span class='kw'>&lt;-</span> <span class='fu'>formula</span>(<span class='no'>income</span> + <span class='no'>education</span> ~ <span class='no'>women</span> + <span class='no'>prestige</span> + <span class='no'>type</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>Prestige</span>)
-<span class='no'>sh</span> <span class='kw'>&lt;-</span> <span class='fu'>shuffle</span>(<span class='kw'>obj</span><span class='kw'>=</span><span class='no'>Prestige</span>,<span class='no'>form</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: rows with missing values have been imputed!</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>Prestige</span>[,<span class='fu'>c</span>(<span class='st'>"income"</span>, <span class='st'>"education"</span>)])</div><div class='img'><img src='shuffle-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'><span class='fu'>plot</span>(<span class='no'>sh</span>$<span class='no'>sh</span>)</div><div class='img'><img src='shuffle-2.png' alt='' width='700' height='432.632880098887' /></div><div class='input'><span class='fu'>colMeans</span>(<span class='no'>Prestige</span>[,<span class='fu'>c</span>(<span class='st'>"income"</span>, <span class='st'>"education"</span>)])</div><div class='output co'>#&gt;     income  education 
+<span class='no'>sh</span> <span class='kw'>&lt;-</span> <span class='fu'>shuffle</span>(<span class='kw'>obj</span><span class='kw'>=</span><span class='no'>Prestige</span>,<span class='no'>form</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: rows with missing values have been imputed!</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>Prestige</span>[,<span class='fu'>c</span>(<span class='st'>"income"</span>, <span class='st'>"education"</span>)])</div><div class='img'><img src='shuffle-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot</span>(<span class='no'>sh</span>$<span class='no'>sh</span>)</div><div class='img'><img src='shuffle-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>colMeans</span>(<span class='no'>Prestige</span>[,<span class='fu'>c</span>(<span class='st'>"income"</span>, <span class='st'>"education"</span>)])</div><div class='output co'>#&gt;     income  education 
 #&gt; 6797.90196   10.73804 </div><div class='input'><span class='fu'>colMeans</span>(<span class='no'>sh</span>$<span class='no'>sh</span>)</div><div class='output co'>#&gt;     income  education 
 #&gt; 6797.90196   10.73804 </div><div class='input'><span class='fu'>cor</span>(<span class='no'>Prestige</span>[,<span class='fu'>c</span>(<span class='st'>"income"</span>, <span class='st'>"education"</span>)], <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"spearman"</span>)</div><div class='output co'>#&gt;             income education
 #&gt; income    1.000000  0.573999
