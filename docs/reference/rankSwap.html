@@ -32,6 +32,8 @@ original variables are preserved, and second, the values in each record are
 disturbed.  To be used on numeric or ordinal variables where the rank can be
 determined and the correlation coefficient makes sense." />
 <meta name="twitter:card" content="summary" />
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -54,8 +56,12 @@ determined and the correlation coefficient makes sense." />
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">sdcMicro</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">sdcMicro</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.1</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -91,7 +97,7 @@ determined and the correlation coefficient makes sense." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Rank Swapping</h1>
-    <small>Source: <a href='https:/github.com/sdcTools/sdcMicro/blob/master/R/rankSwap.R'><code>R/rankSwap.R</code></a></small>
+    <small>Source: <a href='https://github.com/sdcTools/sdcMicro/blob/master/R/rankSwap.R'><code>R/rankSwap.R</code></a></small>
     </div>
 
     
@@ -104,7 +110,7 @@ determined and the correlation coefficient makes sense.</p>
     <pre class="usage"><span class='fu'>rankSwap</span>(<span class='no'>obj</span>, <span class='kw'>variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>TopPercent</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>BottomPercent</span> <span class='kw'>=</span> <span class='fl'>5</span>,
   <span class='kw'>K0</span> <span class='kw'>=</span> -<span class='fl'>1</span>, <span class='kw'>R0</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='kw'>P</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>

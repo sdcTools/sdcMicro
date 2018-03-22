@@ -29,6 +29,8 @@
 
 <meta property="og:description" content="Algorithm to achieve k-anonymity by performing local suppression." />
 <meta name="twitter:card" content="summary" />
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -51,8 +53,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">sdcMicro</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">sdcMicro</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.1</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -88,7 +94,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Local Suppression to obtain k-anonymity</h1>
-    <small>Source: <a href='https:/github.com/sdcTools/sdcMicro/blob/master/R/localSuppression.R'><code>R/localSuppression.R</code></a></small>
+    <small>Source: <a href='https://github.com/sdcTools/sdcMicro/blob/master/R/localSuppression.R'><code>R/localSuppression.R</code></a></small>
     </div>
 
     
@@ -99,7 +105,7 @@
 
 <span class='fu'>kAnon</span>(<span class='no'>obj</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>importance</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>combs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -197,7 +203,7 @@ Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 #&gt; 1 1 (1) 0 (0) 3 (3)
 #&gt; 
 #&gt; 2-anonymity == TRUE
-#&gt; -----------------------</div><div class='input'><span class='fu'>plot</span>(<span class='no'>localS</span>)</div><div class='img'><img src='localSuppression-1.png' alt='' width='700' height='432.632880098887' /></div><span class='co'># NOT RUN {</span>
+#&gt; -----------------------</div><div class='input'><span class='fu'>plot</span>(<span class='no'>localS</span>)</div><div class='img'><img src='localSuppression-1.png' alt='' width='700' height='433' /></div><span class='co'># NOT RUN {</span>
 <span class='co'>## for objects of class sdcMicro, no stratification</span>
 <span class='fu'>data</span>(<span class='no'>testdata2</span>)
 <span class='no'>sdc</span> <span class='kw'>&lt;-</span> <span class='fu'>createSdcObj</span>(<span class='no'>testdata2</span>,

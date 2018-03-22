@@ -29,6 +29,8 @@
 
 <meta property="og:description" content="Fast generation of (primitive) synthetic multivariate normal data." />
 <meta name="twitter:card" content="summary" />
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -51,8 +53,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">sdcMicro</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">sdcMicro</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.1</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -88,7 +94,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Fast generation of synthetic data</h1>
-    <small>Source: <a href='https:/github.com/sdcTools/sdcMicro/blob/master/R/dataGen.r'><code>R/dataGen.r</code></a></small>
+    <small>Source: <a href='https://github.com/sdcTools/sdcMicro/blob/master/R/dataGen.r'><code>R/dataGen.r</code></a></small>
     </div>
 
     
@@ -97,7 +103,7 @@
 
     <pre class="usage"><span class='fu'>dataGen</span>(<span class='no'>obj</span>, <span class='no'>...</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -148,7 +154,7 @@ general, not follows a multivariate normal distribution.</p>
 #&gt; wt     44.19266  -0.3727207  0.9573790</div><div class='input'><span class='fu'>cov</span>(<span class='fu'>dataGen</span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>]))</div><div class='output co'>#&gt;              hp        drat         wt
 #&gt; hp   4419.70027 -13.9514919 40.9857637
 #&gt; drat  -13.95149   0.2828721 -0.3316736
-#&gt; wt     40.98576  -0.3316736  0.8840920</div><div class='input'><span class='fu'>pairs</span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>])</div><div class='img'><img src='dataGen-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'><span class='fu'>pairs</span>(<span class='fu'>dataGen</span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>]))</div><div class='img'><img src='dataGen-2.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+#&gt; wt     40.98576  -0.3316736  0.8840920</div><div class='input'><span class='fu'>pairs</span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>])</div><div class='img'><img src='dataGen-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>pairs</span>(<span class='fu'>dataGen</span>(<span class='no'>mtcars</span>[,<span class='fl'>4</span>:<span class='fl'>6</span>]))</div><div class='img'><img src='dataGen-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## for objects of class sdcMicro:</span>
 <span class='fu'>data</span>(<span class='no'>testdata2</span>)
 <span class='no'>sdc</span> <span class='kw'>&lt;-</span> <span class='fu'>createSdcObj</span>(<span class='no'>testdata2</span>,
