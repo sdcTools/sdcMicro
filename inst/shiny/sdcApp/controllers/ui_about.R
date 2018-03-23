@@ -2,15 +2,15 @@ output$credits <- renderUI({
   out <- fluidRow(
     column(width = 8, offset = 2, h4("Implementation")),
     column(width = 8, offset = 2, p("This app was developed by", a(tags$strong("data-analysis OG"), href="http://www.data-analysis.at", target="_blank"))),
-    column(width = 8, offset = 2, tags$img(src="imgs/logo_da.jpg"), tags$br())
+    column(width = 8, offset = 2, tags$img(src="sdcwww/imgs/logo_da.jpg"), tags$br())
   )
   out <- list(out, fluidRow(
     column(width = 8, offset = 2, h4("Funding")),
     column(width = 8, offset = 2, p("The work was funded by the", a(tags$strong("World Bank Group"), href="http://www.worldbank.org/", target="_blank"))),
-    column(width = 8, offset = 2, tags$img(src="imgs/logo_worldbank.png"), tags$br()),
+    column(width = 8, offset = 2, tags$img(src="sdcwww/imgs/logo_worldbank.png"), tags$br()),
     column(width = 8, offset = 2, p("and the Department for International Development",
       a(tags$strong("DfID"), href="https://www.gov.uk/government/organisations/department-for-international-development", target="_blank"))),
-    column(width = 8, offset = 2, tags$img(src="imgs/logo_ukaid.png", width = 70))
+    column(width = 8, offset = 2, tags$img(src="sdcwww/imgs/logo_ukaid.png", width = 70))
   ))
   out <- list(out, fluidRow(
     column(width = 8, offset = 2, h4("Special Thanks")),

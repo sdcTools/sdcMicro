@@ -7,16 +7,16 @@ library(DT)
 library(shinyBS)
 library(data.table)
 
-if (sys.calls()[[1]]!="sdcApp()") {### Beginning required code for deployment
+if (!getShinyOption("sdcAppInvoked", FALSE)) {### Beginning required code for deployment
   .startdir <- .guitheme <- .guijsfile <- NULL
   maxRequestSize <- 50
   options(shiny.maxRequestSize=ceiling(maxRequestSize)*1024^2)
 
-  .GlobalEnv$.startdir <- getwd()
+  shinyOptions(.startdir = getwd())
 
   theme="IHSN"
-  .GlobalEnv$.guitheme <- "ihsn-root.css"
-  .GlobalEnv$.guijsfile <- "js/ihsn-style.js"
+  shinyOptions(.guitheme = "ihsn-root.css")
+  shinyOptions(.guijsfile = "js/ihsn-style.js")
 }## End of deployment code
 
 
@@ -201,7 +201,7 @@ myErrBtn <- function(id, label, btn.style="danger") {
 # does not immediately react to user input
 customTextInput <- function(inputId, label, value = "") {
   tagList(
-    singleton(tags$head(tags$script(src = "js/customTextInputBinding.js"))),
+    singleton(tags$head(tags$script(src = "sdcwww/js/customTextInputBinding.js"))),
     tags$label(label, `for` = inputId),
     tags$input(id = inputId, type = "text", value = value, class = "returnTextInput")
   )
@@ -235,8 +235,8 @@ summaryfn <- function(x) {
 }
 
 # global, reactive data-structure
-data(testdata)
-data(testdata2)
+data(testdata, envir = environment())
+data(testdata2, envir = environment())
 testdata$urbrur <- factor(testdata$urbrur)
 testdata$urbrur[sample(1:nrow(testdata), 10)] <- NA
 testdata$roof <- factor(testdata$roof)
@@ -397,7 +397,7 @@ obj$stata_labs <- NULL
 obj$stata_varnames <- NULL
 
 # the path, where all output will be saved to
-pp <- .startdir
+pp <- getShinyOption(".startdir", getwd())
 if (file.access(pp, mode=2)==0) {
   obj$path_export <- pp
 } else {
