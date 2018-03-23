@@ -201,7 +201,7 @@ myErrBtn <- function(id, label, btn.style="danger") {
 # does not immediately react to user input
 customTextInput <- function(inputId, label, value = "") {
   tagList(
-    singleton(tags$head(tags$script(src = "js/customTextInputBinding.js"))),
+    singleton(tags$head(tags$script(src = "sdcwww/js/customTextInputBinding.js"))),
     tags$label(label, `for` = inputId),
     tags$input(id = inputId, type = "text", value = value, class = "returnTextInput")
   )
