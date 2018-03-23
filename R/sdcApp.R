@@ -16,14 +16,18 @@
 #' }
 #' @param ... arguments (e.g \code{host}) that are passed through \code{\link[shiny]{runApp}} when
 #' starting the shiny application
+#' @param shiny.server Setting this parameter to \code{TRUE} will return the app in the form of an 
+#' object rather than invoking it. This is useful for deploying \code{sdcApp} via \code{shiny-server}.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' sdcApp(theme="flatly")
 #' }
-sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN", ...) {
-  .startdir <- .guitheme <- .guijsfile <- NULL
+sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN", ..., shiny.server = FALSE) {
+  if(!shiny.server)
+    runApp(sdcApp(maxRequestSize, debug, theme, ..., shiny.server = TRUE))
+  
   if (!is.numeric(maxRequestSize)) {
     stop("argument 'maxRequestSize' must be numeric!\n")
   }
@@ -38,33 +42,44 @@ sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN", ...) {
   options(shiny.fullstacktrace=debug)
   options(shiny.trace=debug)
 
-  .GlobalEnv$.startdir <- getwd()
-  on.exit(rm(.startdir, envir=.GlobalEnv))
+  #.GlobalEnv$.startdir <- getwd()
+  shinyOptions(.startdir = getwd())
+  shinyOptions(.appDir = appDir)
 
   if (!theme %in% c("yeti","journal","flatly", "IHSN")) {
     stop("Invalid value for argument 'theme'\n")
   }
 
   if (theme=="yeti") {
-    .GlobalEnv$.guitheme <- "bootswatch_yeti.css"
-    .GlobalEnv$.guijsfile <- NULL
+    shinyOptions(.guitheme = "bootswatch_yeti.css")
+    shinyOptions(.guijsfile = NULL)
   }
 
   if (theme=="journal") {
-    .GlobalEnv$.guitheme <- "bootswatch_journal.css"
-    .GlobalEnv$.guijsfile <- NULL
+    shinyOptions(.guitheme = "bootswatch_journal.css")
+    shinyOptions(.guijsfile = NULL)
   }
   if (theme=="flatly") {
-    .GlobalEnv$.guitheme <- "bootswatch_flatly.css"
-    .GlobalEnv$.guijsfile <- NULL
+    shinyOptions(.guitheme = "bootswatch_flatly.css")
+    shinyOptions(.guijsfile = NULL)
   }
 
   if (theme=="IHSN") {
-    .GlobalEnv$.guitheme <- "ihsn-root.css"
-    .GlobalEnv$.guijsfile <- "js/ihsn-style.js"
+    shinyOptions(.guitheme = "ihsn-root.css")
+    shinyOptions(.guijsfile = "js/ihsn-style.js")
   }
+  
+  source_from_appdir <- function(filename){
+    source(file.path(appDir, filename), local = parent.frame(), chdir = TRUE)$value
+  }
+  
+  shinyOptions(sdcAppInvoked = TRUE)
+  source_from_appdir("global.R")
+  shinyOptions(sdcAppInvoked = NULL)
 
-  on.exit(rm(.guitheme, envir=.GlobalEnv))
-
-  shiny::runApp(appDir, display.mode="normal", launch.browser=TRUE, ...)
+  shiny::shinyApp(
+    ui = source_from_appdir("ui.R"),
+    server = source_from_appdir("server.R"),
+    options = list(launch.browser=TRUE, ...)
+  )
 }
