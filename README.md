@@ -7,4 +7,4 @@
 sdcMicro
 ========
 
-Readme for R-Package sdcMicro
+**sdcMicro** is an R-package to anonymize microdata. Most functionalities of the package are also available via an interactive shiny-based graphical user interface.

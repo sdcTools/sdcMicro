@@ -5,6 +5,10 @@ Title: Statistical Disclosure Control Methods for Anonymization of Microdata and
 Version: 5.1.1
 Date: 2018-02-05
 Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl
+Authors@R: c(person("Bernhard", "Meindl", email = "Bernhard.Meindl@statistik.gv.at", 
+                    role = c("aut")),
+              person("Alexander", "Kowarik", email="Alexander.Kowarik@statistik.gv.at", role = "aut"),
+              person("Matthias", "Templ", email="matthias.templ@gmail.com", role = c("aut", "cre")))
 Maintainer: Matthias Templ <matthias.templ@gmail.com>
 Description: Data from statistical agencies and other institutions are mostly
     confidential. This package can be used for the generation of anonymized
