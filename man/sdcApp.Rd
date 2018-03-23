@@ -4,7 +4,8 @@
 \alias{sdcApp}
 \title{sdcApp}
 \usage{
-sdcApp(maxRequestSize = 50, debug = FALSE, theme = "IHSN", ...)
+sdcApp(maxRequestSize = 50, debug = FALSE, theme = "IHSN", ...,
+  shiny.server = FALSE)
 }
 \arguments{
 \item{maxRequestSize}{(numeric) number defining the maximum allowed filesize (in megabytes)
@@ -22,6 +23,9 @@ for uploaded files, defaults to 50MB}
 
 \item{...}{arguments (e.g \code{host}) that are passed through \code{\link[shiny]{runApp}} when
 starting the shiny application}
+
+\item{shiny.server}{Setting this parameter to \code{TRUE} will return the app in the form of an 
+object rather than invoking it. This is useful for deploying \code{sdcApp} via \code{shiny-server}.}
 }
 \value{
 starts the interactive graphical user interface which may be used to perform the
