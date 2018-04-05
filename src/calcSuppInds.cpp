@@ -1,6 +1,9 @@
 #include <Rcpp.h>
 using namespace Rcpp;
-
+void R_init_sdcMicro(DllInfo* info) {
+  R_registerRoutines(info, NULL, NULL, NULL, NULL);
+  R_useDynamicSymbols(info, TRUE);
+}
 /*
  * calculates distances in a matrix and returns
  * indices with minimal distance > 0
