@@ -2,10 +2,10 @@ Package: sdcMicro
 Type: Package
 Title: Statistical Disclosure Control Methods for Anonymization of Microdata and
     Risk Estimation
-Version: 5.1.1
-Date: 2018-02-05
+Version: 5.1.2
+Date: 2018-04-05
 Author: Matthias Templ, Alexander Kowarik, Bernhard Meindl
-Authors@R: c(person("Bernhard", "Meindl", email = "Bernhard.Meindl@statistik.gv.at", 
+Authors@R: c(person("Bernhard", "Meindl", email = "Bernhard.Meindl@statistik.gv.at",
                     role = c("aut")),
               person("Alexander", "Kowarik", email="Alexander.Kowarik@statistik.gv.at", role = "aut"),
               person("Matthias", "Templ", email="matthias.templ@gmail.com", role = c("aut", "cre")))
@@ -28,6 +28,7 @@ Imports:
     stats,
     graphics,
     car,
+    carData,
     rmarkdown,
     knitr,
     data.table,
