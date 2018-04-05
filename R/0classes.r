@@ -7,7 +7,8 @@
 #' @import Rcpp
 #' @import robustbase
 #' @import MASS
-#' @import car
+#' @import carData
+#' @importFrom car powerTransform bcPower
 #' @import cluster
 #' @import e1071
 #' @import tools
