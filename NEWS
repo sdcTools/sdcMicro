@@ -1,4 +1,8 @@
-# 5.1.1  
+# 5.1.2
+- improvements in sdcApp()
+- updating dependencies due to new version of package car
+
+# 5.1.1
 - bug in IL1 resolved. Now distiction of methods IL1 and IL1s
 
 # 5.1.0
