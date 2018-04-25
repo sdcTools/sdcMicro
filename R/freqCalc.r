@@ -128,8 +128,6 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
   # split in complete and non-complete
   dat_without_na <- na.omit(agg, cols=keyVars_n)
   dat_with_na <- na.omit(agg, cols=keyVars_n, invert=TRUE)
-  if (nrow(dat_without_na) == 0)
-    dat_with_na <- copy(agg)
 
   # special treatment - one key variable containing missings
   if (length(keyVars_n)==1) {
@@ -165,7 +163,7 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
 
   un[,keyid:=.I]
   naind[,sortvar:=.I]
-  naind <- merge(naind, un, by=keyVars_n, suffixes = c("", ".y"))
+  naind <- merge(naind, un, by=keyVars_n)
 
   # we need to resort so that later in the look we can use 'keyid' to set the key
   # for the complete dataset
