@@ -163,7 +163,7 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
 
   un[,keyid:=.I]
   naind[,sortvar:=.I]
-  naind <- merge(naind, un, by=keyVars_n)
+  naind <- merge(naind, un, by=keyVars_n, suffixes = c("", ".y"))
 
   # we need to resort so that later in the look we can use 'keyid' to set the key
   # for the complete dataset
