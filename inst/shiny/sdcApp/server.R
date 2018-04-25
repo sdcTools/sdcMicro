@@ -649,6 +649,7 @@ shinyServer(function(session, input, output) {
     cmd <- paste0("writeSafeFile(obj=sdcObj, format=",dQuote(input$dat_exp_type), ", randomizeRecords=",dQuote(input$rb_export_randomizeorder))
     if (input$dat_exp_type=="dta") {
       cmd <- paste0(cmd,", lab=obj$stata_labs")
+      cmd <- paste0(cmd,", version=", input$export_dta_version)
     }
     if (input$dat_exp_type=="csv") {
       cmd <- paste0(cmd, ", col.names=",input$export_csv_header)
