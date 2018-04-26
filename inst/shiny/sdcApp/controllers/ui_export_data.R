@@ -70,8 +70,14 @@ output$ui_export_data <- renderUI({
     fluidRow(column(12, p(txt, align="center")))
   })
   output$ui_export_stata <- renderUI({
-    txt <- list("The file will be exported using", code("write_dta()"), "from package", code("haven"),".")
-    fluidRow(column(12, p(txt, align="center")))
+    txt1 <- list("The file will be exported using", code("write_dta()"), "from package", code("haven"),".")
+    rb1 <- radioButtons("export_dta_version", label=p("To which version of STATA would you like to export?"), 
+                        choices=c("Version 8" = 8,"Version 9" = 9, "Version 10" = 10, "Version 11" = 11,
+                                  "Version 12" = 12, "Version 13" = 13, "Version 14" = 14), inline=TRUE)
+    
+    return(fluidRow(
+      column(12, p(txt1, align="center")),
+      column(12, rb1, align="center")))
   })
   rb_exptype <- radioButtons("dat_exp_type", label=p("Select file format for export", align="center"),
     choices=c("R-dataset (.RData)"="rdata","SPSS-file (.sav)"="sav","CSV-file (.csv)"="csv", "STATA-file (.dta)"="dta", "SAS-file (.sas7bdat)"="sas"),
