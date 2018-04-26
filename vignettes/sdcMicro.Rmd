@@ -601,6 +601,10 @@ Using this input, the desired output format can be specified. The possible choic
   - **Field separator**: allows to specify the separation character, possible choices are `Comma` (the default), `Semicolon` and `Tab`
   - **Decimal separator**: allows to specify the decimal character, possible choices are `Decimal point` (the default) and `Decimal comma`
 
+If `STATA-File` is selected, an additional radio button input is shown:
+
+  - **To which version of STATA would you like to export?**: allows to select the version of STATA to export the data to, as earlier versions of STATA cannot open STATA file formats of later versions. Versions 8 to 14 are available.
+
 **Randomize Order of Observations**
 
 This set of radio buttons allows to choose if the observations in the dataset should be randomized. The possible choices are `No randomization` (the default) and `Randomization at record level`. In the case of the former, the order of records remains unchanged. If `Randomization at record level` is chosen, the records of the dataset are randomly changed. In the case where a household/cluster variable was selected when specifying the current sdc problem as described [here](setup_sdcproblem), two additional options are possible. If `Randomize by hierarchical identifier` is selected, the values of this identification variable are randomized across the dataset. If the user opts to choose `Randomize by hierarchical identifier and within hierarchical units`, not only are the values of the household identification variable randomly changed, the order of records within the households/clusters is also permuted.
