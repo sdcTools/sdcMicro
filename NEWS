@@ -1,3 +1,7 @@
+# 5.3.0
+ - Add versions for Stata export
+ - add parameter `shiny.server` to `sdcApp` (to make it easily possible to run the app on a shiny server)
+ 
 # 5.2.0
 - improvements in sdcApp()
 - updating dependencies due to new version of package car

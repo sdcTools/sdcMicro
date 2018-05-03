@@ -2,8 +2,8 @@ Package: sdcMicro
 Type: Package
 Title: Statistical Disclosure Control Methods for Anonymization of Microdata and
     Risk Estimation
-Version: 5.2.0
-Date: 2018-04-05
+Version: 5.3.0
+Date: 2018-05-03
 Authors@R: c(
   person("Matthias", "Templ", email="matthias.templ@gmail.com", role = c("aut", "cre")),
   person("Bernhard", "Meindl", email = "Bernhard.Meindl@statistik.gv.at", role = c("aut")),
