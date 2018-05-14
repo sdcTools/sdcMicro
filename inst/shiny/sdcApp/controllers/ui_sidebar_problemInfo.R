@@ -1,5 +1,6 @@
 output$tabinfo_sb_results <- output$tabinfo_sb_anonymize <- renderUI({
   inp <- infodat()$df
+  inp[,3] <- as.character(inp[,3])
   if (is.null(inp)) {
     return(NULL)
   }
