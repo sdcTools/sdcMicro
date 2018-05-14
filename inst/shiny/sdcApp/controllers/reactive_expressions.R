@@ -396,7 +396,7 @@ info_localsupp <- reactive({
   if (is.null(curObj)) {
     return(NULL)
   }
-  curObj@localSuppression$totalSupps
+  curObj@localSuppression$supps
 })
 
 ## information on current sdcProblem used in sidebars
