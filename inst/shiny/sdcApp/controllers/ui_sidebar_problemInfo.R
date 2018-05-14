@@ -8,7 +8,7 @@ output$tabinfo_sb_results <- output$tabinfo_sb_anonymize <- renderUI({
     column(12, h4("Variable selection"), align="center"),
     column(12, DT::renderDataTable({
       inp
-    }, rownames=FALSE, colnames = c("Variable name", "Type", "Suppressions"), selection='none', style='bootstrap', class='table-condensed',
+    }, rownames=FALSE, colnames = c("Variable name", "Type", "Additional suppressions by local suppression algorithm"), selection='none', style='bootstrap', class='table-condensed',
     options = list(searching=FALSE, scrollX=TRUE, paging=FALSE, ordering=FALSE, bInfo=FALSE)), align="center")
   )
 })

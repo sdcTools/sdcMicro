@@ -149,20 +149,27 @@ output$ui_sdcObj_summary <- renderUI({
       txt <- NULL
     } else {
       meth <- "kAnon()"
+      txt <- "Below the number of supressions (values set to a missing value (NA)) due to the last run of the local suppression algorithm."
+      txt <- paste0(txt, " The table also displays the number of missing values (NA) per variable before applying the local suppresion algorithm as well as the ")
+      txt <- paste0(txt, "the total number of missing values in each variable after applying local suppression (sum of intial missings and suppressions).")
       if (length(x$strataVars)>0) {
-        txt <- "Note: k-anonymity was applied per strata!"
+        txt2 <- "Note: k-anonymity was applied per strata!"
       } else {
-        txt <- NULL
+        txt2 <- NULL
       }
     }
 
     dt <- data.table(keyVar=x$supps$KeyVar)
     dt[,v1:=paste0(x$supps[[2]]," (",x$supps[[3]],"%)")]
-    dt[,v2:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
-    setnames(dt, c("Key variable", paste("Additional suppressions due to last run of",meth), "Total number of missing values (NA) in variable"))
+    dt[,v2:=paste0(x$suppsT[[2]] - x$supps[[2]]," (",prettyF(as.numeric(100*((x$suppsT[[2]] - x$supps[[2]])/nrow(curObj@origData))), digits=3),"%)")]
+    dt[,v3:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
+    
+    setnames(dt, c("Key variable", "Number of suppressions", 
+                   "Number of initial missing values (NA) before applying local suppression", "Total number of missing values (NA) in variable after applying local supression"))
     out <- list(fluidRow(
       column(12, h4("Information on local suppression") ),
       column(12, p(txt)),
+      column(12, p(txt2)),
       column(12, renderTable(dt), class="wn-info-table")))
   })
   output$show_info_pram <- renderUI({
