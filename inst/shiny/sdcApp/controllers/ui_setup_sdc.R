@@ -165,7 +165,7 @@ output$ui_sdcObj_summary <- renderUI({
     dt[,v3:=paste0(x$suppsT[[2]]," (",x$suppsT[[3]],"%)")]
     
     setnames(dt, c("Key variable", "Number of suppressions", 
-                   "Number of initial missing values (NA) before applying local suppression", "Total number of missing values (NA) in variable after applying local supression"))
+                   "Total missing values (NA) before applying local suppression", "Total missing values (NA) after applying local supression"))
     out <- list(fluidRow(
       column(12, h4("Information on local suppression") ),
       column(12, p(txt)),
