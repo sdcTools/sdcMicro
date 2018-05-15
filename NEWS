@@ -1,7 +1,9 @@
 # 5.3.0
- - Add versions for Stata export
- - add parameter `shiny.server` to `sdcApp` (to make it easily possible to run the app on a shiny server)
- 
+- Add versions for Stata export
+- add parameter `shiny.server` to `sdcApp` (to make it easily possible to run the app on a shiny server)
+- fixes due to new data.table version
+- improvements in sdcApp()
+
 # 5.2.0
 - improvements in sdcApp()
 - updating dependencies due to new version of package car
