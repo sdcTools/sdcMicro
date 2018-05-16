@@ -38,6 +38,7 @@ Allows to compute risky (unweighted) combinations of key variables either up to 
 identification level. This mimics the approach taken in mu-argus.
 }
 \examples{
+\dontrun{
 ## data.frame method / all combinations up to maxDim
 riskyCells(testdata2, keyVars=c(1:5), threshold=c(50,25,10,5),
   useIdentificationLevel=FALSE, maxDim=4)
@@ -65,6 +66,7 @@ r1 <- riskyCells(sdc, useIdentificationLevel=FALSE, threshold=c(10,5,3), maxDim=
 
 ## sdcMicroObj-method / using identification levels
 riskyCells(sdc, useIdentificationLevel=TRUE, threshold=10, level=c(c(1,1,3,4,5,5,5)))
+}
 }
 \author{
 Bernhard Meindl
