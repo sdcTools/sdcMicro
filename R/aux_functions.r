@@ -134,8 +134,8 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
     standardizeInput(obj, numVars), standardizeInput(obj, pramVars),
     standardizeInput(obj, weightVar), standardizeInput(obj, hhId),
     standardizeInput(obj, strataVar), standardizeInput(obj, sensibleVar))
-  if (!is.null(ghostVars )) {
-    for ( i in seq_along(ghostVars)) {
+  if (!is.null(ghostVars)) {
+    for (i in seq_along(ghostVars)) {
       usedVars <- c(usedVars, standardizeInput(obj, ghostVars[[i]][[2]]))
     }
   }
@@ -143,7 +143,7 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
   # exclude variables if required
   if (!is.null(excludeVars)) {
     excludeVarsInd <- standardizeInput(obj, excludeVars)
-    if ( any(excludeVarsInd %in% usedVars) ) {
+    if (any(excludeVarsInd %in% usedVars)) {
       stop("You have specified variables in 'excludeVars' that cannot be removed!\n")
     }
     obj@origData <- obj@origData[,-c(excludeVarsInd),drop=FALSE]
@@ -406,6 +406,7 @@ setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function
   n <- get.sdcMicroObj(obj, type="manipNumVars")
   g <- get.sdcMicroObj(obj, type="manipGhostVars")
   s <- get.sdcMicroObj(obj, type="manipStrataVar")
+  origKeys <- o[,colnames(k)]
   if (!is.null(k) && !ignoreKeyVars)
     o[, colnames(k)] <- k
   if (!is.null(p) && !ignorePramVars)
@@ -419,7 +420,22 @@ setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function
   ## quick and dirty: ensure that keyVars are factors:
   if (!is.null(k) && !ignoreKeyVars) {
     for (i in 1:length(colnames(k))) {
-      o[, colnames(k)[i]] <- as.factor(o[, colnames(k)[i]])
+      cc <- class(origKeys[, colnames(k)[i]])
+      v_p <- o[,colnames(k)[i]]
+      if (cc!=class(v_p)) {
+        if (cc=="integer") {
+          o[,colnames(k)[i]] <- as.integer(v_p)
+        }
+        if (cc=="character") {
+          o[,colnames(k)[i]] <- as.character(v_p)
+        }
+        if (cc=="numeric") {
+          o[,colnames(k)[i]] <- as.numeric(v_p)
+        }
+        if (cc=="logical") {
+          o[,colnames(k)[i]] <- as.logical(v_p)
+        }
+      }
     }
   }
 
