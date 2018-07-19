@@ -41,8 +41,8 @@
 #' y <- addNoise(x)$xm
 #' dRiskRMD(x, xm=y)
 #' dRisk(x, xm=y)
-#' dUtility(x, xm = y, method = " IL1")
-#' dUtility(x, xm = y, method = " IL1s")
+#' dUtility(x, xm = y, method = "IL1")
+#' dUtility(x, xm = y, method = "IL1s")
 #' dUtility(x, xm = y, method = "eigen")
 #' dUtility(x, xm = y, method = "robeigen")
 #'
@@ -89,8 +89,9 @@ dUtilityWORK <- function(x, xm, method = "IL1s") {
   if (method == "IL1") {
     a <- x
     for (i in 1:dim(x)[2]) {
-      a[[i]] <- 100 * abs(x[[i]] - xm[[i]]) / (abs(x[[i]]))
+      a[[i]] <- 100 * abs(x[[i]] - xm[[i]]) / (abs(x[[i]])) 
     }
+    a[a == "Inf"] <- NA
     infLoss1 <- sum(a, na.rm = TRUE)
     return(infLoss1)
   }
