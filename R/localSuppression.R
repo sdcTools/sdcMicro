@@ -76,7 +76,7 @@
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- localSuppression(sdc)
 #'
-#' ## for objects of class sdcMicro, no with stratification
+#' ## for objects of class sdcMicro, with stratification
 #' testdata2$ageG <- cut(testdata2$age, 5, labels=paste0("AG",1:5))
 #' sdc <- createSdcObj(testdata2,
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
