@@ -43,8 +43,8 @@ x <- Tarragona[, 5:7]
 y <- addNoise(x)$xm
 dRiskRMD(x, xm=y)
 dRisk(x, xm=y)
-dUtility(x, xm = y, method = " IL1")
-dUtility(x, xm = y, method = " IL1s")
+dUtility(x, xm = y, method = "IL1")
+dUtility(x, xm = y, method = "IL1s")
 dUtility(x, xm = y, method = "eigen")
 dUtility(x, xm = y, method = "robeigen")
 

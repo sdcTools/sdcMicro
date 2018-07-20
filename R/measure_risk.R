@@ -366,7 +366,7 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2
   dataX <- data[, c(variables, ldiv_var), drop=FALSE]
   for (i in 1:ncol(dataX)) {
     if (!is.numeric(dataX[, i]))
-      dataX[, i] <- as.numeric(dataX[, i])
+      dataX[, i] <- as.numeric(unlist(dataX[, i]))
   }
   dataX <- as.matrix(dataX)
   ind <- do.call(order, data.frame(dataX))
