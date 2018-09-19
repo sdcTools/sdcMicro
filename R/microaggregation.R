@@ -139,6 +139,10 @@
 microaggregation <- function(obj, variables=NULL, aggr=3, strata_variables=NULL,
   method="mdav", weights=NULL, nc=8, clustermethod="clara",
   measure="mean", trim=0, varsort=1, transf="log") {
+
+  if (!is.data.frame(obj) & !is.null(strata_variables)) {
+    message("Argument 'strata_variables' is ignored. Only variables specified in slot 'strataVar' (if any) of the input object are used!\n")
+  }
   microaggregationX(obj=obj, variables=variables, aggr=aggr, strata_variables=strata_variables,
     method=method, weights=weights, nc=nc, clustermethod=clustermethod,
     measure=measure, trim=trim, varsort=varsort, transf=transf)
