@@ -4,17 +4,15 @@
 \name{sdcMicroObj-class}
 \alias{sdcMicroObj-class}
 \alias{createSdcObj}
-\alias{sdcMicroObj-class}
-\alias{createSdcObj}
 \alias{undolast}
 \alias{strataVar<-}
 \alias{strataVar<-,sdcMicroObj,characterOrNULL-method}
 \title{Class \code{"sdcMicroObj"}}
 \usage{
 createSdcObj(dat, keyVars, numVars = NULL, pramVars = NULL,
-  ghostVars = NULL, weightVar = NULL, hhId = NULL, strataVar = NULL,
-  sensibleVar = NULL, excludeVars = NULL, options = NULL, seed = NULL,
-  randomizeRecords = FALSE, alpha = 1)
+  ghostVars = NULL, weightVar = NULL, hhId = NULL,
+  strataVar = NULL, sensibleVar = NULL, excludeVars = NULL,
+  options = NULL, seed = NULL, randomizeRecords = FALSE, alpha = 1)
 
 undolast(object)
 
@@ -74,12 +72,6 @@ an object of class \code{sdcMicroObj} with modified slot \code{@strataVar}
 }
 \description{
 Class to save all information about the SDC process
-
-undo last changes to \code{sdcMicroObj}-objects if possible
-note that this will only work if the user makes use of the prev slot or uses the sdcMicroObj functions
-
-\code{strataVar<-} allows to modify the variable which is used if anonymization limitation
-techniques are applied independent for each characteristic of the defined strata.
 }
 \section{Objects from the Class}{
  Objects can be created by calls of the form

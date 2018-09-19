@@ -5,9 +5,10 @@
 \alias{microaggregation}
 \title{Microaggregation}
 \usage{
-microaggregation(obj, variables = NULL, aggr = 3, strata_variables = NULL,
-  method = "mdav", weights = NULL, nc = 8, clustermethod = "clara",
-  measure = "mean", trim = 0, varsort = 1, transf = "log")
+microaggregation(obj, variables = NULL, aggr = 3,
+  strata_variables = NULL, method = "mdav", weights = NULL, nc = 8,
+  clustermethod = "clara", measure = "mean", trim = 0, varsort = 1,
+  transf = "log")
 }
 \arguments{
 \item{obj}{either an object of class \code{\link{sdcMicroObj-class}} or a \code{data.frame}}
@@ -106,6 +107,7 @@ data before aggregation.
 }
 \note{
 if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored.
+Paramters \code{measure} are ignored for methods \code{mdav} and \code{rmd}.
 }
 \examples{
 data(Tarragona)

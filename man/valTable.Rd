@@ -6,8 +6,8 @@
 \usage{
 valTable(x, method = c("simple", "onedims", "clustpppca",
   "addNoise: additive", "swappNum"), measure = "mean",
-  clustermethod = "clara", aggr = 3, nc = 8, transf = "log", p = 15,
-  noise = 15, w = 1:dim(x)[2], delta = 0.1)
+  clustermethod = "clara", aggr = 3, nc = 8, transf = "log",
+  p = 15, noise = 15, w = 1:dim(x)[2], delta = 0.1)
 }
 \arguments{
 \item{x}{data frame or matrix}
