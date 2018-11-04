@@ -136,6 +136,15 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
     })
     x
   }
+  addNoise_additive0 <- function(x, noise) {
+    N <- nrow(x)
+    x <- apply(x, 2, function(x) {
+      noise <- rnorm(N, 0, noise/100 * sd(x, na.rm=TRUE))  #1.96 * sd(x)/sqrt(N) * wnoise)
+      noise[x == 0] <- 0
+      x + noise
+    })
+    x
+  }  
   addNoise_correlated <- function(x, noise) {
     if (ncol(x) < 2) {
       stop("'addNoise_correlated' works only for >= 2 variables!\n")
@@ -243,11 +252,14 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
     x
   }
 
-  if (!method %in% c("additive","correlated","correlated2","restr","ROMM","outdect")) {
+  if (!method %in% c("additive","additive0","correlated","correlated2","restr","ROMM","outdect")) {
     stop("addNoiseWORK: 'method' must be one of the following: 'additive', 'correlated', 'correlated2', 'restr', 'ROMM' or 'outdect'.\n")
   }
   if (method == "additive") {
     xm <- addNoise_additive(x=x, noise=noise)
+  }
+  if (method == "additive0") {
+    xm <- addNoise_additive0(x=x, noise=noise)
   }
   if (method == "correlated") {
     xm <- addNoise_correlated(x=x, noise=noise)

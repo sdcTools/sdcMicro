@@ -36,4 +36,8 @@ plot.sdcMicroObj <- function(x, type="ls", ...) {
       invisible(NULL)
     }
   }
+  if(type == "indiv_risk" | type == "indivRisk" | type == "indivrisk"){
+    irisk <- x@risk$individual[, 1]
+    
+  }
 }

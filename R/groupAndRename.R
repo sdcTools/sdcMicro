@@ -51,11 +51,11 @@ definition=function(obj, var, before, after, addNA=FALSE) {
     stop("each level from the original factor must be listed only once in argument 'before'!")
   }
   ll <- levels(obj)
-  ll[ll %in% before] <- after[1]
+  ll[ll %in% before] <- after
   levels(obj) <- ll
   # add missing value (NA) to newly created level!
   if (addNA) {
-    obj[is.na(obj)] <- after[1]
+    obj[is.na(obj)] <- after
   }
   obj
 })
