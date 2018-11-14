@@ -107,7 +107,7 @@ data before aggregation.
 }
 \note{
 if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored.
-Paramters \code{measure} are ignored for methods \code{mdav} and \code{rmd}.
+Parameters \code{measure} are ignored for methods \code{mdav} and \code{rmd}.
 }
 \examples{
 data(Tarragona)
