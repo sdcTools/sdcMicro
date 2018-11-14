@@ -268,6 +268,7 @@ output$ui_pram_simple <- renderUI({
 # current values of the importance-vector must be outside because of code_kAnon()
 kAnon_impvec <- reactive({
   cn <- names(input)[grep("sel_importance_", names(input))]
+  cn <- cn[-grep("-selectized", cn)]
   if (length(cn)==0) {
     return(c(""))
   }
