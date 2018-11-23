@@ -437,7 +437,7 @@ output$ui_kAnon <- renderUI({
     btn <- NULL
     impvec <- kAnon_impvec()
     pp <- kAnon_comb_params()
-    if (input$rb_kanon_useCombs=="Yes" & (!is.null(pp) && length(pp$use)==0)) {
+    if (input$rb_kanon_useCombs=="Yes" && (!is.null(pp) && length(pp$use)==0)) {
       return(NULL)
     }
     if (kAnon_useImportance() && any(impvec=="")) {
