@@ -3,7 +3,7 @@ library(shiny)
 shinyServer(function(session, input, output) {
   wd <- setwd(getShinyOption(".appDir", getwd()))
   on.exit(setwd(wd))
-  
+
   for (file in list.files("controllers")) {
     source(file.path("controllers", file), local=TRUE)
   }
@@ -935,7 +935,7 @@ shinyServer(function(session, input, output) {
     })
     obj$rbs <- lapply(1:nrKeyVars, function(i) {
       id <- paste0("rb_kanon_usecombs_", i)
-      radioButtons(id, label=p(paste("Apply k-anonimity to all subsets of",i,"key variables?")),
+      radioButtons(id, label=p(paste("Apply k-anonymity to all subsets of",i,"key variables?")),
         selected=input[[id]], width="100%", inline=TRUE, choices=c("No", "Yes"))
     })
     # reset all menu items to first choice
