@@ -42,12 +42,12 @@ specified.
 Method \sQuote{additive} adds noise completely at random to each variable
 depending on its size and standard deviation. \sQuote{correlated} and
 method \sQuote{correlated2} adds noise and preserves the covariances as
-descriped in R. Brand (2001) or in the reference given below. Method
-\sQuote{restr} takes the sample size into account when adding noise.  Method
+described in R. Brand (2001) or in the reference given below. Method
+\sQuote{restr} takes the sample size into account when adding noise. Method
 \sQuote{ROMM} is an implementation of the algorithm ROMM (Random
 Orthogonalized Matrix Masking) (Fienberg, 2004).  Method \sQuote{outdect}
-adds noise only to outliers.  The outliers are idedentified with univariate
-and robust multivariate procedures based on a robust mahalanobis distancs
+adds noise only to outliers. The outliers are identified with univariate
+and robust multivariate procedures based on a robust mahalanobis distances
 calculated by the MCD estimator.
 }
 \examples{

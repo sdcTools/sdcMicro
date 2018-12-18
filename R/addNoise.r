@@ -10,12 +10,12 @@
 #' Method \sQuote{additive} adds noise completely at random to each variable
 #' depending on its size and standard deviation. \sQuote{correlated} and
 #' method \sQuote{correlated2} adds noise and preserves the covariances as
-#' descriped in R. Brand (2001) or in the reference given below. Method
-#' \sQuote{restr} takes the sample size into account when adding noise.  Method
+#' described in R. Brand (2001) or in the reference given below. Method
+#' \sQuote{restr} takes the sample size into account when adding noise. Method
 #' \sQuote{ROMM} is an implementation of the algorithm ROMM (Random
 #' Orthogonalized Matrix Masking) (Fienberg, 2004).  Method \sQuote{outdect}
-#' adds noise only to outliers.  The outliers are idedentified with univariate
-#' and robust multivariate procedures based on a robust mahalanobis distancs
+#' adds noise only to outliers. The outliers are identified with univariate
+#' and robust multivariate procedures based on a robust mahalanobis distances
 #' calculated by the MCD estimator.
 #'
 #' @name addNoise
@@ -36,7 +36,7 @@
 #' \item{noise}{amount of noise}
 #' @author Matthias Templ and Bernhard Meindl
 #' @seealso \code{\link{sdcMicroObj-class}}, \code{\link{summary.micro}}
-#' @references 
+#' @references
 #' Domingo-Ferrer, J. and Sebe, F. and Castella, J., \dQuote{On the
 #' security of noise addition for privacy in statistical databases}, Lecture
 #' Notes in Computer Science, vol. 3050, pp. 149-161, 2004.  ISSN 0302-9743.
@@ -65,7 +65,7 @@
 #' Templ, M. and Meindl, B. and Kowarik, A.: \emph{Statistical Disclosure Control for
 #' Micro-Data Using the R Package sdcMicro}, Journal of Statistical Software,
 #' 67 (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
-#' 
+#'
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
 #' \doi{10.1007/978-3-319-50272-4}
@@ -144,7 +144,7 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
       x + noise
     })
     x
-  }  
+  }
   addNoise_correlated <- function(x, noise) {
     if (ncol(x) < 2) {
       stop("'addNoise_correlated' works only for >= 2 variables!\n")
