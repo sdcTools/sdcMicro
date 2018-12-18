@@ -289,7 +289,8 @@ output$ui_noise <- renderUI({
   # resetting to default values!
   # also we have different parameters for methods (noise, p, delta) that we
   # catch with a single slider
-  if (!has_numkeyvars()) {
+  has_nv <- has_numkeyvars()
+  if (!is.null(has_nv) && has_nv==FALSE) {
     return(fluidRow(
       column(12, h4("The current sdcProblem contains no",code("numerical key variables")), align="center"),
       column(12, p("However,",code("addNoise()"),"can only be applied on such variables!
@@ -349,10 +350,21 @@ output$ui_noise <- renderUI({
       width="75%", multiple=TRUE)
   })
 
+  observe({
+    if (length(input$sel_noise_v)==1) {
+      updateSelectInput(session, inputId="sel_noise_method", choices = setdiff(choices_noise(), "correlated"))
+    } else {
+      updateSelectInput(session, inputId="sel_noise_method", choices = choices_noise())
+    }
+  })
+
   # ui for 'btn_noise
   output$ui_noise_btn <- renderUI({
-    btn <- NULL
-    if (has_numkeyvars() | length(input$sel_noise_v)>0) {
+    has_nv <- has_numkeyvars()
+    if (is.null(has_nv)) {
+      return(NULL)
+    }
+    if (has_numkeyvars() || length(input$sel_noise_v)>0) {
       btn <- myActionButton("btn_noise", label="Add noise", "primary")
     }
     btn
