@@ -76,7 +76,7 @@ Collate:
     'microaggregation.R'
     'modRisk.R'
     'muargus_compatibility_functions.R'
-    'mvTopCoding'
+    'mvTopCoding.R'
     'plotFunctions.R'
     'plotMicro.R'
     'pram.R'

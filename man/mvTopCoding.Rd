@@ -34,9 +34,6 @@ x[1,2] <- 6
 plot(x)
 ximp <- mvTopCoding(x)
 }
-\seealso{
-\code{\link{detectout}}
-}
 \author{
 Johannes Gussenbauer, Matthias Templ
 }
