@@ -10,8 +10,9 @@
 #' @param center center of data, needed for calcualtion of mahalanobis distance (if not provide)
 #' @param sigma covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)
 #' @param alpha significance level, determining the ellipsoide to which outliers should be placed upon
-#' @return the imputed/winsorized data
+#' @return the imputed winsorized data
 #' @importFrom robustbase covMcd
+#' @importFrom MASS mvrnorm
 #' @export 
 #' @examples 
 #' set.seed(123)

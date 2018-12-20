@@ -18,7 +18,7 @@ mvTopCoding(x, maha=NULL,center=NULL,cov=NULL, alpha=0.025)
 \item{sigma}{covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)}
 }
 \value{
-the imputed/winsorized data
+the imputed winsorized data
 }
 \description{
 Imputation and detection of outliers
