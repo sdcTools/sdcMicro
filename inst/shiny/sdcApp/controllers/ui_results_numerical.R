@@ -57,7 +57,7 @@ output$ui_resnum_infoloss <- renderUI({
   }
   x <- print(curObj, type="numrisk", docat=FALSE)
 
-  txt1 <- "For the continuous variables in the dataset, the IL1s measure is defined as:"
+  txt1 <- paste("For the continuous variables in the dataset, the",strong("IL1s"),"measure is defined as:")
 
   txt2 <- paste("where",tags$i("p"),"is the number of continuous variables;",tags$i("n"),"is the number of records in the dataset;")
   txt2 <- paste(txt2,tags$i("x_ij"),"and",tags$i("z_ij"),", respectively, are the values before and after anonymization for variable",tags$i("j"))
