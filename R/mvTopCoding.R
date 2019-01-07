@@ -5,7 +5,7 @@
 #' @author Johannes Gussenbauer, Matthias Templ
 #' @description Imputation and detection of outliers 
 #' @details Winsorizes the potential outliers on the ellipsoid defined by MD2 in direction to the center of the data
-#' @param x data frame or matrix or table
+#' @param x object of class matrix with numeric entries
 #' @param maha squared mahalanobis distance of each observation
 #' @param center center of data, needed for calcualtion of mahalanobis distance (if not provide)
 #' @param sigma covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)
@@ -21,6 +21,14 @@
 #' x[1,2] <- 6
 #' plot(x)
 #' ximp <- mvTopCoding(x)
+#' 
+#' # by hand (non-robust)
+#' x[2,2] <- NA
+#' m <- colMeans(x, na.rm = TRUE)
+#' s <- cov(x, use = "complete.obs")
+#' md <- mahalanobis(x, m, s)
+#' ximp <- mvTopCoding(x, center = m, cov = s, maha = md)
+#' 
 mvTopCoding <- function(x, maha=NULL,center=NULL,
                            cov=NULL, alpha=0.025){
   stopifnot(is.numeric(x) || is.logical(x), is.atomic(x))
