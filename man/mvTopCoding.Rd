@@ -7,15 +7,15 @@
 mvTopCoding(x, maha=NULL,center=NULL,cov=NULL, alpha=0.025)
 }
 \arguments{
-\item{x}{data frame or matrix or table}
+\item{x}{object of class matrix with numeric entries}
 
 \item{maha}{squared mahalanobis distance of each observation}
 
 \item{center}{center of data, needed for calcualtion of mahalanobis distance (if not provide)}
 
-\item{alpha}{significance level, determining the ellipsoide to which outliers should be placed upon}
+\item{cov}{covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)}
 
-\item{sigma}{covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)}
+\item{alpha}{significance level, determining the ellipsoide to which outliers should be placed upon}
 }
 \value{
 the imputed winsorized data
@@ -33,6 +33,14 @@ x[1,1] <- 3
 x[1,2] <- 6
 plot(x)
 ximp <- mvTopCoding(x)
+
+# by hand (non-robust)
+x[2,2] <- NA
+m <- colMeans(x, na.rm = TRUE)
+s <- cov(x, use = "complete.obs")
+md <- mahalanobis(x, m, s)
+ximp <- mvTopCoding(x, center = m, cov = s, maha = md)
+
 }
 \author{
 Johannes Gussenbauer, Matthias Templ

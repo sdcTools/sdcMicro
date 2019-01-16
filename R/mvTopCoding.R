@@ -8,7 +8,7 @@
 #' @param x object of class matrix with numeric entries
 #' @param maha squared mahalanobis distance of each observation
 #' @param center center of data, needed for calcualtion of mahalanobis distance (if not provide)
-#' @param sigma covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)
+#' @param cov covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)
 #' @param alpha significance level, determining the ellipsoide to which outliers should be placed upon
 #' @return the imputed winsorized data
 #' @importFrom robustbase covMcd
