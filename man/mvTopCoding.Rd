@@ -13,9 +13,9 @@ mvTopCoding(x, maha=NULL,center=NULL,cov=NULL, alpha=0.025)
 
 \item{center}{center of data, needed for calcualtion of mahalanobis distance (if not provide)}
 
-\item{cov}{covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)}
-
 \item{alpha}{significance level, determining the ellipsoide to which outliers should be placed upon}
+
+\item{sigma}{covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)}
 }
 \value{
 the imputed winsorized data
@@ -24,7 +24,7 @@ the imputed winsorized data
 Imputation and detection of outliers
 }
 \details{
-Winsorizes the potential outliers on the ellipsoid defined by MD2 in direction to the center of the data
+Winsorizes the potential outliers on the ellipsoid defined by (robust) Mahalanobis distances in direction to the center of the data
 }
 \examples{
 set.seed(123)
@@ -33,6 +33,22 @@ x[1,1] <- 3
 x[1,2] <- 6
 plot(x)
 ximp <- mvTopCoding(x)
+points(ximp, col = "blue", pch = 4)
+
+# more dimensions
+Sigma <- diag(5)
+Sigma[upper.tri(Sigma)] <- 0.9
+Sigma[lower.tri(Sigma)] <- 0.9
+x <- MASS::mvrnorm(20, mu = rep(5,5), Sigma = Sigma)
+x[1,1] <- 3
+x[1,2] <- 6
+par(mfrow = c(1,2))
+pairs(x)
+ximp <- mvTopCoding(x)
+xnew <- data.frame(rbind(x, ximp))
+xnew$beforeafter <- rep(c(0,1), each = nrow(x))
+
+pairs(xnew, col = xnew$beforeafter, pch = 4)
 
 # by hand (non-robust)
 x[2,2] <- NA
@@ -40,6 +56,8 @@ m <- colMeans(x, na.rm = TRUE)
 s <- cov(x, use = "complete.obs")
 md <- mahalanobis(x, m, s)
 ximp <- mvTopCoding(x, center = m, cov = s, maha = md)
+plot(x)
+points(ximp, col = "blue", pch = 4)
 
 }
 \author{
