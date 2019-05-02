@@ -12,14 +12,14 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
+  
 ```{r, echo=FALSE}
 library(rmarkdown)
 ```
 
 # Introduction and Main Features
 Package `sdcMicro` contains a [shiny](https://cran.r-project.org/package=shiny) app that should help users that are non-experts in R (command-line) to apply disclosure limitation techniques. For this reason, users may upload (micro)data files from different software products into the app and then start to anonymize the dataset by working within the interactive, graphical user interface (GUI). This document will give an overview of the functionalities of the graphical user interface which can be started with `sdcApp()`. The main functionality of the GUI is:
-
+  
 - [Uploading microdata](#microdata)
 - [Modify and analyze microdata](#modify_microdata)
 - [Creating `sdcMicroObj`-instances](#setup_sdcproblem)
@@ -27,23 +27,23 @@ Package `sdcMicro` contains a [shiny](https://cran.r-project.org/package=shiny) 
 - [Obtain information on disclosure risks and/or information loss](#risk_utility)
 - [Export anonymized data and reports](#export_data)
 - [Keep reproducibility by being able do download the underlying code from `sdcMicro`](#reproducibility)
-
+                
 We now describe the features of the interactive graphical user interface in detail. The GUI is separated into 7 main categories, which can be selected from the navigation bar at the top of the screen. Initially, some of these pages will be empty and their content changes once microdata have been uploaded or an `sdcMicroObj` has been generated. 
-
+                
 We also want to note that throughout the GUI, questionmark signs are shown. Hovering the mouse over these small icons triggers a pop up window with additional information which will help during the anonymization process.
-
+                
 # About/Help {#about}
-
+                
 This is the first page that is shown once the graphical user interface has been started using `sdcApp()` after loading package `sdcMicro`. On this page, the user is presented the information on how to open this package vignette which contains extensive information on how to use the GUI. Furthermore, in section `Getting started`, users are advised to either [upload microdata](#microdata) or to [upload a previously saved problem instance](#undo). Clicking on the relevant buttons brings the user automatically to the page from which the desired functionality is available. 
-
+                  
 In section `Settings`, it is possible to change the default output path. This path is used whenever the user decides to export data from the GUI to the hard disk. The default value is the directory from which the GUI was started (e.g the current working directory). Once a valid path is entered in the text input field, a button labelled `Update the current output path` appears below the input. Pressing this input updates the path. If successful, the current path is shown both as placeholder in the text input as well as in the text above the input field. We note that you can change the path at any time during the anonymization process. Writing files to disk will always use the current path.
-
+                  
 From this page, the user can also stop the interface by clicking on a button labelled `Stop the GUI`. If this feature is used, the current [uploaded microdata] after [modifications](#modify_microdata) as well as the [current problem instance](#setup_sdcproblem) (if it has already been specified) are (invisibly) returned to `R`. So in case the interface was started with `x <- sdcApp()`, `x` then contains a list with two elements named `inputdata` and `sdcObj`. This allows one to continue working in `R`. Finally, users are shown ways on how to contact us for bug reports or any other issues.
-
+                    
 We now continue to describe the functionality of the user interface in detail.
-
+                    
 # Microdata {#microdata}
-On this page, the user can either upload data sets stored as files on the hard drive into the GUI or to select data frames that exist in the users workspace before working the graphical user interface was started. This allows to perform common data manipulation steps directly in `R` before continuing to anonymize the dataset using the GUI.
+On this page, the user can either upload data sets stored as files on the hard drive into the GUI or to select data frames that exist in the users' workspace before working the graphical user interface was started. This allows to perform common data manipulation steps directly in `R` before continuing to anonymize the dataset using the GUI.
 
 We note that the content of this page changes depending on whether microdata have already been uploaded or not. In the former case, the user can view, modify or reset variables from the uploaded dataset as described in chapter [Modify microdata](#modify_microdata). In the latter case, the user is asked to upload data in the GUI. This is described in chapter [Upload microdata](#upload_microdata) below.
 
@@ -54,19 +54,19 @@ By default, no microdata are loaded into the GUI. Therefore the user has to uplo
 This screen allows the user to select data.frames that are available in the users-workspace when starting the user interface. Two test-data sets (`testdata` and `testdata2`, information on which is available from `?testdata`) that are included in `sdcMicro` are always available. Pressing the action button below the drop-down selection input will make the GUI use the selected data frame.
 
 ### R-dataset (.rdata)
-Here users can opt to upload a file saved in `R` binary format. The users can change the options if character vectors should be automatically converted to factors and if variables that only contain missing-values only should be dropped. By clicking on the `Browse` button the user needs to select a `rdata`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
+Here users can opt to upload a file saved in `R` binary format. Users can change the options if character vectors should be automatically converted to factors and if variables that only contain missing-values only should be dropped. By clicking on the `Browse` button the user needs to select a `rdata`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
 ### SPSS-file (.sav)
-Here users can opt to upload a file exported from `SPSS`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `sav`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
+Here users can opt to upload a file exported from `SPSS`. Users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `sav`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
 ### SAS-file (.sasb7dat)
-Here users can opt to upload a file exported from `SAS`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `sas7bdat`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
+Here users can opt to upload a file exported from `SAS`. Users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `sas7bdat`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
 ### CSV-file (.csv, .txt)
 Here users can opt to upload a text file where variables are separated by some characters. Typically these data would be exported from software such as `Excel`. It is crucial that users indicate if the data file has variable names in the first row and how variables are separated. At this point, users have the option to have character vectors automatically converted to factor or have variables that contain only missing-values ('NA') dropped when the data are read into the GUI. For columns read as character (text), the character `"` is ignored as quoting character and not imported. By clicking on the `Browse` button the user needs to select a `txt` or `csv`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
 ### STATA-file (.dta)
-Here users can opt to upload a file exported from `Stata`. The users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `dta`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
+Here users can opt to upload a file exported from `Stata`. Users can change the options if character vectors should be automatically converted to factors and if variables that contain only missing-values ('NA') only should be dropped. By clicking on the `Browse` button the user needs to select a `dta`-file on disk which he wants to upload. For detailed explanation on the options, please see the chapter on [additional options](#additional_options).
 
 ### Additional options {#additional_options}
 We now describe the choices users can make when uploading data.
@@ -101,7 +101,7 @@ Once data have been uploaded, the content of the *Microdata*-page changes and us
 Below this button, a list of action buttons is shown. Clicking on any of these buttons changes the content of the main column. The currently active selection has a different color than the currently inactive buttons. By default, the first entry ("*Display Microdata*") is selected. These entries can be selected by clicking on the desired text or directly on the button. We now continue to describe the features that can be selected.
 
 ### Display microdata {#display_microdata}
-This is the default selection, after microdata have been successfully imported or uploaded as described in [uploading microdata](#upload_microdata). This page gives a short overview on the microdata. It shows the name of the imported file as well as the number of observations and the number of variables that are available. Below this information, the user is presented with an interactive table containing the current microdata. The variables can be sorted by clicking on the small arrows next to the variable names on top of the table. Also on the top, there is a dropdown field where users can select how many observations should be displayed on one page. On the bottom of the table the users can find a dynamic pagination field which allows users to jump to a given *"page"* of the current table.
+This is the default selection, after microdata have been successfully imported or uploaded as described in [uploading microdata](#upload_microdata). This page gives a short overview on the microdata. It shows the name of the imported file as well as the number of observations and the number of variables that are available. Below this information, the user is presented with an interactive table containing the current microdata. The variables can be sorted by clicking on the small arrows next to the variable names on top of the table. Also on the top, there is a dropdown field where users can select how many observations should be displayed on one page. On the bottom of the table users can find a dynamic pagination field which allows users to jump to a given *"page"* of the current table.
 
 ### Explore variables {#explore_inputvars}
 On this page users have the possibility to explore variables from the current microdata. Users have to choose a variable by selecting a variable from the dropdown field with label *"Choose a variable"*. The default value of this input field is the first variable in the dataset. Optionally, a second variable can be selected by choosing a variable from the dropdown field labelled *"Choose a second variable (optional)"* which has the default value of *"None"*. Once the variables have been selected, a graph and additional information is presented below. The specific output depends on the number of variable(s) chosen as well as their type:
@@ -230,7 +230,7 @@ On the left hand side, an interactive table with a row for each variable availab
 - **Number of levels**: the number of unique values in the variable
 - **Number of missing**: number of missing values in the variable
 
-For columns `PRAM`, `Weight`, `Hierarchical identifier` and `Delete`, checkboxes are present in the table. These checkboxes are by default not selected. The checkboxes can be enabled by clicking on them. While there can at most be one variable selected as weight variable and variable holding cluster ids, multiple variables may be checked in column `Delete` or `PRAM`.
+For columns `PRAM`, `Weight`, `Hierarchical identifier` and `Delete`, checkboxes are present in the table. These checkboxes are by default not selected. The checkboxes can be enabled by clicking on them. While there can at most be one variable selected as weight variable and variable holding cluster ids, multiple variables may be checked in column `Remove` or `Pram`.
 
 Below the table, two slider inputs are shown. The first one, labelled `Parameter "alpha"` is relevant for the frequency calculation given the categorical key variables that contain missing (`NA`) values. For this input, values between `0` and `1` (the default setting) in steps of `0.01` can be selected. We note that leaving the value at `1` leads to the same results as in versions of `sdcMicro` <= 4.7.0. For details on this parameter, please have a look at `?freqCalc`. The second slider, termed `Parameter "seed"` can take on values between `-250` and `250` in steps of `1` and is the number used to set the seed for the random number generator to ensure reproducability. By default, this value is set to `0`. We note that once the sliders are selected, values can also be increased and decreased by clicking the up and down (or left and right) keys on the keyboard.
 
@@ -251,7 +251,7 @@ In the first section, the *"important"* variables in the current sdc problem are
 
 - **Additional parameters** 
 
-The second block lists - also in tabular format - the number of records in the data set within the current sdc problem instance and the value for parameters `alpha` and `random seed` that were used when setting up the current problem.
+The second block lists - also in tabular format - the number of records in the data set within the current sdc problem instance and the value for paramters `alpha` and `random seed` that were used when setting up the current problem.
 
 - **k-anonymity **
 
@@ -382,7 +382,7 @@ When both inputs have been chosen, a button labelled `Add new ID variable` appea
 If `Anonymize categorical variables` has been selected in `What do you want to do?` in the left sidebar of the screen, the options [Recoding](#recoding_sdcproblem), [k-Anonymity](#kanon), [PRAM (simple)](#pram_simple), [PRAM (expert)](#pram_expert) and [Supress values with high risk](#supp_highrisk) are available from the radio button list termed `Choose a Method` and will be described below.
 
 #### Recoding {#recoding_sdcproblem}
-This page allows to recode or reduce the level of detail in the selected categorical key variables. The functionality is the same as already described [here](#recode_factors_inputdata) for recoding of factor variables in the original microdata file. There are two slight differences, though. The first one is that the variables that can be selected in the input field termed `Choose factor variable` are restricted to the categorical key variables that have been chosen when the sdc problem was created, as described [here](setup_sdcproblem). The other difference is that once recoding is done, the page refreshes and the content in the right sidebar is recalculated. This especially affects the number of observations violating k-anonymity that are shown in the block `k-anonymity`.
+This page allows to recode or reduce the level of detail in the selected categorical key variables. The functionality is the same as already described [here](#recode_factors_inputdata) for recoding of factor variables in the original microsdcdata file. There are two slight differences, though. The first one is that the variables that can be selected in the input field termed `Choose factor variable` are restricted to the categorical key variables that have been chosen when the sdc problem was created, as described [here](setup_sdcproblem). The other difference is that once recoding is done, the page refreshes and the content in the right sidebar is recalculated. This especially affects the number of observations violating k-anonymity that are shown in the block `k-anonymity`.
 
 #### k-Anonymity {#kanon}
 This section allows to generate `k`-anonymity in the categorical key vars or (independently) within subsets of the key variables. This is done by setting specific values in the categorical key variables to `NA`. Thus, for this method the parameter `alpha` that has been specified during the [creating of the sdc problem](setup_sdcproblem) is of great importance. For a discussion on this parameter, the reader is advised to read the help pages for `?freqCalc`. A feature for this algorithm is that users may enter a preference specifying an order in which variables the required suppressions should take place. Furthermore it is possible to apply the method independently on groups defined by a stratification variable. This is also the first choice the user has to make on this page. In the select input field labelled `Do you want to apply the method for each group defined by the selected variable?` it is possible to select a variable from the set of all variables of type `factor`, `integer` or `character` excluding those variables that have been specified as categorical key variables.
@@ -523,7 +523,7 @@ On this page, two plots are presented. The first histogram shows the distributio
 ### Suda2 risk measure {#suda2}
 On this page, users can apply the SUDA algorithm. This algorithm can be used to search for Minimum Sample Uniques (MSU) in the data given the current set of key variables. The algorithm looks at those records that are unique in the sample (sample uniques), and checks if any of these sample uniques are also special uniques. Special uniques are defined as records having keys for which also a subset of the selected key variables is unique in the sample. See the help files for more information on SUDA scores.
 
-We note that this algorithm can only be applied if the current problem instance features three or more categorical key variables. If this requirement is not fulfilled, this information is shown to the user. Else, the user needs to choose a value for parameter `disFraction` which is the sampling fraction for the simple random sampling or the common sampling fraction for stratified sampling used within the algorithm. By default, this value is set to 0.01 and can be changed by modifying the slider labeled `Specify the sampling fraction for the stratified sampling`.
+We note that this algorithm can only be applied if the current problem instance features three or more categorical key variables. If this requirement is not fulfilled, this information is shown to the user. Else, the user needs to choose a value for parameter `disFraction?` which is the sampling fraction for the simple random sampling or the common sampling fraction for stratified sampling used within the algorithm. By default, this value is set to 0.01 and can be changed by modifying the slider labeled `Specify the sampling fraction for the stratified sampling`.
 
 After pressing the button termed `Calculate suda2-scores`, the actual computation is performed. Once computation is complete, the layout of the page changes. On top of the page a button labeled `Reset to choose a different sampling fraction parameter`. Pressing this button resets the results and allows to recompute the suda2 scores using a different value for parameter `disFraction`. Below this button, two tables are shown. The first table summarizes the suda2 scores that have been obtained. It shows for `0` and 8 intervals the number of records having suda2 scores of this value or within a specific interval. The second table shows for each categorical key variable how much of the total risk is contributed to by each of the variables. This amount is shown in the second column (`contribution`) while the corresponding key variable is listed in column `variable`.
 
@@ -537,7 +537,7 @@ In this section it is possible to either compare current key variables in the or
 
 
 ### Barplot/Mosaicplot {#res_vis_plot}
-On this page it is possible to graphically compare key variables before and after the anonymization. In the select input labeled `Variable 1`, the first categorical key variable is already pre-selected while the value of the second input field `Variable 2` has the default value of `none`. If only one variable is specified, the users is presented with two graphs below these inputs. First, we see a barplot of the original data as it was when the problem instance was created. Below that, another barplot showing the anonymized variable is shown. 
+On this page it is possible to graphically compare key variables before and after the anonymization. In the select input labeled `Variable 1`, the first categorical key variable is already pre-selected while the value of the second input field `Variable 2` has the default value of `none`. If only one variable is specified, users are presented with two graphs below these inputs. First, we see a barplot of the original data as it was when the problem instance was created. Below that, another barplot showing the anonymized variable is shown. 
 
 If the value in `Variable 2` is different from `none`, the two graphs change. In this case a mosaicplot of the two selected variables is shown for both the original and the anonymized variables.
 
@@ -577,7 +577,7 @@ Below this information, two tables are presented. The first refers to the origin
 On this page, users can check on the estimated disclosure risk for the selected numerical key variables. The measure can be interpreted in the following way. In the original, unmodified data that has been used to create the sdc problem, the risk for the numeric key variables is assumed to be between `0%` and `100%`. The more data anonymization techniques such as microaggregation or adding noise are applied to the data, the less the upper bound of the risk will be. So users can compare the estimated upper bound of the risk for numerical key variables in the anonymized data and compare on how much it has reduced from the initial value of `100%`. We note that the larger the deviations from the original data are, the lower the upper risk bound will be. However, this has of course also an impact on data utility measures that can be assessed from the menu button `Information loss` as described [below](#numres_infoloss).
 
 ### Information loss {#numres_infoloss}
-Here, users can check on two measures of information loss (comment:please name them). Generally speaking, the more the numerical key variables are modified (anonymized), the higher the information loss values for both measures. We also note that information loss and [disclosure risk for numerical variables](#numres_disclosure_risk) are always a trade of which need to be balanced. 
+Here, users can check on two measures of information loss, IL1s and differences in eigenvalues. Generally speaking, the more the numerical key variables are modified (anonymized), the higher the information loss values for both measures. We also note that information loss and [disclosure risk for numerical variables](#numres_disclosure_risk) are always a trade of which need to be balanced. 
 
 Also shown on this page, are the values of the `IL1s` measure (definition provided) as well as the differences of robust eigenvalues of the data before and after the anonymization process. 
 
@@ -589,7 +589,7 @@ If, however, a problem instance has been defined, the page features a sidebar on
 ## Anonymized Data {#export_anonymized_data}
 On this page, the microdata available at present in the active sdc problem instance after the applied anonymization techniques as described [here](#anonymization_methods) can be saved to disk. 
 
-On top of this page, an interactive, sortable and browsable table containing showing the data that will be written to a file are shown. The variables can be sorted by clicking on the small arrows next to the variable names on top of the table. Also on the top, there is a dropdown field where users can select how many observations should be displayed on one page. On the bottom of the table the users can find a dynamic pagination field which allows users to jump to a given *"page"* of the current table.
+On top of this page, an interactive, sortable and browsable table containing the data that will be written to a file is shown. The variables can be sorted by clicking on the small arrows next to the variable names on top of the table. Also on the top, there is a dropdown field where users can select how many observations should be displayed on one page. On the bottom of the table, users find a dynamic pagination field which allows users to jump to a given *"page"* of the current table.
 
 Below the table, two sets of radio buttons are shown:
 
