@@ -195,10 +195,14 @@ measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_
 
   variables <- keyVars
   weight_variable <- w
-  if ((is.null(variables) || !variables %in% colnames(data)) && is.character(variables))
-    stop("Please define valid key variables") else if (is.numeric(variables)) {
-    if (all(variables %in% c(1:ncol(data))))
-      variables <- colnames(data)[variables] else stop("Please define valid key variables")
+  if ((is.null(variables) | !all(variables %in% colnames(data))) && is.character(variables)) {
+    stop("Please define valid key variables", call. = FALSE)
+  } else if (is.numeric(variables)) {
+    if (all(variables %in% c(1:ncol(data)))) {
+      variables <- colnames(data)[variables]
+    } else {
+      stop("Please define valid key variables", call. = FALSE)
+    }
   }
   if (!is.null(weight_variable)) {
     if (!weight_variable %in% colnames(data) && is.character(weight_variable))
@@ -334,21 +338,37 @@ definition=function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-999) {
   if (!is.null(s))
     o$sdcGUI_strataVar <- s
   kV <- colnames(obj@origData)[get.sdcMicroObj(obj, "keyVars")]
-  obj@risk$ldiversity <- ldiversityWORK(data=o, keyVars=kV, l_recurs_c=l_recurs_c, ldiv_index=ldiv_index, missing=missing)
+  obj@risk$ldiversity <- ldiversityWORK(
+    data = o,
+    keyVars = kV,
+    l_recurs_c = l_recurs_c,
+    ldiv_index = ldiv_index,
+    missing = missing
+  )
   return(obj)
 })
 
 setMethod(f="ldiversityX", signature=c("data.frame"),
 definition=function(obj, keyVars, ldiv_index, l_recurs_c=2, missing=-999) {
-  ldiversityWORK(data=obj, keyVars=keyVars, ldiv_index=ldiv_index, l_recurs_c=l_recurs_c, missing=missing)
+  ldiversityWORK(
+    data = obj,
+    keyVars = keyVars,
+    ldiv_index = ldiv_index,
+    l_recurs_c = l_recurs_c,
+    missing = missing
+  )
 })
 
 ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2) {
   variables <- keyVars
-  if ((is.null(variables) || !variables %in% colnames(data)) && is.character(variables))
-    stop("Please define valid key variables") else if (is.numeric(variables)) {
-    if (all(variables %in% c(1:ncol(data))))
-      variables <- colnames(data)[variables] else stop("Please define valid key variables")
+  if ((is.null(variables) || !all(variables %in% colnames(data))) && is.character(variables)) {
+    stop("Please define valid key variables", call. = FALSE)
+  } else if (is.numeric(variables)) {
+    if (all(variables %in% c(1:ncol(data)))) {
+      variables <- colnames(data)[variables]
+    } else {
+      stop("Please define valid key variables", call. = FALSE)
+    }
   }
   if (!is.null(ldiv_index)) {
     if (is.numeric(ldiv_index)) {
