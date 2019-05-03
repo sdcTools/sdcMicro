@@ -134,6 +134,6 @@ mafastWORK <- function(x, variables=colnames(x), by=NULL, aggr=3, measure=mean) 
   eval(parse(text=cmd))
   x <- x[, !colnames(x) %in% c("BYVARIABLEFORSPLIT", "idvariableforresorting"), drop=FALSE]
   setkey(erg, "idvariableforresorting")
-  x[, variables] <- data.frame(erg[, by=idvariableforresorting])[, variables]
+  x[, variables] <- data.frame(erg)[, variables]
   return(x)
 }

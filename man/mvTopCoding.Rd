@@ -13,9 +13,9 @@ mvTopCoding(x, maha=NULL,center=NULL,cov=NULL, alpha=0.025)
 
 \item{center}{center of data, needed for calcualtion of mahalanobis distance (if not provide)}
 
-\item{alpha}{significance level, determining the ellipsoide to which outliers should be placed upon}
+\item{cov}{covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)}
 
-\item{sigma}{covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)}
+\item{alpha}{significance level, determining the ellipsoide to which outliers should be placed upon}
 }
 \value{
 the imputed winsorized data

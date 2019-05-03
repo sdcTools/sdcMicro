@@ -8,7 +8,7 @@
 #' @param x object of class matrix with numeric entries
 #' @param maha squared mahalanobis distance of each observation
 #' @param center center of data, needed for calcualtion of mahalanobis distance (if not provide)
-#' @param sigma covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)
+#' @param cov covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)
 #' @param alpha significance level, determining the ellipsoide to which outliers should be placed upon
 #' @return the imputed winsorized data
 #' @importFrom robustbase covMcd
@@ -50,13 +50,12 @@
 #' 
 mvTopCoding <- function(x, maha=NULL,center=NULL,
                         cov=NULL, alpha=0.025){
-  stopifnot(is.numeric(x) || is.logical(x), is.atomic(x))
+  # stopifnot(is.numeric(x) || is.logical(x), is.atomic(x))
   
-  if(is.data.frame(x) | is.data.table(x)){
-    stop("x must be of class matrix")
-  }
-  #  if(!is.data.table(x))x <- as.data.table(x)
-  
+  # if(is.data.frame(x) | is.data.table(x)){
+  #   stop("x must be of class matrix")
+  # }
+  if(!is.data.table(x)) x <- as.data.table(x)
   p <- ncol(x)
   d <- qchisq(1-alpha,df=p)
   
