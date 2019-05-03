@@ -377,12 +377,17 @@ output$ui_kAnon <- renderUI({
     poss <- possVals_importance()
     kV <- colnames(get_origData())[get_keyVars()]
     n <- length(kV)
-    sl <- lapply(1:n, function(i) {
-      selectInput(
-        inputId=paste0('sel_importance_', i),
-        label=paste0('Select the importance for key variable ', dQuote(kV[i])),
-        choices=c("",poss[[i]]$poss), selected=poss[[i]]$val, width="100%")
-    })
+    if (n == 0) {
+      sl <- NULL
+    } else {
+      sl <- lapply(1:n, function(i) {
+        selectInput(
+          inputId=paste0('sel_importance_', i),
+          label=paste0('Select the importance for key variable ', dQuote(kV[i])),
+          choices=c("",poss[[i]]$poss), selected=poss[[i]]$val, width="100%")
+      })
+    }
+
     # how many rows?
     n_rows <- ceiling(n/3)
     out <- list()
