@@ -50,13 +50,12 @@
 #' 
 mvTopCoding <- function(x, maha=NULL,center=NULL,
                         cov=NULL, alpha=0.025){
-  stopifnot(is.numeric(x) || is.logical(x), is.atomic(x))
+  # stopifnot(is.numeric(x) || is.logical(x), is.atomic(x))
   
-  if(is.data.frame(x) | is.data.table(x)){
-    stop("x must be of class matrix")
-  }
-  #  if(!is.data.table(x))x <- as.data.table(x)
-  
+  # if(is.data.frame(x) | is.data.table(x)){
+  #   stop("x must be of class matrix")
+  # }
+  if(!is.data.table(x)) x <- as.data.table(x)
   p <- ncol(x)
   d <- qchisq(1-alpha,df=p)
   
