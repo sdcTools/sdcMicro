@@ -5,14 +5,10 @@
 #include "RankSwap.h"
 #include <Rcpp.h>
 
-// returns max_random_value, used in my_rand()
-int get_RAND_MAX() {
-  return(RAND_MAX);
-}
-int my_rand() {
+long my_rand() {
   // a random number between 0 and RAND_MAX (including)
-  int maxval = get_RAND_MAX()+1;
-  int x = R::runif(0, 1)*(maxval+1);
+  int maxval = RAND_MAX;
+  long x = R::runif(0, 1)*(maxval+1);
   return(x);
 }
 
@@ -167,7 +163,7 @@ void CRankSwap::generate_swap(long swap[],long n_columns, long n_regs,long perce
 
   for (i = 0; i < n_regs; i++) {
     if (swap[i] == -1) {
-      int randNumber = my_rand();
+      long randNumber = my_rand();
       k = 1 + ((long) ((double) max_dist * randNumber / (RAND_MAX + 1.0))) + i;
       j = long_min(k, n_regs - 1);
       while ((swap[j] >= 0) && ((i + 1) < j)) /* if record modified then look left */
