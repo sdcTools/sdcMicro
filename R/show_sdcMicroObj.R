@@ -2,7 +2,7 @@
 #'
 #' show a sdcMicro object
 #' @param object an sdcmicro obj
-#'
+#' @author Bernhard Meindl
 #' @return a sdcMicro object
 #' @export
 setMethod(f="show", signature="sdcMicroObj",

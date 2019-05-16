@@ -26,3 +26,6 @@ sdc <- createSdcObj(testdata,
 head(freq(sdc, type="fk"))
 head(freq(sdc, type="Fk"))
 }
+\author{
+Bernhard Meindl
+}

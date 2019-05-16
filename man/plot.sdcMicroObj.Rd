@@ -23,13 +23,15 @@ only visualization of local supression is implemented.
 \examples{
 
 data(testdata)
+\dontrun{
+# dontrun because Examples with CPU time > 2.5 times elapsed time
 sdc <- createSdcObj(testdata,
   keyVars=c('urbrur','roof','walls','relat','sex'),
   pramVars=c('water','electcon'),
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- kAnon(sdc, k=5)
 plot(sdc, type="ls")
-
+}
 }
 \author{
 Bernhard Meindl

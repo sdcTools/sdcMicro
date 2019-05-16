@@ -184,6 +184,8 @@ ghostVars[[1]] <- list()
 ghostVars[[1]][[1]] <- "electcon"
 ghostVars[[1]][[2]] <- c("electcon2","electcon3")
 
+\dontrun{
+# dontrun because Examples with CPU time > 2.5 times elapsed time
 ## we want variable 'water2' to be linked to key-variable 'water'
 ghostVars[[2]] <- list()
 ghostVars[[2]][[1]] <- "water"
@@ -207,6 +209,12 @@ all(is.na(manipKeyVars$water) == is.na(manipGhostVars$water2))
 obj <- createSdcObj(testdata, keyVars=c("urbrur","roof","walls"), numVars="savings",
    weightVar=w, excludeVars=c("relat","electcon","hhcivil","ori_hid","expend"))
 colnames(get.sdcMicroObj(obj, "origData"))
+}
+}
+\references{
+Templ, M. and Meindl, B. and Kowarik, A.: \emph{Statistical Disclosure Control for
+Micro-Data Using the R Package sdcMicro}, Journal of Statistical Software,
+67 (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 }
 \author{
 Bernhard Meindl, Alexander Kowarik, Matthias Templ, Elias Rut

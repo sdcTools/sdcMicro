@@ -13,7 +13,7 @@
 #' @author Bernhard Meindl
 #' @references 
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
-#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4. \doi{10.1007/978-3-319-50272-4}
 #' \doi{10.1007/978-3-319-50272-4}
 #' @keywords manip
 #' @export

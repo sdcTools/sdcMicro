@@ -9,7 +9,7 @@ prettyF <- function(inp, digits=3) {
 #'
 #' @param obj an \code{\link{sdcMicroObj-class}}-object
 #' @param type either \code{'fk'} or \code{'FK'}
-#'
+#' @author Bernhard Meindl
 #' @return a vector containing sample frequencies or weighted frequencies
 #' @export
 #' @examples

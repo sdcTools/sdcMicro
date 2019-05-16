@@ -146,6 +146,10 @@ Imputation: Robust Statistics Applied to Official Statistics},
 Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 264 pages.
 
+Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+\emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4. \doi{10.1007/978-3-319-50272-4}
+\doi{10.1007/978-3-319-50272-4}
+
 Templ, M. and Meindl, B. and Kowarik, A.: \emph{Statistical Disclosure Control for
 Micro-Data Using the R Package sdcMicro}, Journal of Statistical Software,
 67 (4), 1--36, 2015.

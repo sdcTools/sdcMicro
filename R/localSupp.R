@@ -17,12 +17,18 @@
 #' @references Templ, M. \emph{Statistical Disclosure Control for Microdata
 #' Using the R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number
 #' 2, pp. 67-85, 2008. \url{http://www.tdp.cat/issues/abs.a004a08.php}
+#' 
+#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
+#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4. \doi{10.1007/978-3-319-50272-4}
+#' \doi{10.1007/978-3-319-50272-4}
 #' @keywords manip
 #' @export
 #' @examples
 #' ## example from Capobianchi, Polettini and Lucarelli:
 #' data(francdat)
 #' keyVars <- paste0("Key",1:4)
+#' \dontrun{
+#' # dontrun because Examples with CPU time > 2.5 times elapsed time
 #' f <- freqCalc(francdat, keyVars=keyVars,w=8)
 #' f
 #' f$fk
@@ -47,7 +53,7 @@
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- localSupp(sdc, keyVar='urbrur', threshold=0.045)
 #' print(sdc, type="ls")
-#'
+#' }
 localSupp <- function(obj, threshold=0.15, keyVar) {
   localSuppX(obj=obj, threshold=threshold, keyVar=keyVar)
 }
