@@ -6,7 +6,7 @@
 \title{Rank Swapping}
 \usage{
 rankSwap(obj, variables = NULL, TopPercent = 5, BottomPercent = 5,
-  K0 = -1, R0 = 0.95, P = 0, missing = NA, seed = NULL)
+  K0 = NULL, R0 = 0.95, P = NULL, missing = NA, seed = NULL)
 }
 \arguments{
 \item{obj}{a \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}
@@ -61,9 +61,8 @@ determined and the correlation coefficient makes sense.
 Rank swapping sorts the values of one numeric variable by their numerical
 values (ranking).  The restricted range is determined by the rank of two
 swapped values, which cannot differ, by definition, by more than \eqn{P}{P}
-percent of the total number of observations.  R0 and K0 are only used if
-positive. Only one of the two are used (R0 is prefered if both are
-positive).
+percent of the total number of observations.  Only positive P, R0 and K0 are
+used and only one of it must be supplied.
 }
 \examples{
 data(testdata2)

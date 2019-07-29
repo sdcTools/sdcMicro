@@ -8,9 +8,8 @@
 #' Rank swapping sorts the values of one numeric variable by their numerical
 #' values (ranking).  The restricted range is determined by the rank of two
 #' swapped values, which cannot differ, by definition, by more than \eqn{P}{P}
-#' percent of the total number of observations.  R0 and K0 are only used if
-#' positive. Only one of the two are used (R0 is prefered if both are
-#' positive).
+#' percent of the total number of observations.  Only positive P, R0 and K0 are
+#' used and only one of it must be supplied.
 #'
 #' @name rankSwap
 #' @docType methods
@@ -74,7 +73,13 @@
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- rankSwap(sdc)
-rankSwap <- function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=-1, R0=0.95, P=0, missing=NA, seed=NULL) {
+rankSwap <- function(obj, variables=NULL, TopPercent=5, BottomPercent=5,
+                     K0=NULL, R0=0.95, P=NULL, missing=NA, seed=NULL) {
+  TFpar <- c(!is.null(P),!is.null(R0),!is.null(K0))
+  if(sum(TFpar)>1){
+    stop("Only one of the parameters P, R0 and K0 should be provided.")
+  }
+
   rankSwapX(obj=obj, variables=variables, TopPercent=TopPercent, BottomPercent=BottomPercent, K0=K0, R0=R0, P=P, missing=missing, seed=seed)
 }
 setGeneric("rankSwapX", function(obj, variables=NULL, TopPercent=5, BottomPercent=5,
@@ -83,9 +88,9 @@ setGeneric("rankSwapX", function(obj, variables=NULL, TopPercent=5, BottomPercen
 })
 
 setMethod(f="rankSwapX", signature=c("sdcMicroObj"),
-definition=function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=-1,
-  R0=0.95, P=0, missing=NA, seed=NULL) {
-
+definition=function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=NULL,
+  R0=0.95, P=NULL, missing=NA, seed=NULL) {
+  
   manipData <- get.sdcMicroObj(obj, type="manipNumVars")
 
   if ( is.null(variables) ) {
@@ -127,6 +132,15 @@ definition=function(obj, variables=NULL, TopPercent=5, BottomPercent=5, K0=-1,
   }
 
   seed <- ifelse(is.null(seed), -1L, as.integer(seed))
+  if(is.null(K0)){
+    K0 <- -1
+  }
+  if(is.null(R0)){
+    R0 <- -1
+  }
+  if(is.null(P)){
+    P <- -1
+  }
   dat <- .Call("RankSwap", dataX, data2, miss_val, TopPercent, BottomPercent, K0, R0, P, seed)$Res
   if (sum(index_missing) > 0 & is.na(missing)) {
     dat[dat==miss_val] <- NA
