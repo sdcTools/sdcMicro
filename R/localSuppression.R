@@ -167,7 +167,7 @@ definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=N
   localSuppressionWORK(x=obj, keyVars=keyVars, k=k, strataVars=strataVars,
     importance=importance, combs=combs, alpha=1)
 })
-suppSubset <- function(x, k, importance, alpha=alpha)  {
+suppSubset <- function(x, k, importance, alpha)  {
   # checks
   if (length(k) != 1 | k < 1) {
     stop("argument 'k' must be of length 1 and > 0 ")
@@ -179,7 +179,11 @@ suppSubset <- function(x, k, importance, alpha=alpha)  {
   }
   
   # k can be at most the number of obs!
+  if(nrow(x)<k){
+    stop("k is larger or equal the group size (in at least one stratum).")
+  }
   k <- min(k, nrow(x))
+  
   
   keys <- 1:ncol(x)
   keyVars <- names(x)
