@@ -34,10 +34,10 @@
 #' data(Tarragona)
 #' \dontrun{
 #' valTable(Tarragona[100:200,],
-#' method=c("simple","onedims","pca","addNoise: additive"))
+#' method=c("simple","onedims","pca"))
 #' valTable(Tarragona,
 #' method=c("simple","onedims","pca","clustpppca",
-#' "mdav", "addNoise: additive", "swappNum"))
+#' "mdav", "swappNum"))
 #' ## clustpppca in combination with Mclust outperforms
 #' ## the other algorithms for this data set...
 #' }
@@ -104,7 +104,6 @@ valTable <- function(x, method = c("simple", "onedims", "clustpppca", "addNoise:
   }
   print("calculating summary statistics")
   flush.console()
-  # save(m, file='mres.Rdata')
   s <- list()
   s <- lapply(m, summary, robCov = FALSE, robReg = FALSE)
   g <- data.frame(amean = round(s[[1]][[3]], 3), amedian = round(s[[1]][[4]], 3), aonestep = round(s[[1]][[5]],
