@@ -167,151 +167,151 @@ definition=function(obj, k=2, importance=NULL, combs=NULL, keyVars, strataVars=N
   localSuppressionWORK(x=obj, keyVars=keyVars, k=k, strataVars=strataVars,
     importance=importance, combs=combs, alpha=1)
 })
-
+suppSubset <- function(x, k, importance, alpha=alpha)  {
+  # checks
+  if (length(k) != 1 | k < 1) {
+    stop("argument 'k' must be of length 1 and > 0 ")
+  }
+  if (!is.null(importance)) {
+    if (length(importance)!=ncol(x)) {
+      stop("length of importance-vector does not match number of key variables!\n")
+    }
+  }
+  
+  # k can be at most the number of obs!
+  k <- min(k, nrow(x))
+  
+  keys <- 1:ncol(x)
+  keyVars <- names(x)
+  x <- data.table(x)
+  
+  # calculate number of suppressions for each keyVar
+  # before trying to achieve k-anonymity
+  NABefore <- is.na(x)
+  NAinKey <- x[,lapply(.SD, function(x) sum(is.na(x)))]
+  totalNABefore <- sum(NAinKey)
+  
+  x[,idvarextraforsls:=.I]
+  
+  ##############
+  # The dataset is reduced to a smaller dataset in the following way
+  # 1) all NAs are initialized with the first unique value
+  # of the corresponding keyVariable
+  xKeys <- x[,c(keyVars, "idvarextraforsls"),with=F]
+  for (kV in keyVars) {
+    if (NAinKey[[kV]] > 0) {
+      e1 <- parse(text=paste0("is.na(",kV,")"))
+      e2 <- parse(text=paste0(kV,":=unique(",kV,")[1]"))
+      xKeys[eval(e1), eval(e2)]
+    }
+  }
+  setkeyv(xKeys, keyVars)
+  
+  # 2) fk is computed
+  erg <- xKeys[,list(fk=.N), by=key(xKeys)]
+  xKeys <- merge(xKeys, erg)
+  
+  # 3) from groups with fk>k, all observations except k observations are removed
+  weg <- fkd <- idvarextraforsls <- fk <- NA #for CHECK-NOTES
+  erg <- xKeys[fk>k] # more than k
+  erg[,fkd:=fk-k]
+  if (nrow(erg) >0) {
+    erg2 <- erg[,tail(.SD,fkd[1]),by=key(erg)]
+    xKeys <- data.table(x)
+    setkey(xKeys,"idvarextraforsls")
+    erg2 <- erg2[,list(idvarextraforsls)]
+    erg2[,weg:=1]
+    setkey(erg2,"idvarextraforsls")
+    xKeys <- merge(xKeys,erg2,all=TRUE)
+    x <- xKeys[is.na(weg)]
+  }
+  
+  # 4) afterwards the old lS-Algo is applied
+  ff <- freqCalc(x, keyVars=keyVars, alpha=alpha)
+  rk <- indivRisk(ff)
+  runInd <- TRUE
+  
+  importanceI <- (length(importance)+1)-importance
+  
+  # prepare data input for cpp_calcSuppInds()
+  # factors must be recoded as numeric
+  mat <- x[,keyVars,with=F]
+  for (kV in names(mat)) {
+    if (is.factor(mat[[kV]])) {
+      ex <- parse(text=paste0(kV,":=as.numeric(",kV,")"))
+      mat[,eval(ex)]
+    }
+  }
+  mat <- as.matrix(mat)
+  while (runInd) {
+    ind.problem <- which(ff$fk < k)
+    ind.problem  <- ind.problem[order(rk$rk[ind.problem],decreasing=TRUE)]
+    for (i in seq_along(ind.problem)) {
+      params <- list(alpha=alpha, id=as.integer(ind.problem[i]))
+      res <- cpp_calcSuppInds(mat, mat[ind.problem[i],], params=params)
+      ind <- res$ids
+      if (length(ind) > 0) {
+        colInd <- NULL
+        colIndsSorted <- keyVars[order(importanceI)]
+        while (is.null(colInd)) {
+          for (cc in colIndsSorted) {
+            # special case where we have to suppress values in the problematic instance itself because no other candidates are available
+            if (length(ind)==1 && ind==ind.problem[i]) {
+              z <- which(!is.na(mat[ind, cc]))
+            } else {
+              z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
+            }
+            if (length(z) > 0) {
+              colInd <- cc
+              break;
+            }
+          }
+        }
+        x[[colInd]][ind.problem[i]] <- NA
+        mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
+      } else {
+        stop("Error the length of the index vector is 0\n")
+      }
+    }
+    ff <- freqCalc(x, keyVars=keyVars, alpha=alpha)
+    rk <- indivRisk(ff)
+    if (all(ff$fk >= k)) {
+      runInd <- FALSE
+    }
+  }
+  # 5) the last step is to merge the smaller k-anonymized data set back to the
+  # original data set with initial NAs introduced again
+  if (nrow(erg)>0) {
+    xrem <- data.table(x[,"idvarextraforsls",with=F],weg=1)
+    x[,weg:=NULL]
+    
+    setkey(xrem,"idvarextraforsls")
+    xKeys[,weg:=NULL]
+    setkey(xKeys,"idvarextraforsls")
+    xKeys <- merge(xKeys,xrem,all=TRUE)
+    xKeys <- xKeys[is.na(weg),]
+    xKeys[,weg:=NULL]
+    x <- rbind(x,xKeys)
+    setkey(x,"idvarextraforsls")
+    x[,idvarextraforsls:=NULL]
+  } else {
+    setkey(x,"idvarextraforsls")
+    x[,idvarextraforsls:=NULL]
+  }
+  out <- list(xAnon=x)#, supps=supps, totalSupps=totalSupps)
+  return(out)
+}
+sum_na <- function(x) {
+  sum(is.na(x))
+}
 localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=NULL, alpha) {
   # find a suppression pattern for a simple subset that is not stratified
   # input: df=data.table with only keyVars
   # k: parameter for k-anonymity (length 1)
   # importance: importance-vector with length equals ncol(df)
-  suppSubset <- function(x, k, importance, alpha=alpha)  {
-    # checks
-    if (length(k) != 1 | k < 1) {
-      stop("argument 'k' must be of length 1 and > 0 ")
-    }
-    if (!is.null(importance)) {
-      if (length(importance)!=ncol(x)) {
-        stop("length of importance-vector does not match number of key variables!\n")
-      }
-    }
-
-    # k can be at most the number of obs!
-    k <- min(k, nrow(x))
-
-    keys <- 1:ncol(x)
-    keyVars <- names(x)
-    x <- data.table(x)
-
-    # calculate number of suppressions for each keyVar
-    # before trying to achieve k-anonymity
-    NABefore <- is.na(x)
-    NAinKey <- x[,lapply(.SD, function(x) sum(is.na(x)))]
-    totalNABefore <- sum(NAinKey)
-
-    x[,idvarextraforsls:=.I]
-
-    ##############
-    # The dataset is reduced to a smaller dataset in the following way
-    # 1) all NAs are initialized with the first unique value
-    # of the corresponding keyVariable
-    xKeys <- x[,c(keyVars, "idvarextraforsls"),with=F]
-    for (kV in keyVars) {
-      if (NAinKey[[kV]] > 0) {
-        e1 <- parse(text=paste0("is.na(",kV,")"))
-        e2 <- parse(text=paste0(kV,":=unique(",kV,")[1]"))
-        xKeys[eval(e1), eval(e2)]
-      }
-    }
-    setkeyv(xKeys, keyVars)
-
-    # 2) fk is computed
-    erg <- xKeys[,list(fk=.N), by=key(xKeys)]
-    xKeys <- merge(xKeys, erg)
-
-    # 3) from groups with fk>k, all observations except k observations are removed
-    weg <- fkd <- idvarextraforsls <- fk <- NA #for CHECK-NOTES
-    erg <- xKeys[fk>k] # more than k
-    erg[,fkd:=fk-k]
-    if (nrow(erg) >0) {
-      erg2 <- erg[,tail(.SD,fkd[1]),by=key(erg)]
-      xKeys <- data.table(x)
-      setkey(xKeys,"idvarextraforsls")
-      erg2 <- erg2[,list(idvarextraforsls)]
-      erg2[,weg:=1]
-      setkey(erg2,"idvarextraforsls")
-      xKeys <- merge(xKeys,erg2,all=TRUE)
-      x <- xKeys[is.na(weg)]
-    }
-
-    # 4) afterwards the old lS-Algo is applied
-    ff <- freqCalc(x, keyVars=keyVars, alpha=alpha)
-    rk <- indivRisk(ff)
-    runInd <- TRUE
-
-    importanceI <- (length(importance)+1)-importance
-
-    # prepare data input for cpp_calcSuppInds()
-    # factors must be recoded as numeric
-    mat <- x[,keyVars,with=F]
-    for (kV in names(mat)) {
-      if (is.factor(mat[[kV]])) {
-        ex <- parse(text=paste0(kV,":=as.numeric(",kV,")"))
-        mat[,eval(ex)]
-      }
-    }
-    mat <- as.matrix(mat)
-    while (runInd) {
-      ind.problem <- which(ff$fk < k)
-      ind.problem  <- ind.problem[order(rk$rk[ind.problem],decreasing=TRUE)]
-      for (i in seq_along(ind.problem)) {
-        params <- list(alpha=alpha, id=as.integer(ind.problem[i]))
-        res <- cpp_calcSuppInds(mat, mat[ind.problem[i],], params=params)
-        ind <- res$ids
-        if (length(ind) > 0) {
-          colInd <- NULL
-          colIndsSorted <- keyVars[order(importanceI)]
-          while (is.null(colInd)) {
-            for (cc in colIndsSorted) {
-              # special case where we have to suppress values in the problematic instance itself because no other candidates are available
-              if (length(ind)==1 && ind==ind.problem[i]) {
-                z <- which(!is.na(mat[ind, cc]))
-              } else {
-                z <- which(mat[ind.problem[i],cc]!=mat[ind,cc] & !is.na(mat[ind,cc]))
-              }
-              if (length(z) > 0) {
-                colInd <- cc
-                break;
-              }
-            }
-          }
-          x[[colInd]][ind.problem[i]] <- NA
-          mat[ind.problem[i], colInd] <- NA # required for cpp_calcSuppInds()
-        } else {
-          stop("Error\n")
-        }
-      }
-      ff <- freqCalc(x, keyVars=keyVars, alpha=alpha)
-      rk <- indivRisk(ff)
-      if (all(ff$fk >= k)) {
-        runInd <- FALSE
-      }
-    }
-    # 5) the last step is to merge the smaller k-anonymized data set back to the
-    # original data set with initial NAs introduced again
-    if (nrow(erg)>0) {
-      xrem <- data.table(x[,"idvarextraforsls",with=F],weg=1)
-      x[,weg:=NULL]
-
-      setkey(xrem,"idvarextraforsls")
-      xKeys[,weg:=NULL]
-      setkey(xKeys,"idvarextraforsls")
-      xKeys <- merge(xKeys,xrem,all=TRUE)
-      xKeys <- xKeys[is.na(weg),]
-      xKeys[,weg:=NULL]
-      x <- rbind(x,xKeys)
-      setkey(x,"idvarextraforsls")
-      x[,idvarextraforsls:=NULL]
-    } else {
-      setkey(x,"idvarextraforsls")
-      x[,idvarextraforsls:=NULL]
-    }
-    out <- list(xAnon=x)#, supps=supps, totalSupps=totalSupps)
-    return(out)
-  }
 
   # compute number of missings
-  sum_na <- function(x) {
-    sum(is.na(x))
-  }
+  
 
   strata <- NULL
   if (!"data.table" %in% class(x)) {
