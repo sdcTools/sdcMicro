@@ -97,7 +97,9 @@ sdc <- localSuppression(sdc)
 ## in this case we want to provide 10-anonymity for all combinations
 ## of 5 key variables, 20-anonymity for all combinations with 4 key variables
 ## and 30-anonymity for all combinations of 3 key variables.
-## note: stratas are automatically considered!
+sdc <- createSdcObj(testdata2,
+  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
+  numVars=c('expend','income','savings'), w='sampling_weight')
 combs <- 5:3
 k <- c(10,20,30)
 sdc <- localSuppression(sdc, k=k, combs=combs)

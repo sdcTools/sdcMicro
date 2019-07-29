@@ -52,10 +52,10 @@ perturbation methods in future versions.
 data(Tarragona)
 \dontrun{
 valTable(Tarragona[100:200,],
-method=c("simple","onedims","pca","addNoise: additive"))
+method=c("simple","onedims","pca"))
 valTable(Tarragona,
 method=c("simple","onedims","pca","clustpppca",
-"mdav", "addNoise: additive", "swappNum"))
+"mdav", "swappNum"))
 ## clustpppca in combination with Mclust outperforms
 ## the other algorithms for this data set...
 }
