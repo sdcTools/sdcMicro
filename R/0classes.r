@@ -1,6 +1,6 @@
 ### class sdcMicroObj ###
 #all <- setdiff(getNamespaceExports("shiny"), c("renderDataTable", "dataTableOutput"))
-#cat(paste("#' @importFrom shiny", all), sep="\n")
+#message(paste("#' @importFrom shiny", all), sep="\n")
 
 #' @useDynLib sdcMicro, .registration=TRUE
 #' @import methods

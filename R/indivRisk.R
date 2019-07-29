@@ -155,10 +155,10 @@ indivRisk <- function(x, method = "approx", qual = 1, survey = TRUE) {
 #' indivRisk(f1)
 #'
 print.indivRisk <- function(x, ...) {
-  # cat('\n ----- individual risk ----- \n')
-  cat(paste("method=", x$method, ", qual=", x$qual, sep = ""))
-  cat("\n --------------------------- \n")
+  # message('\n ----- individual risk ----- \n')
+  message(paste("method=", x$method, ", qual=", x$qual, sep = ""))
+  message("\n --------------------------- \n")
   s <- sum(x$rk > median(x$rk) + 3 * mad(x$rk) & x$rk > 0.1)
-  cat(paste(s, "obs. with high risk"))
+  message(paste(s, "obs. with high risk"))
 }
 

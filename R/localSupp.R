@@ -130,7 +130,7 @@ definition = function(obj, threshold=0.15, keyVar) {
     stop("invalid key variable specified!\n")
   }
   res <- localSuppWORK(x=x, rk=rk, threshold=threshold, keyVar=keyVar)
-  cat(res$newSupps,"observations has individual risks >=",threshold,"and were suppressed!\n")
+  message(res$newSupps,"observations has individual risks >=",threshold,"and were suppressed!\n")
   inpdf <- obj$freqCalc
   inpdf[,obj$keyVars] <- res$xAnon
   freqCalc(inpdf, keyVars=obj$keyVars, w=obj$w)

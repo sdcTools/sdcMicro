@@ -419,6 +419,6 @@ definition=function(obj, outdir=getwd(), filename="SDC-Report",
       txt <- paste0("An short report was successfully generated.\n")
     }
     txt <- paste0(txt, "It was saved in '", fOut,"'.\n")
-    cat(txt)
+    message(txt)
   }
 })

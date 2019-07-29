@@ -392,9 +392,9 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
         cur_k <- k[gr]
         #log <- paste0("providing ",cur_k,"-Anonymity for ",ncol(tree[[gr]])," combinations ")
         #log <- paste0(log, "of ",combs[gr]," key variables.\n")
-        #cat(log)
+        #message(log)
         for (comb in 1:ncol(tree[[gr]])) {
-          #cat("combination",comb,"|",ncol(tree[[gr]]),"\n")
+          #message("combination",comb,"|",ncol(tree[[gr]]),"\n")
           counter <- counter+1
           kV <- tree[[gr]][,comb]
           cur_importance <- rank(importance[kV], ties.method="min")
@@ -438,7 +438,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
           cur_k <- k[gr]
           #log <- paste0("providing ",cur_k,"-Anonymity for ",ncol(tree[[gr]])," combinations ")
           #log <- paste0(log, "of ",combs[gr]," key variables in strata ", names(spl)[i],"!\n")
-          #cat(log)
+          #message(log)
           for (comb in 1:ncol(tree[[gr]])) {
             counter <- counter+1
             kV <- tree[[gr]][,comb]
@@ -522,14 +522,14 @@ print.localSuppression <- function(x, ...) {
   pp <- paste0(pp, "Total number of suppressions in the key variables: ", totSupps," (new: ",addSupps,")\n\n")
   if (!is.na(x$threshold)) {
     pp <- paste0(pp, "Number of suppressions by key variables:\n\n")
-    cat(pp)
+    message(pp)
     print(x$supps)
 
     kv <- x$keyVars[which.max(x$importance)]
     pp <- paste0("\nThe last application of localSupp() resulted")
     pp <- paste0(pp, " in ", x$newSupps," additional suppressions in variable ",dQuote(kv),".\n")
     pp <- paste0(pp, "These observations had individual risks >= ",x$threshold,".\n")
-    cat(pp)
+    message(pp)
     return(invisible(NULL))
   }
 
@@ -543,7 +543,7 @@ print.localSuppression <- function(x, ...) {
   for (i in 1:ncol(dt)) {
     dt[[i]] <- paste0(dt[[i]], " (",x$totalSupps[[i]],")")
   }
-  cat(pp)
+  message(pp)
   print(dt)
 
   if (byStrata==TRUE) {
@@ -574,7 +574,7 @@ print.localSuppression <- function(x, ...) {
     }
   }
   pp <- paste0(pp, "-----------------------\n")
-  cat(pp)
+  message(pp)
   invisible(NULL)
 }
 

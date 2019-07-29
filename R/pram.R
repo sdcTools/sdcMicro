@@ -554,10 +554,10 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
 print.pram <- function(x, ...) {
   params <- attr(x, "pram_params")
   df <- attr(x, "summary")
-  cat("Number of changed observations: \n")
-  cat("- - - - - - - - - - - \n")
+  message("Number of changed observations: \n")
+  message("- - - - - - - - - - - \n")
   for (i in 1:nrow(df)) {
-    cat(df$variable[i], " != ", paste0(df$variable[i],"_pram"), " : ", df$nrChanges[i], " (", df$percChanges[i], "%)", "\n", sep="")
+    message(df$variable[i], " != ", paste0(df$variable[i],"_pram"), " : ", df$nrChanges[i], " (", df$percChanges[i], "%)", "\n", sep="")
   }
   return(invisible(df))
 }
@@ -592,12 +592,12 @@ summary.pram <- function(object, ...) {
   transitions <- attr(object, "transitions")
   compdats <- attr(object, "compdat")
   for (i in 1:nrow(df)) {
-    cat("Variable: ", df$variable[i])
-    cat("\n ----------------------")
-    cat("\nFrequencies in original and perturbed data:\n")
+    message("Variable: ", df$variable[i])
+    message("\n ----------------------")
+    message("\nFrequencies in original and perturbed data:\n")
     print(compdats[[i]])
-    cat("\nTransitions:\n")
+    message("\nTransitions:\n")
     print(transitions[[i]])
-    cat("\n")
+    message("\n")
   }
 }

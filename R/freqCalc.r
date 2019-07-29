@@ -282,10 +282,10 @@ freqCalc <- function(x, keyVars, w=NULL, alpha=1) {
 #'
 print.freqCalc <- function(x, ...) {
   P <- dim(x)[2]
-  cat("\n --------------------------\n")
-  cat(paste(x$n1, "obs. violate 2-anonymity \n"))
-  cat(paste(x$n2 + x$n1, "obs. violate 3-anonymity \n"))
-  cat(" --------------------------\n")
+  message("\n --------------------------\n")
+  message(paste(x$n1, "obs. violate 2-anonymity \n"))
+  message(paste(x$n2 + x$n1, "obs. violate 3-anonymity \n"))
+  message(" --------------------------\n")
 }
 
 #' Summary method for objects from class freqCalc
@@ -326,9 +326,9 @@ summary.freqCalc <- function(object, ...) {
     sum(is.na(x))
   }))
   P <- dim(object$freqCalc)[1]
-  cat("\n Suppressions: \n")
+  message("\n Suppressions: \n")
   for (i in 1:length(a1)) {
     if (a1[i] != 0)
-      cat(paste("\nLocal suppression in", names(a1)[i], ":", a1[i], "/", P, "\n"))
+      message(paste("\nLocal suppression in", names(a1)[i], ":", a1[i], "/", P, "\n"))
   }
 }

@@ -424,28 +424,28 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2
 #' @method print measure_risk
 #' @export
 print.measure_risk <- function(x, ...) {
-  cat("\n")
-  cat("--------------------------\n")
+  message("\n")
+  message("--------------------------\n")
   s <- sum(x$Res[, 1] > median(x$Res[, 1]) + 3 * mad(x$Res[, 1]) & x$Res[, 1] > 0.1)
-  cat(paste(s, "obs. with higher risk as the main part\n"))
-  cat("Expected no. of re-identifications:\n", round(x$global_risk_ER, 2), "")
-  cat("(", round(x$global_risk_pct, 2), "%)\n")
+  message(paste(s, "obs. with higher risk as the main part\n"))
+  message("Expected no. of re-identifications:\n", round(x$global_risk_ER, 2), "")
+  message("(", round(x$global_risk_pct, 2), "%)\n")
   if (is.na(x$global_threshold))
     x$global_threshold <- Inf
-  cat("Threshold:", round(x$global_threshold, 2), "\n (for maximal global risk", round(x$max_global_risk,
+  message("Threshold:", round(x$global_threshold, 2), "\n (for maximal global risk", round(x$max_global_risk,
     2), ")\n")
-  cat("--------------------------\n")
+  message("--------------------------\n")
   if ("hier_risk_ER" %in% names(x)) {
     if (!is.na(x$hier_risk_ER)) {
-      cat("--------------------------\n")
-      cat("Hierarchical risk \n")
-      cat("--------------------------\n")
-      cat("Expected no. of re-identifications:\n", round(x$hier_risk_ER, 2), "")
-      cat("(", round(x$hier_risk_pct, 2), "% )\n")
+      message("--------------------------\n")
+      message("Hierarchical risk \n")
+      message("--------------------------\n")
+      message("Expected no. of re-identifications:\n", round(x$hier_risk_ER, 2), "")
+      message("(", round(x$hier_risk_pct, 2), "% )\n")
     } else {
-      cat("--------------------------\n")
-      cat("Hierarchical risk not available\n")
-      cat("--------------------------\n")
+      message("--------------------------\n")
+      message("Hierarchical risk not available\n")
+      message("--------------------------\n")
     }
   }
 }
@@ -461,8 +461,8 @@ print.measure_risk <- function(x, ...) {
 #' @method print ldiversity
 #' @export
 print.ldiversity <- function(x, ...) {
-  cat("--------------------------\n")
-  cat("L-Diversity Measures \n")
-  cat("--------------------------\n")
+  message("--------------------------\n")
+  message("L-Diversity Measures \n")
+  message("--------------------------\n")
   print(summary(x[, grep("_Distinct_Ldiversity", colnames(x))]))
 }

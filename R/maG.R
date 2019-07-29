@@ -38,11 +38,11 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
   numerical <- colnames(data)[numerical]
   numerical <- numerical[!numerical %in% mixed]
   if (trace) {
-    cat("Detected as categorical variable:\n")
+    message("Detected as categorical variable:\n")
     print(factors)
-    cat("Detected as ordinal variable:\n")
+    message("Detected as ordinal variable:\n")
     print(orders)
-    cat("Detected as numerical variable:\n")
+    message("Detected as numerical variable:\n")
     print(numerical)
   }
   if (is.null(weights)) {

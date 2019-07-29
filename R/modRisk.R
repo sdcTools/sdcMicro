@@ -270,9 +270,9 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
 #' @method print modrisk
 #' @export
 print.modrisk <- function(x, ...) {
-  cat(paste0("The estimated model (using method '",x$method,"') was:\n"))
-  cat(paste0("\t",paste(as.character(x$model), collapse=" "),"\n"))
-  cat("global risk-measures:\n")
-  cat(paste0("\tRisk-Measure 1: ", prettyF(x$gr1, digits=3)," (",prettyF(x$gr1perc, digits=3)," %)\n"))
-  cat(paste0("\tRisk-Measure 2: ", prettyF(x$gr2, digits=3)," (",prettyF(x$gr2perc, digits=3)," %)\n"))
+  message(paste0("The estimated model (using method '",x$method,"') was:\n"))
+  message(paste0("\t",paste(as.character(x$model), collapse=" "),"\n"))
+  message("global risk-measures:\n")
+  message(paste0("\tRisk-Measure 1: ", prettyF(x$gr1, digits=3)," (",prettyF(x$gr1perc, digits=3)," %)\n"))
+  message(paste0("\tRisk-Measure 2: ", prettyF(x$gr2, digits=3)," (",prettyF(x$gr2perc, digits=3)," %)\n"))
 }

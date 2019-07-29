@@ -620,7 +620,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
         y <- x[w, , drop=FALSE]
         xx[[i]] <- y[order(y[, varsort]), ]
       } else {
-        cat("length(w):", length(w), "\n")
+        message("length(w):", length(w), "\n")
         x.mcd <- cov.mcd(x[w, ], cor=TRUE)
         x.scale <- scale(x[w, ], x.mcd$center, sqrt(diag(x.mcd$cor)))
         p <- princomp(x.scale, covmat=x.mcd)$scores[, 1]
@@ -847,18 +847,18 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
 #' m1
 #'
 print.micro <- function(x, ...) {
-  cat(paste("\n Object created with method", x$method, "and aggregation level",
+  message(paste("\n Object created with method", x$method, "and aggregation level",
     x$aggr))
-  cat("\n -------------------------\n")
-  cat("x ... original values \n")
+  message("\n -------------------------\n")
+  message("x ... original values \n")
   print(summary(x$x))
-  cat("\n -------------------------\n")
-  cat("mx ... microaggregated values\n")
+  message("\n -------------------------\n")
+  message("mx ... microaggregated values\n")
   print(summary(x$mx))
-  cat("\n -------------------------\n")
+  message("\n -------------------------\n")
 
-  cat("Try names(your object from class micro) for more details")
-  cat("\n")
+  message("Try names(your object from class micro) for more details")
+  message("\n")
 }
 
 #' Summary method for objects from class micro
