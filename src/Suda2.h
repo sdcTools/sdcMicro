@@ -1,4 +1,3 @@
-//* ======================================================================== *
 //*                              CEntry
 //* ======================================================================== *
 
@@ -281,8 +280,7 @@ void CEntry :: InitValue(void)
 
   m_Hash = 0;
 
-  ForLoop (j, g_NbVarALEX)
-  {
+  ForLoop (j, g_NbVarALEX){
     int CarryFlag = m_Hash & es_HashListHiBit;
     m_Hash <<= 1;
     m_Hash += m_pValue[j];
@@ -529,8 +527,7 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
             pItem->m_FromItem = j;
             pItem->m_EntryCrc = EntryCrc;
             pEntryOut = pItem->m_pEntry + NbSameEntry;
-          }
-          else{
+          }else{
             memcpy(pCorrelation->m_pEntryOut, g_pEntryCacheOut,
                             sizeof(pCorrelation->m_pEntryOut[0]) * NbDiffEntry);
             pEntryOut = pCorrelation->m_pEntryOut;
@@ -807,9 +804,12 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
     ForLoop (j, g_NbEntry){
       CEntry &Entry = g_pEntry[j];
 
-      if (Entry.m_Ignore)   // This Entry has 2 or more other duplicates
+      if (Entry.m_Ignore){   // This Entry has 2 or more other duplicates
+        if(g_Debug){
+          Rprintf("Suda2 ==> Ignore var %d msu %d",i+1,j+1);
+        }
         continue;
-
+      }
       SValue *pValue = ValueList.m_pFirst;
 
       while (pValue){
@@ -839,6 +839,9 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
         continue;
 
       if (Freq == 1){    // 1-MSU ?
+        if(g_Debug){
+          Rprintf("Suda2 ==> Var%d, Freq==1 \n",i+1);
+        }
         CSudaMsu *pMsu = CSudaMsu::New(1, pEntry->m_Index);
         pMsu->m_Var[0].FromItem = -1;
 
@@ -846,9 +849,13 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
         ++g_NbMsuN[0];
         ++pEntry->m_pNbMsu[0];
         ++g_pNbMsuPerVariable[i];
-        if (pEntry->m_pContribution)
+        if (pEntry->m_pContribution){
           pEntry->m_pContribution[i] += g_ab[0];
+        }
       }else if (Freq && Freq != NbEntry){
+        if(g_Debug){
+          Rprintf("Suda2 ==> Var%d, Freq!=1 \n",i+1);
+        }
         CItem *pItem = CItem::New(i, pValue->Value, Freq, 0);
 
         pItem->m_FromItem = -pItemList->m_NbElement - 1;
@@ -869,7 +876,10 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
         CCorrelation *pCorrelation = CorrelateItem(*pItemList, CorrelationList, pItem->m_pEntry,
                                     Freq, pItem->m_EntryCrc, -1, Freq);
 
-        if (pCorrelation != NULL){   // Correlated ?
+        if (pCorrelation != NULL){// Correlated ?
+          if(g_Debug){
+            Rprintf("Suda2 ==> Var%d, Delete correlated \n",i+1);
+          }
           delete pItem;
           ++NbCorrelated;
         }else{
@@ -881,10 +891,10 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
     }
   }
 
-  if (g_Debug)
+  if (g_Debug){
     Rprintf("Suda2 ==> Nb Total Item = %d; AvrNbEntryPerItem = %g; NbCorrelated = %d\n",
         pItemList->m_NbElement, NbEntryForAllItem / (float) (pItemList->m_NbElement ? pItemList->m_NbElement : 1), NbCorrelated);
-
+  }
 
   pItemList->CreateIndex();
 
@@ -895,7 +905,7 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
   FindMsu(MsuList, CorrelationList, *pItemList, NbEntry, g_MaxK);
 
   if (g_Debug){
-    Rprintf("Suda2 : NbCall = %d\n", g_NbCall);
+    Rprintf("Suda2 ==> NbCall = %d\n", g_NbCall);
   }
     
 
@@ -1136,7 +1146,16 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
   ASSERT(NbProcessedEntry == g_NbEntry);
 
   CList<CItem> *pItemList = Suda2(g_pEntry, g_NbEntry);
-
+  if(g_Debug){
+    Rprintf("=== NbMsu : %d\n", g_NbMsu);
+    
+    ForLoop (i, g_NbVarALEX)
+    {
+      Rprintf("%6d Msu%02d; ", g_NbMsuN[i], i+1);
+      if (!((i+1) % 5) || i == g_NbVarALEX - 1)
+        Rprintf("\n");
+    }
+  }
     //============================ Nb Msu Per Variable output
   ForLoop (i, g_NbVarALEX)
     g_pNbCorrelated[i] = i;
@@ -1147,7 +1166,18 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
         Swap(g_pNbCorrelated[i], g_pNbCorrelated[j]);
     }
   }
-
+  if(g_Debug){
+    Rprintf("=== NbMsu Per Variable :\n");
+    
+    ForLoop (i, g_NbVarALEX){
+      Rprintf("Var%02d: %6d; ", g_pNbCorrelated[i]+1, g_pNbMsuPerVariable[g_pNbCorrelated[i]]);
+      
+      if (!((i+1) % 5) || i == g_NbVarALEX - 1)
+        Rprintf("\n");
+    }
+    Rprintf("=====================\n");
+  }
+  
 
 
     //============================ Dis risk
@@ -1162,27 +1192,28 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
     CEntry &Entry = g_pEntry[i];
     if (Entry.m_Ignore){   // This Entry has 2 or more other duplicates
       if(g_Debug){
-        Rprintf("Ignore Obs %d",i);
+        Rprintf("Ignore Obs %d",i+1);
       }
       continue;
     }
       //=== Calculate SudaScore
     double SudaScore = 0.0;
     ForLoop (j, g_MaxK){
+      Rprintf("Obs %d - Size of MSU %d - Number of Entries %d\n",i+1,j+1,Entry.m_pNbMsu[j]);
       SudaScore += Entry.m_pNbMsu[j] * g_ab[j];
     }
     if(g_Debug){
-      Rprintf("Obs %d - SudaScore :%f\n",i,SudaScore);
+      Rprintf("Obs %d - SudaScore :%f\n",i+1,SudaScore);
     }
     if (CEntry::m_pContributionStack && SudaScore){
         //=== Var Contribution per Row
       ForLoop (j, g_NbVarALEX){
         if(g_Debug){
-          Rprintf("Obs %d - Var %d: Raw contribution=%f",i,j,Entry.m_pContribution[j]);
+          Rprintf("Obs %d - Var %d: Raw contribution=%f",i+1,j+1,Entry.m_pContribution[j]);
         }
         Entry.m_pContribution[j] /= SudaScore;
         if(g_Debug){
-          Rprintf(", Adjusted contribution=%f\n",j,Entry.m_pContribution[j]);
+          Rprintf(", Adjusted contribution=%f\n",Entry.m_pContribution[j]);
         }
         Res(Entry.m_Index,j) = Entry.m_pContribution[j];
       }
