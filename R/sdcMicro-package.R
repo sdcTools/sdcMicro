@@ -117,7 +117,7 @@
 #' ## do not use the mu-Argus test data set (free1)
 #' # since the numerical variables are (probably) faked.
 #' data(Tarragona)
-#' Tarragona1 <- rankSwap(Tarragona, P=10)
+#' Tarragona1 <- rankSwap(Tarragona, P = 10, K0 = NULL, R0 = NULL)
 #'
 #' ## Microaggregation:
 #' m1 <- microaggregation(Tarragona, method="onedims", aggr=3)
