@@ -390,7 +390,8 @@ output$ui_rankswap_header <- renderUI({
     column(12, h4("Rank Swapping"), offset = 0, class = "wb-header"),
     column(12, p("This is a method to be used on numeric or ordinal variables. The idea is to",tags$i("swap"),"values within a range
                  so that correlation structure of original variables is preserved and some perturbation is applied. Note: rank swapping is a probabilistic method
-                 and therefore the results differ depending on the current seed for the random number generator."), offset = 0, class = "wb-header-hint"))
+                 and therefore the results differ depending on the current seed for the random number generator.
+                 Only one of the 3 parameters below will be used to compute the number of swaps."), offset = 0, class = "wb-header-hint"))
   out
 })
 output$ui_rankswap <- renderUI({
@@ -429,37 +430,37 @@ output$ui_rankswap <- renderUI({
       min=0, max=25, step=1, value=0, width="100%")
 
   })
-  output$sl_rankswap_k0 <- renderUI({
-    txt_tooltip <- "The algorithm keeps the change in the means of the variables before and after rank swapping within a range based on the subset-mean preservation factor K_0. "
+  
+  output$rb_rankswap_p_k0_r0 <- renderUI({
+    txt_tooltip <- "<b>K0:</b><br />"
+    txt_tooltip <- paste0(txt_tooltip, "The algorithm keeps the change in the means of the variables before and after rank swapping within a range based on the subset-mean preservation factor K_0. ")
     txt_tooltip <- paste0(txt_tooltip, "The absolute difference between the variable mean before and swapping (abs(X_1 - X_2), where X_1 is the (subset) sample mean before swapping ")
     txt_tooltip <- paste0(txt_tooltip, "and X_2 is the (subset) sample mean after swapping) is kept smaller than or equal to 2 * K_0 * X_1 / sqrt(N_S), where N_S is the sample size of the subset under consideration. Therefore, larger values of K_0 allow larger deviations.")
-    sliderInput("sl_rankswap_k0",
-      label=p("Set subset-mean preservation factor", tipify(icon("info-circle"), title=txt_tooltip, placement="bottom")),
-      min=0, max=1, step=0.01, value=0, width="100%")
-  })
-  output$sl_rankswap_r0 <- renderUI({
-    txt_tooltip <- "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_1/R_2 > R_0 where R_1 is the correlation coefficient of the two variables after swapping, "
+    txt_tooltip <- paste0(txt_tooltip, "<br><b>R0:</b><br />")
+    txt_tooltip <- paste0(txt_tooltip, "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_1/R_2 > R_0 where R_1 is the correlation coefficient of the two variables after swapping, ")
     txt_tooltip <- paste0(txt_tooltip, "and R_2 is the correlation coefficient of the two variables before swapping.")
-    sliderInput("sl_rankswap_r0",
-      label=p("Set multivariate preservation factor", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
-      min=0, max=1, step=0.01, value=0.95, width="100%")
+    txt_tooltip <- paste0(txt_tooltip, "<br><b>P:</b><br />")
+    txt_tooltip <- paste0(txt_tooltip, "This parameter (P) describes the size of the rank range as percentage of the total sample size. So two records are eligible for swapping if their ranks, i and j respectively, satisfy abs(i-j) < P*N/100, where N is the total sample size.")
+    rb_rankswap_p_k0_r0 <- radioButtons("rb_rankswap_p_k0_r0",
+                                        label=p("Method to compute swap rate:", tipify(icon("info-circle"),
+                                                                                       title=txt_tooltip, placement="top")),
+                                        choices=c("K0","R0","P"), width="100%", selected=input$rb_rankswap_p_k0_r0, inline=TRUE)
   })
-  output$sl_rankswap_p <- renderUI({
-    txt_tooltip <- "This parameter (P) describes the size of the rank range as percentage of the total sample size. So two records are eligible for swapping if their ranks, i and j respectively, satisfy abs(i-j) < P*N/100, where N is the total sample size."
-    sliderInput("sl_rankswap_p",
-      label=p("Set rank range as percentage of total sample size.", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
-      min=0, max=100, step=1, value=0, width="100%")
+  
+  output$sl_rankswap_p_k0_r0 <- renderUI({
+    txt_tooltip <- "For K0 and R0 a value between 0 and 1 will be used directly and for P it will be multiplied by 100."
+    sliderInput("sl_rankswap_p_k0_r0",
+                label=p("Set rank range as percentage of total sample size.", tipify(icon("info-circle"), title=txt_tooltip, placement="top")),
+                min=0, max=1, step=0.01, value=0.95, width="100%")
   })
-
+ 
   out <- fluidRow(
     column(4, uiOutput("ui_rankswap_vars"), align="center"),
     column(4, uiOutput("sl_rankswap_bot"), align="center"),
     column(4, uiOutput("sl_rankswap_top"), align="center"))
-
   out <- list(out, fluidRow(
-    column(4, uiOutput("sl_rankswap_k0"), align="center"),
-    column(4, uiOutput("sl_rankswap_r0"), align="center"),
-    column(4, uiOutput("sl_rankswap_p"), align="center")))
+    column(8, uiOutput("rb_rankswap_p_k0_r0"), align="center"),
+    column(4, uiOutput("sl_rankswap_p_k0_r0"), align="center")))
 
   out <- list(out, fluidRow(
     column(12, uiOutput("ui_rankswap_btn"), align="center")))

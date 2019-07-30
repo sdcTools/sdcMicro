@@ -587,13 +587,21 @@ shinyServer(function(session, input, output) {
     }
     cmd <- paste0(cmd, ", TopPercent=",input$sl_rankswap_top)
     cmd <- paste0(cmd, ", BottomPercent=",input$sl_rankswap_bot)
-    cmd <- paste0(cmd, ", K0=",input$sl_rankswap_k0)
-    cmd <- paste0(cmd, ", R0=",input$sl_rankswap_r0)
-    cmd <- paste0(cmd, ", P=",input$sl_rankswap_p)
+    rankswap_k0 <- rankswap_r0 <- rankswap_p <- "NULL"
+    if(input$rb_rankswap_p_k0_r0=="K0"){
+      rankswap_k0 <- input$sl_rankswap_p_k0_r0
+    }else if(input$rb_rankswap_p_k0_r0=="R0"){
+      rankswap_r0 <- input$sl_rankswap_p_k0_r0
+    }else if(input$rb_rankswap_p_k0_r0=="P"){
+      rankswap_p <- input$sl_rankswap_p_k0_r0*100
+    }
+    cmd <- paste0(cmd, ", K0=",rankswap_k0)
+    cmd <- paste0(cmd, ", R0=",rankswap_r0)
+    cmd <- paste0(cmd, ", P=",rankswap_p)
     cmd <- paste0(cmd, ", missing=NA, seed=NULL)")
 
     txt_action <- paste0(txt_action, " (parameters: TopPercent=",input$sl_rankswap_top,", BottomPercent=", input$sl_rankswap_bot)
-    txt_action <- paste0(txt_action, ", K0=",input$sl_rankswap_k0,", R0=", input$sl_rankswap_r0, ")\n")
+    txt_action <- paste0(txt_action, ", K0=",rankswap_k0,", R0=", rankswap_r0, ", P=",rankswap_p,")\n")
     return(list(cmd=cmd, txt_action=txt_action))
   })
 
