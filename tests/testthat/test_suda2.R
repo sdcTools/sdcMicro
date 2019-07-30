@@ -29,10 +29,9 @@ test_that("suda2 simple example",{
   a <- c(2, 1, 1)
   b <- c(0, 3, 0)
   c <- c(0, 6, 0)
-  d <- c(1, 1, 1)
   data <- data.frame(a,b,c)
   su <- suda2(data)
-  expect_true(all(su$attribute_contributions$contribution==c(50,37.5,25)))
+  expect_true(all(su$attribute_contributions$contribution==c(50,37.5,37.5)))
 })
 
 test_that("suda2 book example",{

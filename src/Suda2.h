@@ -5,7 +5,12 @@
 typedef int TValue;
 typedef int TEntryIndex;
 typedef int TItemIndex;
+
+//*============================ DEBUG TRUE/FALSE =========================== *
 BOOL g_Debug = FALSE;
+//*============================ DEBUG TRUE/FALSE =========================== *
+  
+  
 
 class CEntry : public CChainedList
 {
