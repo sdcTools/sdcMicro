@@ -5,6 +5,7 @@
 typedef int TValue;
 typedef int TEntryIndex;
 typedef int TItemIndex;
+BOOL g_Debug = FALSE;
 
 class CEntry : public CChainedList
 {
@@ -230,7 +231,7 @@ int g_NbVarALEX = 0,
 CEntry *g_pEntry = NULL;
 int *g_pNbMsuPerVariable, *g_pNbCorrelated;
 TValue g_MissingValueALEX = -1;
-BOOL g_Debug;
+
 
 double *g_ab = NULL;
 
@@ -833,8 +834,8 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
         continue;
 
       if (Freq == 1){    // 1-MSU ?
-        // CSudaMsu *pMsu = CSudaMsu::New(1, pEntry->m_Index);
-        // pMsu->m_Var[0].FromItem = -1;
+        CSudaMsu *pMsu = CSudaMsu::New(1, pEntry->m_Index);
+        pMsu->m_Var[0].FromItem = -1;
 
         ++g_NbMsu;
         ++g_NbMsuN[0];
@@ -941,7 +942,6 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
   // result matrix
   Rcpp::NumericMatrix Res(g_NbEntry, g_NbVarALEX+2);
 
-  g_Debug = TRUE;
 
 
   if (g_NbVarALEX > es_NbMaxVar){
