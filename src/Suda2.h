@@ -381,12 +381,12 @@ inline CCorrelation *CorrelateItem(CList<CItem> &ItemList, CList<CCorrelation> &
 int *g_pEntryCache = NULL, *g_pEntryCacheOut = NULL;
 int g_BiggestSize = 0, g_NbCall = 0;
 
-void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CList<CItem> &ItemList,
+void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CList<CItem> &ItemList, CList<CItem> &CorItemList,
                           int NbEntry, int MaxK, CItem *pFromItem = NULL)
 {
   int i, j, k, l, m;
   if (g_Debug){
-    Rprintf("Find MSU\n");
+    Rprintf("BEGIN FindMsu\n");
   }
   ++g_NbCall;
 
@@ -409,29 +409,29 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
     if (!Swapped)
       break;
   }
-  if(g_Debug){
-    for (i = 1; i < ItemList.m_NbElement; ++i){
-      CItem &ItemI = ItemList[i];
-      Rprintf("ItemI.m_VarNum %d ItemI.m_NbEntry %d -  ItemI.m_VarValue %d \n",ItemI.m_VarNum,ItemI.m_NbEntry, ItemI.m_VarValue);
-      ForLoop (k, ItemI.m_NbEntry){
-        Rprintf("  %d \n",ItemI.m_pEntry[k]);
-      }
-    }  
-  }
-  
-
     //=== Create Subsets
-  ForLoop (i, ItemList.m_NbElement - 1){
+  ForLoop (i, ItemList.m_NbElement ){
     CItem &ItemI = ItemList[i];
 
     CList<CItem> ItemListI;
+    CList<CItem> CorItemListI;
     CList<CSudaMsu> MsuListI;
     CList<CCorrelation> CorrelationListI;
 
       //=== Find all Entries of ItemJ that intersects with ItemI and stock them in ItemListI
     for (j = i + 1; j < ItemList.m_NbElement; ++j){
       CItem &ItemJ = ItemList[j];
-
+      if(g_Debug){
+        CItem &ItemI = ItemList[i];
+        Rprintf("ItemI.m_VarNum %d ItemI.m_NbEntry %d - ItemI.m_VarValue %d \n",ItemI.m_VarNum,ItemI.m_NbEntry, ItemI.m_VarValue);
+        ForLoop (k, ItemI.m_NbEntry){
+          Rprintf("  %d \n",ItemI.m_pEntry[k]);
+        }
+        Rprintf("ItemJ.m_VarNum %d ItemJ.m_NbEntry %d - ItemJ.m_VarValue %d \n",ItemJ.m_VarNum,ItemJ.m_NbEntry, ItemJ.m_VarValue);
+        ForLoop (k, ItemJ.m_NbEntry){
+          Rprintf("  %d \n",ItemJ.m_pEntry[k]);
+        }
+      }
       if (ItemJ.m_VarNum == ItemI.m_VarNum) // Can happen only during 1st call
         continue;
 
@@ -488,29 +488,54 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
 
               //=== Count how many correlated MSUs we have
             CCorrelation *pCorrelated = CorrelationList.m_pFirst;
-
+            CEntry &Entry = g_pEntry[g_pEntryCache[0]];
+            int ic = 0;
             while (pCorrelated){
+              if(g_Debug){
+                Rprintf("pCorrelated A %d B %d- ItemI.m_FromItem %d - ItemJ.m_FromItem %d \n",
+                        pCorrelated->m_ItemNumA,pCorrelated->m_ItemNumB,ItemI.m_FromItem,ItemJ.m_FromItem);
+              }
               if (pCorrelated->m_ItemNumA == ItemJ.m_FromItem){
+                CItem &ItemX = CorItemList[ic];
+                g_pNbMsuPerVariable[ItemX.m_VarNum] += 1;
+                if (Entry.m_pContribution){
+                  Entry.m_pContribution[ItemX.m_VarNum] += g_ab[1];
+                }
+                if(g_Debug){
+                  Rprintf("ItemJHit - VarNum:%d\n",ItemX.m_VarNum);
+                }
                 ++m;
               }else if (pCorrelated->m_ItemNumA == ItemI.m_FromItem){
+                CItem &ItemX = CorItemList[ic];
+                g_pNbMsuPerVariable[ItemX.m_VarNum] += 1;
+                if (Entry.m_pContribution){
+                  Entry.m_pContribution[ItemX.m_VarNum] += g_ab[1];
+                }
+                if(g_Debug){
+                  Rprintf("ItemIHit - VarNum:%d\n",ItemX.m_VarNum);
+                }
                 ++n;
               }
+              ic++;
               pCorrelated = (CCorrelation *) pCorrelated->m_pNext;
             }
             if(g_Debug){
-              Rprintf("Add Number of NbMsu Per Variable Var0%d:%d \n",ItemI.m_VarNum+1,m);
-              Rprintf("Add Number of NbMsu Per Variable Var0%d:%d \n",ItemJ.m_VarNum+1,n);  
+              Rprintf("Add Number of NbMsu Per Variable Var0%d:%d - VarValue %d\n", ItemI.m_VarNum+1, m, ItemI.m_VarValue);
+              Rprintf("Add Number of NbMsu Per Variable Var0%d:%d - VarValue %d\n", ItemJ.m_VarNum+1, n, ItemJ.m_VarValue);
             }
             g_pNbMsuPerVariable[ItemI.m_VarNum] += m;
             g_pNbMsuPerVariable[ItemJ.m_VarNum] += n;
 
-            CEntry &Entry = g_pEntry[g_pEntryCache[0]];
+            
 
             if (Entry.m_pContribution){
               Entry.m_pContribution[ItemI.m_VarNum] += m * g_ab[1];
               Entry.m_pContribution[ItemJ.m_VarNum] += n * g_ab[1];
             }
             m *= n;
+            if(g_Debug){
+              Rprintf("c) New MSUs %d \n",m);
+            }
             g_NbMsu += m;
             g_NbMsuN[1] += m;
             Entry.m_pNbMsu[1] += m;
@@ -556,7 +581,7 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
     if (ItemListI.m_NbElement){    // Not Empty list ?
         //=== getting MSUs of MaxK-1 subset, MsuListI is a list of MaxK-1 MSUs
       ItemListI.CreateIndex();
-      FindMsu(MsuListI, CorrelationListI, ItemListI, ItemI.m_NbEntry, MaxK - 1, &ItemI);
+      FindMsu(MsuListI, CorrelationListI, ItemListI, CorItemListI, ItemI.m_NbEntry, MaxK - 1, &ItemI);
     }
 
     if (MsuListI.m_NbElement){   // Got any MSU candidate ?
@@ -751,6 +776,9 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
               if (Entry.m_pContribution)
                 Entry.m_pContribution[VarNum] += m * g_ab[Msu.m_NbVar];
             }
+            if(g_Debug){
+              Rprintf("b) New MSUs %d \n",m);
+            }
             g_NbMsu += m;
             g_NbMsuN[Msu.m_NbVar] += m;
             Entry.m_pNbMsu[Msu.m_NbVar] += m;
@@ -766,6 +794,9 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
   }
   if(g_Debug){
     Rprintf("Nb Msu:%d\n",g_NbMsu);
+  }
+  if (g_Debug){
+    Rprintf("END FindMsu\n");
   }
 }
 
@@ -784,6 +815,7 @@ struct SValue
 
 CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
 {
+  CList<CItem> *pCorItemList = NULL;
   CList<CItem> *pItemList = NULL;
   int i, j, k,
     NbCorrelated = 0;
@@ -804,6 +836,7 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
     Rprintf("Suda2 ==> g_MaxK=%d\n",g_MaxK);
   }
   pItemList = new CList<CItem>;
+  pCorItemList = new CList<CItem>;
 
   ForLoop (i, g_NbVarALEX){
     CList<SValue> ValueList;
@@ -847,11 +880,13 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
 
       if (Freq == 1){    // 1-MSU ?
         if(g_Debug){
-          Rprintf("Suda2 ==> Var%d, Freq==1 \n",i+1);
+          Rprintf("Suda2 ==> Var%d, Freq==1 Value %d\n",i+1,pValue->Value);
         }
         CSudaMsu *pMsu = CSudaMsu::New(1, pEntry->m_Index);
         pMsu->m_Var[0].FromItem = -1;
-
+        if(g_Debug){
+          Rprintf("a) New MSUs %d \n",1);
+        }
         ++g_NbMsu;
         ++g_NbMsuN[0];
         ++pEntry->m_pNbMsu[0];
@@ -864,7 +899,7 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
         }
       }else if (Freq && Freq != NbEntry){
         if(g_Debug){
-          Rprintf("Suda2 ==> Var%d, Freq!=1 \n",i+1);
+          Rprintf("Suda2 ==> Var%d, Freq!=1 Value %d\n",i+1, pValue->Value);
         }
         CItem *pItem = CItem::New(i, pValue->Value, Freq, 0);
 
@@ -888,9 +923,9 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
 
         if (pCorrelation != NULL){// Correlated ?
           if(g_Debug){
-            Rprintf("Suda2 ==> Var%d, Delete correlated \n",i+1);
+            Rprintf("Suda2 ==> Var%d, Delete correlated, Value %d\n",i+1, pValue->Value);
           }
-          delete pItem;
+          pCorItemList->Add(pItem);
           ++NbCorrelated;
         }else{
           pItemList->Add(pItem);
@@ -907,12 +942,13 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
   }
 
   pItemList->CreateIndex();
-
+  pCorItemList ->CreateIndex();
+  
   g_pEntryCache = new int[g_BiggestSize];
   g_pEntryCacheOut = new int[g_BiggestSize];
 
 
-  FindMsu(MsuList, CorrelationList, *pItemList, NbEntry, g_MaxK);
+  FindMsu(MsuList, CorrelationList, *pItemList, *pCorItemList,NbEntry, g_MaxK);
 
   if (g_Debug){
     Rprintf("Suda2 ==> NbCall = %d\n", g_NbCall);
@@ -1203,7 +1239,9 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
       //=== Calculate SudaScore
     double SudaScore = 0.0;
     ForLoop (j, g_MaxK){
-      Rprintf("Obs %d - Size of MSU %d - Number of Entries %d, contribution to score: %f\n",i+1,j+1,Entry.m_pNbMsu[j], g_ab[j]);
+      if(g_Debug){
+        Rprintf("Obs %d - Size of MSU %d - Number of Entries %d, contribution to score: %f\n",i+1,j+1,Entry.m_pNbMsu[j], g_ab[j]);  
+      }
       SudaScore += Entry.m_pNbMsu[j] * g_ab[j];
     }
     if(g_Debug){
