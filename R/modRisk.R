@@ -240,7 +240,7 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
     lambda <- as.data.frame.table(lambda, stringsAsFactors=FALSE)
     colnames(lambda)[ncol(lambda)] <- "Fk"
     lambda <- data.table(lambda, key=vars)
-    lambda <- lambda[,lapply(.SD, as.numeric)]
+    #lambda <- lambda[,lapply(.SD, as.numeric)]
   }
   x <- merge(x, lambda, all.x=TRUE)
   x[is.na(Fk), Fk:=0]
