@@ -240,8 +240,23 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
     lambda <- as.data.frame.table(lambda, stringsAsFactors=FALSE)
     colnames(lambda)[ncol(lambda)] <- "Fk"
     lambda <- data.table(lambda, key=vars)
-    lambda <- lambda[,lapply(.SD, as.numeric)]
+    #lambda <- lambda[,lapply(.SD, as.numeric)]
+    for(v in vars){
+      if(class(x[[v]])!=class(lambda[[v]])){
+        if(is.character(x[[v]])){
+          lambda[[v]] <- as.character(lambda[[v]])
+        }else if(is.integer(x[[v]])){
+          lambda[[v]] <- as.integer(lambda[[v]])
+        }else if(is.numeric(x[[v]])){
+          lambda[[v]] <- as.numeric(lambda[[v]])
+        }else if(is.factor(x[[v]])){
+          lambda[[v]] <- as.factor(lambda[[v]])
+        }
+      }
+    }
   }
+  
+            
   x <- merge(x, lambda, all.x=TRUE)
   x[is.na(Fk), Fk:=0]
   x <- x[0 < x$counts & x$counts <= bound]
