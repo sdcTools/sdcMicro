@@ -108,7 +108,7 @@
 #' Imputation: Robust Statistics Applied to Official Statistics},
 #' Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 #' 264 pages.
-#' 
+#'
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4. \doi{10.1007/978-3-319-50272-4}
 #' \doi{10.1007/978-3-319-50272-4}
@@ -901,7 +901,6 @@ print.micro <- function(x, ...) {
 #' data(Tarragona)
 #' m1 <- microaggregation(Tarragona, method='onedims', aggr=3)
 #' ## summary(m1)
-#'
 summary.micro <- function(object, ...) {
   prcompRob <- function(X, k=0, sca="mad", scores=TRUE) {
     ## Copyright: Croux and Filzmoser
@@ -939,15 +938,14 @@ summary.micro <- function(object, ...) {
   }
 
   x1 <- as.data.frame(object$x)
-  x2 <- if (length(as.data.frame(object$mx)) > 0)
-    as.data.frame(object$mx) else as.data.frame(object$mx)
+  x2 <- as.data.frame(object$mx)
   colnames(x2) <- colnames(x1)
   amx <- mapply(mean, x1)
   amxn <- mapply(mean, x2)
   amean <- sum(abs(amx - amxn)/(abs(amx)))
   meds1 <- mapply(median, x1)
   meds2 <- mapply(median, x2)
-  amedian <- sum(abs(meds1 - meds2)/abs(meds1), na.rm=TRUE)
+  amedian <- sum(abs(meds1 - meds2) / abs(meds1), na.rm = TRUE)
   onestep <- function(x) {
     y <- x
     constant <- 3/1.486
@@ -973,32 +971,21 @@ summary.micro <- function(object, ...) {
   aox <- mapply(mean, aox)
   aoxm <- onestep(x2)
   aoxm <- mapply(mean, aoxm)
-  aonestep <- sum(abs(aox - aoxm)/abs(aox), na.rm=TRUE)
+  aonestep <- sum(abs(aox - aoxm) / abs(aox), na.rm = TRUE)
   devvar <- sum(abs(var(x1) - var(x2))/abs(var(x1)))/length(x1)
   amx <- mapply(mad, x1)
   amxn <- mapply(mad, x2)
-  amad <- sum(abs(amx - amxn)/(abs(amx)), na.rm=TRUE)
+  amad <- sum(abs(amx - amxn) / (abs(amx)), na.rm = TRUE)
   acov <- sum(abs(cov(x1) - cov(x2))/abs(cov(x1)))/(2 * length(x1))
-  # if (robCov == TRUE) { arcov <- sum(abs(covMcd(x1)$cov -
-  # covMcd(x2)$cov)/abs(covMcd(x1)$cov))/(2 * length(x1)) } else {
   arcov <- NA
-  # }
   acor <- sum(abs(cor(x1) - cor(x2))/abs(cor(x1)))/(2 * length(x2))
-  # if (robCov == TRUE) { arcor <- sum(abs(covMcd(x1, cor=TRUE)$cor - covMcd(x2,
-  # cor=TRUE)$cor)/abs(covMcd(x1, cor=TRUE)$cor))/(2 * length(x1)) } else {
   arcor <- NA
-  # }
-  acors <- sum(abs(cor(x1, method="spearman") - cor(x2, method="spearman"))/abs(cor(x1,
-    method="spearman")))/(2 * length(x1))
+  acors <- sum(abs(cor(x1, method = "spearman") - cor(x2, method = "spearman")) /
+          abs(cor(x1, method = "spearman"))) / (2 * length(x1))
   l1 <- lm(as.matrix(x1[, 1]) ~ as.matrix(x1[, -1]))$coeff
   l2 <- lm(as.matrix(x2[, 1]) ~ as.matrix(x2[, -1]))$coeff
-  adlm <- sum(abs(l1[2:length(l1)] - l2[2:length(l2)]), na.rm=TRUE)
-  # if (robReg == TRUE) { l1 <- lqs(as.matrix(x1[, 1]) ~ as.matrix(x1[, -1]),
-  # method='lts')$coeff l2 <- lqs(as.matrix(x2[, 1]) ~ as.matrix(x2[, -1]),
-  # method='lts')$coeff adlts <- sum(abs(l1[2:length(l1)] - l2[2:length(l2)])) }
-  # else {
+  adlm <- sum(abs(l1[2:length(l1)] - l2[2:length(l2)]), na.rm = TRUE)
   adlts <- NA
-  # }
   if (dim(x1)[1] > dim(x1)[2] && dim(x2)[1] > dim(x2)[2]) {
     p1 <- princomp(x1)
     p2 <- princomp(x2)
@@ -1022,17 +1009,39 @@ summary.micro <- function(object, ...) {
   atotals <- sum(abs((cmx1 - cmx2)/cmx1))
   pmtotals <- sum((cmx2 - cmx1)/cmx1)
   util1 <- dUtility(x1, x2)
-  deigenvalues <- dUtility(x1, x2, method="eigen")
+  deigenvalues <- dUtility(x1, x2, method = "eigen")
   risk0 <- dRisk(x1, x2)
-  r <- dRiskRMD(x1, x2, k=0.7)
+  r <- dRiskRMD(x1, x2, k = 0.7)
   risk1 <- r$risk1
   risk2 <- r$risk2
   wrisk1 <- r$wrisk1
   wrisk2 <- r$wrisk2
-  list(meansx=summary(x1), meansxm=summary(x2), amean=amean, amedian=amedian,
-    aonestep=aonestep, devvar=devvar, amad=amad, acov=acov, arcov=arcov,
-    acor=acor, arcor=arcor, acors=acors, adlm=adlm, adlts=adlts, apcaload=apcaload,
-    apppcaload=apppcaload, totalsOrig=cmx1, totalsMicro=cmx2, atotals=atotals,
-    pmtotals=pmtotals, util1=util1, deigenvalues=deigenvalues, risk0=risk0,
-    risk1=risk1, risk2=risk2, wrisk1=wrisk1, wrisk2=wrisk2)
+  list(
+    meansx = summary(x1),
+    meansxm = summary(x2),
+    amean = amean,
+    amedian = amedian,
+    aonestep = aonestep,
+    devvar = devvar,
+    amad = amad,
+    acov = acov,
+    arcov = arcov,
+    acor = acor,
+    arcor = arcor,
+    acors = acors,
+    adlm = adlm,
+    adlts = adlts,
+    apcaload = apcaload,
+    apppcaload = apppcaload,
+    totalsOrig = cmx1,
+    totalsMicro = cmx2,
+    atotals = atotals,
+    pmtotals = pmtotals,
+    util1 = util1,
+    deigenvalues = deigenvalues,
+    risk0 = risk0,
+    risk1 = risk1,
+    risk2 = risk2,
+    wrisk1 = wrisk1,
+    wrisk2 = wrisk2)
 }

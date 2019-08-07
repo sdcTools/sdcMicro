@@ -42,7 +42,6 @@ This function computes several measures of information loss, such as
 data(Tarragona)
 m1 <- microaggregation(Tarragona, method='onedims', aggr=3)
 ## summary(m1)
-
 }
 \references{
 Templ, M. \emph{Statistical Disclosure Control for Microdata
