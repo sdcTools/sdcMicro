@@ -89,11 +89,16 @@ valTable <- function(x, method = c("simple", "onedims", "clustpppca", "addNoise:
         aggr = aggr, nc = nc, transf = transf)
     }
     if (method[i] == "swappNum") {
-      m[[i]] <- rankSwap(x, P = p)
+      d <- rankSwap(x, P = p)
+      d <- list(x = x, mx = d)
+      class(d) <- "micro"
+      m[[i]] <- d
     }
     if (substring(method[i], 1, 8) == "addNoise") {
-      m[[i]] <- addNoise(x, noise = noise, method = substring(method[i], 11, nchar(method[i],
+      m[[i]] <- addNoise(x, noise = noise, method = substring(method[i], 10, nchar(method[i],
         type = "width")))
+      m[[i]]$mx <- m[[i]]$xm
+      class(m[[i]]) <- "micro"
     }
     if (method[i] == "dataGen") {
       d <- dataGen(x, n = dim(x)[1])
