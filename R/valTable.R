@@ -89,7 +89,7 @@ valTable <- function(x, method = c("simple", "onedims", "clustpppca", "addNoise:
         aggr = aggr, nc = nc, transf = transf)
     }
     if (method[i] == "swappNum") {
-      d <- rankSwap(x, P = p)
+      d <- rankSwap(x, P = p, K0 = NULL, R0 = NULL)
       d <- list(x = x, mx = d)
       class(d) <- "micro"
       m[[i]] <- d
