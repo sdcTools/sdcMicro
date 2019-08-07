@@ -10,9 +10,10 @@ valTable(x, method = c("simple", "onedims", "clustpppca",
   p = 15, noise = 15, w = 1:dim(x)[2], delta = 0.1)
 }
 \arguments{
-\item{x}{data frame or matrix}
+\item{x}{a \code{data.frame} or a \code{matrix}}
 
-\item{method}{microaggregation methods or adding noise methods or rank swapping.}
+\item{method}{character vector defining names of microaggregation-, adding-noise
+or rank swapping methods.}
 
 \item{measure}{FUN for aggregation. Possible values are mean (default), median, trim, onestep.}
 
@@ -30,43 +31,44 @@ valTable(x, method = c("simple", "onedims", "clustpppca",
 
 \item{w}{variables for swapping, if method swappNum has been chosen}
 
-\item{delta}{parameter for adding noise method \sQuote{correlated2}}
+\item{delta}{parameter for adding noise method \code{"correlated2"}}
 }
 \value{
 Measures of information loss splitted for the comparison of different methods.
-
-Methods for adding noise should be named via \dQuote{addNoise: method}, e.g.
-\dQuote{addNoise: correlated}, i.e. the term \sQuote{at first} then followed
-by a \sQuote{:} and a blank and then followed by the name of the method as
-described in function \sQuote{addNoise}.
 }
 \description{
 A Function for the comparison of different perturbation methods.
 }
 \details{
-Tabelarise the output from summary.micro. Will be enhanced to all
+Tabularize the output from \code{\link[=summary.micro]{summary.micro()}}. Will be enhanced to all
 perturbation methods in future versions.
+
+Methods for adding noise should be named via \code{addNoise: method}, e.g.
+\code{addNoise: correlated}, i.e. the term \sQuote{at first} then followed
+by a \code{:} and a blank. Afterwards, the name of the desired method as
+described in \code{\link[=addNoise]{addNoise()}} must be appended.
 }
 \examples{
-
 data(Tarragona)
 \dontrun{
-valTable(Tarragona[100:200,],
-method=c("simple","onedims","pca"))
-valTable(Tarragona,
-method=c("simple","onedims","pca","clustpppca",
-"mdav", "swappNum"))
+valTable(
+  x = Tarragona[100:200, ],
+  method=c("simple", "onedims", "pca"))
+
+valTable(
+  x = Tarragona,
+  method = c("simple", "onedims", "pca", "clustpppca", "mdav", "swappNum"))
+
 ## clustpppca in combination with Mclust outperforms
 ## the other algorithms for this data set...
 }
 }
 \references{
-Templ, M. and Meindl, B., \emph{Software Development for SDC in
-R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,
+Templ, M. and Meindl, B., \code{Software Development for SDC in R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,
 vol. 4302, pp. 347-359, 2006.
 }
 \seealso{
-\code{\link{microaggregation}}, \code{\link{summary.micro}}
+\code{\link[=microaggregation]{microaggregation()}}, \code{\link[=summary.micro]{summary.micro()}}
 }
 \author{
 Matthias Templ
