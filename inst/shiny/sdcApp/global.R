@@ -235,20 +235,20 @@ summaryfn <- function(x) {
 }
 
 # global, reactive data-structure
-data(testdata, envir = environment())
-data(testdata2, envir = environment())
+data(testdata, envir = .GlobalEnv)
+data(testdata2, envir = .GlobalEnv)
 testdata$urbrur <- factor(testdata$urbrur)
 testdata$urbrur[sample(1:nrow(testdata), 10)] <- NA
 testdata$roof <- factor(testdata$roof)
 testdata$walls <- factor(testdata$walls)
 testdata$sex <- factor(testdata$sex)
 # which data.frames ware available in the global environment?
-ex <- ls()
-if ( length(ex) > 0 ) {
+ex <- ls(envir = .GlobalEnv)
+if (length(ex) > 0) {
   available_dfs <- ex[sapply(ex, function(x) {
-    is.data.frame(get(paste(x)))
+    is.data.frame(get(paste(x), envir = .GlobalEnv))
   })]
-  if ( length(available_dfs) == 0 ) {
+  if (length(available_dfs) == 0) {
     available_dfs <- NULL
   }
 }
