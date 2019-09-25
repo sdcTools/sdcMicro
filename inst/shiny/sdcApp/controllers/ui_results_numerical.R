@@ -175,8 +175,8 @@ output$ui_resnum_comparison <- renderUI({
 
   res <- list(res, uiOutput("ui_numvar_cor"), fluidRow(
     column(12, h5("Original Data", align="center")),
-    column(12, dataTableOutput("ui_numvar_origtab")),
+    column(12, DT::dataTableOutput("ui_numvar_origtab")),
     column(12, h5("Anomyized Data", align="center")),
-    column(12, dataTableOutput("ui_numvar_modtab"))))
+    column(12, DT::dataTableOutput("ui_numvar_modtab"))))
   res
 })

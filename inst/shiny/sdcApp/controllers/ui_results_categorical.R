@@ -67,7 +67,7 @@ output$ui_rescat_riskinfo <- renderUI({
     })
     output$riskyobs_result <- renderUI({
       # table containing the corresponding observations
-      output$tab_risk <- renderDataTable({
+      output$tab_risk <- DT::renderDataTable({
         df
       }, options = list(pageLength = 10, searching=FALSE, scrollX=TRUE, scrollY=250))
 
@@ -86,7 +86,7 @@ output$ui_rescat_riskinfo <- renderUI({
       } else {
         out <- list(out, fluidRow(
           column(12, p(code(n),"(",code(p),") records have a risk larger than",code(input$sl_riskyobs),"."), align="center"),
-          column(12, dataTableOutput("tab_risk"))
+          column(12, DT::dataTableOutput("tab_risk"))
         ))
       }
       out
@@ -184,7 +184,7 @@ output$ui_rescat_recodes <- renderUI({
   }, rownames=FALSE, options = list(scrollX=TRUE, pageLength = 10, searching=FALSE))
 
   fluidRow(
-    column(12, dataTableOutput("tab_recodes")))
+    column(12, DT::dataTableOutput("tab_recodes")))
 })
 
 # UI output displaying information on l-diversity risk-measure
@@ -357,7 +357,7 @@ output$ui_rescat_violating_kanon_header <- renderUI({
   out
 })
 output$ui_rescat_violating_kanon <- renderUI({
-  output$violating_obs_tab <- renderDataTable({
+  output$violating_obs_tab <- DT::renderDataTable({
     risks <- get_risk()
     ii <- which(risks$fk<input$k_val_violating)
     if (length(ii)==0) {
@@ -390,7 +390,7 @@ output$ui_rescat_violating_kanon <- renderUI({
   out <- list(
     uiOutput("ui_kanon_selection"),
     uiOutput("ui_kanon_result"),
-    fluidRow(column(12, dataTableOutput("violating_obs_tab"))))
+    fluidRow(column(12, DT::dataTableOutput("violating_obs_tab"))))
   out
 })
 

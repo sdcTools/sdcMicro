@@ -16,8 +16,6 @@
 #' @import shinyBS
 #' @import shiny
 #' @import rhandsontable
-#' @importFrom DT renderDataTable
-#' @importFrom DT dataTableOutput
 #' @importFrom sets set_power
 #' @importFrom rmarkdown pandoc_available
 #' @importFrom rmarkdown render

@@ -320,7 +320,7 @@ output$ui_set_to_na <- renderUI({
     radioButtons("set_to_na_type", label=p("How to select values to recode to NA?"),
       choices=c("by value"="rule", "by record ID"="id"), inline=TRUE)
   })
-  output$tab_inputdata_setna <- renderDataTable({
+  output$tab_inputdata_setna <- DT::renderDataTable({
     a <- obj$inputdata
     cbind(id=1:nrow(a),a)
   },
@@ -380,7 +380,7 @@ output$ui_set_to_na <- renderUI({
     column(6, uiOutput("ui_nasuppid"), align="center")))
   out <- list(out, fluidRow(
     column(12, uiOutput("ui_ansuppbtn"), align="center"),
-    column(12, dataTableOutput("tab_inputdata_setna"), align="center")))
+    column(12, DT::dataTableOutput("tab_inputdata_setna"), align="center")))
   out
 })
 
@@ -633,7 +633,7 @@ output$ui_show_microdata <- renderUI({
       column(width = 8, offset = 2, list(HTML(txt_microdata), code(lapply(attr(obj$inputdata, "dropped"), function(x) {x}))))))
   }
   out <- list(out, fluidRow(
-    column(12, dataTableOutput("tab_inputdata"))))
+    column(12, DT::dataTableOutput("tab_inputdata"))))
   return(out)
 })
 
