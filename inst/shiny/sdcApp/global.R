@@ -3,7 +3,6 @@ library(grid)
 library(sdcMicro)
 library(rhandsontable)
 library(haven)
-library(DT)
 library(shinyBS)
 library(data.table)
 
