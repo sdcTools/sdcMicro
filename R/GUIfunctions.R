@@ -404,19 +404,19 @@ tryCatchFn <- function(expr) {
 readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=TRUE, ...) {
   nonUTFvarname <- NULL
   if (type=="sas") {
-    res <- tryCatchFn(read_sas(data_file=path))
+    res <- tryCatchFn(haven::read_sas(data_file=path))
     # Convert column names to utf8
     nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
     colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
     }
   if (type=="spss") {
-    res <- tryCatchFn(read_spss(file=path))
+    res <- tryCatchFn(haven::read_spss(file=path))
     # Convert column names to utf8
     nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
     colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
     }
   if (type=="stata") {
-    res <- tryCatchFn(read_dta(file=path))
+    res <- tryCatchFn(haven::read_dta(file=path))
     # Convert column names to utf8
     nonUTFvarname <- cbind(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))], iconv(enc2utf8(colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))]), "UTF-8", "UTF-8", sub='')) # Save list of all variable names that aren't encoded in UTF-8
     colnames(res)[which(!validUTF8(colnames(res)) & !is.na(colnames(res)))] <- nonUTFvarname[,2]
@@ -457,10 +457,10 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   cl_lab <- which(sapply(res, class) %in% c("labelled", "haven_labelled"))
   if (length(cl_lab) > 0) {
     if (length(cl_lab)==1) {
-      res[[cl_lab]] <- as_factor(res[[cl_lab]], levels="default")
+      res[[cl_lab]] <- haven::as_factor(res[[cl_lab]], levels="default")
     } else {
       res[,cl_lab] <- lapply(res[,cl_lab] , function(x) {
-        as_factor(x, levels="default")
+        haven::as_factor(x, levels="default")
       })
     }
   }
@@ -644,10 +644,10 @@ writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
     save(dat, file=fileOut)
   }
   if (format=="sav") {
-    write_sav(data=dat, path=fileOut)
+    haven::write_sav(data=dat, path=fileOut)
   }
   if (format=="sas") {
-    write_sas(data=dat, path=fileOut)
+    haven::write_sas(data=dat, path=fileOut)
   }
   if (format=="dta") {
     # add label information
@@ -667,7 +667,7 @@ writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
       }
       dat <- addVarLabels(dat, lab=new_labs)
     }
-    write_dta(data=dat, path=fileOut, version=inp$version)
+    haven::write_dta(data=dat, path=fileOut, version=inp$version)
   }
   if (format=="csv") {
     write.table(dat, file=fileOut, ...)

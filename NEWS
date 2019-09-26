@@ -1,5 +1,6 @@
 # 5.4.1
 - valTable now also works for additive noise methods and swapping
+- updates to imports
 
 # 5.3.0
 - Add versions for Stata export

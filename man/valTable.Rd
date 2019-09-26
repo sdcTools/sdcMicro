@@ -43,10 +43,9 @@ A Function for the comparison of different perturbation methods.
 Tabularize the output from \code{\link[=summary.micro]{summary.micro()}}. Will be enhanced to all
 perturbation methods in future versions.
 
-Methods for adding noise should be named via \code{addNoise: method}, e.g.
-\code{addNoise: correlated}, i.e. the term \sQuote{at first} then followed
-by a \code{:} and a blank. Afterwards, the name of the desired method as
-described in \code{\link[=addNoise]{addNoise()}} must be appended.
+Methods for adding noise should be named via \code{addNoise:{method}}, e.g.
+\code{addNoise:correlated}, where \code{{method}} specifies the desired method as
+described in \code{\link[=addNoise]{addNoise()}}.
 }
 \examples{
 data(Tarragona)

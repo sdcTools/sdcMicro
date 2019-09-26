@@ -5,7 +5,7 @@
 #' @import robustbase
 #' @import MASS
 #' @import carData
-#' @importFrom car powerTransform bcPower
+#' @import car
 #' @import cluster
 #' @import e1071
 #' @import tools
@@ -16,7 +16,6 @@
 #' @import shinyBS
 #' @import shiny
 #' @import rhandsontable
-#' @importFrom sets set_power
 #' @importFrom rmarkdown pandoc_available
 #' @importFrom rmarkdown render
 #' @importFrom graphics axis
@@ -69,13 +68,7 @@
 #' @importFrom utils tail
 #' @importFrom utils read.table
 #' @importFrom utils write.table
-#' @importFrom haven read_spss
-#' @importFrom haven read_dta
-#' @importFrom haven read_sas
-#' @importFrom haven write_sav
-#' @importFrom haven write_dta
-#' @importFrom haven write_sas
-#' @importFrom haven as_factor
+#' @import haven
 #' @importFrom prettydoc html_pretty
 #' @importFrom VIM sampleCat maxCat gowerD
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))

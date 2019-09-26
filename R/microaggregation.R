@@ -389,8 +389,8 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
       y <- scale(log(x))
     }
     if (transf == "boxcox") {
-      lambda <- powerTransform(x)$lambda
-      y <- scale(bcPower(x, lambda))
+      lambda <- car::powerTransform(x)$lambda
+      y <- scale(car::bcPower(x, lambda))
     }
     if (clustermethod == "clara") {
       a <- clara(x, nc)
