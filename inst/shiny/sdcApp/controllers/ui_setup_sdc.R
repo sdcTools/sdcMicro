@@ -577,8 +577,8 @@ options = list(
   scrollX=TRUE, scrollY=380, searching=FALSE, paging=FALSE, ordering=FALSE, bInfo=FALSE, autoWidth=FALSE,
   # columnDefs=list(list(width='400px', targets = c(2))),
   columnDefs=list(list()),
-  preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
-  drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); var event = new Event("AnonymiseDrawnEvent"); document.dispatchEvent(event);} ')
+  preDrawCallback = DT::JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
+  drawCallback = DT::JS('function() { Shiny.bindAll(this.api().table().node()); var event = new Event("AnonymiseDrawnEvent"); document.dispatchEvent(event);} ')
 ))
 
 # show the setup-button or an error-message
