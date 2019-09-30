@@ -603,7 +603,7 @@ output$ui_reset_var <- renderUI({
 # UI-output to display and reset currently available microdata
 output$ui_show_microdata <- renderUI({
   my_data_dt = reactive({
-    datatable(inputdata(),
+    DT::datatable(inputdata(),
               rownames = FALSE,
               selection="none",
               options = list(scrollX=TRUE, scrollY=250, lengthMenu=list(c(20, 50, 100, -1), c('20', '50', '100', 'All')), pageLength=20)
