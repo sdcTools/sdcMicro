@@ -300,7 +300,7 @@ In this part of the summary, some aggregation statistics on the categorical key 
 - *Variable name*: the name of the key variable
 - *Number of levels*: the current number of categories
 - *Average frequency*: the mean size of the existing categories
-- *Frequency of smallest level*: The number of records in the smallest category
+- *Frequency of smallest level (>0)*: The number of records in the smallest category that has frequencies `>0`
 
 The the last three columns, the same information based on the data set that was used to create the problem instance is shown in parenthesis. We note that `NA` values (missings) are counted as separate categories in this table.
 

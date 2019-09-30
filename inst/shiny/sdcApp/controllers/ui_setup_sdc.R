@@ -65,13 +65,13 @@ output$ui_sdcObj_summary <- renderUI({
     if (is.null(x)) {
       return(invisible(NULL))
     }
-    txt <-"Reported is the number of levels, average frequency of each level and frequency of the smallest level for categorical key variables.
+    txt <-"Reported is the number of levels, average frequency of each level and frequency of the smallest level (with frequency >0) for categorical key variables.
       In parentheses, the same statistics are shown for the original data. Note that NA (missing) is counted as a separate category."
     dt <- data.table(
       "Variable name"=x$keyVars,
       "Number of levels"=paste(x$categories$orig, x$categories$mod),
       "Average frequency"=paste(x$meansize$orig, x$meansize$mod),
-      "Frequency of smallest level"=paste(x$minsize$orig, x$minsize$mod))
+      "Frequency of smallest level (>0)"=paste(x$minsize$orig, x$minsize$mod))
     out <- fluidRow(
       column(12, h4("Information on categorical key variables") ),
       column(12, p(txt) ),

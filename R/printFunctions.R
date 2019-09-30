@@ -289,10 +289,21 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
     df.rec <- as.data.table(get.sdcMicroObj(obj, "manipKeyVars"))
 
     # number of categories (inkl. NA)
-    stats_o <- t(df.o[,lapply(.SD, function(x) {
-      c(length(unique(x)), mean(table(x)), sort(table(x))[1])})])
-    stats_rec <- t(df.rec[,lapply(.SD, function(x) {
-      c(length(unique(x)), mean(table(x)), sort(table(x))[1])})])
+    .stats <- function(x) {
+      tab_x <- table(x)
+      res <- c(
+        length(unique(x)),
+        mean(tab_x))
+
+      if (any(tab_x) > 0) {
+        return(c(res, min(tab_x[tab_x>0])))
+      } else {
+        return(c(res, 0))
+      }
+    }
+
+    stats_o <- t(df.o[,lapply(.SD, function(x) .stats(x))])
+    stats_rec <- t(df.rec[,lapply(.SD, function(x) .stats(x))])
 
     stats_o <- cbind(names(df.o), stats_o)
     stats_rec <- cbind(names(df.rec), stats_rec)
@@ -301,10 +312,10 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
       prettyF(stats_rec[,3]), paste0("(",prettyF(stats_o[,3]),")"),
       stats_rec[,4], paste0("(",stats_o[,4],")"))
     stats_rec <- as.data.table(stats_rec)
-    setnames(stats_rec, c("Key Variable","Number of categories","","Mean size","","Size of smallest",""))
+    setnames(stats_rec, c("Key Variable","Number of categories","","Mean size","","Size of smallest (>0)",""))
 
     txt_rec <- paste0("Information on categorical key variables:\n")
-    txt_rec <- paste0(txt_rec,"\nReported is the number, mean size and size of the smallest category for recoded variables.\n")
+    txt_rec <- paste0(txt_rec,"\nReported is the number, mean size and size of the smallest category >0 for recoded variables.\n")
     txt_rec <- paste0(txt_rec, "In parenthesis, the same statistics are shown for the unmodified data.\n")
     txt_rec <- paste0(txt_rec, "Note: NA (missings) are counted as seperate categories!\n\n")
 
