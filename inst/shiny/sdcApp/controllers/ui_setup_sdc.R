@@ -146,7 +146,7 @@ output$ui_sdcObj_summary <- renderUI({
     }
     if(!is.na(x$threshold)) {
       meth <- "localSupp()"
-      txt <- NULL
+      txt <- txt2 <- NULL
     } else {
       meth <- "kAnon()"
       txt <- "Below the number of supressions (values set to a missing value (NA)) due to the last run of the local suppression algorithm."
