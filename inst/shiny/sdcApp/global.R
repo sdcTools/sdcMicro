@@ -360,7 +360,9 @@ obj$sdcObj <- NULL
 obj$code_read_and_modify <- c()
 obj$code_setup <- c()
 obj$code_anonymize <- c()
-obj$code <- "require(sdcMicro)"
+obj$code <- c(
+  paste("# created using sdcMicro", packageVersion("sdcMicro")),
+  "library(sdcMicro)")
 obj$transmat <- NULL
 obj$last_warning <- NULL
 obj$last_error <- NULL
