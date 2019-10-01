@@ -43,11 +43,11 @@
 #' Smoothing Model for Sample Disclosure Risk Estimation}. Privacy in
 #' Statistical Databases. Lecture Notes in Computer Science.  Springer-Verlag,
 #' 82--93.
-#' 
+#'
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
 #' \doi{10.1007/978-3-319-50272-4}
-#' 
+#'
 #' @keywords manip
 #' @note LLmodGlobalRisk is depcrecated for \code{\link{modRisk}} and is only
 #' provided for compatibility with older versions of this package. It may be removed
@@ -129,14 +129,14 @@ LLmodGlobalRiskWORK <- function(x, method="IPF", inclProb=NULL, form=as.formula(
   }
 
   ## sample frequencies
-  tab <- xtabs(form, x)
+  tab <- stats::xtabs(form, x)
   x <- data.frame(x, inclProb=inclProb)
   form2 <- as.formula(paste(c("inclProb", as.character(form)), collapse=""))
-  tabP <- xtabs(form2, x)
+  tabP <- stats::xtabs(form2, x)
 
   ## IPF
   mod <- loglm(form, data=tab, fitted=TRUE)
-  lambda <- fitted(mod)
+  lambda <- stats::fitted(mod)
 
   ## Risk
   r1 <- risk1(lambda, tabP)

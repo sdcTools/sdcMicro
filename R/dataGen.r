@@ -63,11 +63,11 @@ setMethod(f="dataGenX", signature=c("data.frame"), definition=function(obj, ...)
 })
 
 dataGenWORK <- function(x, n=200, use="everything") {
-  stopifnot(use %in% c("everything", "all.obs", "complete.obs", "na.or.complete", "pairwise.complete.obs")) 
+  stopifnot(use %in% c("everything", "all.obs", "complete.obs", "na.or.complete", "pairwise.complete.obs"))
 
   ## Generate a random $n^{'} \times m$ matrix $A$ in such way that the covariance matrix
   ## $\Sigma_aa = I$.
-  M <- matrix(rnorm(n * ncol(x)), ncol = ncol(x))
+  M <- matrix(stats::rnorm(n * ncol(x)), ncol = ncol(x))
   ## Use the Cholesky decomposition on C to obtain $C = U^t U$,
   ## where $U$ is an upper triangular matrix.
   C <- cov(x, use=use)

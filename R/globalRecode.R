@@ -32,15 +32,15 @@
 #' @note \code{globalRecode} can not be applied to vectors stored as factors from sdcMicro >= 4.7.0!
 #' @keywords manip
 #' @author Matthias Templ and Bernhard Meindl
-#' @references 
-#' #' Templ, M. and Kowarik, A. and Meindl, B. 
-#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#' @references
+#' #' Templ, M. and Kowarik, A. and Meindl, B.
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 #' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
-#' 
+#'
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4. \doi{10.1007/978-3-319-50272-4}
 #' \doi{10.1007/978-3-319-50272-4}
-#' 
+#'
 #' @export
 #' @examples
 #' data(free1)
@@ -126,15 +126,15 @@ globalRecodeWORK <- function(x, breaks, labels=NULL, method="equidistant") {
   ## same-size groups
   equalAmount <- function(x, b=breaks) {
     SEQ <- c(0, ((1:b)/b))
-    b1 <- quantile(na.omit(x), SEQ)
+    b1 <- stats::quantile(na.omit(x), SEQ)
     if (any(duplicated(b1))) {
       b1 <- jitter(b1)
     }
     b1
   }
-  
+
   stopifnot(method %in% c("equidistant","logEqui","equalAmount"))
-  
+
   if (length(breaks)==1) {
     breaks <- round(breaks)
     stopifnot(breaks>=1)

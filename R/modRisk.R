@@ -214,17 +214,17 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
   if ( method == "IPF" ) {
     form <- as.formula(paste(c("counts", as.character(formulaM)), collapse=""))
     form2 <- as.formula(paste(c("inclProb", as.character(formulaM)), collapse=""))
-    tab <- xtabs(form, x)
-    tabP <- xtabs(form2, x)
+    tab <- stats::xtabs(form, x)
+    tabP <- stats::xtabs(form2, x)
   }
 
   # running the model with the chosen formula
   if ( method == "IPF" ) {
     mod <- loglm(form, data=tab, fitted=TRUE)
   } else {
-    mod <- glm(form, data=x, family=poisson())
+    mod <- glm(form, data=x, family=stats::poisson())
   }
-  lambda <- fitted(mod)
+  lambda <- stats::fitted(mod)
 
   # calculate risk and estimate
   # 1. the number of sample uniques that are population unique
@@ -255,8 +255,8 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
       }
     }
   }
-  
-            
+
+
   x <- merge(x, lambda, all.x=TRUE)
   x[is.na(Fk), Fk:=0]
   x <- x[0 < x$counts & x$counts <= bound]
@@ -267,7 +267,7 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
   gr2 <- file_risk(x$counts, r2)
 
   res <- list(gr1=gr1, gr2=gr2, gr1perc=gr1*100, gr2perc=gr2*100,
-              method=method, model=formulaM, fitted=fitted(mod), inclProb=x$inclProb)
+              method=method, model=formulaM, fitted=stats::fitted(mod), inclProb=x$inclProb)
   class(res) <- "modrisk"
   res
 })

@@ -54,7 +54,7 @@ pairs(xnew, col = xnew$beforeafter, pch = 4)
 x[2,2] <- NA
 m <- colMeans(x, na.rm = TRUE)
 s <- cov(x, use = "complete.obs")
-md <- mahalanobis(x, m, s)
+md <- stats::mahalanobis(x, m, s)
 ximp <- mvTopCoding(x, center = m, cov = s, maha = md)
 plot(x)
 points(ximp, col = "blue", pch = 4)

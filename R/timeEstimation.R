@@ -7,7 +7,7 @@ predictTime <- function(n, nkey, nmean) {
 coefTime <- function() {
   ## very very very simple coefficent for computation time in comparison to my computer
   t <- Sys.time()
-  a <- rnorm(5e+05)
+  a <- stats::rnorm(5e+05)
   rm(a)
   max(0.1, as.numeric(Sys.time() - t)/0.06)
 }

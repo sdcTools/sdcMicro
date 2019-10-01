@@ -250,7 +250,7 @@ suppSubset <- function(x, k, importance, alpha)  {
   erg <- xKeys[fk > k] # more than k
   erg[, fkd := fk - k]
   if (nrow(erg) > 0) {
-    erg2 <- erg[, tail(.SD, fkd[1]), by = key(erg)]
+    erg2 <- erg[, utils::tail(.SD, fkd[1]), by = key(erg)]
     xKeys <- data.table(x)
     setkey(xKeys, "idvarextraforsls")
     erg2 <- erg2[, list(idvarextraforsls)]
@@ -378,7 +378,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
 
     # all combinations we need to tackle are stored here
     tree <- lapply(combs, function(x) {
-      combn(keyVarsNum, x)
+      utils::combn(keyVarsNum, x)
     })
   }
 
@@ -539,7 +539,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     rownames(totalSupps) <- totalSupps$strata; totalSupps$strata <- NULL
   }
 
-  newSupps <- tail(rowSums(supps), 1)
+  newSupps <- utils::tail(rowSums(supps), 1)
   res <- list(
     xAnon = as.data.frame(xAnon),
     supps = supps,
@@ -576,8 +576,8 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
 #'
 print.localSuppression <- function(x, ...) {
   byStrata <- ifelse(nrow(x$totalSupps) == 1, FALSE, TRUE)
-  totSupps <- tail(rowSums(x$totalSupps), 1)
-  addSupps <- tail(rowSums(x$supps), 1)
+  totSupps <- utils::tail(rowSums(x$totalSupps), 1)
+  addSupps <- utils::tail(rowSums(x$supps), 1)
 
   pp <- "\n-----------------------\n"
   pp <- paste0(pp, "Total number of suppressions in the key variables: ", totSupps," (new: ", addSupps, ")\n\n")

@@ -115,13 +115,13 @@ dRiskRMDWORK <- function(x, xm, k = 0.01, k2 = 0.05) {
   xm <- scale(xm)
   cent <- colMeans(x)
   covs <- covMcd(x)$cov
-  rmd <- mahalanobis(x, center = cent, cov = covs)
+  rmd <- stats::mahalanobis(x, center = cent, cov = covs)
   rmd <- sqrt(rmd) * 0.05  ##rmd/max(rmd) * 2
   mi <- x - k * rmd
   ma <- x + k * rmd
   w <- which(apply(xm < ma & xm > mi, 1, any) == TRUE)
 
-  xd <- as.matrix(dist(xm))
+  xd <- as.matrix(stats::dist(xm))
   diag(xd) <- NA
   if (length(w) > 0) {
     ind <- apply(xd[w, , drop = FALSE], 1, function(x, k = k2) {

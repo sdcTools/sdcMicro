@@ -52,7 +52,7 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
   }
   if (addRandom) {
     numerical <- c(numerical, "RandomVariableForImputation")
-    data[, "RandomVariableForImputation"] <- rnorm(nrow(data))
+    data[, "RandomVariableForImputation"] <- stats::rnorm(nrow(data))
     if (is.list(dist_var)) {
       for (i in 1:length(dist_var)) {
         dist_var[[i]] <- c(dist_var[[i]], "RandomVariableForImputation")
@@ -72,10 +72,10 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
   if (is.null(mixed.constant))
     mixed.constant <- rep(0, length(mixedX))
   spl <- lapply(spl, function(dataSpl) {
-    erg <- gowerD(dataSpl[, dist_var],dataSpl[, dist_var],weights=weights,numericalX,
+    erg <- VIM::gowerD(dataSpl[, dist_var],dataSpl[, dist_var],weights=weights,numericalX,
                  factorsX,ordersX,mixedX,levOrdersX,mixed.constant=mixed.constant,returnIndex=TRUE,
                  nMin=as.integer(aggr));
-    
+
     if (addRandom)
       dataSpl <- dataSpl[, -which(colnames(dataSpl) == "RandomVariableForImputation")]
     dataSpl[, variables] <- do.call("rbind", apply(erg$ind, 2, function(x) {
@@ -91,7 +91,7 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
   row.names(data) <- rn
   return(data)
 }
-#' 
+#'
 #' Microaggregation for numerical and categorical key variables based on a
 #' distance similar to the Gower Distance
 #'
@@ -122,7 +122,7 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
 #' for distance computation
 #' @param numFun function: to be used to aggregated numerical variables
 #' @param catFun function: to be used to aggregated categorical variables
-#' @param addRandom TRUE/FALS if a random value should be added for the
+#' @param addRandom TRUE/FALSE if a random value should be added for the
 #' distance computation.
 #' @return The function returns the updated sdcMicroObj or simply an altered
 #' data frame.

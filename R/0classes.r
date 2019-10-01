@@ -5,9 +5,7 @@
 #' @import robustbase
 #' @import MASS
 #' @import carData
-#' @import car
 #' @import cluster
-#' @import e1071
 #' @import tools
 #' @import knitr
 #' @import xtable
@@ -31,46 +29,20 @@
 #' @importFrom graphics segments
 #' @importFrom graphics strwidth
 #' @importFrom graphics text
-#' @importFrom stats complete.cases
 #' @importFrom stats as.formula
-#' @importFrom stats biplot
 #' @importFrom stats coef
 #' @importFrom stats cor
 #' @importFrom stats cov
-#' @importFrom stats density
-#' @importFrom stats dist
-#' @importFrom stats fitted
 #' @importFrom stats formula
 #' @importFrom stats glm
-#' @importFrom stats kmeans
 #' @importFrom stats lm
 #' @importFrom stats mad
-#' @importFrom stats mahalanobis
 #' @importFrom stats median
-#' @importFrom stats model.matrix
 #' @importFrom stats na.omit
-#' @importFrom stats poisson
-#' @importFrom stats predict
-#' @importFrom stats princomp
-#' @importFrom stats qchisq
-#' @importFrom stats qnorm
-#' @importFrom stats quantile
-#' @importFrom stats rnorm
-#' @importFrom stats runif
 #' @importFrom stats sd
 #' @importFrom stats terms
 #' @importFrom stats var
-#' @importFrom stats weighted.mean
-#' @importFrom stats xtabs
-#' @importFrom utils combn
 #' @importFrom utils data
-#' @importFrom utils flush.console
-#' @importFrom utils tail
-#' @importFrom utils read.table
-#' @importFrom utils write.table
-#' @import haven
-#' @importFrom prettydoc html_pretty
-#' @importFrom VIM sampleCat maxCat gowerD
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))
 setClassUnion("numericOrNULL", c("numeric", "NULL"))
 setClassUnion("characterOrNULL", c("character", "NULL"))

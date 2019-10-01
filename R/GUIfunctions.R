@@ -127,7 +127,7 @@ selectHouseholdData <- function(dat, hhId, hhVars) {
     stop("The selected household ID isn't available in the data.\nRespecify hhId\n")
   }
   # Remove any records with missing household ID (these cannot be matched later on in the process)
-  res <- dat[complete.cases(dat[,hhId]), ]
+  res <- dat[stats::complete.cases(dat[,hhId]), ]
 
   # Keep only one observation per household
   res <- res[which(!duplicated(res[,hhId])),]
@@ -433,7 +433,7 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     header <- ifelse(opts$header==TRUE, TRUE, FALSE)
     sep <- opts$sep
     quote <- "\""
-    res <- tryCatchFn(read.table(path, sep=sep, header=header, quote=quote))
+    res <- tryCatchFn(utils::read.table(path, sep=sep, header=header, quote=quote))
   }
   if ("simpleError" %in% class(res)) {
     return(res)
@@ -670,7 +670,7 @@ writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
     haven::write_dta(data=dat, path=fileOut, version=inp$version)
   }
   if (format=="csv") {
-    write.table(dat, file=fileOut, ...)
+    utils::write.table(dat, file=fileOut, ...)
   }
   return(invisible(NULL))
 }

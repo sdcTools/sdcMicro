@@ -36,21 +36,21 @@
 #' original and post-randomized variables (with suffix "_pram").
 #' @author Alexander Kowarik, Matthias Templ, Bernhard Meindl
 #' @references \url{http://www.gnu.org/software/glpk}
-#' 
+#'
 #' Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 #' \emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
 #' in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
-#' (editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77. 
+#' (editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77.
 #' \doi{10.1007/978-3-642-33627-0_6}
-#' 
-#' Templ, M. and Kowarik, A. and Meindl, B. 
-#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#'
+#' Templ, M. and Kowarik, A. and Meindl, B.
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 #' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #'
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
 #' \doi{10.1007/978-3-319-50272-4}
-#' 
+#'
 #' @keywords manip
 #' @export
 #' @note Deprecated method 'pram_strata'is no longer available
@@ -159,14 +159,14 @@ setMethod(f="pramX", signature=c("sdcMicroObj"),
             } else {
               pramVars <- variables
             }
-            
+
             pp <- get.sdcMicroObj(obj, type="pram")
             if (!is.null(pp)) {
               if ( any(pramVars%in%pp$summary$variable)) {
                 stop("pram() was already applied on at least one variable!\n")
               }
             }
-            
+
             ### Get data from manipPramVars
             manipPramVars <- get.sdcMicroObj(obj, type="manipPramVars")
             strataVars <- get.sdcMicroObj(obj, type="strataVar")
@@ -174,7 +174,7 @@ setMethod(f="pramX", signature=c("sdcMicroObj"),
             kVar <- pramVars[pramVars %in% colnames(manipKeyVars)]
             pVar <- pramVars[pramVars %in% colnames(manipPramVars)]
             rVar <- pramVars[!pramVars %in% c(kVar, pVar)]
-            
+
             if (length(kVar) > 0) {
               warnMsg <- "If pram is applied on key variables, the k-anonymity and risk assessment are not useful anymore.\n"
               obj <- addWarning(obj, warnMsg=warnMsg, method="pram", variable=kVar[1])
@@ -198,7 +198,7 @@ setMethod(f="pramX", signature=c("sdcMicroObj"),
             if (!exists("manipData")) {
               manipData <- obj@origData[, pramVars, drop=FALSE]
             }
-            
+
             if (!is.null(strata_variables)) {
               # case 1: character vector
               if (is.character(strata_variables)) {
@@ -217,12 +217,12 @@ setMethod(f="pramX", signature=c("sdcMicroObj"),
               manipData <- cbind(manipData, sData)
               strataVars <- c((length(pramVars)+1):length(manipData))
             }
-            
+
             levList <- lapply(manipData[,pramVars,drop=FALSE], levels)
             params <- inputs_pram(pd=pd, alpha=alpha, levList=levList)
             res_pram <- pramWORK(data=manipData, variables=pramVars,
                                  strata_variables=strataVars, params=params)
-            
+
             if ( is.null(pp)) {
               pram_inp <- list()
               pram_inp$params <- attr(res_pram, "pram_params")
@@ -237,9 +237,9 @@ setMethod(f="pramX", signature=c("sdcMicroObj"),
               pram_inp$summary <- rbind(pram_inp$summary, attr(res_pram,"summary"))
             }
             obj <- set.sdcMicroObj(obj, type="pram", input=list(pram_inp))
-            
+
             manipData[, pramVars] <- res_pram[, paste0(pramVars, "_pram"), drop=FALSE]
-            
+
             if (length(pVar) > 0) {
               manipPramVars[, pVar] <- manipData[, pVar]
             }
@@ -251,7 +251,7 @@ setMethod(f="pramX", signature=c("sdcMicroObj"),
               }
             }
             obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))
-            
+
             if (length(kVar) > 0) {
               manipKeyVars[, kVar] <- manipData[, kVar]
               obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(manipKeyVars))
@@ -320,16 +320,16 @@ inputs_pram <- function(pd, alpha, levList) {
     }
     TRUE
   }
-  
+
   if (any(sapply(levList, is.null))) {
     stop("at least one variable is not coded as a factor.\n")
   }
-  
+
   if ( is.matrix(pd) & length(levList)==1) {
     checkMat(pd, levList[[1]])
     return(list(pd=list(pd), alpha=NA))
   }
-  
+
   nrPramVars <- length(levList)
   if (is.vector(alpha)) {
     if ( !is.numeric(alpha)) {
@@ -346,7 +346,7 @@ inputs_pram <- function(pd, alpha, levList) {
   } else {
     stop("'alpha' needs to be a vector!\n")
   }
-  
+
   # at least one element should be a transition-matrix
   # we check if levels match
   if (is.list(pd)) {
@@ -399,9 +399,9 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
       }
       return(pd)
     }
-    
+
     P <- matrix(, ncol=L, nrow=L)
-    pds <- runif(L, min=pd, max=1)
+    pds <- stats::runif(L, min=pd, max=1)
     tri <- (1 - pds)/(L - 1)
     for (i in seq(L)) {
       P[i, ] <- tri[i]
@@ -421,7 +421,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     rownames(Rs) <- colnames(Rs) <- levs
     return(Rs)
   }
-  
+
   # pram on a simple vector
   # x: input vector
   # Rs: transition matrix
@@ -432,7 +432,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     }
     xpramed <- x
     levs <- levels(xpramed)
-    
+
     # perform sampling
     for ( i in 1:length(levs) ) {
       ii <- which(xpramed==levs[i])
@@ -443,19 +443,19 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     xpramed <- factor(xpramed, levels=levs)
     return(list(x=x, xpramed=xpramed))
   }
-  
+
   idvarpram <- tmpfactor_for_pram <- NULL
-  
+
   if (is.null(variables)) {
     stop("Please define valid variables to pram!\n")
   }
-  
+
   data <- as.data.table(data)
   # all variables must be factors (new in sdcMicro >= 4.7.0)
   if (!all(sapply(data, class)[variables]=="factor")) {
     stop("all variables that should be pramed must be factors!\n")
   }
-  
+
   # calculate stratification variable in any case;
   # even if it is only a 'pseudo' one
   data[,idvarpram:=1:.N]
@@ -476,12 +476,12 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     v <- variables[i]
     pV <- data[[v]]
     levs <- levels(pV)
-    
+
     s <- split(data[, c(variables, "idvarpram"), with=FALSE], f)
     cmd <- paste0("data[,",v,"_pram:=factor(NA, levels=levs)]")
     eval(parse(text=cmd))
     ll <- levels(data$tmpfactor_for_pram)
-    
+
     # calculate or check and use transition-matrix
     Rs <- calcTransitionMatrix(xvec=data[[v]], pd=pd[[i]], alpha=alpha[[i]])
     for (si in ll) {
@@ -490,7 +490,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
       cmd <- paste0("data[ii,",v,"_pram:=res]")
       eval(parse(text=cmd))
     }
-    
+
     # transitions
     dat_o <- data[[v]]
     dat_p <- data[[paste0(v,"_pram")]]
@@ -500,7 +500,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     colnames(result) <- c("transition", "Frequency")
     out$params[[length(out$params)+1]] <- list(Rs=Rs, pd=pd[[i]], alpha=alpha[[i]])
     transitions[[length(transitions)+1]] <- result
-    
+
     # frequency-comparison
     to <- table(dat_o, useNA="always")
     tp <- table(dat_p, useNA="always")
@@ -517,7 +517,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
   data[,tmpfactor_for_pram:=NULL]
   data[,idvarpram:=NULL]
   data <- as.data.frame(data)
-  
+
   x <- data
   x <- apply(x, 2, as.character)
   x[is.na(x)] <- "."  # NA comparisons -> cast to character (better solution?)

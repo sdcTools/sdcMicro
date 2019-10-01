@@ -276,7 +276,7 @@ kAnon_impvec <- reactive({
 
   # we need to sort the inputs properly
   # in case >= 10 key vars have been specified
-  ii <- as.numeric(sapply(strsplit(cn, "_"), tail, 1))
+  ii <- as.numeric(sapply(strsplit(cn, "_"), utils::tail, 1))
   cn <- cn[order(ii)]
   vals <- unlist(lapply(cn, function(x) {
     input[[x]]
@@ -296,7 +296,7 @@ kAnon_comb_params <- reactive({
 
   # we need to sort the inputs properly
   # in case >= 10 key vars have been specified
-  ii <- as.numeric(sapply(strsplit(cn1, "_"), tail, 1))
+  ii <- as.numeric(sapply(strsplit(cn1, "_"), utils::tail, 1))
   cn1 <- cn1[order(ii)]
   vals1 <- unlist(lapply(cn1, function(x) {
     input[[x]]

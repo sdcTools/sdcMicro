@@ -132,14 +132,14 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
   addNoise_additive <- function(x, noise) {
     N <- nrow(x)
     x <- apply(x, 2, function(x) {
-      x + rnorm(N, 0, noise/100 * sd(x, na.rm=TRUE))  #1.96 * sd(x)/sqrt(N) * wnoise)
+      x + stats::rnorm(N, 0, noise/100 * sd(x, na.rm=TRUE))  #1.96 * sd(x)/sqrt(N) * wnoise)
     })
     x
   }
   addNoise_additive0 <- function(x, noise) {
     N <- nrow(x)
     x <- apply(x, 2, function(x) {
-      noise <- rnorm(N, 0, noise/100 * sd(x, na.rm=TRUE))  #1.96 * sd(x)/sqrt(N) * wnoise)
+      noise <- stats::rnorm(N, 0, noise/100 * sd(x, na.rm=TRUE))  #1.96 * sd(x)/sqrt(N) * wnoise)
       noise[x == 0] <- 0
       x + noise
     })
@@ -158,7 +158,7 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
     N <- nrow(x)
     d1 <- sqrt(1 - delta^2)
     x <- apply(x, 2, function(x) {
-      x * d1 + delta * rnorm(N, mean=(1 - d1)/delta * mean(x, na.rm=TRUE), sd=sd(x, na.rm=TRUE))
+      x * d1 + delta * stats::rnorm(N, mean=(1 - d1)/delta * mean(x, na.rm=TRUE), sd=sd(x, na.rm=TRUE))
     })
     x
   }
@@ -216,7 +216,7 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
     }
     ROMM <- function(x, p1=p) {
       N <- nrow(x)
-      M <- matrix(rnorm(N * N), ncol=N, nrow=N)
+      M <- matrix(stats::rnorm(N * N), ncol=N, nrow=N)
       I <- diag(1, N)
       P <- I + p1 * M
       Torthon <- orthonormalization(P)
@@ -234,19 +234,19 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
     wnoise <- noise/100
     N <- nrow(x)
     P <- ncol(x)
-    q1 <- apply(x, 2, quantile, probs=0.99, na.rm=TRUE)
+    q1 <- apply(x, 2, stats::quantile, probs=0.99, na.rm=TRUE)
     r <- list()
     for (i in 1:ncol(x)) {
       r[[i]] <- which(x[,i] > q1[i])
     }
     univOutlier <- unlist(r)
-    limit <- sqrt(qchisq(0.975, dim(x)[2]))
+    limit <- sqrt(stats::qchisq(0.975, dim(x)[2]))
     xMcd <- covMcd(na.omit(x), alpha=1/2)
-    rd <- sqrt(mahalanobis(x, xMcd$center, xMcd$cov))
+    rd <- sqrt(stats::mahalanobis(x, xMcd$center, xMcd$cov))
     rdOutlier <- which(rd > limit)
     outliers <- unique(sort(c(univOutlier, rdOutlier)))
     for (i in 1:P) {
-      nn <- rnorm(length(outliers), 0, 1.96 * sd(x[,i], na.rm=TRUE)/sqrt(N) * wnoise)
+      nn <- stats::rnorm(length(outliers), 0, 1.96 * sd(x[,i], na.rm=TRUE)/sqrt(N) * wnoise)
       x[outliers, i] <- x[outliers, i] + nn
     }
     x

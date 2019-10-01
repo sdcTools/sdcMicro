@@ -78,8 +78,8 @@ plotMicro <- function(x, p, which.plot = 1:3) {
     }
     par(mfrow = c(r1, r2))
     for (i in 1:dim(x1)[2]) {
-      plot(density(x1[, i]), main = paste(colnames(x1)[i], "- density traces"))
-      lines(density(x2[, i]), col = "red")
+      plot(stats::density(x1[, i]), main = paste(colnames(x1)[i], "- density traces"))
+      lines(stats::density(x2[, i]), col = "red")
       legend("topright", legend = c("original data", "microaggr. data"), lty = c(1, 1),
         lwd = c(1, 1), col = c("black", "red"))
     }
@@ -95,13 +95,13 @@ plotMicro <- function(x, p, which.plot = 1:3) {
     legend("topright", legend = c("original data", "microaggr. data"), pch = c(15, 15),
       col = c("yellow", "orange"))
     if (dim(x$mx)[1] > dim(x$mx)[2]) {
-      pc1 <- princomp(scale(x$x))
+      pc1 <- stats::princomp(scale(x$x))
       xm <- x$mx
       colnames(xm) <- colnames(x$x)
-      pc2 <- princomp(scale(xm))
-      biplot(pc1)
+      pc2 <- stats::princomp(scale(xm))
+      stats::biplot(pc1)
       mtext("Original data", 3)
-      biplot(pc2)
+      stats::biplot(pc2)
       mtext("Microaggregated data", 3)
     }
   }

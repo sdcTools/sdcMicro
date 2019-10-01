@@ -178,10 +178,10 @@ shuffleWORK <- function(data, form, method="ds", weights=NULL, covmethod="spearm
     }
   }
   # data <- na.omit(data)
-  predictors <- model.matrix(form, data=as.data.frame(data))
+  predictors <- stats::model.matrix(form, data=as.data.frame(data))
   predictors <- predictors[, 2:ncol(predictors), drop=FALSE]
   formR <- formula(paste(" ~ ", strsplit(as.character(form), "~")[[2]]))
-  responses <- model.matrix(formR, data=as.data.frame(data))
+  responses <- stats::model.matrix(formR, data=as.data.frame(data))
   responses <- responses[, 2:ncol(responses)]
   if (dim(data.frame(responses))[2] < 2)
     stop("The method needs at least 2 confidential numeric variables")
@@ -234,7 +234,7 @@ shuffleWORK <- function(data, form, method="ds", weights=NULL, covmethod="spearm
     perc <- apply(ranks, 2, function(x) (x - 0.5)/length(x))
     indResp <- 1:ncol(responses)
     indPred <- (ncol(responses) + 1):(ncol(responses) + ncol(predictors))
-    normInvers <- apply(perc, c(2), function(x) qnorm(x))
+    normInvers <- apply(perc, c(2), function(x) stats::qnorm(x))
     responses1 <- normInvers[, indResp, drop=FALSE]
     predictors1 <- normInvers[, indPred, drop=FALSE]
     Ystar <- predictors %*% t(cov(responses1, predictors1) %*% solve(cov(predictors1)))
@@ -248,7 +248,7 @@ shuffleWORK <- function(data, form, method="ds", weights=NULL, covmethod="spearm
     # sig <- cr(mat, covmethod)
     ranks <- apply(mat, 2, rank, ties.method="average")
     perc <- apply(ranks, 2, function(x) (x - 0.5)/length(x))
-    normInvers <- apply(perc, c(2), function(x) qnorm(x))
+    normInvers <- apply(perc, c(2), function(x) stats::qnorm(x))
     indResp <- 1:ncol(responses)
     indPred <- (ncol(responses) + 1):(ncol(responses) + ncol(predictors))
     pmc <- 2 * sin((pi * cr(mat, type=covmethod))/6)  #(where pi=22/7).
@@ -256,7 +256,7 @@ shuffleWORK <- function(data, form, method="ds", weights=NULL, covmethod="spearm
     pxx <- pmc[indResp, indResp]
     psx <- pmc[indPred, indResp]
     pssinv <- solve(pmc[indPred, indPred])
-    normInvers <- apply(perc, c(2), function(x) qnorm(x))
+    normInvers <- apply(perc, c(2), function(x) stats::qnorm(x))
     responses1 <- normInvers[, indResp]
     predictors1 <- normInvers[, indPred]
     Ystar1 <- predictors1 %*% t(pxs %*% pssinv)
@@ -275,7 +275,7 @@ shuffleWORK <- function(data, form, method="ds", weights=NULL, covmethod="spearm
     # ranks[,4:10] <- ranks[,4:10]+1 compute percentiles p
     perc <- apply(ranks, 2, function(x) (x - 0.5)/length(x))
     ## compute x*,s*
-    normInvers <- apply(perc, c(2), qnorm)
+    normInvers <- apply(perc, c(2), stats::qnorm)
     ## compute pmc:
     pmc <- 2 * sin((pi * cor(mat, method=covmethod))/6)  #(where pi=22/7).
 
@@ -298,13 +298,13 @@ shuffleWORK <- function(data, form, method="ds", weights=NULL, covmethod="spearm
   }
   if (method == "mlm") {
     LMres <- lm(cbind(responses) ~ predictors)  #, data=x)
-    Ystar <- predict(LMres, predictors)
+    Ystar <- stats::predict(LMres, predictors)
     # sy <- apply(Ystar, 2, sort, index.return=TRUE) sx <- apply(responses, 2, sort,
     # index.return=TRUE) for(i in 1:ncol(responses)){ Ystar[sy[[i]]$ix,i] <-
     # responses[sx[[i]]$ix,i] }
   }
   # if(method=='mlts'){ LMres <- mlts(y=responses, x=predictors, gamma=0.75) Ystar <-
-  # predict(LMres, x[,predictors]) sy <- apply(Ystar, 2, sort, index.return=TRUE) sx <-
+  # stats::predict(LMres, x[,predictors]) sy <- apply(Ystar, 2, sort, index.return=TRUE) sx <-
   # apply(responses, 2, sort, index.return=TRUE) for(i in 1:ncol(responses)){
   # Ystar[sy[[i]]$ix,i] <- responses[sx[[i]]$ix,i] } }
   if (gadp == TRUE && (method != "ds_cob" || method != "ds"))

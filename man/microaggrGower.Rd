@@ -39,7 +39,7 @@ for distance computation}
 
 \item{catFun}{function: to be used to aggregated categorical variables}
 
-\item{addRandom}{TRUE/FALS if a random value should be added for the
+\item{addRandom}{TRUE/FALSE if a random value should be added for the
 distance computation.}
 }
 \value{

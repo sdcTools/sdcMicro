@@ -169,7 +169,7 @@ riskyCellsWork <- function(df, keyVars, useIdentificationLevel=FALSE, threshold,
     tmp <- dat[,keyVars, with=F]
     keyVars <- 1:ncol(tmp)
     for (dd in 1:maxDim) {
-      todo_combs <- combn(names(tmp)[keyVars], dd)
+      todo_combs <- utils::combn(names(tmp)[keyVars], dd)
       res <- matrix(NA, ncol=maxDim+1, nrow=ncol(todo_combs))
 
       for (i in 1:ncol(todo_combs)) {

@@ -170,7 +170,7 @@ setMethod(f="microaggregationX", signature=c("sdcMicroObj"), definition=function
   if (length(strataVars) > 0) {
     sx <- get.sdcMicroObj(obj, type="origData")[, strataVars, drop=FALSE]
     x <- cbind(x, sx)
-    strataVars <- tail(colnames(x), 1)
+    strataVars <- utils::tail(colnames(x), 1)
   }
 
   weights <- get.sdcMicroObj(obj, type="weightVar")
@@ -310,7 +310,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
     }
     if (measure == "mean" & !is.null(weights)) {
       for (i in 1:length(index)) {
-        m[i, ] <- apply(x[index[[i]], ], 2, function(x) weighted.mean(x,
+        m[i, ] <- apply(x[index[[i]], ], 2, function(x) stats::weighted.mean(x,
           w=weights[index[[i]]]))
       }
     }
@@ -405,20 +405,20 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
       size <- a$clusinfo[, 1]
     }
     if (clustermethod == "kmeans") {
-      a <- kmeans(x, nc)
+      a <- stats::kmeans(x, nc)
       centers <- a$centers
       clustresult <- a$cluster
       size <- a$size
     }
     if (clustermethod == "cmeans") {
-      a <- cmeans(x, nc)
+      a <- e1071::cmeans(x, nc)
       centers <- a$centers
       clustresult <- a$cluster
       size <- a$size
       res@mem <- a$mem
     }
     if (clustermethod == "bclust") {
-      a <- bclust(x, nc)
+      a <- e1071::bclust(x, nc)
       centers <- a$centers
       groesse <- rep(0, nc)
       for (i in seq(nc)) {
@@ -506,7 +506,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
       varsort=NULL, transf=NULL, blowup=TRUE, blowxm=y, fot=0))
   }
   micro_pca <- function(x, aggr, measure, trim) {
-    p <- princomp(scale(x))
+    p <- stats::princomp(scale(x))
     s1 <- sort(p$scores[, 1], index.return=TRUE)$ix
     xx <- x[s1, ]
     index <- indexMicro(xx, aggr)
@@ -521,7 +521,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
   micro_mcdpca <- function(x, aggr, measure, trim) {
     x.mcd <- cov.mcd(x, cor=TRUE)
     x.scale <- scale(x, x.mcd$center, sqrt(diag(x.mcd$cor)))
-    p <- princomp(x.scale, covmat=x.mcd)
+    p <- stats::princomp(x.scale, covmat=x.mcd)
     s1 <- sort(p$scores[, 1], index.return=TRUE)$ix
     xx <- x[s1, ]
     index <- indexMicro(xx, aggr)
@@ -588,7 +588,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
         y <- x[w, , drop=FALSE]
         xx[[i]] <- y[order(y[, varsort]), ]
       } else {
-        p <- princomp(scale(x[w, , drop=FALSE]))$scores[, 1]
+        p <- stats::princomp(scale(x[w, , drop=FALSE]))$scores[, 1]
         psortind <- sort(p, index.return=TRUE)$ix
         y <- x[w, , drop=FALSE]
         xx[[i]] <- y[psortind, ]
@@ -623,7 +623,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
         message("length(w):", length(w), "\n")
         x.mcd <- cov.mcd(x[w, ], cor=TRUE)
         x.scale <- scale(x[w, ], x.mcd$center, sqrt(diag(x.mcd$cor)))
-        p <- princomp(x.scale, covmat=x.mcd)$scores[, 1]
+        p <- stats::princomp(x.scale, covmat=x.mcd)$scores[, 1]
         psortind <- sort(p, index.return=TRUE)$ix
         y <- x[w, , drop=FALSE]
         xx[[i]] <- y[psortind, ]
@@ -692,10 +692,10 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
     len <- nrow(y)
     y <- apply(y, 2, function(x) (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE))
 
-    d <- as.matrix(dist(y))
+    d <- as.matrix(stats::dist(y))
     set.seed(123)
     rr <- covMcd(y)
-    md <- mahalanobis(y, center=rr$center, cov=rr$cov)
+    md <- stats::mahalanobis(y, center=rr$center, cov=rr$cov)
     diag(d) <- 0
 
     for (i in 1:(floor(dim(x)[1]/aggr) - 1)) {
@@ -987,8 +987,8 @@ summary.micro <- function(object, ...) {
   adlm <- sum(abs(l1[2:length(l1)] - l2[2:length(l2)]), na.rm = TRUE)
   adlts <- NA
   if (dim(x1)[1] > dim(x1)[2] && dim(x2)[1] > dim(x2)[2]) {
-    p1 <- princomp(x1)
-    p2 <- princomp(x2)
+    p1 <- stats::princomp(x1)
+    p2 <- stats::princomp(x2)
     cp1 <- colMeans(p1$load)
     cp2 <- colMeans(p2$load)
     apcaload <- sum(abs(cp1 - cp2)/abs(cp1))

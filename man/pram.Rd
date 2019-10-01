@@ -144,11 +144,11 @@ get.sdcMicroObj(sdc, "pram")$transitions
 Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 \emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
 in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
-(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77. 
+(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77.
 \doi{10.1007/978-3-642-33627-0_6}
 
-Templ, M. and Kowarik, A. and Meindl, B. 
-Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+Templ, M. and Kowarik, A. and Meindl, B.
+Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 
 Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
