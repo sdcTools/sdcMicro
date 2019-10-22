@@ -64,8 +64,13 @@ shinyServer(function(session, input, output) {
   # 1: modifications for microdata
   # code to read in microdata
   code_useRObj <- reactive({
-    cmd <- paste0("obj$inputdata <- readMicrodata(")
-    cmd <- paste0(cmd, "path=",dQuote(input$sel_choose_df))
+    obj <- input$sel_choose_df
+    cmd_chk <- paste0("if (!exists(", dQuote(obj),")) {\n")
+    cmd_chk <- paste0(cmd_chk, "  stop('object ", dQuote(obj), " is missing; make sure it exists.`', call. = FALSE)\n")
+    cmd_chk <- paste0(cmd_chk, "}\n")
+
+    cmd <- paste0(cmd_chk, "obj$inputdata <- readMicrodata(")
+    cmd <- paste0(cmd, "path=",dQuote(obj))
     cmd <- paste0(cmd, ", type=",dQuote("rdf"))
     cmd <- paste0(cmd, ", convertCharToFac=FALSE")
     cmd <- paste0(cmd, ", drop_all_missings=FALSE)")
@@ -721,7 +726,7 @@ shinyServer(function(session, input, output) {
       code_out <- gsub("res", "inputdata", code_out)
       obj$code_read_and_modify <- code_out
       obj$inputdataB <- obj$inputdata
-      obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
+      obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- obj$inputdata\n")
       obj$sdcObj <- NULL # start fresh
 
       # stata
@@ -808,7 +813,7 @@ shinyServer(function(session, input, output) {
     ptm <- proc.time()
     cmd <- code_useRObj()
     runEvalStrMicrodat(cmd=cmd, comment=NULL)
-    obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- inputdata\n")
+    obj$code_read_and_modify <- c(obj$code_read_and_modify,"inputdataB <- obj$inputdata\n")
     obj$inputdataB <- obj$inputdata
     obj$utf8 <- FALSE
     obj$sdcObj <- NULL # start fresh
