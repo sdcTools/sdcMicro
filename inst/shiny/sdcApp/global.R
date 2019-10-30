@@ -362,7 +362,8 @@ obj$code_setup <- c()
 obj$code_anonymize <- c()
 obj$code <- c(
   paste("# created using sdcMicro", packageVersion("sdcMicro")),
-  "library(sdcMicro)")
+  "library(sdcMicro)", "",
+  "obj <- NULL")
 obj$transmat <- NULL
 obj$last_warning <- NULL
 obj$last_error <- NULL
