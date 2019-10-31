@@ -43,6 +43,7 @@
 #' @importFrom stats terms
 #' @importFrom stats var
 #' @importFrom utils data
+#' @importFrom shiny knit_print.html
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))
 setClassUnion("numericOrNULL", c("numeric", "NULL"))
 setClassUnion("characterOrNULL", c("character", "NULL"))

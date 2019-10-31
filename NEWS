@@ -1,4 +1,7 @@
 # 5.4.1
+- nothing new, but shiny did no longer export a specific function, so we resolved a warning
+
+# 5.4.1
 - valTable now also works for additive noise methods and swapping
 - updates to imports
 - small fixes and updates in `sdcApp`
