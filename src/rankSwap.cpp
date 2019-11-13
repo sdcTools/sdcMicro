@@ -7,7 +7,7 @@
 
 long my_rand() {
   // a random number between 0 and RAND_MAX (including)
-  int maxval = RAND_MAX;
+  long maxval = RAND_MAX;
   long x = R::runif(0, 1)*(maxval+1);
   return(x);
 }
