@@ -14,6 +14,8 @@
 #' @import shinyBS
 #' @import shiny
 #' @import rhandsontable
+#' @importFrom DT datatable
+#' @importFrom prettydoc html_pretty
 #' @importFrom rmarkdown pandoc_available
 #' @importFrom rmarkdown render
 #' @importFrom graphics axis
@@ -43,7 +45,6 @@
 #' @importFrom stats terms
 #' @importFrom stats var
 #' @importFrom utils data
-#' @importFrom shiny knit_print.html
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))
 setClassUnion("numericOrNULL", c("numeric", "NULL"))
 setClassUnion("characterOrNULL", c("character", "NULL"))

@@ -9,11 +9,11 @@ Authors@R: c(
   person("Alexander", "Kowarik", email="Alexander.Kowarik@statistik.gv.at", role = "aut", comment=c(ORCID="0000-0001-8598-4130")))
 Description: Data from statistical agencies and other institutions are mostly
     confidential. This package (see also Templ, Kowarik and Meindl (2017) <doi:10.18637/jss.v067.i04>) can be used for the generation of anonymized
-    (micro)data, i.e. for the creation of public- and scientific-use files. 
-    The theoretical basis for the methods implemented can be found in Templ (2017) <doi:10.1007/978-3-319-50272-4>. 
+    (micro)data, i.e. for the creation of public- and scientific-use files.
+    The theoretical basis for the methods implemented can be found in Templ (2017) <doi:10.1007/978-3-319-50272-4>.
     Various risk estimation and anonymisation methods are included. Note that the package
     includes a graphical user interface (Meindl and Templ, 2019 <doi:10.3390/a12090191>) that allows to use various methods of this
-    package. 
+    package.
 LazyData: TRUE
 ByteCompile: TRUE
 LinkingTo: Rcpp
@@ -38,9 +38,8 @@ Imports:
     tools,
     Rcpp,
     methods,
-    sets,
     ggplot2,
-    shiny,
+    shiny (>= 1.4.0),
     haven,
     rhandsontable,
     DT,
@@ -95,6 +94,6 @@ Collate:
     'maG.R'
     'sdcApp.R'
     'show_sdcMicroObj.R'
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.0
 VignetteBuilder: knitr
 Encoding: UTF-8
