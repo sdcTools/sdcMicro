@@ -9,8 +9,7 @@
 \usage{
 measure_risk(obj, ...)
 
-ldiversity(obj, ldiv_index = NULL, l_recurs_c = 2, missing = -999,
-  ...)
+ldiversity(obj, ldiv_index = NULL, l_recurs_c = 2, missing = -999, ...)
 
 \method{print}{measure_risk}(x, ...)
 

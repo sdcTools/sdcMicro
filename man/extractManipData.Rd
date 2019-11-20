@@ -4,9 +4,15 @@
 \alias{extractManipData}
 \title{Remove certain variables from the data set inside a sdc object.}
 \usage{
-extractManipData(obj, ignoreKeyVars = FALSE, ignorePramVars = FALSE,
-  ignoreNumVars = FALSE, ignoreGhostVars = FALSE,
-  ignoreStrataVar = FALSE, randomizeRecords = "no")
+extractManipData(
+  obj,
+  ignoreKeyVars = FALSE,
+  ignorePramVars = FALSE,
+  ignoreNumVars = FALSE,
+  ignoreGhostVars = FALSE,
+  ignoreStrataVar = FALSE,
+  randomizeRecords = "no"
+)
 }
 \arguments{
 \item{obj}{object of class \code{\link{sdcMicroObj-class}}}

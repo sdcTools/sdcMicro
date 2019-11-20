@@ -65,6 +65,7 @@
 #' @export
 #' @examples
 #' data(testdata2)
+#' \dontrun{
 #' data_swap <- rankSwap(testdata2,variables=c("age","income","expend","savings"))
 #'
 #' ## for objects of class sdcMicro:
@@ -73,6 +74,7 @@
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- rankSwap(sdc)
+#' }
 rankSwap <- function(obj, variables=NULL, TopPercent=5, BottomPercent=5,
                      K0=NULL, R0=0.95, P=NULL, missing=NA, seed=NULL) {
   TFpar <- c(!is.null(P),!is.null(R0),!is.null(K0))

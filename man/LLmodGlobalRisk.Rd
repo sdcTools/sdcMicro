@@ -5,8 +5,13 @@
 \alias{LLmodGlobalRisk}
 \title{Global risk using log-linear models.}
 \usage{
-LLmodGlobalRisk(obj, method = "IPF", inclProb = NULL, form = NULL,
-  modOutput = FALSE)
+LLmodGlobalRisk(
+  obj,
+  method = "IPF",
+  inclProb = NULL,
+  form = NULL,
+  modOutput = FALSE
+)
 }
 \arguments{
 \item{obj}{\code{\link{sdcMicroObj-class}}-object or a \code{data.frame} containing

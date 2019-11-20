@@ -4,8 +4,7 @@
 \alias{addNoise}
 \title{Adding noise to perturb data}
 \usage{
-addNoise(obj, variables = NULL, noise = 150, method = "additive",
-  ...)
+addNoise(obj, variables = NULL, noise = 150, method = "additive", ...)
 }
 \arguments{
 \item{obj}{either a \code{data.frame} or a \code{\link{sdcMicroObj-class}} that should be perturbed}

@@ -5,8 +5,17 @@
 \alias{rankSwap}
 \title{Rank Swapping}
 \usage{
-rankSwap(obj, variables = NULL, TopPercent = 5, BottomPercent = 5,
-  K0 = NULL, R0 = 0.95, P = NULL, missing = NA, seed = NULL)
+rankSwap(
+  obj,
+  variables = NULL,
+  TopPercent = 5,
+  BottomPercent = 5,
+  K0 = NULL,
+  R0 = 0.95,
+  P = NULL,
+  missing = NA,
+  seed = NULL
+)
 }
 \arguments{
 \item{obj}{a \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}

@@ -5,8 +5,14 @@
 \alias{report}
 \title{Generate an Html-report from an sdcMicroObj}
 \usage{
-report(obj, outdir = getwd(), filename = "SDC-Report",
-  title = "SDC-Report", internal = FALSE, verbose = FALSE)
+report(
+  obj,
+  outdir = getwd(),
+  filename = "SDC-Report",
+  title = "SDC-Report",
+  internal = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{obj}{an object of class \code{\link{sdcMicroObj-class}} or \code{reportObj}}

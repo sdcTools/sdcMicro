@@ -5,8 +5,7 @@
 \alias{pram}
 \title{Post Randomization}
 \usage{
-pram(obj, variables = NULL, strata_variables = NULL, pd = 0.8,
-  alpha = 0.5)
+pram(obj, variables = NULL, strata_variables = NULL, pd = 0.8, alpha = 0.5)
 }
 \arguments{
 \item{obj}{Input data. Allowed input data are objects of class
@@ -55,6 +54,7 @@ Deprecated method 'pram_strata'is no longer available
 in sdcMicro > 4.5.0
 }
 \examples{
+\dontrun{
 data(testdata)
 
 ## application on a factor-variable
@@ -101,7 +101,7 @@ print(res3) # of course, nothing has changed!
 
 ## it is possible use a transistion matrix for a variable and use the 'traditional' way
 ## of specifying a number for the minimal diagonal entries of the transision matrix
-## for other variables. In this case we must supply \\code{pd} as list.
+## for other variables. In this case we must supply \code{pd} as list.
 res4 <- pram(testdata,variables=c("roof","walls"), pd=list(mat,0.5), alpha=c(NA, 0.5))
 print(res4)
 summary(res4)
@@ -137,6 +137,7 @@ sdc <- pram(sdc, variables="roof", pd=mat)
 print(sdc, type="pram")
 # we can also have a look at the transitions
 get.sdcMicroObj(sdc, "pram")$transitions
+}
 }
 \references{
 \url{http://www.gnu.org/software/glpk}

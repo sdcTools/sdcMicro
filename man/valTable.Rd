@@ -4,10 +4,19 @@
 \alias{valTable}
 \title{Comparison of different microaggregation methods}
 \usage{
-valTable(x, method = c("simple", "onedims", "clustpppca",
-  "addNoise: additive", "swappNum"), measure = "mean",
-  clustermethod = "clara", aggr = 3, nc = 8, transf = "log",
-  p = 15, noise = 15, w = 1:dim(x)[2], delta = 0.1)
+valTable(
+  x,
+  method = c("simple", "onedims", "clustpppca", "addNoise: additive", "swappNum"),
+  measure = "mean",
+  clustermethod = "clara",
+  aggr = 3,
+  nc = 8,
+  transf = "log",
+  p = 15,
+  noise = 15,
+  w = 1:dim(x)[2],
+  delta = 0.1
+)
 }
 \arguments{
 \item{x}{a \code{data.frame} or a \code{matrix}}
@@ -63,7 +72,7 @@ valTable(
 }
 }
 \references{
-Templ, M. and Meindl, B., \code{Software Development for SDC in R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,
+Templ, M. and Meindl, B., \verb{Software Development for SDC in R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,
 vol. 4302, pp. 347-359, 2006.
 }
 \seealso{

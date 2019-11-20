@@ -56,6 +56,7 @@
 #' @note Deprecated method 'pram_strata'is no longer available
 #' in sdcMicro > 4.5.0
 #' @examples
+#' \dontrun{
 #' data(testdata)
 #'
 #' ## application on a factor-variable
@@ -138,6 +139,7 @@
 #' print(sdc, type="pram")
 #' # we can also have a look at the transitions
 #' get.sdcMicroObj(sdc, "pram")$transitions
+#' }
 
 pram <- function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
   pramX(obj=obj, variables=variables, strata_variables=strata_variables, pd=pd, alpha=alpha)

@@ -9,10 +9,22 @@
 \alias{strataVar<-,sdcMicroObj,characterOrNULL-method}
 \title{Class \code{"sdcMicroObj"}}
 \usage{
-createSdcObj(dat, keyVars, numVars = NULL, pramVars = NULL,
-  ghostVars = NULL, weightVar = NULL, hhId = NULL,
-  strataVar = NULL, sensibleVar = NULL, excludeVars = NULL,
-  options = NULL, seed = NULL, randomizeRecords = FALSE, alpha = 1)
+createSdcObj(
+  dat,
+  keyVars,
+  numVars = NULL,
+  pramVars = NULL,
+  ghostVars = NULL,
+  weightVar = NULL,
+  hhId = NULL,
+  strataVar = NULL,
+  sensibleVar = NULL,
+  excludeVars = NULL,
+  options = NULL,
+  seed = NULL,
+  randomizeRecords = FALSE,
+  alpha = 1
+)
 
 undolast(object)
 

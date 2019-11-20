@@ -4,8 +4,13 @@
 \alias{readMicrodata}
 \title{readMicrodata}
 \usage{
-readMicrodata(path, type, convertCharToFac = TRUE,
-  drop_all_missings = TRUE, ...)
+readMicrodata(
+  path,
+  type,
+  convertCharToFac = TRUE,
+  drop_all_missings = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{a file path}

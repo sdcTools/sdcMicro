@@ -8,8 +8,7 @@
 \usage{
 kAnon_violations(object, weighted, k)
 
-\S4method{kAnon_violations}{sdcMicroObj,logical,numeric}(object, weighted,
-  k)
+\S4method{kAnon_violations}{sdcMicroObj,logical,numeric}(object, weighted, k)
 }
 \arguments{
 \item{object}{a \code{\link{sdcMicroObj-class}} object}
