@@ -1,3 +1,9 @@
+# 5.5.1
+- bug in modRisk when the levels of a variable in the formulaM is greater than 10 (solved). Thanks to Ying Chen for the solution.
+
+# 5.5.0
+- gcc problems solved
+
 # 5.4.1
 - nothing new, but shiny did no longer export a specific function, so we resolved a warning
 

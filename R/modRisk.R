@@ -51,6 +51,8 @@
 #' @return Two global risk measures and some model output given the specified model. If this method
 #' is applied to an \code{\link{sdcMicroObj-class}}-object, the slot 'risk' in the object ist updated
 #' with the result of the model-based risk-calculation.
+#' @importFrom data.table data.table
+#' @importFrom MASS loglm
 #' @author Matthias Templ, Marius Totter, Bernhard Meindl
 #' @seealso \code{\link{loglm}}, \code{\link{measure_risk}}
 #' @references Skinner, C.J. and Holmes, D.J. (1998) \emph{Estimating the
@@ -241,6 +243,8 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
     colnames(lambda)[ncol(lambda)] <- "Fk"
     lambda <- data.table(lambda, key=vars)
     #lambda <- lambda[,lapply(.SD, as.numeric)]
+    # suggestion by Ying Chen:
+    lambda <- data.table(lambda, key = vars)
     for(v in vars){
       if(class(x[[v]])!=class(lambda[[v]])){
         if(is.character(x[[v]])){

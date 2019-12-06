@@ -75,6 +75,7 @@ used and only one of it must be supplied.
 }
 \examples{
 data(testdata2)
+\dontrun{
 data_swap <- rankSwap(testdata2,variables=c("age","income","expend","savings"))
 
 ## for objects of class sdcMicro:
@@ -83,6 +84,7 @@ sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- rankSwap(sdc)
+}
 }
 \references{
 Moore, Jr.R. (1996) Controlled data-swapping techniques for
