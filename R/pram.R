@@ -5,142 +5,164 @@
 #' according to an invariant probability transition matrix or a custom-defined
 #' transition matrix.
 #'
+#' @md
 #' @name pram
 #' @docType methods
 #' @param obj Input data. Allowed input data are objects of class
-#' \code{data.frame}, \code{factor} or \code{\link{sdcMicroObj-class}}.
-#' @param variables Names of variables in 'obj' on which post-randomization
-#' should be applied. If obj is a factor, this argument is ignored. Please note that
+#' `data.frame`, `factor` or [sdcMicroObj-class].
+#' @param variables Names of variables in `obj` on which post-randomization
+#' should be applied. If `obj` is a factor, this argument is ignored. Please note that
 #' pram can only be applied to factor-variables.
-#' @param strata_variables Names of variables for stratification (will be set
-#' automatically for an object of class \code{\link{sdcMicroObj-class}}. One can also specify
+#' @param strata_variables names of variables for stratification (will be set
+#' automatically for an object of class [sdcMicroObj-class]. One can also specify
 #' an integer vector or factor that specifies that desired groups. This vector must match the dimension
 #' of the input data set, however. For a possible use case, have a look at the examples.
-#' @param ...  further input, currently ignored.
 #' @param pd minimum diagonal entries for the generated transition matrix P.
 #' Either a vector of length 1 (which is recycled) or a vector of the same length as
-#' the number of variables that should be postrandomized. It is also possible to set \code{pd}
+#' the number of variables that should be postrandomized. It is also possible to set `pd`
 #' to a numeric matrix. This matrix will be used directly as the transition matrix. The matrix must
 #' be constructed as follows:
-#' \itemize{
-#' \item the matrix must be a square matrix
-#' \item the rownames and colnames of the matrix must match the levels (in the same order) of the factor-variable that should be
+#'
+#' - the matrix must be a square matrix
+#' - the rownames and colnames of the matrix must match the levels (in the same order) of the factor-variable that should be
 #' postrandomized.
-#' \item the rowSums and colSums of the matrix need to equal 1
-#' }
+#' - the rowSums and colSums of the matrix need to equal 1
+#'
 #' It is also possible to combine the different ways. For details have a look at the examples.
 #' @param alpha amount of perturbation for the invariant Pram method. This is a numeric vector
 #' of length 1 (that will be recycled if necessary) or a vector of the same length as the number
-#' of variables. If one specified as transition matrix directly, alpha is ignored.
-#' @return a modified \code{\link{sdcMicroObj-class}} object or a new object containing
+#' of variables. If one specified as transition matrix directly, `alpha` is ignored.
+#' @return a modified [sdcMicroObj-class] object or a new object containing
 #' original and post-randomized variables (with suffix "_pram").
 #' @author Alexander Kowarik, Matthias Templ, Bernhard Meindl
 #' @references \url{http://www.gnu.org/software/glpk}
 #'
 #' Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
-#' \emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
+#' *Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro*,
 #' in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
 #' (editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77.
 #' \doi{10.1007/978-3-642-33627-0_6}
 #'
-#' Templ, M. and Kowarik, A. and Meindl, B.
-#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
-#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+#' Templ, M. and Kowarik, A. and Meindl, B.: *Statistical Disclosure Control for
+#' Micro-Data Using the R Package sdcMicro.* in: Journal of Statistical Software, **67** (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #'
-#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
-#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' Templ, M.: *Statistical Disclosure Control for Microdata: Methods and Applications in R.*
+#' in: Springer International Publishing, 287 pages, 2017. ISBN 978-3-319-50272-4.
 #' \doi{10.1007/978-3-319-50272-4}
 #'
 #' @keywords manip
 #' @export
-#' @note Deprecated method 'pram_strata'is no longer available
+#' @note Deprecated method 'pram_strata' is no longer available
 #' in sdcMicro > 4.5.0
 #' @examples
 #' \dontrun{
 #' data(testdata)
 #'
-#' ## application on a factor-variable
+#' # using a factor variable as input
 #' res <- pram(as.factor(testdata$roof))
 #' print(res)
 #' summary(res)
 #'
-#' ## application on a data.frame
-#' ## pram can only be applied to factors, thus we have to recode
-#' ## to factors before the method can be applied
+#' # using a data.frame as input
+#' # pram can only be applied to factors
+#' # -- > we have to recode to factors beforehand
 #' testdata$roof <- factor(testdata$roof)
 #' testdata$walls <- factor(testdata$walls)
 #' testdata$water <- factor(testdata$water)
 #'
-#' ## pram() is applied within subgroups defined by
-#' ## variables "urbrur" and "sex"
-#' res <- pram(testdata, variables="roof",
-#'   strata_variables=c("urbrur","sex"))
+#' # pram() is applied within subgroups defined by
+#' # variables "urbrur" and "sex"
+#' res <- pram(
+#'   obj = testdata,
+#'   variables = "roof",
+#'   strata_variables = c("urbrur", "sex"))
 #' print(res)
 #' summary(res)
 #'
-#' ## default parameters (pd=0.8 and alpha=0.5) for the generation
-#' ## of the invariant transition matrix will be used for all variables
-#' res1 <- pram(testdata, variables=c("roof","walls","water"))
+#' # default parameters (pd = 0.8 and alpha = 0.5) for the generation
+#' # of the invariant transition matrix will be used for all variables
+#' res1 <- pram(
+#'   obj = testdata,
+#'   variables = c("roof", "walls", "water"))
 #' print(res1)
 #'
-#' ## specific parameters for each variable
-#' res2 <- pram(testdata,variables=c("roof","walls","water"),
-#'   pd=c(0.95,0.8,0.9), alpha=0.5)
+#' ## specific parameter settings for each variable
+#' res2 <- pram(
+#'   obj = testdata,
+#'   variables = c("roof", "walls", "water"),
+#'   pd = c(0.95, 0.8, 0.9),
+#'   alpha = 0.5)
 #' print(res2)
 #'
-#' ## detailed information on pram-parameters (such as the transition matrix 'Rs')
-#' ## is stored in the output, eg. for variable 'roof'
+#' # detailed information on pram-parameters (such as the transition matrix 'Rs')
+#' # is stored in the output, eg. for variable 'roof'
 #' attr(res2, "pram_params")$roof
 #'
-#' ## we can also specify a custom transition-matrix directly
-#' # for variable roof; matrix must have rownames and colnames that match
-#' # the levels of the variable that should be post-randomized
-#' # rowSums() and colSums() must equal 1 too!
+#' # we can also specify a custom transition-matrix directly
 #' mat <- diag(length(levels(testdata$roof)))
 #' rownames(mat) <- colnames(mat) <- levels(testdata$roof)
-#' res3 <- pram(testdata,variables="roof", pd=mat)
+#' res3 <- pram(
+#'   obj = testdata,
+#'   variables = "roof",
+#'   pd = mat)
 #' print(res3) # of course, nothing has changed!
 #'
-#' ## it is possible use a transistion matrix for a variable and use the 'traditional' way
-#' ## of specifying a number for the minimal diagonal entries of the transision matrix
-#' ## for other variables. In this case we must supply \code{pd} as list.
-#' res4 <- pram(testdata,variables=c("roof","walls"), pd=list(mat,0.5), alpha=c(NA, 0.5))
+#' # it is possible use a transition matrix for a variable and use the 'traditional' way
+#' # of specifying a number for the minimal diagonal entries of the transision matrix
+#' # for other variables. In this case we must supply `pd` as list.
+#' res4 <- pram(
+#'   obj = testdata,
+#'   variables = c("roof", "walls"),
+#'   pd = list(mat, 0.5),
+#'   alpha = c(NA, 0.5))
 #' print(res4)
 #' summary(res4)
 #' attr(res4, "pram_params")
 #'
-#' ## application to objects of class sdcMicro with default parameters
+#' # application to objects of class sdcMicro with default parameters
 #' data(testdata2)
 #' testdata2$urbrur <- factor(testdata2$urbrur)
-#' sdc <- createSdcObj(testdata2,
-#'   keyVars=c('roof','walls','water','electcon','relat','sex'),
-#'   numVars=c('expend','income','savings'), w='sampling_weight')
-#' sdc <- pram(sdc, variables=c("urbrur"))
-#' print(sdc, type="pram")
+#' sdc <- createSdcObj(
+#'   dat = testdata2,
+#'   keyVars = c("roof", "walls", "water", "electcon", "relat", "sex"),
+#'   numVars = c("expend", "income", "savings"),
+#'   w = "sampling_weight")
+#' sdc <- pram(
+#'   obj = sdc,
+#'   variables = "urbrur")
+#' print(sdc, type = "pram")
 #'
-#' ## this is equal to the previous application. If argument 'variables' is NULL,
-#' ## all variables from slot 'pramVars' will be used if possible.
-#' sdc <- createSdcObj(testdata2,
-#'   keyVars=c('roof','walls','water','electcon','relat','sex'),
-#'   numVars=c('expend','income','savings'), w='sampling_weight',
-#'   pramVars="urbrur")
+#' # this is equal to the previous application. If argument 'variables' is NULL,
+#' # all variables from slot 'pramVars' will be used if possible.
+#' sdc <- createSdcObj(
+#'   dat = testdata2,
+#'   keyVars = c("roof", "walls", "water", "electcon", "relat", "sex"),
+#'   numVars = c("expend", "income", "savings"),
+#'   w = "sampling_weight",
+#'   pramVars = "urbrur")
 #' sdc <- pram(sdc)
 #' print(sdc, type="pram")
 #'
-#' ## we can specify transition matrices for sdcMicroObj-objects too
+#' # we can specify transition matrices for sdcMicroObj-objects too
 #' testdata2$roof <- factor(testdata2$roof)
-#' sdc <- createSdcObj(testdata2,
-#'   keyVars=c('roof','walls','water','electcon','relat','sex'),
-#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- createSdcObj(
+#'   dat = testdata2,
+#'   keyVars = c("roof", "walls", "water", "electcon", "relat", "sex"),
+#'   numVars = c("expend", "income", "savings"),
+#'   w = "sampling_weight")
 #' mat <- diag(length(levels(testdata2$roof)))
+#'
 #' rownames(mat) <- colnames(mat) <- levels(testdata2$roof)
-#' mat[1,] <- c(0.9,0,0,0.05,0.05)
-#' sdc <- pram(sdc, variables="roof", pd=mat)
-#' print(sdc, type="pram")
+#' mat[1,] <- c(0.9, 0, 0, 0.05, 0.05)
+#' sdc <- pram(
+#'   obj = sdc,
+#'   variables = "roof",
+#'   pd = mat)
+#' print(sdc, type = "pram")
+#'
 #' # we can also have a look at the transitions
 #' get.sdcMicroObj(sdc, "pram")$transitions
 #' }
-
 pram <- function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
   pramX(obj=obj, variables=variables, strata_variables=strata_variables, pd=pd, alpha=alpha)
 }
