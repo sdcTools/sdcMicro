@@ -6,10 +6,20 @@
 \title{Microaggregation for numerical and categorical key variables based on a
 distance similar to the Gower Distance}
 \usage{
-microaggrGower(obj, variables = NULL, aggr = 3, dist_var = NULL,
-  by = NULL, mixed = NULL, mixed.constant = NULL, trace = FALSE,
-  weights = NULL, numFun = mean, catFun = VIM::sampleCat,
-  addRandom = FALSE)
+microaggrGower(
+  obj,
+  variables = NULL,
+  aggr = 3,
+  dist_var = NULL,
+  by = NULL,
+  mixed = NULL,
+  mixed.constant = NULL,
+  trace = FALSE,
+  weights = NULL,
+  numFun = mean,
+  catFun = VIM::sampleCat,
+  addRandom = FALSE
+)
 }
 \arguments{
 \item{obj}{\code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}

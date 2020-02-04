@@ -5,9 +5,17 @@
 \alias{LocalRecProg}
 \title{Local recoding via Edmond's maximum weighted matching algorithm}
 \usage{
-LocalRecProg(obj, ancestors = NULL, ancestor_setting = NULL,
-  k_level = 2, FindLowestK = TRUE, weight = NULL,
-  lowMemory = FALSE, missingValue = NA, ...)
+LocalRecProg(
+  obj,
+  ancestors = NULL,
+  ancestor_setting = NULL,
+  k_level = 2,
+  FindLowestK = TRUE,
+  weight = NULL,
+  lowMemory = FALSE,
+  missingValue = NA,
+  ...
+)
 }
 \arguments{
 \item{obj}{a \code{data.frame} or a \code{\link{sdcMicroObj-class}}-object}

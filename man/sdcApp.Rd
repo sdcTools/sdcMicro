@@ -4,8 +4,13 @@
 \alias{sdcApp}
 \title{sdcApp}
 \usage{
-sdcApp(maxRequestSize = 50, debug = FALSE, theme = "IHSN", ...,
-  shiny.server = FALSE)
+sdcApp(
+  maxRequestSize = 50,
+  debug = FALSE,
+  theme = "IHSN",
+  ...,
+  shiny.server = FALSE
+)
 }
 \arguments{
 \item{maxRequestSize}{(numeric) number defining the maximum allowed filesize (in megabytes)

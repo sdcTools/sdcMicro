@@ -5,8 +5,17 @@
 \alias{rankSwap}
 \title{Rank Swapping}
 \usage{
-rankSwap(obj, variables = NULL, TopPercent = 5, BottomPercent = 5,
-  K0 = NULL, R0 = 0.95, P = NULL, missing = NA, seed = NULL)
+rankSwap(
+  obj,
+  variables = NULL,
+  TopPercent = 5,
+  BottomPercent = 5,
+  K0 = NULL,
+  R0 = NULL,
+  P = NULL,
+  missing = NA,
+  seed = NULL
+)
 }
 \arguments{
 \item{obj}{a \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}
@@ -61,19 +70,27 @@ determined and the correlation coefficient makes sense.
 Rank swapping sorts the values of one numeric variable by their numerical
 values (ranking).  The restricted range is determined by the rank of two
 swapped values, which cannot differ, by definition, by more than \eqn{P}{P}
-percent of the total number of observations.  Only positive P, R0 and K0 are
-used and only one of it must be supplied.
+percent of the total number of observations. Only positive P, R0 and K0 are
+used and only one of it must be supplied. If none is supplied, sdcMicro sets
+parameter eqn{R0} to 0.95 internally.
 }
 \examples{
 data(testdata2)
-data_swap <- rankSwap(testdata2,variables=c("age","income","expend","savings"))
+\dontrun{
+data_swap <- rankSwap(
+  obj = testdata2,
+  variables = c("age", "income", "expend", "savings")
+)
 
 ## for objects of class sdcMicro:
 data(testdata2)
-sdc <- createSdcObj(testdata2,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
+sdc <- createSdcObj(
+  dat = testdata2,
+  keyVars = c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex"),
+  numVars = c("expend", "income", "savings"),
+  w = "sampling_weight")
 sdc <- rankSwap(sdc)
+}
 }
 \references{
 Moore, Jr.R. (1996) Controlled data-swapping techniques for
@@ -83,7 +100,7 @@ Research Division Report Series}, RR 96-04.
 Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 \emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
 in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
-(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77. 
+(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77.
 \doi{10.1007/978-3-642-33627-0_6}
 }
 \author{

@@ -61,9 +61,9 @@ cat(paste0("- **householdID**: *", paste(impVars$hhId, collapse="* | *"),"*\n"))
 cat(paste0("- **strataVariable(s)**: *", paste(impVars$strataVars, collapse="* | *"),"*\n")) 
 
 #sensVar <- get.reportObj(repObj, "sensiblecn")
-if ( !is.null(impVars$sensibleVar ) ) {
+if (!is.null(impVars$sensibleVar)) {
   cat(paste0("- **Sensitive variable(s) for l-diversity**: "))
-  cat(paste0("*",paste(impVar$sensibleVar, collapse="* | *"),"*"))
+  cat(paste0("*", paste(impVars$sensibleVar, collapse = "* | *"), "*"))
 }
 cat("\n\n")
 ```

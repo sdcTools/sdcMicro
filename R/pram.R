@@ -16,7 +16,7 @@
 #' automatically for an object of class \code{\link{sdcMicroObj-class}}. One can also specify
 #' an integer vector or factor that specifies that desired groups. This vector must match the dimension
 #' of the input data set, however. For a possible use case, have a look at the examples.
-#' @param ...  further input, currently ignored.
+## @param ...  further input, currently ignored.
 #' @param pd minimum diagonal entries for the generated transition matrix P.
 #' Either a vector of length 1 (which is recycled) or a vector of the same length as
 #' the number of variables that should be postrandomized. It is also possible to set \code{pd}
@@ -56,6 +56,7 @@
 #' @note Deprecated method 'pram_strata'is no longer available
 #' in sdcMicro > 4.5.0
 #' @examples
+#' \dontrun{
 #' data(testdata)
 #'
 #' ## application on a factor-variable
@@ -138,6 +139,7 @@
 #' print(sdc, type="pram")
 #' # we can also have a look at the transitions
 #' get.sdcMicroObj(sdc, "pram")$transitions
+#' }
 
 pram <- function(obj, variables=NULL, strata_variables=NULL, pd=0.8, alpha=0.5) {
   pramX(obj=obj, variables=variables, strata_variables=strata_variables, pd=pd, alpha=alpha)

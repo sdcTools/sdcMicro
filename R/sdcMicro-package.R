@@ -117,7 +117,9 @@
 #' ## do not use the mu-Argus test data set (free1)
 #' # since the numerical variables are (probably) faked.
 #' data(Tarragona)
+#' \dontrun{
 #' Tarragona1 <- rankSwap(Tarragona, P = 10, K0 = NULL, R0 = NULL)
+#' }
 #'
 #' ## Microaggregation:
 #' m1 <- microaggregation(Tarragona, method="onedims", aggr=3)
@@ -158,7 +160,7 @@
 #' pairs(dataGen(mtcars[,4:6],n=200))
 #'
 #' ## PRAM
-#'
+#' \dontrun{
 #' set.seed(123)
 #' x <- factor(sample(1:4, 250, replace=TRUE))
 #' pr1 <- pram(x)
@@ -171,7 +173,6 @@
 #' marstat <- as.factor(free1[,"MARSTAT"])
 #' marstatPramed <- pram(marstat)
 #' summary(marstatPramed)
-#' \dontrun{
 #' # FOR OBJECTS OF CLASS sdcMicro
 #' data(testdata)
 #' sdc <- createSdcObj(testdata,

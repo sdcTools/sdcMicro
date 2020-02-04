@@ -5,8 +5,15 @@
 \alias{shuffle}
 \title{Shuffling and EGADP}
 \usage{
-shuffle(obj, form, method = "ds", weights = NULL,
-  covmethod = "spearman", regmethod = "lm", gadp = TRUE)
+shuffle(
+  obj,
+  form,
+  method = "ds",
+  weights = NULL,
+  covmethod = "spearman",
+  regmethod = "lm",
+  gadp = TRUE
+)
 }
 \arguments{
 \item{obj}{An object of class sdcMicroObj or a data.frame including the
