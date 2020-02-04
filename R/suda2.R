@@ -103,7 +103,12 @@ setMethod(f="suda2X", signature=c("sdcMicroObj"), definition=function(obj, ...) 
   risk$suda2 <- suda2WORK(manipData, variables = keyVars, ...)
 
   obj <- set.sdcMicroObj(obj, type = "risk", input = list(risk))
-  obj
+  if(length(keyVars)<=2){
+    warn_s <- "This version of Suda2 can find MSUs only in Dataset with more than 2 variables."
+    warn_s <- paste0(warn_s,"\nDummy variables have been added and the result might be wrong!")
+    obj <- addWarning(obj, warnMsg=warn_s, method="suda2", variable=NA)
+  }
+  return(obj)
 })
 
 setMethod(f="suda2X", signature=c("data.frame"), definition = function(obj, ...) {
@@ -159,8 +164,8 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
   if (length(variables) <= 2) {
     warn_s <- "This version of Suda2 can find MSUs only in Dataset with more than 2 variables."
     warn_s <- paste0(warn_s,"\nDummy variables have been added and the result might be wrong!")
-    obj <- addWarning(obj, warnMsg=warn_s, method="suda2", variable=NA)
     warning(warn_s)
+    
   }
   invisible(res)
 }
