@@ -4,3 +4,4 @@
 ^\.Rproj\.user$
 ^notes_and_testdata$
 docs
+inst/shiny/sdcApp/rsconnect
