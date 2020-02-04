@@ -1,6 +1,6 @@
 require(sdcMicro)
 ### for a data.frame
-test_that("pram on a factor", {
+test_that("microaggregation", {
   dat <- data.frame(x = rnorm(100))
   datout <- microaggregation(obj = dat, variables = "x", method = "mdav", aggr = 3, measure = "mean")
   expect_identical(dat,datout$x)
