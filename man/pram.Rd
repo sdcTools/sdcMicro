@@ -36,8 +36,6 @@ It is also possible to combine the different ways. For details have a look at th
 \item{alpha}{amount of perturbation for the invariant Pram method. This is a numeric vector
 of length 1 (that will be recycled if necessary) or a vector of the same length as the number
 of variables. If one specified as transition matrix directly, alpha is ignored.}
-
-\item{...}{further input, currently ignored.}
 }
 \value{
 a modified \code{\link{sdcMicroObj-class}} object or a new object containing
