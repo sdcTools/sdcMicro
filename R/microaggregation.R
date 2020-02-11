@@ -175,7 +175,10 @@ setMethod(f="microaggregationX", signature=c("sdcMicroObj"), definition=function
   if (!is.null(weights)) {
     weights <- get.sdcMicroObj(obj, type="origData")[, weights]
   }
-
+  if (any(weights < 0)) {
+    warnMsg <- "negative weights have been detected!\n"
+    obj <- addWarning(obj, warnMsg=warnMsg, method="microaggregation", variable=NA)
+  }
   res <- microaggregationWORK(x, variables=variables, aggr=aggr, strata_variables=strataVars,
     method=method, weights=weights, nc=nc, clustermethod=clustermethod,
     measure=measure, trim=trim, varsort=varsort, transf=transf)
@@ -231,7 +234,6 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
       }
       if (any(weights < 0)) {
         warnMsg <- "negative weights have been detected!\n"
-        obj <- addWarning(obj, warnMsg=warnMsg, method="microaggregation", variable=NA)
         warning(warnMsg)
       }
       if (!is.numeric(probs) || all(is.na(probs)) || isTRUE(any(probs < 0 | probs > 1))) {

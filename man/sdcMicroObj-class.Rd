@@ -175,7 +175,7 @@ sdc@risk$model
 ## we can also specify ghost (linked) variables
 ## these variables are linked to some categorical key variables
 ## and have the sampe suppression pattern as the variable that they
-## are linked to after \\code{\\link{localSuppression}} has been applied
+## are linked to after \code{\link{localSuppression}} has been applied
 data(testdata)
 testdata$electcon2 <- testdata$electcon
 testdata$electcon3 <- testdata$electcon
