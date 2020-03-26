@@ -5,7 +5,8 @@
 \alias{testdata}
 \alias{testdata2}
 \title{A real-world data set on household income and expenditures}
-\format{testdata: a data frame with 4580 observations on the following 15 variables.
+\format{
+testdata: a data frame with 4580 observations on the following 15 variables.
 \describe{
 \item{urbrur}{a numeric vector}
 \item{roof}{a numeric vector}
@@ -42,7 +43,8 @@ testdata2: A data frame with 93 observations on the following 19 variables.
 \item{category_count}{a numeric vector}
 \item{relat2}{a numeric vector}
 \item{water2}{a numeric vector}
-\item{water3}{a numeric vector}}}
+\item{water3}{a numeric vector}}
+}
 \description{
 A concise (1-5 lines) description of the dataset.
 }

@@ -4,9 +4,11 @@
 \name{microData}
 \alias{microData}
 \title{microData}
-\format{The format is: num [1:13, 1:5] 5 7 2 1 7 8 12 3 15 4 ...  - attr(*,
+\format{
+The format is: num [1:13, 1:5] 5 7 2 1 7 8 12 3 15 4 ...  - attr(*,
 "dimnames")=List of 2 ..$ : chr [1:13] "10000" "11000" "12000" "12100" ...
-..$ : chr [1:5] "one" "two" "three" "four" ...}
+..$ : chr [1:5] "one" "two" "three" "four" ...
+}
 \description{
 Small aritificial toy data set.
 }
