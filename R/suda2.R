@@ -10,39 +10,35 @@
 #'
 #' @name suda2
 #' @docType methods
-#' @param obj object of class \code{data.frame} or a \code{\link{sdcMicroObj-class}}-object
+#' @param obj a `data.frame` or a [sdcMicroObj-class]-object
 #' @param ... see arguments below
-#' \itemize{
-#' \item{\code{variables}: }{Categorical (key) variables. Either the column names or and
-#' index of the variables to be used for risk measurement.}
-#' \item{\code{missing}: }{Missing value coding in the given data set.}
-#' \item{\code{DisFraction}: }{It is the sampling fraction for the simple random
+#' - `variables` Categorical (key) variables. Either the column names or and
+#' index of the variables to be used for risk measurement.
+#' - `missing`: Missing value coding in the given data set.
+#' - `DisFraction`: It is the sampling fraction for the simple random
 #' sampling, and the common sampling fraction for stratified sampling. By
-#' default, it's set to 0.01.}
-#' \item{\code{original_scores}: }{if this argument is \code{TRUE} (the default), the suda-scores are computed as described in paper
-#' "SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE}, the computation of the scores
-#' is slightly different as it was done in the original implementation of the algorithm by the IHSN.}
-#' }
-#' @return A modified \code{\link{sdcMicroObj-class}} object or the following list
-#' \itemize{
-#' \item{\code{ContributionPercent}: }{The contribution of each key variable to the SUDA
-#' score, calculated for each row.}
-#' \item{\code{score}: }{The suda score.}
-#' \item{\code{disscore}: }{The dis suda score}
-#' \item{\code{attribute_contributions: }}{\code{data.frame} showing how much of the total risk is contributed
-#' by each variable. This information is stored in a \code{data.frame} in two variables:
-#' \itemize{
-#'  \item \code{variable}: containing the name of the variable
-#'  \item \code{contribution}: contains how much risk a variable contributes to the total risk.
-#' }}
-#' \item{\code{attribute_level_contributions: }}{shows risks of each attribute-level. this is saved in a
-#' \code{data.frame} with three columns.
-#' \itemize{
-#'  \item \code{variable}: containing the name of the variable
-#'  \item \code{attribute}: holding relevant level-codes and
-#'  \item \code{contribution}: contains the risk of this level within the variable.)
-#'  }
-#' }}
+#' default, it's set to 0.01.
+#' - `original_scores`: if this argument is `TRUE` (the default), the
+#' suda-scores are computed as described in paper "SUDA: A Program for Detecting Special
+#' Uniques" by Elliot et al., if `FALSE`, the computation of the scores
+#' is slightly different as it was done in the original implementation
+#' of the algorithm by the IHSN.
+#' @return A modified [sdcMicroObj-class] object or the following list
+#' - `ContributionPercent`: The contribution of each key variable to the SUDA
+#' score, calculated for each row.
+#' - `score`: The suda score
+#' `disscore: The dis suda score
+#' - `attribute_contributions:` a `data.frame` showing how much of the total
+#' risk is contributed by each variable. This information is stored in the
+#' following two variables:
+#'   * `variable`: containing the name of the variable
+#'   * `contribution`: contains how much risk a variable contributes to the total risk.
+#' - `attribute_level_contributions`: returns risks of each attribute-level as a
+#' `data.frame` with the following three columns:
+#'   * `variable`: the variable name
+#'   * `attribute`: holding relevant level-codes
+#'   * `contribution`: contains the risk of this level within the variable.
+#' @md
 #' @author Alexander Kowarik and Bernhard Meindl (based on the C++ code from the Organisation For
 #' Economic Co-Operation And Development.
 #'
@@ -62,11 +58,11 @@
 #' Anna M. Manning, David J. Haglin, John A. Keane (2008) A recursive search
 #' algorithm for statistical disclosure assessment. \emph{Data Min Knowl Disc}
 #' 16:165 -- 196
-#' 
+#'
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
 #' \doi{10.1007/978-3-319-50272-4}
-#' 
+#'
 #' @keywords manip
 #' @rdname suda2
 #' @note Since version >5.0.2, the computation of suda-scores has changed and is now by default as described in
@@ -117,46 +113,64 @@ setMethod(f="suda2X", signature=c("data.frame"), definition = function(obj, ...)
 
 suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01, original_scores=TRUE) {
   stopifnot(is.logical(original_scores))
-  stopifnot(length(original_scores)==1)
+  stopifnot(length(original_scores) == 1)
 
-  if (is.null(variables))
+  if (is.null(variables)) {
     variables <- colnames(data)
+  }
   dataX <- data[, variables, drop = FALSE]
-  if (length(variables) == 2)
-    dataX <- cbind(dataX, rep(1, nrow(dataX))) else if (length(variables) == 1)
+  if (length(variables) == 2) {
+    dataX <- cbind(dataX, rep(1, nrow(dataX)))
+  } else if (length(variables) == 1) {
     dataX <- cbind(dataX, rep(1, nrow(dataX)), rep(1, nrow(dataX)))
-  for (i in 1:ncol(dataX)) {
-    if (!is.numeric(dataX[, i]))
+  }
+  for (i in seq_len(ncol(dataX))) {
+    if (!is.numeric(dataX[, i])) {
       dataX[, i] <- as.numeric(dataX[, i])
+    }
   }
   dataX <- as.matrix(dataX)
   dataX[is.na(dataX)] <- missing
   dat <- .Call("Suda2", dataX, missing, ncol(dataX), DisFraction, original_scores)$Res
-  if (length(variables) == 2)
-    dat <- dat[, -3] else if (length(variables) == 1)
+  if (length(variables) == 2) {
+    dat <- dat[, -3]
+  } else if (length(variables) == 1) {
     dat <- dat[, c(-2, -3)]
-  colnames(dat) <- c(paste(variables, "_contribution", sep = ""), "suda_score", "dis_suda_score")
+  }
+  colnames(dat) <- c(paste0(variables, "_contribution"), "suda_score", "dis_suda_score")
   res <- list(
-    contributionPercent=dat[, 1:length(variables)],
-    score=dat[,"suda_score"],
-    disScore=dat[, "dis_suda_score"])
+    contributionPercent = dat[, 1:length(variables)],
+    score = dat[, "suda_score"],
+    disScore = dat[, "dis_suda_score"]
+  )
 
   # attribute contributions
   contribs <- res$contributionPercent * res$score
-  df <- data.frame(variable=variables, contribution=100*(colSums(contribs) / sum(res$score)), stringsAsFactors=FALSE)
+  df <- data.frame(
+    variable = variables,
+    contribution = 100 * (colSums(contribs) / sum(res$score)),
+    stringsAsFactors = FALSE
+  )
+
   rownames(df) <- NULL
   res$attribute_contributions <- df
 
   # attribute level contributions
-  tmp <- cbind(data[,variables,drop=FALSE], contribs)
+  tmp <- cbind(data[, variables, drop = FALSE], contribs)
   tots <- apply(contribs, 2, sum)
   df <- NULL
-  for ( vv in variables ) {
+  #browser()
+  for (vv in variables) {
     levs <- sort(unique(data[[vv]]))
     val <- sapply(levs, function(x) {
-      100*(sum(tmp[[paste0(vv,"_contribution")]][tmp[[vv]]==x]))
-    }) / tots[[paste0(vv,"_contribution")]]
-    df <- rbind(df, data.frame(variable=vv, attribute=levs, contribution=val, stringsAsFactors=FALSE))
+      100*(sum(tmp[[paste0(vv, "_contribution")]][tmp[[vv]] == x], na.rm = TRUE))
+    }) / tots[[paste0(vv, "_contribution")]]
+    df <- rbind(df, data.frame(
+      variable = vv,
+      attribute = levs,
+      contribution = val,
+      stringsAsFactors = FALSE
+    ))
   }
   res$attribute_level_contributions <- df
 
@@ -165,7 +179,7 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
     warn_s <- "This version of Suda2 can find MSUs only in Dataset with more than 2 variables."
     warn_s <- paste0(warn_s,"\nDummy variables have been added and the result might be wrong!")
     warning(warn_s)
-    
+
   }
   invisible(res)
 }

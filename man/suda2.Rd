@@ -8,42 +8,45 @@
 suda2(obj, ...)
 }
 \arguments{
-\item{obj}{object of class \code{data.frame} or a \code{\link{sdcMicroObj-class}}-object}
+\item{obj}{a \code{data.frame} or a \linkS4class{sdcMicroObj}-object}
 
 \item{...}{see arguments below
 \itemize{
-\item{\code{variables}: }{Categorical (key) variables. Either the column names or and
-index of the variables to be used for risk measurement.}
-\item{\code{missing}: }{Missing value coding in the given data set.}
-\item{\code{DisFraction}: }{It is the sampling fraction for the simple random
+\item \code{variables} Categorical (key) variables. Either the column names or and
+index of the variables to be used for risk measurement.
+\item \code{missing}: Missing value coding in the given data set.
+\item \code{DisFraction}: It is the sampling fraction for the simple random
 sampling, and the common sampling fraction for stratified sampling. By
-default, it's set to 0.01.}
-\item{\code{original_scores}: }{if this argument is \code{TRUE} (the default), the suda-scores are computed as described in paper
-"SUDA: A Program for Detecting Special Uniques" by Elliot et al., if \code{FALSE}, the computation of the scores
-is slightly different as it was done in the original implementation of the algorithm by the IHSN.}
+default, it's set to 0.01.
+\item \code{original_scores}: if this argument is \code{TRUE} (the default), the
+suda-scores are computed as described in paper "SUDA: A Program for Detecting Special
+Uniques" by Elliot et al., if \code{FALSE}, the computation of the scores
+is slightly different as it was done in the original implementation
+of the algorithm by the IHSN.
 }}
 }
 \value{
-A modified \code{\link{sdcMicroObj-class}} object or the following list
+A modified \linkS4class{sdcMicroObj} object or the following list
 \itemize{
-\item{\code{ContributionPercent}: }{The contribution of each key variable to the SUDA
-score, calculated for each row.}
-\item{\code{score}: }{The suda score.}
-\item{\code{disscore}: }{The dis suda score}
-\item{\code{attribute_contributions: }}{\code{data.frame} showing how much of the total risk is contributed
-by each variable. This information is stored in a \code{data.frame} in two variables:
+\item \code{ContributionPercent}: The contribution of each key variable to the SUDA
+score, calculated for each row.
+\item \code{score}: The suda score
+`disscore: The dis suda score
+\item \verb{attribute_contributions:} a \code{data.frame} showing how much of the total
+risk is contributed by each variable. This information is stored in the
+following two variables:
 \itemize{
- \item \code{variable}: containing the name of the variable
- \item \code{contribution}: contains how much risk a variable contributes to the total risk.
-}}
-\item{\code{attribute_level_contributions: }}{shows risks of each attribute-level. this is saved in a
-\code{data.frame} with three columns.
+\item \code{variable}: containing the name of the variable
+\item \code{contribution}: contains how much risk a variable contributes to the total risk.
+}
+\item \code{attribute_level_contributions}: returns risks of each attribute-level as a
+\code{data.frame} with the following three columns:
 \itemize{
- \item \code{variable}: containing the name of the variable
- \item \code{attribute}: holding relevant level-codes and
- \item \code{contribution}: contains the risk of this level within the variable.)
- }
-}}
+\item \code{variable}: the variable name
+\item \code{attribute}: holding relevant level-codes
+\item \code{contribution}: contains the risk of this level within the variable.
+}
+}
 }
 \description{
 SUDA risk measure for data from (stratified) simple random sampling.
