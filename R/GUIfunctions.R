@@ -433,7 +433,8 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     header <- ifelse(opts$header==TRUE, TRUE, FALSE)
     sep <- opts$sep
     quote <- "\""
-    res <- tryCatchFn(utils::read.table(path, sep=sep, header=header, quote=quote))
+    comment.char <- ""
+    res <- tryCatchFn(utils::read.table(path, sep=sep, header=header, quote=quote, comment.char=comment.char))
   }
   if ("simpleError" %in% class(res)) {
     return(res)
