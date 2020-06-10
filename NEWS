@@ -1,5 +1,6 @@
 # 5.5.1
 - bug in modRisk when the levels of a variable in the formulaM is greater than 10 (solved). Thanks to Ying Chen for the solution.
+- Adding default comment.char parameter for csv imports (thx @leebrian)
 
 # 5.5.0
 - gcc problems solved
