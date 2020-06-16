@@ -455,7 +455,10 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
 
   # check if any variable has class 'labelled' or 'haven_labelled' (from haven 2.0.0) and convert it to factors.
   # this might happen if we read data with read_xxx() from haven
-  cl_lab <- which(sapply(res, class) %in% c("labelled", "haven_labelled"))
+  cl_lab <- which(sapply(res, function(x) {
+    any(grepl("labelled", class(x)))
+  }))
+
   if (length(cl_lab) > 0) {
     if (length(cl_lab)==1) {
       res[[cl_lab]] <- haven::as_factor(res[[cl_lab]], levels="default")
