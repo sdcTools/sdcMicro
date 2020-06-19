@@ -1,32 +1,32 @@
-### create obj ### library(sdcMicro) data(francdat)
-
-# dat <- francdat numVars <- c(1,3,7) weightVar <- 8 keyVars <- c(2,4:6)
-
+# obj: an sdcMicroObj-object
 # v: either a numeric vector specifying column-indices or a character vector specifying
 # column-names
 standardizeInput <- function(obj, v) {
-  if (class(obj) != "sdcMicroObj") {
-    stop("obj must be an object of class 'sdcMicroObj'!\n")
+  if (!inherits(obj, "sdcMicroObj")) {
+    stop("obj must be an object of class 'sdcMicroObj'!", call. = FALSE)
   }
   if (is.null(v)) {
     return(NULL)
   }
 
   if (is.numeric(v)) {
-    if (all(v %in% 1:ncol(get.sdcMicroObj(obj, type="origData")))) {
+    if (all(v %in% 1:ncol(get.sdcMicroObj(obj, type = "origData")))) {
       return(v)
     } else {
-      stop("please specify valid column-indices!\n")
+      stop("please specify valid column-indices!", call. = FALSE)
     }
   } else if (is.character(v)) {
-    m <- match(v, colnames(get.sdcMicroObj(obj, type="origData")))
+    m <- match(v, colnames(get.sdcMicroObj(obj, type = "origData")))
     if (!any(is.na(m))) {
       return(m)
     } else {
-      stop("please specify valid column-names!\n")
+      stop("please specify valid column-names!", call. = FALSE)
     }
   } else {
-    stop("please specify either a numeric vector specifying column-indices or a character vector containing valid variable names!\n")
+    stop(
+      "please specify either a numeric vector specifying column-indices or a character vector containing valid variable names!",
+      call. = FALSE
+    )
   }
 }
 
@@ -85,7 +85,7 @@ standardizeInput <- function(obj, v) {
 #' ghostVars[[1]] <- list()
 #' ghostVars[[1]][[1]] <- "electcon"
 #' ghostVars[[1]][[2]] <- c("electcon2","electcon3")
-#' 
+#'
 #' \dontrun{
 #' # dontrun because Examples with CPU time > 2.5 times elapsed time
 #' ## we want variable 'water2' to be linked to key-variable 'water'
@@ -115,7 +115,6 @@ standardizeInput <- function(obj, v) {
 createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NULL, weightVar=NULL,
   hhId=NULL, strataVar=NULL, sensibleVar=NULL, excludeVars=NULL, options=NULL, seed=NULL,
   randomizeRecords=FALSE, alpha=1) {
-
   obj <- new("sdcMicroObj")
   options <- list()
   if (!is.null(seed) && is.numeric(seed)) {
@@ -129,6 +128,8 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
   if (!is.data.frame(dat)) {
     dat <- as.data.frame(dat)
   }
+  class(dat) <- "data.frame" # removing e.g data.table attributes
+
   if (randomizeRecords==TRUE) {
     dat <- dat[sample(1:nrow(dat)),]
     rownames(dat) <- NULL
