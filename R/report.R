@@ -387,38 +387,47 @@ definition=function(obj, internal, title, outdir) {
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' report(sdc)
 #' }
-report <- function(obj, outdir=getwd(), filename="SDC-Report", title="SDC-Report", internal=FALSE, verbose=FALSE) {
-  reportX(obj=obj, outdir=outdir, filename=filename, title=title, internal=internal, verbose=verbose)
-}
-setGeneric("reportX", function(obj, outdir=getwd(), filename="SDC-Report",
-  title="SDC-Report", internal=FALSE, verbose=FALSE) {
-  standardGeneric("reportX")
-})
-
-setMethod(f="reportX", signature=c("sdcMicroObj"),
-definition=function(obj, outdir=getwd(), filename="SDC-Report",
-  title="SDC-Report", internal=FALSE, verbose=FALSE) {
-
-  filename <- paste0(filename, ".html")
-  repObj <- calcReportData(obj, internal=internal, title=title, outdir=outdir)
-  fOut <- paste0(outdir,"/",filename)
-  if (pandoc_available()) {
-    fTemplate <- system.file("templates", "report-template.rmd", package="sdcMicro")
-    render(fTemplate, quiet=TRUE, output_dir=outdir, output_file=filename)
-  } else {
-    myCustomTitle <- get.reportObj(repObj, "title")
-    fTemplate <- system.file("templates", "report-template-simple.rmd", package="sdcMicro")
-    knit2html(input=fTemplate, output=fOut, quiet=TRUE, force_v1=TRUE)
-    file.remove(paste0(outdir,"/report-template-simple.md"))
+report <- function(obj, outdir = getwd(), filename = "SDC-Report", title = "SDC-Report", internal = FALSE, verbose = FALSE) {
+  if (!inherits(obj, "sdcMicroObj")) {
+    stop("argument `obj` needs to be of class `sdcMicroObj.`", call. = FALSE)
   }
-
+  
+  filename <- paste0(filename, ".html")
+  repObj <- calcReportData(
+    obj = obj,
+    internal = internal,
+    title = title,
+    outdir = outdir
+  )
+  f_out <- paste0(outdir, "/", filename)
+  if (pandoc_available()) {
+    f_tpl <- system.file("templates", "report-template.rmd", package = "sdcMicro")
+    rmarkdown::render(
+      input = f_tpl,
+      quiet = TRUE,
+      output_dir = outdir,
+      intermediates_dir = tempdir(),
+      output_file = filename
+    )
+  } else {
+    custom_title <- get.reportObj(repObj, "title")
+    f_tpl <- system.file("templates", "report-template-simple.rmd", package = "sdcMicro")
+    knitr::knit2html(
+      input = f_tpl,
+      output = f_out,
+      quiet = TRUE,
+      force_v1 = TRUE
+    )
+    file.remove(file.path(outdir, "report-template-simple.md"))
+  }
+  
   if (verbose) {
     if (internal) {
       txt <- paste0("An internal (extensive) report was successfully generated.\n")
     } else {
       txt <- paste0("An short report was successfully generated.\n")
     }
-    txt <- paste0(txt, "It was saved in '", fOut,"'.\n")
+    txt <- paste0(txt, "It was saved in '", f_out,"'.\n")
     message(txt)
   }
-})
+}
