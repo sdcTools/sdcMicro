@@ -4,7 +4,7 @@ output:
 ---
 
 ---
-title: `r myCustomTitle`
+title: `r custom_title`
 ---
 
 ```{r, echo=F}
