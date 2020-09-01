@@ -1,5 +1,5 @@
 # 5.5.2
-- write intermediate files to temp-directory in rmarkdown::render() to fix possible deployment problems with rsconnect
+- write intermediate files to temp-directory in `rmarkdown::render()` to fix possible deployment problems with rsconnect when using `report()`
 
 # 5.5.1
 - bug in modRisk when the levels of a variable in the formulaM is greater than 10 (solved). Thanks to Ying Chen for the solution.
