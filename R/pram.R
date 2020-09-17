@@ -452,20 +452,20 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
   do.pram <- function(x, Rs) {
     # special case: na-only input
     if (all(is.na(x))) {
-      return(list(x=x, xpramed=x))
+      return(list(x = x, xpramed = x))
     }
     xpramed <- x
     levs <- levels(xpramed)
 
     # perform sampling
-    for ( i in 1:length(levs) ) {
-      ii <- which(xpramed==levs[i])
+    for (i in 1:length(levs)) {
+      ii <- which(x == levs[i])
       if (length(ii) > 0) {
-        xpramed[ii] <- sample(levs, length(ii), prob=Rs[i, ], replace=TRUE)
+        xpramed[ii] <- sample(levs, length(ii), prob = Rs[i,], replace = TRUE)
       }
     }
-    xpramed <- factor(xpramed, levels=levs)
-    return(list(x=x, xpramed=xpramed))
+    xpramed <- factor(xpramed, levels = levs)
+    return(list(x = x, xpramed = xpramed))
   }
 
   idvarpram <- tmpfactor_for_pram <- NULL
