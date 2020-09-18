@@ -338,11 +338,11 @@ setMethod(f="calcRisksX", signature=c("sdcMicroObj"), definition=function(obj, .
   suda2Set <- (!is.null(risk$suda2))
   obj <- measure_risk(obj)
   if (modelSet) {
-    inclProb <- NULL
-    if (!is.null(risk$model$inclProb)) {
-      inclProb <- risk$model$inclProb
-    }
-    obj <- LLmodGlobalRisk(obj, inclProb=inclProb)
+    kv <- colnames(get.sdcMicroObj(obj, type = "manipKeyVars"))
+    obj <- modRisk(
+      obj = obj,
+      method = "IPF",
+      formulaM = as.formula(paste(" ~ ", paste(kv, collapse="+"))))
   }
   if (suda2Set) {
     obj <- suda2(obj)

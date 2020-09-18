@@ -44,6 +44,7 @@
 #' @importFrom stats sd
 #' @importFrom stats terms
 #' @importFrom stats var
+#' @importFrom stats runif
 #' @importFrom utils data
 setClassUnion("dataframeOrNULL", c("data.frame", "NULL"))
 setClassUnion("numericOrNULL", c("numeric", "NULL"))
@@ -136,19 +137,31 @@ setClassUnion("sdcmicroOrNULL", c("NULL"))
 #' sdc <- topBotCoding(sdc, value=60000000, replacement=62000000, column="income")
 #' head(get.sdcMicroObj(sdc, type="manipNumVars"))
 #' sdc@@risk$numeric
+#'
 #' ### LocalRecProg
 #' data(testdata2)
+#' keyVars <- c("urbrur", "roof", "walls", "water", "sex")
+#' w <- "sampling_weight"
 #' sdc <- createSdcObj(testdata2,
-#'   keyVars=c("urbrur", "roof", "walls", "water", "sex", "relat"))
+#'   keyVars = keyVars,
+#'   weightVar = w)
 #' sdc@@risk$global
 #' sdc <- LocalRecProg(sdc)
 #' sdc@@risk$global
-#' ### LLmodGlobalRisk
-#' sdc <- undolast(sdc)
-#' sdc <- LLmodGlobalRisk(sdc, inclProb=0.001)
-#' sdc@@risk$model
+#' ### model-based risks
+#' #' formula
+#' form <- as.formula(paste("~", paste(keyVars, collapse = "+")))
+#' sdc <- modRisk(sdc, method = "default", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
+#' sdc <- modRisk(sdc, method = "CE", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
+#' sdc <- modRisk(sdc, method = "PLM", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
+#' sdc <- modRisk(sdc, method = "weightedLLM", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
+#' sdc <- modRisk(sdc, method = "IPF", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
 #' }
-#'
 setClass(Class = "sdcMicroObj",
   representation = representation(
     origData = "dataframeOrNULL",

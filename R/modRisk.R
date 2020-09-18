@@ -1,5 +1,5 @@
 ###################################################
-# LLmodRisk Function
+# modRisk Function
 # Calculates two disclosure risk measures with
 # five possible log-linear models (standard, CE, PSE, weightedLLM, IPF)
 # 1. estimates the number of sample uniques that are population unique
@@ -73,20 +73,35 @@
 #' data(testdata2)
 #' form <- ~sex+water+roof
 #' w <- "sampling_weight"
-#' (modRisk(testdata2, method="default", formulaM=form, weights=w))
-#' (modRisk(testdata2, method="CE", formulaM=form, weights=w))
-#' (modRisk(testdata2, method="PML", formulaM=form, weights=w))
-#' (modRisk(testdata2, method="weightedLLM", formulaM=form, weights=w))
-#' (modRisk(testdata2, method="IPF", formulaM=form, weights=w))
+#' (modRisk(testdata2, method = "default", formulaM = form, weights = w))
+#' (modRisk(testdata2, method = "CE", formulaM = form, weights = w))
+#' (modRisk(testdata2, method = "PML", formulaM = form, weights = w))
+#' (modRisk(testdata2, method = "weightedLLM", formulaM = form, weights = w))
+#' (modRisk(testdata2, method = "IPF", formulaM = form, weights = w))
 #'
 #' ## application to a sdcMicroObj
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata2,
-#'  keyVars=c('urbrur','roof','walls','electcon','relat','sex'),
-#'  numVars=c('expend','income','savings'), w='sampling_weight')
-#' sdc <- modRisk(sdc,form=~sex+water+roof)
+#'  keyVars = c("urbrur", "roof", "walls", "electcon", "relat", "sex"),
+#'  numVars = c("expend", "income", "savings"),
+#'  w = "sampling_weight")
+#' sdc <- modRisk(sdc, form = ~sex+water+roof)
 #' slot(sdc, "risk")$model
-
+#'
+#' \dontrun{
+#' # an example using data from the laeken-pkg
+#' library(laeken)
+#' data(eusilc)
+#' f <- as.formula(paste(" ~ ", "db040 + hsize + rb090 +
+#'              age + pb220a + age:rb090 + age:hsize +
+#'              hsize:rb090"))
+#' w <- "rb050"
+#' (modRisk(eusilc, method = "default", weights = w, formulaM = f, bound = 5))
+#' (modRisk(eusilc, method = "CE", weights =  w, formulaM = f, bound = 5))
+#' (modRisk(eusilc, method = "PML", weights = w, formulaM = f, bound = 5))
+#' (modRisk(eusilc, method = "weightedLLM", weights = w, formulaM = f, bound = 5))
+#' }
+#'
 modRisk <- function(obj, method="default", weights, formulaM, bound=Inf, ...) {
   modRiskX(obj=obj, method=method, weights=weights, formulaM=formulaM, bound=bound, ...)
 }
@@ -98,13 +113,13 @@ setGeneric("modRiskX", function(obj, method="default", weights, formulaM, bound=
 setMethod(f="modRiskX", signature=c("sdcMicroObj"),
 definition=function(obj, method="default", weights, formulaM, bound=Inf) {
   vars <- labels(terms(formulaM))
-  mk <- get.sdcMicroObj(obj, type="manipKeyVars")
-  mn <- get.sdcMicroObj(obj, type="manipNumVars")
-  orig <- get.sdcMicroObj(obj, type="origData")
+  mk <- get.sdcMicroObj(obj, type = "manipKeyVars")
+  mn <- get.sdcMicroObj(obj, type = "manipNumVars")
+  orig <- get.sdcMicroObj(obj, type = "origData")
   cn <- colnames(orig)
-  ok <- orig[, !colnames(orig) %in% c(colnames(mk), colnames(mn)), drop=FALSE]
-  if ( any(colnames(mk) %in% vars) ) {
-    x <- mk[, colnames(mk) %in% vars, drop=FALSE]
+  ok <- orig[, !colnames(orig) %in% c(colnames(mk), colnames(mn)), drop = FALSE]
+  if (any(colnames(mk) %in% vars)) {
+    x <- mk[, colnames(mk) %in% vars, drop = FALSE]
   } else {
     x <- NULL
   }
@@ -123,16 +138,29 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
     }
   }
 
-  wV <- get.sdcMicroObj(obj, type="weightVar")
+  wV <- get.sdcMicroObj(obj, type = "weightVar")
   weightsVar <- cn[wV]
-  if ( is.null(wV) ) {
-    stop("It is not possible to calculate model-based risks for data without sampling weights (slot 'weightVar')!\n")
+  if (is.null(wV)) {
+    w <- c(
+      "model-based risks are computed for data without defined sampling weights.",
+      "weights are temporarily set to 1."
+    )
+    warning(paste(w, collapse = "\n"))
+    weightsVar <- paste0("tmpweights_", substr(runif(1), 3, 10))
+    x[[weightsVar]] <- 1
+  } else {
+    x[[weightsVar]] <- orig[[wV]]
   }
-  x[[weightsVar]] <- orig[[wV]]
 
   risk <- get.sdcMicroObj(obj, type="risk")
-  risk$model <- modRisk(x, method=method, weights=weightsVar, formulaM=formulaM, bound=bound)
-  obj <- set.sdcMicroObj(obj, type="risk", input=list(risk))
+  risk$model <- modRisk(
+    obj = x,
+    method = method,
+    weights = weightsVar,
+    formulaM = formulaM,
+    bound = bound
+  )
+  obj <- set.sdcMicroObj(obj, type = "risk", input = list(risk))
   obj
 })
 
@@ -152,126 +180,132 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
 
   . <- inclProb <- counts <- id <- Fk <- NULL
   x <- obj
-  if ( !is.data.frame(x) ) {
-    stop("input 'x' must be a data.frame!\n")
+  if (!inherits(x, "data.frame")) {
+    stop("input 'x' must inherit class `data.frame`", call. = FALSE)
   }
-  if ( !method %in% c("default","CE","PML","weightedLLM","IPF") ) {
-    stop("Unknown value for 'method' was detected!\n")
+  if (!method %in% c("default", "CE", "PML", "weightedLLM", "IPF")) {
+    stop("Unknown value for 'method' was detected!", call. = FALSE)
   }
-  if ( !weights %in% colnames(x) ) {
-    stop("Please provide a valid variable name that contains sampling weights!\n")
+  if (!weights %in% colnames(x)) {
+    stop("Please provide a valid variable name that contains sampling weights!", call. = FALSE)
   }
-  if ( length(bound) != 1 & bound[1] <= 0) {
-    stop("Argument 'bound' must be numeric > 0!\n")
+  if (length(bound) != 1 & bound[1] <= 0) {
+    stop("Argument 'bound' must be numeric > 0!", call. = FALSE)
   }
 
   form_info <- terms(formulaM)
   orders <- attributes(form_info)$order
   vars <- labels(form_info)[orders==1]
 
-  if ( method=="IPF" && any(orders>1) ) {
-    stop("Sorry, but method 'IPF' cannot be used for models with interactions!\n")
+  if (method == "IPF" && any(orders > 1)) {
+    stop("Sorry, but method 'IPF' cannot be used for models with interactions!", call. = FALSE)
   }
 
-  if ( !all(vars %in% colnames(x)) ) {
-    stop("all variables specified in the formula must exist in the input dataset!\n")
+  if (!all(vars %in% colnames(x))) {
+    stop("all variables specified in the formula must exist in the input dataset!", call. = FALSE)
   }
 
-  x <- x[,c(vars, weights)]
+  x <- x[, c(vars, weights)]
   colnames(x) <- c(vars, "weights")
-  y <- data.table(x, key=vars)
-  y[,inclProb:=1/weights]
-  y <- y[,.(counts=.N, weights=sum(weights), inclProb=sum(inclProb)), by=key(y)]
+  y <- data.table(x, key = vars)
+  y[, inclProb := 1 / weights]
+  y <- y[, .(counts = .N, weights = sum(weights), inclProb = sum(inclProb)), by = key(y)]
 
   grid <- data.table(expand.grid(lapply(1:length(vars), function(t) unique((x[[vars[t]]])))))
   setnames(grid, vars)
   setkeyv(grid, vars)
 
-  x <- merge(grid, y, all.x=TRUE)
-  x[is.na(counts), counts:=0]
-  x[is.na(weights ), weights :=0]
-  x[is.na(inclProb), inclProb:=0]
+  x <- merge(grid, y, all.x = TRUE)
+  x[is.na(counts), counts := 0]
+  x[is.na(weights), weights := 0]
+  x[is.na(inclProb), inclProb := 0]
 
   # model selection
-  if ( method == "default" ) {
-    form <- as.formula(paste(c("counts", as.character(formulaM)), collapse=""))
+  if (method == "default") {
+    form <- as.formula(paste(c("counts", as.character(formulaM)), collapse = ""))
   }
-  if ( method == "CE" ) {
-    EC <- x$counts/x$weights  #offset term
+  if (method == "CE") {
+    EC <- x$counts / x$weights  #offset term
     EC[EC == "NaN"] <- 0
     EC <- log(EC + 0.1)
-    form <- as.formula(paste(c("counts", c(as.character(formulaM)), "+ offset(EC)"),
-                             collapse=""))
+    form <- as.formula(paste(c("counts", c(as.character(formulaM)), "+ offset(EC)"), collapse = ""))
   }
-  if ( method == "PML" ) {
-    f <- sum(x$counts)/sum(x$weights)
+  if (method == "PML") {
+    f <- sum(x$counts) / sum(x$weights)
     weights_t <- round(x$weights * f)  #round
     x <- data.frame(x, weights_t)
-    form <- as.formula(paste(c("weights_t", as.character(formulaM)), collapse=""))
+    form <- as.formula(paste(c("weights_t", as.character(formulaM)), collapse = ""))
   }
-  if ( method == "weightedLLM" ) {
-    form_zw <- as.formula(paste(c(formulaM, "weights"), collapse="+"))
-    form <- as.formula(paste(c("counts", as.character(form_zw)), collapse=""))
+  if (method == "weightedLLM") {
+    form_zw <- as.formula(paste(c(formulaM, "weights"), collapse = "+"))
+    form <- as.formula(paste(c("counts", as.character(form_zw)), collapse = ""))
   }
-  if ( method == "IPF" ) {
-    form <- as.formula(paste(c("counts", as.character(formulaM)), collapse=""))
-    form2 <- as.formula(paste(c("inclProb", as.character(formulaM)), collapse=""))
+  if (method == "IPF") {
+    form <- as.formula(paste(c("counts", as.character(formulaM)), collapse = ""))
+    form2 <- as.formula(paste(c("inclProb", as.character(formulaM)), collapse = ""))
     tab <- stats::xtabs(form, x)
     tabP <- stats::xtabs(form2, x)
   }
 
   # running the model with the chosen formula
-  if ( method == "IPF" ) {
-    mod <- loglm(form, data=tab, fitted=TRUE)
+  if (method == "IPF") {
+    mod <- loglm(form, data = tab, fitted = TRUE)
   } else {
-    mod <- glm(form, data=x, family=stats::poisson())
+    mod <- glm(form, data = x, family = stats::poisson())
   }
   lambda <- stats::fitted(mod)
 
   # calculate risk and estimate
   # 1. the number of sample uniques that are population unique
   # 2. the number of correct matches of sample uniques
-  if ( method != "IPF" ) {
+  if (method != "IPF") {
     x <- data.table(x)
-    x[,id:=1:nrow(x)]
+    x[, id := 1:nrow(x)]
     setkey(x, id)
-    lambda <- data.table(Fk=as.numeric(lambda), id=as.numeric(attributes(lambda)$names))
+    lambda <- data.table(Fk = as.numeric(lambda), id = as.numeric(attributes(lambda)$names))
     setkey(lambda, id)
   } else {
-    x <- data.table(x, key=vars)
-    lambda <- as.data.frame.table(lambda, stringsAsFactors=FALSE)
+    x <- data.table(x, key = vars)
+    lambda <- as.data.frame.table(lambda, stringsAsFactors = FALSE)
     colnames(lambda)[ncol(lambda)] <- "Fk"
-    lambda <- data.table(lambda, key=vars)
+    lambda <- data.table(lambda, key = vars)
     #lambda <- lambda[,lapply(.SD, as.numeric)]
     # suggestion by Ying Chen:
     lambda <- data.table(lambda, key = vars)
-    for(v in vars){
-      if(class(x[[v]])!=class(lambda[[v]])){
-        if(is.character(x[[v]])){
+    for (v in vars) {
+      if (class(x[[v]]) != class(lambda[[v]])) {
+        if (is.character(x[[v]])) {
           lambda[[v]] <- as.character(lambda[[v]])
-        }else if(is.integer(x[[v]])){
+        } else if (is.integer(x[[v]])) {
           lambda[[v]] <- as.integer(lambda[[v]])
-        }else if(is.numeric(x[[v]])){
+        } else if (is.numeric(x[[v]])) {
           lambda[[v]] <- as.numeric(lambda[[v]])
-        }else if(is.factor(x[[v]])){
+        } else if (is.factor(x[[v]])) {
           lambda[[v]] <- as.factor(lambda[[v]])
         }
       }
     }
   }
 
-
-  x <- merge(x, lambda, all.x=TRUE)
-  x[is.na(Fk), Fk:=0]
+  x <- merge(x, lambda, all.x = TRUE)
+  x[is.na(Fk), Fk := 0]
   x <- x[0 < x$counts & x$counts <= bound]
-  x <- x[!(x$Fk==0 & x$counts >0)]
+  x <- x[!(x$Fk == 0 & x$counts > 0)]
   r1 <- risk1(x$Fk, x$inclProb) / nrow(x)
   r2 <- risk2(x$Fk, x$inclProb) / nrow(x)
   gr1 <- file_risk(x$counts, r1)
   gr2 <- file_risk(x$counts, r2)
 
-  res <- list(gr1=gr1, gr2=gr2, gr1perc=gr1*100, gr2perc=gr2*100,
-              method=method, model=formulaM, fitted=stats::fitted(mod), inclProb=x$inclProb)
+  res <- list(
+    gr1 = gr1,
+    gr2 = gr2,
+    gr1perc = gr1 * 100,
+    gr2perc = gr2 * 100,
+    method = method,
+    model = formulaM,
+    fitted = stats::fitted(mod),
+    inclProb = x$inclProb
+  )
   class(res) <- "modrisk"
   res
 })
@@ -289,9 +323,9 @@ definition=function(obj, method="default", weights, formulaM, bound=Inf) {
 #' @method print modrisk
 #' @export
 print.modrisk <- function(x, ...) {
-  message(paste0("The estimated model (using method '",x$method,"') was:\n"))
+  message(paste0("The estimated model (using method '",x$method,"') was:"))
   message(paste0("\t",paste(as.character(x$model), collapse=" "),"\n"))
-  message("global risk-measures:\n")
-  message(paste0("\tRisk-Measure 1: ", prettyF(x$gr1, digits=3)," (",prettyF(x$gr1perc, digits=3)," %)\n"))
-  message(paste0("\tRisk-Measure 2: ", prettyF(x$gr2, digits=3)," (",prettyF(x$gr2perc, digits=3)," %)\n"))
+  message("global risk-measures:")
+  message(paste0("\tRisk-Measure 1: ", prettyF(x$gr1, digits = 3)," (", prettyF(x$gr1perc, digits = 3), " %)"))
+  message(paste0("\tRisk-Measure 2: ", prettyF(x$gr2, digits = 3)," (", prettyF(x$gr2perc, digits = 3), " %)"))
 }
