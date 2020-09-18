@@ -64,19 +64,35 @@ global risk, defined in Skinner and Holmes (1998).
 data(testdata2)
 form <- ~sex+water+roof
 w <- "sampling_weight"
-(modRisk(testdata2, method="default", formulaM=form, weights=w))
-(modRisk(testdata2, method="CE", formulaM=form, weights=w))
-(modRisk(testdata2, method="PML", formulaM=form, weights=w))
-(modRisk(testdata2, method="weightedLLM", formulaM=form, weights=w))
-(modRisk(testdata2, method="IPF", formulaM=form, weights=w))
+(modRisk(testdata2, method = "default", formulaM = form, weights = w))
+(modRisk(testdata2, method = "CE", formulaM = form, weights = w))
+(modRisk(testdata2, method = "PML", formulaM = form, weights = w))
+(modRisk(testdata2, method = "weightedLLM", formulaM = form, weights = w))
+(modRisk(testdata2, method = "IPF", formulaM = form, weights = w))
 
 ## application to a sdcMicroObj
 data(testdata2)
 sdc <- createSdcObj(testdata2,
- keyVars=c('urbrur','roof','walls','electcon','relat','sex'),
- numVars=c('expend','income','savings'), w='sampling_weight')
-sdc <- modRisk(sdc,form=~sex+water+roof)
+ keyVars = c("urbrur", "roof", "walls", "electcon", "relat", "sex"),
+ numVars = c("expend", "income", "savings"),
+ w = "sampling_weight")
+sdc <- modRisk(sdc, form = ~sex+water+roof)
 slot(sdc, "risk")$model
+
+\dontrun{
+# an example using data from the laeken-pkg
+library(laeken)
+data(eusilc)
+f <- as.formula(paste(" ~ ", "db040 + hsize + rb090 +
+             age + pb220a + age:rb090 + age:hsize +
+             hsize:rb090"))
+w <- "rb050"
+(modRisk(eusilc, method = "default", weights = w, formulaM = f, bound = 5))
+(modRisk(eusilc, method = "CE", weights =  w, formulaM = f, bound = 5))
+(modRisk(eusilc, method = "PML", weights = w, formulaM = f, bound = 5))
+(modRisk(eusilc, method = "weightedLLM", weights = w, formulaM = f, bound = 5))
+}
+
 }
 \references{
 Skinner, C.J. and Holmes, D.J. (1998) \emph{Estimating the

@@ -64,7 +64,6 @@ Collate:
     'groupAndRename.R'
     'GUIfunctions.R'
     'indivRisk.R'
-    'LLmodGlobalRisk.R'
     'LocalRecProg.R'
     'localSupp.R'
     'localSuppression.R'

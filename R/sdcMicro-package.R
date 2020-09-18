@@ -33,24 +33,24 @@
 #' @author Matthias Templ, Alexander Kowarik, Bernhard Meindl
 #'
 #' Maintainer: Matthias Templ <templ@@statistik.tuwien.ac.at>
-#' @references 
+#' @references
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
 #' \doi{10.1007/978-3-319-50272-4}
-#' 
-#' Templ, M. and Kowarik, A. and Meindl, B. 
-#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro. 
+#'
+#' Templ, M. and Kowarik, A. and Meindl, B.
+#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 #' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #'
 #' Templ, M. and Meindl, B. \emph{Practical Applications in
 #' Statistical Disclosure Control Using R}, Privacy and Anonymity in
 #' Information Management Systems, Bookchapter, Springer London, pp. 31-62,
 #' 2010. \doi{10.1007/978-1-84996-238-4_3}
-#' 
+#'
 #' Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 #' \emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
 #' in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
-#' (editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77. 
+#' (editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77.
 #' \doi{10.1007/978-3-642-33627-0_6}
 #'
 #' Templ, M.  \emph{Statistical Disclosure Control for Microdata Using the
@@ -241,15 +241,27 @@
 #' sdc@@risk$numeric
 #' ### LocalRecProg
 #' data(testdata2)
+#' keyVars <- c("urbrur", "roof", "walls", "water", "sex")
+#' w <- "sampling_weight"
 #' sdc <- createSdcObj(testdata2,
-#'   keyVars=c("urbrur", "roof", "walls", "water", "sex", "relat"))
+#'   keyVars = keyVars,
+#'   weightVar = w)
 #' sdc@@risk$global
 #' sdc <- LocalRecProg(sdc)
 #' sdc@@risk$global
-#' ### LLmodGlobalRisk
-#' sdc <- undolast(sdc)
-#' sdc <- LLmodGlobalRisk(sdc, inclProb=0.001)
-#' sdc@@risk$model
+#' ### model-based risks
+#' #' formula
+#' form <- as.formula(paste("~", paste(keyVars, collapse = "+")))
+#' sdc <- modRisk(sdc, method = "default", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
+#' sdc <- modRisk(sdc, method = "CE", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
+#' sdc <- modRisk(sdc, method = "PLM", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
+#' sdc <- modRisk(sdc, method = "weightedLLM", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
+#' sdc <- modRisk(sdc, method = "IPF", formulaM = form)
+#' get.sdcMicroObj(sdc, "risk")$model
 #' }
 #'
 NULL
