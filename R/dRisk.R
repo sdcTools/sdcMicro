@@ -66,6 +66,10 @@ setMethod(f = "dRiskX", signature = c("data.frame"), definition = function(obj, 
 })
 
 dRiskWORK <- function(x, xm, k = 0.05) {
+  if(is.vector(x)){
+    x <- matrix(x, ncol = 1)
+    xm <- matrix(xm, ncol = 1)
+  }
   if (dim(x)[1] != dim(xm)[1]) {
     warnMsg <- "dimension of perturbed data and original data are different\n"
     obj <- addWarning(obj, warnMsg=warnMsg, method="dRisk", variable=NA)
@@ -75,6 +79,6 @@ dRiskWORK <- function(x, xm, k = 0.05) {
   sds <- apply(xm, 2, sd, na.rm = TRUE)
   mi <- t(t(xm) - k * sds)
   ma <- t(t(xm) + k * sds)
-  w <- which(rowSums(x < mi | x > ma, na.rm = TRUE) %in% 0:1)
-  as.numeric(length(w)/nrow(x))
+  w <- rowSums(x < mi | x > ma, na.rm = TRUE) == 0
+  return(mean(w))
 }
