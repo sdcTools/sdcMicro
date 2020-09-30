@@ -107,7 +107,7 @@ definition=function(obj, variables, noise=150, method="additive", ...) {
   obj <- nextSdcObj(obj)
   if (length(variables) == 1) {
     x1tmp <- cbind(0, x[, variables])
-    x[, variables] <- addNoiseWORK(x1tmp, noise=noise, method=method, ...)$xm[, 2, drop=FALSE]
+    x[, variables] <- addNoiseWORK(x1tmp, noise=noise, method=method, ...)$xm[, 2, drop=TRUE]
   } else {
     x[, variables] <- addNoiseWORK(x=x[, variables], noise=noise, method=method, ...)$xm
   }
