@@ -4,11 +4,20 @@ r:
   - devel
 cache: packages
 
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y install libxml2-dev
+
+r_github_packages:
+  - r-lib/textshaping
+  
 r_packages:
   - kableExtra
   - covr
   - pkgdown
 
+
+  
 after_success:
   - Rscript -e 'covr::coveralls()'
 
