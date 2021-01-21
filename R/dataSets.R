@@ -269,7 +269,7 @@ NULL
 #' \item{Key4}{Key variable 4. A numeric vector}
 #' \item{Num3}{a numeric vector}
 #' \item{w}{The weight vector. A numeric vector}}
-#' @source \url{http://neon.vb.cbs.nl/casc/Deliv/12d1.pdf}
+#' @source \url{https://research.cbs.nl/casc/deliv/12d1.pdf}
 #' @keywords datasets
 #' @examples
 #'

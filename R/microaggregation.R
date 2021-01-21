@@ -2,7 +2,7 @@
 #'
 #' Function to perform various methods of microaggregation.
 #'
-#' On \url{http://neon.vb.cbs.nl/casc/Glossary.htm} one can found the
+#' On \url{https://research.cbs.nl/casc/glossary.htm} one can found the
 #' \dQuote{official} definition of microaggregation:
 #'
 #' Records are grouped based on a proximity measure of variables of interest,
