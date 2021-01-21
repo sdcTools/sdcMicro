@@ -8,7 +8,7 @@
 #' \item{original: } the originally provided input data
 #' \item{swapped: } the \code{data.frame} containing the swapped values
 #' }
-#' @seealso mu-Argus manual at \url{http://neon.vb.cbs.nl/casc/Software/MUmanual5.1.pdf}
+#' @seealso mu-Argus manual at \url{https://github.com/sdcTools/manuals/raw/master/mu-argus/MUmanual5.1.pdf}
 #' @export
 #' @examples
 #' mat <- matrix(sample(1:100, 50, replace=TRUE), nrow=10, ncol=5)
@@ -59,7 +59,7 @@ argus_rankswap <- function(df, perc) {
 #' \item{original: } the originally provided input data
 #' \item{microaggregated: } the microaggregated data.frame
 #' }
-#' @seealso mu-Argus manual at \url{http://neon.vb.cbs.nl/casc/Software/MUmanual5.1.pdf}
+#' @seealso mu-Argus manual at \url{https://github.com/sdcTools/manuals/raw/master/mu-argus/MUmanual5.1.pdf}
 #' @export
 #'
 #' @examples
