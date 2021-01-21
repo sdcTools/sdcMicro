@@ -1,3 +1,6 @@
+# 5.6.0
+- fix for changes in the base R function order/sort in R 4.1.0
+
 # 5.5.2
 - write intermediate files to temp-directory in `rmarkdown::render()` to fix possible deployment problems with rsconnect when using `report()`
 - bugfix in `pram()`
