@@ -60,7 +60,7 @@ sdc <- createSdcObj(testdata2,
 }
 \references{
 for IL1 and IL1s: see
-\url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf},
+\url{https://crises-deim.urv.cat/webCrises/publications/isijcr/lncs3050Outlier.pdf},
 
 Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New Disclosure
 Risk Measures for Continuous Microdata Masking}, Lecture Notes in Computer

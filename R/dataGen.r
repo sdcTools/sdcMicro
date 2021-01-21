@@ -21,7 +21,7 @@
 #' @author Matthias Templ
 #' @seealso \code{\link{sdcMicroObj-class}}, \code{\link{shuffle}}
 #' @references Have a look at
-#' \url{http://crises2-deim.urv.cat/docs/publications/lncs/443.pdf}
+#' \url{https://crises-deim.urv.cat/web/docs/publications/lncs/443.pdf}
 #' @keywords manip
 #' @export
 #' @examples

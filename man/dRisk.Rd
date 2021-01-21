@@ -47,7 +47,7 @@ sdc <- createSdcObj(testdata2,
 }
 \references{
 see method SDID in
-\url{http://vneumann.etse.urv.es/webCrises/publications/isijcr/lncs3050Outlier.pdf}
+\url{https://crises-deim.urv.cat/webCrises/publications/isijcr/lncs3050Outlier.pdf}
 
 Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
