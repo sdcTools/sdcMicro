@@ -163,7 +163,7 @@ get.sdcMicroObj(sdc, "pram")$transitions
 }
 }
 \references{
-\url{http://www.gnu.org/software/glpk}
+\url{https://www.gnu.org/software/glpk/}
 
 Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 \emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},

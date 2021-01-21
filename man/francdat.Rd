@@ -17,7 +17,7 @@ A data frame with 8 observations on the following 8 variables.
 \item{w}{The weight vector. A numeric vector}}
 }
 \source{
-\url{http://neon.vb.cbs.nl/casc/Deliv/12d1.pdf}
+\url{https://research.cbs.nl/casc/deliv/12d1.pdf}
 }
 \description{
 Small synthetic data from Capobianchi, Polettini, Lucarelli

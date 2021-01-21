@@ -160,6 +160,6 @@ head(EIA)
 Brand, R. and Domingo-Ferrer, J. and Mateo-Sanz, J.M., Reference
 data sets to test and compare SDC methods for protection of numerical
 microdata. Unpublished.
-\url{http://neon.vb.cbs.nl/casc/CASCrefmicrodata.pdf}
+\url{https://research.cbs.nl/casc/CASCrefmicrodata.pdf}
 }
 \keyword{datasets}

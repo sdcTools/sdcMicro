@@ -68,10 +68,10 @@ data.frame(fka=f3a$fk, fkb=f3b$fk, fkc=f3c$fk)
 data.frame(Fka=f3a$Fk, Fkb=f3b$Fk, Fkc=f3c$Fk)
 }
 \references{
-look e.g. in \url{http://neon.vb.cbs.nl/casc/Deliv/12d1.pdf}
+look e.g. in \url{https://research.cbs.nl/casc/deliv/12d1.pdf}
 Templ, M.  \emph{Statistical Disclosure Control for Microdata Using the
 R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number 2, pp.
-67-85, 2008.  \url{http://www.tdp.cat/issues/abs.a004a08.php}
+67-85, 2008.  \url{https://www.tdp.cat/issues/abs.a004a08.php}
 
 Templ, M.  \emph{New Developments in Statistical Disclosure Control and
 Imputation: Robust Statistics Applied to Official Statistics},
