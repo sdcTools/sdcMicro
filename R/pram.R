@@ -35,7 +35,7 @@
 #' @return a modified [sdcMicroObj-class] object or a new object containing
 #' original and post-randomized variables (with suffix "_pram").
 #' @author Alexander Kowarik, Matthias Templ, Bernhard Meindl
-#' @references \url{http://www.gnu.org/software/glpk}
+#' @references \url{https://www.gnu.org/software/glpk/}
 #'
 #' Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 #' *Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro*,
