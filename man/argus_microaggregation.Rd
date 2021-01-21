@@ -32,5 +32,5 @@ df <- as.data.frame(mat)
 res <- argus_microaggregation(df, k=5, useOptimal=FALSE)
 }
 \seealso{
-mu-Argus manual at \url{http://neon.vb.cbs.nl/casc/Software/MUmanual5.1.pdf}
+mu-Argus manual at \url{https://github.com/sdcTools/manuals/raw/master/mu-argus/MUmanual5.1.pdf}
 }

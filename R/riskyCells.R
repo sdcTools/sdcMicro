@@ -17,7 +17,7 @@
 #' \item{keyVars: }{index or variable-names within \code{obj} that should be used for tabulation. In case \code{obj} is
 #' of class \code{\link{sdcMicroObj-class}}, this argument is not used and the pre-defined key-variables are used.}
 #' \item{level: }{in case \code{useIdentificationLevel=TRUE}, this numeric vector specifies the importance of the key variables.
-#' The construction of output tables follows the implementation in mu-argus, see e.g \url{http://neon.vb.cbs.nl/casc/Software/MUmanual5.1.pdf}.
+#' The construction of output tables follows the implementation in mu-argus, see e.g \url{https://github.com/sdcTools/manuals/raw/master/mu-argus/MUmanual5.1.pdf}.
 #' The length of this numeric vector must match the number of key variables.}
 #' \item{maxDim: }{in case \code{useIdentificationLevel=FALSE}, this number specifies maximal number of variables to tablulate.}
 #' }
