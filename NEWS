@@ -1,3 +1,6 @@
+# next
+- add additional data-utility / information-loss measures `IL_correl()` and `IL_variables()`
+
 # 5.6.0
 - fix for changes in the base R function order/sort in R 4.1.0
 
