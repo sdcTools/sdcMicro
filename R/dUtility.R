@@ -146,9 +146,13 @@ dUtilityWORK <- function(x, xm, method = "IL1s") {
 #' specifically these functions are different for numeric variables, ordered-factors and character/factor variables. The individual distances
 #' are summed up and scaled by `n * m` with `n` being the number of records and `m` being the number of (common) variables. 
 #' @author Bernhard Meindl <bernhard.meindl@@statistik.gv.at>
-#' @details Details can be found in (abstracts are in English) 
+#' @details Details can be found in (abstracts are in english) 
 #' - [Mlodak, A. (2020). Information loss resulting from statistical disclosure control of output data](https://bit.ly/3gvr0qd)
 #' - [Mlodak, A. (2019). Using the Complex Measure in an Assessment of the Information Loss Due to the Microdata Disclosure Control](https://bit.ly/3tDy9Z5)
+#' 
+#' The implementation of [IL_correl()] differs slightly with the original proposition from Mlodak, A. (2020) as 
+#' the constant multiplier was changed to `1 / sqrt(2)` instead of `1/2` for better efficiency and interpretability
+#' of the measure.
 #' 
 #' @param x an object coercible to a `data.frame` representing the original dataset
 #' @param xm an object coercible to a `data.frame` representing the perturbed, modified dataset
