@@ -347,9 +347,7 @@ IL_variables <- function(x, xm) {
   indiv_contr <- inp$dists / nrow(x)
   names(indiv_contr) <- inp$v
   
-  dd <- inp$dists
-  names(dd) <- cn
-  attr(lambda, "indiv_distances") <- dd
+  attr(lambda, "indiv_distances") <- indiv_contr
   attr(lambda, "n") <- nrow(x)
   class(lambda) <- "il_variables"
   lambda
