@@ -3,7 +3,7 @@
 maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variables, by=NULL,
   mixed=NULL, mixed.constant=NULL, trace=FALSE, weights=NULL, numFun=mean,
   catFun=VIM::sampleCat, addRandom=FALSE) {
-
+  data$OriginalSortingVariableMaGowerWork <- 1:nrow(data)
   if (!is.null(by)) {
     if (!all(by %in% colnames(data)))
       stop("'by'-variable not found in data set.\n'by' should be a vector of\n              variable names to split the dataset before \n applying microaggregation.")
@@ -88,6 +88,8 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
   })
   rn <- row.names(data)
   data <- do.call("rbind", spl)
+  data <- data[order(data$OriginalSortingVariableMaGowerWork),]
+  data$OriginalSortingVariableMaGowerWork <- NULL
   row.names(data) <- rn
   return(data)
 }
@@ -173,10 +175,10 @@ setMethod(f="microaggrGowerX", signature=c("sdcMicroObj"),
     variables <- colnames(o)[c(nV, kV)]
   if (is.null(dist_var))
     dist_var <- variables
+  
   res <- maGowerWORK(o, variables=variables, aggr=aggr, dist_var=dist_var, by=by,
     mixed=mixed, mixed.constant=mixed.constant, trace=trace, weights=weights, numFun=numFun,
     catFun=catFun, addRandom=addRandom)
-
   obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(res[, nV])))
   obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(as.data.frame(res[, kV])))
   obj <- dRisk(obj)
