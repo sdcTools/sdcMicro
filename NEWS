@@ -1,3 +1,6 @@
+# 5.6.1
+- various fixes in `sdcApp()`
+
 # 5.6.0
 - fix for changes in the base R function order/sort in R 4.1.0
 
