@@ -68,6 +68,7 @@ definition = function(obj, keyVar, ghostVars) {
 
   new_kv <- standardizeInput(obj=obj, v=keyVar)
   new_gv <- standardizeInput(obj=obj, v=ghostVars)
+
   if (is.null(gv)) {
     tmp <- list()
     tmp[[1]] <- new_kv
@@ -90,6 +91,20 @@ definition = function(obj, keyVar, ghostVars) {
       inp[[length(inp)+1]] <- tmp
     }
   }
+  
+  # update/initialize slot manipGhostVars
+  manipGhostVars <- get.sdcMicroObj(obj, type = "manipGhostVars")
+  if (is.null(manipGhostVars)) {
+    manipGhostVars <- get.sdcMicroObj(obj, "origData")[, new_gv, drop = FALSE]
+  } else {
+    df <- get.sdcMicroObj(obj, "origData")[, new_gv, drop = FALSE]
+    new <- setdiff(colnames(df), colnames(manipGhostVars))
+    if (length(new) > 0) {
+      df <- df[, new, drop = FALSE]
+      manipGhostVars <- cbind(manipGhostVars, df)
+    }
+  }
+  obj <- set.sdcMicroObj(obj, type="manipGhostVars", input=list(manipGhostVars))
   obj <- set.sdcMicroObj(obj, type="ghostVars", input=list(inp))
   obj
 })
