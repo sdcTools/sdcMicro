@@ -28,7 +28,7 @@ IL_variables(x, xm)
 the corresponding information-loss measure
 }
 \description{
-Measures \code{\link[=IL_correl]{IL_correl()}} and \code{\link[=IL_variables]{IL_variables()}} were proposed by Dr. Andrzej Mlodak and are (theoretically) bounded between \code{0} and \code{1}.
+Measures \code{\link[=IL_correl]{IL_correl()}} and \code{\link[=IL_variables]{IL_variables()}} were proposed by Andrzej Mlodak and are (theoretically) bounded between \code{0} and \code{1}.
 }
 \details{
 \itemize{
@@ -39,11 +39,7 @@ specifically these functions are different for numeric variables, ordered-factor
 are summed up and scaled by \code{n * m} with \code{n} being the number of records and \code{m} being the number of (common) variables.
 }
 
-Details can be found in (abstracts are in english)
-\itemize{
-\item \href{https://bit.ly/3gvr0qd}{Mlodak, A. (2020). Information loss resulting from statistical disclosure control of output data}
-\item \href{https://bit.ly/3tDy9Z5}{Mlodak, A. (2019). Using the Complex Measure in an Assessment of the Information Loss Due to the Microdata Disclosure Control}
-}
+Details can be found in the references below
 
 The implementation of \code{\link[=IL_correl]{IL_correl()}} differs slightly with the original proposition from Mlodak, A. (2020) as
 the constant multiplier was changed to \code{1 / sqrt(2)} instead of \code{1/2} for better efficiency and interpretability
@@ -69,6 +65,14 @@ xm$v1[1:5] <- "a"
 xm$v2 <- rnorm(n, mean = 5)
 xm$v4[1:5] <- "A"
 IL_variables(x, xm)
+}
+\references{
+Mlodak, A. (2020). Information loss resulting from statistical disclosure control of output data,
+Wiadomosci Statystyczne. The Polish Statistician, 2020, 65(9), 7-27, DOI: 10.5604/01.3001.0014.4121
+
+Mlodak, A. (2019). Using the Complex Measure in an Assessment of the Information Loss Due to the Microdata Disclosure Control,
+Przegląd Statystyczny, 2019, 66(1), 7-26,
+DOI: 10.5604/01.3001.0013.8285
 }
 \author{
 Bernhard Meindl \href{mailto:bernhard.meindl@statistik.gv.at}{bernhard.meindl@statistik.gv.at}

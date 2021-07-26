@@ -67,8 +67,10 @@ sdc <- createSdcObj(testdata2,
 
 }
 \references{
-for IL1 and IL1s: see
-\url{https://crises-deim.urv.cat/webCrises/publications/isijcr/lncs3050Outlier.pdf},
+for IL1 and IL1s: see Mateo-Sanz, Sebe, Domingo-Ferrer.
+Outlier Protection in Continuous Microdata Masking.
+International Workshop on Privacy in Statistical Databases.
+PSD 2004: Privacy in Statistical Databases pp 201-215.
 
 Templ, M. and Meindl, B., \verb{Robust Statistics Meets SDC: New Disclosure Risk Measures for Continuous Microdata Masking}, Lecture Notes in Computer
 Science, Privacy in Statistical Databases, vol. 5262, pp. 113-126, 2008.
