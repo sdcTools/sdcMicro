@@ -17,8 +17,10 @@
 #' @return The disclosure risk or/and the modified \code{\link{sdcMicroObj-class}}
 #' @author Matthias Templ
 #' @seealso \code{\link{dUtility}}
-#' @references see method SDID in
-#' \url{https://crises-deim.urv.cat/webCrises/publications/isijcr/lncs3050Outlier.pdf}
+#' @references see method SDID in Mateo-Sanz, Sebe, Domingo-Ferrer. 
+#' Outlier Protection in Continuous Microdata Masking.
+#' International Workshop on Privacy in Statistical Databases.
+#' PSD 2004: Privacy in Statistical Databases pp 201-215.
 #' 
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.

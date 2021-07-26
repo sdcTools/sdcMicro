@@ -22,8 +22,10 @@
 #' @return data utility or modified entry for data utility the [sdcMicroObj-class].
 #' @author Matthias Templ
 #' @seealso [dRisk()], [dRiskRMD()]
-#' @references for IL1 and IL1s: see
-#' \url{https://crises-deim.urv.cat/webCrises/publications/isijcr/lncs3050Outlier.pdf},
+#' @references for IL1 and IL1s: see Mateo-Sanz, Sebe, Domingo-Ferrer. 
+#' Outlier Protection in Continuous Microdata Masking.
+#' International Workshop on Privacy in Statistical Databases.
+#' PSD 2004: Privacy in Statistical Databases pp 201-215.
 #'
 #' Templ, M. and Meindl, B., `Robust Statistics Meets SDC: New Disclosure
 #' Risk Measures for Continuous Microdata Masking`, Lecture Notes in Computer
@@ -138,7 +140,7 @@ dUtilityWORK <- function(x, xm, method = "IL1s") {
 
 #' Additional Information-Loss measures
 #' 
-#' Measures [IL_correl()] and [IL_variables()] were proposed by Dr. Andrzej Mlodak and are (theoretically) bounded between `0` and `1`.
+#' Measures [IL_correl()] and [IL_variables()] were proposed by Andrzej Mlodak and are (theoretically) bounded between `0` and `1`.
 #' 
 #' - `IL_correl()`: is a information-loss measure that can be applied to common numerically scaled variables in `x` and `xm`. It is based
 #' on diagonal entries of inverse correlation matrices in the original and perturbed data. 
@@ -146,9 +148,7 @@ dUtilityWORK <- function(x, xm, method = "IL1s") {
 #' specifically these functions are different for numeric variables, ordered-factors and character/factor variables. The individual distances
 #' are summed up and scaled by `n * m` with `n` being the number of records and `m` being the number of (common) variables. 
 #' @author Bernhard Meindl <bernhard.meindl@@statistik.gv.at>
-#' @details Details can be found in (abstracts are in english) 
-#' - [Mlodak, A. (2020). Information loss resulting from statistical disclosure control of output data](https://bit.ly/3gvr0qd)
-#' - [Mlodak, A. (2019). Using the Complex Measure in an Assessment of the Information Loss Due to the Microdata Disclosure Control](https://bit.ly/3tDy9Z5)
+#' @details Details can be found in the references below
 #' 
 #' The implementation of [IL_correl()] differs slightly with the original proposition from Mlodak, A. (2020) as 
 #' the constant multiplier was changed to `1 / sqrt(2)` instead of `1/2` for better efficiency and interpretability
@@ -158,6 +158,12 @@ dUtilityWORK <- function(x, xm, method = "IL1s") {
 #' @param xm an object coercible to a `data.frame` representing the perturbed, modified dataset
 #' @param digits number digits used for rounding when displaying results
 #' @param ... additional parameter for print-methods; currently ignored
+#' @references Mlodak, A. (2020). Information loss resulting from statistical disclosure control of output data,
+#' Wiadomosci Statystyczne. The Polish Statistician, 2020, 65(9), 7-27, DOI: 10.5604/01.3001.0014.4121
+#' 
+#' Mlodak, A. (2019). Using the Complex Measure in an Assessment of the Information Loss Due to the Microdata Disclosure Control, 
+#' Przegląd Statystyczny, 2019, 66(1), 7-26, 
+#' DOI: 10.5604/01.3001.0013.8285
 #' @return the corresponding information-loss measure
 #' @export
 #' @rdname il_additional
