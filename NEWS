@@ -1,3 +1,11 @@
+# 5.6.1
+- various fixes in `sdcApp()`, e. g:
+   * pram (expert) button is now shown again
+   * kAnon correctly shows button
+- additional data-utility / information-loss measures `IL_correl()` and `IL_variables()`
+- fix in `addGhostVars()` that now correctly initializes `@manipGhostVars`
+- fix order in `microaggregationGower()`
+
 # 5.6.0
 - fix for changes in the base R function order/sort in R 4.1.0
 

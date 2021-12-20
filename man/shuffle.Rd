@@ -42,7 +42,7 @@ implementation in package robustbase is used.}
 \dQuote{MM} are possible.  For method \dQuote{MM}, the function \dQuote{rlm}
 from package MASS is applied.}
 
-\item{gadp}{TRUE, if the egadp results from a fit on the origianl data is
+\item{gadp}{TRUE, if the egadp results from a fit on the original data is
 returned.}
 }
 \value{
@@ -62,14 +62,14 @@ variables have to be stored as responses in the argument \sQuote{form},
 which is the usual formula interface for regression models in R.
 
 For method \dQuote{ds} the EGADP method is applied on the norm inverse
-percentiles.  Shuffling then ranks the original values according to the GADP
+percentiles. Shuffling then ranks the original values according to the GADP
 output. For further details, please see the references.
 
 Method \dQuote{mvn} uses a simplification and draws from the normal Copulas
 directly before these draws are shuffled.
 
-Method \dQuote{mlm} is also a simplification. A linear model is applied the
-expected values are used as the perturbed values before shuffling is
+Method \dQuote{mlm} is also a simplification. A linear model is applied, the
+expected values are used as perturbed values before shuffling is
 applied.
 }
 \note{

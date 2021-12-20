@@ -7,14 +7,14 @@
 #' which is the usual formula interface for regression models in R.
 #'
 #' For method \dQuote{ds} the EGADP method is applied on the norm inverse
-#' percentiles.  Shuffling then ranks the original values according to the GADP
+#' percentiles. Shuffling then ranks the original values according to the GADP
 #' output. For further details, please see the references.
 #'
 #' Method \dQuote{mvn} uses a simplification and draws from the normal Copulas
 #' directly before these draws are shuffled.
 #'
-#' Method \dQuote{mlm} is also a simplification. A linear model is applied the
-#' expected values are used as the perturbed values before shuffling is
+#' Method \dQuote{mlm} is also a simplification. A linear model is applied, the
+#' expected values are used as perturbed values before shuffling is
 #' applied.
 #'
 #' @name shuffle
@@ -39,7 +39,7 @@
 #' @param regmethod Method for multivariate regression. \dQuote{lm} and
 #' \dQuote{MM} are possible.  For method \dQuote{MM}, the function \dQuote{rlm}
 #' from package MASS is applied.
-#' @param gadp TRUE, if the egadp results from a fit on the origianl data is
+#' @param gadp TRUE, if the egadp results from a fit on the original data is
 #' returned.
 #' @return If \sQuote{obj} is of class \code{\link{sdcMicroObj-class}} the corresponding
 #' slots are filled, like manipNumVars, risk and utility.  If \sQuote{obj} is

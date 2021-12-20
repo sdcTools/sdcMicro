@@ -72,7 +72,6 @@ security of noise addition for privacy in statistical databases}, Lecture
 Notes in Computer Science, vol. 3050, pp. 149-161, 2004.  ISSN 0302-9743.
 Vol. Privacy in Statistical Databases, eds. J. Domingo-Ferrer and V. Torra,
 Berlin: Springer-Verlag.
-\url{https://crises-deim.urv.cat/webCrises/publications/isijcr/lncs3050OntheSec.pdf},
 
 Ting, D. Fienberg, S.E. and Trottini, M. \dQuote{ROMM Methodology for
 Microdata Release} Joint UNECE/Eurostat work session on statistical data

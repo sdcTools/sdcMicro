@@ -69,7 +69,7 @@ sdc <- globalRecode(sdc, column="water", breaks=3)
 table(get.sdcMicroObj(sdc, type="manipKeyVars")$water)
 }
 \references{
-#' Templ, M. and Kowarik, A. and Meindl, B.
+Templ, M. and Kowarik, A. and Meindl, B.
 Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 

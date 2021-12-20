@@ -268,18 +268,17 @@ output$ui_pram_simple <- renderUI({
 # UI-output for kAnon
 # current values of the importance-vector must be outside because of code_kAnon()
 kAnon_impvec <- reactive({
-  cn <- names(input)[grep("sel_importance_", names(input))]
-  cn <- cn[-grep("-selectized", cn)]
+  inp <- reactiveValuesToList(input)
+  cn <- names(inp)[grep("sel_importance_", names(inp))]
   if (length(cn)==0) {
     return(c(""))
   }
-
   # we need to sort the inputs properly
   # in case >= 10 key vars have been specified
   ii <- as.numeric(sapply(strsplit(cn, "_"), utils::tail, 1))
   cn <- cn[order(ii)]
   vals <- unlist(lapply(cn, function(x) {
-    input[[x]]
+    inp[[x]]
   }))
   vals <- gsub("NA","", vals)
   vals
@@ -287,9 +286,10 @@ kAnon_impvec <- reactive({
 
 # values for comb-suppression
 kAnon_comb_params <- reactive({
-  cn <- names(input)
-
+  inp <- reactiveValuesToList(input)
+  cn <- names(inp)
   cn1 <- cn[grep("rb_kanon_usecombs_", cn)]
+
   if (length(cn1)==0) {
     return(NULL)
   }
@@ -297,15 +297,18 @@ kAnon_comb_params <- reactive({
   # we need to sort the inputs properly
   # in case >= 10 key vars have been specified
   ii <- as.numeric(sapply(strsplit(cn1, "_"), utils::tail, 1))
+
   cn1 <- cn1[order(ii)]
+
   vals1 <- unlist(lapply(cn1, function(x) {
-    input[[x]]
+    inp[[x]]
   }))
 
   cn2 <- cn[grep("sl_kanon_combs_", cn)]
   cn2 <- cn2[order(ii)]
+
   vals2 <- unlist(lapply(cn2, function(x) {
-    input[[x]]
+    inp[[x]]
   }))
 
   # restrict to 'active' combs
@@ -443,6 +446,7 @@ output$ui_kAnon <- renderUI({
     btn <- NULL
     impvec <- kAnon_impvec()
     pp <- kAnon_comb_params()
+
     if (input$rb_kanon_useCombs=="Yes" && (!is.null(pp) && length(pp$use)==0)) {
       return(NULL)
     }

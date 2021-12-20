@@ -268,10 +268,10 @@ shinyServer(function(session, input, output) {
     }
 
     v <- as.vector(as.matrix(obj$transmat))/100
-    rn <- rownames(obj$transmat)
+    cn <- colnames(obj$transmat)
     matstr <- VecToRStr(v, quoted=FALSE)
     cmd <- paste0("mat <- matrix(",matstr,",ncol=",ncol(obj$transmat),"); ")
-    cmd <- paste0(cmd,"\nrownames(mat) <- colnames(mat) <- ", VecToRStr(rn, quoted=TRUE),";\n")
+    cmd <- paste0(cmd,"\nrownames(mat) <- colnames(mat) <- ", VecToRStr(cn, quoted=TRUE),";\n")
     cmd <- paste0(cmd,"sdcObj <- pram(sdcObj, variables=",dQuote(input$sel_pramvars_expert),", pd=mat)")
 
     txt_action <- paste0("PRAM of categorical variables ", VecToRStr_txt(input$sel_pramvars_expert), " with user-specified transition matrix (see above)\n")

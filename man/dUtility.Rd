@@ -3,31 +3,39 @@
 \docType{methods}
 \name{dUtility}
 \alias{dUtility}
-\title{data utility}
+\title{Data-Utility measures}
 \usage{
 dUtility(obj, ...)
 }
 \arguments{
-\item{obj}{original data or object of class \code{\link{sdcMicroObj-class}}}
+\item{obj}{original data or object of class \linkS4class{sdcMicroObj}}
 
 \item{...}{see arguments below
 \itemize{
-\item{xm: }{perturbed data}
-\item{method: }{method IL1, IL1s or eigen. More methods are implemented in
-summary.micro()}}}
+\item xm: perturbed data
+\item method: method IL1, IL1s or eigen. More methods are implemented in
+summary.micro()
+}}
 }
 \value{
-data utility or modified entry for data utility the \code{\link{sdcMicroObj-class}}.
+data utility or modified entry for data utility the \linkS4class{sdcMicroObj}.
 }
 \description{
-IL1s data utility.
+\code{\link[=dUtility]{dUtility()}} allows to compute different measures of data-utility based
+on various distances using original and perturbed variables.
 }
 \details{
 The standardised distances of the perturbed data values to the original ones
-are measured.  Measure IL1 measures the distances between the original
-values and the perturbed ones, scaled by the standard deviation.  Method
-\sQuote{eigen} and \sQuote{robeigen} compares the eigenvalues and robust
-eigenvalues form the original data and the perturbed data.
+are measured. The following measures are available:
+\itemize{
+\item \verb{"IL1}: sum of absolute distances between original and perturbed variables
+scaled by absolute values of the original variables
+\item \verb{"IL1s}: measures the absolute distances between original
+and perturbed ones, scaled by the standard deviation of original variables times
+the square root of \code{2}.
+\item \verb{"eigen}; compares the eigenvalues of original and perturbed data
+\item \verb{"robeigen}; compares robust eigenvalues of original and perturbed data
+}
 }
 \examples{
 data(free1)
@@ -59,15 +67,16 @@ sdc <- createSdcObj(testdata2,
 
 }
 \references{
-for IL1 and IL1s: see
-\url{https://crises-deim.urv.cat/webCrises/publications/isijcr/lncs3050Outlier.pdf},
+for IL1 and IL1s: see Mateo-Sanz, Sebe, Domingo-Ferrer.
+Outlier Protection in Continuous Microdata Masking.
+International Workshop on Privacy in Statistical Databases.
+PSD 2004: Privacy in Statistical Databases pp 201-215.
 
-Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New Disclosure
-Risk Measures for Continuous Microdata Masking}, Lecture Notes in Computer
+Templ, M. and Meindl, B., \verb{Robust Statistics Meets SDC: New Disclosure Risk Measures for Continuous Microdata Masking}, Lecture Notes in Computer
 Science, Privacy in Statistical Databases, vol. 5262, pp. 113-126, 2008.
 }
 \seealso{
-\code{\link{dRisk}}, \code{\link{dRiskRMD}}
+\code{\link[=dRisk]{dRisk()}}, \code{\link[=dRiskRMD]{dRiskRMD()}}
 }
 \author{
 Matthias Templ
