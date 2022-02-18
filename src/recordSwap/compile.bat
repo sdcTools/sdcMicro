@@ -1,0 +1,2 @@
+g++  -std=gnu++11 -DNDEBUG  -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -mtune=core2 -c recordSwap.cpp -o recordSwap.o
+g++ -shared -s -static-libgcc -o recordSwapping.dll recordSwap.o -Ld:/Compiler/gcc-4.9.3/local330/lib/i386 -Ld:/Compiler/gcc-4.9.3/local330/lib
