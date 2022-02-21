@@ -105,10 +105,11 @@ rounded up or down such that the number of households swapped in total is in coh
 \examples{
  
 # generate 10000 dummy households
+library(data.table)
 seed <- 2021
 set.seed(seed)
 nhid <- 10000
-dat <- recordSwapping::createDat( nhid )
+dat <- sdcMicro::createDat( nhid )
 
 # define paramters for swapping
 k_anonymity <- 1

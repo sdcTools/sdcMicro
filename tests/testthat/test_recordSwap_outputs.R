@@ -130,12 +130,12 @@ test_that("test k anonymity levels",{
   # check if high risk households were swapped
   dat_t <- transpose(dat)
   cnames <- colnames(dat)
-  hierarchy <- recordSwapping:::checkIndexString(hier, cnames = cnames, matchLength = length(hier))
-  risk_var <- recordSwapping:::checkIndexString(risk_variables, cnames = cnames ,minLength = 1)
-  hid_var <- recordSwapping:::checkIndexString(hid, cnames = cnames ,minLength = 1)  
-  risk <- recordSwapping:::setRisk_cpp(dat_t,hierarchy,risk_var,hid_var)
+  hierarchy <- sdcMicro:::checkIndexString(hier, cnames = cnames, matchLength = length(hier))
+  risk_var <- sdcMicro:::checkIndexString(risk_variables, cnames = cnames ,minLength = 1)
+  hid_var <- sdcMicro:::checkIndexString(hid, cnames = cnames ,minLength = 1)  
+  risk <- sdcMicro:::setRisk_cpp(dat_t,hierarchy,risk_var,hid_var)
   risk_threshold <- 1/k_anonymity
-  dat_s$levels <- recordSwapping:::setLevels_cpp(risk,risk_threshold)
+  dat_s$levels <- sdcMicro:::setLevels_cpp(risk,risk_threshold)
   table(dat_s$levels)
   expect_true(all(dat_s[levels>2,all(hid!=hid_swapped)]))
   
@@ -154,12 +154,12 @@ test_that("test k anonymity levels",{
   # check if households at high risk at highest level were swapped at highest level
   dat_t <- transpose(dat)
   cnames <- colnames(dat)
-  hierarchy <- recordSwapping:::checkIndexString(hier, cnames = cnames, matchLength = length(hier))
-  risk_var <- recordSwapping:::checkIndexString(risk_variables, cnames = cnames ,minLength = 1)
-  hid_var <- recordSwapping:::checkIndexString(hid, cnames = cnames ,minLength = 1)  
-  risk <- recordSwapping:::setRisk_cpp(dat_t,hierarchy,risk_var,hid_var)
+  hierarchy <- sdcMicro:::checkIndexString(hier, cnames = cnames, matchLength = length(hier))
+  risk_var <- sdcMicro:::checkIndexString(risk_variables, cnames = cnames ,minLength = 1)
+  hid_var <- sdcMicro:::checkIndexString(hid, cnames = cnames ,minLength = 1)  
+  risk <- sdcMicro:::setRisk_cpp(dat_t,hierarchy,risk_var,hid_var)
   risk_threshold <- 1/k_anonymity
-  dat_s2$levels <- recordSwapping:::setLevels_cpp(risk,risk_threshold)
+  dat_s2$levels <- sdcMicro:::setLevels_cpp(risk,risk_threshold)
   
   i <- dat_s2[levels==0][[hid]]
   dat_help <- dat[.(i),on=c(hid)][,.SD,.SDcols=c(hid,hier)]

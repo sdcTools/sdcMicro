@@ -226,3 +226,42 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
+RcppExport SEXP LocalRecProg_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP Mdav(SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP measure_hierachical(SEXP);
+RcppExport SEXP measure_risk_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP measure_threshold(SEXP, SEXP);
+RcppExport SEXP RankSwap(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP Suda2(SEXP, SEXP, SEXP, SEXP, SEXP);
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_sdcMicro_cpp_calcSuppInds", (DL_FUNC) &_sdcMicro_cpp_calcSuppInds, 3},
+    {"_sdcMicro_microaggregation_argus_cpp", (DL_FUNC) &_sdcMicro_microaggregation_argus_cpp, 3},
+    {"_sdcMicro_rankSwap_argus_cpp", (DL_FUNC) &_sdcMicro_rankSwap_argus_cpp, 2},
+    {"_sdcMicro_recordSwap_cpp", (DL_FUNC) &_sdcMicro_recordSwap_cpp, 12},
+    {"_sdcMicro_setLevels_cpp", (DL_FUNC) &_sdcMicro_setLevels_cpp, 2},
+    {"_sdcMicro_orderData_cpp", (DL_FUNC) &_sdcMicro_orderData_cpp, 2},
+    {"_sdcMicro_setRisk_cpp", (DL_FUNC) &_sdcMicro_setRisk_cpp, 4},
+    {"_sdcMicro_randSample_cpp", (DL_FUNC) &_sdcMicro_randSample_cpp, 5},
+    {"_sdcMicro_distributeDraws_cpp", (DL_FUNC) &_sdcMicro_distributeDraws_cpp, 5},
+    {"_sdcMicro_distributeDraws2_cpp", (DL_FUNC) &_sdcMicro_distributeDraws2_cpp, 6},
+    {"_sdcMicro_sampleDonor_cpp", (DL_FUNC) &_sdcMicro_sampleDonor_cpp, 7},
+    {"_sdcMicro_distributeRandom_cpp", (DL_FUNC) &_sdcMicro_distributeRandom_cpp, 3},
+    {"_sdcMicro_testLoop_cpp", (DL_FUNC) &_sdcMicro_testLoop_cpp, 2},
+    {"_sdcMicro_test_prioqueue", (DL_FUNC) &_sdcMicro_test_prioqueue, 5},
+    {"_sdcMicro_test_comparator", (DL_FUNC) &_sdcMicro_test_comparator, 5},
+    {"LocalRecProg_cpp",    (DL_FUNC) &LocalRecProg_cpp,    9},
+    {"Mdav",                (DL_FUNC) &Mdav,                5},
+    {"measure_hierachical", (DL_FUNC) &measure_hierachical, 1},
+    {"measure_risk_cpp",    (DL_FUNC) &measure_risk_cpp,    6},
+    {"measure_threshold",   (DL_FUNC) &measure_threshold,   2},
+    {"RankSwap",            (DL_FUNC) &RankSwap,            9},
+    {"Suda2",               (DL_FUNC) &Suda2,               5},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_sdcMicro(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}
