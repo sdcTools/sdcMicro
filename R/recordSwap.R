@@ -356,7 +356,7 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
                             seed=seed)
   
   # check if swapping was successful
-  if(file.exists(log_file_name) & file.mtime(log_file_name)>start_time){
+  if(file.exists(log_file_name) && file.mtime(log_file_name)>start_time){
     message("Donor household was not found in ",length(readLines(log_file_name))-2," case(s).\nSee ",log_file_name," for a detailed list")
   }else{
     message("Recordswapping was successful!\n")
