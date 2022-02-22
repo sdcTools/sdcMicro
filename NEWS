@@ -1,3 +1,6 @@
+# 5.6.2
+- allow to change fixed threshold for undo-feature using env-var `sdcMicro_maxsize_undo`
+
 # 5.6.1
 - various fixes in `sdcApp()`, e. g:
    * pram (expert) button is now shown again

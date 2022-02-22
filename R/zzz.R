@@ -7,3 +7,7 @@
   msg <- paste0(msg,"--------")
   packageStartupMessage(msg)
 }
+
+.onAttach <- function(lib, pkg) {
+  Sys.setenv("sdcMicro_maxsize_undo" = 1e5)
+}

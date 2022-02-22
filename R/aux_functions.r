@@ -131,6 +131,19 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
     options$seed <- NA
   }
 
+  # max_size for undo-functionality (refers to rows of data.frame input
+  # can be set via env-var `sdcMicro_maxsize_undo`
+  res <- tryCatch(
+    expr = as.numeric(Sys.getenv("sdcMicro_maxsize_undo")),
+    error = function(e) e,
+    warning = function(w) w
+  )
+  if (inherits(res, "error") || is.na(res) || res < 1) {
+    options$max_size <- 1e5
+  } else {
+    options$max_size <- res
+  }
+
   if (!is.data.frame(dat)) {
     dat <- as.data.frame(dat)
   }
@@ -290,21 +303,39 @@ setGeneric("nextSdcObjX", function(obj) {
 })
 
 setMethod(f="nextSdcObjX", signature=c("sdcMicroObj"), definition=function(obj) {
-  options <- get.sdcMicroObj(obj, type="options")
+  options <- get.sdcMicroObj(obj, type = "options")
   if (("noUndo" %in% options)) {
     return(obj)
   }
-  if (nrow(obj@origData) > 1e+05) {
-    warnMsg <- "No previous states are saved because your data set has more than 100 000 observations.\n"
-    obj <- addWarning(obj, warnMsg=warnMsg, method="nextSdcObj", variable=NA)
+  if (nrow(obj@origData) > options$max_size) {
+    warnMsg <- paste("No previous states are saved because your data set has more than", options$max_size, "observations.\n")
+    obj <- addWarning(
+      obj = obj,
+      warnMsg = warnMsg,
+      method = "nextSdcObj",
+      variable = NA
+    )
     warning(warnMsg)
     return(obj)
   }
-  if (length(grep("maxUndo", options)) > 0)
-    maxUndo <- as.numeric(substr(options[grep("maxUndo", options)], 9, stop=nchar(options[grep("maxUndo",
-      options)], type="width"))) else maxUndo <- 1
-  obj <- deletePrevSave(obj, maxUndo)
-  obj <- set.sdcMicroObj(obj, type="prev", input=list(obj))
+  if (length(grep("maxUndo", options)) > 0) {
+    maxUndo <- as.numeric(substr(
+      x = options[grep("maxUndo", options)],
+      start = 9,
+      stop = nchar(options[grep("maxUndo", options)], type = "width")
+    ))
+  } else {
+    maxUndo <- 1
+  }
+  obj <- deletePrevSave(
+    obj = obj,
+    m = maxUndo
+  )
+  obj <- set.sdcMicroObj(
+    object = obj,
+    type = "prev",
+    input = list(obj)
+  )
   return(obj)
 })
 
