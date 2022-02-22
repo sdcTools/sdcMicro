@@ -847,11 +847,11 @@ std::vector< std::vector<int> > recordSwap(std::vector< std::vector<int> > data,
   // save number of swaped hids 
   count_swapped_hid = swappedIndex.size()*2;
   
-  if(IDnotUsed.size()==0){
-    cout<<"Recordswapping was successful!"<<endl;
-  }else{
-    cout<<"Donor household was not found in "<<IDnotUsed.size()<<" cases.\nSee log.txt for a detailed list"<<endl;
-    
+  if(IDnotUsed.size()>0){
+//    cout<<"Recordswapping was successful!"<<endl;
+//  }else{
+//    cout<<"Donor household was not found in "<<IDnotUsed.size()<<" cases.\nSee log.txt for a detailed list"<<endl;
+    // write to output file
     FILE* pFile = fopen(log_file_name.c_str(), "w");
     fprintf(pFile, "%lu household IDs for which a suitable donor for swapping was not found\n -------------------------------------------\n",IDnotUsed.size());
     for(auto const&x : IDnotUsed){

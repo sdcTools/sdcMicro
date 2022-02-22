@@ -375,7 +375,7 @@ std::vector<int> distributeRandom_cpp(std::vector<double> inputRatio, int totalD
   
   std::vector<int> help_i(1,0);
   std::map<std::vector<int>,double> ratioDraws;
-  for(std::size_t i;i<inputRatio.size();i++){
+  for(std::size_t i=0;i<inputRatio.size();i++){
     help_i[0] = i;
     ratioDraws[help_i] = inputRatio[i];
   }
