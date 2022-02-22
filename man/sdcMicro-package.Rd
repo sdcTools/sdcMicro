@@ -145,13 +145,14 @@ data(free1)
 marstat <- as.factor(free1[,"MARSTAT"])
 marstatPramed <- pram(marstat)
 summary(marstatPramed)
+
 # FOR OBJECTS OF CLASS sdcMicro
 data(testdata)
 
 # undo-functionality is by default restricted to data sets
 # with <= 1e5 rows; to modify, env-var `sdcMicro_maxsize_undo`
-# needs to be changed before creating a problem instance
-Sys.setenv("sdcMicro_maxsize_undo" = 2e5)
+# can to be changed before creating a problem instance
+Sys.setenv("sdcMicro_maxsize_undo" = 1e6)
 
 sdc <- createSdcObj(testdata,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),

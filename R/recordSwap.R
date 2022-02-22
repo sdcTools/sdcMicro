@@ -58,6 +58,7 @@
 #' @param log_file_name character, path for writing a log file. The log file contains a list of household IDs (`hid`) which could not have been swapped and is only created if any such households exist.    
 #' @param seed integer defining the seed for the random number generator, for reproducibility. if `NULL` a random seed will be set using `sample(1e5,1)`.
 #' @param ... parameters passed to `recordSwap.default()`
+#' @author Johannes Gussenbauer
 #' 
 #' @return `data.table` with swapped records.
 #' 

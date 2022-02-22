@@ -3,11 +3,12 @@ Type: Package
 Title: Statistical Disclosure Control Methods for Anonymization of Data and
     Risk Estimation
 Version: 5.6.1
-Date: 2021-07-20
+Date: 2022-02-22
 Authors@R: c(
   person("Matthias", "Templ", email="matthias.templ@gmail.com", role = c("aut", "cre"), comment=c(ORCID="0000-0002-8638-5276")),
   person("Bernhard", "Meindl", email = "Bernhard.Meindl@statistik.gv.at", role = c("aut")),
-  person("Alexander", "Kowarik", email="Alexander.Kowarik@statistik.gv.at", role = "aut", comment=c(ORCID="0000-0001-8598-4130")))
+  person("Alexander", "Kowarik", email="Alexander.Kowarik@statistik.gv.at", role = "aut", comment=c(ORCID="0000-0001-8598-4130")),  
+  person("Johannes", "Gussenbauer", email = "johannes.gussenbauer@statistik.gv.at", role = c("aut")))
 Description: Data from statistical agencies and other institutions are mostly
     confidential. This package (see also Templ, Kowarik and Meindl (2017) <doi:10.18637/jss.v067.i04>) can be used for the generation of anonymized
     (micro)data, i.e. for the creation of public- and scientific-use files.
