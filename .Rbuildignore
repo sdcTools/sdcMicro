@@ -5,3 +5,6 @@
 ^notes_and_testdata$
 docs
 inst/shiny/sdcApp/rsconnect
+src/recordSwap/*.o
+src/recordSwap/*.so
+src/recordSwap/compile.sh

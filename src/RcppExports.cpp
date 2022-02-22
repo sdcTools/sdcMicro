@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // cpp_calcSuppInds
 List cpp_calcSuppInds(NumericMatrix inp, NumericVector checkVals, List params);
 RcppExport SEXP _sdcMicro_cpp_calcSuppInds(SEXP inpSEXP, SEXP checkValsSEXP, SEXP paramsSEXP) {
@@ -42,4 +47,221 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(rankSwap_argus_cpp(inp, perc));
     return rcpp_result_gen;
 END_RCPP
+}
+// recordSwap_cpp
+std::vector< std::vector<int> > recordSwap_cpp(std::vector< std::vector<int> > data, int hid, std::vector<int> hierarchy, Rcpp::List similar_cpp, double swaprate, std::vector<std::vector<double>> risk, double risk_threshold, int k_anonymity, std::vector<int> risk_variables, std::vector<int> carry_along, std::string log_file_name, int seed);
+RcppExport SEXP _sdcMicro_recordSwap_cpp(SEXP dataSEXP, SEXP hidSEXP, SEXP hierarchySEXP, SEXP similar_cppSEXP, SEXP swaprateSEXP, SEXP riskSEXP, SEXP risk_thresholdSEXP, SEXP k_anonymitySEXP, SEXP risk_variablesSEXP, SEXP carry_alongSEXP, SEXP log_file_nameSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector< std::vector<int> > >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< int >::type hid(hidSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type hierarchy(hierarchySEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type similar_cpp(similar_cppSEXP);
+    Rcpp::traits::input_parameter< double >::type swaprate(swaprateSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::vector<double>> >::type risk(riskSEXP);
+    Rcpp::traits::input_parameter< double >::type risk_threshold(risk_thresholdSEXP);
+    Rcpp::traits::input_parameter< int >::type k_anonymity(k_anonymitySEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type risk_variables(risk_variablesSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type carry_along(carry_alongSEXP);
+    Rcpp::traits::input_parameter< std::string >::type log_file_name(log_file_nameSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(recordSwap_cpp(data, hid, hierarchy, similar_cpp, swaprate, risk, risk_threshold, k_anonymity, risk_variables, carry_along, log_file_name, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// setLevels_cpp
+std::vector<int> setLevels_cpp(std::vector< std::vector<double> > risk, double risk_threshold);
+RcppExport SEXP _sdcMicro_setLevels_cpp(SEXP riskSEXP, SEXP risk_thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector< std::vector<double> > >::type risk(riskSEXP);
+    Rcpp::traits::input_parameter< double >::type risk_threshold(risk_thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(setLevels_cpp(risk, risk_threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
+// orderData_cpp
+std::vector< std::vector<int> > orderData_cpp(std::vector< std::vector<int> >& data, int orderIndex);
+RcppExport SEXP _sdcMicro_orderData_cpp(SEXP dataSEXP, SEXP orderIndexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector< std::vector<int> >& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< int >::type orderIndex(orderIndexSEXP);
+    rcpp_result_gen = Rcpp::wrap(orderData_cpp(data, orderIndex));
+    return rcpp_result_gen;
+END_RCPP
+}
+// setRisk_cpp
+std::vector< std::vector<double> > setRisk_cpp(std::vector<std::vector<int> > data, std::vector<int> hierarchy, std::vector<int> risk_variables, int hid);
+RcppExport SEXP _sdcMicro_setRisk_cpp(SEXP dataSEXP, SEXP hierarchySEXP, SEXP risk_variablesSEXP, SEXP hidSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::vector<int> > >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type hierarchy(hierarchySEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type risk_variables(risk_variablesSEXP);
+    Rcpp::traits::input_parameter< int >::type hid(hidSEXP);
+    rcpp_result_gen = Rcpp::wrap(setRisk_cpp(data, hierarchy, risk_variables, hid));
+    return rcpp_result_gen;
+END_RCPP
+}
+// randSample_cpp
+std::vector<int> randSample_cpp(std::vector<int> ID, int N, std::vector<double> prob, std::vector<int> IDused, int seed);
+RcppExport SEXP _sdcMicro_randSample_cpp(SEXP IDSEXP, SEXP NSEXP, SEXP probSEXP, SEXP IDusedSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<int> >::type ID(IDSEXP);
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type prob(probSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type IDused(IDusedSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(randSample_cpp(ID, N, prob, IDused, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// distributeDraws_cpp
+std::vector< std::vector<int> > distributeDraws_cpp(std::vector< std::vector<int> > data, std::vector<int> hierarchy, int hid, double swaprate, int seed);
+RcppExport SEXP _sdcMicro_distributeDraws_cpp(SEXP dataSEXP, SEXP hierarchySEXP, SEXP hidSEXP, SEXP swaprateSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector< std::vector<int> > >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type hierarchy(hierarchySEXP);
+    Rcpp::traits::input_parameter< int >::type hid(hidSEXP);
+    Rcpp::traits::input_parameter< double >::type swaprate(swaprateSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(distributeDraws_cpp(data, hierarchy, hid, swaprate, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// distributeDraws2_cpp
+std::vector<std::vector<int>> distributeDraws2_cpp(std::vector< std::vector<int> > data, std::vector< std::vector<double> > risk, std::vector<int> hierarchy, int hid, double swaprate, int seed);
+RcppExport SEXP _sdcMicro_distributeDraws2_cpp(SEXP dataSEXP, SEXP riskSEXP, SEXP hierarchySEXP, SEXP hidSEXP, SEXP swaprateSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector< std::vector<int> > >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< std::vector< std::vector<double> > >::type risk(riskSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type hierarchy(hierarchySEXP);
+    Rcpp::traits::input_parameter< int >::type hid(hidSEXP);
+    Rcpp::traits::input_parameter< double >::type swaprate(swaprateSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(distributeDraws2_cpp(data, risk, hierarchy, hid, swaprate, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sampleDonor_cpp
+std::vector<int> sampleDonor_cpp(std::vector< std::vector<int> > data, Rcpp::List similar_cpp, int hid, std::vector<int> IDswap, std::vector<int> IDswap_pool_vec, std::vector<double> prob, int seed);
+RcppExport SEXP _sdcMicro_sampleDonor_cpp(SEXP dataSEXP, SEXP similar_cppSEXP, SEXP hidSEXP, SEXP IDswapSEXP, SEXP IDswap_pool_vecSEXP, SEXP probSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector< std::vector<int> > >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type similar_cpp(similar_cppSEXP);
+    Rcpp::traits::input_parameter< int >::type hid(hidSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type IDswap(IDswapSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type IDswap_pool_vec(IDswap_pool_vecSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type prob(probSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(sampleDonor_cpp(data, similar_cpp, hid, IDswap, IDswap_pool_vec, prob, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// distributeRandom_cpp
+std::vector<int> distributeRandom_cpp(std::vector<double> inputRatio, int totalDraws, int seed);
+RcppExport SEXP _sdcMicro_distributeRandom_cpp(SEXP inputRatioSEXP, SEXP totalDrawsSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<double> >::type inputRatio(inputRatioSEXP);
+    Rcpp::traits::input_parameter< int >::type totalDraws(totalDrawsSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(distributeRandom_cpp(inputRatio, totalDraws, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// testLoop_cpp
+std::vector<double> testLoop_cpp(std::vector<std::vector<int>> inputGroup, std::vector<std::vector<double>> risk);
+RcppExport SEXP _sdcMicro_testLoop_cpp(SEXP inputGroupSEXP, SEXP riskSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::vector<int>> >::type inputGroup(inputGroupSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::vector<double>> >::type risk(riskSEXP);
+    rcpp_result_gen = Rcpp::wrap(testLoop_cpp(inputGroup, risk));
+    return rcpp_result_gen;
+END_RCPP
+}
+// test_prioqueue
+std::vector<int> test_prioqueue(std::vector<int> x_vec, std::vector<double> prob, std::vector<int> mustSwap_vec, int n, int seed);
+RcppExport SEXP _sdcMicro_test_prioqueue(SEXP x_vecSEXP, SEXP probSEXP, SEXP mustSwap_vecSEXP, SEXP nSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<int> >::type x_vec(x_vecSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type prob(probSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type mustSwap_vec(mustSwap_vecSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_prioqueue(x_vec, prob, mustSwap_vec, n, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// test_comparator
+std::vector<int> test_comparator(std::vector<int> x_vec, std::vector<double> prob, std::vector<int> mustSwap_vec, int n, int seed);
+RcppExport SEXP _sdcMicro_test_comparator(SEXP x_vecSEXP, SEXP probSEXP, SEXP mustSwap_vecSEXP, SEXP nSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<int> >::type x_vec(x_vecSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type prob(probSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type mustSwap_vec(mustSwap_vecSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_comparator(x_vec, prob, mustSwap_vec, n, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+
+RcppExport SEXP LocalRecProg_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP Mdav(SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP measure_hierachical(SEXP);
+RcppExport SEXP measure_risk_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP measure_threshold(SEXP, SEXP);
+RcppExport SEXP RankSwap(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP Suda2(SEXP, SEXP, SEXP, SEXP, SEXP);
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_sdcMicro_cpp_calcSuppInds", (DL_FUNC) &_sdcMicro_cpp_calcSuppInds, 3},
+    {"_sdcMicro_microaggregation_argus_cpp", (DL_FUNC) &_sdcMicro_microaggregation_argus_cpp, 3},
+    {"_sdcMicro_rankSwap_argus_cpp", (DL_FUNC) &_sdcMicro_rankSwap_argus_cpp, 2},
+    {"_sdcMicro_recordSwap_cpp", (DL_FUNC) &_sdcMicro_recordSwap_cpp, 12},
+    {"_sdcMicro_setLevels_cpp", (DL_FUNC) &_sdcMicro_setLevels_cpp, 2},
+    {"_sdcMicro_orderData_cpp", (DL_FUNC) &_sdcMicro_orderData_cpp, 2},
+    {"_sdcMicro_setRisk_cpp", (DL_FUNC) &_sdcMicro_setRisk_cpp, 4},
+    {"_sdcMicro_randSample_cpp", (DL_FUNC) &_sdcMicro_randSample_cpp, 5},
+    {"_sdcMicro_distributeDraws_cpp", (DL_FUNC) &_sdcMicro_distributeDraws_cpp, 5},
+    {"_sdcMicro_distributeDraws2_cpp", (DL_FUNC) &_sdcMicro_distributeDraws2_cpp, 6},
+    {"_sdcMicro_sampleDonor_cpp", (DL_FUNC) &_sdcMicro_sampleDonor_cpp, 7},
+    {"_sdcMicro_distributeRandom_cpp", (DL_FUNC) &_sdcMicro_distributeRandom_cpp, 3},
+    {"_sdcMicro_testLoop_cpp", (DL_FUNC) &_sdcMicro_testLoop_cpp, 2},
+    {"_sdcMicro_test_prioqueue", (DL_FUNC) &_sdcMicro_test_prioqueue, 5},
+    {"_sdcMicro_test_comparator", (DL_FUNC) &_sdcMicro_test_comparator, 5},
+    {"LocalRecProg_cpp",    (DL_FUNC) &LocalRecProg_cpp,    9},
+    {"Mdav",                (DL_FUNC) &Mdav,                5},
+    {"measure_hierachical", (DL_FUNC) &measure_hierachical, 1},
+    {"measure_risk_cpp",    (DL_FUNC) &measure_risk_cpp,    6},
+    {"measure_threshold",   (DL_FUNC) &measure_threshold,   2},
+    {"RankSwap",            (DL_FUNC) &RankSwap,            9},
+    {"Suda2",               (DL_FUNC) &Suda2,               5},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_sdcMicro(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

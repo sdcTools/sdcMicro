@@ -54,6 +54,7 @@ Collate:
     'addGhostVars.R'
     'addNoise.r'
     'aux_functions.r'
+    'createDat.R'
     'createNewID.R'
     'dataGen.r'
     'dataSets.R'
@@ -65,6 +66,7 @@ Collate:
     'groupAndRename.R'
     'GUIfunctions.R'
     'indivRisk.R'
+    'infoLoss.R'
     'LocalRecProg.R'
     'localSupp.R'
     'localSuppression.R'
@@ -80,6 +82,7 @@ Collate:
     'pram.R'
     'rankSwap.R'
     'RcppExports.R'
+    'recordSwap.R'
     'report.R'
     'riskyCells.R'
     'sdcMicro-package.R'
@@ -94,6 +97,7 @@ Collate:
     'maG.R'
     'sdcApp.R'
     'show_sdcMicroObj.R'
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 Encoding: UTF-8
+SystemRequirements: C++11

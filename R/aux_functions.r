@@ -116,7 +116,13 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
   hhId=NULL, strataVar=NULL, sensibleVar=NULL, excludeVars=NULL, options=NULL, seed=NULL,
   randomizeRecords=FALSE, alpha=1) {
   obj <- new("sdcMicroObj")
-  options <- list()
+  
+  if(!is.null(options)){
+    # check if options is a named list
+    if(!(is.list(options) && !is.null(names(options)))){
+      stop("`options` must be either `NULL` or a named list")
+    }
+  }
   if (!is.null(seed) && is.numeric(seed)) {
     ss <- round(seed)
     set.seed(ss)
