@@ -1,3 +1,7 @@
+# 5.7.2
+- parametrization of undolast()'s data size
+- target record swapping
+
 # 5.6.2
 - allow to change fixed threshold for undo-feature using env-var `sdcMicro_maxsize_undo`
 

@@ -146,3 +146,6 @@ dat_s <- recordSwap(data = dat, hid = hid, hierarchy = hier,
 dat_s[hid!=hid_swapped,.(nuts1,nuts2,nuts3,lau2)]
 
 }
+\author{
+Johannes Gussenbauer
+}
