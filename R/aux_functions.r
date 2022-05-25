@@ -116,7 +116,7 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
   hhId=NULL, strataVar=NULL, sensibleVar=NULL, excludeVars=NULL, options=NULL, seed=NULL,
   randomizeRecords=FALSE, alpha=1) {
   obj <- new("sdcMicroObj")
-  
+
   if(!is.null(options)){
     # check if options is a named list
     if(!(is.list(options) && !is.null(names(options)))){
@@ -442,42 +442,48 @@ setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function
   ignoreGhostVars=FALSE, ignoreStrataVar=FALSE, randomizeRecords="no") {
   hhid <- clusterid <- newid <- N <- id <- NULL
   if (!randomizeRecords %in% c("no","simple","byHH", "withinHH")) {
-    stop("invalid value in argument 'randomizeRecords'\n")
+    stop("invalid value in argument 'randomizeRecords'", call. = FALSE)
   }
-  o <- get.sdcMicroObj(obj, type="origData")
-  k <- get.sdcMicroObj(obj, type="manipKeyVars")
-  p <- get.sdcMicroObj(obj, type="manipPramVars")
-  n <- get.sdcMicroObj(obj, type="manipNumVars")
-  g <- get.sdcMicroObj(obj, type="manipGhostVars")
-  s <- get.sdcMicroObj(obj, type="manipStrataVar")
-  origKeys <- o[,colnames(k)]
-  if (!is.null(k) && !ignoreKeyVars)
+  o <- get.sdcMicroObj(obj, type = "origData")
+  k <- get.sdcMicroObj(obj, type = "manipKeyVars")
+  p <- get.sdcMicroObj(obj, type = "manipPramVars")
+  n <- get.sdcMicroObj(obj, type = "manipNumVars")
+  g <- get.sdcMicroObj(obj, type = "manipGhostVars")
+  s <- get.sdcMicroObj(obj, type = "manipStrataVar")
+  origKeys <- o[, colnames(k), drop = FALSE]
+  if (!is.null(k) && !ignoreKeyVars) {
     o[, colnames(k)] <- k
-  if (!is.null(p) && !ignorePramVars)
+  }
+  if (!is.null(p) && !ignorePramVars) {
     o[, colnames(p)] <- p
-  if (!is.null(n) && !ignoreNumVars)
+  }
+  if (!is.null(n) && !ignoreNumVars) {
     o[, colnames(n)] <- n
-  if (!is.null(g) && !ignoreGhostVars)
+  }
+  if (!is.null(g) && !ignoreGhostVars) {
     o[, colnames(g)] <- g
-  if (!is.null(s) && !ignoreStrataVar)
+  }
+  if (!is.null(s) && !ignoreStrataVar) {
     o$sdcGUI_strataVar <- s
+  }
   ## quick and dirty: ensure that keyVars are factors:
   if (!is.null(k) && !ignoreKeyVars) {
-    for (i in 1:length(colnames(k))) {
-      cc <- class(origKeys[, colnames(k)[i]])
-      v_p <- o[,colnames(k)[i]]
-      if (cc!=class(v_p)) {
-        if (cc=="integer") {
-          o[,colnames(k)[i]] <- as.integer(v_p)
+    for (i in seq_len(ncol(k))) {
+      cc <- class(origKeys[[colnames(k)[i]]])
+      vname <- colnames(k)[i]
+      v_p <- o[[vname]]
+      if (cc != class(v_p)) {
+        if (cc == "integer") {
+          o[[vname]] <- as.integer(v_p)
         }
-        if (cc=="character") {
-          o[,colnames(k)[i]] <- as.character(v_p)
+        if (cc == "character") {
+          o[[vname]] <- as.character(v_p)
         }
-        if (cc=="numeric") {
-          o[,colnames(k)[i]] <- as.numeric(v_p)
+        if (cc == "numeric") {
+          o[[vname]] <- as.numeric(v_p)
         }
-        if (cc=="logical") {
-          o[,colnames(k)[i]] <- as.logical(v_p)
+        if (cc == "logical") {
+          o[[vname]] <- as.logical(v_p)
         }
       }
     }
