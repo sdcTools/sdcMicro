@@ -1,5 +1,6 @@
 # 5.7.1
 - Bugfix in `extractManipData()` with only a single categorical variable, thx @tamertemizer for reporting
+- Feature: added new function `recordSwap()` that implmements targetted record swapping
 
 # 5.7.0
 - parametrization of undolast()'s data size
