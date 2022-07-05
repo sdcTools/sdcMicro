@@ -356,9 +356,9 @@ definition=function(obj, var) {
     stop("at least one variable specified in 'var' is not available in 'obj'!\n")
   }
   for (vv in var) {
-    if("factor" %in% class(obj[[vv]])){
+    if (inherits(obj[[vv]], "factor")) {
       obj[[vv]] <- as.numeric(levels(obj[[vv]]))[obj[[vv]]]
-    }else{
+    } else{
       obj[[vv]] <- as.numeric(obj[[vv]])
     }
   }
@@ -436,15 +436,15 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
     comment.char <- ""
     res <- tryCatchFn(utils::read.table(path, sep=sep, header=header, quote=quote, comment.char=comment.char))
   }
-  if ("simpleError" %in% class(res)) {
+  if (inherits(res, "simpleError")) {
     return(res)
   }
-  if (!"data.frame" %in% class(res)) {
+  if (!inherits(res, "data.frame")) {
     res$message <- paste0(res$message,"\ndata read into the system was not of class 'data.frame'!")
     return(res)
   }
   # convert result to clas 'data.frame' if it is a 'tbl_df'...
-  if ("tbl_df" %in% class(res)) {
+  if (inherits(res, "tbl_df")) {
     class(res) <- "data.frame"
   }
 
@@ -492,7 +492,7 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
   nonUTFvallabels <- data.frame(varName = character(), initLabel = character(0), convLabel = character(0), stringsAsFactors = FALSE)
   for (i in 1:dim(res)[2]) {
     # Character strings
-    if ("character" %in% class(res[,i])) {
+    if (inherits(res[, i], "character")) {
       if (any(!validUTF8(res[,i]))) {
         nonUTFvallabels <- rbind(nonUTFvallabels, cbind(rep(colnames(res)[i], length(unique(res[which(!validUTF8(res[,i])),i]))),
           unique(res[which(!validUTF8(res[,i])),i]),
@@ -503,7 +503,7 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
       }
     }
     # Factor variables
-    if ("factor" %in% class(res[,i])) {
+    if (inherits(res[, i], "factor")) {
       if (any(!validUTF8(levels(res[,i])))) {
         nonUTFvallabels <- rbind(nonUTFvallabels, cbind(rep(colnames(res)[i], length(levels(res[,i])[which(!validUTF8(levels(res[,i])))])),
           levels(res[,i])[which(!validUTF8(levels(res[,i])))],
@@ -549,13 +549,15 @@ readMicrodata <- function(path, type, convertCharToFac=TRUE, drop_all_missings=T
 #' @export
 importProblem <- function(path) {
   res <- tryCatchFn(get(load(file=path)))
-  if ( "simpleError" %in% class(res) ) {
+  if (inherits(res, "simpleError")) {
     return(res)
-  } else {
-    if (!"sdcMicro_GUI_export" %in% class(res)) {
-      res$message <- paste0(res$message,"\ndata read into the system was not of class 'sdcMicro_GUI_export'!")
-      return(res)
-    }
+  }
+  if (!inherits(res, "sdcMicro_GUI_export")) {
+    res$message <- paste0(
+      res$message,
+      "\ndata read into the system was not of class 'sdcMicro_GUI_export'!"
+    )
+    return(res)
   }
   res
 }
@@ -636,7 +638,7 @@ subsetMicrodata <- function(obj, type, n) {
 #' @rdname writeSafeFile
 #' @export
 writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
-  if (!class(obj)=="sdcMicroObj") {
+  if (!inherits(obj, "sdcMicroObj")) {
     stop("invalid input in argument 'obj'\n")
   }
   dat <- extractManipData(obj, randomizeRecords=randomizeRecords)

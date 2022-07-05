@@ -17,7 +17,7 @@
 #' @references Templ, M. \emph{Statistical Disclosure Control for Microdata
 #' Using the R-Package sdcMicro}, Transactions on Data Privacy, vol. 1, number
 #' 2, pp. 67-85, 2008. \url{http://www.tdp.cat/issues/abs.a004a08.php}
-#' 
+#'
 #' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4. \doi{10.1007/978-3-319-50272-4}
 #' \doi{10.1007/978-3-319-50272-4}
@@ -115,7 +115,7 @@ definition = function(obj, threshold=0.15, keyVar) {
 
 setMethod(f="localSuppX", signature=c("ANY"),
 definition = function(obj, threshold=0.15, keyVar) {
-  if (!class(obj)=="freqCalc") {
+  if (!inherits(obj, "freqCalc")) {
     stop("'obj' must be of class 'freqCalc'\n")
   }
   rk <- indivRisk(obj)$rk

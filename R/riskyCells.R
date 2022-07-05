@@ -63,7 +63,8 @@ riskyCells <- function(obj, useIdentificationLevel=FALSE, threshold, ...) {
   stopifnot(length(useIdentificationLevel)==1)
 
   params <- list(...)
-  if (class(obj)=="sdcMicroObj") {
+
+  if (inherits(obj, "sdcMicroObj")) {
     if (!is.null(params$keyVars)) {
       warning("argument 'keyVars' has been specified, but is ignored because argument 'obj' is not a data.frame!")
     }
@@ -223,7 +224,7 @@ riskyCellsWork <- function(df, keyVars, useIdentificationLevel=FALSE, threshold,
     res
   }
 
-  stopifnot("data.frame" %in% class(df))
+  stopifnot(inherits(df, "data.frame"))
   if (!is.data.table(df)) {
     df <- as.data.table(df)
   }

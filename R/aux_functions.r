@@ -529,7 +529,7 @@ setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function
 })
 
 addWarning <- function(obj, warnMsg, method, variable=NA) {
-  if (!class(obj)=="sdcMicroObj") {
+  if (!inherits(obj, "sdcMicroObj")) {
     stop("'obj' must be a of class 'sdcMicroObj'!\n")
   }
   if (!is.character(method)) {
