@@ -4,88 +4,78 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="sdcMicro">
 <title>Targeted Record Swapping • sdcMicro</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Targeted Record Swapping">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Targeted Record Swapping">
 <meta property="og:description" content="sdcMicro">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">sdcMicro</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.1</span>
-      </span>
-    </div>
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    
+    <a class="navbar-brand me-2" href="../index.html">sdcMicro</a>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../articles/sdcMicro.html">Get started</a>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.7.1</small>
+
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="../articles/sdcMicro.html">Get started</a>
 </li>
-<li>
-  <a href="../reference/index.html">Reference</a>
+<li class="nav-item">
+  <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/recordSwapping.html">Targeted Record Swapping</a>
-    </li>
-  </ul>
-</li>
-      </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/sdcTools/sdcMicro/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
-</div>
-<!--/.nav-collapse -->
+<li class="active nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/recordSwapping.html">Targeted Record Swapping</a>
   </div>
-<!--/.container -->
+</li>
+      </ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/sdcTools/sdcMicro/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
-<!--/.navbar -->
 
-      
+    
+  </div>
+</nav><div class="container template-article">
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Targeted Record Swapping</h1>
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+      <img src="" class="logo" alt=""><h1>Targeted Record Swapping</h1>
                         <h4 data-toc-skip class="author">Johannes Gussenbauer</h4>
             
             <h4 data-toc-skip class="date">2022-07-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sdcTools/sdcMicro/blob/HEAD/vignettes/recordSwapping.Rmd" class="external-link"><code>vignettes/recordSwapping.Rmd</code></a></small>
-      <div class="hidden name"><code>recordSwapping.Rmd</code></div>
-
+      <div class="d-none name"><code>recordSwapping.Rmd</code></div>
     </div>
 
     
@@ -226,13 +216,13 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sdcTools/sdcMicro" class="external-link">sdcMicro</a></span><span class="op">)</span></span>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recordSwap.html">createDat</a></span><span class="op">(</span>N<span class="op">=</span><span class="fl">100000</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning in as.data.table.list(x, keep.rownames = keep.rownames, check.names =</span></span>
-<span><span class="co">## check.names, : Item 7 has 100000 rows but longest item has 350552; recycled with</span></span>
+<span><span class="co">## check.names, : Item 7 has 100000 rows but longest item has 350397; recycled with</span></span>
 <span><span class="co">## remainder.</span></span></code></pre>
 <pre><code><span><span class="co">## Warning in as.data.table.list(x, keep.rownames = keep.rownames, check.names =</span></span>
-<span><span class="co">## check.names, : Item 8 has 100000 rows but longest item has 350552; recycled with</span></span>
+<span><span class="co">## check.names, : Item 8 has 100000 rows but longest item has 350397; recycled with</span></span>
 <span><span class="co">## remainder.</span></span></code></pre>
 <pre><code><span><span class="co">## Warning in as.data.table.list(x, keep.rownames = keep.rownames, check.names =</span></span>
-<span><span class="co">## check.names, : Item 9 has 100000 rows but longest item has 350552; recycled with</span></span>
+<span><span class="co">## check.names, : Item 9 has 100000 rows but longest item has 350397; recycled with</span></span>
 <span><span class="co">## remainder.</span></span></code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span></span></code></pre></div>
@@ -315,13 +305,13 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <code class="sourceCode R"><span><span class="co"># demonstrate on small data set</span></span>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recordSwap.html">createDat</a></span><span class="op">(</span>N<span class="op">=</span><span class="fl">10000</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning in as.data.table.list(x, keep.rownames = keep.rownames, check.names =</span></span>
-<span><span class="co">## check.names, : Item 7 has 10000 rows but longest item has 34653; recycled with</span></span>
+<span><span class="co">## check.names, : Item 7 has 10000 rows but longest item has 35092; recycled with</span></span>
 <span><span class="co">## remainder.</span></span></code></pre>
 <pre><code><span><span class="co">## Warning in as.data.table.list(x, keep.rownames = keep.rownames, check.names =</span></span>
-<span><span class="co">## check.names, : Item 8 has 10000 rows but longest item has 34653; recycled with</span></span>
+<span><span class="co">## check.names, : Item 8 has 10000 rows but longest item has 35092; recycled with</span></span>
 <span><span class="co">## remainder.</span></span></code></pre>
 <pre><code><span><span class="co">## Warning in as.data.table.list(x, keep.rownames = keep.rownames, check.names =</span></span>
-<span><span class="co">## check.names, : Item 9 has 10000 rows but longest item has 34653; recycled with</span></span>
+<span><span class="co">## check.names, : Item 9 has 10000 rows but longest item has 35092; recycled with</span></span>
 <span><span class="co">## remainder.</span></span></code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hierarchy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts1"</span>,<span class="st">"nuts2"</span><span class="op">)</span></span>
@@ -338,7 +328,7 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span>                          k_anonymity <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>                          swaprate <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                          seed <span class="op">=</span> <span class="fl">123456L</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Donor household was not found in 4 case(s).</span></span>
+<pre><code><span><span class="co">## Donor household was not found in 5 case(s).</span></span>
 <span><span class="co">## See TRS_logfile.txt for a detailed list</span></span></code></pre>
 <p>The expected number of swapped households for a population of 10000 households and a swapping rate of 0.05 is 500. The actual number of swaps was however:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
@@ -347,7 +337,7 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span></span>
 <span><span class="co"># number of swapped households</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat_compare</span><span class="op">[</span><span class="va">V1.x</span><span class="op">!=</span><span class="va">V1.y</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 492</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 490</span></span></code></pre>
 <p>With the parameter <code>similar</code> multiple similarity profiles can be defined, if the parameter input is a <code>list</code>. If a donor could not be found for the first similarity profile (<code>similar[[1]]</code>) then a donor is searched for using the next similarity profile (<code>similar[[2]]</code>) and so on.</p>
 <p>Using multiple similarity profiles makes it easy to supply fall-back profiles if the initial profile is too specific.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
@@ -404,12 +394,12 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span>                     <span class="va">dat_swapped</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">nuts1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">nuts2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,by<span class="op">=</span><span class="va">hid</span><span class="op">]</span>,by<span class="op">=</span><span class="st">"hid"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat_compare</span><span class="op">[</span><span class="va">V1.x</span><span class="op">!=</span><span class="va">V1.y</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    hid V1.x V1.y</span></span>
-<span><span class="co">## 1:  35 3 35 1 12</span></span>
-<span><span class="co">## 2:  36 1 12 2 22</span></span>
-<span><span class="co">## 3:  37 1 15 3 35</span></span>
-<span><span class="co">## 4:  67 2 22 2 21</span></span>
-<span><span class="co">## 5:  84 1 11 2 24</span></span>
-<span><span class="co">## 6:  85 1 15 2 25</span></span></code></pre>
+<span><span class="co">## 1:   7 3 32 1 15</span></span>
+<span><span class="co">## 2:  18 1 11 1 12</span></span>
+<span><span class="co">## 3:  37 3 35 2 23</span></span>
+<span><span class="co">## 4:  84 2 23 2 24</span></span>
+<span><span class="co">## 5:  85 1 12 2 24</span></span>
+<span><span class="co">## 6: 128 1 15 3 32</span></span></code></pre>
 <p>For <code>nuts1==1</code> and <code>nuts2==14</code> the <code>nuts3</code> variables takes on values</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span><span class="op">[</span><span class="va">nuts1</span><span class="op">==</span><span class="fl">1</span><span class="op">&amp;</span><span class="va">nuts2</span><span class="op">==</span><span class="fl">14</span>,<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">nuts3</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
@@ -417,10 +407,9 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <p>In the swapped data set there are however many more values for <code>nuts3</code> now which are not coherent with <code>nuts1==1</code> and <code>nuts2==14</code></p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped</span><span class="op">[</span><span class="va">nuts1</span><span class="op">==</span><span class="fl">1</span><span class="op">&amp;</span><span class="va">nuts2</span><span class="op">==</span><span class="fl">14</span>,<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">nuts3</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1] 1113 1114 1115 1207 1215 1305 1307 1401 1402 1403 1404 1405 1406 1407 1408</span></span>
-<span><span class="co">## [16] 1409 1410 1411 1412 1413 1414 1415 1502 1503 1505 1508 1511 1512 2110 2111</span></span>
-<span><span class="co">## [31] 2112 2204 2210 2309 2407 3102 3110 3115 3203 3206 3212 3215 3307 3402 3405</span></span>
-<span><span class="co">## [46] 3414 3502 3510 3511</span></span></code></pre>
+<pre><code><span><span class="co">##  [1] 1202 1203 1211 1305 1306 1307 1310 1401 1402 1403 1404 1405 1406 1407 1408</span></span>
+<span><span class="co">## [16] 1409 1410 1411 1412 1413 1414 1415 1501 1506 1512 1514 2101 2104 2113 2213</span></span>
+<span><span class="co">## [31] 2502 3210 3306 3314 3315 3402 3409 3412 3505 3514</span></span></code></pre>
 <p>Using the parameter <code>carry_along</code> one can define certain variables which are additionally swapped but do not interfere with the risk calculation, sampling and procedure of finding a donor.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recordSwap.html">recordSwap</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>,</span>
@@ -485,17 +474,17 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span><span class="co">##  1:    Min  0.000000 0.00000000 0.000000000</span></span>
 <span><span class="co">##  2:    10%  0.000000 0.00000000 0.000000000</span></span>
 <span><span class="co">##  3:    20%  0.000000 0.00000000 0.000000000</span></span>
-<span><span class="co">##  4:    30%  1.000000 0.02220056 0.001973486</span></span>
-<span><span class="co">##  5:    40%  1.600000 0.03684319 0.003404586</span></span>
-<span><span class="co">##  6:   Mean  3.389474 0.07887374 0.007350719</span></span>
-<span><span class="co">##  7: Median  2.000000 0.04975190 0.004938272</span></span>
-<span><span class="co">##  8:    60%  4.000000 0.08912266 0.007911400</span></span>
-<span><span class="co">##  9:    70%  4.000000 0.09669701 0.009306783</span></span>
-<span><span class="co">## 10:    80%  6.000000 0.13446201 0.012096774</span></span>
-<span><span class="co">## 11:    90%  8.000000 0.19113273 0.018526554</span></span>
-<span><span class="co">## 12:    95% 10.600000 0.25381411 0.024618532</span></span>
-<span><span class="co">## 13:    99% 16.060000 0.34930225 0.030786704</span></span>
-<span><span class="co">## 14:    Max 17.000000 0.39784816 0.036559140</span></span></code></pre>
+<span><span class="co">##  4:    30%  1.000000 0.02290184 0.002100254</span></span>
+<span><span class="co">##  5:    40%  3.000000 0.06588566 0.005794649</span></span>
+<span><span class="co">##  6:   Mean  4.505263 0.10426315 0.009660333</span></span>
+<span><span class="co">##  7: Median  4.000000 0.09794070 0.009546539</span></span>
+<span><span class="co">##  8:    60%  6.000000 0.13432641 0.012126108</span></span>
+<span><span class="co">##  9:    70%  6.000000 0.14631870 0.013986014</span></span>
+<span><span class="co">## 10:    80%  8.000000 0.18373894 0.016939746</span></span>
+<span><span class="co">## 11:    90% 10.000000 0.22984672 0.021081966</span></span>
+<span><span class="co">## 12:    95% 12.000000 0.27401174 0.025343785</span></span>
+<span><span class="co">## 13:    99% 13.120000 0.31783720 0.030329437</span></span>
+<span><span class="co">## 14:    Max 15.000000 0.36619519 0.035128806</span></span></code></pre>
 <p>Per default the absolute deviation (<span class="math inline">\(abs(x,y)\)</span>), relative absolute deviation (<span class="math inline">\(r\_abs(x,y)\)</span>), and absolute deviaion of square roots (<span class="math inline">\(abs\_sqr(x,y)\)</span>) is calculated between the table cells x and y, see also parameter <code>metric</code>.</p>
 <p><span class="math display">\[
 abs(x,y) = |x-y| 
@@ -521,17 +510,17 @@ abs\_sqr(x,y) = |\sqrt{x}-\sqrt{y}|
 <span><span class="co">##  1:    Min  0.000000 0.00000000 0.000000000   0.00000</span></span>
 <span><span class="co">##  2:    10%  0.000000 0.00000000 0.000000000   0.00000</span></span>
 <span><span class="co">##  3:    20%  0.000000 0.00000000 0.000000000   0.00000</span></span>
-<span><span class="co">##  4:    30%  1.000000 0.02220056 0.001973486   1.00000</span></span>
-<span><span class="co">##  5:    40%  1.600000 0.03684319 0.003404586   2.80000</span></span>
-<span><span class="co">##  6:   Mean  3.389474 0.07887374 0.007350719  25.41053</span></span>
-<span><span class="co">##  7: Median  2.000000 0.04975190 0.004938272   4.00000</span></span>
-<span><span class="co">##  8:    60%  4.000000 0.08912266 0.007911400  16.00000</span></span>
-<span><span class="co">##  9:    70%  4.000000 0.09669701 0.009306783  16.00000</span></span>
-<span><span class="co">## 10:    80%  6.000000 0.13446201 0.012096774  36.00000</span></span>
-<span><span class="co">## 11:    90%  8.000000 0.19113273 0.018526554  64.00000</span></span>
-<span><span class="co">## 12:    95% 10.600000 0.25381411 0.024618532 113.20000</span></span>
-<span><span class="co">## 13:    99% 16.060000 0.34930225 0.030786704 257.98000</span></span>
-<span><span class="co">## 14:    Max 17.000000 0.39784816 0.036559140 289.00000</span></span></code></pre>
+<span><span class="co">##  4:    30%  1.000000 0.02290184 0.002100254   1.00000</span></span>
+<span><span class="co">##  5:    40%  3.000000 0.06588566 0.005794649   9.00000</span></span>
+<span><span class="co">##  6:   Mean  4.505263 0.10426315 0.009660333  36.54737</span></span>
+<span><span class="co">##  7: Median  4.000000 0.09794070 0.009546539  16.00000</span></span>
+<span><span class="co">##  8:    60%  6.000000 0.13432641 0.012126108  36.00000</span></span>
+<span><span class="co">##  9:    70%  6.000000 0.14631870 0.013986014  36.00000</span></span>
+<span><span class="co">## 10:    80%  8.000000 0.18373894 0.016939746  64.00000</span></span>
+<span><span class="co">## 11:    90% 10.000000 0.22984672 0.021081966 100.00000</span></span>
+<span><span class="co">## 12:    95% 12.000000 0.27401174 0.025343785 144.00000</span></span>
+<span><span class="co">## 13:    99% 13.120000 0.31783720 0.030329437 172.36000</span></span>
+<span><span class="co">## 14:    Max 15.000000 0.36619519 0.035128806 225.00000</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="sdcmicro-objects">sdcMicro Objects<a class="anchor" aria-label="anchor" href="#sdcmicro-objects"></a>
@@ -564,31 +553,26 @@ abs\_sqr(x,y) = |\sqrt{x}-\sqrt{y}|
 <span><span class="co">## 2:       TRUE  500</span></span></code></pre>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-      </div>
-
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
+    <footer><div class="pkgdown-footer-left">
   <p></p>
 <p>Developed by Matthias Templ, Bernhard Meindl, Alexander Kowarik, Johannes Gussenbauer.</p>
 </div>
 
-<div class="pkgdown">
+<div class="pkgdown-footer-right">
   <p></p>
 <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
   
-
 
   
 
