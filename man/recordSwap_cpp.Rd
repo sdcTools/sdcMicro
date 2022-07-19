@@ -25,7 +25,7 @@ recordSwap_cpp(
 
 \item{hid}{column index in \code{data} which refers to the household identifier.}
 
-\item{hierarchy}{column indices of variables in \code{data} which refere to the geographic hierarchy in the micro data set. For instance county > municipality > district.}
+\item{hierarchy}{column indices of variables in \code{data} which refers to the geographic hierarchy in the micro data set. For instance county > municipality > district.}
 
 \item{similar_cpp}{List where each entry corresponds to column indices of variables in \code{data} which should be considered when swapping households.}
 
@@ -35,7 +35,7 @@ recordSwap_cpp(
 
 \item{risk_threshold}{double indicating risk threshold above every household needs to be swapped.}
 
-\item{k_anonymity}{integer defining the threshhold of high risk households (k-anonymity). This is used as k_anonymity <= counts.}
+\item{k_anonymity}{integer defining the threshold of high risk households (k-anonymity). This is used as k_anonymity <= counts.}
 
 \item{risk_variables}{column indices of variables in \code{data} which will be considered for estimating the risk.}
 
@@ -45,7 +45,7 @@ This parameter is only used at the end of the procedure when swapping the hierar
 
 \item{log_file_name}{character, path for writing a log file. The log file contains a list of household IDs (`hid`) which could not have been swapped and is only created if any such households exist.}
 
-\item{seed}{integer defining the seed for the random number generator, for reproducability.}
+\item{seed}{integer defining the seed for the random number generator, for reproducibility.}
 }
 \value{
 Returns data set with swapped records.

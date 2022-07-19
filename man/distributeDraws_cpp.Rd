@@ -9,7 +9,7 @@ distributeDraws_cpp(data, hierarchy, hid, swaprate, seed = 123456L)
 \arguments{
 \item{data}{micro data containing the hierarchy levels and household ID}
 
-\item{hierarchy}{column indices of variables in \code{data} which refere to the geographic hierarchy in the micro data set. For instance county > municipality > district.}
+\item{hierarchy}{column indices of variables in \code{data} which refers to the geographic hierarchy in the micro data set. For instance county > municipality > district.}
 
 \item{hid}{column index in \code{data} which refers to the household identifier.}
 
@@ -18,8 +18,8 @@ distributeDraws_cpp(data, hierarchy, hid, swaprate, seed = 123456L)
 \item{seed}{integer setting the sampling seed}
 }
 \description{
-Distribute number of swaps across lowest hierarchy level according to a predefinde \code{swaprate}. The swaprate is applied such that a single swap counts as swapping 2 households.
-Number of swaps are randomly rouded up or down, if needed, such that the total number of swaps is in coherence with the swaprate.
+Distribute number of swaps across lowest hierarchy level according to a predefined \code{swaprate}. The swaprate is applied such that a single swap counts as swapping 2 households.
+Number of swaps are randomly rounded up or down, if needed, such that the total number of swaps is in coherence with the swaprate.
 \cr
 \strong{NOTE:} This is an internal function used for testing the C++-function \code{distributeDraws} which is used inside the C++-function \code{recordSwap()}.
 }

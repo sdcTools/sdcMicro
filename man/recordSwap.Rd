@@ -99,7 +99,7 @@ reproducibility. if `NULL` a random seed will be set using `sample(1e5,1)`.}
 [createDat()] returns dummy data to illustrate
 targeted record swapping. The generated data contain
 household ids (`hid`), geographic variables
-(`nuts1`, `nuts2`, `nuts3`, `lau2`)as well as some
+(`nuts1`, `nuts2`, `nuts3`, `lau2`) as well as some
 other household or personal variables.
 
 Applies targeted record swapping on micro data considering the identification
