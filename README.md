@@ -1,5 +1,4 @@
-![Build Status](https://travis-ci.org/sdcTools/sdcMicro.svg?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/sdcTools/sdcMicro/badge.svg?branch=master)](https://coveralls.io/github/sdcTools/sdcMicro?branch=master)
+[![R-CMD-check](https://github.com/sdcTools/sdcMicro/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sdcTools/sdcMicro/actions/workflows/R-CMD-check.yaml)
 [![CRAN](http://www.r-pkg.org/badges/version/sdcMicro)](https://CRAN.R-project.org/package=sdcMicro)
 [![Downloads](http://cranlogs.r-pkg.org/badges/sdcMicro)](https://CRAN.R-project.org/package=sdcMicro)
 [![Mentioned in Awesome Official Statistics ](https://awesome.re/mentioned-badge.svg)](https://github.com/SNStatComp/awesome-official-statistics-software)
