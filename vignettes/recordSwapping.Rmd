@@ -4,7 +4,7 @@ author: "Johannes Gussenbauer"
 date: "`r Sys.Date()`"
 output: html_vignette
 vignette: >
-  %\VignetteIndexEntry{recordSwapping}
+  %\VignetteIndexEntry{Targeted Record Swapping}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 pkgdown:
