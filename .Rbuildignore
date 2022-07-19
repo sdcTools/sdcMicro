@@ -9,3 +9,6 @@ src/recordSwap/*.o
 src/recordSwap/*.so
 src/recordSwap/compile.sh
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
