@@ -1,13 +1,13 @@
+# 5.7.2
+- Removed old package vignette `sdc_guidelines`
+- Fix warnings with clang-devel related targeted record swapping
+- Fix a note in vignette title for TRS
+- Remove travis and use Github workflows to check the package
+
 # 5.7.1
 - Bugfix in `extractManipData()` with only a single categorical variable, thx @tamertemizer for reporting
-- Feature: added new function `recordSwap()` that implmements targetted record swapping
-
-# 5.7.0
-- parametrization of undolast()'s data size
-- target record swapping
-
-# 5.6.2
-- allow to change fixed threshold for undo-feature using env-var `sdcMicro_maxsize_undo`
+- Feature: added new function `recordSwap()` that implements TRS (targeted record swapping)
+- Allow to change fixed threshold for undo-feature (`undolast()`) using env-var `sdcMicro_maxsize_undo`
 
 # 5.6.1
 - various fixes in `sdcApp()`, e. g:
