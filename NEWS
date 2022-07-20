@@ -3,6 +3,8 @@
 - Fix warnings with clang-devel related targeted record swapping
 - Fix a note in vignette title for TRS
 - Remove travis and use Github workflows to check the package
+- small fix for `createDat()` removing a possible warning
+- only allow household-level variables for argument `carry_along` for TRS
 
 # 5.7.1
 - Bugfix in `extractManipData()` with only a single categorical variable, thx @tamertemizer for reporting

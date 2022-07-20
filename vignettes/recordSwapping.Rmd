@@ -53,7 +53,7 @@ recordSwap(std::vector< std::vector<int> > data, int hid,
 Should be ignored, for now, it is not fully tested yet.
 + **k_anonymity** integer defining the threshold of high risk households (k-anonymity). A record is not at risk if `k_anonymity > counts`.
 + **risk_variables** column indices of variables in \code{data} which will be considered for estimating the risk. This is only used if `risk` was not supplied.
-+ **carry_along** column indices of variables in \code{data} which are additionally swapped. These variables do not interfere with the procedure of finding a record to swap with. This parameter is only used at the end of the procedure when swapping the hierarchies.
++ **carry_along** column indices of variables in \code{data} which are additionally swapped. These variables do not interfere with the procedure of finding a record to swap with. This parameter is only used at the end of the procedure when swapping the hierarchies. However, the variables need to be at household-level (identical value within **hid**)
 + **count_swapped_records**, **count_swapped_hid** count number of households and records swapped
 + **log_file_name** path for writing a log file. The log file contains a list of household IDs (`hid`) that could not have been swapped and is only created if any such households exist.
 + **seed** integer defining the seed for the random number generator, for reproducibility.
