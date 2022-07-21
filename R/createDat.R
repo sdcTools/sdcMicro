@@ -12,7 +12,7 @@
 #' @return `data.table` containing dummy data
 #' @rdname recordSwap
 #' @export
-createDat <- function(N = 10000) {
+createDat <- function(N=10000) {
   stopifnot(is.numeric(N))
   stopifnot(N > 1)
   N <- ceiling(N)
@@ -23,19 +23,32 @@ createDat <- function(N = 10000) {
   hsize <- sample(1:6, N, replace = TRUE)
   htype <- sample(1:10, N, replace = TRUE)
   hincome <- sample(1:10, N, replace = TRUE)
-  dat <- data.table(
-    nuts1 = rep(nuts1, times = hsize),
-    nuts2 = rep(nuts2, times = hsize),
-    nuts3 = rep(nuts3, times = hsize),
-    lau2 = rep(lau2, times = hsize),
-    hid = rep(1:length(hsize), times = hsize),
-    hsize = rep(hsize, times = hsize),
-    ageGroup = sample(1:7, length(hsize), replace = TRUE),
-    gender = sample(c(1, 2), length(hsize), replace = TRUE),
-    national = sample(1:5, length(hsize), replace = TRUE),
-    htype = rep(htype, times = hsize),
-    hincome = rep(hincome, times = hsize)
-  )
+
+  # replicate
+  hid <- rep(1:length(hsize), times = hsize)
+  nuts1 <- rep(nuts1, times = hsize)
+  nuts2 <- rep(nuts2, times = hsize)
+  nuts3 <- rep(nuts3, times = hsize)
+  lau2 <- rep(lau2, times = hsize)
+  htype <- rep(htype, times = hsize)
+  hincome <- rep(hincome, times = hsize)
+  hsize <- rep(hsize, times = hsize)
+  gender <- sample(c(1, 2), length(hsize), replace = TRUE)
+  ageGroup <- sample(1:7, length(hsize), replace = TRUE)
+  national <- sample(1:5, length(hsize), replace = TRUE)
+
+  # create data.table
+  dat <- data.table(nuts1,
+                    nuts2,
+                    nuts3,
+                    lau2,
+                    hid,
+                    hsize,
+                    ageGroup,
+                    gender,
+                    national,
+                    htype,
+                    hincome)
 
   # hierarchy for regional variables
   help_0 <- c("", "0", "00", "000")
@@ -43,5 +56,5 @@ createDat <- function(N = 10000) {
   dat[, nuts3 := paste0(nuts2, help_0[3 - nchar(nuts3)], nuts3)]
   dat[, lau2 := paste0(nuts3, help_0[5 - nchar(nuts3)], lau2)]
   dat[, colnames(dat) := lapply(.SD, as.integer)]
-  return(dat)
+  return(dat[])
 }

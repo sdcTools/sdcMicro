@@ -77,7 +77,8 @@ rule is applied.}
 besides to hierarchy variables. These variables do not interfere with the
 procedure of finding a record to swap with or calculating risk. This
 parameter is only used at the end of the procedure when swapping the
-hierarchies.}
+hierarchies. However, any variables specified need to be at household
+level which means that only identical values within `hid` are allowed.}
 
 \item{return_swapped_id, }{boolean if `TRUE` the output includes an
 additional column showing the `hid` with which a record was swapped with.
@@ -177,7 +178,7 @@ library(data.table)
 seed <- 2021
 set.seed(seed)
 nhid <- 10000
-dat <- sdcMicro::createDat(nhid)
+dat <- createDat(nhid)
 
 # define paramters for swapping
 k_anonymity <- 1

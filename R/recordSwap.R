@@ -101,7 +101,8 @@
 #' besides to hierarchy variables. These variables do not interfere with the
 #' procedure of finding a record to swap with or calculating risk. This
 #' parameter is only used at the end of the procedure when swapping the
-#' hierarchies.
+#' hierarchies. However, any variables specified need to be at household
+#' level which means that only identical values within `hid` are allowed.
 #' @param return_swapped_id, boolean if `TRUE` the output includes an
 #' additional column showing the `hid` with which a record was swapped with.
 #' The new column will have the name `paste0(hid,"_swapped")`.
@@ -121,7 +122,7 @@
 #' seed <- 2021
 #' set.seed(seed)
 #' nhid <- 10000
-#' dat <- sdcMicro::createDat(nhid)
+#' dat <- createDat(nhid)
 #'
 #' # define paramters for swapping
 #' k_anonymity <- 1
@@ -256,19 +257,20 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
     stop("return_swapped_id must be logical of length 1")
   }
 
-  if(return_swapped_id==TRUE){
-    orig_id <- cnames[hid+1]
-    swapped_id <- paste0(orig_id,"_swapped")
-    data[,c(swapped_id):=get(orig_id)]
+  if (return_swapped_id == TRUE) {
+    orig_id <- cnames[hid + 1]
+    swapped_id <- paste0(orig_id, "_swapped")
+    data[, c(swapped_id) := get(orig_id)]
     cnames <- copy(colnames(data))
-
-    swapped_id <- checkIndexString(swapped_id,cnames,
-                                   matchLength = 1)
-    carry_along <- c(carry_along,swapped_id)
+    swapped_id <- checkIndexString(swapped_id, cnames, matchLength = 1)
+    carry_along <- c(carry_along, swapped_id)
   }
 
   # check k_anonymity
-  if(!all((!is.null(risk_variables))&checkInteger(k_anonymity)&length(k_anonymity)==1&k_anonymity>=0)){
+  if (!all((!is.null(risk_variables)) &
+           checkInteger(k_anonymity) &
+           length(k_anonymity) == 1 &
+           k_anonymity >= 0)) {
     stop("k_anonymity must be a positiv single integer!")
   }
 
@@ -285,19 +287,22 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   }
 
   # check risk
-  if(is.null(risk)){
+  if (is.null(risk)) {
     risk <- data.table()
     risk_threshold <- 0
   }
-  if(is.vector(risk)){
-    if(length(risk)!=length(hierarchy)){
+  if (is.vector(risk)) {
+    if (length(risk) != length(hierarchy)) {
       stop("risk and hierarchy need to address the same number of columns!")
     }
-    risk <- checkIndexString(risk,cnames,minLength = 1)
-    risk <- data[,c(risk+1)]
-  }else{
-    if(all(!class(risk)%in%c("data.table","data.frame","matrix"))){
-      stop("If risk is not a vector containing column indices or column names in data then risk must be either a data.table, data.frame or matrix!")
+    risk <- checkIndexString(risk, cnames, minLength = 1)
+    risk <- data[, c(risk + 1)]
+  } else {
+    if (all(!class(risk) %in% c("data.table", "data.frame", "matrix"))) {
+      stop(
+        "If risk is not a vector containing column indices or column names",
+        "in data then risk must be either a data.table, data.frame or matrix!"
+      )
     }
   }
 
@@ -310,16 +315,20 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   cnamesrisk <- copy(colnames(risk))
   risk <- data.table(risk)
 
-  if(nrow(risk)>0){
-    if(is.null(cnamesrisk)){
-      message("risk does not contain column names; the first column in risk will be used for the first hierarchy level, e.g ",cnames[hierarchy[1]+1]," and so on.")
-    }else{
-      if(!any(cnamesrisk)%in%cnames[hierarchy+1]){
+  if (nrow(risk) > 0) {
+    if (is.null(cnamesrisk)) {
+      message(
+        "risk does not contain column names; the first column in risk will be ",
+        "used for the first hierarchy level, e.g ",
+        cnames[hierarchy[1] + 1], " and so on."
+      )
+    } else {
+      if (!any(cnamesrisk) %in% cnames[hierarchy + 1]) {
         stop("the columnnames of risk do not appear in data")
       }
     }
 
-    if(any(risk<0)||any(!is.numeric(risk))){
+    if (any(risk < 0) || any(!is.numeric(risk))) {
       stop("risk must contain positive real values only!")
     }
   }
@@ -328,80 +337,93 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   # if(is.character(seed)){
   #   stop("seed must be a single positive integer!")
   # }
-  if(is.null(seed) | any(is.na(seed))){
-    seed <- sample(1e5,1)
+  if (is.null(seed) | any(is.na(seed))) {
+    seed <- sample(1e5, 1)
   }
-  if(!(is.numeric(seed)&&length(seed)==1&&seed%%1==0&&seed>0)){
+  if (!(is.numeric(seed) && length(seed) == 1 && seed %% 1 == 0 && seed > 0)) {
     stop("seed must be a single positive integer!")
   }
-
   ##########################
   # setup data and inputs for c++ function
 
   # order data
-  setkeyv(data,cnames[hid+1])
+  setkeyv(data, cnames[hid + 1])
   # take sub data
-  data[,helpVariableforMergingAfterTRS:=.I]
+  data[, helpVariableforMergingAfterTRS := .I]
   sim_vars <- sort(unique(unlist(similar)))
-  original_cols <- unique(c(hid,hierarchy,risk_variables,sim_vars,carry_along))
-  select_cols <- unique(c(original_cols+1,ncol(data)))
-  data_sw <- copy(data[,.SD,.SDcols=c(select_cols)])
+  original_cols <- unique(c(hid, hierarchy, risk_variables, sim_vars, carry_along))
+  select_cols <- unique(c(original_cols + 1, ncol(data)))
+  data_sw <- copy(data[, .SD, .SDcols = c(select_cols)])
   cnames_sw <- colnames(data_sw) # save column names for later use
   # remove columns from original data except help variable for merging
   drop_cols <- cnames_sw[-length(cnames_sw)]
-  data[,c(drop_cols):=NULL]
+  data[, c(drop_cols) := NULL]
 
   # remap column indices
-  hid <- which(hid %in% original_cols)-1
-  hierarchy <- sapply(hierarchy,function(z){
-    which(original_cols %in% z) -1
+  hid <- which(hid %in% original_cols) - 1
+  hierarchy <- sapply(hierarchy, function(z) {
+    which(original_cols %in% z) - 1
   })
 
-  if(length(similar)>0){
+  if (length(similar) > 0) {
     # remap all similarity variables
-    similar <- lapply(similar,function(z){
-      sapply(z,function(z.s){
-        which(original_cols %in% z) -1
+    similar <- lapply(similar, function(z) {
+      sapply(z, function(z.s) {
+        which(original_cols %in% z) - 1
       })
     })
   }
-  if(length(risk_variables)>0){
-    risk_variables <- sapply(risk_variables,function(z){
-      which(original_cols %in% z) -1
+  if (length(risk_variables) > 0) {
+    risk_variables <- sapply(risk_variables, function(z) {
+      which(original_cols %in% z) - 1
     })
   }
-  if(length(carry_along)>0){
-    carry_along <- sapply(carry_along,function(z){
-      which(original_cols %in% z) -1
+  if (length(carry_along) > 0) {
+    carry_along <- sapply(carry_along, function(z) {
+      which(original_cols %in% z) - 1
     })
   }
 
   # check if any non numeric values are present in data
   if(any(!unlist(apply(data_sw,2,is.numeric)))){
-    stop("Columns specified in hid, hierarchy, similar and carry_along must contain only integer values at this point")
+    stop(
+      "Columns specified in hid, hierarchy, similar ",
+      "and carry_along must contain only integer values at this point"
+    )
   }
 
   # check if any values with NA values are present in data
-  NAOccured <- apply(data_sw,2,function(z){any(is.na(z))})
-  if(any(NAOccured)){
-    stop("data must contain only integer values. \nColumn(s)\n    ",paste( names(which(NAOccured)),collapse=", "),"\ncontain(s) NA values")
+  NAOccured <- apply(data_sw, 2, function(z) {
+    any(is.na(z))
+  })
+  if (any(NAOccured)) {
+    stop(
+      "data must contain only integer values. \nColumn(s)\n    ",
+      paste(names(which(NAOccured)), collapse = ", "),
+      "\ncontain(s) NA values"
+    )
   }
 
   # check if any values with decimal values are present in data
-  decOccured <- apply(data_sw,2,function(z){any((z%%1)!=0)})
-  if(any(decOccured)){
+  decOccured <- apply(data_sw, 2, function(z) {
+    any((z %% 1) != 0)
+  })
+  if (any(decOccured)) {
     decOccured <- names(decOccured)[decOccured]
-    stop("data must contain only integer values.\nColumn(s)\n    ",paste(decOccured,collapse=", "),"\ncontain(s) decimal numbers")
+    stop(
+      "data must contain only integer values.\nColumn(s)\n    ",
+      paste(decOccured, collapse = ", "),
+      "\ncontain(s) decimal numbers"
+    )
   }
-
 
   # transpose data for cpp function
   data_sw <- transpose(data_sw)
 
   # transpose risk
-  if(nrow(risk)>0){
+  if (nrow(risk) > 0) {
     risk <- transpose(risk)
-  }else{
+  } else{
     risk <- numeric(0)
   }
   risk <- numeric(0) # drop this if risk was tested enough
@@ -409,29 +431,39 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   # take time before starting swapping
   start_time <- Sys.time()
 
-  data_sw <- recordSwap_cpp(data=data_sw, similar_cpp=similar, hierarchy=hierarchy,
-                            risk_variables=risk_variables, hid=hid, k_anonymity=k_anonymity,
-                            swaprate=swaprate,
-                            risk_threshold=risk_threshold, risk=risk,
-                            carry_along = carry_along,
-                            log_file_name = log_file_name,
-                            seed=seed)
+  data_sw <- recordSwap_cpp(
+    data = data_sw,
+    similar_cpp = similar,
+    hierarchy = hierarchy,
+    risk_variables = risk_variables,
+    hid = hid,
+    k_anonymity = k_anonymity,
+    swaprate = swaprate,
+    risk_threshold = risk_threshold,
+    risk = risk,
+    carry_along = carry_along,
+    log_file_name = log_file_name,
+    seed = seed
+  )
 
   # check if swapping was successful
-  if(file.exists(log_file_name) && file.mtime(log_file_name)>start_time){
-    message("Donor household was not found in ",length(readLines(log_file_name))-2," case(s).\nSee ",log_file_name," for a detailed list")
-  }else{
+  if (file.exists(log_file_name) && file.mtime(log_file_name) > start_time) {
+    message(
+      "Donor household was not found in ",
+      length(readLines(log_file_name)) - 2,
+      " case(s).\nSee ", log_file_name, " for a detailed list"
+    )
+  } else{
     message("Recordswapping was successful!\n")
   }
 
   setDT(data_sw)
   data_sw <- transpose(data_sw)
-  setnames(data_sw,colnames(data_sw),cnames_sw)
-  data[data_sw,c(drop_cols):=mget(drop_cols),on=.(helpVariableforMergingAfterTRS)]
+  setnames(data_sw, colnames(data_sw), cnames_sw)
+  data[data_sw, c(drop_cols) := mget(drop_cols), on = .(helpVariableforMergingAfterTRS)]
   rm(data_sw)
-  setcolorder(data,cnames)
-  data[,helpVariableforMergingAfterTRS:=NULL]
-
+  setcolorder(data, cnames)
+  data[, helpVariableforMergingAfterTRS := NULL]
   return(data)
 }
 
