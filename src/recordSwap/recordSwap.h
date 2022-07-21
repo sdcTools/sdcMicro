@@ -1,27 +1,27 @@
 /*
  * Open Source Software to apply Statistical Disclosure Control techniques
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the European Union Public Licence 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the European Union Public Licence
  * (EUPL) version 1.1, as published by the European Commission.
- * 
+ *
  * You can find the text of the EUPL v1.1 on
  * https://joinup.ec.europa.eu/software/page/eupl/licence-eupl
- * 
- * This software is distributed on an "AS IS" basis without 
+ *
+ * This software is distributed on an "AS IS" basis without
  * warranties or conditions of any kind, either express or implied.
  */
 
 /*
- * Version: 1.0.1
+ * Version: 1.0.2
  */
 
-/* 
+/*
  * Header file for shared library recordSwap.dll
  * with source code recordSwap.cpp
  * to perform Targeted Record Swapping
  */
-#include <iostream>     
+#include <iostream>
 #include <algorithm>    // std::count
 #include <vector>       // std::vector
 #include <random>
@@ -41,11 +41,11 @@
  * Function to perform record swapping
  */
 std::vector< std::vector<int> > recordSwap(std::vector< std::vector<int> > data, int hid,
-                                           std::vector<int> hierarchy, 
+                                           std::vector<int> hierarchy,
                                            std::vector< std::vector<int> > similar,
                                            double swaprate,
                                            std::vector< std::vector<double> > risk, double risk_threshold,
-                                           int k_anonymity, std::vector<int> risk_variables,  
+                                           int k_anonymity, std::vector<int> risk_variables,
                                            std::vector<int> carry_along,
                                            int &count_swapped_records,
                                            int &count_swapped_hid,
@@ -55,17 +55,17 @@ std::vector< std::vector<int> > recordSwap(std::vector< std::vector<int> > data,
 
 //private:
 /*
- * Function to reorder data-set given one index vector 
+ * Function to reorder data-set given one index vector
  */
 std::vector< std::vector<int> > orderData(std::vector< std::vector<int> > &data, int orderIndex);
 
 /*
- * Function to define levels 
+ * Function to define levels
  */
 std::vector<int> setLevels(std::vector< std::vector<double> > &risk, double risk_threshold);
 
 /*
- * Function to set sampling probability 
+ * Function to set sampling probability
  * and reverse sampling probability (for donor sets)
  */
 std::vector< std::vector<double> > setRisk(std::vector<std::vector<int> > &data, std::vector<int> &hierarchy, std::vector<int> &risk_variables, int &hid);
@@ -85,7 +85,7 @@ std::vector<int> sampleDonor(std::vector< std::vector<int> > &data, std::vector<
                              std::vector<int> &IDswap, std::unordered_set<int> &IDswap_pool,
                              std::map<double,int> &IDdonor_pool, std::vector<int> &IDused, int &hid);
 
-/* 
+/*
  * help function to randomly distribute number of units to draw from
  */
 std::map<std::vector<int>,int> distributeRandom(std::map<std::vector<int>,double> &ratioDraws, int &totalDraws,
