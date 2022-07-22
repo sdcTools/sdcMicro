@@ -2,6 +2,7 @@
 - Removed old package vignette `sdc_guidelines`
 - Fix warnings with clang-devel related targeted record swapping
 - Fix a note in vignette title for TRS
+- Added a warning in `recordSwap()` if variables that are not at household-level are used in `carry_along`
 - Remove travis and use Github workflows to check the package
 
 # 5.7.1

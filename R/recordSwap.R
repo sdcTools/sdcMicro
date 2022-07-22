@@ -101,7 +101,9 @@
 #' besides to hierarchy variables. These variables do not interfere with the
 #' procedure of finding a record to swap with or calculating risk. This
 #' parameter is only used at the end of the procedure when swapping the
-#' hierarchies.
+#' hierarchies. We note that the variables to be used as `carry_along` should
+#' be at household level. In case it is detected that they are at individual
+#' level (different values within `hid`), a warning is given.
 #' @param return_swapped_id, boolean if `TRUE` the output includes an
 #' additional column showing the `hid` with which a record was swapped with.
 #' The new column will have the name `paste0(hid,"_swapped")`.
@@ -265,6 +267,36 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
     swapped_id <- checkIndexString(swapped_id,cnames,
                                    matchLength = 1)
     carry_along <- c(carry_along,swapped_id)
+  }
+
+  # check that carry_along-variables are at household level
+  .chk_hhlevel <- function(data, hid, idx, action = "warning") {
+    # hid and idx are c-level indices (starting at 0!)
+    N <- NULL
+    vhid <- names(data)[hid + 1]
+    vidx <- names(data)[idx + 1]
+    agg <- data[, .(N = length(unique(get(vidx)))), by = vhid]
+    agg <- agg[N != 1]
+    if (nrow(agg) > 0) {
+      msg <- paste(
+        "Variable", shQuote(vidx),
+        "(used in `carry_along`) is not at household-level",
+        "which might lead to unexpected results."
+      )
+      if (action == "message") {
+        message(msg)
+      } else if (action == "warning") {
+        warning(msg, call. = FALSE)
+      } else {
+        stop(msg, call. = FALSE)
+      }
+    }
+    invisible(TRUE)
+  }
+  if (length(carry_along) > 0) {
+    for (i in carry_along) {
+      .chk_hhlevel(data = data, hid = hid, idx = i, action = "warning")
+    }
   }
 
   # check k_anonymity
