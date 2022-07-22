@@ -23,7 +23,7 @@ risk of each record as well the geographic topology."><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sdcMicro</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.2</span>
       </span>
     </div>
 
@@ -172,7 +172,9 @@ rule is applied.</p></dd>
 besides to hierarchy variables. These variables do not interfere with the
 procedure of finding a record to swap with or calculating risk. This
 parameter is only used at the end of the procedure when swapping the
-hierarchies.</p></dd>
+hierarchies. We note that the variables to be used as `carry_along` should
+be at household level. In case it is detected that they are at individual
+level (different values within `hid`), a warning is given.</p></dd>
 
 
 <dt>return_swapped_id, </dt>
@@ -279,9 +281,6 @@ number of households swapped in total is in coherence to the swaprate.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="va">seed</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">nhid</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">sdcMicro</span><span class="fu">::</span><span class="fu">createDat</span><span class="op">(</span><span class="va">nhid</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Item 7 has 10000 rows but longest item has 34827; recycled with remainder.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Item 8 has 10000 rows but longest item has 34827; recycled with remainder.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Item 9 has 10000 rows but longest item has 34827; recycled with remainder.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># define paramters for swapping</span></span></span>
 <span class="r-in"><span><span class="va">k_anonymity</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
@@ -313,17 +312,17 @@ number of households swapped in total is in coherence to the swaprate.</p>
 <span class="r-in"><span><span class="co"># hierarchies are not consistently swapped</span></span></span>
 <span class="r-in"><span><span class="va">dat_s</span><span class="op">[</span><span class="va">hid</span> <span class="op">!=</span> <span class="va">hid_swapped</span>, <span class="fu">.</span><span class="op">(</span><span class="va">nuts1</span>, <span class="va">nuts2</span>, <span class="va">nuts3</span>, <span class="va">lau2</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       nuts1 nuts2 nuts3  lau2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    1:     3    35  3406 34062</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    2:     3    35  3406 34062</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    3:     3    35  3406 34062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    1:     1    15  2103 21031</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    2:     1    15  2103 21031</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    3:     2    21  1104 11042</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    4:     2    21  1104 11042</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    5:     2    21  1104 11042</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ---                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1682:     3    34  3204 32044</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1683:     3    34  3204 32044</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1684:     3    34  3204 32044</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1685:     3    34  3204 32044</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1686:     3    34  3204 32044</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1728:     3    34  3204 32044</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1729:     3    34  3204 32044</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1730:     3    32  3112 31125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1731:     3    32  3112 31125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1732:     3    32  3112 31125</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># use parameter carry_along</span></span></span>
 <span class="r-in"><span><span class="va">dat_s</span> <span class="op">&lt;-</span> <span class="fu">recordSwap</span><span class="op">(</span></span></span>
@@ -341,17 +340,17 @@ number of households swapped in total is in coherence to the swaprate.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dat_s</span><span class="op">[</span><span class="va">hid</span> <span class="op">!=</span> <span class="va">hid_swapped</span>, <span class="fu">.</span><span class="op">(</span><span class="va">nuts1</span>, <span class="va">nuts2</span>, <span class="va">nuts3</span>, <span class="va">lau2</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       nuts1 nuts2 nuts3  lau2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    1:     3    35  3508 35085</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    2:     3    35  3508 35085</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    3:     3    35  3508 35085</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    4:     2    21  2109 21093</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    5:     2    21  2109 21093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    1:     1    15  1506 15061</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    2:     1    15  1506 15061</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    3:     2    21  2104 21042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    4:     2    21  2104 21042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    5:     2    21  2104 21042</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ---                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1682:     3    34  3408 34083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1683:     3    34  3408 34083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1684:     3    34  3408 34083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1685:     3    34  3408 34083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1686:     3    34  3408 34083</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1728:     3    34  3411 34111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1729:     3    34  3411 34111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1730:     3    32  3212 32122</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1731:     3    32  3212 32122</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1732:     3    32  3212 32122</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

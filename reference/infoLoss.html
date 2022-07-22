@@ -18,7 +18,7 @@ Information loss will be calculated on table counts defined by parameter `table_
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sdcMicro</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.2</span>
       </span>
     </div>
 
@@ -158,9 +158,6 @@ One or more custom metrices can be applied using the parameter `custom_metric`, 
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="va">seed</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">nhid</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="recordSwap.html">createDat</a></span><span class="op">(</span> <span class="va">nhid</span> <span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Item 7 has 10000 rows but longest item has 34827; recycled with remainder.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Item 8 has 10000 rows but longest item has 34827; recycled with remainder.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Item 9 has 10000 rows but longest item has 34827; recycled with remainder.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># define paramters for swapping</span></span></span>
 <span class="r-in"><span><span class="va">k_anonymity</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
@@ -191,17 +188,17 @@ One or more custom metrices can be applied using the parameter `custom_metric`, 
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:    Min  0.000000 0.00000000 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:    10%  0.000000 0.00000000 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:    20%  0.000000 0.00000000 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    30%  1.000000 0.02266939 0.002054402</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    40%  2.000000 0.04606798 0.004246399</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   Mean  3.642105 0.08434515 0.007822526</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: Median  2.000000 0.04950741 0.004914005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    60%  4.000000 0.09067496 0.008216906</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    70%  4.000000 0.09539014 0.009058038</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    80%  6.000000 0.13459612 0.012048388</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    90% 10.000000 0.23095825 0.021393566</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    95% 13.000000 0.29168934 0.026492789</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    99% 14.300000 0.32595429 0.031417566</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    Max 19.000000 0.44860772 0.043280182</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    30%  1.000000 0.02390533 0.002288524</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    40%  2.000000 0.04756573 0.004522890</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   Mean  4.315789 0.10017820 0.009308046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: Median  4.000000 0.09545504 0.009153318</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    60%  5.000000 0.11836756 0.011241883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    70%  6.000000 0.14120468 0.013239198</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    80%  8.000000 0.17514380 0.015476455</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    90% 10.000000 0.23073035 0.021243737</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    95% 11.000000 0.25242188 0.023440989</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    99% 14.060000 0.32657229 0.030736419</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    Max 15.000000 0.37338619 0.036496350</span>
 <span class="r-in"><span><span class="va">iloss</span><span class="op">$</span><span class="va">false_zero</span> <span class="co"># no false zeros</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span><span class="va">iloss</span><span class="op">$</span><span class="va">false_nonzero</span> <span class="co"># no false non-zeros</span></span></span>
@@ -218,17 +215,17 @@ One or more custom metrices can be applied using the parameter `custom_metric`, 
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:    Min 0.000000 0.00000000 0.00000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:    10% 0.000000 0.00000000 0.00000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:    20% 0.000000 0.00000000 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    30% 1.000000 0.05478394 0.01204819</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    40% 1.000000 0.05913160 0.01400626</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   Mean 1.508571 0.09285244 0.02290000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: Median 1.000000 0.06225775 0.01562500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    60% 2.000000 0.11279864 0.02544628</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    70% 2.000000 0.12560138 0.03125000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    80% 3.000000 0.17521323 0.04132742</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    90% 3.600000 0.22232623 0.05495495</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    95% 5.000000 0.28316703 0.06809524</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    99% 6.260000 0.36480767 0.08950688</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    Max 7.000000 0.46585680 0.11666667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    30% 1.000000 0.05800732 0.01351351</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    40% 1.000000 0.06068013 0.01470588</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   Mean 1.691429 0.10413875 0.02579566</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: Median 1.000000 0.06593867 0.01724138</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    60% 2.000000 0.11785397 0.02777778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    70% 2.000000 0.12500382 0.03174603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    80% 3.000000 0.17765429 0.04298137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    90% 4.000000 0.24364441 0.05989305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    95% 5.000000 0.30967359 0.07385865</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    99% 7.000000 0.41887182 0.10553131</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    Max 8.000000 0.51242331 0.14035088</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># define custom metric</span></span></span>
 <span class="r-in"><span><span class="va">squareD</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">{</span></span></span>
@@ -243,17 +240,17 @@ One or more custom metrices can be applied using the parameter `custom_metric`, 
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:    Min  0.000000 0.00000000 0.000000000   0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:    10%  0.000000 0.00000000 0.000000000   0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:    20%  0.000000 0.00000000 0.000000000   0.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    30%  1.000000 0.02266939 0.002054402   1.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    40%  2.000000 0.04606798 0.004246399   4.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   Mean  3.642105 0.08434515 0.007822526  29.11579</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: Median  2.000000 0.04950741 0.004914005   4.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    60%  4.000000 0.09067496 0.008216906  16.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    70%  4.000000 0.09539014 0.009058038  16.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    80%  6.000000 0.13459612 0.012048388  36.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    90% 10.000000 0.23095825 0.021393566 100.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    95% 13.000000 0.29168934 0.026492789 169.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    99% 14.300000 0.32595429 0.031417566 205.90000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    Max 19.000000 0.44860772 0.043280182 361.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    30%  1.000000 0.02390533 0.002288524   1.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    40%  2.000000 0.04756573 0.004522890   4.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   Mean  4.315789 0.10017820 0.009308046  33.09474</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: Median  4.000000 0.09545504 0.009153318  16.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    60%  5.000000 0.11836756 0.011241883  25.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    70%  6.000000 0.14120468 0.013239198  36.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    80%  8.000000 0.17514380 0.015476455  64.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    90% 10.000000 0.23073035 0.021243737 100.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    95% 11.000000 0.25242188 0.023440989 121.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    99% 14.060000 0.32657229 0.030736419 197.74000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    Max 15.000000 0.37338619 0.036496350 225.00000</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
