@@ -98,7 +98,7 @@ output$ui_modify_recode_to_factor <- renderUI({
     txt <- paste(txt, "- <strong>logEqui:</strong> uses breakpoints that generate intervals of equal length based on the log transformation of the data. The number of records in each interval might differ.<br />")
     txt <- paste(txt, "- <strong>equalAmount:</strong> uses breakpoints such that each group/interval has the same number of records. The intervals might be of different length.<br />")
     txt <- paste(txt, "- <strong>manual:</strong> allows the user to set the breakpoints manually. Note: make sure that all values are included in the specified intervals.")
-    selectInput("sel_algo",label=p("Select algorithm", tipify(icon("info-circle"), title=txt, placement="top")),
+    selectInput("sel_algo",label=p("Select algorithm", tipify(icon("circle-info"), title=txt, placement="top")),
       choices=c("equidistant","logEqui","equalAmount","manual"), selected=input$sel_algo)
   })
   output$ui_globalRecode_btn <- renderUI({
