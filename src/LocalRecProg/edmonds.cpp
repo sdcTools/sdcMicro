@@ -638,7 +638,7 @@ void write_matching(vertex_type *pVertex, int NbRow, int *pMatch, int c, SEXP re
 void sum_matching(vertex_type *pVertex, int *pMatch, int c)
 {
   int i, p, q, t[512];
-  TDist d, h, s, l;
+  TDist d, h, l;
 
   h = -32767;
   l = 32767;
@@ -679,7 +679,6 @@ void sum_matching(vertex_type *pVertex, int *pMatch, int c)
 void count_degree(CData *d, int n, int (*f) (CData *, CData *), int upperbound)
 {
   int i, k, c, l, h, b;
-  TDist s;
   CData *p, *q;
 
   s = 0;
