@@ -65,9 +65,9 @@ std::vector< std::vector<int> > recordSwap_cpp(std::vector< std::vector<int> > d
                                                       risk, risk_threshold,
                                                       k_anonymity, risk_variables,
                                                       carry_along,
-                                                      count_swapped_records = count_swapped_records,
-                                                      count_swapped_hid = count_swapped_hid,
-                                                      log_file_name = log_file_name,
+                                                      count_swapped_records,
+                                                      count_swapped_hid,
+                                                      log_file_name,
                                                       seed);
 
   return output;
