@@ -639,10 +639,13 @@ void sum_matching(vertex_type *pVertex, int *pMatch, int c)
 {
   int i, p, q, t[512];
   TDist d, h, l;
+  // s is used to count the total distances in a debug statement.
+  // Uncomment for debug
+  // TDist s;
 
   h = -32767;
   l = 32767;
-  s = 0;
+  //s = 0;
 
   ClearMem(t);
 
@@ -657,7 +660,9 @@ void sum_matching(vertex_type *pVertex, int *pMatch, int c)
 
     if (d < l)
       l = d;
-    s += d;
+    
+    // Uncomment for debug
+    // s += d;
 
     d += 0.5;
     if (d >= 0 && d < 512)
@@ -680,8 +685,12 @@ void count_degree(CData *d, int n, int (*f) (CData *, CData *), int upperbound)
 {
   int i, k, c, l, h, b;
   CData *p, *q;
-
-  s = 0;
+  
+  // s is used to count the total times b is less than an upper bound
+  // Uncomment for debug
+  //TDist s;
+  //s = 0;
+  
   l = 32767;
   h = -32767;
 
@@ -698,7 +707,9 @@ void count_degree(CData *d, int n, int (*f) (CData *, CData *), int upperbound)
       }
     }
 
-    s += c;
+    // Uncomment for debug
+    // s += c;
+    
     if (l > c)
       l = c;
     if (h < c)
