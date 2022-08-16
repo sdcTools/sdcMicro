@@ -1,3 +1,8 @@
+# 5.7.3 (next)
+- Fix Fontawesome-Icons changes in `sdcApp` (thx @coatless)
+- Fix self-assignment of variables in the record-swapping code (thx @coatless)
+- Remove unused variables in edmonds.cpp (thx @coatless)
+
 # 5.7.2
 - Removed old package vignette `sdc_guidelines`
 - Fix warnings with clang-devel related targeted record swapping
