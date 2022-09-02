@@ -26,9 +26,9 @@
 /*
  * HOW IT WORKS:
  * This plugin takes the identification variables and optionaly the weight variable as data input.
- * The output is a level of risk stored in the specifed risk variable.
+ * The output is a level of risk stored in the specified risk variable.
  *
- * For weighted data, the risk is computed based on the micro-argus methodology
+ * For weighted data, the risk is computed based on the mu-argus methodology
  * For unweighted data, the risk is the inverse of the frequency
  *
  * Note that
@@ -518,7 +518,6 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 		current_obs = 0;//SF_GetRowStart();
 		do
 		{
-
 			// Init group
 			group_count++;
 
@@ -540,9 +539,9 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 			for (i = 0; i < g_Config.Nb_QuasiId_Var; i++)
 			{
 				group_key[i] = Mat(current_obs, i);
-				//g_pDataset->GetValue(i, current_obs, &group_key[i]);
-				if (SF_IsMissing(group_key[i]))
-					group_missing++;
+				if (SF_IsMissing(group_key[i])) {
+				  group_missing++;
+				}
 			}
 			if (group_missing == g_Config.Nb_QuasiId_Var)
 			{
@@ -554,7 +553,7 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 
 				// UPDATE STATA
 				do
-				{					
+				{
 					Res(current_obs, 0) = group_count;
 					Res(current_obs, 1) = group_risk;
 					Res(current_obs, 2) = group_size;
@@ -567,9 +566,8 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 						break;
 
 					// read next obs key
-					for (i = 0; i < g_Config.Nb_QuasiId_Var; i++)
-						obs_key[i] = Mat(current_obs, i);
-					//g_pDataset->GetValue(i, current_obs, &obs_key[i]);
+					for (int k = 0; k < g_Config.Nb_QuasiId_Var; k++)
+						obs_key[k] = Mat(current_obs, k);
 				}
 				while (is_same_key_Risk(group_key, obs_key, g_Config.Nb_QuasiId_Var));
 			}
@@ -578,33 +576,28 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 				//
 				// CASE 2: SOME MISSING VALUES IN KEY
 				//
-				//				display_key(group_key, g_Config.Nb_QuasiId_Var);
-
 				// The weights and count of the observations with the same
 				// non-missing key values need to be used for this group
 				// This requires a full scan of the dataset
 				int i, j;						// local definitions to prevent conflicts
 				double value;
-
-				//				for (i = SF_GetRowStart(); i <= SF_GetRowEnd(); i++)
 				ForLoop (i, NbRow)
 				{
-					// if (g_pDataset->IsRowSelected(i)) - Always TRUE
-					// {
 					// compare partial keys
 					for (j = 0; j < g_Config.Nb_QuasiId_Var; j++)
 					{
 						// if this variable is a missing component of the current key, ignore it
-						if (SF_IsMissing(group_key[j]))
-							continue;
+						if (SF_IsMissing(group_key[j])) {
+						  continue;
+						}
 
 						// read this variable value
 						value = Mat(i, j);
-						// g_pDataset->GetValue(j, i, &value);
 
 						// if not equal to the current key, this is not a match
-						if (value != group_key[j])
-							break;
+						if (value != group_key[j] & !SF_IsMissing(value)) {
+						  break;
+						}
 					}
 
 					if (j == g_Config.Nb_QuasiId_Var)
@@ -614,7 +607,6 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 						if (g_Config.is_weighted)
 						{
 							value = Mat(i, g_Config.weight_var_pos);
-							//g_pDataset->GetValue(g_Config.weight_var_pos, i, &value);
 							group_weight += value;
 						}
 
@@ -622,19 +614,18 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 						if (!g_Config.is_weighted && g_Config.Nb_QuasiId_Var > 0)
 						{
 							//add l-diversity category frequency
-							for (i = 0; i < MAX_SENSITIVE_VAR; i++)
+							for (int z = 0; z < MAX_SENSITIVE_VAR; z++)
 							{
 								// for active variable only
-								if (g_Config.Sensitive_Var[i].Require_Ldiversity)
+								if (g_Config.Sensitive_Var[z].Require_Ldiversity)
 								{
 									// read value for this variable and add to category count
-									obs_value = Mat(current_obs, g_Config.Sensitive_Var[i].position);
-									add_var_cat_value(&g_Config.Sensitive_Var[i], obs_value);
+									obs_value = Mat(i, g_Config.Sensitive_Var[z].position);
+									add_var_cat_value(&g_Config.Sensitive_Var[z], obs_value);
 								}
 							}
 						}
 					}
-					// }
 				}
 
 				// compute risk
@@ -645,15 +636,12 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 				else
 				{
 					group_risk = 1 / group_size;
-
 					// compute group l-diversity
 					if (g_Config.Nb_Sensitive_Var > 0)
 					{
-												compute_group_ldiversity(group_size, g_Config.Sensitive_Var);
-
+					  compute_group_ldiversity(group_size, g_Config.Sensitive_Var);
 					}
 				}
-
 
 				// UPDATE STATA
 				do
@@ -668,26 +656,25 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 					// if unweighted data and sensitive variables exist
 					if (!g_Config.is_weighted && g_Config.Nb_Sensitive_Var > 0)
 					{
-						int ii;
-						int ind_sens=0;
-						for (ii = 0; ii < MAX_SENSITIVE_VAR; ii++)
-						{
-							if (g_Config.Sensitive_Var[ii].Require_Ldiversity)
-							{
-								Mat_Risk(i, (ind_sens*3)) = g_Config.Sensitive_Var[ii].Group_Distinct_Ldiversity;
-								Mat_Risk(i, (ind_sens*3)+1) = g_Config.Sensitive_Var[ii].Group_Entropy_Ldiversity;
-								Mat_Risk(i, (ind_sens*3)+2) = g_Config.Sensitive_Var[ii].Group_Recursive_Ldiversity;
-								ind_sens++;
-							}
-						}
+					  int ii;
+					  int ind_sens=0;
+					  for (ii = 0; ii < MAX_SENSITIVE_VAR; ii++)
+					  {
+					    if (g_Config.Sensitive_Var[ii].Require_Ldiversity)
+					    {
+					      Mat_Risk(current_obs, (ind_sens*3)) = g_Config.Sensitive_Var[ii].Group_Distinct_Ldiversity;
+					      Mat_Risk(current_obs, (ind_sens*3)+1) = g_Config.Sensitive_Var[ii].Group_Entropy_Ldiversity;
+					      Mat_Risk(current_obs, (ind_sens*3)+2) = g_Config.Sensitive_Var[ii].Group_Recursive_Ldiversity;
+					      ind_sens++;
+					    }
+					  }
 
-						if (g_Config.Nb_Sensitive_Var >= 2)
-						{
-							Mat_Risk(i, Mat_Risk.cols()-2) = g_Config.Group_MultiEntropy_Ldiversity;
-							Mat_Risk(i, Mat_Risk.cols()-1) = g_Config.Group_MultiRecursive_Ldiversity;
-						}
+					  if (g_Config.Nb_Sensitive_Var >= 2)
+					  {
+					    Mat_Risk(current_obs, Mat_Risk.cols()-2) = g_Config.Group_MultiEntropy_Ldiversity;
+					    Mat_Risk(current_obs, Mat_Risk.cols()-1) = g_Config.Group_MultiRecursive_Ldiversity;
+					  }
 					}
-
 					obs_count++;
 					current_obs++;
 
@@ -697,8 +684,6 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 					// read next obs key
 					for (i = 0; i < g_Config.Nb_QuasiId_Var; i++)
 						obs_key[i] = Mat(current_obs, i);
-					//g_pDataset->GetValue(i, current_obs, &obs_key[i]);
-
 				}
 				while (is_same_key_Risk(group_key, obs_key, g_Config.Nb_QuasiId_Var));
 			}
@@ -715,7 +700,6 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 					{
 						// add to group weight
 						obs_weight = Mat(current_obs, g_Config.weight_var_pos);
-						//g_pDataset->GetValue(g_Config.weight_var_pos, current_obs, &obs_weight);
 						group_weight += obs_weight;
 					}
 					else
@@ -723,14 +707,13 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 						if (g_Config.Nb_Sensitive_Var > 0)
 						{
 							// add l-diversity category frequency
-							for (i = 0; i < MAX_SENSITIVE_VAR; i++)
+							for (int z = 0; z < MAX_SENSITIVE_VAR; z++)
 							{
-								if (g_Config.Sensitive_Var[i].Require_Ldiversity)
+								if (g_Config.Sensitive_Var[z].Require_Ldiversity)
 								{
 									// read value for this variable and add to category count
-									obs_value = Mat(current_obs, g_Config.Sensitive_Var[i].position);
-									//g_pDataset->GetValue(g_Config.Sensitive_Var[i].position, current_obs, &obs_value);
-									add_var_cat_value(&g_Config.Sensitive_Var[i], obs_value);
+									obs_value = Mat(current_obs, g_Config.Sensitive_Var[z].position);
+									add_var_cat_value(&g_Config.Sensitive_Var[z], obs_value);
 								}
 							}
 						}
@@ -746,10 +729,8 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 						break;
 
 					// read next obs key
-					for (i = 0; i < g_Config.Nb_QuasiId_Var; i++)
-						obs_key[i] = Mat(current_obs, i);
-					//g_pDataset->GetValue(i, current_obs, &obs_key[i]);
-
+					for (int k = 0; k < g_Config.Nb_QuasiId_Var; k++)
+						obs_key[k] = Mat(current_obs, k);
 				}
 				while (is_same_key_Risk(group_key, obs_key, g_Config.Nb_QuasiId_Var));
 				// compute risk for this group
@@ -764,26 +745,22 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 					// compute group l-diversity
 					if (g_Config.Nb_Sensitive_Var > 0)
 					{
-												compute_group_ldiversity(group_size, g_Config.Sensitive_Var);
-
-
+					  compute_group_ldiversity(group_size, g_Config.Sensitive_Var);
 						if (g_Config.Nb_Sensitive_Var >= 2){
-														Compute_Multi_LDiversity(current_obs - group_size, group_size,Mat,ldiv_index_RR);
-
+						  Compute_Multi_LDiversity(current_obs - group_size, group_size,Mat,ldiv_index_RR);
 						}
 					}
 				}
 				for (i = current_obs - group_size; i < current_obs; i++)
 				{
-					// Write value back to stata file for all observations in the group					
+					// Write value back to stata file for all observations in the group
 					Res(i, 0) = group_count;
 					Res(i, 1) = group_risk;
 					Res(i, 2) = group_size;
 
-
 					// l-diversity
 					if (!g_Config.is_weighted && g_Config.Nb_Sensitive_Var > 0){
-                        int ind_sens2=0;
+            int ind_sens2=0;
 						for (int ii = 0; ii < MAX_SENSITIVE_VAR; ii++)
 						{
 							if (g_Config.Sensitive_Var[ii].Require_Ldiversity)
@@ -826,7 +803,6 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 
 		delete[] group_key;
 		delete[] obs_key;
-
 		return Rcpp::List::create(
 				Rcpp::Named( "global_risk_ER" ) = global_risk_ER,
 				Rcpp::Named( "global_risk" ) = global_risk,
