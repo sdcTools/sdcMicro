@@ -7,7 +7,7 @@
 #' To be used when risk of disclosure for individuals within a family is
 #' considered to be statistical independent.
 #'
-#' Internally, function \emph{freqCalc()} and \emph{indivRisk} are used for
+#' Internally, function [freqCalc()] and [indivRisk()] are used for
 #' estimation.
 #'
 #' Measuring individual risk: The individual risk approach based on so-called
@@ -37,37 +37,37 @@
 #'
 #' l-Diversity: If \dQuote{ldiv_index} is unequal to NULL, i.e. if the indices
 #' of sensible variables are specified, various measures for l-diversity are
-#' calculated. l-diverstiy is an extension of the well-known k-anonymity
+#' calculated. l-diversity is an extension of the well-known k-anonymity
 #' approach where also the uniqueness in sensible variables for each pattern
 #' spanned by the key variables are evaluated.
 #'
 #' @rdname measure_risk
 #' @param obj Object of class \code{\link{sdcMicroObj-class}}
-#' @param x Output of measure_risk() or ldiversity()
+#' @param x Output of [measure_risk()] or [ldiversity()]
 #' @param ... see arguments below
-#' \itemize{
-#' \item{data: }{Input data, a data.frame.}
-#' \item{keyVars: }{names (or indices) of categorical key variables (for data-frame method)}
-#' \item{w: }{name of variable containing sample weights}
-#' \item{hid: }{name of the clustering variable, e.g. the household ID}
-#' \item{max_global_risk: }{Maximal global risk for threshold computation}
-#' \item{fast_hier: }{If TRUE a fast approximation is computed if household data are provided.}
-#' }
+#'
+#' - `data`: Input data, a data.frame
+#' - `keyVars`: names (or indices) of categorical key variables (for `data.frame` method)
+#' - `w`: name of variable containing sample weights
+#' - `hid`: name of the clustering variable, e.g. the household ID
+#' - `max_global_risk`: Maximal global risk for threshold computation
+#' - `fast_hier`: if `TRUE`, a fast approximation is computed if household data are provided.
 #' @return A modified \code{\link{sdcMicroObj-class}} object or a list with the following elements:
-#' \itemize{
-#' \item{global_risk_ER: }{expected number of re-identification.}
-#' \item{global_risk: }{global risk (sum of indivdual risks).}
-#' \item{global_risk_pct: }{global risk in percent.}
-#' \item{Res: }{matrix with the risk, frequency in the sample and grossed-up frequency in the population (and the hierachical risk) for each observation.}
-#' \item{global_threshold: }{for a given max_global_risk the threshold for the risk of observations.}
-#' \item{max_global_risk: }{the input max_global_risk of the function.}
-#' \item{hier_risk_ER: }{expected number of re-identification with household structure.}
-#' \item{hier_risk: }{global risk with household structure (sum of indivdual risks).}
-#' \item{hier_risk_pct: }{global risk with household structure in percent.}
-#' \item{ldiverstiy: }{Matrix with Distinct_Ldiversity,
-#' Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}}
+#' - `global_risk_ER`: expected number of re-identification.
+#' - `global_risk`: global risk (sum of individual risks).
+#' - `global_risk_pct`: global risk in percent.
+#' - `Res`: matrix with the risk, frequency in the sample and grossed-up frequency in the
+#' population (and the hierarchical risk) for each observation.
+#' - `global_threshold`: for a given max_global_risk the threshold for the risk of observations.
+#' - `max_global_risk`: the input max_global_risk of the function.
+#' - `hier_risk_ER`: expected number of re-identification with household structure.
+#' - `hier_risk`: global risk with household structure (sum of individual risks).
+#' - `hier_risk_pct`: global risk with household structure in percent.
+#' - `ldiverstiy`: Matrix with `Distinct_Ldiversity`,
+#' `Entropy_Ldiversity` and `Recursive_Ldiversity` for each sensitivity variable.
+#' @md
 #' @author Alexander Kowarik, Bernhard Meindl, Matthias Templ, Bernd Prantner, minor parts of IHSN C++ source
-#' @seealso \code{\link{freqCalc}}, \code{\link{indivRisk}}
+#' @seealso [freqCalc()], [indivRisk()]
 #' @references Franconi, L. and Polettini, S. (2004) \emph{Individual risk
 #' estimation in mu-Argus: a review}. Privacy in Statistical Databases, Lecture
 #' Notes in Computer Science, 262--272. Springer
@@ -80,7 +80,7 @@
 #' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
 #' \doi{10.1007/978-3-319-50272-4}.
 #'
-#' #' Templ, M. and Kowarik, A. and Meindl, B.
+#' Templ, M. and Kowarik, A. and Meindl, B.
 #' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 #' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 #'
@@ -350,6 +350,19 @@ definition=function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-999) {
 
 setMethod(f="ldiversityX", signature=c("data.frame"),
 definition=function(obj, keyVars, ldiv_index, l_recurs_c=2, missing=-999) {
+
+  if (is.data.table(obj)) {
+    obj <- as.data.frame(obj)
+  }
+
+  # we need to later convert key-vars to integers; thus
+  # we must make sure that keyVars are factors
+  for (v in keyVars) {
+    if (!is.factor(obj[[v]])) {
+      obj[[v]] <- as.factor(obj[[v]])
+    }
+  }
+
   ldiversityWORK(
     data = obj,
     keyVars = keyVars,
@@ -378,9 +391,14 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2
       ldiv_var <- ldiv_index
       ldiv_index <- length(variables) + 1:length(ldiv_index)
     }
-    if (any(ldiv_var %in% variables))
+    if (any(ldiv_var %in% variables)) {
       stop("Sensitivity variable should not be a keyVariable")
+    }
   } else ldiv_var <- character(0)
+
+  if (!is.numeric(missing) || length(missing) != 1) {
+    stop("Argument `missing` is not a number")
+  }
 
   n_key_vars <- length(variables)
   dataX <- data[, c(variables, ldiv_var), drop=FALSE]
@@ -392,15 +410,24 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2
   ind <- do.call(order, data.frame(dataX))
   dataX <- dataX[ind, , drop=FALSE]
   ind <- order(c(1:nrow(dataX))[ind])
-  if (is.null(ldiv_index))
+  if (is.null(ldiv_index)) {
     ldiv_index=-99
-  if (length(ldiv_index) > 5)
+  }
+  if (length(ldiv_index) > 5) {
     stop("Maximal number of sensitivity variables is 5")
+  }
+
+  # actually convert missing-values to the
+  # value specified in argument `missing`
+  for (i in seq_len(n_key_vars)) {
+    dataX[is.na(dataX[, i]), i] <- missing
+  }
+
   res <- .Call("measure_risk_cpp", dataX, 0, n_key_vars, l_recurs_c, ldiv_index, missing)
   res$Fk <- res$Res[, 3]
-  res$Res <- res$Res[ind, ]
+  res$Res <- res$Res[ind, , drop = FALSE]
   if (all(ldiv_index != -99)) {
-    res$Mat_Risk <- res$Mat_Risk[ind, ]
+    res$Mat_Risk <- res$Mat_Risk[ind, , drop = FALSE]
     names(res)[names(res) == "Mat_Risk"] <- "ldiversity"
     colnames(res$ldiversity) <- c(paste(rep(ldiv_var, each=3), rep(c("Distinct_Ldiversity",
       "Entropy_Ldiversity", "Recursive_Ldiversity"), length(ldiv_index)), sep="_"),
@@ -408,7 +435,7 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2
   } else {
     res <- res[names(res) != "Mat_Risk"]
   }
-  ind <- order(res$Res[, 1], decreasing=TRUE)
+  ind <- order(res$Res[, 1, drop = FALSE], decreasing=TRUE)
   res <- res$ldiversity
   class(res) <- "ldiversity"
   invisible(res)

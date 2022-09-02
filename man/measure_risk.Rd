@@ -20,12 +20,12 @@ ldiversity(obj, ldiv_index = NULL, l_recurs_c = 2, missing = -999, ...)
 
 \item{...}{see arguments below
 \itemize{
-\item{data: }{Input data, a data.frame.}
-\item{keyVars: }{names (or indices) of categorical key variables (for data-frame method)}
-\item{w: }{name of variable containing sample weights}
-\item{hid: }{name of the clustering variable, e.g. the household ID}
-\item{max_global_risk: }{Maximal global risk for threshold computation}
-\item{fast_hier: }{If TRUE a fast approximation is computed if household data are provided.}
+\item \code{data}: Input data, a data.frame
+\item \code{keyVars}: names (or indices) of categorical key variables (for \code{data.frame} method)
+\item \code{w}: name of variable containing sample weights
+\item \code{hid}: name of the clustering variable, e.g. the household ID
+\item \code{max_global_risk}: Maximal global risk for threshold computation
+\item \code{fast_hier}: if \code{TRUE}, a fast approximation is computed if household data are provided.
 }}
 
 \item{ldiv_index}{indices (or names) of the variables used for l-diversity}
@@ -34,22 +34,24 @@ ldiversity(obj, ldiv_index = NULL, l_recurs_c = 2, missing = -999, ...)
 
 \item{missing}{a integer value to be used as missing value in the C++ routine}
 
-\item{x}{Output of measure_risk() or ldiversity()}
+\item{x}{Output of \code{\link[=measure_risk]{measure_risk()}} or \code{\link[=ldiversity]{ldiversity()}}}
 }
 \value{
 A modified \code{\link{sdcMicroObj-class}} object or a list with the following elements:
 \itemize{
-\item{global_risk_ER: }{expected number of re-identification.}
-\item{global_risk: }{global risk (sum of indivdual risks).}
-\item{global_risk_pct: }{global risk in percent.}
-\item{Res: }{matrix with the risk, frequency in the sample and grossed-up frequency in the population (and the hierachical risk) for each observation.}
-\item{global_threshold: }{for a given max_global_risk the threshold for the risk of observations.}
-\item{max_global_risk: }{the input max_global_risk of the function.}
-\item{hier_risk_ER: }{expected number of re-identification with household structure.}
-\item{hier_risk: }{global risk with household structure (sum of indivdual risks).}
-\item{hier_risk_pct: }{global risk with household structure in percent.}
-\item{ldiverstiy: }{Matrix with Distinct_Ldiversity,
-Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}}
+\item \code{global_risk_ER}: expected number of re-identification.
+\item \code{global_risk}: global risk (sum of individual risks).
+\item \code{global_risk_pct}: global risk in percent.
+\item \code{Res}: matrix with the risk, frequency in the sample and grossed-up frequency in the
+population (and the hierarchical risk) for each observation.
+\item \code{global_threshold}: for a given max_global_risk the threshold for the risk of observations.
+\item \code{max_global_risk}: the input max_global_risk of the function.
+\item \code{hier_risk_ER}: expected number of re-identification with household structure.
+\item \code{hier_risk}: global risk with household structure (sum of individual risks).
+\item \code{hier_risk_pct}: global risk with household structure in percent.
+\item \code{ldiverstiy}: Matrix with \code{Distinct_Ldiversity},
+\code{Entropy_Ldiversity} and \code{Recursive_Ldiversity} for each sensitivity variable.
+}
 
 Prints risk-information into the console
 
@@ -68,7 +70,7 @@ Prints a 'ldiversity'-object
 To be used when risk of disclosure for individuals within a family is
 considered to be statistical independent.
 
-Internally, function \emph{freqCalc()} and \emph{indivRisk} are used for
+Internally, function \code{\link[=freqCalc]{freqCalc()}} and \code{\link[=indivRisk]{indivRisk()}} are used for
 estimation.
 
 Measuring individual risk: The individual risk approach based on so-called
@@ -98,7 +100,7 @@ risk.
 
 l-Diversity: If \dQuote{ldiv_index} is unequal to NULL, i.e. if the indices
 of sensible variables are specified, various measures for l-diversity are
-calculated. l-diverstiy is an extension of the well-known k-anonymity
+calculated. l-diversity is an extension of the well-known k-anonymity
 approach where also the uniqueness in sensible variables for each pattern
 spanned by the key variables are evaluated.
 }
@@ -162,12 +164,12 @@ Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications
 \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
 \doi{10.1007/978-3-319-50272-4}.
 
-#' Templ, M. and Kowarik, A. and Meindl, B.
+Templ, M. and Kowarik, A. and Meindl, B.
 Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
 }
 \seealso{
-\code{\link{freqCalc}}, \code{\link{indivRisk}}
+\code{\link[=freqCalc]{freqCalc()}}, \code{\link[=indivRisk]{indivRisk()}}
 
 \code{\link{measure_risk}}
 }
