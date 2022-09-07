@@ -93,7 +93,7 @@
 #' ATTENTION: This is NOT fully implemented yet and currently ignored by the
 #' underlying c++ functions until tested properly
 #' @param k_anonymity integer defining the threshold of high risk households
-#' (counts<k) for using k-anonymity rule
+#' (counts < k_anonymity) for using k-anonymity rule
 #' @param risk_variables column indices or column names of variables in `data`
 #' which will be considered for estimating the risk. Only used when k-anonymity
 #' rule is applied.
