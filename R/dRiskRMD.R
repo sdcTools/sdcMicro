@@ -119,11 +119,17 @@ dRiskRMDWORK <- function(x, xm, k = 0.01, k2 = 0.05) {
   rmd <- sqrt(rmd) * 0.05  ##rmd/max(rmd) * 2
   mi <- x - k * rmd
   ma <- x + k * rmd
-  w <- which(apply(xm < ma & xm > mi, 1, any) == TRUE)
 
-  xd <- as.matrix(stats::dist(xm))
-  diag(xd) <- NA
+  dn <- dimnames(xm)[[2]]
+  rr <- lapply(dn, function(v) {
+    xm[, v] > mi[, v] & xm[, v] < ma[, v]
+  })
+  names(rr) <- dn
+  w <- which(apply(as.data.frame(rr), 1, any))
+
   if (length(w) > 0) {
+    xd <- as.matrix(stats::dist(xm))
+    diag(xd) <- NA
     ind <- apply(xd[w, , drop = FALSE], 1, function(x, k = k2) {
       min(x, na.rm = TRUE) > k2
     })
@@ -145,11 +151,26 @@ dRiskRMDWORK <- function(x, xm, k = 0.01, k2 = 0.05) {
   }
   risk <- if (length(w) > 0) {
     length(w2)/dim(x)[1]
-  } else 0
+  } else {
+    0
+  }
   wrisk <- if (length(w) > 0) {
     (length(w2) * sum((rmd[w2])))/dim(x)[1]
-  } else 0
-  list(risk1 = length(w)/dim(x)[1], risk2 = risk, wrisk1 = if (length(w) > 0) (length(w) *
-    sum((rmd[w])))/dim(x)[1] else 0, wrisk2 = wrisk, indexRisk1 = w, indexRisk2 = w2, riskvec1 = riskvec1,
-    riskvec2 = riskvec2)
+  } else {
+    0
+  }
+  list(
+    risk1 = length(w) / dim(x)[1],
+    risk2 = risk,
+    wrisk1 = if (length(w) > 0) {
+      (length(w) * sum((rmd[w]))) / dim(x)[1]
+    } else {
+      0
+    },
+    wrisk2 = wrisk,
+    indexRisk1 = w,
+    indexRisk2 = w2,
+    riskvec1 = riskvec1,
+    riskvec2 = riskvec2
+  )
 }
