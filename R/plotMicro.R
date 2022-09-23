@@ -29,6 +29,9 @@
 #' plotMicro(m1, p = 1, which.plot = 2)
 #' plotMicro(m1, p = 1, which.plot = 3)
 plotMicro <- function(x, p, which.plot = 1:3) {
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+
   bct <- function(y, p) {
     gm <- exp(colMeans(log(y)))
     if (p == 0)

@@ -316,8 +316,6 @@ shuffleWORK <- function(data, form, method="ds", weights=NULL, covmethod="spearm
     shuffled[, i] <- reverseMap(responses[, i], Ystar[, i])
   }
 
-  ### TODO: DELETE THIS corm=function(x)cor(x,method='spearman') corm(shuffled)
-  ### x11();pairs(shuffled) x11();pairs(responses)
   if (length(missingid) > 0) {
     for (i in 1:ncol(data)) {
       if (colnames(data)[i] %in% colnames(responses)) {
@@ -330,30 +328,4 @@ shuffleWORK <- function(data, form, method="ds", weights=NULL, covmethod="spearm
   }
   res <- list(shuffled=shuffled, perturbed=Ystar, egapd=gadpres)
   return(res)
-  # pdf('model4.pdf') par(mfrow=c(2,2), cex.main=0.7) plot(mat[,c(1,3)], main=paste('x1
-  # against s1\n', form[3])) points(x=Ystar[,1], y=mat[,3], col='blue', pch=2)
-  # points(x=gadpres[,1], y=mat[,3], col='red', pch=3) legend('bottomright',
-  # legend=c('original', 'shuffled','egadp'), pch=c(1,2,3), col=c('black','blue','red'))
-  # plot(mat[,c(2,3)], main=paste('x2 against s1\n', form[3])) points(x=Ystar[,2],
-  # y=mat[,3], col='blue', pch=2) points(x=gadpres[,2], y=mat[,3], col='red', pch=3)
-  # plot(mat[,c(1,4)], main=paste('x1 against s2\n', form[3])) points(x=Ystar[,1],
-  # y=mat[,4], col='blue', pch=2) points(x=gadpres[,1], y=mat[,4], col='red', pch=3)
-  # plot(mat[,c(1:2)], main=paste('x1 against x2\n', form[3])) points(x=Ystar[,1],
-  # y=Ystar[,2], col='blue', pch=2) points(x=gadpres[,1], y=gadpres[,2], col='red', pch=3)
-  # dev.off() print(cor(cbind(Ystar[,1:2],mat[,3:3]))) print(cor(mat[,1:3]))
-
 }
-# testmat <- Prestige[1:15,1:4] library(car) data(Prestige) Prestige <- na.omit(Prestige)
-# form <- formula(income + education ~ prestige + census + women + type, data=Prestige)
-# form <- formula(income + education ~ type*(prestige + women) + census, data=Prestige)
-# form <- formula(log(income) + education ~ prestige + census + women, data=Prestige) form
-# <- formula(log(income) + education ~ prestige:type + census + women, data=Prestige) form
-# <- formula(income + education ~ prestige, data=Prestige) sh <- shuffle(Prestige,form,
-# regmethod='lm', covmethod='spearman') sh1 <- sh[[1]] cor(cbind(sh1[,1:2],mat[,3:3]))
-# cor(mat[,1:3]) sh2 <- sh[[2]] cor(cbind(sh2[,1:2],mat[,3:3])) cor(mat[,1:3])
-# par(mfrow=c(2,2)) plot(mat[,c(1,3)]) points(x=sh2[,1], y=mat[,3], col='blue', pch=2)
-# points(x=sh1[,1], y=mat[,3], col='red', pch=3) plot(mat[,c(2,3)]) points(x=sh2[,2],
-# y=mat[,3], col='blue', pch=2) points(x=sh1[,2], y=mat[,3], col='red', pch=3)
-# plot(mat[,c(1,4)]) points(x=sh2[,1], y=mat[,4], col='blue', pch=2) points(x=sh1[,1],
-# y=mat[,4], col='red', pch=3) plot(mat[,c(2,4)]) points(x=sh2[,2], y=mat[,4], col='blue',
-# pch=2) points(x=sh1[,2], y=mat[,4], col='red', pch=3)

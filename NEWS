@@ -4,6 +4,7 @@
 - Remove unused variables in edmonds.cpp (thx @coatless)
 - Bugfix in `dRiskRMD()`; previously, too many obs were marked as risky
 - fix missing `\value` sections in `.Rd` files
+- never change users options when using `par()`
 
 # 5.7.2
 - Removed old package vignette `sdc_guidelines`

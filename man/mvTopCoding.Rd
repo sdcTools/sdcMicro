@@ -4,18 +4,21 @@
 \alias{mvTopCoding}
 \title{Detection and winsorization of multivariate outliers}
 \usage{
-mvTopCoding(x, maha=NULL,center=NULL,cov=NULL, alpha=0.025)
+mvTopCoding(x, maha = NULL, center = NULL, cov = NULL, alpha = 0.025)
 }
 \arguments{
-\item{x}{object of class matrix with numeric entries}
+\item{x}{an object coercible to a \code{data.table} containing numeric entries}
 
 \item{maha}{squared mahalanobis distance of each observation}
 
-\item{center}{center of data, needed for calcualtion of mahalanobis distance (if not provide)}
+\item{center}{center of data, needed for calculation of mahalanobis
+distance (if not provided)}
 
-\item{cov}{covariance matrix of data, needed for calcualtion of mahalanobis distance (if not provide)}
+\item{cov}{covariance matrix of data, needed for calcualtion of mahalanobis
+distance (if not provided)}
 
-\item{alpha}{significance level, determining the ellipsoide to which outliers should be placed upon}
+\item{alpha}{significance level, determining the ellipsoide to which
+outliers should be placed upon}
 }
 \value{
 the imputed winsorized data
@@ -24,13 +27,14 @@ the imputed winsorized data
 Imputation and detection of outliers
 }
 \details{
-Winsorizes the potential outliers on the ellipsoid defined by (robust) Mahalanobis distances in direction to the center of the data
+Winsorizes the potential outliers on the ellipsoid defined by
+(robust) Mahalanobis distances in direction to the center of the data
 }
 \examples{
 set.seed(123)
 x <- MASS::mvrnorm(20, mu = c(5,5), Sigma = matrix(c(1,0.9,0.9,1), ncol = 2))
-x[1,1] <- 3
-x[1,2] <- 6
+x[1, 1] <- 3
+x[1, 2] <- 6
 plot(x)
 ximp <- mvTopCoding(x)
 points(ximp, col = "blue", pch = 4)
@@ -40,14 +44,13 @@ Sigma <- diag(5)
 Sigma[upper.tri(Sigma)] <- 0.9
 Sigma[lower.tri(Sigma)] <- 0.9
 x <- MASS::mvrnorm(20, mu = rep(5,5), Sigma = Sigma)
-x[1,1] <- 3
-x[1,2] <- 6
-par(mfrow = c(1,2))
+x[1, 1] <- 3
+x[1, 2] <- 6
 pairs(x)
+
 ximp <- mvTopCoding(x)
 xnew <- data.frame(rbind(x, ximp))
 xnew$beforeafter <- rep(c(0,1), each = nrow(x))
-
 pairs(xnew, col = xnew$beforeafter, pch = 4)
 
 # by hand (non-robust)
