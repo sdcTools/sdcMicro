@@ -155,10 +155,153 @@ Using the R-Package sdcMicro</em>, Transactions on Data Privacy, vol. 1, number
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Tarragona</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">Tarragona</span>, method<span class="op">=</span><span class="st">'onedims'</span>, aggr<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## summary(m1)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Tarragona</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">Tarragona</span>, method <span class="op">=</span> <span class="st">"onedims"</span>, aggr <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $meansx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   FIXED.ASSETS     CURRENT.ASSETS       TREASURY      UNCOMMITTED.FUNDS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   :      0   Min.   : -26538   Min.   :-38776   Min.   :-515464  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:  10980   1st Qu.:  45741   1st Qu.:  1599   1st Qu.:  17322  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :  33930   Median :  90545   Median :  5656   Median :  40580  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   : 105339   Mean   : 210314   Mean   : 19353   Mean   : 120219  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:  95992   3rd Qu.: 196819   3rd Qu.: 19499   3rd Qu.: 105426  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   :4994098   Max.   :4539074   Max.   :497490   Max.   :3939325  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  PAID.UP.CAPITAL   SHORT.TERM.DEBT       SALES           LABOR.COSTS     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   :     90   Min.   :  -2701   Min.   :       0   Min.   :      0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:  10000   1st Qu.:  33155   1st Qu.:  135076   1st Qu.:  18441  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :  11000   Median :  67045   Median :  244794   Median :  36200  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   :  39946   Mean   : 159344   Mean   :  546958   Mean   :  74448  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:  30539   3rd Qu.: 143382   3rd Qu.:  473353   3rd Qu.:  74834  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   :1493787   Max.   :3601182   Max.   :15382214   Max.   :1372449  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   DEPRECIATION    OPERATING.PROFIT  FINANCIAL.OUTCOME    GROSS.PROFIT      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   :  -119   Min.   :-251798   Min.   :-357071.0   Min.   :-301172.0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:  1382   1st Qu.:   2454   1st Qu.:  -9547.8   1st Qu.:    746.2  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :  3614   Median :   8476   Median :  -3548.0   Median :   4055.0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   : 10855   Mean   :  27623   Mean   :  -8366.2   Mean   :  21243.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:  9293   3rd Qu.:  23452   3rd Qu.:   -213.8   3rd Qu.:  14333.0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   :378927   Max.   :1207056   Max.   : 108058.0   Max.   :1267541.0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    NET.PROFIT     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   :-301172  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:    471  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :   2844  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   :  14134  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:  10198  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   : 873843  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $meansxm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   FIXED.ASSETS     CURRENT.ASSETS       TREASURY      UNCOMMITTED.FUNDS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   :      0   Min.   : -13157   Min.   :-34015   Min.   :-371144  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:  10999   1st Qu.:  45735   1st Qu.:  1599   1st Qu.:  17297  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :  34002   Median :  90494   Median :  5664   Median :  40533  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   : 105339   Mean   : 210314   Mean   : 19353   Mean   : 120219  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:  96045   3rd Qu.: 196725   3rd Qu.: 19497   3rd Qu.: 105379  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   :3280469   Max.   :4276147   Max.   :446250   Max.   :3220313  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  PAID.UP.CAPITAL     SHORT.TERM.DEBT       SALES           LABOR.COSTS     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   :    363.3   Min.   :   -800   Min.   :     619   Min.   :      0  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:  10000.0   1st Qu.:  33072   1st Qu.:  134993   1st Qu.:  18426  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :  11023.3   Median :  66911   Median :  245380   Median :  36214  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   :  39946.4   Mean   : 159344   Mean   :  546958   Mean   :  74448  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:  30655.0   3rd Qu.: 143625   3rd Qu.:  475615   3rd Qu.:  74802  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   :1224154.7   Max.   :3240728   Max.   :12576186   Max.   :1308064  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   DEPRECIATION       OPERATING.PROFIT  FINANCIAL.OUTCOME    GROSS.PROFIT    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   :   -39.67   Min.   :-194049   Min.   :-285401.7   Min.   :-147801  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:  1379.67   1st Qu.:   2444   1st Qu.:  -9552.3   1st Qu.:    744  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :  3610.33   Median :   8437   Median :  -3549.5   Median :   4071  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   : 10855.10   Mean   :  27623   Mean   :  -8366.2   Mean   :  21244  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:  9291.00   3rd Qu.:  23531   3rd Qu.:   -207.3   3rd Qu.:  14328  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   :315696.00   Max.   : 982815   Max.   :  79754.0   Max.   : 955925  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    NET.PROFIT     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   :-206025  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:    466  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :   2847  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   :  14134  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:  10230  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   : 636607  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $amean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $amedian</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02289723</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $aonestep</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00947609</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $devvar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6049969</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $amad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02652711</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $acov</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3024984</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $arcov</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $acor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3246321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $arcor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $acors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01232482</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $adlm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4.66857</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $adlts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $apcaload</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7.644529</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $apppcaload</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12.89826</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $totalsOrig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      FIXED.ASSETS    CURRENT.ASSETS          TREASURY UNCOMMITTED.FUNDS </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          87852581         175401893          16140292         100262360 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PAID.UP.CAPITAL   SHORT.TERM.DEBT             SALES       LABOR.COSTS </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          33315324         132892906         456163207          62089598 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      DEPRECIATION  OPERATING.PROFIT FINANCIAL.OUTCOME      GROSS.PROFIT </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           9053156          23037386          -6977451          17717066 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        NET.PROFIT </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          11787590 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $totalsMicro</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numeric(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $atotals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $pmtotals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $util1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 120.8887</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $deigenvalues</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.69433</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8717026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9952038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $wrisk1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 616.5908</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $wrisk2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 612.3873</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>

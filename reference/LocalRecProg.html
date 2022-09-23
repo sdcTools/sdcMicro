@@ -146,7 +146,7 @@ categories based on the recoding result and repeatedly apply this algorithm.</p>
     <p>Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 <em>Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro</em>,
 in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
-(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77. 
+(editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77.
 <a href="https://doi.org/10.1007/978-3-642-33627-0_6" class="external-link">doi:10.1007/978-3-642-33627-0_6</a></p>
     </div>
     <div id="author">
@@ -156,26 +156,35 @@ in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># LocalRecProg</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">r1</span><span class="op">=</span><span class="fu">LocalRecProg</span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  categorical<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"sex"</span>, <span class="st">"relat"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  missingValue<span class="op">=</span><span class="op">-</span><span class="fl">99</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">r2</span><span class="op">=</span><span class="fu">LocalRecProg</span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  categorical<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"sex"</span>, <span class="st">"relat"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    ancestor<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"water2"</span>, <span class="st">"water3"</span>, <span class="st">"relat2"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    ancestor_setting<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"water"</span>,<span class="st">"water"</span>,<span class="st">"relat"</span><span class="op">)</span>,missingValue<span class="op">=</span><span class="op">-</span><span class="fl">99</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">r3</span><span class="op">=</span><span class="fu">LocalRecProg</span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  categorical<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"sex"</span>, <span class="st">"relat"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    ancestor<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"water2"</span>, <span class="st">"water3"</span>, <span class="st">"relat2"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    ancestor_setting<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"water"</span>,<span class="st">"water"</span>,<span class="st">"relat"</span><span class="op">)</span>,missingValue<span class="op">=</span><span class="op">-</span><span class="fl">99</span>,</span></span>
-<span class="r-in"><span>    FindLowestK<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cat_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"sex"</span>, <span class="st">"relat"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">anc_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"water2"</span>, <span class="st">"water3"</span>, <span class="st">"relat2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">anc_setting</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"water"</span>,<span class="st">"water"</span>,<span class="st">"relat"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## for objects of class sdcMicro:</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'urbrur'</span>,<span class="st">'roof'</span>,<span class="st">'walls'</span>,<span class="st">'water'</span>,<span class="st">'electcon'</span>,<span class="st">'relat'</span>,<span class="st">'sex'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  numVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'expend'</span>,<span class="st">'income'</span>,<span class="st">'savings'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'sampling_weight'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r1</span> <span class="op">&lt;-</span> <span class="fu">LocalRecProg</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
+<span class="r-in"><span>  categorical <span class="op">=</span> <span class="va">cat_vars</span>,</span></span>
+<span class="r-in"><span>  missingValue <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r2</span> <span class="op">&lt;-</span> <span class="fu">LocalRecProg</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
+<span class="r-in"><span>  categorical <span class="op">=</span> <span class="va">cat_vars</span>,</span></span>
+<span class="r-in"><span>  ancestor <span class="op">=</span> <span class="va">anc_var</span>,</span></span>
+<span class="r-in"><span>  ancestor_setting <span class="op">=</span> <span class="va">anc_setting</span>,</span></span>
+<span class="r-in"><span>  missingValue <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r3</span> <span class="op">&lt;-</span> <span class="fu">LocalRecProg</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
+<span class="r-in"><span>  categorical <span class="op">=</span> <span class="va">cat_vars</span>,</span></span>
+<span class="r-in"><span>  ancestor <span class="op">=</span> <span class="va">anc_var</span>,</span></span>
+<span class="r-in"><span>  ancestor_setting <span class="op">=</span> <span class="va">anc_setting</span>,</span></span>
+<span class="r-in"><span>  missingValue <span class="op">=</span> <span class="op">-</span><span class="fl">99</span>,</span></span>
+<span class="r-in"><span>  FindLowestK <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># for objects of class sdcMicro:</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dat <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
+<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"electcon"</span>, <span class="st">"relat"</span>, <span class="st">"sex"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  numVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span>, <span class="st">"savings"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  w <span class="op">=</span> <span class="st">"sampling_weight"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">LocalRecProg</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>

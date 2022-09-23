@@ -128,10 +128,10 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co">## example from Capobianchi, Polettini and Lucarelli:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">francdat</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">francdat</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span>,w<span class="op">=</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">francdat</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>, w <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">f</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  --------------------------</span>
@@ -142,41 +142,50 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2 2 2 1 1 1 1 2</span>
 <span class="r-in"><span><span class="va">f</span><span class="op">$</span><span class="va">Fk</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 110.0  84.5  84.5  17.0 541.0   8.0   5.0 110.0</span>
-<span class="r-in"><span><span class="co">## with missings:</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## dealing with missing values:</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">francdat</span></span></span>
 <span class="r-in"><span><span class="va">x</span><span class="op">[</span><span class="fl">3</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
 <span class="r-in"><span><span class="va">x</span><span class="op">[</span><span class="fl">4</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fl">4</span>,<span class="fl">4</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
 <span class="r-in"><span><span class="va">x</span><span class="op">[</span><span class="fl">5</span>,<span class="fl">6</span><span class="op">]</span>  <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
 <span class="r-in"><span><span class="va">x</span><span class="op">[</span><span class="fl">6</span>,<span class="fl">2</span><span class="op">]</span>  <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
-<span class="r-in"><span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">x</span>,  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span>,w<span class="op">=</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">x</span>, keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>, w <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f2</span><span class="op">$</span><span class="va">fk</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3 2 4 3 3 2 2 3</span>
 <span class="r-in"><span><span class="va">f2</span><span class="op">$</span><span class="va">Fk</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 149.0  84.5 194.5 563.0 566.0 549.0  22.0 149.0</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## individual risk calculation:</span></span></span>
 <span class="r-in"><span><span class="va">indivf</span> <span class="op">&lt;-</span> <span class="fu"><a href="indivRisk.html">indivRisk</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">indivf</span><span class="op">$</span><span class="va">rk</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01714426 0.02204233 0.02204233 0.17707583 0.01165448 0.29706308 0.40235948</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [8] 0.01714426</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Local Suppression</span></span></span>
-<span class="r-in"><span><span class="va">localS</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSupp.html">localSupp</a></span><span class="op">(</span><span class="va">f</span>, keyVar<span class="op">=</span><span class="fl">2</span>, threshold<span class="op">=</span><span class="fl">0.25</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">localS</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSupp.html">localSupp</a></span><span class="op">(</span><span class="va">f</span>, keyVar <span class="op">=</span> <span class="fl">2</span>, threshold <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 2observations has individual risks &gt;=0.25and were suppressed!</span>
-<span class="r-in"><span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">localS</span><span class="op">$</span><span class="va">freqCalc</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span>, w<span class="op">=</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">localS</span><span class="op">$</span><span class="va">freqCalc</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>, w <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">indivf2</span> <span class="op">&lt;-</span> <span class="fu"><a href="indivRisk.html">indivRisk</a></span><span class="op">(</span><span class="va">f2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">indivf2</span><span class="op">$</span><span class="va">rk</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01714426 0.02204233 0.02204233 0.17707583 0.01165448 0.29706308 0.40235948</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [8] 0.01714426</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## select another keyVar and run localSupp once again,</span></span></span>
-<span class="r-in"><span><span class="co">#if you think the table is not fully protected</span></span></span>
+<span class="r-in"><span><span class="co">## select another keyVar and run localSupp() once again,</span></span></span>
+<span class="r-in"><span><span class="co">## if you think the table is not fully protected</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">free1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">free1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">free1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">free1</span>, keyVars<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, w<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">free1</span>, keyVars <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, w <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ind</span> <span class="op">&lt;-</span> <span class="fu"><a href="indivRisk.html">indivRisk</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## and now you can use the interactive plot for individual risk objects:</span></span></span>
 <span class="r-in"><span><span class="co">## plot(ind)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## example from Capobianchi, Polettini and Lucarelli:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">francdat</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span><span class="va">francdat</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span>, importance<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">2</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">francdat</span>,</span></span>
+<span class="r-in"><span>  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">l1</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
@@ -200,39 +209,62 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6   NA    3    1    1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7    6   NA    1   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8    1    2    5    1</span>
-<span class="r-in"><span><span class="va">l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span><span class="va">francdat</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span>, k<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span><span class="va">francdat</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span>, k<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">francdat</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">francdat</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>, k <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Data from mu-Argus:</span></span></span>
 <span class="r-in"><span><span class="co">## Global recoding:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">free1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">free1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">free1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">free1</span><span class="op">[</span>, <span class="st">"AGE"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="globalRecode.html">globalRecode</a></span><span class="op">(</span><span class="va">free1</span><span class="op">[</span>,<span class="st">"AGE"</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">9</span>,<span class="fl">19</span>,<span class="fl">29</span>,<span class="fl">39</span>,<span class="fl">49</span>,<span class="fl">59</span>,<span class="fl">69</span>,<span class="fl">100</span><span class="op">)</span>, labels<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">free1</span><span class="op">[</span>, <span class="st">"AGE"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="globalRecode.html">globalRecode</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">free1</span><span class="op">[</span>, <span class="st">"AGE"</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">9</span>,<span class="fl">19</span>,<span class="fl">29</span>,<span class="fl">39</span>,<span class="fl">49</span>,<span class="fl">59</span>,<span class="fl">69</span>,<span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  labels <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">8</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Top coding:</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="topBotCoding.html">topBotCoding</a></span><span class="op">(</span><span class="va">free1</span><span class="op">[</span>,<span class="st">"DEBTS"</span><span class="op">]</span>, value<span class="op">=</span><span class="fl">9000</span>, replacement<span class="op">=</span><span class="fl">9100</span>, kind<span class="op">=</span><span class="st">"top"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="topBotCoding.html">topBotCoding</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">free1</span><span class="op">[</span>, <span class="st">"DEBTS"</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  value <span class="op">=</span> <span class="fl">9000</span>,</span></span>
+<span class="r-in"><span>  replacement <span class="op">=</span> <span class="fl">9100</span>,</span></span>
+<span class="r-in"><span>  kind <span class="op">=</span> <span class="st">"top"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Numerical Rank Swapping:</span></span></span>
-<span class="r-in"><span><span class="co">## do not use the mu-Argus test data set (free1)</span></span></span>
-<span class="r-in"><span><span class="co"># since the numerical variables are (probably) faked.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Tarragona</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="va">Tarragona1</span> <span class="op">&lt;-</span> <span class="fu"><a href="rankSwap.html">rankSwap</a></span><span class="op">(</span><span class="va">Tarragona</span>, P <span class="op">=</span> <span class="fl">10</span>, K0 <span class="op">=</span> <span class="cn">NULL</span>, R0 <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Microaggregation:</span></span></span>
-<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">Tarragona</span>, method<span class="op">=</span><span class="st">"onedims"</span>, aggr<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">Tarragona</span>, method<span class="op">=</span><span class="st">"pca"</span>, aggr<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># summary(m1)</span></span></span>
-<span class="r-in"><span><span class="co">## approx. 1 minute computation time</span></span></span>
-<span class="r-in"><span><span class="co"># valTable(Tarragona, method=c("simple","onedims","pca"))</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">Tarragona</span>, method <span class="op">=</span> <span class="st">"onedims"</span>, aggr <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">Tarragona</span>, method <span class="op">=</span> <span class="st">"pca"</span>, aggr <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## using a subset because of computation time</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="valTable.html">valTable</a></span><span class="op">(</span><span class="va">Tarragona</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span>, <span class="op">]</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simple"</span>, <span class="st">"onedims"</span>, <span class="st">"pca"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> method 1|3: 'simple'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> --&gt; compute results</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> --&gt; compute summary statistics</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> method 2|3: 'onedims'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> --&gt; compute results</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> --&gt; compute summary statistics</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> method 3|3: 'pca'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> --&gt; compute results</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> --&gt; compute summary statistics</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    method amean amedian aonestep devvar  amad  acov   acor  acors  adlm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  simple     0  18.607    4.810 10.100 5.111 5.050  8.474 14.935 3.480</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 onedims     0   0.522    0.502 16.763 1.197 8.381 10.671  2.413 0.215</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     pca     0   7.074    3.341 16.190 5.418 8.095 15.779 19.354 1.742</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   apcaload apppcaload atotals pmtotals   util1 deigenvalues risk0 risk1 risk2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   36.350     20.575       0        0 207.390        5.763  0.00     1     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   36.406     23.093       0        0  69.528       27.008  0.04     1     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   67.326     24.294       0        0 202.370        6.818  0.00     1     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    wrisk1  wrisk2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 129.603   0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 135.305 135.305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 130.317   0.000</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">microData</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">microData</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">microData</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">microData</span>, method<span class="op">=</span><span class="st">"mdav"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">m1</span><span class="op">$</span><span class="va">x</span>  <span class="co">### fix me</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m_micro</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">microData</span>, method <span class="op">=</span> <span class="st">"mdav"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m_micro</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $meansx</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       one              two            three         four            five      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   : 1.000   Min.   : 3.00   Min.   :21   Min.   :50.00   Min.   : 90.0  </span>
@@ -334,159 +366,546 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-out co"><span class="r-pr">#&gt;</span> $wrisk2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="plotMicro.html">plotMicro</a></span><span class="op">(</span><span class="va">m1</span>, <span class="fl">1</span>, which.plot<span class="op">=</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># too less observations...</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plotMicro.html">plotMicro</a></span><span class="op">(</span><span class="va">m_micro</span>, <span class="fl">1</span>, which.plot <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>  <span class="co"># not enough observations...</span></span></span>
 <span class="r-plt img"><img src="sdcMicro-package-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">free1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">free1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">free1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plotMicro.html">plotMicro</a></span><span class="op">(</span><span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">free1</span><span class="op">[</span>,<span class="fl">31</span><span class="op">:</span><span class="fl">34</span><span class="op">]</span>, method<span class="op">=</span><span class="st">"onedims"</span><span class="op">)</span>, <span class="fl">1</span>, which.plot<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plotMicro.html">plotMicro</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  x <span class="op">=</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">free1</span><span class="op">[</span>,<span class="fl">31</span><span class="op">:</span><span class="fl">34</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"onedims"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  p <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  which.plot <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="sdcMicro-package-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## disclosure risk (interval) and data utility:</span></span></span>
-<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">Tarragona</span>, method<span class="op">=</span><span class="st">"onedims"</span>, aggr<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="dRisk.html">dRisk</a></span><span class="op">(</span>obj<span class="op">=</span><span class="va">Tarragona</span>, xm<span class="op">=</span><span class="va">m1</span><span class="op">$</span><span class="va">mx</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">Tarragona</span>, method <span class="op">=</span> <span class="st">"onedims"</span>, aggr <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dRisk.html">dRisk</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">Tarragona</span>, xm <span class="op">=</span> <span class="va">m1</span><span class="op">$</span><span class="va">mx</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8717026</span>
-<span class="r-in"><span><span class="fu"><a href="dRisk.html">dRisk</a></span><span class="op">(</span>obj<span class="op">=</span><span class="va">Tarragona</span>, xm<span class="op">=</span><span class="va">m2</span><span class="op">$</span><span class="va">mx</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dRisk.html">dRisk</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">Tarragona</span>, xm <span class="op">=</span> <span class="va">m2</span><span class="op">$</span><span class="va">mx</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.004796163</span>
-<span class="r-in"><span><span class="fu"><a href="dUtility.html">dUtility</a></span><span class="op">(</span>obj<span class="op">=</span><span class="va">Tarragona</span>, xm<span class="op">=</span><span class="va">m1</span><span class="op">$</span><span class="va">mx</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dUtility.html">dUtility</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">Tarragona</span>, xm <span class="op">=</span> <span class="va">m1</span><span class="op">$</span><span class="va">mx</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 120.8887</span>
-<span class="r-in"><span><span class="fu"><a href="dUtility.html">dUtility</a></span><span class="op">(</span>obj<span class="op">=</span><span class="va">Tarragona</span>, xm<span class="op">=</span><span class="va">m2</span><span class="op">$</span><span class="va">mx</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dUtility.html">dUtility</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">Tarragona</span>, xm <span class="op">=</span> <span class="va">m2</span><span class="op">$</span><span class="va">mx</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1512.416</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## S4 class code for Adding Noise methods will be included</span></span></span>
-<span class="r-in"><span><span class="co">#in the next version of sdcMicro.</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Fast generation of synthetic data with aprox.</span></span></span>
-<span class="r-in"><span><span class="co">#the same covariance matrix as the original one.</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Fast generation of synthetic data with approximately</span></span></span>
+<span class="r-in"><span><span class="co">## the same covariance matrix as the original one.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              hp        drat         wt</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> hp   4700.86694 -16.4511089 44.1926613</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> drat  -16.45111   0.2858814 -0.3727207</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> wt     44.19266  -0.3727207  0.9573790</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></span><span class="op">(</span><span class="fu"><a href="dataGen.html">dataGen</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>,n<span class="op">=</span><span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df_gen</span> <span class="op">&lt;-</span> <span class="fu"><a href="dataGen.html">dataGen</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">mtcars</span><span class="op">[</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>, n <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></span><span class="op">(</span><span class="va">df_gen</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              hp        drat         wt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> hp   4239.93053 -11.9670373 38.3510071</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> drat  -11.96704   0.2645077 -0.3599786</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wt     38.35101  -0.3599786  0.9470101</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> hp   4540.18921 -16.4344451 44.3904027</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> drat  -16.43445   0.2984788 -0.4078128</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> wt     44.39040  -0.4078128  0.9892510</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="sdcMicro-package-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="fu"><a href="dataGen.html">dataGen</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>,n<span class="op">=</span><span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="va">df_gen</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="sdcMicro-package-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## PRAM</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">250</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Post-Randomization (PRAM)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">250</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="pram.html">pram</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">pr1</span><span class="op">$</span><span class="va">x_pram</span> <span class="op">==</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 222</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">pr1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Variable: x</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  ----------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Frequencies in original and perturbed data:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 x  1  2  3  4 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:           Original Frequencies 60 67 59 64  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: Frequencies after Perturbation 55 68 65 62  0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Transitions:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     transition Frequency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:    1 --&gt; 1        52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    1 --&gt; 2         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    1 --&gt; 3         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    1 --&gt; 4         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    2 --&gt; 1         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:    2 --&gt; 2        60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:    2 --&gt; 3         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    2 --&gt; 4         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    3 --&gt; 1         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    3 --&gt; 2         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    3 --&gt; 3        53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    3 --&gt; 4         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    4 --&gt; 2         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    4 --&gt; 3         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    4 --&gt; 4        57</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">250</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="pram.html">pram</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span><span class="op">$</span><span class="va">x_pram</span> <span class="op">==</span> <span class="va">x2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 234</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">free1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">marstat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">free1</span><span class="op">[</span>,<span class="st">"MARSTAT"</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">marstatPramed</span> <span class="op">&lt;-</span> <span class="fu"><a href="pram.html">pram</a></span><span class="op">(</span><span class="va">marstat</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">marstatPramed</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Variable: x</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  ----------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Frequencies in original and perturbed data:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 x    1   2   3    4 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:           Original Frequencies 2547 162 171 1120  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: Frequencies after Perturbation 2547 158 177 1118  0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Transitions:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     transition Frequency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:    1 --&gt; 1      2418</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    1 --&gt; 2        28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    1 --&gt; 3        40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    1 --&gt; 4        61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    2 --&gt; 1        37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:    2 --&gt; 2       120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:    2 --&gt; 4         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    3 --&gt; 1        30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    3 --&gt; 2         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    3 --&gt; 3       134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    3 --&gt; 4         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    4 --&gt; 1        62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    4 --&gt; 2         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    4 --&gt; 3         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    4 --&gt; 4      1046</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># FOR OBJECTS OF CLASS sdcMicro</span></span></span>
+<span class="r-in"><span><span class="co">## The same functionality can be also applied to `sdcMicroObj`-objects</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># undo-functionality is by default restricted to data sets</span></span></span>
-<span class="r-in"><span><span class="co"># with &lt;= 1e5 rows; to modify, env-var `sdcMicro_maxsize_undo`</span></span></span>
-<span class="r-in"><span><span class="co"># can to be changed before creating a problem instance</span></span></span>
+<span class="r-in"><span><span class="co">## undo-functionality is by default restricted to data sets</span></span></span>
+<span class="r-in"><span><span class="co">## with &lt;= `1e5` rows; to modify, env-var `sdcMicro_maxsize_undo`</span></span></span>
+<span class="r-in"><span><span class="co">## can to be changed before creating a problem instance</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span><span class="st">"sdcMicro_maxsize_undo"</span> <span class="op">=</span> <span class="fl">1e6</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata</span>,</span></span>
-<span class="r-in"><span>  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'urbrur'</span>,<span class="st">'roof'</span>,<span class="st">'walls'</span>,<span class="st">'water'</span>,<span class="st">'electcon'</span>,<span class="st">'relat'</span>,<span class="st">'sex'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  numVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'expend'</span>,<span class="st">'income'</span>,<span class="st">'savings'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'sampling_weight'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## create an object</span></span></span>
+<span class="r-in"><span><span class="va">testdata</span><span class="op">$</span><span class="va">water</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">$</span><span class="va">water</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dat <span class="op">=</span> <span class="va">testdata</span>,</span></span>
+<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"electcon"</span>, <span class="st">"water"</span>, <span class="st">"relat"</span>, <span class="st">"sex"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  numVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span>, <span class="st">"savings"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  w <span class="op">=</span> <span class="st">"sampling_weight"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">manipNumVars</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">### Display Risks</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 90929693 57800000  116258.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 27338058 25300000  279345.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 26524717 69200000 5495381.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 18073948 79600000 8695862.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  6713247 90300000  203620.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 49057636 32900000 1021268.0</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Display risk-measures</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_ER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10.7783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="dRisk.html">dRisk</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="co">### use addNoise without Parameters</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="addNoise.html">addNoise</a></span><span class="op">(</span><span class="va">sdc</span>,variables<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>,<span class="st">"income"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Generation of synthetic data</span></span></span>
+<span class="r-in"><span><span class="va">synthdat</span> <span class="op">&lt;-</span> <span class="fu"><a href="dataGen.html">dataGen</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## use addNoise with default parameters (not suggested)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="addNoise.html">addNoise</a></span><span class="op">(</span><span class="va">sdc</span>, variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">manipNumVars</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend    income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 41361882  97867993  116258.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 64827473 -26657240  279345.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 31060570  43043526 5495381.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -9611113 -14374396 8695862.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 28408470 124773683  203620.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 26289579 -22533649 1021268.0</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="co">### undolast</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00349345</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## undolast step (remove adding noise)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">undolast</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">manipNumVars</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 90929693 57800000  116258.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 27338058 25300000  279345.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 26524717 69200000 5495381.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 18073948 79600000 8695862.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  6713247 90300000  203620.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 49057636 32900000 1021268.0</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="co">### redo addNoise with Parameter</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="addNoise.html">addNoise</a></span><span class="op">(</span><span class="va">sdc</span>, noise<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## apply addNoise() with custom parameters</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="addNoise.html">addNoise</a></span><span class="op">(</span><span class="va">sdc</span>, noise <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">manipNumVars</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 90879125 57708353  117704.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 27236121 25375257  276831.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 26524892 69188007 5489039.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 18066834 79568690 8703730.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  6619469 90342123  193098.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 49075964 32868647 1025826.1</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="co">### dataGen</span></span></span>
-<span class="r-in"><span><span class="co">#sdc &lt;- undolast(sdc)</span></span></span>
-<span class="r-in"><span><span class="co">#head(sdc@risk$individual)</span></span></span>
-<span class="r-in"><span><span class="co">#sdc@risk$global</span></span></span>
-<span class="r-in"><span><span class="co">#sdc &lt;- dataGen(sdc)</span></span></span>
-<span class="r-in"><span><span class="co">#head(sdc@risk$individual)</span></span></span>
-<span class="r-in"><span><span class="co">#sdc@risk$global</span></span></span>
-<span class="r-in"><span><span class="co">### LocalSuppression</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## LocalSuppression</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">undolast</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              risk  fk    Fk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 9.433072e-05 107 10700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 9.900010e-05 102 10200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 5.713959e-05 176 17600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 5.713959e-05 176 17600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 2.221729e-04  46  4600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] 2.272211e-04  45  4500</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_ER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10.7783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              risk  fk    Fk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 9.258402e-05 109 10900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 9.900010e-05 102 10200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 5.649398e-05 178 17800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 5.649398e-05 178 17800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 2.173441e-04  47  4700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] 2.221729e-04  46  4600</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="co">### microaggregation</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.0006729827</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_ER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3.082261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.06729827</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## microaggregation</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">undolast</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 90929693 57800000  116258.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 27338058 25300000  279345.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 26524717 69200000 5495381.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 18073948 79600000 8695862.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  6713247 90300000  203620.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 49057636 32900000 1021268.0</span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">### pram</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 89216447 56066667  198935.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 26627836 25933333  478764.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 23178458 67700000 5579820.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 16100539 81433333 8634904.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  9097752 88200000  282854.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 49866768 34400000  955027.8</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Post-Randomization</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">undolast</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              risk  fk    Fk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 9.433072e-05 107 10700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 9.900010e-05 102 10200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 5.713959e-05 176 17600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 5.713959e-05 176 17600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 2.221729e-04  46  4600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] 2.272211e-04  45  4500</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="pram.html">pram</a></span><span class="op">(</span><span class="va">sdc</span>,keyVar<span class="op">=</span><span class="st">"water"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_ER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10.7783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="pram.html">pram</a></span><span class="op">(</span><span class="va">sdc</span>, variables <span class="op">=</span> <span class="st">"water"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>If pram is applied on key variables, the k-anonymity and risk assessment are not useful anymore.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              risk  fk    Fk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 9.090083e-05 111 11100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 1.020304e-04  99  9900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 5.524557e-05 182 18200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 5.524557e-05 182 18200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 2.173441e-04  47  4700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] 2.325041e-04  44  4400</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="co">### rankSwap</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.002744458</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_ER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12.56962</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2744458</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## rankSwap</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">undolast</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              risk  fk    Fk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 9.433072e-05 107 10700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 9.900010e-05 102 10200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 5.713959e-05 176 17600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 5.713959e-05 176 17600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 2.221729e-04  46  4600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] 2.272211e-04  45  4500</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_ER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10.7783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 90929693 57800000  116258.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 27338058 25300000  279345.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 26524717 69200000 5495381.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 18073948 79600000 8695862.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  6713247 90300000  203620.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 49057636 32900000 1021268.0</span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="rankSwap.html">rankSwap</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> setting parameter R0 = 0.95 as no inputs have been specified.</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 94414270 58200000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 22979189 31800000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 22823843 72800000 5386877.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 19214481 75600000 9008862.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8325201 94200000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 43742594 25200000 1463218.0</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              risk  fk    Fk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 9.433072e-05 107 10700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 9.900010e-05 102 10200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 5.713959e-05 176 17600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 5.713959e-05 176 17600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 2.221729e-04  46  4600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] 2.272211e-04  45  4500</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="co">### suda2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_ER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10.7783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.235334</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## suda2</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="suda2.html">suda2</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">suda2</span></span></span>
-<span class="r-in"><span><span class="co">### topBotCoding</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Dis suda scores table: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Interval Number of records</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       == 0              4423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 (0.0, 0.1]               122</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 (0.1, 0.2]                22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 (0.2, 0.3]                12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 (0.3, 0.4]                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 (0.4, 0.5]                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 (0.5, 0.6]                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 (0.6, 0.7]                 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9      &gt; 0.7                 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attribute contribution:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   variable contribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   urbrur     12.04499</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     roof     33.86503</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    walls     18.09816</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 electcon     22.51534</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    water     53.41513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    relat     92.59714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7      sex     24.94888</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## topBotCoding</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 94414270 58200000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 22979189 31800000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 22823843 72800000 5386877.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 19214481 75600000 9008862.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8325201 94200000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 43742594 25200000 1463218.0</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="topBotCoding.html">topBotCoding</a></span><span class="op">(</span><span class="va">sdc</span>, value<span class="op">=</span><span class="fl">60000000</span>, replacement<span class="op">=</span><span class="fl">62000000</span>, column<span class="op">=</span><span class="st">"income"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.005458515</span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="topBotCoding.html">topBotCoding</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
+<span class="r-in"><span>  value <span class="op">=</span> <span class="fl">60000000</span>,</span></span>
+<span class="r-in"><span>  replacement <span class="op">=</span> <span class="fl">62000000</span>,</span></span>
+<span class="r-in"><span>  column <span class="op">=</span> <span class="st">"income"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 94414270 58200000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 22979189 31800000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 22823843 62000000 5386877.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 19214481 62000000 9008862.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8325201 62000000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 43742594 25200000 1463218.0</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="co">### LocalRecProg</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.002401747</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## LocalRecProg</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">keyVars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"sex"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="st">"sampling_weight"</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
 <span class="r-in"><span>  keyVars <span class="op">=</span> <span class="va">keyVars</span>,</span></span>
-<span class="r-in"><span>  weightVar <span class="op">=</span> <span class="va">w</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  weightVar <span class="op">=</span> <span class="va">w</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.04651687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_ER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4.326069</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4.651687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="LocalRecProg.html">LocalRecProg</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="co">### model-based risks</span></span></span>
-<span class="r-in"><span><span class="co">#' formula</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.003255076</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_ER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.302722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk_pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3255076</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $max_risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Model-based risks using a formula</span></span></span>
 <span class="r-in"><span><span class="va">form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"~"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">keyVars</span>, collapse <span class="op">=</span> <span class="st">"+"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"default"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>glm.fit: algorithm did not converge</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>glm.fit: fitted rates numerically 0 occurred</span>
 <span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The estimated model (using method 'default') was:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	~ urbrur + roof + walls + water + sex</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> global risk-measures:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 1: 0.372 (37.158 %)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 2: 0.635 (63.477 %)</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"CE"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>glm.fit: algorithm did not converge</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>glm.fit: fitted rates numerically 0 occurred</span>
 <span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"PLM"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The estimated model (using method 'CE') was:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	~ urbrur + roof + walls + water + sex</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> global risk-measures:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 1: 0.372 (37.158 %)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 2: 0.635 (63.477 %)</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"PML"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>glm.fit: algorithm did not converge</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>glm.fit: fitted rates numerically 0 occurred</span>
 <span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The estimated model (using method 'PML') was:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	~ urbrur + roof + walls + water + sex</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> global risk-measures:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 1: 0.372 (37.158 %)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 2: 0.635 (63.477 %)</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"weightedLLM"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>glm.fit: algorithm did not converge</span>
 <span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The estimated model (using method 'weightedLLM') was:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	~ urbrur + roof + walls + water + sex</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> global risk-measures:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 1: 0.372 (37.158 %)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 2: 0.635 (63.477 %)</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"IPF"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The estimated model (using method 'IPF') was:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	~ urbrur + roof + walls + water + sex</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> global risk-measures:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 1: 0.372 (37.158 %)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 	Risk-Measure 2: 0.635 (63.477 %)</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>

@@ -360,8 +360,8 @@ Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
 <span class="r-in"><span>  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'urbrur'</span>,<span class="st">'roof'</span>,<span class="st">'walls'</span>,<span class="st">'water'</span>,<span class="st">'electcon'</span>,<span class="st">'relat'</span>,<span class="st">'sex'</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  numVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'expend'</span>,<span class="st">'income'</span>,<span class="st">'savings'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'sampling_weight'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## already interally applied and availabe in object sdc:</span></span></span>
-<span class="r-in"><span><span class="co">## sdc &lt;- measure_risk(sdc)</span></span></span>
+<span class="r-in"><span><span class="co">## -&gt; when using `createSdcObj()`, the risks are already internally computed</span></span></span>
+<span class="r-in"><span><span class="co">## and it is not required to explicitely run `sdc &lt;- measure_risk(sdc)`</span></span></span>
 </code></pre></div>
     </div>
   </div>
