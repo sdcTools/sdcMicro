@@ -693,7 +693,6 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
     y <- apply(y, 2, function(x) (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE))
 
     d <- as.matrix(stats::dist(y))
-    set.seed(123)
     rr <- covMcd(y)
     md <- stats::mahalanobis(y, center=rr$center, cov=rr$cov)
     diag(d) <- 0
