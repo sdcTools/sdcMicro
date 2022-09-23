@@ -155,7 +155,9 @@ Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">francdat</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">francdat</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Local Suppression</span></span></span>
 <span class="r-in"><span><span class="va">localS</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">francdat</span>, keyVar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">localS</span></span></span>
@@ -173,20 +175,21 @@ Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 <span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">localS</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="localSuppression-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## for objects of class sdcMicro, no stratification</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'urbrur'</span>,<span class="st">'roof'</span>,<span class="st">'walls'</span>,<span class="st">'water'</span>,<span class="st">'electcon'</span>,<span class="st">'relat'</span>,<span class="st">'sex'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  numVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'expend'</span>,<span class="st">'income'</span>,<span class="st">'savings'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'sampling_weight'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">kv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"electcon"</span>, <span class="st">"relat"</span>, <span class="st">"sex"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata2</span>, keyVars <span class="op">=</span> <span class="va">kv</span>, w <span class="op">=</span> <span class="st">"sampling_weight"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## for objects of class sdcMicro, with stratification</span></span></span>
 <span class="r-in"><span><span class="va">testdata2</span><span class="op">$</span><span class="va">ageG</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">$</span><span class="va">age</span>, <span class="fl">5</span>, labels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"AG"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'urbrur'</span>,<span class="st">'roof'</span>,<span class="st">'walls'</span>,<span class="st">'water'</span>,<span class="st">'electcon'</span>,<span class="st">'relat'</span>,<span class="st">'sex'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  numVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'expend'</span>,<span class="st">'income'</span>,<span class="st">'savings'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'sampling_weight'</span>,</span></span>
-<span class="r-in"><span>  strataVar<span class="op">=</span><span class="st">'ageG'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dat <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
+<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="va">kv</span>,</span></span>
+<span class="r-in"><span>  w <span class="op">=</span> <span class="st">"sampling_weight"</span>,</span></span>
+<span class="r-in"><span>  strataVar <span class="op">=</span> <span class="st">"ageG"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## it is also possible to provide k-anonymity for subsets of key-variables</span></span></span>
@@ -194,26 +197,53 @@ Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 <span class="r-in"><span><span class="co">## in this case we want to provide 10-anonymity for all combinations</span></span></span>
 <span class="r-in"><span><span class="co">## of 5 key variables, 20-anonymity for all combinations with 4 key variables</span></span></span>
 <span class="r-in"><span><span class="co">## and 30-anonymity for all combinations of 3 key variables.</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'urbrur'</span>,<span class="st">'roof'</span>,<span class="st">'walls'</span>,<span class="st">'water'</span>,<span class="st">'electcon'</span>,<span class="st">'relat'</span>,<span class="st">'sex'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  numVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'expend'</span>,<span class="st">'income'</span>,<span class="st">'savings'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'sampling_weight'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata2</span>, keyVars <span class="op">=</span> <span class="va">kv</span>, w <span class="op">=</span> <span class="st">"sampling_weight"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">combs</span> <span class="op">&lt;-</span> <span class="fl">5</span><span class="op">:</span><span class="fl">3</span></span></span>
-<span class="r-in"><span><span class="va">k</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">30</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">sdc</span>, k<span class="op">=</span><span class="va">k</span>, combs<span class="op">=</span><span class="va">combs</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">k</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">sdc</span>, k <span class="op">=</span> <span class="va">k</span>, combs <span class="op">=</span> <span class="va">combs</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## data.frame method (no stratification)</span></span></span>
-<span class="r-in"><span><span class="va">keyVars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>,<span class="st">"roof"</span>,<span class="st">"walls"</span>,<span class="st">"water"</span>,<span class="st">"electcon"</span>,<span class="st">"relat"</span>,<span class="st">"sex"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">strataVars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ageG"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">inp</span> <span class="op">&lt;-</span> <span class="va">testdata2</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">keyVars</span>, <span class="va">strataVars</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">ls</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">inp</span>, keyVars<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">inp</span> <span class="op">&lt;-</span> <span class="va">testdata2</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">kv</span>, <span class="st">"ageG"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">ls</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">inp</span>, keyVars <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ls</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of suppressions in the key variables: 97 (new: 97)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of suppressions by key variables:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (in parenthesis, the total number suppressions is shown)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   urbrur    roof walls   water electcon   relat   sex</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  3 (3) 10 (10) 7 (7) 56 (56)    0 (0) 16 (16) 5 (5)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2-anonymity == TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ls</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="localSuppression-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## data.frame method (with stratification)</span></span></span>
-<span class="r-in"><span><span class="va">ls</span> <span class="op">&lt;-</span> <span class="fu">kAnon</span><span class="op">(</span><span class="va">inp</span>, keyVars<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>, strataVars<span class="op">=</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ls</span> <span class="op">&lt;-</span> <span class="fu">kAnon</span><span class="op">(</span><span class="va">inp</span>, keyVars <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span>, strataVars <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ls</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ls</span>, showTotalSupps<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of suppressions in the key variables: 109 (new: 109)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of suppressions by key variables and strata:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (in parenthesis, the total number suppressions is shown)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       urbrur    roof   walls   water electcon relat   sex</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AG5    1 (1)   2 (2)   1 (1)   1 (1)    1 (1) 1 (1) 1 (1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AG3    2 (2)   3 (3)   3 (3)   7 (7)    0 (0) 2 (2) 0 (0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AG1    0 (0) 10 (10)   5 (5) 24 (24)    0 (0) 3 (3) 5 (5)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AG2    2 (2)   5 (5)   3 (3) 13 (13)    2 (2) 2 (2) 1 (1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AG4    1 (1)   1 (1)   2 (2)   3 (3)    1 (1) 1 (1) 0 (0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total  6 (6) 21 (21) 14 (14) 48 (48)    4 (4) 9 (9) 7 (7)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2-anonymity == TRUE in all strata!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ls</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="localSuppression-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>

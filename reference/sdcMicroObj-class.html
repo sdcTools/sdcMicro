@@ -195,123 +195,7 @@ Micro-Data Using the R Package sdcMicro</em>, Journal of Statistical Software,
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">showClass</span><span class="op">(</span><span class="st">"sdcMicroObj"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class "sdcMicroObj" [package "sdcMicro"]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Slots:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:           origData           keyVars          pramVars           numVars</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   dataframeOrNULL     numericOrNULL     numericOrNULL     numericOrNULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:          ghostVars         weightVar              hhId         strataVar</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        listOrNULL     numericOrNULL     numericOrNULL     numericOrNULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:        sensibleVar      manipKeyVars     manipPramVars      manipNumVars</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:     numericOrNULL   dataframeOrNULL   dataframeOrNULL   dataframeOrNULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:     manipGhostVars    manipStrataVar      originalRisk              risk</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:   dataframeOrNULL      factorOrNULL        listOrNULL        listOrNULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:            utility              pram  localSuppression           options</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        listOrNULL        listOrNULL        listOrNULL        listOrNULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name:  additionalResults               set              prev       deletedVars</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Class:        listOrNULL        listOrNULL    sdcmicroOrNULL   characterOrNULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Extends: "sdcmicroOrNULL"</span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">createSdcObj</span><span class="op">(</span><span class="va">testdata</span>,</span></span>
-<span class="r-in"><span>  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'urbrur'</span>,<span class="st">'roof'</span>,<span class="st">'walls'</span>,<span class="st">'water'</span>,<span class="st">'electcon'</span>,<span class="st">'relat'</span>,<span class="st">'sex'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  numVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'expend'</span>,<span class="st">'income'</span>,<span class="st">'savings'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'sampling_weight'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">manipNumVars</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">### Display Risks</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="dRisk.html">dRisk</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="co">### use addNoise without Parameters</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="addNoise.html">addNoise</a></span><span class="op">(</span><span class="va">sdc</span>,variables<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>,<span class="st">"income"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">manipNumVars</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="co">### undolast</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">undolast</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">manipNumVars</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="co">### redo addNoise with Parameter</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="addNoise.html">addNoise</a></span><span class="op">(</span><span class="va">sdc</span>, noise<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">manipNumVars</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="co">### dataGen</span></span></span>
-<span class="r-in"><span><span class="co">#sdc &lt;- undolast(sdc)</span></span></span>
-<span class="r-in"><span><span class="co">#head(sdc@risk$individual)</span></span></span>
-<span class="r-in"><span><span class="co">#sdc@risk$global</span></span></span>
-<span class="r-in"><span><span class="co">#sdc &lt;- dataGen(sdc)</span></span></span>
-<span class="r-in"><span><span class="co">#head(sdc@risk$individual)</span></span></span>
-<span class="r-in"><span><span class="co">#sdc@risk$global</span></span></span>
-<span class="r-in"><span><span class="co">### LocalSuppression</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">undolast</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="co">### microaggregation</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">undolast</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="microaggregation.html">microaggregation</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">### pram</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">undolast</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="pram.html">pram</a></span><span class="op">(</span><span class="va">sdc</span>,keyVar<span class="op">=</span><span class="st">"water"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="co">### rankSwap</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">undolast</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="rankSwap.html">rankSwap</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="co">### suda2</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="suda2.html">suda2</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">suda2</span></span></span>
-<span class="r-in"><span><span class="co">### topBotCoding</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="topBotCoding.html">topBotCoding</a></span><span class="op">(</span><span class="va">sdc</span>, value<span class="op">=</span><span class="fl">60000000</span>, replacement<span class="op">=</span><span class="fl">62000000</span>, column<span class="op">=</span><span class="st">"income"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">### LocalRecProg</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">keyVars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"sex"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="st">"sampling_weight"</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">createSdcObj</span><span class="op">(</span><span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="va">keyVars</span>,</span></span>
-<span class="r-in"><span>  weightVar <span class="op">=</span> <span class="va">w</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="LocalRecProg.html">LocalRecProg</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">global</span></span></span>
-<span class="r-in"><span><span class="co">### model-based risks</span></span></span>
-<span class="r-in"><span><span class="co">#' formula</span></span></span>
-<span class="r-in"><span><span class="va">form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"~"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">keyVars</span>, collapse <span class="op">=</span> <span class="st">"+"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"default"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"CE"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"PLM"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"weightedLLM"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="modRisk.html">modRisk</a></span><span class="op">(</span><span class="va">sdc</span>, method <span class="op">=</span> <span class="st">"IPF"</span>, formulaM <span class="op">=</span> <span class="va">form</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"risk"</span><span class="op">)</span><span class="op">$</span><span class="va">model</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="co">## we can also specify ghost (linked) variables</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## we can also specify ghost (linked) variables</span></span></span>
 <span class="r-in"><span><span class="co">## these variables are linked to some categorical key variables</span></span></span>
 <span class="r-in"><span><span class="co">## and have the sampe suppression pattern as the variable that they</span></span></span>
 <span class="r-in"><span><span class="co">## are linked to after \code{\link{localSuppression}} has been applied</span></span></span>
@@ -335,8 +219,8 @@ Micro-Data Using the R Package sdcMicro</em>, Journal of Statistical Software,
 <span class="r-in"><span><span class="va">ghostVars</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"electcon"</span></span></span>
 <span class="r-in"><span><span class="va">ghostVars</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"electcon2"</span>,<span class="st">"electcon3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="co"># dontrun because Examples with CPU time &gt; 2.5 times elapsed time</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># donttest because Examples with CPU time &gt; 2.5 times elapsed time</span></span></span>
 <span class="r-in"><span><span class="co">## we want variable 'water2' to be linked to key-variable 'water'</span></span></span>
 <span class="r-in"><span><span class="va">ghostVars</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ghostVars</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"water"</span></span></span>
@@ -348,19 +232,90 @@ Micro-Data Using the R Package sdcMicro</em>, Journal of Statistical Software,
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## apply 3-anonymity to selected key variables</span></span></span>
 <span class="r-in"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">kAnon</a></span><span class="op">(</span><span class="va">obj</span>, k<span class="op">=</span><span class="fl">3</span><span class="op">)</span>; <span class="va">obj</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The input dataset consists of 4580 rows and 18 variables.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   --&gt; Categorical key variables: urbrur, roof, walls, water, electcon, relat, sex</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   --&gt; Numerical key variables: expend, income, savings</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   --&gt; Weight variable: sampling_weight</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   --&gt; Ghost variable(s) exist</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     Variable(s) electcon2, electcon3 are linked to key variable electcon</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     Variable(s) water2 are linked to key variable water</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Information on categorical key variables:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Reported is the number, mean size and size of the smallest category &gt;0 for recoded variables.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> In parenthesis, the same statistics are shown for the unmodified data.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Note: NA (missings) are counted as seperate categories!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Key Variable Number of categories     Mean size           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        urbrur                    2 (2)  2290.000 (2290.000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          roof                    6 (5)   913.200  (916.000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         walls                    4 (3)  1525.333 (1526.667)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         water                    9 (8)   567.500  (572.500)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      electcon                    4 (3)  1524.667 (1526.667)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         relat                    9 (9)   543.875  (508.889)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           sex                    2 (2)  2290.000 (2290.000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Size of smallest (&gt;0)       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    646  (646)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     15   (16)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     46   (50)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     25   (26)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    103  (107)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      2    (1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   2284 (2284)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Infos on 2/3-Anonymity:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of observations violating</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   - 2-anonymity: 0 (0.000%) | in original data: 157 (3.428%)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   - 3-anonymity: 0 (0.000%) | in original data: 281 (6.135%)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   - 5-anonymity: 100 (2.183%) | in original data: 458 (10.000%)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Numerical key variables: expend, income, savings</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Disclosure risk (~100.00% in original data):</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   modified data: [0.00%; 100.00%]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Current Information Loss in modified data (0.00% in original data):</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   IL1: 0.00</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Difference of Eigenvalues: 0.000%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Local suppression:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    KeyVar | Suppressions (#) | Suppressions (%)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    urbrur |                0 |            0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      roof |               14 |            0.306</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     walls |                4 |            0.087</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     water |               40 |            0.873</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  electcon |                6 |            0.131</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     relat |              229 |            5.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       sex |                0 |            0.000</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## check, if the suppression patterns are identical</span></span></span>
 <span class="r-in"><span><span class="va">manipGhostVars</span> <span class="op">&lt;-</span> <span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">obj</span>, <span class="st">"manipGhostVars"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">manipKeyVars</span> <span class="op">&lt;-</span> <span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">obj</span>, <span class="st">"manipKeyVars"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">manipKeyVars</span><span class="op">$</span><span class="va">electcon</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">manipGhostVars</span><span class="op">$</span><span class="va">electcon2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">manipKeyVars</span><span class="op">$</span><span class="va">electcon</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">manipGhostVars</span><span class="op">$</span><span class="va">electcon3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">manipKeyVars</span><span class="op">$</span><span class="va">water</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">manipGhostVars</span><span class="op">$</span><span class="va">water2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## exclude some variables</span></span></span>
 <span class="r-in"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">createSdcObj</span><span class="op">(</span><span class="va">testdata</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>,<span class="st">"roof"</span>,<span class="st">"walls"</span><span class="op">)</span>, numVars<span class="op">=</span><span class="st">"savings"</span>,</span></span>
 <span class="r-in"><span>   weightVar<span class="op">=</span><span class="va">w</span>, excludeVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"relat"</span>,<span class="st">"electcon"</span>,<span class="st">"hhcivil"</span>,<span class="st">"ori_hid"</span>,<span class="st">"expend"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">obj</span>, <span class="st">"origData"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "urbrur"            "roof"              "walls"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "water"             "sex"               "age"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "income"            "savings"           "sampling_weight"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "household_weights" "electcon2"         "electcon3"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "water2"           </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>

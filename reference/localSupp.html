@@ -115,36 +115,60 @@ Using the R-Package sdcMicro</em>, Transactions on Data Privacy, vol. 1, number
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## example from Capobianchi, Polettini and Lucarelli:</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">francdat</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">francdat</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">keyVars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Key"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="co"># dontrun because Examples with CPU time &gt; 2.5 times elapsed time</span></span></span>
-<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">francdat</span>, keyVars<span class="op">=</span><span class="va">keyVars</span>,w<span class="op">=</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">francdat</span>, keyVars <span class="op">=</span> <span class="va">keyVars</span>, w <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">f</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  --------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 4 obs. violate 2-anonymity </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 8 obs. violate 3-anonymity </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  --------------------------</span>
 <span class="r-in"><span><span class="va">f</span><span class="op">$</span><span class="va">fk</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2 2 2 1 1 1 1 2</span>
 <span class="r-in"><span><span class="va">f</span><span class="op">$</span><span class="va">Fk</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 110.0  84.5  84.5  17.0 541.0   8.0   5.0 110.0</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## individual risk calculation:</span></span></span>
 <span class="r-in"><span><span class="va">indivf</span> <span class="op">&lt;-</span> <span class="fu"><a href="indivRisk.html">indivRisk</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">indivf</span><span class="op">$</span><span class="va">rk</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01714426 0.02204233 0.02204233 0.17707583 0.01165448 0.29706308 0.40235948</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [8] 0.01714426</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Local Suppression</span></span></span>
-<span class="r-in"><span><span class="va">localS</span> <span class="op">&lt;-</span> <span class="fu">localSupp</span><span class="op">(</span><span class="va">f</span>, keyVar<span class="op">=</span><span class="st">"Key4"</span>, threshold<span class="op">=</span><span class="fl">0.15</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">localS</span><span class="op">$</span><span class="va">freqCalc</span>, keyVars<span class="op">=</span><span class="va">keyVars</span>, w<span class="op">=</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">localS</span> <span class="op">&lt;-</span> <span class="fu">localSupp</span><span class="op">(</span><span class="va">f</span>, keyVar <span class="op">=</span> <span class="st">"Key4"</span>, threshold <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 3observations has individual risks &gt;=0.15and were suppressed!</span>
+<span class="r-in"><span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="fu"><a href="freqCalc.html">freqCalc</a></span><span class="op">(</span><span class="va">localS</span><span class="op">$</span><span class="va">freqCalc</span>, keyVars <span class="op">=</span> <span class="va">keyVars</span>, w <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">indivf2</span> <span class="op">&lt;-</span> <span class="fu"><a href="indivRisk.html">indivRisk</a></span><span class="op">(</span><span class="va">f2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">indivf2</span><span class="op">$</span><span class="va">rk</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.017144262 0.022042326 0.022042326 0.177075834 0.003581243 0.003581243</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7] 0.402359478 0.017144262</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">indivf</span><span class="op">$</span><span class="va">rk</span>, <span class="va">indivf2</span><span class="op">$</span><span class="va">rk</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## select another keyVar and run localSupp once again,</span></span></span>
 <span class="r-in"><span><span class="co"># if you think the table is not fully protected</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## for objects of class sdcMicro:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">testdata</span>,</span></span>
-<span class="r-in"><span>  keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'urbrur'</span>,<span class="st">'roof'</span>,<span class="st">'walls'</span>,<span class="st">'water'</span>,<span class="st">'electcon'</span>,<span class="st">'relat'</span>,<span class="st">'sex'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  numVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'expend'</span>,<span class="st">'income'</span>,<span class="st">'savings'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'sampling_weight'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">localSupp</span><span class="op">(</span><span class="va">sdc</span>, keyVar<span class="op">=</span><span class="st">'urbrur'</span>, threshold<span class="op">=</span><span class="fl">0.045</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"ls"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dat <span class="op">=</span> <span class="va">testdata</span>,</span></span>
+<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"electcon"</span>, <span class="st">"relat"</span>, <span class="st">"sex"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  w <span class="op">=</span> <span class="st">"sampling_weight"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">localSupp</span><span class="op">(</span><span class="va">sdc</span>, keyVar <span class="op">=</span> <span class="st">"urbrur"</span>, threshold <span class="op">=</span> <span class="fl">0.045</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"ls"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Local suppression:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    KeyVar | Suppressions (#) | Suppressions (%)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    urbrur |              157 |            3.428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      roof |                0 |            0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     walls |                0 |            0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     water |                0 |            0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  electcon |                0 |            0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     relat |                0 |            0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       sex |                0 |            0.000</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </div>

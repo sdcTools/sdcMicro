@@ -162,14 +162,23 @@ is returned.</p>
 <span class="r-in"><span><span class="va">sdc2</span> <span class="op">&lt;-</span> <span class="fu">mafast</span><span class="op">(</span><span class="va">sdc</span>,aggr<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc2</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01075269</span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co">### Performance tests</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">testdata</span></span></span>
 <span class="r-in"><span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">testdata</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">xx</span> <span class="op">&lt;-</span> <span class="fu">mafast</span><span class="op">(</span><span class="va">x</span>,variables<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>,<span class="st">"income"</span>,<span class="st">"savings"</span><span class="op">)</span>,aggr<span class="op">=</span><span class="fl">50</span>,by<span class="op">=</span><span class="st">"sex"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">xx</span> <span class="op">&lt;-</span> <span class="fu">mafast</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    obj <span class="op">=</span> <span class="va">x</span>,</span></span>
+<span class="r-in"><span>    variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span>, <span class="st">"savings"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    aggr <span class="op">=</span> <span class="fl">50</span>,</span></span>
+<span class="r-in"><span>    by <span class="op">=</span> <span class="st">"sex"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.365   0.000   0.366 </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
