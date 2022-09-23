@@ -16,18 +16,18 @@
 #' }
 #' @param ... arguments (e.g \code{host}) that are passed through \code{\link[shiny]{runApp}} when
 #' starting the shiny application
-#' @param shiny.server Setting this parameter to \code{TRUE} will return the app in the form of an 
+#' @param shiny.server Setting this parameter to \code{TRUE} will return the app in the form of an
 #' object rather than invoking it. This is useful for deploying \code{sdcApp} via \code{shiny-server}.
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' sdcApp(theme="flatly")
+#' if(interactive()) {
+#'   sdcApp(theme = "flatly")
 #' }
 sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN", ..., shiny.server = FALSE) {
   if(!shiny.server)
     runApp(sdcApp(maxRequestSize, debug, theme, ..., shiny.server = TRUE))
-  
+
   if (!is.numeric(maxRequestSize)) {
     stop("argument 'maxRequestSize' must be numeric!\n")
   }
@@ -68,11 +68,11 @@ sdcApp <- function(maxRequestSize=50, debug=FALSE, theme="IHSN", ..., shiny.serv
     shinyOptions(.guitheme = "ihsn-root.css")
     shinyOptions(.guijsfile = "js/ihsn-style.js")
   }
-  
+
   source_from_appdir <- function(filename){
     source(file.path(appDir, filename), local = parent.frame(), chdir = TRUE)$value
   }
-  
+
   shinyOptions(sdcAppInvoked = TRUE)
   source_from_appdir("global.R")
   shinyOptions(sdcAppInvoked = NULL)

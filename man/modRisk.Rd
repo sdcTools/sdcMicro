@@ -79,7 +79,7 @@ sdc <- createSdcObj(testdata2,
 sdc <- modRisk(sdc, form = ~sex+water+roof)
 slot(sdc, "risk")$model
 
-\dontrun{
+\donttest{
 # an example using data from the laeken-pkg
 library(laeken)
 data(eusilc)

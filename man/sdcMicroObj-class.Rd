@@ -91,99 +91,6 @@ Class to save all information about the SDC process
 }
 
 \examples{
-
-showClass("sdcMicroObj")
-\dontrun{
-data(testdata)
-sdc <- createSdcObj(testdata,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
-head(sdc@manipNumVars)
-### Display Risks
-sdc@risk$global
-sdc <- dRisk(sdc)
-sdc@risk$numeric
-### use addNoise without Parameters
-sdc <- addNoise(sdc,variables=c("expend","income"))
-head(sdc@manipNumVars)
-sdc@risk$numeric
-### undolast
-sdc <- undolast(sdc)
-head(sdc@manipNumVars)
-sdc@risk$numeric
-### redo addNoise with Parameter
-sdc <- addNoise(sdc, noise=0.2)
-head(sdc@manipNumVars)
-sdc@risk$numeric
-### dataGen
-#sdc <- undolast(sdc)
-#head(sdc@risk$individual)
-#sdc@risk$global
-#sdc <- dataGen(sdc)
-#head(sdc@risk$individual)
-#sdc@risk$global
-### LocalSuppression
-sdc <- undolast(sdc)
-head(sdc@risk$individual)
-sdc@risk$global
-sdc <- localSuppression(sdc)
-head(sdc@risk$individual)
-sdc@risk$global
-### microaggregation
-sdc <- undolast(sdc)
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
-sdc <- microaggregation(sdc)
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
-### pram
-sdc <- undolast(sdc)
-head(sdc@risk$individual)
-sdc@risk$global
-sdc <- pram(sdc,keyVar="water")
-head(sdc@risk$individual)
-sdc@risk$global
-### rankSwap
-sdc <- undolast(sdc)
-head(sdc@risk$individual)
-sdc@risk$global
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
-sdc <- rankSwap(sdc)
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
-head(sdc@risk$individual)
-sdc@risk$global
-### suda2
-sdc <- suda2(sdc)
-sdc@risk$suda2
-### topBotCoding
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
-sdc@risk$numeric
-sdc <- topBotCoding(sdc, value=60000000, replacement=62000000, column="income")
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
-sdc@risk$numeric
-
-### LocalRecProg
-data(testdata2)
-keyVars <- c("urbrur", "roof", "walls", "water", "sex")
-w <- "sampling_weight"
-sdc <- createSdcObj(testdata2,
-  keyVars = keyVars,
-  weightVar = w)
-sdc@risk$global
-sdc <- LocalRecProg(sdc)
-sdc@risk$global
-### model-based risks
-#' formula
-form <- as.formula(paste("~", paste(keyVars, collapse = "+")))
-sdc <- modRisk(sdc, method = "default", formulaM = form)
-get.sdcMicroObj(sdc, "risk")$model
-sdc <- modRisk(sdc, method = "CE", formulaM = form)
-get.sdcMicroObj(sdc, "risk")$model
-sdc <- modRisk(sdc, method = "PLM", formulaM = form)
-get.sdcMicroObj(sdc, "risk")$model
-sdc <- modRisk(sdc, method = "weightedLLM", formulaM = form)
-get.sdcMicroObj(sdc, "risk")$model
-sdc <- modRisk(sdc, method = "IPF", formulaM = form)
-get.sdcMicroObj(sdc, "risk")$model
-}
 ## we can also specify ghost (linked) variables
 ## these variables are linked to some categorical key variables
 ## and have the sampe suppression pattern as the variable that they
@@ -208,8 +115,8 @@ ghostVars[[1]] <- list()
 ghostVars[[1]][[1]] <- "electcon"
 ghostVars[[1]][[2]] <- c("electcon2","electcon3")
 
-\dontrun{
-# dontrun because Examples with CPU time > 2.5 times elapsed time
+\donttest{
+# donttest because Examples with CPU time > 2.5 times elapsed time
 ## we want variable 'water2' to be linked to key-variable 'water'
 ghostVars[[2]] <- list()
 ghostVars[[2]][[1]] <- "water"

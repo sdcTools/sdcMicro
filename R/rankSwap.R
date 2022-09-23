@@ -66,7 +66,6 @@
 #' @export
 #' @examples
 #' data(testdata2)
-#' \dontrun{
 #' data_swap <- rankSwap(
 #'   obj = testdata2,
 #'   variables = c("age", "income", "expend", "savings")
@@ -80,7 +79,6 @@
 #'   numVars = c("expend", "income", "savings"),
 #'   w = "sampling_weight")
 #' sdc <- rankSwap(sdc)
-#' }
 rankSwap <- function(obj, variables = NULL, TopPercent = 5, BottomPercent = 5,
                      K0 = NULL, R0 = NULL, P = NULL, missing = NA, seed = NULL) {
 

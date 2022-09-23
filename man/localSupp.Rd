@@ -26,21 +26,20 @@ Values of high risk (above the threshold) of a certain variable (parameter
 keyVar) are suppressed.
 }
 \examples{
-## example from Capobianchi, Polettini and Lucarelli:
 data(francdat)
 keyVars <- paste0("Key",1:4)
-\dontrun{
-# dontrun because Examples with CPU time > 2.5 times elapsed time
-f <- freqCalc(francdat, keyVars=keyVars,w=8)
+f <- freqCalc(francdat, keyVars = keyVars, w = 8)
 f
 f$fk
 f$Fk
+
 ## individual risk calculation:
 indivf <- indivRisk(f)
 indivf$rk
+
 ## Local Suppression
-localS <- localSupp(f, keyVar="Key4", threshold=0.15)
-f2 <- freqCalc(localS$freqCalc, keyVars=keyVars, w=8)
+localS <- localSupp(f, keyVar = "Key4", threshold = 0.15)
+f2 <- freqCalc(localS$freqCalc, keyVars = keyVars, w = 8)
 indivf2 <- indivRisk(f2)
 indivf2$rk
 identical(indivf$rk, indivf2$rk)
@@ -50,12 +49,13 @@ identical(indivf$rk, indivf2$rk)
 
 ## for objects of class sdcMicro:
 data(testdata)
-sdc <- createSdcObj(testdata,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
-sdc <- localSupp(sdc, keyVar='urbrur', threshold=0.045)
-print(sdc, type="ls")
-}
+sdc <- createSdcObj(
+  dat = testdata,
+  keyVars = c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex"),
+  w = "sampling_weight"
+)
+sdc <- localSupp(sdc, keyVar = "urbrur", threshold = 0.045)
+print(sdc, type = "ls")
 }
 \references{
 Templ, M. \emph{Statistical Disclosure Control for Microdata

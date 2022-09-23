@@ -76,7 +76,6 @@ parameter eqn{R0} to 0.95 internally.
 }
 \examples{
 data(testdata2)
-\dontrun{
 data_swap <- rankSwap(
   obj = testdata2,
   variables = c("age", "income", "expend", "savings")
@@ -90,7 +89,6 @@ sdc <- createSdcObj(
   numVars = c("expend", "income", "savings"),
   w = "sampling_weight")
 sdc <- rankSwap(sdc)
-}
 }
 \references{
 Moore, Jr.R. (1996) Controlled data-swapping techniques for

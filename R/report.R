@@ -373,7 +373,7 @@ definition=function(obj, internal, title, outdir) {
 #' @param outdir output folder
 #' @param filename output filename
 #' @param title Title for the report
-#' @param internal TRUE/FALSE, if TRUE a detailled internal report is produced,
+#' @param internal TRUE/FALSE, if TRUE a detailed internal report is produced,
 #' else a non-disclosive overview
 #' @param verbose TRUE/FALSE, if TRUE, some additional information is printed.
 #' @author Matthias Templ, Bernhard Meindl
@@ -382,16 +382,19 @@ definition=function(obj, internal, title, outdir) {
 #' @examples
 #' \dontrun{
 #' data(testdata2)
-#' sdc <- createSdcObj(testdata2,
-#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' sdc <- createSdcObj(
+#'   dat = testdata2,
+#'   keyVars = c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex"),
+#'   numVars = c("expend", "income", "savings"),
+#'   w = "sampling_weight"
+#' )
 #' report(sdc)
 #' }
 report <- function(obj, outdir = getwd(), filename = "SDC-Report", title = "SDC-Report", internal = FALSE, verbose = FALSE) {
   if (!inherits(obj, "sdcMicroObj")) {
     stop("argument `obj` needs to be of class `sdcMicroObj.`", call. = FALSE)
   }
-  
+
   filename <- paste0(filename, ".html")
   repObj <- calcReportData(
     obj = obj,
@@ -420,7 +423,7 @@ report <- function(obj, outdir = getwd(), filename = "SDC-Report", title = "SDC-
     )
     file.remove(file.path(outdir, "report-template-simple.md"))
   }
-  
+
   if (verbose) {
     if (internal) {
       txt <- paste0("An internal (extensive) report was successfully generated.\n")

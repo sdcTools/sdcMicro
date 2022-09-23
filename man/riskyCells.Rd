@@ -8,65 +8,118 @@
 riskyCells(obj, useIdentificationLevel = FALSE, threshold, ...)
 }
 \arguments{
-\item{obj}{a \code{data.frame}, \code{data.table} or an object of class \code{\link{sdcMicroObj-class}}}
+\item{obj}{a \code{data.frame}, \code{data.table} or an \linkS4class{sdcMicroObj} object}
 
-\item{useIdentificationLevel}{(logical) specifies if tabulation should be done up to a specific
-dimension (\code{useIdentificationLevel=FALSE} using argument \code{maxDim}) or taking identification
-levels (\code{useIdentificationLevel=FALSE} using argument \code{level}) into account.}
+\item{useIdentificationLevel}{(logical) specifies if tabulation should be
+done up to a specific dimension (\code{useIdentificationLevel = FALSE} using
+argument \code{maxDim}) or taking identification levels
+(\code{useIdentificationLevel = FALSE} using argument \code{level}) into account.}
 
-\item{threshold}{a numeric vector specifiying the thresholds at which cells are considered to be unsafe. In case a
-tabulation is done up to a specific level (\code{useIdentificationLevel=FALSE}), the thresholds may be
-specified differently for each dimension. In the other case, the same threshold is used for all tables.}
+\item{threshold}{a numeric vector specifiying the thresholds at which cells
+are considered to be unsafe. In case a tabulation is done up to a specific
+level (\code{useIdentificationLevel = FALSE}), the thresholds may be specified
+differently for each dimension. In the other case, the same threshold is
+used for all tables.}
 
 \item{...}{see possible arguments below
 \itemize{
-\item{keyVars: }{index or variable-names within \code{obj} that should be used for tabulation. In case \code{obj} is
-of class \code{\link{sdcMicroObj-class}}, this argument is not used and the pre-defined key-variables are used.}
-\item{level: }{in case \code{useIdentificationLevel=TRUE}, this numeric vector specifies the importance of the key variables.
-The construction of output tables follows the implementation in mu-argus, see e.g \url{https://github.com/sdcTools/manuals/raw/master/mu-argus/MUmanual5.1.pdf}.
-The length of this numeric vector must match the number of key variables.}
-\item{maxDim: }{in case \code{useIdentificationLevel=FALSE}, this number specifies maximal number of variables to tablulate.}
+\item \code{keyVars}: index or variable-names within \code{obj} that should be used for
+tabulation. In case \code{obj} is a \linkS4class{sdcMicroObj} object, this argument is
+not used and the pre-defined key-variables are used.
+\item \code{level}: in case \code{useIdentificationLevel = TRUE}, this numeric vector
+specifies the importance of the key variables. The construction of output
+tables follows the implementation in mu-argus, see e.g
+\href{https://github.com/sdcTools/manuals/raw/master/mu-argus/MUmanual5.1.pdf}{mu-argus}.
+The length of this numeric vector must match the number of key variables.
+\item \code{maxDim}: in case \code{useIdentificationLevel = FALSE}, this number specifies
+maximal number of variables to tablulate.
 }}
 }
 \value{
-a \code{data.table} showing the number of unsafe cells, thresholds for any combination of the key variables. If
-the input was a \code{\link{sdcMicroObj-class}} object and some modifications have been already applied to the categorical
-key variables, the resulting output contains the number of unsafe cells both for the original and the modified data.
+a \code{data.table} showing the number of unsafe cells, thresholds for
+any combination of the key variables. If the input was a \linkS4class{sdcMicroObj}
+object and some modifications have been already applied to the categorical
+key variables, the resulting output contains the number of unsafe cells
+both for the original and the modified data.
 }
 \description{
-Allows to compute risky (unweighted) combinations of key variables either up to a specified dimension or using
-identification level. This mimics the approach taken in mu-argus.
+Allows to compute risky (unweighted) combinations of key variables either
+up to a specified dimension or using identification level. This mimics the
+approach taken in mu-argus.
 }
 \examples{
-\dontrun{
 ## data.frame method / all combinations up to maxDim
-riskyCells(testdata2, keyVars=c(1:5), threshold=c(50,25,10,5),
-  useIdentificationLevel=FALSE, maxDim=4)
-riskyCells(testdata2, keyVars=c(1:5), threshold=10,
-  useIdentificationLevel=FALSE, maxDim=3)
+riskyCells(
+  obj = testdata2,
+  keyVars = 1:5,
+  threshold = c(50, 25, 10, 5),
+  useIdentificationLevel = FALSE,
+  maxDim = 4
+)
+riskyCells(
+  obj  = testdata2,
+  keyVars = 1:5,
+  threshold = 10,
+  useIdentificationLevel = FALSE,
+  maxDim = 3
+)
 
 ## data.frame method / using identification levels
-riskyCells(testdata2, keyVars=c(1:6), threshold=20,
-  useIdentificationLevel=TRUE, level=c(1,1,2,3,3,5))
-riskyCells(testdata2, keyVars=c(1,3,4,6), threshold=10,
-  useIdentificationLevel=TRUE, level=c(1,2,2,4))
+riskyCells(
+  obj = testdata2,
+  keyVars = 1:6,
+  threshold = 20,
+  useIdentificationLevel = TRUE,
+  level = c(1, 1, 2, 3, 3, 5)
+)
+riskyCells(
+  obj = testdata2,
+  keyVars = c(1, 3, 4, 6),
+  threshold = 10,
+  useIdentificationLevel = TRUE,
+  level = c(1, 2, 2, 4)
+)
 
 ## sdcMicroObj-method / all combinations up to maxDim
 testdata2[1:6] <- lapply(1:6, function(x) {
   testdata2[[x]] <- as.factor(testdata2[[x]])
 })
-sdc <- createSdcObj(testdata2,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
 
-r0 <- riskyCells(sdc, useIdentificationLevel=FALSE, threshold=c(20,10,5), maxDim=3)
-## in case key-variables have been modified, we get counts for original and modified data
-sdc <- groupAndRename(sdc, var="roof", before=c("5","6","9"), after=c("5+"))
-r1 <- riskyCells(sdc, useIdentificationLevel=FALSE, threshold=c(10,5,3), maxDim=3)
+sdc <- createSdcObj(
+  dat = testdata2,
+  keyVars = c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex"),
+  numVars = c("expend", "income", "savings"),
+  w = "sampling_weight")
+
+r0 <- riskyCells(
+  obj = sdc,
+  useIdentificationLevel=FALSE,
+  threshold = c(20, 10, 5),
+  maxDim = 3
+)
+
+## in case key-variables have been modified, we get counts for
+## original and modified data
+sdc <- groupAndRename(
+  obj = sdc,
+  var = "roof",
+  before = c("5", "6", "9"),
+  after = "5+"
+)
+r1 <- riskyCells(
+  obj = sdc,
+  useIdentificationLevel = FALSE,
+  threshold = c(10, 5, 3),
+  maxDim = 3
+)
 
 ## sdcMicroObj-method / using identification levels
-riskyCells(sdc, useIdentificationLevel=TRUE, threshold=10, level=c(c(1,1,3,4,5,5,5)))
-}
+riskyCells(
+  obj = sdc,
+  useIdentificationLevel = TRUE,
+  threshold = 10,
+  level = c(1, 1, 3, 4, 5, 5, 5)
+)
 }
 \author{
 Bernhard Meindl

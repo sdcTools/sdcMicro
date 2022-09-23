@@ -6,7 +6,11 @@
 - Fix missing `\value` sections in `.Rd` files
 - Never change users options when using `par()`
 - Removed fixed seed-value in `microaggregation(..., method = "rmd")`
-- Updates examples sop that no code-lines are commented out
+- Updates examples so that no code-lines are commented out
+- use `\donttest{}` instead of `\dontrun{}` if possible
+
+  * report.R -> \dontrun because (html)files would be created
+
 
 # 5.7.2
 - Removed old package vignette `sdc_guidelines`

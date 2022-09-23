@@ -29,7 +29,7 @@ for uploaded files, defaults to 50MB}
 \item{...}{arguments (e.g \code{host}) that are passed through \code{\link[shiny]{runApp}} when
 starting the shiny application}
 
-\item{shiny.server}{Setting this parameter to \code{TRUE} will return the app in the form of an 
+\item{shiny.server}{Setting this parameter to \code{TRUE} will return the app in the form of an
 object rather than invoking it. This is useful for deploying \code{sdcApp} via \code{shiny-server}.}
 }
 \value{
@@ -40,7 +40,7 @@ anonymisation process.
 starts the graphical user interface developed with \emph{shiny}.
 }
 \examples{
-\dontrun{
-sdcApp(theme="flatly")
+if(interactive()) {
+  sdcApp(theme = "flatly")
 }
 }

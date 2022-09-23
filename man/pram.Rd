@@ -53,7 +53,6 @@ Deprecated method 'pram_strata' is no longer available
 in sdcMicro > 4.5.0
 }
 \examples{
-\dontrun{
 data(testdata)
 
 # using a factor variable as input
@@ -160,7 +159,6 @@ print(sdc, type = "pram")
 
 # we can also have a look at the transitions
 get.sdcMicroObj(sdc, "pram")$transitions
-}
 }
 \references{
 \url{https://www.gnu.org/software/glpk/}

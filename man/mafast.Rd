@@ -50,13 +50,20 @@ sdc1@risk$numeric
 
 sdc2 <- mafast(sdc,aggr=10)
 sdc2@risk$numeric
-\dontrun{
+\donttest{
 ### Performance tests
 x <- testdata
 for(i in 1:20){
   x <- rbind(x,testdata)
 }
-system.time(xx <- mafast(x,variables=c("expend","income","savings"),aggr=50,by="sex"))
+system.time({
+  xx <- mafast(
+    obj = x,
+    variables = c("expend", "income", "savings"),
+    aggr = 50,
+    by = "sex"
+  )
+})
 }
 
 }

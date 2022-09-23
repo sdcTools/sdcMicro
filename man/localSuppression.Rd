@@ -71,25 +71,28 @@ in sdcMicro > 4.5.0.
 to obtain k-anonymity for some parts of the data.
 }
 \examples{
+\donttest{
 data(francdat)
+
 ## Local Suppression
 localS <- localSuppression(francdat, keyVar=c(4,5,6))
 localS
 plot(localS)
-\dontrun{
+
 ## for objects of class sdcMicro, no stratification
 data(testdata2)
-sdc <- createSdcObj(testdata2,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
+kv <- c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex")
+sdc <- createSdcObj(testdata2, keyVars = kv, w = "sampling_weight")
 sdc <- localSuppression(sdc)
 
 ## for objects of class sdcMicro, with stratification
 testdata2$ageG <- cut(testdata2$age, 5, labels=paste0("AG",1:5))
-sdc <- createSdcObj(testdata2,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight',
-  strataVar='ageG')
+sdc <- createSdcObj(
+  dat = testdata2,
+  keyVars = kv,
+  w = "sampling_weight",
+  strataVar = "ageG"
+)
 sdc <- localSuppression(sdc)
 
 ## it is also possible to provide k-anonymity for subsets of key-variables
@@ -97,25 +100,21 @@ sdc <- localSuppression(sdc)
 ## in this case we want to provide 10-anonymity for all combinations
 ## of 5 key variables, 20-anonymity for all combinations with 4 key variables
 ## and 30-anonymity for all combinations of 3 key variables.
-sdc <- createSdcObj(testdata2,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
+sdc <- createSdcObj(testdata2, keyVars = kv, w = "sampling_weight")
 combs <- 5:3
-k <- c(10,20,30)
-sdc <- localSuppression(sdc, k=k, combs=combs)
+k <- c(10, 20, 30)
+sdc <- localSuppression(sdc, k = k, combs = combs)
 
 ## data.frame method (no stratification)
-keyVars <- c("urbrur","roof","walls","water","electcon","relat","sex")
-strataVars <- c("ageG")
-inp <- testdata2[,c(keyVars, strataVars)]
-ls <- localSuppression(inp, keyVars=1:7)
+inp <- testdata2[,c(kv, "ageG")]
+ls <- localSuppression(inp, keyVars = 1:7)
 print(ls)
 plot(ls)
 
 ## data.frame method (with stratification)
-ls <- kAnon(inp, keyVars=1:7, strataVars=8)
+ls <- kAnon(inp, keyVars = 1:7, strataVars = 8)
 print(ls)
-plot(ls, showTotalSupps=TRUE)
+plot(ls)
 }
 }
 \references{

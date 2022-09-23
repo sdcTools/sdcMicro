@@ -23,7 +23,7 @@ report(
 
 \item{title}{Title for the report}
 
-\item{internal}{TRUE/FALSE, if TRUE a detailled internal report is produced,
+\item{internal}{TRUE/FALSE, if TRUE a detailed internal report is produced,
 else a non-disclosive overview}
 
 \item{verbose}{TRUE/FALSE, if TRUE, some additional information is printed.}
@@ -38,9 +38,12 @@ sdcMicro object that contains useful summaries about the anonymization process.
 \examples{
 \dontrun{
 data(testdata2)
-sdc <- createSdcObj(testdata2,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
+sdc <- createSdcObj(
+  dat = testdata2,
+  keyVars = c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex"),
+  numVars = c("expend", "income", "savings"),
+  w = "sampling_weight"
+)
 report(sdc)
 }
 }

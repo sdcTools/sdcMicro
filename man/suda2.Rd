@@ -63,7 +63,6 @@ Since version >5.0.2, the computation of suda-scores has changed and is now by d
 the original paper by Elliot et al.
 }
 \examples{
-\dontrun{
 data(testdata2)
 data_suda2 <- suda2(testdata2,variables=c("urbrur","roof","walls","water","sex"))
 data_suda2
@@ -76,7 +75,6 @@ sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- suda2(sdc, original_scores=FALSE)
-}
 }
 \references{
 C. J. Skinner; M. J. Elliot (20xx) A Measure of Disclosure Risk
