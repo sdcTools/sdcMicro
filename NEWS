@@ -8,9 +8,7 @@
 - Removed fixed seed-value in `microaggregation(..., method = "rmd")`
 - Updates examples so that no code-lines are commented out
 - use `\donttest{}` instead of `\dontrun{}` if possible
-
-  * report.R -> \dontrun because (html)files would be created
-
+- Update `Authors@R`
 
 # 5.7.2
 - Removed old package vignette `sdc_guidelines`
