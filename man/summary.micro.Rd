@@ -38,10 +38,11 @@ Summary method for objects from class \sQuote{micro}.
 This function computes several measures of information loss, such as
 }
 \examples{
-
 data(Tarragona)
-m1 <- microaggregation(Tarragona, method='onedims', aggr=3)
-## summary(m1)
+m1 <- microaggregation(Tarragona, method = "onedims", aggr = 3)
+\donttest{
+summary(m1)
+}
 }
 \references{
 Templ, M. \emph{Statistical Disclosure Control for Microdata

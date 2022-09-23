@@ -146,8 +146,8 @@ data(testdata2)
 sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
-## already interally applied and availabe in object sdc:
-## sdc <- measure_risk(sdc)
+## -> when using `createSdcObj()`, the risks are already internally computed
+## and it is not required to explicitely run `sdc <- measure_risk(sdc)`
 }
 \references{
 Franconi, L. and Polettini, S. (2004) \emph{Individual risk

@@ -35,106 +35,114 @@ then be easily modified and reloaded.
 2.5.9\cr Date: \tab 2009-07-22\cr License: \tab GPL 2.0 \cr }
 }
 \examples{
-
+\donttest{
 ## example from Capobianchi, Polettini and Lucarelli:
 data(francdat)
-f <- freqCalc(francdat, keyVars=c(2,4,5,6),w=8)
+f <- freqCalc(francdat, keyVars=c(2, 4:6), w = 8)
 f
 f$fk
 f$Fk
-## with missings:
+
+## dealing with missing values:
 x <- francdat
 x[3,5] <- NA
 x[4,2] <- x[4,4] <- NA
 x[5,6]  <- NA
 x[6,2]  <- NA
-f2 <- freqCalc(x,  keyVars=c(2,4,5,6),w=8)
+f2 <- freqCalc(x, keyVars = c(2, 4:6), w = 8)
+f2$fk
 f2$Fk
+
 ## individual risk calculation:
 indivf <- indivRisk(f)
 indivf$rk
+
 ## Local Suppression
-localS <- localSupp(f, keyVar=2, threshold=0.25)
-f2 <- freqCalc(localS$freqCalc, keyVars=c(2,4,5,6), w=8)
+localS <- localSupp(f, keyVar = 2, threshold = 0.25)
+f2 <- freqCalc(localS$freqCalc, keyVars=c(2, 4:6), w = 8)
 indivf2 <- indivRisk(f2)
 indivf2$rk
 
-## select another keyVar and run localSupp once again,
-#if you think the table is not fully protected
+## select another keyVar and run localSupp() once again,
+## if you think the table is not fully protected
 data(free1)
 free1 <- as.data.frame(free1)
-f <- freqCalc(free1, keyVars=1:3, w=30)
+f <- freqCalc(x = free1, keyVars = 1:3, w = 30)
 ind <- indivRisk(f)
 ## and now you can use the interactive plot for individual risk objects:
 ## plot(ind)
 
 ## example from Capobianchi, Polettini and Lucarelli:
 data(francdat)
-l1 <- localSuppression(francdat, keyVars=c(2,4,5,6), importance=c(1,3,2,4))
+l1 <- localSuppression(
+  obj = francdat,
+  keyVars=c(2, 4:6),
+  importance = c(1, 3, 2, 4)
+)
 l1
 l1$x
-l2 <- localSuppression(francdat, keyVars=c(2,4,5,6), k=2)
-l3 <- localSuppression(francdat, keyVars=c(2,4,5,6), k=4)
+l2 <- localSuppression(obj = francdat, keyVars=c(2, 4:6), k = 2)
+l3 <- localSuppression(obj = francdat, keyVars=c(2, 4:6), k = 4)
 
-## Data from mu-Argus:
 ## Global recoding:
 data(free1)
 free1 <- as.data.frame(free1)
-free1[, "AGE"] <- globalRecode(free1[,"AGE"], c(1,9,19,29,39,49,59,69,100), labels=1:8)
+free1[, "AGE"] <- globalRecode(
+  obj = free1[, "AGE"],
+  breaks = c(1,9,19,29,39,49,59,69,100),
+  labels = 1:8
+)
 
 ## Top coding:
-topBotCoding(free1[,"DEBTS"], value=9000, replacement=9100, kind="top")
+topBotCoding(
+  obj = free1[, "DEBTS"],
+  value = 9000,
+  replacement = 9100,
+  kind = "top"
+)
 
 ## Numerical Rank Swapping:
-## do not use the mu-Argus test data set (free1)
-# since the numerical variables are (probably) faked.
 data(Tarragona)
-\dontrun{
 Tarragona1 <- rankSwap(Tarragona, P = 10, K0 = NULL, R0 = NULL)
-}
 
 ## Microaggregation:
-m1 <- microaggregation(Tarragona, method="onedims", aggr=3)
-m2 <- microaggregation(Tarragona, method="pca", aggr=3)
-# summary(m1)
-## approx. 1 minute computation time
-# valTable(Tarragona, method=c("simple","onedims","pca"))
+m1 <- microaggregation(Tarragona, method = "onedims", aggr = 3)
+m2 <- microaggregation(Tarragona, method = "pca", aggr = 3)
 
+## using a subset because of computation time
+valTable(Tarragona[1:50, ], method = c("simple", "onedims", "pca"))
 
 data(microData)
 microData <- as.data.frame(microData)
-m1 <- microaggregation(microData, method="mdav")
-x <- m1$x  ### fix me
-summary(m1)
-plotMicro(m1, 1, which.plot=1)  # too less observations...
+m_micro <- microaggregation(microData, method = "mdav")
+summary(m_micro)
+plotMicro(m_micro, 1, which.plot = 1)  # not enough observations...
 data(free1)
 free1 <- as.data.frame(free1)
-plotMicro(microaggregation(free1[,31:34], method="onedims"), 1, which.plot=1)
-
+plotMicro(
+  x = microaggregation(free1[,31:34], method = "onedims"),
+  p = 1,
+  which.plot = 1
+)
 
 ## disclosure risk (interval) and data utility:
-m1 <- microaggregation(Tarragona, method="onedims", aggr=3)
-dRisk(obj=Tarragona, xm=m1$mx)
-dRisk(obj=Tarragona, xm=m2$mx)
-dUtility(obj=Tarragona, xm=m1$mx)
-dUtility(obj=Tarragona, xm=m2$mx)
+m1 <- microaggregation(Tarragona, method = "onedims", aggr = 3)
+dRisk(obj = Tarragona, xm = m1$mx)
+dRisk(obj = Tarragona, xm = m2$mx)
+dUtility(obj = Tarragona, xm = m1$mx)
+dUtility(obj = Tarragona, xm = m2$mx)
 
-## S4 class code for Adding Noise methods will be included
-#in the next version of sdcMicro.
-
-## Fast generation of synthetic data with aprox.
-#the same covariance matrix as the original one.
-
+## Fast generation of synthetic data with approximately
+## the same covariance matrix as the original one.
 data(mtcars)
-cov(mtcars[,4:6])
-cov(dataGen(mtcars[,4:6],n=200))
-pairs(mtcars[,4:6])
-pairs(dataGen(mtcars[,4:6],n=200))
+cov(mtcars[, 4:6])
+df_gen <- dataGen(obj = mtcars[, 4:6], n = 200)
+cov(df_gen)
+pairs(mtcars[, 4:6])
+pairs(df_gen)
 
-## PRAM
-\dontrun{
-set.seed(123)
-x <- factor(sample(1:4, 250, replace=TRUE))
+## Post-Randomization (PRAM)
+x <- factor(sample(1:4, 250, replace = TRUE))
 pr1 <- pram(x)
 length(which(pr1$x_pram == x))
 summary(pr1)
@@ -146,103 +154,124 @@ marstat <- as.factor(free1[,"MARSTAT"])
 marstatPramed <- pram(marstat)
 summary(marstatPramed)
 
-# FOR OBJECTS OF CLASS sdcMicro
+## The same functionality can be also applied to `sdcMicroObj`-objects
 data(testdata)
 
-# undo-functionality is by default restricted to data sets
-# with <= 1e5 rows; to modify, env-var `sdcMicro_maxsize_undo`
-# can to be changed before creating a problem instance
+## undo-functionality is by default restricted to data sets
+## with <= `1e5` rows; to modify, env-var `sdcMicro_maxsize_undo`
+## can to be changed before creating a problem instance
 Sys.setenv("sdcMicro_maxsize_undo" = 1e6)
 
-sdc <- createSdcObj(testdata,
-  keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
+## create an object
+testdata$water <- factor(testdata$water)
+sdc <- createSdcObj(
+  dat = testdata,
+  keyVars = c("urbrur", "roof", "walls", "electcon", "water", "relat", "sex"),
+  numVars = c("expend", "income", "savings"),
+  w = "sampling_weight"
+)
 head(sdc@manipNumVars)
-### Display Risks
+
+## Display risk-measures
 sdc@risk$global
 sdc <- dRisk(sdc)
 sdc@risk$numeric
-### use addNoise without Parameters
-sdc <- addNoise(sdc,variables=c("expend","income"))
+
+## Generation of synthetic data
+synthdat <- dataGen(sdc)
+
+## use addNoise with default parameters (not suggested)
+sdc <- addNoise(sdc, variables = c("expend", "income"))
 head(sdc@manipNumVars)
 sdc@risk$numeric
-### undolast
+
+## undolast step (remove adding noise)
 sdc <- undolast(sdc)
 head(sdc@manipNumVars)
 sdc@risk$numeric
-### redo addNoise with Parameter
-sdc <- addNoise(sdc, noise=0.2)
+
+## apply addNoise() with custom parameters
+sdc <- addNoise(sdc, noise = 0.2)
 head(sdc@manipNumVars)
 sdc@risk$numeric
-### dataGen
-#sdc <- undolast(sdc)
-#head(sdc@risk$individual)
-#sdc@risk$global
-#sdc <- dataGen(sdc)
-#head(sdc@risk$individual)
-#sdc@risk$global
-### LocalSuppression
+
+## LocalSuppression
 sdc <- undolast(sdc)
 head(sdc@risk$individual)
 sdc@risk$global
 sdc <- localSuppression(sdc)
 head(sdc@risk$individual)
 sdc@risk$global
-### microaggregation
+
+## microaggregation
 sdc <- undolast(sdc)
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
+head(get.sdcMicroObj(sdc, type = "manipNumVars"))
 sdc <- microaggregation(sdc)
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
-### pram
+head(get.sdcMicroObj(sdc, type = "manipNumVars"))
+
+## Post-Randomization
 sdc <- undolast(sdc)
 head(sdc@risk$individual)
 sdc@risk$global
-sdc <- pram(sdc,keyVar="water")
+sdc <- pram(sdc, variables = "water")
 head(sdc@risk$individual)
 sdc@risk$global
-### rankSwap
+
+## rankSwap
 sdc <- undolast(sdc)
 head(sdc@risk$individual)
 sdc@risk$global
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
+head(get.sdcMicroObj(sdc, type = "manipNumVars"))
 sdc <- rankSwap(sdc)
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
+head(get.sdcMicroObj(sdc, type = "manipNumVars"))
 head(sdc@risk$individual)
 sdc@risk$global
-### suda2
+
+## suda2
 sdc <- suda2(sdc)
 sdc@risk$suda2
-### topBotCoding
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
+
+## topBotCoding
+head(get.sdcMicroObj(sdc, type = "manipNumVars"))
 sdc@risk$numeric
-sdc <- topBotCoding(sdc, value=60000000, replacement=62000000, column="income")
-head(get.sdcMicroObj(sdc, type="manipNumVars"))
+sdc <- topBotCoding(
+  obj = sdc,
+  value = 60000000,
+  replacement = 62000000,
+  column = "income"
+)
+head(get.sdcMicroObj(sdc, type = "manipNumVars"))
 sdc@risk$numeric
-### LocalRecProg
+
+## LocalRecProg
 data(testdata2)
 keyVars <- c("urbrur", "roof", "walls", "water", "sex")
 w <- "sampling_weight"
 sdc <- createSdcObj(testdata2,
   keyVars = keyVars,
-  weightVar = w)
+  weightVar = w
+)
 sdc@risk$global
 sdc <- LocalRecProg(sdc)
 sdc@risk$global
-### model-based risks
-#' formula
+
+## Model-based risks using a formula
 form <- as.formula(paste("~", paste(keyVars, collapse = "+")))
 sdc <- modRisk(sdc, method = "default", formulaM = form)
 get.sdcMicroObj(sdc, "risk")$model
+
 sdc <- modRisk(sdc, method = "CE", formulaM = form)
 get.sdcMicroObj(sdc, "risk")$model
-sdc <- modRisk(sdc, method = "PLM", formulaM = form)
+
+sdc <- modRisk(sdc, method = "PML", formulaM = form)
 get.sdcMicroObj(sdc, "risk")$model
+
 sdc <- modRisk(sdc, method = "weightedLLM", formulaM = form)
 get.sdcMicroObj(sdc, "risk")$model
+
 sdc <- modRisk(sdc, method = "IPF", formulaM = form)
 get.sdcMicroObj(sdc, "risk")$model
 }
-
 }
 \references{
 Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.

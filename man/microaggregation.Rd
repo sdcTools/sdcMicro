@@ -120,25 +120,34 @@ if only one variable is specified, \code{\link{mafast}} is applied and argument 
 Parameters \code{measure} are ignored for methods \code{mdav} and \code{rmd}.
 }
 \examples{
-data(Tarragona)
-m1 <- microaggregation(Tarragona, method='onedims', aggr=3)
-## summary(m1)
 data(testdata)
-m2 <- microaggregation(testdata[1:100,c('expend','income','savings')],
-  method='mdav', aggr=4)
-summary(m2)
+m <- microaggregation(
+  obj = testdata[1:100, c("expend", "income", "savings")],
+  method = "mdav",
+  aggr = 4
+)
+summary(m)
 
 ## for objects of class sdcMicro:
-## no stratification because @strataVar is NULL
+## no stratification because `@strataVar` is `NULL`
 data(testdata2)
-sdc <- createSdcObj(testdata2,
-  keyVars=c('urbrur','roof','walls','water','electcon','sex'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
-sdc <- microaggregation(sdc, variables=c("expend","income"))
+sdc <- createSdcObj(
+  dat = testdata2,
+  keyVars = c("urbrur", "roof", "walls", "water", "electcon", "sex"),
+  numVars = c("expend", "income", "savings"),
+  w = "sampling_weight"
+)
+sdc <- microaggregation(
+  obj = sdc,
+  variables = c("expend", "income")
+)
 
-## with stratification by 'relat'
+## with stratification using variable `"relat"`
 strataVar(sdc) <- "relat"
-sdc <- microaggregation(sdc, variables=c("savings"))
+sdc <- microaggregation(
+  obj = sdc,
+  variables = "savings"
+)
 }
 \references{
 Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New Disclosure

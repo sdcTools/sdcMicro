@@ -28,35 +28,44 @@
 #' @section Methods: \describe{
 #' \item{list("signature(obj=\"sdcMicroObj\")")}{}}
 #' @author Alexander Kowarik, Bernd Prantner, IHSN C++ source, Akimichi Takemura
-#' @references 
+#' @references
 #' Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 #' \emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
 #' in: Lecture Notes in Computer Science, J. Domingo-Ferrer, I. Tinnirello
-#' (editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77. 
+#' (editors.); Springer, Berlin, 2012, ISBN: 978-3-642-33626-3, pp. 63-77.
 #' \doi{10.1007/978-3-642-33627-0_6}
 #' @keywords manip
 #' @export
 #' @examples
-#' # LocalRecProg
 #' data(testdata2)
-#' r1=LocalRecProg(testdata2,
-#'   categorical=c("urbrur", "roof", "walls", "water", "sex", "relat"),
-#'   missingValue=-99)
-#' r2=LocalRecProg(testdata2,
-#'   categorical=c("urbrur", "roof", "walls", "water", "sex", "relat"),
-#'     ancestor=c("water2", "water3", "relat2"),
-#'     ancestor_setting=c("water","water","relat"),missingValue=-99)
-#' r3=LocalRecProg(testdata2,
-#'   categorical=c("urbrur", "roof", "walls", "water", "sex", "relat"),
-#'     ancestor=c("water2", "water3", "relat2"),
-#'     ancestor_setting=c("water","water","relat"),missingValue=-99,
-#'     FindLowestK=FALSE)
+#' cat_vars <- c("urbrur", "roof", "walls", "water", "sex", "relat")
+#' anc_var <- c("water2", "water3", "relat2")
+#' anc_setting <- c("water","water","relat")
 #'
-#' ## for objects of class sdcMicro:
-#' data(testdata2)
-#' sdc <- createSdcObj(testdata2,
-#'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
-#'   numVars=c('expend','income','savings'), w='sampling_weight')
+#' r1 <- LocalRecProg(
+#'   obj = testdata2,
+#'   categorical = cat_vars,
+#'   missingValue = -99)
+#' r2 <- LocalRecProg(
+#'   obj = testdata2,
+#'   categorical = cat_vars,
+#'   ancestor = anc_var,
+#'   ancestor_setting = anc_setting,
+#'   missingValue = -99)
+#' r3 <- LocalRecProg(
+#'   obj = testdata2,
+#'   categorical = cat_vars,
+#'   ancestor = anc_var,
+#'   ancestor_setting = anc_setting,
+#'   missingValue = -99,
+#'   FindLowestK = FALSE)
+#'
+#' # for objects of class sdcMicro:
+#' sdc <- createSdcObj(
+#'   dat = testdata2,
+#'   keyVars = c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex"),
+#'   numVars = c("expend", "income", "savings"),
+#'   w = "sampling_weight")
 #' sdc <- LocalRecProg(sdc)
 LocalRecProg <- function(obj, ancestors=NULL, ancestor_setting=NULL, k_level=2,
   FindLowestK=TRUE, weight=NULL, lowMemory=FALSE, missingValue=NA, ...) {
