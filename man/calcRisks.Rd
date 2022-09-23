@@ -7,17 +7,20 @@
 calcRisks(obj, ...)
 }
 \arguments{
-\item{obj}{an object of class \code{\link{sdcMicroObj-class}}}
+\item{obj}{a \linkS4class{sdcMicroObj} object}
 
 \item{...}{no arguments at the moment}
 }
+\value{
+a \linkS4class{sdcMicroObj} object with updated risk values
+}
 \description{
 Recomputation of Risk should be done after manual changing the content of an
-object of class \code{\link{sdcMicroObj-class}}
+object of class \linkS4class{sdcMicroObj}
 }
 \details{
 By applying this function, the dislosure risk is re-estimated and the
-corresponding slots of an object of class \code{\link{sdcMicroObj-class}} are updated.
+corresponding slots of an object of class \linkS4class{sdcMicroObj} are updated.
 This function mostly used internally to automatically update the risk after
 an sdc method is applied.
 }
@@ -30,5 +33,5 @@ sdc <- calcRisks(sdc)
 
 }
 \seealso{
-\code{\link{sdcMicroObj-class}}
+\linkS4class{sdcMicroObj}
 }

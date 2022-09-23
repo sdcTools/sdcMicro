@@ -611,31 +611,35 @@ subsetMicrodata <- function(obj, type, n) {
 #' writeSafeFile
 #'
 #' writes an anonymized dataset to a file. This function should be used in the
-#' graphical user interface \code{\link{sdcApp}} only.
+#' graphical user interface [sdcApp()] only.
 #'
-#' @param obj an object of class \code{\link{data.frame}} containing micro data
-#' @param randomizeRecords (logical) specifies, if the output records should be randomized. The following
-#' options are possible:
-#' \itemize{
-#' \item {'no'}{ default, no randomization takes place}
-#' \item {'simple'}{ records are just randomly swapped.}
-#' \item {'byHH'}{ if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset. If
-#' slot 'hhId' is \code{NULL}, the records or the dataset are randomly changed.}
-#' \item {'withinHH'}{ if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset and
-#' additionally, the order of records within the clusters are also randomly changed. If slot 'hhId' is \code{NULL}, the records or the dataset are
-#' randomly changed.}}
-#' @param format (character) specifies the output file format. Accepted values are:
-#' \itemize{
-#' \item {'rdata'}{ output will be saved in the R binary file-format.}
-#' \item {'sav'}{ output will be saved as SPSS-file.}
-#' \item {'dta'}{ ouput will be saved as STATA-file.}
-#' \item {'csv'}{ output will be saved as comma seperated (text)-file.}
-#' \item {'sas'}{ output will be saved as SAS-file (sas7bdat).}}
+#' @param obj a `data.frame` containing micro data
+#' @param randomizeRecords (logical) specifies, if the output records should
+#' be randomized. The following options are possible:
+#' - `"no"`: default, no randomization takes place
+#' - `"simple"`: records are randomly swapped
+#' - `"byHH"`: if slot `"hhId"` is not `NULL`, the clusters defined by this
+#' variable are randomized across the dataset. If slot `"hhId"` is `NULL`, the
+#' records or the dataset are randomly changed.
+#' - `"withinHH"`: if slot `"hhId"` is not `NULL`, the clusters defined by
+#' this variable are randomized across the dataset and additionally, the order
+#' of records within the clusters are also randomly changed. If slot `"hhId"`
+#' is `NULL`, the records or the dataset are randomly changed.
+#'
+#' @param format (character) specifies the output file format. Accepted
+#' values are:
+#' - `"rdata"`: output will be saved in the R binary file-format
+#' - `"sav"`: output will be saved as SPSS-file
+#' - `"dta"`: ouput will be saved as STATA-file
+#' - `"csv"`: output will be saved as comma seperated (text)-file
+#' - `"sas"`: output will be saved as SAS-file (sas7bdat)
 #' @param fileOut (character) file to which output should be written
-#' @param ... optional arguments used for \code{write.table} if argument \code{format} equals \code{csv}
-#' @return NULL
+#' @param ... optional arguments used for [utils::write.table()] if
+#' argument `"format"` equals `"csv"`
+#' @return invisible `NULL` if the file was successfully written
 #' @author Bernhard Meindl
 #' @rdname writeSafeFile
+#' @md
 #' @export
 writeSafeFile <- function(obj, format, randomizeRecords, fileOut, ...) {
   if (!inherits(obj, "sdcMicroObj")) {

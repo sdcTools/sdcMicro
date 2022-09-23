@@ -6,29 +6,28 @@
 #' differences between the perturbed and the original data, but also to compare
 #' perturbed data which are produced by different methods.
 #'
-#' @param x object from class micro
-#' @param p necessary parameter for the box cox transformation (lambda)
+#' @md
+#' @param x an output object of [microaggregation()]
+#' @param p necessary parameter for the box cox transformation (`lambda`)
 #' @param which.plot which plot should be created?
-#' \itemize{
-#' \item 1: density traces
-#' \item 2: parallel boxplots
-#'
-#' \item 3: differences in totals}
+#' - `1`: density traces
+#' - `2`: parallel boxplots
+#' - `3`: differences in totals
 #' @author Matthias Templ
-#' @seealso \code{\link{microaggregation}}
-#' @references Templ, M. and Meindl, B., \emph{Software Development for SDC in
-#' R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,
+#' @seealso [microaggregation()]
+#' @references Templ, M. and Meindl, B., *Software Development for SDC in
+#' R*, Lecture Notes in Computer Science, Privacy in Statistical Databases,
 #' vol. 4302, pp. 347-359, 2006.
 #' @keywords aplot
+#' @return returns `NULL`; the selected plot is displayed
 #' @export
 #' @examples
-#'
 #' data(free1)
-#' free1 <- as.data.frame(free1)
-#' m1 <- microaggregation(free1[, 31:34], method="onedims", aggr=3)
-#' m2 <- microaggregation(free1[, 31:34], method="pca", aggr=3)
-#' plotMicro(m1, p=1, which.plot=1)
-#'
+#' df <- as.data.frame(free1)[, 31:34]
+#' m1 <- microaggregation(df, method = "onedims", aggr = 3)
+#' plotMicro(m1, p = 1, which.plot = 1)
+#' plotMicro(m1, p = 1, which.plot = 2)
+#' plotMicro(m1, p = 1, which.plot = 3)
 plotMicro <- function(x, p, which.plot = 1:3) {
   bct <- function(y, p) {
     gm <- exp(colMeans(log(y)))

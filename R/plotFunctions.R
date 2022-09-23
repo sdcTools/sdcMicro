@@ -1,45 +1,42 @@
-#' Plotfunctions for objects of class \code{\link{sdcMicroObj-class}}
+#' Plotfunctions for objects of class [sdcMicroObj-class]
 #'
-#' Descriptive plot function for \code{\link{sdcMicroObj-class}}-objects. Currently
+#' Descriptive plot function for [sdcMicroObj-class]-objects. Currently
 #' only visualization of local supression is implemented.
 #'
-#' @param x An object of class \code{\link{sdcMicroObj-class}}
+#' @md
+#' @param x An object of class [sdcMicroObj-class]
 #' @param type specified what kind of plot will be generated
-#' \itemize{
-#' \item 'ls': plot of local suppressions in key variables
-#' }
+#' - `"ls"`: plot of local suppressions in key variables
 #' @param ... currently ignored
 #' @author Bernhard Meindl
 #' @keywords classes
 #' @method plot sdcMicroObj
+#' @return a `ggplot` plot object or (invisible) `NULL` if local suppression
+#' using [kAnon()] has not been applied
 #' @export
 #' @examples
-#'
+#' \donttest{
 #' data(testdata)
-#' \dontrun{
-#' # dontrun because Examples with CPU time > 2.5 times elapsed time
 #' sdc <- createSdcObj(testdata,
-#'   keyVars=c('urbrur','roof','walls','relat','sex'),
-#'   pramVars=c('water','electcon'),
-#'   numVars=c('expend','income','savings'), w='sampling_weight')
-#' sdc <- kAnon(sdc, k=5)
-#' plot(sdc, type="ls")
+#'   keyVars = c("urbrur", "roof", "walls", "relat", "sex"),
+#'   w = "sampling_weight")
+#' sdc <- kAnon(sdc, k = 3)
+#' plot(sdc, type = "ls")
 #' }
 plot.sdcMicroObj <- function(x, type="ls", ...) {
   if (!type %in% c("ls")) {
-    stop("unsupported plot-type for sdcMicroObj!\n")
+    stop("unsupported plot-type for sdcMicroObj!", call. = FALSE)
   }
   if (type == "ls") {
     ls <- get.sdcMicroObj(x, type="localSuppression")
     if (!is.null(ls)) {
       class(ls) <- "localSuppression"
-      plot(ls)
+      return(plot(ls))
     } else {
-      invisible(NULL)
+      return(invisible(NULL))
     }
   }
-  if(type == "indiv_risk" | type == "indivRisk" | type == "indivrisk"){
+  if (type == "indiv_risk" | type == "indivRisk" | type == "indivrisk") {
     irisk <- x@risk$individual[, 1]
-    
   }
 }

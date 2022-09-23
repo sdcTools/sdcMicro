@@ -342,18 +342,20 @@ setMethod(f="nextSdcObjX", signature=c("sdcMicroObj"), definition=function(obj) 
 #' Recompute Risk and Frequencies for a sdcMicroObj
 #'
 #' Recomputation of Risk should be done after manual changing the content of an
-#' object of class \code{\link{sdcMicroObj-class}}
+#' object of class [sdcMicroObj-class]
 #'
 #' By applying this function, the dislosure risk is re-estimated and the
-#' corresponding slots of an object of class \code{\link{sdcMicroObj-class}} are updated.
+#' corresponding slots of an object of class [sdcMicroObj-class] are updated.
 #' This function mostly used internally to automatically update the risk after
 #' an sdc method is applied.
 #'
 #' @name calcRisks
-#' @param obj an object of class \code{\link{sdcMicroObj-class}}
+#' @param obj a [sdcMicroObj-class] object
 #' @param ... no arguments at the moment
-#' @seealso \code{\link{sdcMicroObj-class}}
+#' @seealso [sdcMicroObj-class]
+#' @return a [sdcMicroObj-class] object with updated risk values
 #' @export
+#' @md
 #' @examples
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata2,

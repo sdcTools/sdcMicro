@@ -3,6 +3,7 @@
 - Fix self-assignment of variables in the record-swapping code (thx @coatless)
 - Remove unused variables in edmonds.cpp (thx @coatless)
 - Bugfix in `dRiskRMD()`; previously, too many obs were marked as risky
+- fix missing `\value` sections in `.Rd` files
 
 # 5.7.2
 - Removed old package vignette `sdc_guidelines`

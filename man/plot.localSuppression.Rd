@@ -2,48 +2,47 @@
 % Please edit documentation in R/localSuppression.R
 \name{plot.localSuppression}
 \alias{plot.localSuppression}
-\title{plot method for localSuppression objects}
+\title{Plots for localSuppression objects}
 \usage{
 \method{plot}{localSuppression}(x, ...)
 }
 \arguments{
-\item{x}{object of class \sQuote{localSuppression}}
+\item{x}{object of derived from \code{\link[=localSuppression]{localSuppression()}}}
 
-\item{\dots}{Additional arguments, currently available are:
+\item{...}{Additional arguments, currently available are:
 \itemize{
-\item showDetails logical, if set, a plot of suppressions by
+\item \code{"showDetails"}: logical, if set, a plot of suppressions by
 strata is shown (if possible)
 }}
 }
-\description{
-Barplot for objects from class localSuppression.
+\value{
+a \code{ggplot} plot object
 }
-\details{
-Just look at the resulting plot.
+\description{
+This function creates barplots to display the number of suppressed values
+in categorical key variables to achieve \code{k}-anonymity.
 }
 \examples{
-## example from Capobianchi, Polettini and Lucarelli:
 data(francdat)
-l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))
+l1 <- localSuppression(obj = francdat, k = 2, keyVars = c(2, 4:6))
 l1
 plot(l1)
 
 ## with details of suppression by strata
 data(testdata2)
-testdata2$ageG <- cut(testdata2$age, 5, labels=paste0("AG",1:5))
-keyVars <- c("urbrur","roof","walls","water","electcon","relat","sex")
-strataVars <- c("ageG")
-inp <- testdata2[,c(keyVars, strataVars)]
-ls <- localSuppression(inp, keyVars=1:7, strataVars=8)
+testdata2$ageG <- cut(testdata2$age, 5, labels = paste0("AG",1:5))
+keyVars <- c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex")
+strataVars <- "ageG"
+inp <- testdata2[, c(keyVars, strataVars)]
+ls <- localSuppression(inp, keyVars = 1:7, strataVars = 8)
 print(ls)
 plot(ls)
-plot(ls, showDetails=TRUE)
-
+plot(ls, showDetails = TRUE)
 }
 \seealso{
-\code{\link{localSuppression}}
+\code{\link[=localSuppression]{localSuppression()}}
 }
 \author{
 Bernhard Meindl, Matthias Templ
 }
-\keyword{aplot}
+\keyword{plot}

@@ -7,34 +7,43 @@
 writeSafeFile(obj, format, randomizeRecords, fileOut, ...)
 }
 \arguments{
-\item{obj}{an object of class \code{\link{data.frame}} containing micro data}
+\item{obj}{a \code{data.frame} containing micro data}
 
-\item{format}{(character) specifies the output file format. Accepted values are:
+\item{format}{(character) specifies the output file format. Accepted
+values are:
 \itemize{
-\item {'rdata'}{ output will be saved in the R binary file-format.}
-\item {'sav'}{ output will be saved as SPSS-file.}
-\item {'dta'}{ ouput will be saved as STATA-file.}
-\item {'csv'}{ output will be saved as comma seperated (text)-file.}
-\item {'sas'}{ output will be saved as SAS-file (sas7bdat).}}}
+\item \code{"rdata"}: output will be saved in the R binary file-format
+\item \code{"sav"}: output will be saved as SPSS-file
+\item \code{"dta"}: ouput will be saved as STATA-file
+\item \code{"csv"}: output will be saved as comma seperated (text)-file
+\item \code{"sas"}: output will be saved as SAS-file (sas7bdat)
+}}
 
-\item{randomizeRecords}{(logical) specifies, if the output records should be randomized. The following
-options are possible:
+\item{randomizeRecords}{(logical) specifies, if the output records should
+be randomized. The following options are possible:
 \itemize{
-\item {'no'}{ default, no randomization takes place}
-\item {'simple'}{ records are just randomly swapped.}
-\item {'byHH'}{ if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset. If
-slot 'hhId' is \code{NULL}, the records or the dataset are randomly changed.}
-\item {'withinHH'}{ if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset and
-additionally, the order of records within the clusters are also randomly changed. If slot 'hhId' is \code{NULL}, the records or the dataset are
-randomly changed.}}}
+\item \code{"no"}: default, no randomization takes place
+\item \code{"simple"}: records are randomly swapped
+\item \code{"byHH"}: if slot \code{"hhId"} is not \code{NULL}, the clusters defined by this
+variable are randomized across the dataset. If slot \code{"hhId"} is \code{NULL}, the
+records or the dataset are randomly changed.
+\item \code{"withinHH"}: if slot \code{"hhId"} is not \code{NULL}, the clusters defined by
+this variable are randomized across the dataset and additionally, the order
+of records within the clusters are also randomly changed. If slot \code{"hhId"}
+is \code{NULL}, the records or the dataset are randomly changed.
+}}
 
 \item{fileOut}{(character) file to which output should be written}
 
-\item{...}{optional arguments used for \code{write.table} if argument \code{format} equals \code{csv}}
+\item{...}{optional arguments used for \code{\link[utils:write.table]{utils::write.table()}} if
+argument \code{"format"} equals \code{"csv"}}
+}
+\value{
+invisible \code{NULL} if the file was successfully written
 }
 \description{
 writes an anonymized dataset to a file. This function should be used in the
-graphical user interface \code{\link{sdcApp}} only.
+graphical user interface \code{\link[=sdcApp]{sdcApp()}} only.
 }
 \author{
 Bernhard Meindl

@@ -2,35 +2,36 @@
 % Please edit documentation in R/plotFunctions.R
 \name{plot.sdcMicroObj}
 \alias{plot.sdcMicroObj}
-\title{Plotfunctions for objects of class \code{\link{sdcMicroObj-class}}}
+\title{Plotfunctions for objects of class \linkS4class{sdcMicroObj}}
 \usage{
 \method{plot}{sdcMicroObj}(x, type = "ls", ...)
 }
 \arguments{
-\item{x}{An object of class \code{\link{sdcMicroObj-class}}}
+\item{x}{An object of class \linkS4class{sdcMicroObj}}
 
 \item{type}{specified what kind of plot will be generated
 \itemize{
-\item 'ls': plot of local suppressions in key variables
+\item \code{"ls"}: plot of local suppressions in key variables
 }}
 
 \item{...}{currently ignored}
 }
+\value{
+a \code{ggplot} plot object or (invisible) \code{NULL} if local suppression
+using \code{\link[=kAnon]{kAnon()}} has not been applied
+}
 \description{
-Descriptive plot function for \code{\link{sdcMicroObj-class}}-objects. Currently
+Descriptive plot function for \linkS4class{sdcMicroObj}-objects. Currently
 only visualization of local supression is implemented.
 }
 \examples{
-
+\donttest{
 data(testdata)
-\dontrun{
-# dontrun because Examples with CPU time > 2.5 times elapsed time
 sdc <- createSdcObj(testdata,
-  keyVars=c('urbrur','roof','walls','relat','sex'),
-  pramVars=c('water','electcon'),
-  numVars=c('expend','income','savings'), w='sampling_weight')
-sdc <- kAnon(sdc, k=5)
-plot(sdc, type="ls")
+  keyVars = c("urbrur", "roof", "walls", "relat", "sex"),
+  w = "sampling_weight")
+sdc <- kAnon(sdc, k = 3)
+plot(sdc, type = "ls")
 }
 }
 \author{

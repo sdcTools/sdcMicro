@@ -641,41 +641,38 @@ print.localSuppression <- function(x, ...) {
   invisible(NULL)
 }
 
-#' plot method for localSuppression objects
+#' Plots for localSuppression objects
 #'
-#' Barplot for objects from class localSuppression.
+#' This function creates barplots to display the number of suppressed values
+#' in categorical key variables to achieve `k`-anonymity.
 #'
-#' Just look at the resulting plot.
-#'
-#' @param x object of class \sQuote{localSuppression}
-#' @param \dots Additional arguments, currently available are:
-#' \itemize{
-#' \item showDetails logical, if set, a plot of suppressions by
+#' @param x object of derived from [localSuppression()]
+#' @param ... Additional arguments, currently available are:
+#' - `"showDetails"`: logical, if set, a plot of suppressions by
 #' strata is shown (if possible)
-#' }
 #' @author Bernhard Meindl, Matthias Templ
-#' @seealso \code{\link{localSuppression}}
-#' @keywords aplot
+#' @md
+#' @seealso [localSuppression()]
+#' @keywords plot
 #' @method plot localSuppression
 #' @export
+#' @return a `ggplot` plot object
 #' @examples
-#' ## example from Capobianchi, Polettini and Lucarelli:
 #' data(francdat)
-#' l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))
+#' l1 <- localSuppression(obj = francdat, k = 2, keyVars = c(2, 4:6))
 #' l1
 #' plot(l1)
 #'
 #' ## with details of suppression by strata
 #' data(testdata2)
-#' testdata2$ageG <- cut(testdata2$age, 5, labels=paste0("AG",1:5))
-#' keyVars <- c("urbrur","roof","walls","water","electcon","relat","sex")
-#' strataVars <- c("ageG")
-#' inp <- testdata2[,c(keyVars, strataVars)]
-#' ls <- localSuppression(inp, keyVars=1:7, strataVars=8)
+#' testdata2$ageG <- cut(testdata2$age, 5, labels = paste0("AG",1:5))
+#' keyVars <- c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex")
+#' strataVars <- "ageG"
+#' inp <- testdata2[, c(keyVars, strataVars)]
+#' ls <- localSuppression(inp, keyVars = 1:7, strataVars = 8)
 #' print(ls)
 #' plot(ls)
-#' plot(ls, showDetails=TRUE)
-#'
+#' plot(ls, showDetails = TRUE)
 #' @export plot.localSuppression
 plot.localSuppression <- function(x, ...) {
   vals <- NULL
