@@ -853,7 +853,7 @@ std::vector< std::vector<int> > recordSwap(std::vector< std::vector<int> > data,
 //    cout<<"Donor household was not found in "<<IDnotUsed.size()<<" cases.\nSee log.txt for a detailed list"<<endl;
     // write to output file
     FILE* pFile = fopen(log_file_name.c_str(), "w");
-    fprintf(pFile, "%lu household IDs for which a suitable donor for swapping was not found\n -------------------------------------------\n",IDnotUsed.size());
+    fprintf(pFile, "%llu household IDs for which a suitable donor for swapping was not found\n -------------------------------------------\n",IDnotUsed.size());
     for(auto const&x : IDnotUsed){
       fprintf(pFile, " %u\n",data[x][hid]);
     }
