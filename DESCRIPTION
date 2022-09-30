@@ -3,7 +3,7 @@ Type: Package
 Title: Statistical Disclosure Control Methods for Anonymization of Data and
     Risk Estimation
 Version: 5.7.3
-Date: 2022-09-21
+Date: 2022-09-30
 Authors@R: c(
   person("Matthias", "Templ", email="matthias.templ@gmail.com", role = c("aut", "cre"), comment=c(ORCID="0000-0002-8638-5276")),
   person("Bernhard", "Meindl", email = "Bernhard.Meindl@statistik.gv.at", role = c("aut")),
@@ -99,7 +99,7 @@ Collate:
     'maG.R'
     'sdcApp.R'
     'show_sdcMicroObj.R'
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 VignetteBuilder: knitr
 Encoding: UTF-8
 SystemRequirements: C++11
