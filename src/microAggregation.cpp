@@ -499,22 +499,26 @@ long CMicroAggregation::Microaggregation(long  n_var, long n_elements,
 		    return MIC_OUT_MEM;
 		  }
 	  }
-	  for (k=0; k<max_group; k++)
+	  for (k=0; k<max_group; k++) {
 	    for (j=beg_var; j<end_var; j++) {
-    		for (h=0, data_add=0.0, i=k*elms_p_group; h<partition[k]; h++,i++)
+    	  for (h=0, data_add=0.0, i=k*elms_p_group; h<partition[k]; h++,i++) {
     		  data_add += out_data[i][j];
+    	  }
     		mean[k][j-beg_var] = data_add/(double)partition[k];
-	     }
-	    for (k=0, i=0; k<max_group; k++)
-	      for (h=0; h<partition[k]; h++) {
-		      for (j=beg_var; j<end_var; j++)
-		        out_data[i][j] = mean[k][j-beg_var];
-		      i++;
-	       }
-
-    	  for (i=0; i<max_group; i++)
-          delete [] mean[i];
-        delete [] mean;
+	    }
+	  }
+    for (k=0, i=0; k<max_group; k++) {
+      for (h=0; h<partition[k]; h++) {
+        for (j=beg_var; j<end_var; j++) {
+          out_data[i][j] = mean[k][j-beg_var];
+        }
+        i++;
+       }
+    }
+    for (i=0; i<max_group; i++) {
+      delete [] mean[i];
+    }
+    delete [] mean;
 
 	  // ==============================================================
 	  // Data are 'destandardized' and stored
