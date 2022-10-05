@@ -7,7 +7,7 @@
 \usage{
 report(
   obj,
-  outdir = getwd(),
+  outdir = tempdir(),
   filename = "SDC-Report",
   title = "SDC-Report",
   internal = FALSE,

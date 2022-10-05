@@ -9,9 +9,9 @@ Authors@R: c(
   person("Bernhard", "Meindl", email = "Bernhard.Meindl@statistik.gv.at", role = c("aut")),
   person("Alexander", "Kowarik", email="Alexander.Kowarik@statistik.gv.at", role = "aut", comment=c(ORCID="0000-0001-8598-4130")),  
   person("Johannes", "Gussenbauer", email = "johannes.gussenbauer@statistik.gv.at", role = c("aut")),
-  person("Organisation For Economic Co-Operation And Development", role=c("cph"), comment="Initial published c(++) code (under LGPL) code for rank swapping, mdav-microaggregation, suda2 and other (hierarchical) risk measures"))
-  person("Statistics Netherlands", role=c("cph"), comment="microAggregation cpp code (under EUPL v1.1)"))
-  person("Pascal Heus", role=c("cph"), comment="original measure threshold cpp code (under LGPL"))
+  person("Organisation For Economic Co-Operation And Development", role=c("cph"), comment="Initial published c(++) code (under LGPL) code for rank swapping, mdav-microaggregation, suda2 and other (hierarchical) risk measures"),
+  person("Statistics Netherlands", role=c("cph"), comment="microAggregation cpp code (under EUPL v1.1)"),
+  person("Pascal Heus", role=c("cph"), comment="original measure threshold cpp code (under LGPL)"))
 Description: Data from statistical agencies and other institutions are mostly
     confidential. This package (see also Templ, Kowarik and Meindl (2017) <doi:10.18637/jss.v067.i04>) can be used for the generation of anonymized
     (micro)data, i.e. for the creation of public- and scientific-use files.

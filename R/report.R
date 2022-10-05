@@ -390,7 +390,7 @@ definition=function(obj, internal, title, outdir) {
 #' )
 #' report(sdc)
 #' }
-report <- function(obj, outdir = getwd(), filename = "SDC-Report", title = "SDC-Report", internal = FALSE, verbose = FALSE) {
+report <- function(obj, outdir = tempdir(), filename = "SDC-Report", title = "SDC-Report", internal = FALSE, verbose = FALSE) {
   if (!inherits(obj, "sdcMicroObj")) {
     stop("argument `obj` needs to be of class `sdcMicroObj.`", call. = FALSE)
   }
