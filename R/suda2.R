@@ -197,8 +197,10 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
 #' @export
 #' @examples
 #' data(testdata)
+#' \donttest{
 #' data_suda2 <- suda2(testdata,variables=c("urbrur","roof","walls","water","sex"))
 #' data_suda2
+#' }
 print.suda2 <- function(x, ...) {
   SEQ <- seq(0, 0.7, 0.1) + .Machine$double.eps
   DISSudaScore <- c("== 0", "(0.0, 0.1]","(0.1, 0.2]", "(0.2, 0.3]", "(0.3, 0.4]", "(0.4, 0.5]", "(0.5, 0.6]", "(0.6, 0.7]","> 0.7")
