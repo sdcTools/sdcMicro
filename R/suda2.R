@@ -70,17 +70,19 @@
 #' @export
 #' @examples
 #' data(testdata2)
+#' \donttest{
 #' data_suda2 <- suda2(testdata2,variables=c("urbrur","roof","walls","water","sex"))
 #' data_suda2
 #' str(data_suda2)
 #' summary(data_suda2)
-#'
+#' 
 #' ## for objects of class sdcMicro:
 #' data(testdata2)
 #' sdc <- createSdcObj(testdata2,
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- suda2(sdc, original_scores=FALSE)
+#' }
 suda2 <- function(obj, ...) {
   suda2X(obj=obj, ...)
 }
