@@ -79,9 +79,10 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Targeted Record Swapping</h1>
-                        <h4 data-toc-skip class="author">Johannes Gussenbauer</h4>
+                        <h4 data-toc-skip class="author">Johannes
+Gussenbauer</h4>
             
-            <h4 data-toc-skip class="date">2022-10-11</h4>
+            <h4 data-toc-skip class="date">2022-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sdcTools/sdcMicro/blob/HEAD/vignettes/recordSwapping.Rmd" class="external-link"><code>vignettes/recordSwapping.Rmd</code></a></small>
       <div class="hidden name"><code>recordSwapping.Rmd</code></div>
@@ -93,12 +94,23 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>This is the vignette for the R-Package <em>recordSwapping</em>, which can be used to apply the record swapping algorithm to a micro data set. The implementation of the procedure was done purely in C++ and is based on the SAS code on targeted record swapping from ONS (<a href="https://ec.europa.eu/eurostat/cros/content/2-record-swapping_en" class="external-link uri">https://ec.europa.eu/eurostat/cros/content/2-record-swapping_en</a>). There are, however, substantial differences between the SAS and C++ Code. Some of these differences are the result of improving the run-time for the C++ implementation. In the next section, the differences between the 2 implementations are presented further. The R-Package is just as a front end to easily call the procedures and for testing purposes.</p>
+<p>This is the vignette for the R-Package <em>recordSwapping</em>, which
+can be used to apply the record swapping algorithm to a micro data set.
+The implementation of the procedure was done purely in C++ and is based
+on the SAS code on targeted record swapping from ONS (<a href="https://ec.europa.eu/eurostat/cros/content/2-record-swapping_en" class="external-link uri">https://ec.europa.eu/eurostat/cros/content/2-record-swapping_en</a>).
+There are, however, substantial differences between the SAS and C++
+Code. Some of these differences are the result of improving the run-time
+for the C++ implementation. In the next section, the differences between
+the 2 implementations are presented further. The R-Package is just as a
+front end to easily call the procedures and for testing purposes.</p>
 </div>
 <div class="section level2">
 <h2 id="functionality">Functionality<a class="anchor" aria-label="anchor" href="#functionality"></a>
 </h2>
-<p>The targeted record swapping can be applied with the function <code><a href="../reference/recordSwap.html">recordSwap()</a></code>. All other functions in the package are called from inside <code><a href="../reference/recordSwap.html">recordSwap()</a></code> and are only exported for testing purposes. The function has the following arguments:</p>
+<p>The targeted record swapping can be applied with the function
+<code><a href="../reference/recordSwap.html">recordSwap()</a></code>. All other functions in the package are called
+from inside <code><a href="../reference/recordSwap.html">recordSwap()</a></code> and are only exported for testing
+purposes. The function has the following arguments:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>recordSwap<span class="op">(</span><span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> <span class="op">&gt;</span> data<span class="op">,</span> <span class="dt">int</span> hid<span class="op">,</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> hierarchy<span class="op">,</span> </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&gt;</span> similar<span class="op">,</span></span>
@@ -112,33 +124,74 @@
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                                           <span class="dt">int</span> seed <span class="op">=</span> <span class="dv">123456</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>
-<strong>data</strong> micro data containing ONLY integer values, rectangular table format.</li>
+<strong>data</strong> micro data containing ONLY integer values,
+rectangular table format.</li>
 <li>
-<strong>hid</strong> column index in  which refers to the household identifier.</li>
+<strong>hid</strong> column index in which refers to the household
+identifier.</li>
 <li>
-<strong>hierarchy</strong> column indices of variables in  which refer to the geographic hierarchy in the micro data set. For instance county &gt; municipality &gt; district.</li>
+<strong>hierarchy</strong> column indices of variables in which
+refer to the geographic hierarchy in the micro data set. For instance
+county &gt; municipality &gt; district.</li>
 <li>
-<strong>similar</strong> vector of vector containing the similarity profiles that are sets of variables in  which should be considered when swapping households.  corresponds to the first set similarity variables,  to the second set and so on.</li>
+<strong>similar</strong> vector of vector containing the similarity
+profiles that are sets of variables in which should be considered when
+swapping households. corresponds to the first set similarity variables,
+to the second set and so on.</li>
 <li>
-<strong>swaprate</strong> double between 0 and 1 defining the proportion of households which should be swapped, see details for more explanations</li>
+<strong>swaprate</strong> double between 0 and 1 defining the
+proportion of households which should be swapped, see details for more
+explanations</li>
 <li>
-<strong>risk</strong> vector of vector containing the risk of each individual for each hierarchy level. <code>risk[0]</code> corresponds to the risks of the first record for all hierarchy levels, <code>risk[1]</code> for the second record and so on. Should be ignored, for now, it is not fully tested yet.</li>
+<strong>risk</strong> vector of vector containing the risk of each
+individual for each hierarchy level. <code>risk[0]</code> corresponds to
+the risks of the first record for all hierarchy levels,
+<code>risk[1]</code> for the second record and so on. Should be ignored,
+for now, it is not fully tested yet.</li>
 <li>
-<strong>risk_threshold</strong> risk threshold, which determines if a record has to be swapped and over which hierarchy level. This overwrites k_anonymity. Should be ignored, for now, it is not fully tested yet.</li>
+<strong>risk_threshold</strong> risk threshold, which determines if
+a record has to be swapped and over which hierarchy level. This
+overwrites k_anonymity. Should be ignored, for now, it is not fully
+tested yet.</li>
 <li>
-<strong>k_anonymity</strong> integer defining the threshold of high risk households (k-anonymity). A record is not at risk if <code>k_anonymity &gt; counts</code>.</li>
+<strong>k_anonymity</strong> integer defining the threshold of high
+risk households (k-anonymity). A record is not at risk if
+<code>k_anonymity &gt; counts</code>.</li>
 <li>
-<strong>risk_variables</strong> column indices of variables in  which will be considered for estimating the risk. This is only used if <code>risk</code> was not supplied.</li>
+<strong>risk_variables</strong> column indices of variables in which
+will be considered for estimating the risk. This is only used if
+<code>risk</code> was not supplied.</li>
 <li>
-<strong>carry_along</strong> column indices of variables in  which are additionally swapped. These variables do not interfere with the procedure of finding a record to swap with. This parameter is only used at the end of the procedure when swapping the hierarchies. We note that the variables to be used as <code>carry_along</code> should be at household level. In case it is detected that they are at individual level (different values within <code>hid</code>), a warning is given because unexpected results may occur since the first observed value within the Household for any variable is used for all members in the swapped household.</li>
+<strong>carry_along</strong> column indices of variables in which
+are additionally swapped. These variables do not interfere with the
+procedure of finding a record to swap with. This parameter is only used
+at the end of the procedure when swapping the hierarchies. We note that
+the variables to be used as <code>carry_along</code> should be at
+household level. In case it is detected that they are at individual
+level (different values within <code>hid</code>), a warning is given
+because unexpected results may occur since the first observed value
+within the Household for any variable is used for all members in the
+swapped household.</li>
 <li>
-<strong>count_swapped_records</strong>, <strong>count_swapped_hid</strong> count number of households and records swapped</li>
+<strong>count_swapped_records</strong>,
+<strong>count_swapped_hid</strong> count number of households and
+records swapped</li>
 <li>
-<strong>log_file_name</strong> path for writing a log file. The log file contains a list of household IDs (<code>hid</code>) that could not have been swapped and is only created if any such households exist.</li>
+<strong>log_file_name</strong> path for writing a log file. The log
+file contains a list of household IDs (<code>hid</code>) that could not
+have been swapped and is only created if any such households exist.</li>
 <li>
-<strong>seed</strong> integer defining the seed for the random number generator, for reproducibility.</li>
+<strong>seed</strong> integer defining the seed for the random
+number generator, for reproducibility.</li>
 </ul>
-<p><strong>IMPORTANT</strong>: The argument <code>data</code> contains the micro data and can be understood as a vector of vectors. Inside the function, <code>data</code> is expected to contain each column of the input data as <code>std::vector&lt;int&gt;</code> which are then again stored in an <code>std::vector&lt; std::vector&lt;int&gt; &gt;</code>. So <code>data[0]</code> addresses variables of the first record and <code>data[0][0]</code> the first column of the first record. The same logic hold for the argument <code>risk</code>.</p>
+<p><strong>IMPORTANT</strong>: The argument <code>data</code> contains
+the micro data and can be understood as a vector of vectors. Inside the
+function, <code>data</code> is expected to contain each column of the
+input data as <code>std::vector&lt;int&gt;</code> which are then again
+stored in an <code>std::vector&lt; std::vector&lt;int&gt; &gt;</code>.
+So <code>data[0]</code> addresses variables of the first record and
+<code>data[0][0]</code> the first column of the first record. The same
+logic hold for the argument <code>risk</code>.</p>
 <div class="section level3">
 <h3 id="some-differences-to-sas-code">Some differences to SAS-Code<a class="anchor" aria-label="anchor" href="#some-differences-to-sas-code"></a>
 </h3>
@@ -147,9 +200,14 @@
 </h4>
 <ul>
 <li>
-<strong>C++-Code</strong>: Risk is calculated using counts over the geographic hierarchies (<code>hierarchy</code>) and the combination of all risk variables.</li>
+<strong>C++-Code</strong>: Risk is calculated using counts over the
+geographic hierarchies (<code>hierarchy</code>) and the combination of
+all risk variables.</li>
 <li>
-<strong>SAS-Code</strong>: Risk is calculated using counts for each geographic hierarchy (<code>hierarchy</code>) and risk variable separately. These risks are then combined to produce a single risk value for each record.</li>
+<strong>SAS-Code</strong>: Risk is calculated using counts for each
+geographic hierarchy (<code>hierarchy</code>) and risk variable
+separately. These risks are then combined to produce a single risk value
+for each record.</li>
 </ul>
 </div>
 <div class="section level4">
@@ -157,22 +215,35 @@
 </h4>
 <ul>
 <li>
-<strong>C++-Code</strong>: Sampling probability <span class="math inline">\(p_{y,h}\)</span> for household <span class="math inline">\(y\)</span> at the geographic hierarchy <span class="math inline">\(h\)</span> is derived from the risks <span class="math inline">\(r_{i,h}\)</span> of all individuals living in the same household. The risk <span class="math inline">\(r_{i,h}\)</span> for each individual <span class="math inline">\(i\)</span> in geographic hierarchy (<span class="math inline">\(h\)</span>) is currently estimated through the k-anonymity rule. <span class="math inline">\(r_{i,h}\)</span> is then defined as</li>
+<strong>C++-Code</strong>: Sampling probability <span class="math inline">\(p_{y,h}\)</span> for household <span class="math inline">\(y\)</span> at the geographic hierarchy <span class="math inline">\(h\)</span> is derived from the risks <span class="math inline">\(r_{i,h}\)</span> of all individuals living in the
+same household. The risk <span class="math inline">\(r_{i,h}\)</span>
+for each individual <span class="math inline">\(i\)</span> in geographic
+hierarchy (<span class="math inline">\(h\)</span>) is currently
+estimated through the k-anonymity rule. <span class="math inline">\(r_{i,h}\)</span> is then defined as</li>
 </ul>
 <p><span class="math display">\[
-r_{i,h} = (\sum\limits_{j=1}^{N_{g_1}}1[v_{1(i)}=v_{1(j)} \land ... \land v_{p(i)}=v_{p(j)}])^{-1} \quad ,
+r_{i,h} = (\sum\limits_{j=1}^{N_{g_1}}1[v_{1(i)}=v_{1(j)} \land ...
+\land v_{p(i)}=v_{p(j)}])^{-1} \quad ,
 \]</span></p>
-<p>with <span class="math inline">\(v_1,\ldots,v_p\)</span> as a set of risk variables, <span class="math inline">\(N_{g_1}\)</span> as the number of persons living in region <span class="math inline">\(g_1\)</span> and <span class="math inline">\(1[...]\)</span> as the indicator function. <span class="math inline">\(1[v_{1(i)}=v_{1(j)} \land ... \land v_{p(i)}=v_{p(j)}]\)</span> is 1 if individual <span class="math inline">\(j\)</span> as the same values for risk variables <span class="math inline">\(v_1,\ldots,v_p\)</span> as individual <span class="math inline">\(i\)</span> and is 0 otherwise. Casually speaking</p>
+<p>with <span class="math inline">\(v_1,\ldots,v_p\)</span> as a set of
+risk variables, <span class="math inline">\(N_{g_1}\)</span> as the
+number of persons living in region <span class="math inline">\(g_1\)</span> and <span class="math inline">\(1[...]\)</span> as the indicator function. <span class="math inline">\(1[v_{1(i)}=v_{1(j)} \land ... \land
+v_{p(i)}=v_{p(j)}]\)</span> is 1 if individual <span class="math inline">\(j\)</span> as the same values for risk variables
+<span class="math inline">\(v_1,\ldots,v_p\)</span> as individual <span class="math inline">\(i\)</span> and is 0 otherwise. Casually
+speaking</p>
 <p><span class="math display">\[
 r_{i,h} \sim \frac{1}{counts} \quad .
 \]</span></p>
-<p>The sampling probability for household <span class="math inline">\(y\)</span>, <span class="math inline">\(p_{y,h}\)</span> in hierarchy <span class="math inline">\(h\)</span>, is then defined by the maximum of risk across all household member</p>
+<p>The sampling probability for household <span class="math inline">\(y\)</span>, <span class="math inline">\(p_{y,h}\)</span> in hierarchy <span class="math inline">\(h\)</span>, is then defined by the maximum of risk
+across all household member</p>
 <p><span class="math display">\[
 p_{y,h} = \max_{i\text{ in household }y}(r_{i,h}) \quad .
-\]</span> This sampling probability is used for selecting households for swapping as well as donor households.</p>
+\]</span> This sampling probability is used for selecting households for
+swapping as well as donor households.</p>
 <ul>
 <li>
-<strong>SAS-Code</strong>: Sampling probability is derived from multiple factors.</li>
+<strong>SAS-Code</strong>: Sampling probability is derived from
+multiple factors.</li>
 </ul>
 <p><span class="math display">\[
 p_i = \begin{cases}
@@ -184,72 +255,109 @@ p_i = \begin{cases}
 \]</span> where <span class="math display">\[
 b = SA - N_{high}\\
 c = N_{netto} - N_{high}
-\]</span> with <span class="math inline">\(SA\)</span> as the sample size, <span class="math inline">\(N_{high}\)</span> as the number of high risk households in the geographic area and <span class="math inline">\(N_{netto}\)</span> the number of non-imputed records in the geographic area.</p>
+\]</span> with <span class="math inline">\(SA\)</span> as the sample
+size, <span class="math inline">\(N_{high}\)</span> as the number of
+high risk households in the geographic area and <span class="math inline">\(N_{netto}\)</span> the number of non-imputed
+records in the geographic area.</p>
 </div>
 <div class="section level4">
 <h4 id="swapping-records">Swapping Records<a class="anchor" aria-label="anchor" href="#swapping-records"></a>
 </h4>
 <ul>
 <li>
-<strong>C++-Code</strong>: Swaps are made in every hierarchy level and records which do not fulfil the k-anonymity are swapped. The donor set of records to be swapped with is always made out of every record which does not belong to the same geographic area as the swapped households. At the lowest hierarchy level, an additional number of households is swapped such that the proportion of households swapped is equal to the number in <code>swaprate</code>. If the proportion of already swapped households succeeds these values then records that do not fulfil the k-anonymity are also swapped.</li>
+<strong>C++-Code</strong>: Swaps are made in every hierarchy level
+and records which do not fulfil the k-anonymity are swapped. The donor
+set of records to be swapped with is always made out of every record
+which does not belong to the same geographic area as the swapped
+households. At the lowest hierarchy level, an additional number of
+households is swapped such that the proportion of households swapped is
+equal to the number in <code>swaprate</code>. If the proportion of
+already swapped households succeeds these values then records that do
+not fulfil the k-anonymity are also swapped.</li>
 </ul>
 <div class="figure">
-<img src="diagram.png" style="width:100.0%" alt=""><p class="caption">Example for swapping households. The number represents the number of high risk households at each hierarchy level.</p>
+<img src="diagram.png" style="width:100.0%" alt=""><p class="caption">Example for swapping households. The number
+represents the number of high risk households at each hierarchy
+level.</p>
 </div>
-<p>Figure 1 displays an example with hierarchy levels NUTS1 &gt; NUTS2 &gt; NUTTS3 where the numbers of high risk households are displayed at the end of the edges. For instance, in the first NUTS1 region, there are 5 high risk households that will be swapped with households from other NUTS1 regions. In the first NUTS2 region, there are 10 high risk households that will be swapped with households that are not in the same NUTS2 region. At the lowest level, the NUTS3 regions, the number of swaps, <span class="math inline">\(n_{swaps}\)</span> for the first district is defined by</p>
+<p>Figure 1 displays an example with hierarchy levels NUTS1 &gt; NUTS2
+&gt; NUTTS3 where the numbers of high risk households are displayed at
+the end of the edges. For instance, in the first NUTS1 region, there are
+5 high risk households that will be swapped with households from other
+NUTS1 regions. In the first NUTS2 region, there are 10 high risk
+households that will be swapped with households that are not in the same
+NUTS2 region. At the lowest level, the NUTS3 regions, the number of
+swaps, <span class="math inline">\(n_{swaps}\)</span> for the first
+district is defined by</p>
 <p><span class="math display">\[
 n_{swaps} = 2 + Rest\\
-Rest = \max(0,N\cdot s - n_{already}) 
-\]</span> with <span class="math inline">\(N\)</span> as the number of households in the district, <span class="math inline">\(n_{already}\)</span> as the number of already swapped households in the district and <span class="math inline">\(s\)</span> as the swap rate.</p>
+Rest = \max(0,N\cdot s - n_{already})
+\]</span> with <span class="math inline">\(N\)</span> as the number of
+households in the district, <span class="math inline">\(n_{already}\)</span> as the number of already
+swapped households in the district and <span class="math inline">\(s\)</span> as the swap rate.</p>
 <ul>
 <li>
-<strong>SAS-Code</strong> Swaps are made in every hierarchy level and depending on the sampling probability, high risk households are more likely to be swapped than low risk households, but they are not mandatorily swapped. The number of swappes in each hierarchy level is defined by the number of high risk records and the total number of records in the geographic area. For instance, having the geographic hierarchy county &gt; municipality &gt; district, the number of Swaps in the municipality <span class="math inline">\(m\)</span> of county <span class="math inline">\(n\)</span> is defined by</li>
+<strong>SAS-Code</strong> Swaps are made in every hierarchy level
+and depending on the sampling probability, high risk households are more
+likely to be swapped than low risk households, but they are not
+mandatorily swapped. The number of swappes in each hierarchy level is
+defined by the number of high risk records and the total number of
+records in the geographic area. For instance, having the geographic
+hierarchy county &gt; municipality &gt; district, the number of Swaps in
+the municipality <span class="math inline">\(m\)</span> of county <span class="math inline">\(n\)</span> is defined by</li>
 </ul>
 <p><span class="math display">\[
 SWAP_m = \frac{SIZE_m+RISK_m}{2}
-\]</span> where <span class="math inline">\(SIZE_m\)</span> can be derived by using the reciprocal number of households of each municipality in county <span class="math inline">\(n\)</span>.</p>
+\]</span> where <span class="math inline">\(SIZE_m\)</span> can be
+derived by using the reciprocal number of households of each
+municipality in county <span class="math inline">\(n\)</span>.</p>
 <p><span class="math display">\[
 SIZE_m = \frac{N_m^{-1}}{\sum_iN_i^{-1}}\cdot sN_n
-\]</span> with <span class="math inline">\(N_m\)</span> as the number of households in municipality <span class="math inline">\(m\)</span>, <span class="math inline">\(s\)</span> the global swaprate and <span class="math inline">\(N_n\)</span> as the number of households in county <span class="math inline">\(n\)</span>. <span class="math inline">\(RISK_m\)</span> can be derived using the proportion of high risk households in each municipality</p>
+\]</span> with <span class="math inline">\(N_m\)</span> as the number of
+households in municipality <span class="math inline">\(m\)</span>, <span class="math inline">\(s\)</span> the global swaprate and <span class="math inline">\(N_n\)</span> as the number of households in county
+<span class="math inline">\(n\)</span>. <span class="math inline">\(RISK_m\)</span> can be derived using the
+proportion of high risk households in each municipality</p>
 <p><span class="math display">\[
 RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 \]</span></p>
-<p>with <span class="math inline">\(H_m\)</span> as the proportion of high risk households in municipality <span class="math inline">\(m\)</span>.</p>
+<p>with <span class="math inline">\(H_m\)</span> as the proportion of
+high risk households in municipality <span class="math inline">\(m\)</span>.</p>
 </div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="application">Application<a class="anchor" aria-label="anchor" href="#application"></a>
 </h2>
-<p>The package was tested on randomly generated data, which contained 5 geographic levels and some other sociodemographic variables.</p>
+<p>The package was tested on randomly generated data, which contained 5
+geographic levels and some other sociodemographic variables.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sdcTools/sdcMicro" class="external-link">sdcMicro</a></span><span class="op">)</span></span>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recordSwap.html">createDat</a></span><span class="op">(</span>N<span class="op">=</span><span class="fl">100000</span><span class="op">)</span></span>
 <span><span class="va">dat</span></span></code></pre></div>
 <pre><code><span><span class="co">##         nuts1 nuts2 nuts3  lau2    hid hsize ageGroup gender national htype</span></span>
-<span><span class="co">##      1:     2    22  2215 22153      1     1        6      1        1     6</span></span>
-<span><span class="co">##      2:     2    21  2107 21075      2     6        1      2        2     2</span></span>
-<span><span class="co">##      3:     2    21  2107 21075      2     6        4      1        3     2</span></span>
-<span><span class="co">##      4:     2    21  2107 21075      2     6        4      2        5     2</span></span>
-<span><span class="co">##      5:     2    21  2107 21075      2     6        7      2        3     2</span></span>
+<span><span class="co">##      1:     3    33  3315 33154      1     6        1      2        3     8</span></span>
+<span><span class="co">##      2:     3    33  3315 33154      1     6        1      2        4     8</span></span>
+<span><span class="co">##      3:     3    33  3315 33154      1     6        1      1        4     8</span></span>
+<span><span class="co">##      4:     3    33  3315 33154      1     6        1      2        5     8</span></span>
+<span><span class="co">##      5:     3    33  3315 33154      1     6        5      1        1     8</span></span>
 <span><span class="co">##     ---                                                                    </span></span>
-<span><span class="co">## 349612:     1    12  1215 12154 100000     5        3      2        3     8</span></span>
-<span><span class="co">## 349613:     1    12  1215 12154 100000     5        5      2        3     8</span></span>
-<span><span class="co">## 349614:     1    12  1215 12154 100000     5        5      2        4     8</span></span>
-<span><span class="co">## 349615:     1    12  1215 12154 100000     5        6      2        5     8</span></span>
-<span><span class="co">## 349616:     1    12  1215 12154 100000     5        4      2        5     8</span></span>
+<span><span class="co">## 350123:     1    15  1502 15023  99998     6        1      2        2     9</span></span>
+<span><span class="co">## 350124:     1    15  1502 15023  99998     6        5      1        5     9</span></span>
+<span><span class="co">## 350125:     2    21  2107 21074  99999     2        1      2        1    10</span></span>
+<span><span class="co">## 350126:     2    21  2107 21074  99999     2        6      1        2    10</span></span>
+<span><span class="co">## 350127:     1    13  1314 13141 100000     1        6      2        4     5</span></span>
 <span><span class="co">##         hincome</span></span>
-<span><span class="co">##      1:      10</span></span>
-<span><span class="co">##      2:       2</span></span>
-<span><span class="co">##      3:       2</span></span>
-<span><span class="co">##      4:       2</span></span>
-<span><span class="co">##      5:       2</span></span>
+<span><span class="co">##      1:       3</span></span>
+<span><span class="co">##      2:       3</span></span>
+<span><span class="co">##      3:       3</span></span>
+<span><span class="co">##      4:       3</span></span>
+<span><span class="co">##      5:       3</span></span>
 <span><span class="co">##     ---        </span></span>
-<span><span class="co">## 349612:       8</span></span>
-<span><span class="co">## 349613:       8</span></span>
-<span><span class="co">## 349614:       8</span></span>
-<span><span class="co">## 349615:       8</span></span>
-<span><span class="co">## 349616:       8</span></span></code></pre>
+<span><span class="co">## 350123:       6</span></span>
+<span><span class="co">## 350124:       6</span></span>
+<span><span class="co">## 350125:       8</span></span>
+<span><span class="co">## 350126:       8</span></span>
+<span><span class="co">## 350127:      10</span></span></code></pre>
 <p>Applying the record swapping to dat could look like this</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hierarchy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts1"</span>,<span class="st">"nuts2"</span><span class="op">)</span></span>
@@ -270,14 +378,21 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <code class="sourceCode R"><span><span class="va">dat_swapped</span></span></code></pre></div>
 <p>Here the procedure was applied to <code>dat</code></p>
 <ul>
-<li>using every hierarchy level, <code>nuts1</code> and <code>nuts2</code>
+<li>using every hierarchy level, <code>nuts1</code> and
+<code>nuts2</code>
 </li>
-<li>using <code>hsize</code> as the similarity variable (so only households with the same household size are swapped)</li>
-<li>using <code>hIncome</code>, <code>ageGroup</code>, <code>gender</code> as risk variables</li>
+<li>using <code>hsize</code> as the similarity variable (so only
+households with the same household size are swapped)</li>
+<li>using <code>hIncome</code>, <code>ageGroup</code>,
+<code>gender</code> as risk variables</li>
 <li>setting the k-anonymity rule to 3</li>
 <li>setting the swaprate to 0.05</li>
 </ul>
-<p>If <code>k_anonymity &lt;- 0</code> only the swaprate is considered. Then at most <code>th*100</code>% of the households are swapped. If the sample is very small, the actual number of swaps can be smaller, however, this can only happen if some regions have a very small number of households, e.g. 1,2,3,…</p>
+<p>If <code>k_anonymity &lt;- 0</code> only the swaprate is considered.
+Then at most <code>th*100</code>% of the households are swapped. If the
+sample is very small, the actual number of swaps can be smaller,
+however, this can only happen if some regions have a very small number
+of households, e.g. 1,2,3,…</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">k_anonymity</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="va">swaprate</span> <span class="op">&lt;-</span> <span class="fl">.05</span></span>
@@ -305,7 +420,9 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <div class="section level3">
 <h3 id="supplying-index-vectors">Supplying index vectors<a class="anchor" aria-label="anchor" href="#supplying-index-vectors"></a>
 </h3>
-<p>Instead of column names, index vectors can be supplied for parameters <code>hid</code>, <code>hierarchy</code>, <code>similar</code> and <code>risk_variables</code>.</p>
+<p>Instead of column names, index vectors can be supplied for parameters
+<code>hid</code>, <code>hierarchy</code>, <code>similar</code> and
+<code>risk_variables</code>.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hierarchy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span> <span class="co"># ~ c("nuts1","nuts2")</span></span>
 <span><span class="va">risk_variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>,<span class="fl">7</span>,<span class="fl">8</span><span class="op">)</span> <span class="co"># ~ c("hincome","ageGroup","gender")</span></span>
@@ -319,12 +436,20 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span>                          k_anonymity <span class="op">=</span> <span class="va">k_anonymity</span>,</span>
 <span>                          swaprate <span class="op">=</span> <span class="va">swaprate</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Recordswapping was successful!</span></span></code></pre>
-<p>Please note that the underlying <code>c++</code>-routines expect indices starting from 0 but in <code>R</code> indices start with 1. The wrapper function <code><a href="../reference/recordSwap.html">recordSwap()</a></code> converts indices or column names in <code>R</code> into the correct format for the <code>c++</code> routines. So using column indices for this function call should be done in the usually <code>R</code>-fashion where indices start with 1.</p>
+<p>Please note that the underlying <code>c++</code>-routines expect
+indices starting from 0 but in <code>R</code> indices start with 1. The
+wrapper function <code><a href="../reference/recordSwap.html">recordSwap()</a></code> converts indices or column
+names in <code>R</code> into the correct format for the <code>c++</code>
+routines. So using column indices for this function call should be done
+in the usually <code>R</code>-fashion where indices start with 1.</p>
 </div>
 <div class="section level3">
 <h3 id="similarity-profiles">Similarity profiles<a class="anchor" aria-label="anchor" href="#similarity-profiles"></a>
 </h3>
-<p>In some cases, the condition of finding a <em>similar</em> household given by the parameter <code>similarity</code> might be too strict. And thus, it is not possible to swap the necessary number of households due to the lack of a suitable donor household.</p>
+<p>In some cases, the condition of finding a <em>similar</em> household
+given by the parameter <code>similarity</code> might be too strict. And
+thus, it is not possible to swap the necessary number of households due
+to the lack of a suitable donor household.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># demonstrate on small data set</span></span>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recordSwap.html">createDat</a></span><span class="op">(</span>N<span class="op">=</span><span class="fl">10000</span><span class="op">)</span></span>
@@ -342,18 +467,25 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span>                          k_anonymity <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>                          swaprate <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                          seed <span class="op">=</span> <span class="fl">123456L</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Donor household was not found in 1 case(s).</span></span>
+<pre><code><span><span class="co">## Donor household was not found in 4 case(s).</span></span>
 <span><span class="co">## See TRS_logfile.txt for a detailed list</span></span></code></pre>
-<p>The expected number of swapped households for a population of 10000 households and a swapping rate of 0.05 is 500. The actual number of swaps was however:</p>
+<p>The expected number of swapped households for a population of 10000
+households and a swapping rate of 0.05 is 500. The actual number of
+swaps was however:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_compare</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">dat</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">nuts1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">nuts2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,by<span class="op">=</span><span class="va">hid</span><span class="op">]</span>,</span>
 <span>                     <span class="va">dat_swapped</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">nuts1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">nuts2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,by<span class="op">=</span><span class="va">hid</span><span class="op">]</span>,by<span class="op">=</span><span class="st">"hid"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># number of swapped households</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat_compare</span><span class="op">[</span><span class="va">V1.x</span><span class="op">!=</span><span class="va">V1.y</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 498</span></span></code></pre>
-<p>With the parameter <code>similar</code> multiple similarity profiles can be defined, if the parameter input is a <code>list</code>. If a donor could not be found for the first similarity profile (<code>similar[[1]]</code>) then a donor is searched for using the next similarity profile (<code>similar[[2]]</code>) and so on.</p>
-<p>Using multiple similarity profiles makes it easy to supply fall-back profiles if the initial profile is too specific.</p>
+<pre><code><span><span class="co">## [1] 492</span></span></code></pre>
+<p>With the parameter <code>similar</code> multiple similarity profiles
+can be defined, if the parameter input is a <code>list</code>. If a
+donor could not be found for the first similarity profile
+(<code>similar[[1]]</code>) then a donor is searched for using the next
+similarity profile (<code>similar[[2]]</code>) and so on.</p>
+<p>Using multiple similarity profiles makes it easy to supply fall-back
+profiles if the initial profile is too specific.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># additional profile contains only hsize</span></span>
 <span><span class="va">similar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">similar</span><span class="op">)</span></span>
@@ -385,8 +517,16 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <div class="section level3">
 <h3 id="carry-along-variables">Carry along variables<a class="anchor" aria-label="anchor" href="#carry-along-variables"></a>
 </h3>
-<p>Using the function <code><a href="../reference/recordSwap.html">recordSwap()</a></code> like above always results in swapping the variables defined through variable <code>hierarchy</code>. Sometimes it might be useful to swap more variables than the ones stated in hierarchy.</p>
-<p>When we apply the record swapping using <code>hierarchy</code>-levels <code>nuts1</code> and <code>nuts2</code> then the <code>nuts3</code> and <code>lau2</code>-variable in our data set will stay unchanged. Thus for the resulting data set, the variables <code>nuts1</code> and <code>nuts2</code> are no longer coherent with <code>nuts3</code> and <code>lau2</code>.</p>
+<p>Using the function <code><a href="../reference/recordSwap.html">recordSwap()</a></code> like above always
+results in swapping the variables defined through variable
+<code>hierarchy</code>. Sometimes it might be useful to swap more
+variables than the ones stated in hierarchy.</p>
+<p>When we apply the record swapping using <code>hierarchy</code>-levels
+<code>nuts1</code> and <code>nuts2</code> then the <code>nuts3</code>
+and <code>lau2</code>-variable in our data set will stay unchanged. Thus
+for the resulting data set, the variables <code>nuts1</code> and
+<code>nuts2</code> are no longer coherent with <code>nuts3</code> and
+<code>lau2</code>.</p>
 <p>Let’s have a more detailed look at the problem</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hid</span> <span class="op">&lt;-</span> <span class="st">"hid"</span></span>
@@ -408,23 +548,29 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span>                     <span class="va">dat_swapped</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">nuts1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">nuts2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,by<span class="op">=</span><span class="va">hid</span><span class="op">]</span>,by<span class="op">=</span><span class="st">"hid"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat_compare</span><span class="op">[</span><span class="va">V1.x</span><span class="op">!=</span><span class="va">V1.y</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    hid V1.x V1.y</span></span>
-<span><span class="co">## 1:   9 3 35 3 34</span></span>
-<span><span class="co">## 2:  40 1 12 2 22</span></span>
-<span><span class="co">## 3:  72 2 21 1 12</span></span>
-<span><span class="co">## 4:  84 1 15 2 23</span></span>
-<span><span class="co">## 5:  85 2 25 1 15</span></span>
-<span><span class="co">## 6: 100 3 32 3 34</span></span></code></pre>
-<p>For <code>nuts1==1</code> and <code>nuts2==14</code> the <code>nuts3</code> variables takes on values</p>
+<span><span class="co">## 1:   9 3 34 3 31</span></span>
+<span><span class="co">## 2:  37 3 35 2 22</span></span>
+<span><span class="co">## 3:  57 2 24 1 12</span></span>
+<span><span class="co">## 4:  67 2 21 1 15</span></span>
+<span><span class="co">## 5:  84 1 11 2 21</span></span>
+<span><span class="co">## 6:  85 1 11 1 12</span></span></code></pre>
+<p>For <code>nuts1==1</code> and <code>nuts2==14</code> the
+<code>nuts3</code> variables takes on values</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span><span class="op">[</span><span class="va">nuts1</span><span class="op">==</span><span class="fl">1</span><span class="op">&amp;</span><span class="va">nuts2</span><span class="op">==</span><span class="fl">14</span>,<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">nuts3</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">##  [1] 1401 1402 1403 1404 1405 1406 1407 1408 1409 1410 1411 1412 1413 1414 1415</span></span></code></pre>
-<p>In the swapped data set there are however many more values for <code>nuts3</code> now which are not coherent with <code>nuts1==1</code> and <code>nuts2==14</code></p>
+<p>In the swapped data set there are however many more values for
+<code>nuts3</code> now which are not coherent with <code>nuts1==1</code>
+and <code>nuts2==14</code></p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped</span><span class="op">[</span><span class="va">nuts1</span><span class="op">==</span><span class="fl">1</span><span class="op">&amp;</span><span class="va">nuts2</span><span class="op">==</span><span class="fl">14</span>,<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">nuts3</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1] 1106 1110 1211 1301 1308 1309 1311 1314 1401 1402 1403 1404 1405 1406 1407</span></span>
-<span><span class="co">## [16] 1408 1409 1410 1411 1412 1413 1414 1415 1512 2107 2111 2203 2204 2215 2305</span></span>
-<span><span class="co">## [31] 2511 3105 3111 3114 3205 3208 3301 3302 3304 3305 3306 3307 3314 3315 3411</span></span></code></pre>
-<p>Using the parameter <code>carry_along</code> one can define certain variables which are additionally swapped but do not interfere with the risk calculation, sampling and procedure of finding a donor.</p>
+<pre><code><span><span class="co">##  [1] 1102 1104 1302 1305 1307 1308 1309 1401 1402 1403 1404 1405 1406 1407 1408</span></span>
+<span><span class="co">## [16] 1409 1410 1411 1412 1413 1414 1415 1504 1507 1508 1512 1513 2109 2212 2214</span></span>
+<span><span class="co">## [31] 2311 2312 2315 2407 2502 2512 2515 3110 3113 3213 3215 3311 3315 3410 3506</span></span>
+<span><span class="co">## [46] 3515</span></span></code></pre>
+<p>Using the parameter <code>carry_along</code> one can define certain
+variables which are additionally swapped but do not interfere with the
+risk calculation, sampling and procedure of finding a donor.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recordSwap.html">recordSwap</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>,</span>
 <span>                        hid <span class="op">=</span> <span class="va">hid</span>,</span>
@@ -445,7 +591,10 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span><span class="co"># check if value combinations of swapped and original data are the same</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">dat_geo</span>,<span class="va">dat_geo_swapped</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
-<p>Both the original and swapped data set have the same value combinations for <code>nuts1</code>, <code>nuts2</code> and <code>nuts3</code>. Setting this parameter did, however, not interfere with the swapping procedure</p>
+<p>Both the original and swapped data set have the same value
+combinations for <code>nuts1</code>, <code>nuts2</code> and
+<code>nuts3</code>. Setting this parameter did, however, not interfere
+with the swapping procedure</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_compare2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">dat</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">nuts1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">nuts2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,by<span class="op">=</span><span class="va">hid</span><span class="op">]</span>,</span>
 <span>                     <span class="va">dat_swapped</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">nuts1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">nuts2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,by<span class="op">=</span><span class="va">hid</span><span class="op">]</span>,by<span class="op">=</span><span class="st">"hid"</span><span class="op">)</span></span>
@@ -454,7 +603,9 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">dat_compare2</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">hid</span><span class="op">)</span>,<span class="fu">.</span><span class="op">(</span><span class="va">hid</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>          <span class="va">dat_compare</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">hid</span><span class="op">)</span>,<span class="fu">.</span><span class="op">(</span><span class="va">hid</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
-<p>Using the same idea one can set <code>return_swapped_id = TRUE</code> to return the <code>hid</code> with which the records were swapped with.</p>
+<p>Using the same idea one can set <code>return_swapped_id = TRUE</code>
+to return the <code>hid</code> with which the records were swapped
+with.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recordSwap.html">recordSwap</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>,</span>
 <span>                        hid <span class="op">=</span> <span class="va">hid</span>,</span>
@@ -466,7 +617,9 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <span>                        return_swapped_id <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                        seed<span class="op">=</span><span class="fl">1234L</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Recordswapping was successful!</span></span></code></pre>
-<p>The output now has an additional column named <code>hid_swapped</code>, which contains the household ID with which a household was swapped with.</p>
+<p>The output now has an additional column named
+<code>hid_swapped</code>, which contains the household ID with which a
+household was swapped with.</p>
 <p>Number of swapped <code>hid</code>s</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped3</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="va">hid</span><span class="op">)</span>,<span class="va">.N</span>,by<span class="op">=</span><span class="fu">.</span><span class="op">(</span>id_swapped <span class="op">=</span> <span class="va">hid</span><span class="op">!=</span><span class="va">hid_swapped</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
@@ -477,31 +630,40 @@ RISK_m = \frac{H_m}{\sum_iH_i}\cdot sN_n
 <div class="section level3">
 <h3 id="information-loss">Information loss<a class="anchor" aria-label="anchor" href="#information-loss"></a>
 </h3>
-<p>With the function <code><a href="../reference/infoLoss.html">infoLoss()</a></code> one can calculate various information loss measures over a pre defined frequency table. This frequency table is defined by the parameter <code>table_vars</code>, which accepts column names of the original and swapped micro data. The frequency table is internally constructed using both the original and swapped micro data. Afterwards, various information loss measures are estimated over each of the table cells.</p>
+<p>With the function <code><a href="../reference/infoLoss.html">infoLoss()</a></code> one can calculate various
+information loss measures over a pre defined frequency table. This
+frequency table is defined by the parameter <code>table_vars</code>,
+which accepts column names of the original and swapped micro data. The
+frequency table is internally constructed using both the original and
+swapped micro data. Afterwards, various information loss measures are
+estimated over each of the table cells.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate information loss for frequecy table nuts2 x national</span></span>
 <span><span class="va">table_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts2"</span>,<span class="st">"national"</span><span class="op">)</span></span>
 <span><span class="va">iloss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infoLoss.html">infoLoss</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">dat</span>, data_swapped <span class="op">=</span> <span class="va">dat_swapped3</span>,</span>
 <span>                  table_vars <span class="op">=</span> <span class="va">table_vars</span><span class="op">)</span></span>
 <span><span class="va">iloss</span><span class="op">$</span><span class="va">measures</span></span></code></pre></div>
-<pre><code><span><span class="co">##       what      absD   abssqrtD     relabsD</span></span>
-<span><span class="co">##  1:    Min  0.000000 0.00000000 0.000000000</span></span>
-<span><span class="co">##  2:    10%  0.000000 0.00000000 0.000000000</span></span>
-<span><span class="co">##  3:    20%  0.000000 0.00000000 0.000000000</span></span>
-<span><span class="co">##  4:    30%  1.000000 0.02330800 0.002175605</span></span>
-<span><span class="co">##  5:    40%  2.000000 0.04497396 0.004046980</span></span>
-<span><span class="co">##  6:   Mean  3.263158 0.07533416 0.006958258</span></span>
-<span><span class="co">##  7: Median  2.000000 0.04740458 0.004504505</span></span>
-<span><span class="co">##  8:    60%  3.000000 0.07097161 0.006717429</span></span>
-<span><span class="co">##  9:    70%  4.000000 0.09355695 0.008791378</span></span>
-<span><span class="co">## 10:    80%  5.000000 0.11498749 0.010522005</span></span>
-<span><span class="co">## 11:    90%  7.000000 0.16446610 0.015432190</span></span>
-<span><span class="co">## 12:    95%  8.300000 0.19655101 0.018491335</span></span>
-<span><span class="co">## 13:    99% 16.180000 0.36356591 0.034647142</span></span>
-<span><span class="co">## 14:    Max 19.000000 0.43161605 0.038461538</span></span></code></pre>
-<p>Per default the absolute deviation (<span class="math inline">\(abs(x,y)\)</span>), relative absolute deviation (<span class="math inline">\(r\_abs(x,y)\)</span>), and absolute deviaion of square roots (<span class="math inline">\(abs\_sqr(x,y)\)</span>) is calculated between the table cells x and y, see also parameter <code>metric</code>.</p>
+<pre><code><span><span class="co">##       what      absD    abssqrtD      relabsD</span></span>
+<span><span class="co">##  1:    Min  0.000000 0.000000000 0.0000000000</span></span>
+<span><span class="co">##  2:    10%  0.000000 0.000000000 0.0000000000</span></span>
+<span><span class="co">##  3:    20%  0.000000 0.000000000 0.0000000000</span></span>
+<span><span class="co">##  4:    30%  0.200000 0.004430247 0.0003929273</span></span>
+<span><span class="co">##  5:    40%  1.600000 0.035920850 0.0032340335</span></span>
+<span><span class="co">##  6:   Mean  3.263158 0.075469432 0.0069833689</span></span>
+<span><span class="co">##  7: Median  2.000000 0.046726959 0.0043572985</span></span>
+<span><span class="co">##  8:    60%  3.000000 0.070469390 0.0066442813</span></span>
+<span><span class="co">##  9:    70%  4.000000 0.095070889 0.0090797720</span></span>
+<span><span class="co">## 10:    80%  5.200000 0.121675293 0.0113619502</span></span>
+<span><span class="co">## 11:    90%  8.000000 0.190049847 0.0180950928</span></span>
+<span><span class="co">## 12:    95% 11.000000 0.243977816 0.0213006042</span></span>
+<span><span class="co">## 13:    99% 15.120000 0.346379432 0.0312423777</span></span>
+<span><span class="co">## 14:    Max 17.000000 0.395686735 0.0361702128</span></span></code></pre>
+<p>Per default the absolute deviation (<span class="math inline">\(abs(x,y)\)</span>), relative absolute deviation
+(<span class="math inline">\(r\_abs(x,y)\)</span>), and absolute
+deviaion of square roots (<span class="math inline">\(abs\_sqr(x,y)\)</span>) is calculated between the
+table cells x and y, see also parameter <code>metric</code>.</p>
 <p><span class="math display">\[
-abs(x,y) = |x-y| 
+abs(x,y) = |x-y|
 \]</span></p>
 <p><span class="math display">\[
 r\_abs(x,y) = \frac{|x-y|}{x}
@@ -509,7 +671,8 @@ r\_abs(x,y) = \frac{|x-y|}{x}
 <p><span class="math display">\[
 abs\_sqr(x,y) = |\sqrt{x}-\sqrt{y}|
 \]</span></p>
-<p>It is also possible to supply a custom information loss metric by using parameter <code>custom_meric</code></p>
+<p>It is also possible to supply a custom information loss metric by
+using parameter <code>custom_meric</code></p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define squared distance as custom metric</span></span>
 <span><span class="va">squareD</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">{</span></span>
@@ -520,26 +683,29 @@ abs\_sqr(x,y) = |\sqrt{x}-\sqrt{y}|
 <span>                  table_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts2"</span>,<span class="st">"national"</span><span class="op">)</span>,</span>
 <span>                  custom_metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>squareD<span class="op">=</span><span class="va">squareD</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">iloss</span><span class="op">$</span><span class="va">measures</span> <span class="co"># includes custom loss as well</span></span></code></pre></div>
-<pre><code><span><span class="co">##       what      absD   abssqrtD     relabsD squareD</span></span>
-<span><span class="co">##  1:    Min  0.000000 0.00000000 0.000000000     0.0</span></span>
-<span><span class="co">##  2:    10%  0.000000 0.00000000 0.000000000     0.0</span></span>
-<span><span class="co">##  3:    20%  0.000000 0.00000000 0.000000000     0.0</span></span>
-<span><span class="co">##  4:    30%  1.000000 0.02330800 0.002175605     1.0</span></span>
-<span><span class="co">##  5:    40%  2.000000 0.04497396 0.004046980     4.0</span></span>
-<span><span class="co">##  6:   Mean  3.263158 0.07533416 0.006958258    23.2</span></span>
-<span><span class="co">##  7: Median  2.000000 0.04740458 0.004504505     4.0</span></span>
-<span><span class="co">##  8:    60%  3.000000 0.07097161 0.006717429     9.0</span></span>
-<span><span class="co">##  9:    70%  4.000000 0.09355695 0.008791378    16.0</span></span>
-<span><span class="co">## 10:    80%  5.000000 0.11498749 0.010522005    25.0</span></span>
-<span><span class="co">## 11:    90%  7.000000 0.16446610 0.015432190    49.0</span></span>
-<span><span class="co">## 12:    95%  8.300000 0.19655101 0.018491335    69.1</span></span>
-<span><span class="co">## 13:    99% 16.180000 0.36356591 0.034647142   262.3</span></span>
-<span><span class="co">## 14:    Max 19.000000 0.43161605 0.038461538   361.0</span></span></code></pre>
+<pre><code><span><span class="co">##       what      absD    abssqrtD      relabsD   squareD</span></span>
+<span><span class="co">##  1:    Min  0.000000 0.000000000 0.0000000000   0.00000</span></span>
+<span><span class="co">##  2:    10%  0.000000 0.000000000 0.0000000000   0.00000</span></span>
+<span><span class="co">##  3:    20%  0.000000 0.000000000 0.0000000000   0.00000</span></span>
+<span><span class="co">##  4:    30%  0.200000 0.004430247 0.0003929273   0.20000</span></span>
+<span><span class="co">##  5:    40%  1.600000 0.035920850 0.0032340335   2.80000</span></span>
+<span><span class="co">##  6:   Mean  3.263158 0.075469432 0.0069833689  23.81053</span></span>
+<span><span class="co">##  7: Median  2.000000 0.046726959 0.0043572985   4.00000</span></span>
+<span><span class="co">##  8:    60%  3.000000 0.070469390 0.0066442813   9.00000</span></span>
+<span><span class="co">##  9:    70%  4.000000 0.095070889 0.0090797720  16.00000</span></span>
+<span><span class="co">## 10:    80%  5.200000 0.121675293 0.0113619502  27.20000</span></span>
+<span><span class="co">## 11:    90%  8.000000 0.190049847 0.0180950928  64.00000</span></span>
+<span><span class="co">## 12:    95% 11.000000 0.243977816 0.0213006042 121.00000</span></span>
+<span><span class="co">## 13:    99% 15.120000 0.346379432 0.0312423777 228.84000</span></span>
+<span><span class="co">## 14:    Max 17.000000 0.395686735 0.0361702128 289.00000</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="sdcmicro-objects">sdcMicro Objects<a class="anchor" aria-label="anchor" href="#sdcmicro-objects"></a>
 </h3>
-<p>The function <code><a href="../reference/recordSwap.html">recordSwap()</a></code> can be called using the micro data directly, as seen above, or with an sdcMicro-Object. Parameters for the swapping routine can be passed to the options-slot when creating the sdcMicro-Object.</p>
+<p>The function <code><a href="../reference/recordSwap.html">recordSwap()</a></code> can be called using the micro
+data directly, as seen above, or with an sdcMicro-Object. Parameters for
+the swapping routine can be passed to the options-slot when creating the
+sdcMicro-Object.</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define paramters</span></span>
 <span><span class="va">hierarchy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts1"</span>,<span class="st">"nuts2"</span><span class="op">)</span></span>
