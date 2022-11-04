@@ -8,7 +8,7 @@ params:
 ---
 
 ---
-title: `r get.reportObj(repObj, "title")`
+title: "`r get.reportObj(repObj, 'title')`"
 ---
 
 ```{r, echo=F}
@@ -234,12 +234,11 @@ if ( !is.null(sI) ) {
 ```
 
 # Disclaimer
-**R**-Package [**sdcMicro**](https://cran.r-project.org/web/packages/sdcMicro/) is actively developed and maintained by
-[**www.statistik.at**](http://www.statistik.at "Statistics Austria") and [**www.data-analysis.at**](http://www.data-analysis.at "www.data-analysis.at").
+**R**-Package [**sdcMicro**](https://cran.r-project.org/web/packages/sdcMicro/) is developed and maintained by Statistics Austria ([**www.statistik.at**](http://www.statistik.at)).
 
 Please use the issue-tracker on *github* to report any issues:
 
-- [**Issue-Tracker for sdcMicro**](https://github.com/alexkowa/sdcMicro/issues)
+- [**Issue-Tracker for sdcMicro**](https://github.com/sdcTools/sdcMicro/issues)
 
 --------------------------------------
 This report was generated on `r format(Sys.time(), "%a, %d/%m/%Y at %H:%M:%S")`.

@@ -1,3 +1,6 @@
+# 5.7.4
+- fix report templates for newer pandoc versions
+
 # 5.7.3
 - Fix Fontawesome-Icons changes in `sdcApp` (thx @coatless)
 - Fix self-assignment of variables in the record-swapping code (thx @coatless)
