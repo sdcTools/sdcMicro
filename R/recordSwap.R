@@ -351,7 +351,8 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
       }
     }
 
-    if(any(risk<0)||any(!is.numeric(risk))){
+    if(any(risk<0)||any(!unlist(lapply(risk, is.numeric)))
+      ){
       stop("risk must contain positive real values only!")
     }
   }
