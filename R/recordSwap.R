@@ -305,7 +305,7 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   }
 
   # check risk_threshold
-  if(is.null(risk_variables)){
+  if(is.null(risk_threshold)){
     if(!(is.numeric(risk_threshold)&&length(risk_threshold)==1&&risk_threshold>=0)){
       stop("risk_threshold must be a positiv numeric value")
     }
