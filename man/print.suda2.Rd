@@ -19,8 +19,10 @@ Print method for objects from class suda2.
 }
 \examples{
 data(testdata)
+\donttest{
 data_suda2 <- suda2(testdata,variables=c("urbrur","roof","walls","water","sex"))
 data_suda2
+}
 }
 \seealso{
 \code{\link{suda2}}
