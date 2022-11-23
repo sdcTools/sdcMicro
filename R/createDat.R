@@ -1,6 +1,6 @@
 #' Dummy Dataset for Record Swapping
 #'
-#' [createDat()] returns dummy data to illustrate
+#' createDat() returns dummy data to illustrate
 #' targeted record swapping. The generated data contain
 #' household ids (`hid`), geographic variables
 #' (`nuts1`, `nuts2`, `nuts3`, `lau2`) as well as some
@@ -10,7 +10,7 @@
 #' @seealso recordSwap
 #'
 #' @return `data.table` containing dummy data
-#' @rdname recordSwap
+#' @rdname createDat
 #' @export
 createDat <- function(N=10000) {
   stopifnot(is.numeric(N))
