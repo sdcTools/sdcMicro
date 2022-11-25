@@ -90,7 +90,7 @@
 #' in a household for each member of the household. If this condition is not      
 #' satisfied, the risk parameter is automatically adjusted to comply with this    
 #' condition.
-#'  If risk parameter is provided then k-anonymity rule is suppressed.
+#' If risk parameter is provided then k-anonymity rule is suppressed.
 #' @param risk_threshold single numeric value indicating when a household is
 #' considered "high risk", e.g. when this household must be swapped. Is only
 #' used when `risk` is not `NULL`.
