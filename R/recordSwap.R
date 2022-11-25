@@ -228,9 +228,12 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
                        log_file_name = "TRS_logfile.txt",
                        seed = NULL, ...){
 
-  helpVariableforMergingAfterTRS <- . <- NULL
+  helpVariableforMergingAfterTRS <- . <- hid_help <- NULL
 
   # check data
+  if(missing(data)){
+    stop("data is missing, data must be either a data.table, data.frame")
+  }
   if(all(!class(data)%in%c("data.table","data.frame"))){
     stop("data must be either a data.table, data.frame")
   }
@@ -241,6 +244,11 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   ##########################
   # # check inputs
 
+  # check mandatory parameters
+  if(any(missing("hid"), missing("hierarchy"),missing("similar"))){
+    stop("One of mandatory parameters (hid, hierarchy, similar) is missing.")
+  }
+  
   # check hid
   hid <- checkIndexString(hid,cnames,matchLength = 1)
 
@@ -254,7 +262,14 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   similar <- lapply(similar,checkIndexString,cnames=cnames,minLength = 1)
 
   # check risk_variables
-  risk_variables <- checkIndexString(risk_variables,cnames,minLength = 1)
+  if(is.null(risk) & is.null(risk_variables)){
+    stop("risk_variables are missing for calculation of k-anonymity rule.")
+  }
+  if(is.null(risk)){
+    risk_variables <- checkIndexString(risk_variables,cnames,minLength = 1)
+  } else {
+    risk_variables <- 0
+  }
 
   # check carry_along
   carry_along <- checkIndexString(carry_along,cnames,minLength = 0)
@@ -311,10 +326,8 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   }
 
   # check risk_threshold
-  if(is.null(risk_variables)){
-    if(!(is.numeric(risk_threshold)&&length(risk_threshold)==1&&risk_threshold>=0)){
-      stop("risk_threshold must be a positiv numeric value")
-    }
+  if(!(is.numeric(risk_threshold)&&length(risk_threshold)==1&&risk_threshold>=0)){
+    stop("risk_threshold must be a positiv numeric value!")
   }
 
   # check swaprate
@@ -328,6 +341,9 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
     risk_threshold <- 0
   }
   if(is.vector(risk)){
+    if(any(length(risk) == nrow(data),is.list(risk))){
+      stop("If risk is not a vector containing column indices or column names in data then risk must be either a data.table, data.frame or matrix!")
+    }
     if(length(risk)!=length(hierarchy)){
       stop("risk and hierarchy need to address the same number of columns!")
     }
@@ -352,7 +368,7 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
     if(is.null(cnamesrisk)){
       message("risk does not contain column names; the first column in risk will be used for the first hierarchy level, e.g ",cnames[hierarchy[1]+1]," and so on.")
     }else{
-      if(!any(cnamesrisk)%in%cnames[hierarchy+1]){
+      if(!any(cnamesrisk%in%cnames[hierarchy+1])){
         stop("the columnnames of risk do not appear in data")
       }
     }
@@ -361,6 +377,27 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
       ){
       stop("risk must contain positive real values only!")
     }
+    
+    # Check the values of risk variable if they need adjustment for recordSwap_cpp()
+    # This check if risk values in each household are unique and if not then assign 
+    # every member of the household the highest value in the household.
+    risk_variables_names <- copy(colnames(risk))
+    risk[,hid_help:=data[[hid+1]]]
+    tryCatch(
+      expr = risk[,lapply(.SD,
+                          function(z){
+                            if( (length(unique(z)) > 1)) {stop()} else {0}
+                          }), # error when value not equal 0
+                  .SDcols=c(risk_variables_names),
+                  by=.(hid_help)], # calculate if each household have unique values
+      error  = function(e){ 
+        message("risk was adjusted in order to give each household member the maximum household risk value")
+        risk[,c(risk_variables_names):=lapply(.SD,max),
+             .SDcols=c(risk_variables_names),
+             by=.(hid_help)] # assign to each household its max value
+        risk[,hid_help:=NULL]
+      }
+    )
   }
 
   # check seed
@@ -443,7 +480,7 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   }else{
     risk <- numeric(0)
   }
-  risk <- numeric(0) # drop this if risk was tested enough
+  # risk <- numeric(0) # drop this if risk was tested enough
 
   # take time before starting swapping
   start_time <- Sys.time()
