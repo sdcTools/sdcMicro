@@ -17,6 +17,13 @@ hier <- c("nuts1","nuts2","nuts3")
 risk_variables <- c("ageGroup","national")
 hid <- "hid"
 
+risk <- matrix(
+  data = rep(1,3*dim(dat)[1]),
+  ncol = 3
+)
+colnames(risk)  <- c("a","b","c")
+risk_threshold <- 0.9
+
 # test input parameter
 test_that("test para - data, hid, hierarchy, similar, risk_variables, carry_along",{
   
@@ -265,4 +272,143 @@ test_that("test para - swaprate, k_anonymity, return_swapped_id, seed",{
                           carry_along = NULL,
                           return_swapped_id = TRUE,
                           seed=c("a","b")),"seed must be a single positive integer!")
+})
+
+# test risk and risk_threshold
+test_that("test para - risk, risk_threshold",{
+  
+  #################################
+  # risk
+  
+  # test: if(is.vector(risk)){ if(length(risk) == nrow(data)) }
+  expect_error(recordSwap(data = dat, hid = hid, 
+                          hierarchy = c("nuts1","nuts2"), # TESTING
+                          similar = similar,
+                          swaprate = swaprate,
+                          k_anonymity = k_anonymity,
+                          risk_variables = risk_variables,
+                          risk = rep(1,dim(dat)[1]), # TESTING
+                          risk_threshold = risk_threshold, 
+                          carry_along = NULL,
+                          return_swapped_id = TRUE,
+                          seed=seed),
+               "If risk is not a vector containing column indices or column names in data then risk must be either a data.table, data.frame or matrix!")
+  
+  # test: if(is.vector(risk)){ if(length(risk)!=length(hierarchy)) }
+  expect_error(recordSwap(data = dat, hid = hid, 
+                          hierarchy = c("nuts1","nuts2"), # TESTING
+                          similar = similar,
+                          swaprate = swaprate,
+                          k_anonymity = k_anonymity,
+                          risk_variables = risk_variables,
+                          risk = 1, # TESTING
+                          risk_threshold = risk_threshold, 
+                          carry_along = NULL,
+                          return_swapped_id = TRUE,
+                          seed=seed),
+               "risk and hierarchy need to address the same number of columns!")
+  
+  # test:  if(is.vector(risk)){ checkIndexString(risk,cnames,minLength = 1) }
+  expect_error(recordSwap(data = dat, hid = hid, 
+                          hierarchy = c("nuts1","nuts2"), # TESTING
+                          similar = similar,
+                          swaprate = swaprate,
+                          k_anonymity = k_anonymity,
+                          risk_variables = risk_variables,
+                          risk = list("nuts1" = rep(1,dim(dat)[1]), 
+                                      "nuts2" = rep(1,dim(dat)[1])
+                          ), # TESTING
+                          risk_threshold = risk_threshold, 
+                          carry_along = NULL,
+                          return_swapped_id = TRUE,
+                          seed=seed),
+               # "checkIndexString(risk, cnames, minLength = 1) : 
+               "If risk is not a vector containing column indices or column names in data then risk must be either a data.table, data.frame or matrix!")
+  
+  # test: if(nrow(risk)>0){ if(ncol(risk)!=length(hierarchy)) }
+  expect_error(recordSwap(data = dat, hid = hid, 
+                          hierarchy = c("nuts1","nuts2"), # TESTING
+                          similar = similar,
+                          swaprate = swaprate,
+                          k_anonymity = k_anonymity,
+                          risk_variables = risk_variables,
+                          risk = matrix(data = rep(1,3*dim(dat)[1]),
+                                        ncol = 3
+                          ), # TESTING
+                          risk_threshold = risk_threshold, 
+                          carry_along = NULL,
+                          return_swapped_id = TRUE,
+                          seed=seed),
+               "number of columns in risk does not match number of hierarchies!")
+  
+  # test: if(is.null(cnamesrisk)){}else{ if(!any(cnamesrisk%in%cnames[hierarchy+1])){} }
+  expect_error(recordSwap(data = dat, hid = hid, 
+                          hierarchy = hier, # TESTING
+                          similar = similar,
+                          swaprate = swaprate,
+                          k_anonymity = k_anonymity,
+                          risk_variables = risk_variables,
+                          risk = risk, # TESTING
+                          risk_threshold = risk_threshold, 
+                          carry_along = NULL,
+                          return_swapped_id = TRUE,
+                          seed=seed),
+               "the columnnames of risk do not appear in data")
+  
+  # test: if(any(risk<0)||any(!unlist(lapply(risk, is.numeric))))
+  expect_error(recordSwap(data = dat, hid = hid, 
+                          hierarchy = hier, # TESTING
+                          similar = similar,
+                          swaprate = swaprate,
+                          k_anonymity = k_anonymity,
+                          risk_variables = risk_variables,
+                          risk = matrix(
+                            data = rep(-1,3*dim(dat)[1]),
+                            ncol = 3
+                          ), # TESTING
+                          risk_threshold = risk_threshold, 
+                          carry_along = NULL,
+                          return_swapped_id = TRUE,
+                          seed=seed),
+               "risk must contain positive real values only!")
+  
+  #################################
+  # risk_threshold
+  
+  # test: is.numeric(risk_threshold) 
+  expect_error(recordSwap(data = dat, hid = hid, hierarchy = hier,
+                          similar = similar, swaprate = swaprate,
+                          k_anonymity = k_anonymity,      
+                          risk = risk, # TESTING
+                          risk_threshold = "A", # TESTING
+                          risk_variables = risk_variables,
+                          carry_along = NULL,
+                          return_swapped_id = TRUE,
+                          seed=seed),
+               "risk_threshold must be a positiv numeric value")     
+  
+  # test: length(risk_threshold)==1    
+  expect_error(recordSwap(data = dat, hid = hid, hierarchy = hier,
+                          similar = similar, swaprate = swaprate,
+                          k_anonymity = k_anonymity,  
+                          risk = risk, # TESTING
+                          risk_threshold = c(0.5,2), # TESTING
+                          risk_variables = risk_variables,
+                          carry_along = NULL,
+                          return_swapped_id = TRUE,
+                          seed=seed),
+               "risk_threshold must be a positiv numeric value")     
+  
+  # test: risk_threshold>=0
+  expect_error(recordSwap(data = dat, hid = hid, hierarchy = hier,
+                          similar = similar, swaprate = swaprate,
+                          k_anonymity = k_anonymity,       
+                          risk = risk, # TESTING
+                          risk_threshold = -1, # TESTING
+                          risk_variables = risk_variables,
+                          carry_along = NULL,
+                          return_swapped_id = TRUE,
+                          seed=seed),
+               "risk_threshold must be a positiv numeric value")
+  
 })
