@@ -6,7 +6,7 @@
 #' @details The procedure accepts a `data.frame` or `data.table`
 #' containing all necessary information for the record swapping, e.g
 #' parameter `hid`, `similar`, `hierarchy`, etc ...
-#' First the micro data in `data` is ordered by `hid` and the identification
+#' First, the micro data in `data` is ordered by `hid` and the identification
 #' risk is calculated for each record in each hierarchy level. As of right
 #' now only counts is used as identification risk and the inverse of counts
 #' is used as sampling probability.
@@ -18,33 +18,34 @@
 #' risky households in each hierarchy level. A household is set to risky
 #' if counts < k_anonymity in any hierarchy level and the household needs
 #' to be swapped across this hierarchy level.
-#' For instance having a geographic hierarchy of NUTS1 > NUTS2 > NUTS3 the
+#' For instance, having a geographic hierarchy of NUTS1 > NUTS2 > NUTS3 the
 #' counts are calculated for each geographic variable and defined
 #' `risk_variables`. If the counts for a record falls below `k_anonymity`
-#' for hierarchy county then this record needs to be swapped across counties.
+#' for hierarchy county (NUTS1, NUTS2, ...) then this record needs to be swapped 
+#' across counties.
 #' Setting `k_anonymity = 0` disables this feature and no risky households
 #' are defined.
 #'
-#' After that the targeted record swapping is applied starting from the highest
+#' After that the targeted record swapping is applied, starting from the highest
 #' to the lowest hierarchy level and cycling through all possible geographic
 #' areas at each hierarchy level, e.g every county, every municipality in
 #' every county, etc, ...
 #'
-#' At each geographic area a set of values is created for records to be
-#' swapped. In all but the lowest hierarchy level this is ONLY made out
-#' of all records which do not fulfill the k-anonymity and have not already
+#' At each geographic area, a set of values is created for records to be
+#' swapped. In all but the lowest hierarchy level, this is ONLY made out
+#' of all records which do not fulfil the k-anonymity and have not already
 #' been swapped. Those records are swapped with records not belonging to
 #' the same geographic area, which have not already been swapped beforehand.
 #' Swapping refers to the interchange of geographic variables defined in
-#' `hierarchy`. When a record is swapped all other record containing the
+#' `hierarchy`. When a record is swapped all other records containing the
 #' same `hid` are swapped as well.
 #'
-#' At the lowest hierarchy level in every geographic area the set of records to
-#' be bswapped is made up of all records which do not fulfill the k-anonymity
-#' as well as the remaining numer of records such that the proportion of
+#' At the lowest hierarchy level in every geographic area, the set of records to
+#' be swapped is made up of all records which do not fulfil the k-anonymity
+#' as well as the remaining number of records such that the proportion of
 #' swapped records of the geographic area is in coherence with the `swaprate`.
-#' If, due to the k-anonymity condition, more records have already been swapped
-#' in this geographic area then only the records which do not fulfill the
+#' If due to the k-anonymity condition, more records have already been swapped
+#' in this geographic area then only the records which do not fulfil the
 #' k-anonymity are swapped.
 #'
 #' Using the parameter `similar` one can define similarity profiles.
@@ -62,7 +63,7 @@
 #'
 #' `swaprate` sets the swaprate of households to be swapped, where a single
 #' swap counts for swapping 2 households, the sampled household and the
-#' corresponding donor. Prior to the procedure the swaprate is applied on
+#' corresponding donor. Prior to the procedure, the swaprate is applied on
 #' the lowest hierarchy level, to determine the target number of swapped
 #' households in each of the lowest hierarchies. If the target numbers of a
 #' decimal point they will randomly be rounded up or down such that the
@@ -85,13 +86,18 @@
 #' at each hierarchy level. If `risk`-matrix is supplied to swapping procedure
 #' will not use the k-anonymity rule but the values found in this matrix
 #' for swapping.
-#' ATTENTION: This is NOT fully implemented yet and currently ignored by the
-#' underlying c++ functions until tested properly
+#' When using the risk parameter is expected to have assigned a maximum value     
+#' in a household for each member of the household. If this condition is not      
+#' satisfied, the risk parameter is automatically adjusted to comply with this    
+#' condition.
+#' If risk parameter is provided then k-anonymity rule is suppressed.
 #' @param risk_threshold single numeric value indicating when a household is
 #' considered "high risk", e.g. when this household must be swapped. Is only
 #' used when `risk` is not `NULL`.
-#' ATTENTION: This is NOT fully implemented yet and currently ignored by the
-#' underlying c++ functions until tested properly
+#' Risk threshold indicates households that have to be swapped, but be aware      
+#' that households with risk lower than threshold, but with still high enough      
+#' risk may be swapped as well. Only households with risk set to 0 are not swapped.                                                   
+#' Risk and risk threshold must be equal or bigger then 0.  
 #' @param k_anonymity integer defining the threshold of high risk households
 #' (counts<k) for using k-anonymity rule
 #' @param risk_variables column indices or column names of variables in `data`
@@ -222,9 +228,12 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
                        log_file_name = "TRS_logfile.txt",
                        seed = NULL, ...){
 
-  helpVariableforMergingAfterTRS <- . <- NULL
+  helpVariableforMergingAfterTRS <- . <- hid_help <- NULL
 
   # check data
+  if(missing(data)){
+    stop("data is missing, data must be either a data.table, data.frame")
+  }
   if(all(!class(data)%in%c("data.table","data.frame"))){
     stop("data must be either a data.table, data.frame")
   }
@@ -235,6 +244,11 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   ##########################
   # # check inputs
 
+  # check mandatory parameters
+  if(any(missing("hid"), missing("hierarchy"),missing("similar"))){
+    stop("One of mandatory parameters (hid, hierarchy, similar) is missing.")
+  }
+  
   # check hid
   hid <- checkIndexString(hid,cnames,matchLength = 1)
 
@@ -248,7 +262,14 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   similar <- lapply(similar,checkIndexString,cnames=cnames,minLength = 1)
 
   # check risk_variables
-  risk_variables <- checkIndexString(risk_variables,cnames,minLength = 1)
+  if(is.null(risk) & is.null(risk_variables)){
+    stop("risk_variables are missing for calculation of k-anonymity rule.")
+  }
+  if(is.null(risk)){
+    risk_variables <- checkIndexString(risk_variables,cnames,minLength = 1)
+  } else {
+    risk_variables <- 0
+  }
 
   # check carry_along
   carry_along <- checkIndexString(carry_along,cnames,minLength = 0)
@@ -305,10 +326,8 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   }
 
   # check risk_threshold
-  if(is.null(risk_variables)){
-    if(!(is.numeric(risk_threshold)&&length(risk_threshold)==1&&risk_threshold>=0)){
-      stop("risk_threshold must be a positiv numeric value")
-    }
+  if(!(is.numeric(risk_threshold)&&length(risk_threshold)==1&&risk_threshold>=0)){
+    stop("risk_threshold must be a positiv numeric value!")
   }
 
   # check swaprate
@@ -322,6 +341,9 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
     risk_threshold <- 0
   }
   if(is.vector(risk)){
+    if(any(length(risk) == nrow(data),is.list(risk))){
+      stop("If risk is not a vector containing column indices or column names in data then risk must be either a data.table, data.frame or matrix!")
+    }
     if(length(risk)!=length(hierarchy)){
       stop("risk and hierarchy need to address the same number of columns!")
     }
@@ -346,7 +368,7 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
     if(is.null(cnamesrisk)){
       message("risk does not contain column names; the first column in risk will be used for the first hierarchy level, e.g ",cnames[hierarchy[1]+1]," and so on.")
     }else{
-      if(!any(cnamesrisk)%in%cnames[hierarchy+1]){
+      if(!any(cnamesrisk%in%cnames[hierarchy+1])){
         stop("the columnnames of risk do not appear in data")
       }
     }
@@ -355,6 +377,27 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
       ){
       stop("risk must contain positive real values only!")
     }
+    
+    # Check the values of risk variable if they need adjustment for recordSwap_cpp()
+    # This check if risk values in each household are unique and if not then assign 
+    # every member of the household the highest value in the household.
+    risk_variables_names <- copy(colnames(risk))
+    risk[,hid_help:=data[[hid+1]]]
+    tryCatch(
+      expr = risk[,lapply(.SD,
+                          function(z){
+                            if( (length(unique(z)) > 1)) {stop()} else {0}
+                          }), # error when value not equal 0
+                  .SDcols=c(risk_variables_names),
+                  by=.(hid_help)], # calculate if each household have unique values
+      error  = function(e){ 
+        message("risk was adjusted in order to give each household member the maximum household risk value")
+        risk[,c(risk_variables_names):=lapply(.SD,max),
+             .SDcols=c(risk_variables_names),
+             by=.(hid_help)] # assign to each household its max value
+        risk[,hid_help:=NULL]
+      }
+    )
   }
 
   # check seed
@@ -437,7 +480,7 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   }else{
     risk <- numeric(0)
   }
-  risk <- numeric(0) # drop this if risk was tested enough
+  # risk <- numeric(0) # drop this if risk was tested enough
 
   # take time before starting swapping
   start_time <- Sys.time()
