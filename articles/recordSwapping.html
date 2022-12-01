@@ -82,7 +82,7 @@
                         <h4 data-toc-skip class="author">Johannes
 Gussenbauer</h4>
             
-            <h4 data-toc-skip class="date">2022-11-23</h4>
+            <h4 data-toc-skip class="date">2022-12-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sdcTools/sdcMicro/blob/HEAD/vignettes/recordSwapping.Rmd" class="external-link"><code>vignettes/recordSwapping.Rmd</code></a></small>
       <div class="hidden name"><code>recordSwapping.Rmd</code></div>
@@ -335,29 +335,29 @@ geographic levels and some other sociodemographic variables.</p>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createDat.html">createDat</a></span><span class="op">(</span>N<span class="op">=</span><span class="fl">100000</span><span class="op">)</span></span>
 <span><span class="va">dat</span></span></code></pre></div>
 <pre><code><span><span class="co">##         nuts1 nuts2 nuts3  lau2    hid hsize ageGroup gender national htype</span></span>
-<span><span class="co">##      1:     1    12  1209 12093      1     5        1      1        1    10</span></span>
-<span><span class="co">##      2:     1    12  1209 12093      1     5        5      1        2    10</span></span>
-<span><span class="co">##      3:     1    12  1209 12093      1     5        4      1        2    10</span></span>
-<span><span class="co">##      4:     1    12  1209 12093      1     5        5      1        5    10</span></span>
-<span><span class="co">##      5:     1    12  1209 12093      1     5        6      2        4    10</span></span>
+<span><span class="co">##      1:     1    15  1506 15062      1     5        4      2        1     7</span></span>
+<span><span class="co">##      2:     1    15  1506 15062      1     5        3      1        5     7</span></span>
+<span><span class="co">##      3:     1    15  1506 15062      1     5        6      2        2     7</span></span>
+<span><span class="co">##      4:     1    15  1506 15062      1     5        2      1        3     7</span></span>
+<span><span class="co">##      5:     1    15  1506 15062      1     5        5      2        1     7</span></span>
 <span><span class="co">##     ---                                                                    </span></span>
-<span><span class="co">## 349983:     2    25  2513 25132  99997     3        5      2        2     9</span></span>
-<span><span class="co">## 349984:     2    25  2512 25124  99998     1        4      1        4     7</span></span>
-<span><span class="co">## 349985:     2    24  2403 24035  99999     2        4      1        4     3</span></span>
-<span><span class="co">## 349986:     2    24  2403 24035  99999     2        5      2        1     3</span></span>
-<span><span class="co">## 349987:     2    25  2502 25023 100000     1        5      1        3     4</span></span>
+<span><span class="co">## 349678:     3    31  3110 31101  99998     4        7      2        3     2</span></span>
+<span><span class="co">## 349679:     3    31  3110 31101  99998     4        4      1        2     2</span></span>
+<span><span class="co">## 349680:     2    22  2205 22052  99999     2        7      1        3     5</span></span>
+<span><span class="co">## 349681:     2    22  2205 22052  99999     2        5      1        5     5</span></span>
+<span><span class="co">## 349682:     1    15  1510 15101 100000     1        7      2        5     6</span></span>
 <span><span class="co">##         hincome</span></span>
-<span><span class="co">##      1:       2</span></span>
-<span><span class="co">##      2:       2</span></span>
-<span><span class="co">##      3:       2</span></span>
-<span><span class="co">##      4:       2</span></span>
-<span><span class="co">##      5:       2</span></span>
+<span><span class="co">##      1:       1</span></span>
+<span><span class="co">##      2:       1</span></span>
+<span><span class="co">##      3:       1</span></span>
+<span><span class="co">##      4:       1</span></span>
+<span><span class="co">##      5:       1</span></span>
 <span><span class="co">##     ---        </span></span>
-<span><span class="co">## 349983:       9</span></span>
-<span><span class="co">## 349984:       8</span></span>
-<span><span class="co">## 349985:       3</span></span>
-<span><span class="co">## 349986:       3</span></span>
-<span><span class="co">## 349987:       2</span></span></code></pre>
+<span><span class="co">## 349678:       5</span></span>
+<span><span class="co">## 349679:       5</span></span>
+<span><span class="co">## 349680:      10</span></span>
+<span><span class="co">## 349681:      10</span></span>
+<span><span class="co">## 349682:       7</span></span></code></pre>
 <p>Applying the record swapping to dat could look like this</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hierarchy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts1"</span>,<span class="st">"nuts2"</span><span class="op">)</span></span>
@@ -467,7 +467,7 @@ to the lack of a suitable donor household.</p>
 <span>                          k_anonymity <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>                          swaprate <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                          seed <span class="op">=</span> <span class="fl">123456L</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Donor household was not found in 4 case(s).</span></span>
+<pre><code><span><span class="co">## Donor household was not found in 3 case(s).</span></span>
 <span><span class="co">## See TRS_logfile.txt for a detailed list</span></span></code></pre>
 <p>The expected number of swapped households for a population of 10000
 households and a swapping rate of 0.05 is 500. The actual number of
@@ -478,7 +478,7 @@ swaps was however:</p>
 <span></span>
 <span><span class="co"># number of swapped households</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat_compare</span><span class="op">[</span><span class="va">V1.x</span><span class="op">!=</span><span class="va">V1.y</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 492</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 494</span></span></code></pre>
 <p>With the parameter <code>similar</code> multiple similarity profiles
 can be defined, if the parameter input is a <code>list</code>. If a
 donor could not be found for the first similarity profile
@@ -548,12 +548,12 @@ for the resulting data set, the variables <code>nuts1</code> and
 <span>                     <span class="va">dat_swapped</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">nuts1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">nuts2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,by<span class="op">=</span><span class="va">hid</span><span class="op">]</span>,by<span class="op">=</span><span class="st">"hid"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat_compare</span><span class="op">[</span><span class="va">V1.x</span><span class="op">!=</span><span class="va">V1.y</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    hid V1.x V1.y</span></span>
-<span><span class="co">## 1:   1 1 14 2 23</span></span>
-<span><span class="co">## 2:   9 3 31 3 35</span></span>
-<span><span class="co">## 3:  37 3 34 2 24</span></span>
-<span><span class="co">## 4:  84 2 21 2 22</span></span>
-<span><span class="co">## 5:  85 2 25 2 21</span></span>
-<span><span class="co">## 6:  98 2 25 1 15</span></span></code></pre>
+<span><span class="co">## 1:  37 3 32 1 14</span></span>
+<span><span class="co">## 2:  84 2 25 1 15</span></span>
+<span><span class="co">## 3:  85 1 13 1 14</span></span>
+<span><span class="co">## 4:  87 3 35 1 12</span></span>
+<span><span class="co">## 5: 116 1 12 2 21</span></span>
+<span><span class="co">## 6: 120 1 13 2 25</span></span></code></pre>
 <p>For <code>nuts1==1</code> and <code>nuts2==14</code> the
 <code>nuts3</code> variables takes on values</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
@@ -564,10 +564,9 @@ for the resulting data set, the variables <code>nuts1</code> and
 and <code>nuts2==14</code></p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped</span><span class="op">[</span><span class="va">nuts1</span><span class="op">==</span><span class="fl">1</span><span class="op">&amp;</span><span class="va">nuts2</span><span class="op">==</span><span class="fl">14</span>,<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">nuts3</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1] 1106 1208 1214 1302 1303 1310 1312 1401 1402 1403 1404 1405 1406 1407 1408</span></span>
-<span><span class="co">## [16] 1409 1410 1411 1412 1413 1414 1415 1501 1507 1508 1515 2108 2202 2204 2209</span></span>
-<span><span class="co">## [31] 2212 2304 2310 2315 2405 2407 2508 2514 3201 3207 3210 3211 3314 3404 3405</span></span>
-<span><span class="co">## [46] 3415 3514</span></span></code></pre>
+<pre><code><span><span class="co">##  [1] 1101 1103 1202 1203 1206 1301 1308 1309 1312 1401 1402 1403 1404 1405 1406</span></span>
+<span><span class="co">## [16] 1407 1408 1409 1410 1411 1412 1413 1414 1415 2104 2109 2112 2203 2207 2310</span></span>
+<span><span class="co">## [31] 2312 2315 2403 2411 2415 2502 3205 3308 3412 3501 3508 3512</span></span></code></pre>
 <p>Using the parameter <code>carry_along</code> one can define certain
 variables which are additionally swapped but do not interfere with the
 risk calculation, sampling and procedure of finding a donor.</p>
@@ -624,8 +623,46 @@ household was swapped with.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped3</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="va">hid</span><span class="op">)</span>,<span class="va">.N</span>,by<span class="op">=</span><span class="fu">.</span><span class="op">(</span>id_swapped <span class="op">=</span> <span class="va">hid</span><span class="op">!=</span><span class="va">hid_swapped</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">##    id_swapped    N</span></span>
-<span><span class="co">## 1:       TRUE  500</span></span>
-<span><span class="co">## 2:      FALSE 9500</span></span></code></pre>
+<span><span class="co">## 1:      FALSE 9500</span></span>
+<span><span class="co">## 2:       TRUE  500</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="supplying-your-own-risk-values">Supplying your own risk values<a class="anchor" aria-label="anchor" href="#supplying-your-own-risk-values"></a>
+</h3>
+<p>Instead of using <code>k_anonymity</code> and
+<code>risk_variables</code> for the calculation of a number of swaps,
+custom risk can be supplied. For custom risk for households can be used
+parameters <code>risk</code> and then the parameter
+<code>risk_threshold</code> is used to determine high-risk households.
+High-risk households are always swapped, and households with risk lower
+than the threshold are also used as donor households. To ensure that the
+household is not swapped, its risk must be set to 0.</p>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hid</span> <span class="op">&lt;-</span> <span class="st">"hid"</span></span>
+<span><span class="va">similar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hsize"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">hier</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts1"</span>,<span class="st">"nuts2"</span>,<span class="st">"nuts3"</span><span class="op">)</span></span>
+<span><span class="va">risk_threshold</span> <span class="op">&lt;-</span> <span class="fl">0.9</span></span>
+<span><span class="co"># set risk matrix with low risk for everybody</span></span>
+<span><span class="va">risk</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.0001</span>,<span class="fl">3</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>  ncol <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>,</span>
+<span>                  <span class="va">hier</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="co"># for example, assign random people high risk value </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234L</span><span class="op">)</span></span>
+<span><span class="va">risk</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">hier</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span><span class="op">)</span>,size <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">99</span> <span class="co"># risk value</span></span>
+<span></span>
+<span><span class="va">dat_swapped4</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recordSwap.html">recordSwap</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>, </span>
+<span>                            hid <span class="op">=</span> <span class="va">hid</span>, </span>
+<span>                            hierarchy <span class="op">=</span> <span class="va">hier</span>,</span>
+<span>                            <span class="va">similar</span>,</span>
+<span>                            risk <span class="op">=</span> <span class="va">risk</span>, </span>
+<span>                            risk_threshold <span class="op">=</span> <span class="va">risk_threshold</span>, </span>
+<span>                            swaprate <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>                            return_swapped_id <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                            seed <span class="op">=</span> <span class="fl">1234L</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## risk was adjusted in order to give each household member the maximum household risk value</span></span></code></pre>
+<pre><code><span><span class="co">## Recordswapping was successful!</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="information-loss">Information loss<a class="anchor" aria-label="anchor" href="#information-loss"></a>
@@ -637,7 +674,7 @@ which accepts column names of the original and swapped micro data. The
 frequency table is internally constructed using both the original and
 swapped micro data. Afterwards, various information loss measures are
 estimated over each of the table cells.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate information loss for frequecy table nuts2 x national</span></span>
 <span><span class="va">table_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts2"</span>,<span class="st">"national"</span><span class="op">)</span></span>
 <span><span class="va">iloss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infoLoss.html">infoLoss</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">dat</span>, data_swapped <span class="op">=</span> <span class="va">dat_swapped3</span>,</span>
@@ -647,17 +684,17 @@ estimated over each of the table cells.</p>
 <span><span class="co">##  1:    Min  0.000000 0.00000000 0.000000000</span></span>
 <span><span class="co">##  2:    10%  0.000000 0.00000000 0.000000000</span></span>
 <span><span class="co">##  3:    20%  0.000000 0.00000000 0.000000000</span></span>
-<span><span class="co">##  4:    30%  1.000000 0.02233537 0.001994576</span></span>
-<span><span class="co">##  5:    40%  1.000000 0.02403264 0.002313031</span></span>
-<span><span class="co">##  6:   Mean  3.389474 0.07831860 0.007252733</span></span>
-<span><span class="co">##  7: Median  2.000000 0.04647397 0.004329004</span></span>
-<span><span class="co">##  8:    60%  4.000000 0.08937172 0.007990419</span></span>
-<span><span class="co">##  9:    70%  5.000000 0.11876598 0.011220907</span></span>
-<span><span class="co">## 10:    80%  6.000000 0.14218007 0.013124183</span></span>
-<span><span class="co">## 11:    90%  9.000000 0.19908995 0.017538890</span></span>
-<span><span class="co">## 12:    95%  9.000000 0.21273656 0.019916850</span></span>
-<span><span class="co">## 13:    99% 11.300000 0.25952784 0.024580183</span></span>
-<span><span class="co">## 14:    Max 16.000000 0.36554208 0.033970276</span></span></code></pre>
+<span><span class="co">##  4:    30%  1.000000 0.02311504 0.002135864</span></span>
+<span><span class="co">##  5:    40%  2.000000 0.04724612 0.004462342</span></span>
+<span><span class="co">##  6:   Mean  3.789474 0.08762997 0.008118392</span></span>
+<span><span class="co">##  7: Median  3.000000 0.06786713 0.006122449</span></span>
+<span><span class="co">##  8:    60%  4.000000 0.09264939 0.008591075</span></span>
+<span><span class="co">##  9:    70%  5.000000 0.11978168 0.011548517</span></span>
+<span><span class="co">## 10:    80%  7.000000 0.16457869 0.015548842</span></span>
+<span><span class="co">## 11:    90%  9.600000 0.21652448 0.019998727</span></span>
+<span><span class="co">## 12:    95% 11.000000 0.24388329 0.021885707</span></span>
+<span><span class="co">## 13:    99% 12.120000 0.28281569 0.026177062</span></span>
+<span><span class="co">## 14:    Max 14.000000 0.33072901 0.031746032</span></span></code></pre>
 <p>Per default the absolute deviation (<span class="math inline">\(abs(x,y)\)</span>), relative absolute deviation
 (<span class="math inline">\(r\_abs(x,y)\)</span>), and absolute
 deviaion of square roots (<span class="math inline">\(abs\_sqr(x,y)\)</span>) is calculated between the
@@ -673,7 +710,7 @@ abs\_sqr(x,y) = |\sqrt{x}-\sqrt{y}|
 \]</span></p>
 <p>It is also possible to supply a custom information loss metric by
 using parameter <code>custom_meric</code></p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define squared distance as custom metric</span></span>
 <span><span class="va">squareD</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">{</span></span>
 <span>   <span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">y</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
@@ -687,17 +724,17 @@ using parameter <code>custom_meric</code></p>
 <span><span class="co">##  1:    Min  0.000000 0.00000000 0.000000000   0.00000</span></span>
 <span><span class="co">##  2:    10%  0.000000 0.00000000 0.000000000   0.00000</span></span>
 <span><span class="co">##  3:    20%  0.000000 0.00000000 0.000000000   0.00000</span></span>
-<span><span class="co">##  4:    30%  1.000000 0.02233537 0.001994576   1.00000</span></span>
-<span><span class="co">##  5:    40%  1.000000 0.02403264 0.002313031   1.00000</span></span>
-<span><span class="co">##  6:   Mean  3.389474 0.07831860 0.007252733  23.26316</span></span>
-<span><span class="co">##  7: Median  2.000000 0.04647397 0.004329004   4.00000</span></span>
-<span><span class="co">##  8:    60%  4.000000 0.08937172 0.007990419  16.00000</span></span>
-<span><span class="co">##  9:    70%  5.000000 0.11876598 0.011220907  25.00000</span></span>
-<span><span class="co">## 10:    80%  6.000000 0.14218007 0.013124183  36.00000</span></span>
-<span><span class="co">## 11:    90%  9.000000 0.19908995 0.017538890  81.00000</span></span>
-<span><span class="co">## 12:    95%  9.000000 0.21273656 0.019916850  81.00000</span></span>
-<span><span class="co">## 13:    99% 11.300000 0.25952784 0.024580183 129.10000</span></span>
-<span><span class="co">## 14:    Max 16.000000 0.36554208 0.033970276 256.00000</span></span></code></pre>
+<span><span class="co">##  4:    30%  1.000000 0.02311504 0.002135864   1.00000</span></span>
+<span><span class="co">##  5:    40%  2.000000 0.04724612 0.004462342   4.00000</span></span>
+<span><span class="co">##  6:   Mean  3.789474 0.08762997 0.008118392  27.26316</span></span>
+<span><span class="co">##  7: Median  3.000000 0.06786713 0.006122449   9.00000</span></span>
+<span><span class="co">##  8:    60%  4.000000 0.09264939 0.008591075  16.00000</span></span>
+<span><span class="co">##  9:    70%  5.000000 0.11978168 0.011548517  25.00000</span></span>
+<span><span class="co">## 10:    80%  7.000000 0.16457869 0.015548842  49.00000</span></span>
+<span><span class="co">## 11:    90%  9.600000 0.21652448 0.019998727  92.40000</span></span>
+<span><span class="co">## 12:    95% 11.000000 0.24388329 0.021885707 121.00000</span></span>
+<span><span class="co">## 13:    99% 12.120000 0.28281569 0.026177062 147.12000</span></span>
+<span><span class="co">## 14:    Max 14.000000 0.33072901 0.031746032 196.00000</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="sdcmicro-objects">sdcMicro Objects<a class="anchor" aria-label="anchor" href="#sdcmicro-objects"></a>
@@ -706,7 +743,7 @@ using parameter <code>custom_meric</code></p>
 data directly, as seen above, or with an sdcMicro-Object. Parameters for
 the swapping routine can be passed to the options-slot when creating the
 sdcMicro-Object.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define paramters</span></span>
 <span><span class="va">hierarchy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts1"</span>,<span class="st">"nuts2"</span><span class="op">)</span></span>
 <span><span class="va">risk_variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hincome"</span>,<span class="st">"ageGroup"</span>,<span class="st">"gender"</span><span class="op">)</span></span>
@@ -722,11 +759,11 @@ sdcMicro-Object.</p>
 <span>                                                    swaprate <span class="op">=</span> <span class="va">swaprate</span>,</span>
 <span>                                                    similar <span class="op">=</span> <span class="va">similar</span>,</span>
 <span>                                                    hierarchy <span class="op">=</span> <span class="va">hierarchy</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped_sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/recordSwap.html">recordSwap</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_sdc</span>,</span>
 <span>                              return_swapped_id <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Recordswapping was successful!</span></span></code></pre>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped_sdc</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="va">hid</span><span class="op">)</span>,<span class="va">.N</span>,by<span class="op">=</span><span class="fu">.</span><span class="op">(</span>id_swapped <span class="op">=</span> <span class="va">hid</span><span class="op">!=</span><span class="va">hid_swapped</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">##    id_swapped    N</span></span>
 <span><span class="co">## 1:      FALSE 9500</span></span>
