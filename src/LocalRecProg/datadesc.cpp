@@ -7,17 +7,6 @@ CData::SAncestor *CData::m_Ancestor = NULL;
 TDist *CData::m_pAllDist = NULL;
 TValue_LocalRec *CData::m_pMissingValueDist = NULL;
 TValue_LocalRec g_MissingValue_LocalRec = -1.0f;
-//void PrintData(CData *d)
-//{
-//  int i;
-//
-//  printf("[");
-//
-//  ForLoop (i, CData::m_NbVariable)
-//  printf("%s%g", i ? "," : "", d->m_Value[i]);
-//
-//  printf("]");
-//}
 
 int CData :: Init(int NbVariable, SEXP weights)
 {
@@ -25,7 +14,6 @@ int CData :: Init(int NbVariable, SEXP weights)
 
   if (NbVariable <= 0)
   {
-    //printf("Error: Number of Variables must be above 0 ( => %d)\n", NbVariable);
     return 0;
   }
 
@@ -103,9 +91,6 @@ void CData :: Uninit_LocalRec(void)
 int LoadData(int NbRow, double SV_MissingValue, CData *pData, SEXP Mat)
 {
   int i, j;
- // printf("Loading %d Rows with %d QuasiIDs & %d Ancestors, %s a Category Count Var\n",
-  //           NbRow, CData::m_NbVariable, CData::m_NbAncestor,
-  //CData::m_CategoryCountVar ? "with" : "without");
   Rcpp::NumericMatrix Mat_LocalRec(Mat);
 
   for (i = 0; i < NbRow; ++i)
@@ -174,7 +159,6 @@ int LoadData(int NbRow, double SV_MissingValue, CData *pData, SEXP Mat)
     }
     else
       CData::m_pMissingValueDist[j] = 0.0f;
-    //printf("Var %d: Ranged weight = %g\n", j, CData::m_Weight[j]);
   }
 
     //=== Compute Categories
@@ -209,7 +193,6 @@ int LoadData(int NbRow, double SV_MissingValue, CData *pData, SEXP Mat)
 
       ++CatSize;
     }
-    //printf("Found %d categories in dataset\n", CatNum + 1);
   }
 
   return i;

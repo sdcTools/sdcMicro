@@ -247,7 +247,6 @@ extern int g_NbNew;
 #ifdef _MSC_VER
 	#define stricmp _stricmp
 	#define strnicmp _strnicmp
-	#define snprintf _snprintf
 #else
 	#if !defined(stricmp)
 	//	int stricmp(char *str1, char *str2);
@@ -415,7 +414,6 @@ inline int Random(int NumMax)					// Return a int in [0; NumMax[
 {
 	return g_TooRandom.Get(NumMax);
 	//float r = g_TooRandom.Get();
-	//printf("Ret = %3d; Max = %3d; r = %f\n", (int)(r * NumMax), NumMax, r);
 	//return r * NumMax;
 }
 
@@ -634,7 +632,6 @@ int OS_Printf(const char *Str, ...)
 	va_list ArgPtr;
 
 	va_start(ArgPtr, Str);
-	vsprintf(g_TxtBuffer, Str, ArgPtr);
 	va_end(ArgPtr);
 
 #ifdef __PLUGIN
@@ -649,8 +646,6 @@ int OS_Printf(const char *Str, ...)
 
 	return Ret;
 #else
-//	return printf(g_TxtBuffer);
-	//std::cout << g_TxtBuffer;
 	return 0;
 #endif
 }
@@ -745,8 +740,6 @@ char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn)
 	{
 		strncpy(Dst, Src, Max - 1);
 		Dst[Max-1] = 0;
-		//if (Warn && Max <= (int) strlen(Src))
-			//printf("Warning: Strncpy cut '%s' to '%s'\n", Src, Dst);
 	}
 	return Dst;
 }
@@ -819,7 +812,6 @@ char *RemoveComment(char *Ptr, int Size)
 
 			if (!Found)
 			{
-				//printf("Warning: found '/*' but no '*/' after\n");
 				break;
 			}
 
@@ -924,10 +916,6 @@ char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
 	}
 
 	Str[i] = 0;
-
-	//if (Warn)
-		//printf("Warning: parsed string has been cut to '%s' (max size = %d)\n", Str, Size);
-
 	return Ptr;
 }
 
@@ -965,10 +953,6 @@ char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
 	}
 
 	Str[i] = 0;
-
-	//if (Warn)
-		//printf("Warning: parsed string has been cut to '%s' (max size = %d)\n", Str, Size);
-
 	return Ptr;
 }
 

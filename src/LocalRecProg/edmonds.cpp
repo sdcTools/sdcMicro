@@ -491,17 +491,7 @@ int set_matching(vertex_type *v, int n, int *m, int c, int ub)
 void write_matching(vertex_type *pVertex, int NbRow, int *pMatch, int c, SEXP res_mat)
 {
   int i, p, q;
- // printf("# of unmatched vertices: %d\n", NbRow - 2 * c);
   Rcpp::NumericMatrix res(res_mat);
-    for (i = 0; i < NbRow; ++i)
-    {
-      if ((pVertex + i)->partner == NULL)
-      {
-        //printf("%d ", i);
-        //PrintData((pVertex + i)->item);
-        //printf("\n");
-      }
-    }
 
   int *pNbRecodingPerVariable = new int[CData::m_NbVariable],
       *pRecodingCountIndex = new int[CData::m_NbVariable];
@@ -590,7 +580,6 @@ void write_matching(vertex_type *pVertex, int NbRow, int *pMatch, int c, SEXP re
                 Value = v1;
               else {
                 Value = v1 - v2;
-                s = sprintf(Buf, "%g.%g", v1, v2);
               }
             }
           }
@@ -620,17 +609,6 @@ void write_matching(vertex_type *pVertex, int NbRow, int *pMatch, int c, SEXP re
         Swap(pRecodingCountIndex[i], pRecodingCountIndex[j]);
     }
   }
-
-
-  //printf("Nb Recoding Per Variable :\n");
-
-  //ForLoop (i, CData::m_NbVariable)
-  //{
-    //printf("Var%02d: %6d; ", pRecodingCountIndex[i]+1, pNbRecodingPerVariable[pRecodingCountIndex[i]]);
-
-    //if (!((i+1) % 5) || i == CData::m_NbVariable - 1)
-    //      printf("\n");
-    //}
   CleanDeleteT(pNbRecodingPerVariable);
   CleanDeleteT(pRecodingCountIndex);
 }
@@ -669,17 +647,6 @@ void sum_matching(vertex_type *pVertex, int *pMatch, int c)
     if (d >= 0 && d < 512)
       ++t[(int)d];
   }
-  //printf("Total: %f; Max: %g; Min: %g\n", s, h, l);
-  //printf("Mean: %f / %d = %f\n", s, c, s / c);
-  //printf("Distribution:\n");
-
-  //for (i = (int) l; i <= h; ++i)
-  //  {
-  //    if (i >= 0 && i < 512)
-  //      printf("%d:%d ", i, t[i]);
-  //  }
-
-  //printf("\n");
 }
 
 void count_degree(CData *d, int n, int (*f) (CData *, CData *), int upperbound)

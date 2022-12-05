@@ -1,4 +1,3 @@
-
 #undef LOOP
 #undef END
 #undef WEIGHT
@@ -67,9 +66,6 @@ int weighted(vertex_type *v,  // array of vertices
 
   /* clear */
 l1:
-  //if ((c & 63) == 0)
-//  OS_Printf(" - %d", c);
-
   for (p = v + (i = n - 1); i >= 0; --i, --p)
   {
     p->root->label = e_Label_Unlabeled;
@@ -254,7 +250,6 @@ l3:
     END
   }
   if(iterat>100000){
-    //printf("max iter c %d",c);
     return c;
   }
   goto l3;
@@ -262,37 +257,28 @@ l3:
 
 int match_check(vertex_type *v, int n)
 {
-  //printf("MAAATCH\n");
   int i, c;
   vertex_type *p, *q;
 
   c = 0;
   for (p = v + (i = n - 1); i >= 0; --i, --p)
   {
-    //printf("c: %d",c);
     q = p->partner;
     if (p == q)
     {
-      //printf("(%d, %d) is a loop\n", (int)(p - v), (int)(p - v));
       return -1;
     }
     else if (q != NULL)
     {
       if (q->partner != p)
       {
-        //printf("(%d, %d) ?\n", (int)(p - v), (int)(q - v));
         q = q->partner;
-        //if (q == NULL)
-          //printf("NULL\n");
-        //else
-        //          printf("%d\n", (int)(q - v));
         return -1;
       }
 
       ++c;
     }
   }
-  //printf("Matching checked: size = %d\n", c / 2);
   return c / 2;
 }
 
@@ -351,12 +337,10 @@ BOOL dual_check(vertex_type *v, int n, vertex_type *u)
   {
     if (greaterp(0, p->var))
     {
-      //printf("dual variable on vertex %d is minus\n", i);
       return FALSE;
     }
     else if (greaterp(p->var, 0) && (p->partner == NULL))
     {
-      //printf("dual variable of unmatched vertex %d is plus(%f)\n", i, p->var);
       return FALSE;
     }
   }
@@ -368,7 +352,6 @@ BOOL dual_check(vertex_type *v, int n, vertex_type *u)
     }
     else if (greaterp(0, p->var))
     {
-      //printf("dual variable of an blossom is minus\n");
       return FALSE;
     }
     else if (greaterp(p->var, 0))
@@ -384,7 +367,6 @@ BOOL dual_check(vertex_type *v, int n, vertex_type *u)
         {
           if (!k)
           {
-            //printf("irregal blossom\n");
             return FALSE;
           }
         }
@@ -392,7 +374,6 @@ BOOL dual_check(vertex_type *v, int n, vertex_type *u)
         {
           if (k)
           {
-            //printf("irregal blossom\n");
             return FALSE;
           }
         }
@@ -421,21 +402,15 @@ BOOL dual_check(vertex_type *v, int n, vertex_type *u)
         s += (r->var);
       if (greaterp(w, s))
       {
-        //printf("dual infeasible %f < %f on (%d, %d)\n", s, w, (int)(p - v), (int)(q - v));
         ++NbInfeasible;
-        //return FALSE;
       }
       else if (p->partner == q && greaterp(s, w))
       {
-        //printf("dual inequality %f > %f holds on matching (%d, %d)\n",
-        //                       s, w, (int)(p - v), (int)(q - v));
         ++NbInequality;
-        //return FALSE;
       }
     }
 
     END
   }
-  //printf("Dual checked: OK!\n");
   return TRUE;
 }

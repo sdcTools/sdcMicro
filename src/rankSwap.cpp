@@ -182,7 +182,6 @@ void CRankSwap::generate_swap(long swap[],long n_columns, long n_regs,long perce
       }
     }
     *prog = *prog + 1;
-    //	  printf ("\nProgress %.2f percent", ((*prog)*100.0)/(n_regs*n_columns));
   }
 }
 

@@ -72,7 +72,6 @@ BEGIN_RCPP
   // NbVar_LocRec = NbTotalVar / 2;
   //=============init Parameters
   K_Level = Rcpp::as<int>(K_Level_R);
-  //  printf("klevel %d \n",K_Level);
   if(K_Level >= 1) Match = e_Match_Kneib;
   if(Rcpp::as<bool>(range_R)) g_Output = e_Output_Range;
   FindLowestK = Rcpp::as<bool>(FindLowestK_R);
@@ -114,7 +113,6 @@ BEGIN_RCPP
     CData::m_CategoryCountVar = TRUE;
     --NbVar_LocRec;
   }
-  //printf("NbVar_LocRec %d \n",NbVar_LocRec);
   if (g_NbRow_LocRec <= 0 || CData::m_NbVariable <= 0)
   {
     Uninit_LocalRec();
@@ -171,25 +169,17 @@ BEGIN_RCPP
     {
       CleanDeleteT(g_AdjType);
       g_AdjType = MALLOC(adj_type, 2 * ((long)g_NbRow_LocRec) * K_Level);
-      //printf("\n===> Kneib Match with nearest %d vertices\n", K_Level);
-    }//else
-    //printf("\n===> Complete Match\n");
+    }
 
     g_Diameter = diameter(g_Data, g_NbRow_LocRec);
-    //printf("Diameter: %g\n", g_Diameter);
     if (Match == e_Match_Kneib)
     {
-      //printf("Adjacency list (nearest %d vertices)\n",
-//                    K_Level);
       make_adj(g_Vertex, g_NbRow_LocRec, K_Level, g_AdjType);
-      //printf("2\n");
     }
-    //printf("*** Weighted ***\n");
     if (Match == e_Match_Kneib)
       g_ShiftBound = SHIFT(UPPERBOUND);
     else
       g_ShiftBound = 0;
-    //printf("Bound: %d\n", UPPERBOUND);
     if (Match == e_Match_Kneib){
       NSKneib::weighted(g_Vertex, g_NbRow_LocRec, g_Vertex + g_NbRow_LocRec);
     }else{
@@ -204,7 +194,6 @@ BEGIN_RCPP
       if (g_Vertex[i].partner == NULL)
         ++j;
     }
-    //printf("Nb Unmatched Vertices: %d\n", j);
 
     int PrevK = K_Level;
 
@@ -223,46 +212,33 @@ BEGIN_RCPP
         Km = K_Level;
       K_Level = (K0 + K_Level + 1) / 2;
     }
-    //printf("w8\n");
     if (K_Level < K0 + 1
       || K_Level == PrevK)
     {
-      //printf("\n===> Found Smallest k value = %d\n\n", K_Level);
       break;
     }
-    //printf("w9\n");
   }
-  //printf("after while(1) \n");
   BOOL Done = FALSE;
 
-  //printf("XX1 \n");
   if (Match == e_Match_Kneib)
   {
-    //printf("XX11 \n");
     Done = NSKneib::match_check(g_Vertex, g_NbRow_LocRec) >= 0
       && NSKneib::dual_check(g_Vertex, g_NbRow_LocRec, g_Vertex + g_NbRow_LocRec);
-    //printf("XX111 \n");
   }
   else
   {
-    //printf("XX22 \n");
     Done = NSComplete::match_check(g_Vertex, g_NbRow_LocRec) >= 0
       && NSComplete::dual_check(g_Vertex, g_NbRow_LocRec, g_Vertex + g_NbRow_LocRec);
-    //printf("XX222 \n");
   }
-  //printf("XX2 \n");
   if (Done)
   //if (1)
   {
-    //printf("DONE \n");
     c2 = get_matching(g_Vertex, g_NbRow_LocRec, g_Match);
     sum_matching(g_Vertex, g_Match, c2);
     write_matching(g_Vertex, g_NbRow_LocRec, g_Match, c2, res);
   }
-  //printf("XX3 \n");
     //============= Uninit_LocalRec
   Uninit_LocalRec();
-  //printf("XX4 \n");
   return Rcpp::List::create(
     Rcpp::Named( "Res" ) = res
   ) ;
