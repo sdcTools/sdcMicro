@@ -82,7 +82,7 @@
                         <h4 data-toc-skip class="author">Johannes
 Gussenbauer</h4>
             
-            <h4 data-toc-skip class="date">2022-12-01</h4>
+            <h4 data-toc-skip class="date">2022-12-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sdcTools/sdcMicro/blob/HEAD/vignettes/recordSwapping.Rmd" class="external-link"><code>vignettes/recordSwapping.Rmd</code></a></small>
       <div class="hidden name"><code>recordSwapping.Rmd</code></div>
@@ -335,29 +335,29 @@ geographic levels and some other sociodemographic variables.</p>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createDat.html">createDat</a></span><span class="op">(</span>N<span class="op">=</span><span class="fl">100000</span><span class="op">)</span></span>
 <span><span class="va">dat</span></span></code></pre></div>
 <pre><code><span><span class="co">##         nuts1 nuts2 nuts3  lau2    hid hsize ageGroup gender national htype</span></span>
-<span><span class="co">##      1:     1    15  1506 15062      1     5        4      2        1     7</span></span>
-<span><span class="co">##      2:     1    15  1506 15062      1     5        3      1        5     7</span></span>
-<span><span class="co">##      3:     1    15  1506 15062      1     5        6      2        2     7</span></span>
-<span><span class="co">##      4:     1    15  1506 15062      1     5        2      1        3     7</span></span>
-<span><span class="co">##      5:     1    15  1506 15062      1     5        5      2        1     7</span></span>
+<span><span class="co">##      1:     3    33  3309 33095      1     2        4      2        3     7</span></span>
+<span><span class="co">##      2:     3    33  3309 33095      1     2        1      1        5     7</span></span>
+<span><span class="co">##      3:     2    23  2301 23015      2     1        6      2        4     5</span></span>
+<span><span class="co">##      4:     2    25  2509 25094      3     1        6      1        5     4</span></span>
+<span><span class="co">##      5:     3    33  3304 33045      4     4        3      1        1     3</span></span>
 <span><span class="co">##     ---                                                                    </span></span>
-<span><span class="co">## 349678:     3    31  3110 31101  99998     4        7      2        3     2</span></span>
-<span><span class="co">## 349679:     3    31  3110 31101  99998     4        4      1        2     2</span></span>
-<span><span class="co">## 349680:     2    22  2205 22052  99999     2        7      1        3     5</span></span>
-<span><span class="co">## 349681:     2    22  2205 22052  99999     2        5      1        5     5</span></span>
-<span><span class="co">## 349682:     1    15  1510 15101 100000     1        7      2        5     6</span></span>
+<span><span class="co">## 350742:     2    21  2113 21135  99999     1        2      1        3     9</span></span>
+<span><span class="co">## 350743:     2    25  2506 25061 100000     4        1      1        4     9</span></span>
+<span><span class="co">## 350744:     2    25  2506 25061 100000     4        3      2        1     9</span></span>
+<span><span class="co">## 350745:     2    25  2506 25061 100000     4        3      1        1     9</span></span>
+<span><span class="co">## 350746:     2    25  2506 25061 100000     4        6      2        3     9</span></span>
 <span><span class="co">##         hincome</span></span>
 <span><span class="co">##      1:       1</span></span>
 <span><span class="co">##      2:       1</span></span>
-<span><span class="co">##      3:       1</span></span>
-<span><span class="co">##      4:       1</span></span>
-<span><span class="co">##      5:       1</span></span>
+<span><span class="co">##      3:       2</span></span>
+<span><span class="co">##      4:       7</span></span>
+<span><span class="co">##      5:       4</span></span>
 <span><span class="co">##     ---        </span></span>
-<span><span class="co">## 349678:       5</span></span>
-<span><span class="co">## 349679:       5</span></span>
-<span><span class="co">## 349680:      10</span></span>
-<span><span class="co">## 349681:      10</span></span>
-<span><span class="co">## 349682:       7</span></span></code></pre>
+<span><span class="co">## 350742:      10</span></span>
+<span><span class="co">## 350743:       5</span></span>
+<span><span class="co">## 350744:       5</span></span>
+<span><span class="co">## 350745:       5</span></span>
+<span><span class="co">## 350746:       5</span></span></code></pre>
 <p>Applying the record swapping to dat could look like this</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hierarchy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts1"</span>,<span class="st">"nuts2"</span><span class="op">)</span></span>
@@ -467,7 +467,7 @@ to the lack of a suitable donor household.</p>
 <span>                          k_anonymity <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>                          swaprate <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                          seed <span class="op">=</span> <span class="fl">123456L</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Donor household was not found in 3 case(s).</span></span>
+<pre><code><span><span class="co">## Donor household was not found in 2 case(s).</span></span>
 <span><span class="co">## See TRS_logfile.txt for a detailed list</span></span></code></pre>
 <p>The expected number of swapped households for a population of 10000
 households and a swapping rate of 0.05 is 500. The actual number of
@@ -478,7 +478,7 @@ swaps was however:</p>
 <span></span>
 <span><span class="co"># number of swapped households</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat_compare</span><span class="op">[</span><span class="va">V1.x</span><span class="op">!=</span><span class="va">V1.y</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 494</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 496</span></span></code></pre>
 <p>With the parameter <code>similar</code> multiple similarity profiles
 can be defined, if the parameter input is a <code>list</code>. If a
 donor could not be found for the first similarity profile
@@ -548,12 +548,12 @@ for the resulting data set, the variables <code>nuts1</code> and
 <span>                     <span class="va">dat_swapped</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">nuts1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">nuts2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,by<span class="op">=</span><span class="va">hid</span><span class="op">]</span>,by<span class="op">=</span><span class="st">"hid"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat_compare</span><span class="op">[</span><span class="va">V1.x</span><span class="op">!=</span><span class="va">V1.y</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    hid V1.x V1.y</span></span>
-<span><span class="co">## 1:  37 3 32 1 14</span></span>
-<span><span class="co">## 2:  84 2 25 1 15</span></span>
-<span><span class="co">## 3:  85 1 13 1 14</span></span>
-<span><span class="co">## 4:  87 3 35 1 12</span></span>
-<span><span class="co">## 5: 116 1 12 2 21</span></span>
-<span><span class="co">## 6: 120 1 13 2 25</span></span></code></pre>
+<span><span class="co">## 1:   9 1 13 2 25</span></span>
+<span><span class="co">## 2:  37 1 15 2 21</span></span>
+<span><span class="co">## 3:  80 2 22 2 24</span></span>
+<span><span class="co">## 4:  84 3 34 2 22</span></span>
+<span><span class="co">## 5:  85 1 13 1 14</span></span>
+<span><span class="co">## 6: 105 3 32 3 34</span></span></code></pre>
 <p>For <code>nuts1==1</code> and <code>nuts2==14</code> the
 <code>nuts3</code> variables takes on values</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
@@ -564,9 +564,10 @@ for the resulting data set, the variables <code>nuts1</code> and
 and <code>nuts2==14</code></p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat_swapped</span><span class="op">[</span><span class="va">nuts1</span><span class="op">==</span><span class="fl">1</span><span class="op">&amp;</span><span class="va">nuts2</span><span class="op">==</span><span class="fl">14</span>,<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">nuts3</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1] 1101 1103 1202 1203 1206 1301 1308 1309 1312 1401 1402 1403 1404 1405 1406</span></span>
-<span><span class="co">## [16] 1407 1408 1409 1410 1411 1412 1413 1414 1415 2104 2109 2112 2203 2207 2310</span></span>
-<span><span class="co">## [31] 2312 2315 2403 2411 2415 2502 3205 3308 3412 3501 3508 3512</span></span></code></pre>
+<pre><code><span><span class="co">##  [1] 1106 1110 1112 1114 1201 1203 1204 1210 1302 1303 1308 1311 1312 1401 1402</span></span>
+<span><span class="co">## [16] 1403 1404 1405 1406 1407 1408 1409 1410 1411 1412 1413 1414 1415 1501 1511</span></span>
+<span><span class="co">## [31] 1512 1514 2104 2114 2211 2403 2413 2514 3201 3211 3215 3401 3409 3415 3511</span></span>
+<span><span class="co">## [46] 3515</span></span></code></pre>
 <p>Using the parameter <code>carry_along</code> one can define certain
 variables which are additionally swapped but do not interfere with the
 risk calculation, sampling and procedure of finding a donor.</p>
@@ -684,17 +685,17 @@ estimated over each of the table cells.</p>
 <span><span class="co">##  1:    Min  0.000000 0.00000000 0.000000000</span></span>
 <span><span class="co">##  2:    10%  0.000000 0.00000000 0.000000000</span></span>
 <span><span class="co">##  3:    20%  0.000000 0.00000000 0.000000000</span></span>
-<span><span class="co">##  4:    30%  1.000000 0.02311504 0.002135864</span></span>
-<span><span class="co">##  5:    40%  2.000000 0.04724612 0.004462342</span></span>
-<span><span class="co">##  6:   Mean  3.789474 0.08762997 0.008118392</span></span>
-<span><span class="co">##  7: Median  3.000000 0.06786713 0.006122449</span></span>
-<span><span class="co">##  8:    60%  4.000000 0.09264939 0.008591075</span></span>
-<span><span class="co">##  9:    70%  5.000000 0.11978168 0.011548517</span></span>
-<span><span class="co">## 10:    80%  7.000000 0.16457869 0.015548842</span></span>
-<span><span class="co">## 11:    90%  9.600000 0.21652448 0.019998727</span></span>
-<span><span class="co">## 12:    95% 11.000000 0.24388329 0.021885707</span></span>
-<span><span class="co">## 13:    99% 12.120000 0.28281569 0.026177062</span></span>
-<span><span class="co">## 14:    Max 14.000000 0.33072901 0.031746032</span></span></code></pre>
+<span><span class="co">##  4:    30%  2.000000 0.04498524 0.004039298</span></span>
+<span><span class="co">##  5:    40%  3.000000 0.06873093 0.006278804</span></span>
+<span><span class="co">##  6:   Mean  4.926316 0.11437606 0.010642949</span></span>
+<span><span class="co">##  7: Median  3.000000 0.07114690 0.006726457</span></span>
+<span><span class="co">##  8:    60%  5.000000 0.11613360 0.010780711</span></span>
+<span><span class="co">##  9:    70%  6.000000 0.14071160 0.013146853</span></span>
+<span><span class="co">## 10:    80%  9.200000 0.21758450 0.020759241</span></span>
+<span><span class="co">## 11:    90% 12.000000 0.27783530 0.026122415</span></span>
+<span><span class="co">## 12:    95% 14.300000 0.32901530 0.030168610</span></span>
+<span><span class="co">## 13:    99% 17.000000 0.39376583 0.037067898</span></span>
+<span><span class="co">## 14:    Max 17.000000 0.41016501 0.038812785</span></span></code></pre>
 <p>Per default the absolute deviation (<span class="math inline">\(abs(x,y)\)</span>), relative absolute deviation
 (<span class="math inline">\(r\_abs(x,y)\)</span>), and absolute
 deviaion of square roots (<span class="math inline">\(abs\_sqr(x,y)\)</span>) is calculated between the
@@ -724,17 +725,17 @@ using parameter <code>custom_meric</code></p>
 <span><span class="co">##  1:    Min  0.000000 0.00000000 0.000000000   0.00000</span></span>
 <span><span class="co">##  2:    10%  0.000000 0.00000000 0.000000000   0.00000</span></span>
 <span><span class="co">##  3:    20%  0.000000 0.00000000 0.000000000   0.00000</span></span>
-<span><span class="co">##  4:    30%  1.000000 0.02311504 0.002135864   1.00000</span></span>
-<span><span class="co">##  5:    40%  2.000000 0.04724612 0.004462342   4.00000</span></span>
-<span><span class="co">##  6:   Mean  3.789474 0.08762997 0.008118392  27.26316</span></span>
-<span><span class="co">##  7: Median  3.000000 0.06786713 0.006122449   9.00000</span></span>
-<span><span class="co">##  8:    60%  4.000000 0.09264939 0.008591075  16.00000</span></span>
-<span><span class="co">##  9:    70%  5.000000 0.11978168 0.011548517  25.00000</span></span>
-<span><span class="co">## 10:    80%  7.000000 0.16457869 0.015548842  49.00000</span></span>
-<span><span class="co">## 11:    90%  9.600000 0.21652448 0.019998727  92.40000</span></span>
-<span><span class="co">## 12:    95% 11.000000 0.24388329 0.021885707 121.00000</span></span>
-<span><span class="co">## 13:    99% 12.120000 0.28281569 0.026177062 147.12000</span></span>
-<span><span class="co">## 14:    Max 14.000000 0.33072901 0.031746032 196.00000</span></span></code></pre>
+<span><span class="co">##  4:    30%  2.000000 0.04498524 0.004039298   4.00000</span></span>
+<span><span class="co">##  5:    40%  3.000000 0.06873093 0.006278804   9.00000</span></span>
+<span><span class="co">##  6:   Mean  4.926316 0.11437606 0.010642949  46.23158</span></span>
+<span><span class="co">##  7: Median  3.000000 0.07114690 0.006726457   9.00000</span></span>
+<span><span class="co">##  8:    60%  5.000000 0.11613360 0.010780711  25.00000</span></span>
+<span><span class="co">##  9:    70%  6.000000 0.14071160 0.013146853  36.00000</span></span>
+<span><span class="co">## 10:    80%  9.200000 0.21758450 0.020759241  84.80000</span></span>
+<span><span class="co">## 11:    90% 12.000000 0.27783530 0.026122415 144.00000</span></span>
+<span><span class="co">## 12:    95% 14.300000 0.32901530 0.030168610 204.70000</span></span>
+<span><span class="co">## 13:    99% 17.000000 0.39376583 0.037067898 289.00000</span></span>
+<span><span class="co">## 14:    Max 17.000000 0.41016501 0.038812785 289.00000</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="sdcmicro-objects">sdcMicro Objects<a class="anchor" aria-label="anchor" href="#sdcmicro-objects"></a>

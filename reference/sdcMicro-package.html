@@ -253,9 +253,9 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 onedims     0   0.522    0.502 16.763 1.197 8.381 10.671  2.413 0.215</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3     pca     0   7.074    3.341 16.190 5.418 8.095 15.779 19.354 1.742</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   apcaload apppcaload atotals pmtotals   util1 deigenvalues risk0 risk1 risk2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   36.350     20.575       0        0 207.390        5.763  0.00     1     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   36.350     21.626       0        0 207.390        5.763  0.00     1     0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   36.406     23.093       0        0  69.528       27.008  0.04     1     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   67.326     24.294       0        0 202.370        6.818  0.00     1     0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   67.326     24.068       0        0 202.370        6.818  0.00     1     0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    wrisk1  wrisk2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 129.603   0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 135.305 135.305</span>
@@ -330,7 +330,7 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8.456233</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $apppcaload</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7.476907</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6.203188</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $totalsOrig</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   one   two three  four  five </span>
@@ -727,12 +727,12 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-msg co"><span class="r-pr">#&gt;</span> setting parameter R0 = 0.95 as no inputs have been specified.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 95384258 54700000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 25632721 29600000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 33255664 76700000 5726081.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 21341923 74300000 8438595.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8829910 83600000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 41736189 26500000 1787568.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 83781826 62300000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 34490645 19800000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 19526865 70100000 6000526.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 19424525 73000000 7859858.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8943730 84200000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 42333180 35800000 1464883.0</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              risk  fk    Fk</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 9.433072e-05 107 10700</span>
@@ -790,14 +790,14 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-in"><span><span class="co">## topBotCoding</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 95384258 54700000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 25632721 29600000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 33255664 76700000 5726081.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 21341923 74300000 8438595.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8829910 83600000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 41736189 26500000 1787568.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 83781826 62300000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 34490645 19800000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 19526865 70100000 6000526.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 19424525 73000000 7859858.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8943730 84200000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 42333180 35800000 1464883.0</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.004803493</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00720524</span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="topBotCoding.html">topBotCoding</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
 <span class="r-in"><span>  value <span class="op">=</span> <span class="fl">60000000</span>,</span></span>
@@ -806,14 +806,14 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 95384258 54700000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 25632721 29600000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 33255664 62000000 5726081.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 21341923 62000000 8438595.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8829910 62000000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 41736189 26500000 1787568.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 83781826 62000000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 34490645 19800000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 19526865 62000000 6000526.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 19424525 62000000 7859858.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8943730 62000000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 42333180 35800000 1464883.0</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.002620087</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.003930131</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## LocalRecProg</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
