@@ -1,5 +1,8 @@
 # 5.7.4
 - fix report templates for newer pandoc versions
+- many improvements in `recordSwap`
+- documentation improvements
+- fixing (new) CRAN warnings
 
 # 5.7.3
 - Fix Fontawesome-Icons changes in `sdcApp` (thx @coatless)

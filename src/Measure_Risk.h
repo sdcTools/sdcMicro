@@ -175,8 +175,6 @@ void Compute_Multi_LDiversity(int Obs, int GroupSize,Rcpp::NumericMatrix Mat,Rcp
 	{
 		ForLoop (j, NbVar){
 			var_pos=indexSensVar(j)-1;
-			//printf("Obs + i %d \n",Obs+i);
-			//printf("pos %d \n -----\n",var_pos);
 			pSet[i * NbVar + j] = Mat(Obs + i, var_pos);
 		}
 			//g_pDataset->GetValue(g_Config.Sensitive_Var[j].position, Obs + i, pSet + i * NbVar + j);
@@ -354,7 +352,6 @@ double compute_risk(int freq, double weight)
 	      if( freq == 1 ){
 	    	  risk = (pk/(1-pk)) * log(1/pk);
 	      }
-	  //printf("R Fun:freq: %d, weight %f, pk=%f, risk=%f\n",freq,weight,pk,risk);
 	}else{
 		// compute risk (see micro-Argus 4.1 manual, p21+)
 		switch (freq)
@@ -554,7 +551,7 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 
 				// UPDATE STATA
 				do
-				{					
+				{
 					Res(current_obs, 0) = group_count;
 					Res(current_obs, 1) = group_risk;
 					Res(current_obs, 2) = group_size;
@@ -775,7 +772,7 @@ RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, 
 				}
 				for (i = current_obs - group_size; i < current_obs; i++)
 				{
-					// Write value back to stata file for all observations in the group					
+					// Write value back to stata file for all observations in the group
 					Res(i, 0) = group_count;
 					Res(i, 1) = group_risk;
 					Res(i, 2) = group_size;
