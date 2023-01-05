@@ -227,9 +227,6 @@ head(get.sdcMicroObj(sdc, type = "manipNumVars"))
 head(sdc@risk$individual)
 sdc@risk$global
 
-## suda2
-sdc <- suda2(sdc)
-sdc@risk$suda2
 
 ## topBotCoding
 head(get.sdcMicroObj(sdc, type = "manipNumVars"))

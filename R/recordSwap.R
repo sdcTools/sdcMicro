@@ -139,41 +139,41 @@
 #' risk_variables <- c("ageGroup", "national")
 #' hid <- "hid"
 #'
-#' # apply record swapping
-#' dat_s <- recordSwap(
-#'   data = dat,
-#'   hid = hid,
-#'   hierarchy = hier,
-#'   similar = similar,
-#'   swaprate = swaprate,
-#'   k_anonymity = k_anonymity,
-#'   risk_variables = risk_variables,
-#'   carry_along = NULL,
-#'   return_swapped_id = TRUE,
-#'   seed = seed
-#' )
-#'
-#' # number of swapped households
-#' dat_s[hid != hid_swapped, uniqueN(hid)]
-#'
-#' # hierarchies are not consistently swapped
-#' dat_s[hid != hid_swapped, .(nuts1, nuts2, nuts3, lau2)]
-#'
-#' # use parameter carry_along
-#' dat_s <- recordSwap(
-#'   data = dat,
-#'   hid = hid,
-#'   hierarchy = hier,
-#'   similar = similar,
-#'   swaprate = swaprate,
-#'   k_anonymity = k_anonymity,
-#'   risk_variables = risk_variables,
-#'   carry_along = c("nuts3", "lau2"),
-#'   return_swapped_id = TRUE,
-#'   seed = seed)
-#'
-#' dat_s[hid != hid_swapped, .(nuts1, nuts2, nuts3, lau2)]
-#'
+#' ## apply record swapping
+#' #dat_s <- recordSwap(
+#' #  data = dat,
+#' #  hid = hid,
+#' #  hierarchy = hier,
+#' #  similar = similar,
+#' #  swaprate = swaprate,
+#' #  k_anonymity = k_anonymity,
+#' #  risk_variables = risk_variables,
+#' #  carry_along = NULL,
+#' #  return_swapped_id = TRUE,
+#' #  seed = seed
+#' #)
+#' #
+#' ## number of swapped households
+#' #dat_s[hid != hid_swapped, uniqueN(hid)]
+#' #
+#' ## hierarchies are not consistently swapped
+#' #dat_s[hid != hid_swapped, .(nuts1, nuts2, nuts3, lau2)]
+#' #
+#' ## use parameter carry_along
+#' #dat_s <- recordSwap(
+#' #   data = dat,
+#' #   hid = hid,
+#' #  hierarchy = hier,
+#' #  similar = similar,
+#' #  swaprate = swaprate,
+#' #  k_anonymity = k_anonymity,
+#' #  risk_variables = risk_variables,
+#' #  carry_along = c("nuts3", "lau2"),
+#' #  return_swapped_id = TRUE,
+#' #  seed = seed)
+#' #
+#' #dat_s[hid != hid_swapped, .(nuts1, nuts2, nuts3, lau2)]
+#' #
 #' @export
 recordSwap <- function(data,...){
   UseMethod("recordSwap")

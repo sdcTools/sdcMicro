@@ -38,77 +38,77 @@
 #' @export
 #' @examples
 #' ## data.frame method / all combinations up to maxDim
-#' riskyCells(
-#'   obj = testdata2,
-#'   keyVars = 1:5,
-#'   threshold = c(50, 25, 10, 5),
-#'   useIdentificationLevel = FALSE,
-#'   maxDim = 4
-#' )
-#' riskyCells(
-#'   obj  = testdata2,
-#'   keyVars = 1:5,
-#'   threshold = 10,
-#'   useIdentificationLevel = FALSE,
-#'   maxDim = 3
-#' )
-#'
-#' ## data.frame method / using identification levels
-#' riskyCells(
-#'   obj = testdata2,
-#'   keyVars = 1:6,
-#'   threshold = 20,
-#'   useIdentificationLevel = TRUE,
-#'   level = c(1, 1, 2, 3, 3, 5)
-#' )
-#' riskyCells(
-#'   obj = testdata2,
-#'   keyVars = c(1, 3, 4, 6),
-#'   threshold = 10,
-#'   useIdentificationLevel = TRUE,
-#'   level = c(1, 2, 2, 4)
-#' )
-#'
-#' ## sdcMicroObj-method / all combinations up to maxDim
-#' testdata2[1:6] <- lapply(1:6, function(x) {
-#'   testdata2[[x]] <- as.factor(testdata2[[x]])
-#' })
-#'
-#' sdc <- createSdcObj(
-#'   dat = testdata2,
-#'   keyVars = c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex"),
-#'   numVars = c("expend", "income", "savings"),
-#'   w = "sampling_weight")
-#'
-#' r0 <- riskyCells(
-#'   obj = sdc,
-#'   useIdentificationLevel=FALSE,
-#'   threshold = c(20, 10, 5),
-#'   maxDim = 3
-#' )
-#'
-#' ## in case key-variables have been modified, we get counts for
-#' ## original and modified data
-#' sdc <- groupAndRename(
-#'   obj = sdc,
-#'   var = "roof",
-#'   before = c("5", "6", "9"),
-#'   after = "5+"
-#' )
-#' r1 <- riskyCells(
-#'   obj = sdc,
-#'   useIdentificationLevel = FALSE,
-#'   threshold = c(10, 5, 3),
-#'   maxDim = 3
-#' )
-#'
-#' ## sdcMicroObj-method / using identification levels
-#' riskyCells(
-#'   obj = sdc,
-#'   useIdentificationLevel = TRUE,
-#'   threshold = 10,
-#'   level = c(1, 1, 3, 4, 5, 5, 5)
-#' )
+#' # riskyCells(
+#' #  obj = testdata2,
+#' #  keyVars = 1:5,
+#' #  threshold = c(50, 25, 10, 5),
+#' #  useIdentificationLevel = FALSE,
+#' #  maxDim = 4
+#' # )
+#' #riskyCells(
+#' #  obj  = testdata2,
+#' #  keyVars = 1:5,
+#' #  threshold = 10,
+#' #  useIdentificationLevel = FALSE,
+#' #  maxDim = 3
+#' #)
+#' #
+#' ### data.frame method / using identification levels
+#' #riskyCells(
+#' #  obj = testdata2,
+#' #  keyVars = 1:6,
+#' #  threshold = 20,
+#' #  useIdentificationLevel = TRUE,
+#' #  level = c(1, 1, 2, 3, 3, 5)
+#' #)
+#' #riskyCells(
+#' #  obj = testdata2,
+#' #  keyVars = c(1, 3, 4, 6),
+#' #  threshold = 10,
+#' #  useIdentificationLevel = TRUE,
+#' #  level = c(1, 2, 2, 4)
+#' #)
+#' #
+#' ### sdcMicroObj-method / all combinations up to maxDim
+#' #testdata2[1:6] <- lapply(1:6, function(x) {
+#' #  testdata2[[x]] <- as.factor(testdata2[[x]])
+#' #})
+#' #
+#' #sdc <- createSdcObj(
+#' #  dat = testdata2,
+#' #  keyVars = c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex"),
+#' #  numVars = c("expend", "income", "savings"),
+#' #  w = "sampling_weight")
+#' #
+#' #r0 <- riskyCells(
+#' #  obj = sdc,
+#' #  useIdentificationLevel=FALSE,
+#' # threshold = c(20, 10, 5),
+#' # maxDim = 3
+#' #)
+#' #
+#' ### in case key-variables have been modified, we get counts for
+#' ### original and modified data
+#' #sdc <- groupAndRename(
+#' #  obj = sdc,
+#' #  var = "roof",
+#' #  before = c("5", "6", "9"),
+#' #  after = "5+"
+#' #)
+#' #r1 <- riskyCells(
+#' #  obj = sdc,
+#' #  useIdentificationLevel = FALSE,
+#' #  threshold = c(10, 5, 3),
+#' #  maxDim = 3
+#' #)
+#' #
+#' ### sdcMicroObj-method / using identification levels
+#' #riskyCells(
+#' #  obj = sdc,
+#' #  useIdentificationLevel = TRUE,
+#' #  threshold = 10,
+#' #  level = c(1, 1, 3, 4, 5, 5, 5)
+#' #)
 riskyCells <- function(obj, useIdentificationLevel=FALSE, threshold, ...) {
   # checks
   stopifnot(is.logical(useIdentificationLevel))

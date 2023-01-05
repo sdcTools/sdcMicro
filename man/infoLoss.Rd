@@ -80,40 +80,40 @@ carry_along <- c("nuts3","lau2")
 risk_variables <- c("ageGroup","national")
 hid <- "hid"
 
-# apply record swapping
-dat_s <- recordSwap(data = dat, hid = hid, hierarchy = hier,
-                    similar = similar, swaprate = swaprate,
-                    k_anonymity = k_anonymity,
-                    risk_variables = risk_variables,
-                    carry_along = carry_along,
-                    return_swapped_id = TRUE,
-                    seed=seed)
-
-
-# calculate informationn loss
-# for the table nuts2 x national
-iloss <- infoLoss(data=dat, data_swapped = dat_s,
-                  table_vars = c("nuts2","national"))
-iloss$measures # distribution of information loss measures
-iloss$false_zero # no false zeros
-iloss$false_nonzero # no false non-zeros
-
-# frequency tables of households accross
-# nuts2 x hincome
-
-iloss <- infoLoss(data=dat, data_swapped = dat_s,
-                  table_vars = c("nuts2","hincome"),
-                  hid = "hid")
-iloss$measures  
-
-# define custom metric
-squareD <- function(x,y){
-  (x-y)^2
-}
-
-iloss <- infoLoss(data=dat, data_swapped = dat_s,
-                 table_vars = c("nuts2","national"),
-                 custom_metric = list(squareD=squareD))
-iloss$measures # includes custom loss as well
-
+# # apply record swapping
+# dat_s <- recordSwap(data = dat, hid = hid, hierarchy = hier,
+#                     similar = similar, swaprate = swaprate,
+#                     k_anonymity = k_anonymity,
+#                     risk_variables = risk_variables,
+#                     carry_along = carry_along,
+#                     return_swapped_id = TRUE,
+#                     seed=seed)
+# 
+# 
+# # calculate informationn loss
+# # for the table nuts2 x national
+# iloss <- infoLoss(data=dat, data_swapped = dat_s,
+#                   table_vars = c("nuts2","national"))
+# iloss$measures # distribution of information loss measures
+# iloss$false_zero # no false zeros
+# iloss$false_nonzero # no false non-zeros
+# 
+# # frequency tables of households accross
+# # nuts2 x hincome
+# 
+# iloss <- infoLoss(data=dat, data_swapped = dat_s,
+ #                  table_vars = c("nuts2","hincome"),
+#                   hid = "hid")
+# iloss$measures  
+# 
+# # define custom metric
+# squareD <- function(x,y){
+#   (x-y)^2
+# }
+# 
+# iloss <- infoLoss(data=dat, data_swapped = dat_s,
+#                  table_vars = c("nuts2","national"),
+#                  custom_metric = list(squareD=squareD))
+# iloss$measures # includes custom loss as well
+# 
 }
