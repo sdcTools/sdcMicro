@@ -168,90 +168,42 @@ One or more custom metrices can be applied using the parameter `custom_metric`, 
 <span class="r-in"><span><span class="va">risk_variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ageGroup"</span>,<span class="st">"national"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">hid</span> <span class="op">&lt;-</span> <span class="st">"hid"</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># apply record swapping</span></span></span>
-<span class="r-in"><span><span class="va">dat_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="recordSwap.html">recordSwap</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dat</span>, hid <span class="op">=</span> <span class="va">hid</span>, hierarchy <span class="op">=</span> <span class="va">hier</span>,</span></span>
-<span class="r-in"><span>                    similar <span class="op">=</span> <span class="va">similar</span>, swaprate <span class="op">=</span> <span class="va">swaprate</span>,</span></span>
-<span class="r-in"><span>                    k_anonymity <span class="op">=</span> <span class="va">k_anonymity</span>,</span></span>
-<span class="r-in"><span>                    risk_variables <span class="op">=</span> <span class="va">risk_variables</span>,</span></span>
-<span class="r-in"><span>                    carry_along <span class="op">=</span> <span class="va">carry_along</span>,</span></span>
-<span class="r-in"><span>                    return_swapped_id <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                    seed<span class="op">=</span><span class="va">seed</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Recordswapping was successful!</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># calculate informationn loss</span></span></span>
-<span class="r-in"><span><span class="co"># for the table nuts2 x national</span></span></span>
-<span class="r-in"><span><span class="va">iloss</span> <span class="op">&lt;-</span> <span class="fu">infoLoss</span><span class="op">(</span>data<span class="op">=</span><span class="va">dat</span>, data_swapped <span class="op">=</span> <span class="va">dat_s</span>,</span></span>
-<span class="r-in"><span>                  table_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts2"</span>,<span class="st">"national"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">iloss</span><span class="op">$</span><span class="va">measures</span> <span class="co"># distribution of information loss measures</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       what      absD   abssqrtD     relabsD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:    Min  0.000000 0.00000000 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    10%  0.000000 0.00000000 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    20%  0.000000 0.00000000 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    30%  1.000000 0.02390533 0.002288524</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    40%  2.000000 0.04756573 0.004522890</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   Mean  4.315789 0.10017820 0.009308046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: Median  4.000000 0.09545504 0.009153318</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    60%  5.000000 0.11836756 0.011241883</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    70%  6.000000 0.14120468 0.013239198</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    80%  8.000000 0.17514380 0.015476455</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    90% 10.000000 0.23073035 0.021243737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    95% 11.000000 0.25242188 0.023440989</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    99% 14.060000 0.32657229 0.030736419</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    Max 15.000000 0.37338619 0.036496350</span>
-<span class="r-in"><span><span class="va">iloss</span><span class="op">$</span><span class="va">false_zero</span> <span class="co"># no false zeros</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="va">iloss</span><span class="op">$</span><span class="va">false_nonzero</span> <span class="co"># no false non-zeros</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># frequency tables of households accross</span></span></span>
-<span class="r-in"><span><span class="co"># nuts2 x hincome</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">iloss</span> <span class="op">&lt;-</span> <span class="fu">infoLoss</span><span class="op">(</span>data<span class="op">=</span><span class="va">dat</span>, data_swapped <span class="op">=</span> <span class="va">dat_s</span>,</span></span>
-<span class="r-in"><span>                  table_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts2"</span>,<span class="st">"hincome"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                  hid <span class="op">=</span> <span class="st">"hid"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">iloss</span><span class="op">$</span><span class="va">measures</span>  </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       what     absD   abssqrtD    relabsD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:    Min 0.000000 0.00000000 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    10% 0.000000 0.00000000 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    20% 0.000000 0.00000000 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    30% 1.000000 0.05800732 0.01351351</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    40% 1.000000 0.06068013 0.01470588</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   Mean 1.691429 0.10413875 0.02579566</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: Median 1.000000 0.06593867 0.01724138</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    60% 2.000000 0.11785397 0.02777778</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    70% 2.000000 0.12500382 0.03174603</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    80% 3.000000 0.17765429 0.04298137</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    90% 4.000000 0.24364441 0.05989305</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    95% 5.000000 0.30967359 0.07385865</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    99% 7.000000 0.41887182 0.10553131</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    Max 8.000000 0.51242331 0.14035088</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># define custom metric</span></span></span>
-<span class="r-in"><span><span class="va">squareD</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">y</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">iloss</span> <span class="op">&lt;-</span> <span class="fu">infoLoss</span><span class="op">(</span>data<span class="op">=</span><span class="va">dat</span>, data_swapped <span class="op">=</span> <span class="va">dat_s</span>,</span></span>
-<span class="r-in"><span>                 table_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts2"</span>,<span class="st">"national"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 custom_metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>squareD<span class="op">=</span><span class="va">squareD</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">iloss</span><span class="op">$</span><span class="va">measures</span> <span class="co"># includes custom loss as well</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       what      absD   abssqrtD     relabsD   squareD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:    Min  0.000000 0.00000000 0.000000000   0.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    10%  0.000000 0.00000000 0.000000000   0.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    20%  0.000000 0.00000000 0.000000000   0.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    30%  1.000000 0.02390533 0.002288524   1.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    40%  2.000000 0.04756573 0.004522890   4.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   Mean  4.315789 0.10017820 0.009308046  33.09474</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: Median  4.000000 0.09545504 0.009153318  16.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    60%  5.000000 0.11836756 0.011241883  25.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    70%  6.000000 0.14120468 0.013239198  36.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    80%  8.000000 0.17514380 0.015476455  64.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    90% 10.000000 0.23073035 0.021243737 100.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    95% 11.000000 0.25242188 0.023440989 121.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    99% 14.060000 0.32657229 0.030736419 197.74000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    Max 15.000000 0.37338619 0.036496350 225.00000</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># # apply record swapping</span></span></span>
+<span class="r-in"><span><span class="co"># dat_s &lt;- recordSwap(data = dat, hid = hid, hierarchy = hier,</span></span></span>
+<span class="r-in"><span><span class="co">#                     similar = similar, swaprate = swaprate,</span></span></span>
+<span class="r-in"><span><span class="co">#                     k_anonymity = k_anonymity,</span></span></span>
+<span class="r-in"><span><span class="co">#                     risk_variables = risk_variables,</span></span></span>
+<span class="r-in"><span><span class="co">#                     carry_along = carry_along,</span></span></span>
+<span class="r-in"><span><span class="co">#                     return_swapped_id = TRUE,</span></span></span>
+<span class="r-in"><span><span class="co">#                     seed=seed)</span></span></span>
+<span class="r-in"><span><span class="co"># </span></span></span>
+<span class="r-in"><span><span class="co"># </span></span></span>
+<span class="r-in"><span><span class="co"># # calculate informationn loss</span></span></span>
+<span class="r-in"><span><span class="co"># # for the table nuts2 x national</span></span></span>
+<span class="r-in"><span><span class="co"># iloss &lt;- infoLoss(data=dat, data_swapped = dat_s,</span></span></span>
+<span class="r-in"><span><span class="co">#                   table_vars = c("nuts2","national"))</span></span></span>
+<span class="r-in"><span><span class="co"># iloss$measures # distribution of information loss measures</span></span></span>
+<span class="r-in"><span><span class="co"># iloss$false_zero # no false zeros</span></span></span>
+<span class="r-in"><span><span class="co"># iloss$false_nonzero # no false non-zeros</span></span></span>
+<span class="r-in"><span><span class="co"># </span></span></span>
+<span class="r-in"><span><span class="co"># # frequency tables of households accross</span></span></span>
+<span class="r-in"><span><span class="co"># # nuts2 x hincome</span></span></span>
+<span class="r-in"><span><span class="co"># </span></span></span>
+<span class="r-in"><span><span class="co"># iloss &lt;- infoLoss(data=dat, data_swapped = dat_s,</span></span></span>
+<span class="r-in"><span> <span class="co">#                  table_vars = c("nuts2","hincome"),</span></span></span>
+<span class="r-in"><span><span class="co">#                   hid = "hid")</span></span></span>
+<span class="r-in"><span><span class="co"># iloss$measures  </span></span></span>
+<span class="r-in"><span><span class="co"># </span></span></span>
+<span class="r-in"><span><span class="co"># # define custom metric</span></span></span>
+<span class="r-in"><span><span class="co"># squareD &lt;- function(x,y){</span></span></span>
+<span class="r-in"><span><span class="co">#   (x-y)^2</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># </span></span></span>
+<span class="r-in"><span><span class="co"># iloss &lt;- infoLoss(data=dat, data_swapped = dat_s,</span></span></span>
+<span class="r-in"><span><span class="co">#                  table_vars = c("nuts2","national"),</span></span></span>
+<span class="r-in"><span><span class="co">#                  custom_metric = list(squareD=squareD))</span></span></span>
+<span class="r-in"><span><span class="co"># iloss$measures # includes custom loss as well</span></span></span>
+<span class="r-in"><span><span class="co"># </span></span></span>
 </code></pre></div>
     </div>
   </div>

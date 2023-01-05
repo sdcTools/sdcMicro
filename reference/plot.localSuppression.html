@@ -99,52 +99,20 @@ strata is shown (if possible)</p></li>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">francdat</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">francdat</span>, k <span class="op">=</span> <span class="fl">2</span>, keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">l1</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of suppressions in the key variables: 4 (new: 4)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of suppressions by key variables:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> (in parenthesis, the total number suppressions is shown)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Key1  Key2  Key3  Key4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1 (1) 1 (1) 0 (0) 2 (2)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2-anonymity == TRUE</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">l1</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.localSuppression-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## with details of suppression by strata</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">testdata2</span><span class="op">$</span><span class="va">ageG</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">$</span><span class="va">age</span>, <span class="fl">5</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"AG"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">keyVars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"electcon"</span>, <span class="st">"relat"</span>, <span class="st">"sex"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">strataVars</span> <span class="op">&lt;-</span> <span class="st">"ageG"</span></span></span>
-<span class="r-in"><span><span class="va">inp</span> <span class="op">&lt;-</span> <span class="va">testdata2</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">keyVars</span>, <span class="va">strataVars</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">ls</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">localSuppression</a></span><span class="op">(</span><span class="va">inp</span>, keyVars <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span>, strataVars <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ls</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of suppressions in the key variables: 109 (new: 109)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of suppressions by key variables and strata:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> (in parenthesis, the total number suppressions is shown)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       urbrur    roof   walls   water electcon relat   sex</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AG5    1 (1)   2 (2)   1 (1)   1 (1)    1 (1) 1 (1) 1 (1)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AG3    2 (2)   3 (3)   3 (3)   7 (7)    0 (0) 2 (2) 0 (0)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AG1    0 (0) 10 (10)   5 (5) 24 (24)    0 (0) 3 (3) 5 (5)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AG2    2 (2)   5 (5)   3 (3) 13 (13)    2 (2) 2 (2) 1 (1)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AG4    1 (1)   1 (1)   2 (2)   3 (3)    1 (1) 1 (1) 0 (0)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Total  6 (6) 21 (21) 14 (14) 48 (48)    4 (4) 9 (9) 7 (7)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 2-anonymity == TRUE in all strata!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ls</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.localSuppression-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ls</span>, showDetails <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.localSuppression-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co">#l1 &lt;- localSuppression(obj = francdat, k = 2, keyVars = c(2, 4:6))</span></span></span>
+<span class="r-in"><span><span class="co">#l1</span></span></span>
+<span class="r-in"><span><span class="co">#plot(l1)</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">### with details of suppression by strata</span></span></span>
+<span class="r-in"><span><span class="co">#data(testdata2)</span></span></span>
+<span class="r-in"><span><span class="co">#testdata2$ageG &lt;- cut(testdata2$age, 5, labels = paste0("AG",1:5))</span></span></span>
+<span class="r-in"><span><span class="co">#keyVars &lt;- c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex")</span></span></span>
+<span class="r-in"><span><span class="co">#strataVars &lt;- "ageG"</span></span></span>
+<span class="r-in"><span><span class="co">#inp &lt;- testdata2[, c(keyVars, strataVars)]</span></span></span>
+<span class="r-in"><span><span class="co">#ls &lt;- localSuppression(inp, keyVars = 1:7, strataVars = 8)</span></span></span>
+<span class="r-in"><span><span class="co">#print(ls)</span></span></span>
+<span class="r-in"><span><span class="co">#plot(ls)</span></span></span>
+<span class="r-in"><span><span class="co">#plot(ls, showDetails = TRUE)</span></span></span>
 </code></pre></div>
     </div>
   </div>

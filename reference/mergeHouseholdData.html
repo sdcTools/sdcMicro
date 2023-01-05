@@ -106,20 +106,20 @@ Requires a matching household ID in both files.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Load data</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">testdata</span></span></span>
 <span class="r-in"><span><span class="co">## Create household level dataset</span></span></span>
-<span class="r-in"><span><span class="va">x_hh</span> <span class="op">&lt;-</span> <span class="fu"><a href="selectHouseholdData.html">selectHouseholdData</a></span><span class="op">(</span>dat<span class="op">=</span><span class="va">x</span>, hhId<span class="op">=</span><span class="st">"ori_hid"</span>,</span></span>
-<span class="r-in"><span>  hhVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>,  <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"electcon"</span>, <span class="st">"household_weights"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## Anonymize household level dataset and extract data</span></span></span>
-<span class="r-in"><span><span class="va">sdc_hh</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">x_hh</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'urbrur'</span>,<span class="st">'roof'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'household_weights'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc_hh</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">kAnon</a></span><span class="op">(</span><span class="va">sdc_hh</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">x_hh_anon</span> <span class="op">&lt;-</span> <span class="fu"><a href="extractManipData.html">extractManipData</a></span><span class="op">(</span><span class="va">sdc_hh</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Merge anonymized household level data back into the full dataset</span></span></span>
-<span class="r-in"><span><span class="va">x_anonhh</span> <span class="op">&lt;-</span> <span class="fu">mergeHouseholdData</span><span class="op">(</span><span class="va">x</span>, <span class="st">"ori_hid"</span>, <span class="va">x_hh_anon</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Anonymize full dataset and extract data</span></span></span>
-<span class="r-in"><span><span class="va">sdc_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span><span class="va">x_anonhh</span>, keyVars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'sex'</span>, <span class="st">'age'</span>, <span class="st">'urbrur'</span>, <span class="st">'roof'</span><span class="op">)</span>, w<span class="op">=</span><span class="st">'sampling_weight'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sdc_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="localSuppression.html">kAnon</a></span><span class="op">(</span><span class="va">sdc_full</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">x_full_anon</span> <span class="op">&lt;-</span> <span class="fu"><a href="extractManipData.html">extractManipData</a></span><span class="op">(</span><span class="va">sdc_full</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># x_hh &lt;- selectHouseholdData(dat=x, hhId="ori_hid",</span></span></span>
+<span class="r-in"><span><span class="co">#   hhVars=c("urbrur", "roof",  "walls", "water", "electcon", "household_weights"))</span></span></span>
+<span class="r-in"><span><span class="co"># ## Anonymize household level dataset and extract data</span></span></span>
+<span class="r-in"><span><span class="co"># sdc_hh &lt;- createSdcObj(x_hh, keyVars=c('urbrur','roof'), w='household_weights')</span></span></span>
+<span class="r-in"><span><span class="co"># sdc_hh &lt;- kAnon(sdc_hh, k = 3)</span></span></span>
+<span class="r-in"><span><span class="co"># x_hh_anon &lt;- extractManipData(sdc_hh)</span></span></span>
+<span class="r-in"><span><span class="co"># </span></span></span>
+<span class="r-in"><span><span class="co"># ## Merge anonymized household level data back into the full dataset</span></span></span>
+<span class="r-in"><span><span class="co"># x_anonhh &lt;- mergeHouseholdData(x, "ori_hid", x_hh_anon)</span></span></span>
+<span class="r-in"><span><span class="co"># </span></span></span>
+<span class="r-in"><span><span class="co"># ## Anonymize full dataset and extract data</span></span></span>
+<span class="r-in"><span><span class="co"># sdc_full &lt;- createSdcObj(x_anonhh, keyVars=c('sex', 'age', 'urbrur', 'roof'), w='sampling_weight')</span></span></span>
+<span class="r-in"><span><span class="co"># sdc_full &lt;- kAnon(sdc_full, k = 3)</span></span></span>
+<span class="r-in"><span><span class="co"># x_full_anon &lt;- extractManipData(sdc_full)</span></span></span>
 </code></pre></div>
     </div>
   </div>

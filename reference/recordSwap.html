@@ -128,16 +128,21 @@ households which should be swapped, see details for more explanations</p></dd>
 at each hierarchy level. If `risk`-matrix is supplied to swapping procedure
 will not use the k-anonymity rule but the values found in this matrix
 for swapping.
-ATTENTION: This is NOT fully implemented yet and currently ignored by the
-underlying c++ functions until tested properly</p></dd>
+When using the risk parameter is expected to have assigned a maximum value     
+in a household for each member of the household. If this condition is not      
+satisfied, the risk parameter is automatically adjusted to comply with this    
+condition.
+If risk parameter is provided then k-anonymity rule is suppressed.</p></dd>
 
 
 <dt>risk_threshold</dt>
 <dd><p>single numeric value indicating when a household is
 considered "high risk", e.g. when this household must be swapped. Is only
 used when `risk` is not `NULL`.
-ATTENTION: This is NOT fully implemented yet and currently ignored by the
-underlying c++ functions until tested properly</p></dd>
+Risk threshold indicates households that have to be swapped, but be aware      
+that households with risk lower than threshold, but with still high enough      
+risk may be swapped as well. Only households with risk set to 0 are not swapped.                                                   
+Risk and risk threshold must be equal or bigger then 0.</p></dd>
 
 
 <dt>k_anonymity</dt>
@@ -189,7 +194,7 @@ reproducibility. if `NULL` a random seed will be set using `sample(1e5,1)`.</p><
     <p>The procedure accepts a `data.frame` or `data.table`
 containing all necessary information for the record swapping, e.g
 parameter `hid`, `similar`, `hierarchy`, etc ...
-First the micro data in `data` is ordered by `hid` and the identification
+First, the micro data in `data` is ordered by `hid` and the identification
 risk is calculated for each record in each hierarchy level. As of right
 now only counts is used as identification risk and the inverse of counts
 is used as sampling probability.
@@ -200,30 +205,31 @@ is however not fully implemented.</p>
 risky households in each hierarchy level. A household is set to risky
 if counts &lt; k_anonymity in any hierarchy level and the household needs
 to be swapped across this hierarchy level.
-For instance having a geographic hierarchy of NUTS1 &gt; NUTS2 &gt; NUTS3 the
+For instance, having a geographic hierarchy of NUTS1 &gt; NUTS2 &gt; NUTS3 the
 counts are calculated for each geographic variable and defined
 `risk_variables`. If the counts for a record falls below `k_anonymity`
-for hierarchy county then this record needs to be swapped across counties.
+for hierarchy county (NUTS1, NUTS2, ...) then this record needs to be swapped 
+across counties.
 Setting `k_anonymity = 0` disables this feature and no risky households
 are defined.</p>
-<p>After that the targeted record swapping is applied starting from the highest
+<p>After that the targeted record swapping is applied, starting from the highest
 to the lowest hierarchy level and cycling through all possible geographic
 areas at each hierarchy level, e.g every county, every municipality in
 every county, etc, ...</p>
-<p>At each geographic area a set of values is created for records to be
-swapped. In all but the lowest hierarchy level this is ONLY made out
-of all records which do not fulfill the k-anonymity and have not already
+<p>At each geographic area, a set of values is created for records to be
+swapped. In all but the lowest hierarchy level, this is ONLY made out
+of all records which do not fulfil the k-anonymity and have not already
 been swapped. Those records are swapped with records not belonging to
 the same geographic area, which have not already been swapped beforehand.
 Swapping refers to the interchange of geographic variables defined in
-`hierarchy`. When a record is swapped all other record containing the
+`hierarchy`. When a record is swapped all other records containing the
 same `hid` are swapped as well.</p>
-<p>At the lowest hierarchy level in every geographic area the set of records to
-be bswapped is made up of all records which do not fulfill the k-anonymity
-as well as the remaining numer of records such that the proportion of
+<p>At the lowest hierarchy level in every geographic area, the set of records to
+be swapped is made up of all records which do not fulfil the k-anonymity
+as well as the remaining number of records such that the proportion of
 swapped records of the geographic area is in coherence with the `swaprate`.
-If, due to the k-anonymity condition, more records have already been swapped
-in this geographic area then only the records which do not fulfill the
+If due to the k-anonymity condition, more records have already been swapped
+in this geographic area then only the records which do not fulfil the
 k-anonymity are swapped.</p>
 <p>Using the parameter `similar` one can define similarity profiles.
 `similar` needs to be a list of vectors with each list entry containing
@@ -239,7 +245,7 @@ continues until a donor record was found or all the similarity profiles
 have been used.</p>
 <p>`swaprate` sets the swaprate of households to be swapped, where a single
 swap counts for swapping 2 households, the sampled household and the
-corresponding donor. Prior to the procedure the swaprate is applied on
+corresponding donor. Prior to the procedure, the swaprate is applied on
 the lowest hierarchy level, to determine the target number of swapped
 households in each of the lowest hierarchies. If the target numbers of a
 decimal point they will randomly be rounded up or down such that the
@@ -267,68 +273,41 @@ number of households swapped in total is in coherence to the swaprate.</p>
 <span class="r-in"><span><span class="va">risk_variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ageGroup"</span>, <span class="st">"national"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">hid</span> <span class="op">&lt;-</span> <span class="st">"hid"</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># apply record swapping</span></span></span>
-<span class="r-in"><span><span class="va">dat_s</span> <span class="op">&lt;-</span> <span class="fu">recordSwap</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">dat</span>,</span></span>
-<span class="r-in"><span>  hid <span class="op">=</span> <span class="va">hid</span>,</span></span>
-<span class="r-in"><span>  hierarchy <span class="op">=</span> <span class="va">hier</span>,</span></span>
-<span class="r-in"><span>  similar <span class="op">=</span> <span class="va">similar</span>,</span></span>
-<span class="r-in"><span>  swaprate <span class="op">=</span> <span class="va">swaprate</span>,</span></span>
-<span class="r-in"><span>  k_anonymity <span class="op">=</span> <span class="va">k_anonymity</span>,</span></span>
-<span class="r-in"><span>  risk_variables <span class="op">=</span> <span class="va">risk_variables</span>,</span></span>
-<span class="r-in"><span>  carry_along <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  return_swapped_id <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  seed <span class="op">=</span> <span class="va">seed</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Recordswapping was successful!</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># number of swapped households</span></span></span>
-<span class="r-in"><span><span class="va">dat_s</span><span class="op">[</span><span class="va">hid</span> <span class="op">!=</span> <span class="va">hid_swapped</span>, <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">uniqueN</a></span><span class="op">(</span><span class="va">hid</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 500</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># hierarchies are not consistently swapped</span></span></span>
-<span class="r-in"><span><span class="va">dat_s</span><span class="op">[</span><span class="va">hid</span> <span class="op">!=</span> <span class="va">hid_swapped</span>, <span class="fu">.</span><span class="op">(</span><span class="va">nuts1</span>, <span class="va">nuts2</span>, <span class="va">nuts3</span>, <span class="va">lau2</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       nuts1 nuts2 nuts3  lau2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    1:     1    15  2103 21031</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    2:     1    15  2103 21031</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    3:     2    21  1104 11042</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    4:     2    21  1104 11042</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    5:     2    21  1104 11042</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ---                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1728:     3    34  3204 32044</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1729:     3    34  3204 32044</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1730:     3    32  3112 31125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1731:     3    32  3112 31125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1732:     3    32  3112 31125</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># use parameter carry_along</span></span></span>
-<span class="r-in"><span><span class="va">dat_s</span> <span class="op">&lt;-</span> <span class="fu">recordSwap</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">dat</span>,</span></span>
-<span class="r-in"><span>  hid <span class="op">=</span> <span class="va">hid</span>,</span></span>
-<span class="r-in"><span>  hierarchy <span class="op">=</span> <span class="va">hier</span>,</span></span>
-<span class="r-in"><span>  similar <span class="op">=</span> <span class="va">similar</span>,</span></span>
-<span class="r-in"><span>  swaprate <span class="op">=</span> <span class="va">swaprate</span>,</span></span>
-<span class="r-in"><span>  k_anonymity <span class="op">=</span> <span class="va">k_anonymity</span>,</span></span>
-<span class="r-in"><span>  risk_variables <span class="op">=</span> <span class="va">risk_variables</span>,</span></span>
-<span class="r-in"><span>  carry_along <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nuts3"</span>, <span class="st">"lau2"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  return_swapped_id <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  seed <span class="op">=</span> <span class="va">seed</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Recordswapping was successful!</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">dat_s</span><span class="op">[</span><span class="va">hid</span> <span class="op">!=</span> <span class="va">hid_swapped</span>, <span class="fu">.</span><span class="op">(</span><span class="va">nuts1</span>, <span class="va">nuts2</span>, <span class="va">nuts3</span>, <span class="va">lau2</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       nuts1 nuts2 nuts3  lau2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    1:     1    15  1506 15061</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    2:     1    15  1506 15061</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    3:     2    21  2104 21042</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    4:     2    21  2104 21042</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    5:     2    21  2104 21042</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ---                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1728:     3    34  3411 34111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1729:     3    34  3411 34111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1730:     3    32  3212 32122</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1731:     3    32  3212 32122</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1732:     3    32  3212 32122</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## apply record swapping</span></span></span>
+<span class="r-in"><span><span class="co">#dat_s &lt;- recordSwap(</span></span></span>
+<span class="r-in"><span><span class="co">#  data = dat,</span></span></span>
+<span class="r-in"><span><span class="co">#  hid = hid,</span></span></span>
+<span class="r-in"><span><span class="co">#  hierarchy = hier,</span></span></span>
+<span class="r-in"><span><span class="co">#  similar = similar,</span></span></span>
+<span class="r-in"><span><span class="co">#  swaprate = swaprate,</span></span></span>
+<span class="r-in"><span><span class="co">#  k_anonymity = k_anonymity,</span></span></span>
+<span class="r-in"><span><span class="co">#  risk_variables = risk_variables,</span></span></span>
+<span class="r-in"><span><span class="co">#  carry_along = NULL,</span></span></span>
+<span class="r-in"><span><span class="co">#  return_swapped_id = TRUE,</span></span></span>
+<span class="r-in"><span><span class="co">#  seed = seed</span></span></span>
+<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">## number of swapped households</span></span></span>
+<span class="r-in"><span><span class="co">#dat_s[hid != hid_swapped, uniqueN(hid)]</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">## hierarchies are not consistently swapped</span></span></span>
+<span class="r-in"><span><span class="co">#dat_s[hid != hid_swapped, .(nuts1, nuts2, nuts3, lau2)]</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">## use parameter carry_along</span></span></span>
+<span class="r-in"><span><span class="co">#dat_s &lt;- recordSwap(</span></span></span>
+<span class="r-in"><span><span class="co">#   data = dat,</span></span></span>
+<span class="r-in"><span><span class="co">#   hid = hid,</span></span></span>
+<span class="r-in"><span><span class="co">#  hierarchy = hier,</span></span></span>
+<span class="r-in"><span><span class="co">#  similar = similar,</span></span></span>
+<span class="r-in"><span><span class="co">#  swaprate = swaprate,</span></span></span>
+<span class="r-in"><span><span class="co">#  k_anonymity = k_anonymity,</span></span></span>
+<span class="r-in"><span><span class="co">#  risk_variables = risk_variables,</span></span></span>
+<span class="r-in"><span><span class="co">#  carry_along = c("nuts3", "lau2"),</span></span></span>
+<span class="r-in"><span><span class="co">#  return_swapped_id = TRUE,</span></span></span>
+<span class="r-in"><span><span class="co">#  seed = seed)</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">#dat_s[hid != hid_swapped, .(nuts1, nuts2, nuts3, lau2)]</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
 </code></pre></div>
     </div>
   </div>

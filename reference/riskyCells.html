@@ -125,409 +125,78 @@ both for the original and the modified data.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## data.frame method / all combinations up to maxDim</span></span></span>
-<span class="r-in"><span><span class="fu">riskyCells</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">25</span>, <span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  useIdentificationLevel <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  maxDim <span class="op">=</span> <span class="fl">4</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         dim1     dim2     dim3     dim4 threshold unsafe_cells</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:   urbrur     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        50            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     roof     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        50            5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    walls     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        50            2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    water     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        50            8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: electcon     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        50            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   urbrur     roof     &lt;NA&gt;     &lt;NA&gt;        25            8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:   urbrur    walls     &lt;NA&gt;     &lt;NA&gt;        25            5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:   urbrur    water     &lt;NA&gt;     &lt;NA&gt;        25           12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:   urbrur electcon     &lt;NA&gt;     &lt;NA&gt;        25            2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     roof    walls     &lt;NA&gt;     &lt;NA&gt;        25            9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     roof    water     &lt;NA&gt;     &lt;NA&gt;        25           24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     roof electcon     &lt;NA&gt;     &lt;NA&gt;        25            8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    walls    water     &lt;NA&gt;     &lt;NA&gt;        25           17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    walls electcon     &lt;NA&gt;     &lt;NA&gt;        25            4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    water electcon     &lt;NA&gt;     &lt;NA&gt;        25           13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:   urbrur     roof    walls     &lt;NA&gt;        10           12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:   urbrur     roof    water     &lt;NA&gt;        10           32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:   urbrur     roof electcon     &lt;NA&gt;        10           10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:   urbrur    walls    water     &lt;NA&gt;        10           24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:   urbrur    walls electcon     &lt;NA&gt;        10            6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21:   urbrur    water electcon     &lt;NA&gt;        10           19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:     roof    walls    water     &lt;NA&gt;        10           36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:     roof    walls electcon     &lt;NA&gt;        10           14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24:     roof    water electcon     &lt;NA&gt;        10           31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25:    walls    water electcon     &lt;NA&gt;        10           26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26:   urbrur     roof    walls    water         5           47</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27:   urbrur     roof    walls electcon         5           18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28:   urbrur     roof    water electcon         5           35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29:   urbrur    walls    water electcon         5           32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30:     roof    walls    water electcon         5           44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         dim1     dim2     dim3     dim4 threshold unsafe_cells</span>
-<span class="r-in"><span><span class="fu">riskyCells</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  obj  <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  threshold <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>  useIdentificationLevel <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  maxDim <span class="op">=</span> <span class="fl">3</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         dim1     dim2     dim3 threshold unsafe_cells</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:   urbrur     &lt;NA&gt;     &lt;NA&gt;        10            0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     roof     &lt;NA&gt;     &lt;NA&gt;        10            3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    walls     &lt;NA&gt;     &lt;NA&gt;        10            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    water     &lt;NA&gt;     &lt;NA&gt;        10            4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: electcon     &lt;NA&gt;     &lt;NA&gt;        10            0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:   urbrur     roof     &lt;NA&gt;        10            6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:   urbrur    walls     &lt;NA&gt;        10            2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:   urbrur    water     &lt;NA&gt;        10            9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:   urbrur electcon     &lt;NA&gt;        10            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     roof    walls     &lt;NA&gt;        10            6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     roof    water     &lt;NA&gt;        10           24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     roof electcon     &lt;NA&gt;        10            6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    walls    water     &lt;NA&gt;        10           16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    walls electcon     &lt;NA&gt;        10            3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    water electcon     &lt;NA&gt;        10            9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:   urbrur     roof    walls        10           12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:   urbrur     roof    water        10           32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:   urbrur     roof electcon        10           10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:   urbrur    walls    water        10           24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:   urbrur    walls electcon        10            6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21:   urbrur    water electcon        10           19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:     roof    walls    water        10           36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:     roof    walls electcon        10           14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24:     roof    water electcon        10           31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25:    walls    water electcon        10           26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         dim1     dim2     dim3 threshold unsafe_cells</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## data.frame method / using identification levels</span></span></span>
-<span class="r-in"><span><span class="fu">riskyCells</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span>,</span></span>
-<span class="r-in"><span>  threshold <span class="op">=</span> <span class="fl">20</span>,</span></span>
-<span class="r-in"><span>  useIdentificationLevel <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         dim1     dim2     dim3     dim4 threshold unsafe_cells</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:   urbrur     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        20            0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     roof     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        20            3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    walls     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        20            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    water     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        20            7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: electcon     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        20            0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:    relat     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        20            4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:   urbrur     roof     &lt;NA&gt;     &lt;NA&gt;        20            7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:   urbrur    walls     &lt;NA&gt;     &lt;NA&gt;        20            5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:   urbrur    water     &lt;NA&gt;     &lt;NA&gt;        20           12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:   urbrur electcon     &lt;NA&gt;     &lt;NA&gt;        20            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:   urbrur    relat     &lt;NA&gt;     &lt;NA&gt;        20            9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     roof    walls     &lt;NA&gt;     &lt;NA&gt;        20            9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     roof    water     &lt;NA&gt;     &lt;NA&gt;        20           24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     roof electcon     &lt;NA&gt;     &lt;NA&gt;        20            8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     roof    relat     &lt;NA&gt;     &lt;NA&gt;        20           17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:    walls    water     &lt;NA&gt;     &lt;NA&gt;        20           17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:    walls electcon     &lt;NA&gt;     &lt;NA&gt;        20            3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:    walls    relat     &lt;NA&gt;     &lt;NA&gt;        20           11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:    water electcon     &lt;NA&gt;     &lt;NA&gt;        20           13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:    water    relat     &lt;NA&gt;     &lt;NA&gt;        20           26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21: electcon    relat     &lt;NA&gt;     &lt;NA&gt;        20            8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:   urbrur     roof    walls     &lt;NA&gt;        20           15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:   urbrur     roof    water     &lt;NA&gt;        20           32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24:   urbrur     roof electcon     &lt;NA&gt;        20           13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25:   urbrur     roof    relat     &lt;NA&gt;        20           26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26:   urbrur    walls    water     &lt;NA&gt;        20           24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27:   urbrur    walls electcon     &lt;NA&gt;        20            9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28:   urbrur    walls    relat     &lt;NA&gt;        20           21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29:   urbrur    water electcon     &lt;NA&gt;        20           19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30:   urbrur    water    relat     &lt;NA&gt;        20           36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31:   urbrur electcon    relat     &lt;NA&gt;        20           15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32:     roof    walls    water     &lt;NA&gt;        20           36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33:     roof    walls electcon     &lt;NA&gt;        20           16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34:     roof    walls    relat     &lt;NA&gt;        20           26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35:     roof    water electcon     &lt;NA&gt;        20           31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36:     roof    water    relat     &lt;NA&gt;        20           50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37:     roof electcon    relat     &lt;NA&gt;        20           24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38:    walls    water electcon     &lt;NA&gt;        20           26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39:    walls    water    relat     &lt;NA&gt;        20           41</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40:    walls electcon    relat     &lt;NA&gt;        20           18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41:    water electcon    relat     &lt;NA&gt;        20           35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42:   urbrur     roof    walls    water        20           47</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43:   urbrur     roof    walls electcon        20           23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44:   urbrur     roof    walls    relat        20           37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45:   urbrur     roof    water electcon        20           38</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46:   urbrur     roof    water    relat        20           62</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47:   urbrur     roof electcon    relat        20           35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48:   urbrur    walls    water electcon        20           34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49:   urbrur    walls    water    relat        20           53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50:   urbrur    walls electcon    relat        20           28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51:   urbrur    water electcon    relat        20           46</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52:     roof    walls    water electcon        20           44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53:     roof    walls    water    relat        20           65</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54:     roof    walls electcon    relat        20           36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55:     roof    water electcon    relat        20           56</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56:    walls    water electcon    relat        20           52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         dim1     dim2     dim3     dim4 threshold unsafe_cells</span>
-<span class="r-in"><span><span class="fu">riskyCells</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  threshold <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>  useIdentificationLevel <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       dim1  dim2  dim3 threshold unsafe_cells</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: urbrur  &lt;NA&gt;  &lt;NA&gt;        10            0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:  walls  &lt;NA&gt;  &lt;NA&gt;        10            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:  water  &lt;NA&gt;  &lt;NA&gt;        10            4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:  relat  &lt;NA&gt;  &lt;NA&gt;        10            3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: urbrur walls  &lt;NA&gt;        10            2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: urbrur water  &lt;NA&gt;        10            9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: urbrur relat  &lt;NA&gt;        10            7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:  walls water  &lt;NA&gt;        10           16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:  walls relat  &lt;NA&gt;        10           10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:  water relat  &lt;NA&gt;        10           23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: urbrur walls water        10           24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12: urbrur walls relat        10           18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13: urbrur water relat        10           35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:  walls water relat        10           41</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## sdcMicroObj-method / all combinations up to maxDim</span></span></span>
-<span class="r-in"><span><span class="va">testdata2</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">testdata2</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  dat <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
-<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"electcon"</span>, <span class="st">"relat"</span>, <span class="st">"sex"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  numVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span>, <span class="st">"savings"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  w <span class="op">=</span> <span class="st">"sampling_weight"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">r0</span> <span class="op">&lt;-</span> <span class="fu">riskyCells</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
-<span class="r-in"><span>  useIdentificationLevel<span class="op">=</span><span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  maxDim <span class="op">=</span> <span class="fl">3</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## in case key-variables have been modified, we get counts for</span></span></span>
-<span class="r-in"><span><span class="co">## original and modified data</span></span></span>
-<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupAndRename.html">groupAndRename</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
-<span class="r-in"><span>  var <span class="op">=</span> <span class="st">"roof"</span>,</span></span>
-<span class="r-in"><span>  before <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"5"</span>, <span class="st">"6"</span>, <span class="st">"9"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  after <span class="op">=</span> <span class="st">"5+"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">r1</span> <span class="op">&lt;-</span> <span class="fu">riskyCells</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
-<span class="r-in"><span>  useIdentificationLevel <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">5</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  maxDim <span class="op">=</span> <span class="fl">3</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## sdcMicroObj-method / using identification levels</span></span></span>
-<span class="r-in"><span><span class="fu">riskyCells</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
-<span class="r-in"><span>  useIdentificationLevel <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  threshold <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         dim1     dim2     dim3     dim4 threshold unsafe_cells_orig</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:   urbrur     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        10                 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     roof     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        10                 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    walls     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        10                 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    water     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        10                 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: electcon     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        10                 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:    relat     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        10                 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:      sex     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;        10                 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:   urbrur     roof     &lt;NA&gt;     &lt;NA&gt;        10                 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:   urbrur    walls     &lt;NA&gt;     &lt;NA&gt;        10                 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:   urbrur    water     &lt;NA&gt;     &lt;NA&gt;        10                 9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:   urbrur electcon     &lt;NA&gt;     &lt;NA&gt;        10                 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:   urbrur    relat     &lt;NA&gt;     &lt;NA&gt;        10                 7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:   urbrur      sex     &lt;NA&gt;     &lt;NA&gt;        10                 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     roof    walls     &lt;NA&gt;     &lt;NA&gt;        10                 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     roof    water     &lt;NA&gt;     &lt;NA&gt;        10                24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:     roof electcon     &lt;NA&gt;     &lt;NA&gt;        10                 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:     roof    relat     &lt;NA&gt;     &lt;NA&gt;        10                16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:     roof      sex     &lt;NA&gt;     &lt;NA&gt;        10                 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:    walls    water     &lt;NA&gt;     &lt;NA&gt;        10                16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:    walls electcon     &lt;NA&gt;     &lt;NA&gt;        10                 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21:    walls    relat     &lt;NA&gt;     &lt;NA&gt;        10                10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:    walls      sex     &lt;NA&gt;     &lt;NA&gt;        10                 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:    water electcon     &lt;NA&gt;     &lt;NA&gt;        10                 9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24:    water    relat     &lt;NA&gt;     &lt;NA&gt;        10                23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25:    water      sex     &lt;NA&gt;     &lt;NA&gt;        10                14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26: electcon    relat     &lt;NA&gt;     &lt;NA&gt;        10                 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27: electcon      sex     &lt;NA&gt;     &lt;NA&gt;        10                 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28:    relat      sex     &lt;NA&gt;     &lt;NA&gt;        10                 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29:   urbrur     roof    walls     &lt;NA&gt;        10                12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30:   urbrur     roof    water     &lt;NA&gt;        10                32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31:   urbrur     roof electcon     &lt;NA&gt;        10                10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32:   urbrur     roof    relat     &lt;NA&gt;        10                26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33:   urbrur     roof      sex     &lt;NA&gt;        10                14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34:   urbrur    walls    water     &lt;NA&gt;        10                24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35:   urbrur    walls electcon     &lt;NA&gt;        10                 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36:   urbrur    walls    relat     &lt;NA&gt;        10                18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37:   urbrur    walls      sex     &lt;NA&gt;        10                10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38:   urbrur    water electcon     &lt;NA&gt;        10                19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39:   urbrur    water    relat     &lt;NA&gt;        10                35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40:   urbrur    water      sex     &lt;NA&gt;        10                24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41:   urbrur electcon    relat     &lt;NA&gt;        10                12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42:   urbrur electcon      sex     &lt;NA&gt;        10                 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43:   urbrur    relat      sex     &lt;NA&gt;        10                11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44:     roof    walls    water     &lt;NA&gt;        10                36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45:     roof    walls electcon     &lt;NA&gt;        10                14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46:     roof    walls    relat     &lt;NA&gt;        10                24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47:     roof    walls      sex     &lt;NA&gt;        10                18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48:     roof    water electcon     &lt;NA&gt;        10                31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49:     roof    water    relat     &lt;NA&gt;        10                50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50:     roof    water      sex     &lt;NA&gt;        10                48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51:     roof electcon    relat     &lt;NA&gt;        10                24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52:     roof electcon      sex     &lt;NA&gt;        10                16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53:     roof    relat      sex     &lt;NA&gt;        10                23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54:    walls    water electcon     &lt;NA&gt;        10                26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55:    walls    water    relat     &lt;NA&gt;        10                41</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56:    walls    water      sex     &lt;NA&gt;        10                34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57:    walls electcon    relat     &lt;NA&gt;        10                14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58:    walls electcon      sex     &lt;NA&gt;        10                 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59:    walls    relat      sex     &lt;NA&gt;        10                14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60:    water electcon    relat     &lt;NA&gt;        10                34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61:    water electcon      sex     &lt;NA&gt;        10                25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62:    water    relat      sex     &lt;NA&gt;        10                36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63: electcon    relat      sex     &lt;NA&gt;        10                10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64:   urbrur     roof    walls    water        10                47</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65:   urbrur     roof    walls electcon        10                22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66:   urbrur     roof    walls    relat        10                37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67:   urbrur     roof    walls      sex        10                30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68:   urbrur     roof    water electcon        10                38</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69:   urbrur     roof    water    relat        10                62</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70:   urbrur     roof    water      sex        10                63</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71:   urbrur     roof electcon    relat        10                34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72:   urbrur     roof electcon      sex        10                25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73:   urbrur     roof    relat      sex        10                36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74:   urbrur    walls    water electcon        10                34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75:   urbrur    walls    water    relat        10                53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76:   urbrur    walls    water      sex        10                48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77:   urbrur    walls electcon    relat        10                27</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78:   urbrur    walls electcon      sex        10                19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79:   urbrur    walls    relat      sex        10                28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80:   urbrur    water electcon    relat        10                46</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81:   urbrur    water electcon      sex        10                36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82:   urbrur    water    relat      sex        10                48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83:   urbrur electcon    relat      sex        10                24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84:     roof    walls    water electcon        10                44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85:     roof    walls    water    relat        10                65</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86:     roof    walls    water      sex        10                72</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87:     roof    walls electcon    relat        10                35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88:     roof    walls electcon      sex        10                30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89:     roof    walls    relat      sex        10                36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90:     roof    water electcon    relat        10                56</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91:     roof    water electcon      sex        10                57</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92:     roof    water    relat      sex        10                65</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93:     roof electcon    relat      sex        10                33</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94:    walls    water electcon    relat        10                52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95:    walls    water electcon      sex        10                48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96:    walls    water    relat      sex        10                58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97:    walls electcon    relat      sex        10                26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98:    water electcon    relat      sex        10                49</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         dim1     dim2     dim3     dim4 threshold unsafe_cells_orig</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     unsafe_cells_manip</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:                  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                  4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                  3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                  2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                  2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                  9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:                  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                  7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:                  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:                  4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:                 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:                  3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:                 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:                  2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:                 16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:                  3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21:                 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:                  2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:                  9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24:                 23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25:                 14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26:                  6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27:                  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28:                  5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29:                 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30:                 28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31:                  7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32:                 21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33:                  8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34:                 24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35:                  6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36:                 18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37:                 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38:                 19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39:                 35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40:                 24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41:                 12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42:                  3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43:                 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44:                 34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45:                 12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46:                 21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47:                 16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48:                 28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49:                 46</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50:                 40</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51:                 20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52:                 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53:                 17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54:                 26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55:                 41</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56:                 34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57:                 14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58:                  6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59:                 14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60:                 34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61:                 25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62:                 36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63:                 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64:                 45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65:                 21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66:                 34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67:                 28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68:                 35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69:                 59</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70:                 55</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71:                 31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72:                 19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73:                 29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74:                 34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75:                 53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76:                 48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77:                 27</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78:                 19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79:                 28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80:                 46</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81:                 36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82:                 48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83:                 24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84:                 42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85:                 63</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86:                 68</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87:                 33</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88:                 26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89:                 33</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90:                 53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91:                 51</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92:                 61</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93:                 28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94:                 52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95:                 48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96:                 58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97:                 26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98:                 49</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     unsafe_cells_manip</span>
+<span class="r-in"><span><span class="co"># riskyCells(</span></span></span>
+<span class="r-in"><span><span class="co">#  obj = testdata2,</span></span></span>
+<span class="r-in"><span><span class="co">#  keyVars = 1:5,</span></span></span>
+<span class="r-in"><span><span class="co">#  threshold = c(50, 25, 10, 5),</span></span></span>
+<span class="r-in"><span><span class="co">#  useIdentificationLevel = FALSE,</span></span></span>
+<span class="r-in"><span><span class="co">#  maxDim = 4</span></span></span>
+<span class="r-in"><span><span class="co"># )</span></span></span>
+<span class="r-in"><span><span class="co">#riskyCells(</span></span></span>
+<span class="r-in"><span><span class="co">#  obj  = testdata2,</span></span></span>
+<span class="r-in"><span><span class="co">#  keyVars = 1:5,</span></span></span>
+<span class="r-in"><span><span class="co">#  threshold = 10,</span></span></span>
+<span class="r-in"><span><span class="co">#  useIdentificationLevel = FALSE,</span></span></span>
+<span class="r-in"><span><span class="co">#  maxDim = 3</span></span></span>
+<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">### data.frame method / using identification levels</span></span></span>
+<span class="r-in"><span><span class="co">#riskyCells(</span></span></span>
+<span class="r-in"><span><span class="co">#  obj = testdata2,</span></span></span>
+<span class="r-in"><span><span class="co">#  keyVars = 1:6,</span></span></span>
+<span class="r-in"><span><span class="co">#  threshold = 20,</span></span></span>
+<span class="r-in"><span><span class="co">#  useIdentificationLevel = TRUE,</span></span></span>
+<span class="r-in"><span><span class="co">#  level = c(1, 1, 2, 3, 3, 5)</span></span></span>
+<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span><span class="co">#riskyCells(</span></span></span>
+<span class="r-in"><span><span class="co">#  obj = testdata2,</span></span></span>
+<span class="r-in"><span><span class="co">#  keyVars = c(1, 3, 4, 6),</span></span></span>
+<span class="r-in"><span><span class="co">#  threshold = 10,</span></span></span>
+<span class="r-in"><span><span class="co">#  useIdentificationLevel = TRUE,</span></span></span>
+<span class="r-in"><span><span class="co">#  level = c(1, 2, 2, 4)</span></span></span>
+<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">### sdcMicroObj-method / all combinations up to maxDim</span></span></span>
+<span class="r-in"><span><span class="co">#testdata2[1:6] &lt;- lapply(1:6, function(x) {</span></span></span>
+<span class="r-in"><span><span class="co">#  testdata2[[x]] &lt;- as.factor(testdata2[[x]])</span></span></span>
+<span class="r-in"><span><span class="co">#})</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">#sdc &lt;- createSdcObj(</span></span></span>
+<span class="r-in"><span><span class="co">#  dat = testdata2,</span></span></span>
+<span class="r-in"><span><span class="co">#  keyVars = c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex"),</span></span></span>
+<span class="r-in"><span><span class="co">#  numVars = c("expend", "income", "savings"),</span></span></span>
+<span class="r-in"><span><span class="co">#  w = "sampling_weight")</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">#r0 &lt;- riskyCells(</span></span></span>
+<span class="r-in"><span><span class="co">#  obj = sdc,</span></span></span>
+<span class="r-in"><span><span class="co">#  useIdentificationLevel=FALSE,</span></span></span>
+<span class="r-in"><span><span class="co"># threshold = c(20, 10, 5),</span></span></span>
+<span class="r-in"><span><span class="co"># maxDim = 3</span></span></span>
+<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">### in case key-variables have been modified, we get counts for</span></span></span>
+<span class="r-in"><span><span class="co">### original and modified data</span></span></span>
+<span class="r-in"><span><span class="co">#sdc &lt;- groupAndRename(</span></span></span>
+<span class="r-in"><span><span class="co">#  obj = sdc,</span></span></span>
+<span class="r-in"><span><span class="co">#  var = "roof",</span></span></span>
+<span class="r-in"><span><span class="co">#  before = c("5", "6", "9"),</span></span></span>
+<span class="r-in"><span><span class="co">#  after = "5+"</span></span></span>
+<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span><span class="co">#r1 &lt;- riskyCells(</span></span></span>
+<span class="r-in"><span><span class="co">#  obj = sdc,</span></span></span>
+<span class="r-in"><span><span class="co">#  useIdentificationLevel = FALSE,</span></span></span>
+<span class="r-in"><span><span class="co">#  threshold = c(10, 5, 3),</span></span></span>
+<span class="r-in"><span><span class="co">#  maxDim = 3</span></span></span>
+<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co">### sdcMicroObj-method / using identification levels</span></span></span>
+<span class="r-in"><span><span class="co">#riskyCells(</span></span></span>
+<span class="r-in"><span><span class="co">#  obj = sdc,</span></span></span>
+<span class="r-in"><span><span class="co">#  useIdentificationLevel = TRUE,</span></span></span>
+<span class="r-in"><span><span class="co">#  threshold = 10,</span></span></span>
+<span class="r-in"><span><span class="co">#  level = c(1, 1, 3, 4, 5, 5, 5)</span></span></span>
+<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </div>
