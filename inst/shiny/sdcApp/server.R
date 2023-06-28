@@ -316,7 +316,7 @@ shinyServer(function(session, input, output) {
       # otherwise it would be possible just to set cur_importance to NULL
       x <- as.data.table(get_manipKeyVars())
       xx <- x[,lapply(.SD, function(y) { length(table(y))}), .SDcols=get_keyVars_names()]
-      cur_importance <- match(names(xx), names(sort(xx, decreasing=FALSE)))
+      cur_importance <- order(unlist(as.vector(xx)), decreasing = TRUE)
     }
     cmd <- paste0(cmd,", importance=",VecToRStr(cur_importance, quoted=FALSE))
 
