@@ -25,11 +25,6 @@
 	#include <time.h>
 	#include <sys/time.h>
 
-	#ifndef _WIN32
-		typedef int64_t __int64;
-//		#include <curses.h>
-	#endif
-
 	#define _open	open
 	#define _close	close
 	#define _lseek	lseek
