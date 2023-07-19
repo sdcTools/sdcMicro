@@ -1,6 +1,8 @@
 # 5.7.5
 - minor modifications in target swapping procedures
 - resolved a note from CRAN
+- removed `SystemRequirements: C++11` and corresponding Makevars-Files
+- removed conditional definition for unused typedef in `src/Framework.h`
 
 # 5.7.4
 - nothing special to report, fixed a note for CRAN policies
