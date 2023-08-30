@@ -227,13 +227,13 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP LocalRecProg_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP Mdav(SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP measure_hierachical(SEXP);
-RcppExport SEXP measure_risk_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP measure_threshold(SEXP, SEXP);
-RcppExport SEXP RankSwap(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP Suda2(SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP LocalRecProg_cpp(void *, void *, void *, void *, void *, void *, void *, void *, void *);
+RcppExport SEXP Mdav(void *, void *, void *, void *, void *);
+RcppExport SEXP measure_hierachical(void *);
+RcppExport SEXP measure_risk_cpp(void *, void *, void *, void *, void *, void *);
+RcppExport SEXP measure_threshold(void *, void *);
+RcppExport SEXP RankSwap(void *, void *, void *, void *, void *, void *, void *, void *, void *);
+RcppExport SEXP Suda2(void *, void *, void *, void *, void *);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_sdcMicro_cpp_calcSuppInds", (DL_FUNC) &_sdcMicro_cpp_calcSuppInds, 3},

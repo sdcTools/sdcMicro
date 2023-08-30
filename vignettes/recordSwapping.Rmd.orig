@@ -1,7 +1,7 @@
 ---
 title: "Targeted Record Swapping"
 author: "Johannes Gussenbauer"
-date: "2023-08-30"
+date: "`r Sys.Date()`"
 output: html_vignette
 vignette: >
   %\VignetteIndexEntry{Targeted Record Swapping}
@@ -13,7 +13,11 @@ pkgdown:
 ---
 
 
-
+```{r setup, include=FALSE}
+library(data.table)
+setDTthreads(1) # limit number of threads by data.table
+library(sdcMicro)
+```
 
 ## Overview
 
@@ -26,8 +30,7 @@ The R-Package is just as a front end to easily call the procedures and for testi
 ## Functionality
 The targeted record swapping can be applied with the function `recordSwap()`. All other functions in the package are called from inside `recordSwap()` and are only exported for testing purposes. The function has the following arguments:
 
-
-```cpp
+```{Rcpp,include=TRUE,eval=FALSE}
 recordSwap(std::vector< std::vector<int> > data, int hid,
                                            std::vector<int> hierarchy, 
                                            std::vector<std::vector<int>> similar,
@@ -146,32 +149,15 @@ with $H_m$ as the proportion of high risk households in municipality $m$.
 ## Application
 
 The package was tested on randomly generated data, which contained 5 geographic levels and some other sociodemographic variables.
-
-```r
+```{r}
 library(sdcMicro)
 dat <- createDat(N=100000)
 dat
 ```
 
-```
-##         nuts1 nuts2 nuts3  lau2    hid hsize ageGroup gender national htype hincome
-##      1:     1    11  1104 11041      1     5        4      2        4     4       5
-##      2:     1    11  1104 11041      1     5        4      1        4     4       5
-##      3:     1    11  1104 11041      1     5        2      1        2     4       5
-##      4:     1    11  1104 11041      1     5        6      2        5     4       5
-##      5:     1    11  1104 11041      1     5        2      1        1     4       5
-##     ---                                                                            
-## 349688:     2    23  2308 23085 100000     6        3      1        4     7       9
-## 349689:     2    23  2308 23085 100000     6        5      1        2     7       9
-## 349690:     2    23  2308 23085 100000     6        5      2        2     7       9
-## 349691:     2    23  2308 23085 100000     6        3      1        2     7       9
-## 349692:     2    23  2308 23085 100000     6        6      1        1     7       9
-```
-
 Applying the record swapping to dat could look like this
 
-
-```r
+```{r}
 hierarchy <- c("nuts1","nuts2")
 risk_variables <- c("hincome","ageGroup","gender")
 k_anonymity <- 3
@@ -185,13 +171,7 @@ dat_swapped <- recordSwap(data = dat, hid = hid,
                           risk_variables = risk_variables,
                           k_anonymity = k_anonymity,
                           swaprate = swaprate)
-```
 
-```
-## Recordswapping was successful!
-```
-
-```r
 dat_swapped
 ```
 
@@ -205,8 +185,7 @@ Here the procedure was applied to `dat`
 
 If `k_anonymity <- 0` only the swaprate is considered. Then at most `th*100`% of the households are swapped. If the sample is very small, the actual number of swaps can be smaller, however, this can only happen if some regions have a very small number of households, e.g. 1,2,3,...
 
-
-```r
+```{r}
 k_anonymity <- 0
 swaprate <- .05
 dat_swapped <- recordSwap(data = dat, hid = hid,
@@ -215,46 +194,28 @@ dat_swapped <- recordSwap(data = dat, hid = hid,
                           risk_variables = risk_variables,
                           k_anonymity = k_anonymity,
                           swaprate = swaprate)
-```
-
-```
-## Recordswapping was successful!
-```
-
-```r
 dat_swapped
 ```
 
 Comparing number of swapped households
 
-
-```r
+```{r}
 dat_compare <- merge(dat[,.(paste(nuts1[1],nuts2[1])),by=hid],
                      dat_swapped[,.(paste(nuts1[1],nuts2[1])),by=hid],by="hid")
 
 # number of swapped households
 nrow(dat_compare[V1.x!=V1.y])
 ```
-
-```
-## [1] 5000
-```
-
-```r
+```{r}
 # swaprate times number of households in data
 dat[,uniqueN(hid)]*swaprate
-```
-
-```
-## [1] 5000
 ```
 
 ### Supplying index vectors
 
 Instead of column names, index vectors can be supplied for parameters `hid`, `hierarchy`, `similar` and `risk_variables`.
 
-
-```r
+```{r}
 hierarchy <- c(1,2) # ~ c("nuts1","nuts2")
 risk_variables <- c(11,7,8) # ~ c("hincome","ageGroup","gender")
 hid <- 5 # ~ "hid"
@@ -268,10 +229,6 @@ dat_swapped <- recordSwap(data = dat, hid = hid,
                           swaprate = swaprate)
 ```
 
-```
-## Recordswapping was successful!
-```
-
 Please note that the underlying `c++`-routines expect indices starting from 0 but in `R` indices start with 1.
 The wrapper function `recordSwap()` converts indices or column names in `R` into the correct format for the `c++` routines.
 So using column indices for this function call should be done in the usually `R`-fashion where indices start with 1.
@@ -282,8 +239,7 @@ So using column indices for this function call should be done in the usually `R`
 In some cases, the condition of finding a *similar* household given by the parameter `similarity` might be too strict.
 And thus, it is not possible to swap the necessary number of households due to the lack of a suitable donor household.
 
-
-```r
+```{r}
 # demonstrate on small data set
 dat <- createDat(N=10000)
 hierarchy <- c("nuts1","nuts2")
@@ -302,15 +258,9 @@ dat_swapped <- recordSwap(data = dat, hid = hid,
                           seed = 123456L)
 ```
 
-```
-## Donor household was not found in 2 case(s).
-## See TRS_logfile.txt for a detailed list
-```
-
-The expected number of swapped households for a population of 10000 households and a swapping rate of 0.05 is 500.
+The expected number of swapped households for a population of `r dat[,uniqueN(hid)]` households and a swapping rate of `r swaprate` is `r dat[,uniqueN(hid)]*swaprate`.
 The actual number of swaps was however:
-
-```r
+```{r}
 dat_compare <- merge(dat[,.(paste(nuts1[1],nuts2[1])),by=hid],
                      dat_swapped[,.(paste(nuts1[1],nuts2[1])),by=hid],by="hid")
 
@@ -318,32 +268,18 @@ dat_compare <- merge(dat[,.(paste(nuts1[1],nuts2[1])),by=hid],
 nrow(dat_compare[V1.x!=V1.y])
 ```
 
-```
-## [1] 496
-```
-
 
 With the parameter `similar` multiple similarity profiles can be defined, if the parameter input is a `list`. If a donor could not be found for the first similarity profile (`similar[[1]]`) then a donor is searched for using the next similarity profile (`similar[[2]]`) and so on.
 
 Using multiple similarity profiles makes it easy to supply fall-back profiles if the initial profile is too specific.
 
-
-```r
+```{r}
 # additional profile contains only hsize
 similar <- list(similar)
 similar[[2]] <- "hsize"
 similar
 ```
-
-```
-## [[1]]
-## [1] "nuts1"   "hsize"   "htype"   "hincome"
-## 
-## [[2]]
-## [1] "hsize"
-```
-
-```r
+```{r}
 # procedure found donors for every record
 dat_swapped <- recordSwap(data = dat, hid = hid,
                           hierarchy = hierarchy,
@@ -352,22 +288,11 @@ dat_swapped <- recordSwap(data = dat, hid = hid,
                           k_anonymity = 3,
                           swaprate = 0.05,
                           seed = 123456L)
-```
-
-```
-## Recordswapping was successful!
-```
-
-```r
 dat_compare <- merge(dat[,.(paste(nuts1[1],nuts2[1])),by=hid],
                      dat_swapped[,.(paste(nuts1[1],nuts2[1])),by=hid],by="hid")
 
 # number of swapped households
 nrow(dat_compare[V1.x!=V1.y])
-```
-
-```
-## [1] 500
 ```
 
 ### Carry along variables
@@ -379,8 +304,7 @@ When we apply the record swapping using `hierarchy`-levels `nuts1` and `nuts2` t
 
 Let's have a more detailed look at the problem
 
-
-```r
+```{r}
 hid <- "hid"
 hierarchy <- c("nuts1","nuts2")
 similar <- c("hsize")
@@ -393,54 +317,26 @@ dat_swapped <- recordSwap(data = copy(dat),
                         risk_variables = risk_variables,
                         swaprate = 0.05,
                         seed=1234L)
-```
 
-```
-## Recordswapping was successful!
-```
-
-```r
 # compare results
 dat_compare <- merge(dat[,.(paste(nuts1[1],nuts2[1])),by=hid],
                      dat_swapped[,.(paste(nuts1[1],nuts2[1])),by=hid],by="hid")
 head(dat_compare[V1.x!=V1.y])
 ```
 
-```
-##    hid V1.x V1.y
-## 1:   1 3 35 2 21
-## 2:  20 1 11 3 35
-## 3:  37 1 11 2 24
-## 4:  84 2 21 2 22
-## 5:  85 3 31 1 13
-## 6: 100 3 33 3 35
-```
-
 For `nuts1==1` and `nuts2==14` the `nuts3` variables takes on values
-
-```r
+```{r}
 dat[nuts1==1&nuts2==14,sort(unique(nuts3))]
 ```
 
-```
-##  [1] 1401 1402 1403 1404 1405 1406 1407 1408 1409 1410 1411 1412 1413 1414 1415
-```
-
 In the swapped data set there are however many more values for `nuts3` now which are not coherent with `nuts1==1` and `nuts2==14`
-
-```r
+```{r}
 dat_swapped[nuts1==1&nuts2==14,sort(unique(nuts3))]
-```
-
-```
-##  [1] 1110 1213 1306 1313 1401 1402 1403 1404 1405 1406 1407 1408 1409 1410 1411 1412 1413 1414 1415 1504 1513 2111 2212 2302 2312 2314 2404 2410 2412 2505 2510 2511 3105
-## [34] 3113 3201 3205 3211 3307 3313 3314 3404 3406 3407 3408
 ```
 
 Using the parameter `carry_along` one can define certain variables which are additionally swapped but do not interfere with the risk calculation, sampling and procedure of finding a donor.
 
-
-```r
+```{r}
 dat_swapped2 <- recordSwap(data = copy(dat),
                         hid = hid,
                         hierarchy = hierarchy,
@@ -449,13 +345,7 @@ dat_swapped2 <- recordSwap(data = copy(dat),
                         swaprate = 0.05,
                         carry_along = c("nuts3","lau2"), # <- swap nuts3 and lau2 variable as well
                         seed=1234L)
-```
 
-```
-## Recordswapping was successful!
-```
-
-```r
 geoVars <- c("nuts1", "nuts2", "nuts3")
 dat_geo <- dat[!duplicated(hid),..geoVars]
 setorderv(dat_geo,geoVars)
@@ -466,15 +356,10 @@ setorderv(dat_geo_swapped,geoVars)
 all.equal(dat_geo,dat_geo_swapped)
 ```
 
-```
-## [1] TRUE
-```
-
 Both the original and swapped data set have the same value combinations for `nuts1`, `nuts2` and `nuts3`.
 Setting this parameter did, however, not interfere with the swapping procedure
 
-
-```r
+```{r}
 dat_compare2 <- merge(dat[,.(paste(nuts1[1],nuts2[1])),by=hid],
                      dat_swapped[,.(paste(nuts1[1],nuts2[1])),by=hid],by="hid")
 
@@ -483,15 +368,10 @@ all.equal(dat_compare2[order(hid),.(hid)],
           dat_compare[order(hid),.(hid)])
 ```
 
-```
-## [1] TRUE
-```
-
 
 Using the same idea one can set `return_swapped_id = TRUE` to return the `hid` with which the records were swapped with.
 
-
-```r
+```{r}
 dat_swapped3 <- recordSwap(data = copy(dat),
                         hid = hid,
                         hierarchy = hierarchy,
@@ -503,22 +383,11 @@ dat_swapped3 <- recordSwap(data = copy(dat),
                         seed=1234L)
 ```
 
-```
-## Recordswapping was successful!
-```
-
 The output now has an additional column named `hid_swapped`, which contains the household ID with which a household was swapped with.
 
 Number of swapped `hid`s
-
-```r
+```{r}
 dat_swapped3[!duplicated(hid),.N,by=.(id_swapped = hid!=hid_swapped)]
-```
-
-```
-##    id_swapped    N
-## 1:       TRUE  500
-## 2:      FALSE 9500
 ```
 
 ### Supplying your own risk values 
@@ -526,8 +395,7 @@ dat_swapped3[!duplicated(hid),.N,by=.(id_swapped = hid!=hid_swapped)]
 Instead of using `k_anonymity` and `risk_variables` for the calculation of a number of swaps, custom risk can be supplied. For custom risk for households can be used parameters `risk` and then the parameter `risk_threshold` is used to determine high-risk households. 
 High-risk households are always swapped, and households with risk lower than the threshold are also used as donor households. To ensure that the household is not swapped, its risk must be set to 0. 
 
-
-```r
+```{r}
 hid <- "hid"
 similar <- list(c("hsize"))
 hier <- c("nuts1","nuts2","nuts3")
@@ -553,45 +421,18 @@ dat_swapped4  <- recordSwap(data = copy(dat),
                             seed = 1234L)
 ```
 
-```
-## risk was adjusted in order to give each household member the maximum household risk value
-```
-
-```
-## Recordswapping was successful!
-```
-
 ### Information loss
 
 With the function `infoLoss()` one can calculate various information loss measures over a pre defined frequency table.
 This frequency table is defined by the parameter `table_vars`, which accepts column names of the original and swapped micro data.
 The frequency table is internally constructed using both the original and swapped micro data. Afterwards, various information loss measures are estimated over each of the table cells. 
 
-
-```r
+```{r}
 # calculate information loss for frequecy table nuts2 x national
 table_vars <- c("nuts2","national")
 iloss <- infoLoss(data=dat, data_swapped = dat_swapped3,
                   table_vars = table_vars)
 iloss$measures
-```
-
-```
-##       what      absD   abssqrtD     relabsD
-##  1:    Min  0.000000 0.00000000 0.000000000
-##  2:    10%  0.000000 0.00000000 0.000000000
-##  3:    20%  0.000000 0.00000000 0.000000000
-##  4:    30%  1.000000 0.02275320 0.002072981
-##  5:    40%  2.000000 0.04496512 0.004035576
-##  6:   Mean  3.473684 0.08023104 0.007423091
-##  7: Median  3.000000 0.07005226 0.006564551
-##  8:    60%  4.000000 0.09223914 0.008472307
-##  9:    70%  5.000000 0.11484568 0.010517821
-## 10:    80%  7.000000 0.15666865 0.014084507
-## 11:    90%  8.000000 0.18272876 0.016724520
-## 12:    95%  9.300000 0.21856234 0.020476550
-## 13:    99% 11.060000 0.26366336 0.025462325
-## 14:    Max 12.000000 0.27945378 0.026373626
 ```
 
 Per default the absolute deviation ($abs(x,y)$), relative absolute deviation ($r\_abs(x,y)$), and absolute deviaion of square roots ($abs\_sqr(x,y)$) is calculated between the table cells x and y, see also parameter `metric`.
@@ -610,8 +451,7 @@ $$
 
 It is also possible to supply a custom information loss metric by using parameter `custom_meric`
 
-
-```r
+```{r}
 # define squared distance as custom metric
 squareD <- function(x,y){
    (x-y)^2
@@ -623,32 +463,13 @@ iloss <- infoLoss(data=dat, data_swapped = dat_swapped3,
 iloss$measures # includes custom loss as well
 ```
 
-```
-##       what      absD   abssqrtD     relabsD   squareD
-##  1:    Min  0.000000 0.00000000 0.000000000   0.00000
-##  2:    10%  0.000000 0.00000000 0.000000000   0.00000
-##  3:    20%  0.000000 0.00000000 0.000000000   0.00000
-##  4:    30%  1.000000 0.02275320 0.002072981   1.00000
-##  5:    40%  2.000000 0.04496512 0.004035576   4.00000
-##  6:   Mean  3.473684 0.08023104 0.007423091  22.69474
-##  7: Median  3.000000 0.07005226 0.006564551   9.00000
-##  8:    60%  4.000000 0.09223914 0.008472307  16.00000
-##  9:    70%  5.000000 0.11484568 0.010517821  25.00000
-## 10:    80%  7.000000 0.15666865 0.014084507  49.00000
-## 11:    90%  8.000000 0.18272876 0.016724520  64.00000
-## 12:    95%  9.300000 0.21856234 0.020476550  86.70000
-## 13:    99% 11.060000 0.26366336 0.025462325 122.38000
-## 14:    Max 12.000000 0.27945378 0.026373626 144.00000
-```
-
 
 ### sdcMicro Objects
 
 The function `recordSwap()` can be called using the micro data directly, as seen above, or with an sdcMicro-Object. 
 Parameters for the swapping routine can be passed to the options-slot when creating the sdcMicro-Object.
 
-
-```r
+```{r}
 # define paramters
 hierarchy <- c("nuts1","nuts2")
 risk_variables <- c("hincome","ageGroup","gender")
@@ -667,22 +488,8 @@ data_sdc <- createSdcObj(dat,hhId = hid,
 ```
 
 
-
-```r
+```{r}
 dat_swapped_sdc <- recordSwap(data = data_sdc,
                               return_swapped_id = TRUE)
-```
-
-```
-## Recordswapping was successful!
-```
-
-```r
 dat_swapped_sdc[!duplicated(hid),.N,by=.(id_swapped = hid!=hid_swapped)]
-```
-
-```
-##    id_swapped    N
-## 1:      FALSE 9500
-## 2:       TRUE  500
 ```

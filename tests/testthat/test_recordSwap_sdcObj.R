@@ -10,7 +10,7 @@ set.seed(seed)
 nhid <- 5000
 dat <- sdcMicro::createDat( nhid )
 
-k_anonymity <- 0
+k_anonymity <- 2
 swaprate <- .05
 similar <- list(c("hsize"))
 hier <- c("nuts1","nuts2","nuts3")
