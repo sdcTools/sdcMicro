@@ -30,6 +30,7 @@ interval.
 \examples{
 data(free1)
 free1 <- as.data.frame(free1)
+\donttest{
 m1 <- microaggregation(free1[, 31:34], method="onedims", aggr=3)
 m2 <- microaggregation(free1[, 31:34], method="pca", aggr=3)
 dRisk(obj=free1[, 31:34], xm=m1$mx)
@@ -44,6 +45,7 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 ## this is already made internally: sdc <- dRisk(sdc)
 ## and already stored in sdc
+}
 }
 \references{
 see method SDID in Mateo-Sanz, Sebe, Domingo-Ferrer. 

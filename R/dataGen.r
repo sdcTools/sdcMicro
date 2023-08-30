@@ -25,6 +25,7 @@
 #' @export
 #' @examples
 #' data(mtcars)
+#' \donttest{
 #' cov(mtcars[,4:6])
 #' cov(dataGen(mtcars[,4:6]))
 #' pairs(mtcars[,4:6])
@@ -36,6 +37,7 @@
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- dataGen(sdc)
+#' }
 dataGen <- function(obj, ...) {
   dataGenX(obj=obj, ...)
 }

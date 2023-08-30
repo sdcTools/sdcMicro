@@ -36,6 +36,7 @@
 #' @examples
 #' data(free1)
 #' free1 <- as.data.frame(free1)
+#' \donttest{
 #' m1 <- microaggregation(free1[, 31:34], method="onedims", aggr=3)
 #' m2 <- microaggregation(free1[, 31:34], method="pca", aggr=3)
 #' dRisk(obj=free1[, 31:34], xm=m1$mx)
@@ -60,7 +61,7 @@
 #' ## this is already made internally:
 #' ## sdc <- dUtility(sdc)
 #' ## and already stored in sdc
-#'
+#' }
 dUtility <- function(obj, ...) {
   dUtilityX(obj=obj, ...)
 }

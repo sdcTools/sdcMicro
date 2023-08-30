@@ -58,10 +58,12 @@ described in \code{\link[=addNoise]{addNoise()}}.
 }
 \examples{
 data(Tarragona)
+\donttest{
 valTable(
   x = Tarragona[100:200, ],
   method=c("simple", "onedims", "pca")
 )
+}
 }
 \references{
 Templ, M. and Meindl, B., \verb{Software Development for SDC in R}, Lecture Notes in Computer Science, Privacy in Statistical Databases,

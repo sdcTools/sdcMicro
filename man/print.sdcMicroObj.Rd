@@ -42,6 +42,7 @@ frequencies and "Fk": weighted frequencies.
 }
 \examples{
 data(testdata)
+\donttest{
 sdc <- createSdcObj(testdata,
   keyVars=c('urbrur','roof','walls','relat','sex'),
   pramVars=c('water','electcon'),
@@ -56,6 +57,7 @@ print(sdc, type="numrisk")
 print(sdc, type="pram")
 print(sdc, type="kAnon")
 print(sdc, type="comp_numvars")
+}
 }
 \author{
 Alexander Kowarik, Matthias Templ, Bernhard Meindl

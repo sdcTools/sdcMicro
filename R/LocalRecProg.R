@@ -41,7 +41,7 @@
 #' cat_vars <- c("urbrur", "roof", "walls", "water", "sex", "relat")
 #' anc_var <- c("water2", "water3", "relat2")
 #' anc_setting <- c("water","water","relat")
-#'
+#' \donttest{
 #' r1 <- LocalRecProg(
 #'   obj = testdata2,
 #'   categorical = cat_vars,
@@ -67,6 +67,7 @@
 #'   numVars = c("expend", "income", "savings"),
 #'   w = "sampling_weight")
 #' sdc <- LocalRecProg(sdc)
+#' }
 LocalRecProg <- function(obj, ancestors=NULL, ancestor_setting=NULL, k_level=2,
   FindLowestK=TRUE, weight=NULL, lowMemory=FALSE, missingValue=NA, ...) {
   LocalRecProgX(obj=obj, ancestors=ancestors, ancestor_setting=ancestor_setting, k_level=k_level,

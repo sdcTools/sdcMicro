@@ -172,6 +172,7 @@ library(data.table)
 seed <- 2021
 set.seed(seed)
 nhid <- 10000
+\donttest{
 dat <- sdcMicro::createDat(nhid)
 
 # define paramters for swapping
@@ -216,7 +217,7 @@ hid <- "hid"
 #  seed = seed)
 #
 #dat_s[hid != hid_swapped, .(nuts1, nuts2, nuts3, lau2)]
-#
+}
 }
 \author{
 Johannes Gussenbauer

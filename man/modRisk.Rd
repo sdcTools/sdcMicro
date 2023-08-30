@@ -64,6 +64,7 @@ global risk, defined in Skinner and Holmes (1998).
 data(testdata2)
 form <- ~sex+water+roof
 w <- "sampling_weight"
+\donttest{
 (modRisk(testdata2, method = "default", formulaM = form, weights = w))
 (modRisk(testdata2, method = "CE", formulaM = form, weights = w))
 (modRisk(testdata2, method = "PML", formulaM = form, weights = w))
@@ -78,6 +79,7 @@ sdc <- createSdcObj(testdata2,
  w = "sampling_weight")
 sdc <- modRisk(sdc, form = ~sex+water+roof)
 slot(sdc, "risk")$model
+}
 
 \donttest{
 # an example using data from the laeken-pkg

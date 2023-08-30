@@ -129,6 +129,7 @@
 #' seed <- 2021
 #' set.seed(seed)
 #' nhid <- 10000
+#' \donttest{
 #' dat <- sdcMicro::createDat(nhid)
 #'
 #' # define paramters for swapping
@@ -173,7 +174,7 @@
 #' #  seed = seed)
 #' #
 #' #dat_s[hid != hid_swapped, .(nuts1, nuts2, nuts3, lau2)]
-#' #
+#' }
 #' @export
 recordSwap <- function(data,...){
   UseMethod("recordSwap")

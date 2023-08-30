@@ -52,10 +52,14 @@ calculated by the MCD estimator.
 \examples{
 
 data(Tarragona)
+\donttest{
 a1 <- addNoise(Tarragona)
 a1
+}
 
 data(testdata)
+\donttest{
+# donttest because Examples with CPU time > 2.5 times elapsed time
 testdata[, c('expend','income','savings')] <-
 addNoise(testdata[,c('expend','income','savings')])$xm
 
@@ -65,6 +69,7 @@ sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- addNoise(sdc)
+}
 }
 \references{
 Domingo-Ferrer, J. and Sebe, F. and Castella, J., \dQuote{On the

@@ -105,6 +105,7 @@ spanned by the key variables are evaluated.
 \examples{
 ## measure_risk with sdcMicro objects:
 data(testdata)
+\donttest{
 sdc <- createSdcObj(testdata,
   keyVars=c('urbrur','roof','walls','water','electcon'),
 numVars=c('expend','income','savings'), w='sampling_weight')
@@ -148,6 +149,7 @@ sdc <- createSdcObj(testdata2,
   numVars=c('expend','income','savings'), w='sampling_weight')
 ## -> when using `createSdcObj()`, the risks are already internally computed
 ## and it is not required to explicitely run `sdc <- measure_risk(sdc)`
+}
 }
 \references{
 Franconi, L. and Polettini, S. (2004) \emph{Individual risk

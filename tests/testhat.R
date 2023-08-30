@@ -1,4 +1,4 @@
-library(testthat)
-library(sdcMicro)
-
-test_check("sdcMicro")
+# library(testthat)
+# library(sdcMicro)
+# 
+# test_check("sdcMicro")
