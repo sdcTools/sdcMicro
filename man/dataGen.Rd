@@ -34,6 +34,7 @@ general, not follows a multivariate normal distribution.
 }
 \examples{
 data(mtcars)
+\donttest{
 cov(mtcars[,4:6])
 cov(dataGen(mtcars[,4:6]))
 pairs(mtcars[,4:6])
@@ -45,6 +46,7 @@ sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
 sdc <- dataGen(sdc)
+}
 }
 \references{
 Mateo-Sanz, Martinez-Balleste, Domingo-Ferrer. Fast Generation of Accurate Synthetic Microdata. 

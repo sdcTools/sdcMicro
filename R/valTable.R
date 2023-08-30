@@ -32,10 +32,12 @@
 #' @md
 #' @examples
 #' data(Tarragona)
+#' \donttest{
 #' valTable(
 #'   x = Tarragona[100:200, ],
 #'   method=c("simple", "onedims", "pca")
 #' )
+#' }
 valTable <- function(x, method = c("simple", "onedims", "clustpppca", "addNoise: additive", "swappNum"),
   measure = "mean", clustermethod = "clara", aggr = 3, nc = 8, transf = "log",
   p = 15, noise = 15, w = 1:dim(x)[2], delta = 0.1) {

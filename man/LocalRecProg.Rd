@@ -64,7 +64,7 @@ data(testdata2)
 cat_vars <- c("urbrur", "roof", "walls", "water", "sex", "relat")
 anc_var <- c("water2", "water3", "relat2")
 anc_setting <- c("water","water","relat")
-
+\donttest{
 r1 <- LocalRecProg(
   obj = testdata2,
   categorical = cat_vars,
@@ -90,6 +90,7 @@ sdc <- createSdcObj(
   numVars = c("expend", "income", "savings"),
   w = "sampling_weight")
 sdc <- LocalRecProg(sdc)
+}
 }
 \references{
 Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:

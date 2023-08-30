@@ -138,6 +138,7 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
 #'
 #' data(testdata,package="sdcMicro")
 #' testdata <- testdata[1:200,]
+#' \donttest{
 #' for(i in c(1:7,9)) testdata[,i] <- as.factor(testdata[,i])
 #' test <- microaggrGower(testdata,variables=c("relat","age","expend"),
 #'   dist_var=c("age","sex","income","savings"),by=c("urbrur","roof"))
@@ -147,6 +148,7 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #'
 #' sdc <- microaggrGower(sdc)
+#' }
 
 microaggrGower <- function(obj, variables=NULL, aggr=3, dist_var=NULL, by=NULL,
   mixed=NULL, mixed.constant=NULL, trace=FALSE, weights=NULL, numFun=mean,

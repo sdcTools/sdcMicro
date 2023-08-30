@@ -74,10 +74,14 @@
 #' @examples
 #'
 #' data(Tarragona)
+#' \donttest{
 #' a1 <- addNoise(Tarragona)
 #' a1
+#' }
 #'
 #' data(testdata)
+#' \donttest{
+#' # donttest because Examples with CPU time > 2.5 times elapsed time
 #' testdata[, c('expend','income','savings')] <-
 #' addNoise(testdata[,c('expend','income','savings')])$xm
 #'
@@ -87,6 +91,7 @@
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
 #' sdc <- addNoise(sdc)
+#' }
 
 addNoise <- function(obj, variables=NULL, noise=150, method="additive", ...) {
   addNoiseX(obj=obj, variables=variables, noise=noise, method=method, ...)

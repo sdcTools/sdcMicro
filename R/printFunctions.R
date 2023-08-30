@@ -71,6 +71,7 @@ definition = function(obj, type="fk") {
 #' @export
 #' @examples
 #' data(testdata)
+#' \donttest{
 #' sdc <- createSdcObj(testdata,
 #'   keyVars=c('urbrur','roof','walls','relat','sex'),
 #'   pramVars=c('water','electcon'),
@@ -85,6 +86,7 @@ definition = function(obj, type="fk") {
 #' print(sdc, type="pram")
 #' print(sdc, type="kAnon")
 #' print(sdc, type="comp_numvars")
+#' }
 setMethod(f = "print", signature = c("sdcMicroObj"),
 definition = function(x, type = "kAnon", docat=TRUE, ...) {
   if (!type %in% c("kAnon","ls","pram","recode","risk","numrisk","general", "comp_numvars")) {

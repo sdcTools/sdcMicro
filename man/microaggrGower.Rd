@@ -76,6 +76,7 @@ consumption.
 
 data(testdata,package="sdcMicro")
 testdata <- testdata[1:200,]
+\donttest{
 for(i in c(1:7,9)) testdata[,i] <- as.factor(testdata[,i])
 test <- microaggrGower(testdata,variables=c("relat","age","expend"),
   dist_var=c("age","sex","income","savings"),by=c("urbrur","roof"))
@@ -85,6 +86,7 @@ sdc <- createSdcObj(testdata,
   numVars=c('expend','income','savings'), w='sampling_weight')
 
 sdc <- microaggrGower(sdc)
+}
 }
 \seealso{
 \code{\link[VIM]{sampleCat}} and \code{\link[VIM]{maxCat}}

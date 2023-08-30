@@ -28,6 +28,7 @@ keyVar) are suppressed.
 \examples{
 data(francdat)
 keyVars <- paste0("Key",1:4)
+\donttest{
 f <- freqCalc(francdat, keyVars = keyVars, w = 8)
 f
 f$fk
@@ -56,6 +57,7 @@ sdc <- createSdcObj(
 )
 sdc <- localSupp(sdc, keyVar = "urbrur", threshold = 0.045)
 print(sdc, type = "ls")
+}
 }
 \references{
 Templ, M. \emph{Statistical Disclosure Control for Microdata

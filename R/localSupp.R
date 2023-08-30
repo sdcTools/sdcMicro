@@ -26,6 +26,7 @@
 #' @examples
 #' data(francdat)
 #' keyVars <- paste0("Key",1:4)
+#' \donttest{
 #' f <- freqCalc(francdat, keyVars = keyVars, w = 8)
 #' f
 #' f$fk
@@ -54,6 +55,7 @@
 #' )
 #' sdc <- localSupp(sdc, keyVar = "urbrur", threshold = 0.045)
 #' print(sdc, type = "ls")
+#' }
 localSupp <- function(obj, threshold=0.15, keyVar) {
   localSuppX(obj=obj, threshold=threshold, keyVar=keyVar)
 }
