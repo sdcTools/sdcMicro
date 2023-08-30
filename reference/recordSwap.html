@@ -18,7 +18,7 @@ risk of each record as well the geographic topology."><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sdcMicro</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.6</span>
       </span>
     </div>
 
@@ -263,6 +263,7 @@ number of households swapped in total is in coherence to the swaprate.</p>
 <span class="r-in"><span><span class="va">seed</span> <span class="op">&lt;-</span> <span class="fl">2021</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="va">seed</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">nhid</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">sdcMicro</span><span class="fu">::</span><span class="fu"><a href="createDat.html">createDat</a></span><span class="op">(</span><span class="va">nhid</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># define paramters for swapping</span></span></span>
@@ -307,7 +308,7 @@ number of households swapped in total is in coherence to the swaprate.</p>
 <span class="r-in"><span><span class="co">#  seed = seed)</span></span></span>
 <span class="r-in"><span><span class="co">#</span></span></span>
 <span class="r-in"><span><span class="co">#dat_s[hid != hid_swapped, .(nuts1, nuts2, nuts3, lau2)]</span></span></span>
-<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
