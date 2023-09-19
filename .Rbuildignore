@@ -12,3 +12,5 @@ src/recordSwap/compile.sh
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+vignettes/precompile.R
+vignettes/recordSwapping.Rmd.orig
