@@ -18,7 +18,7 @@ pkgdown:
 ## Overview
 
 This is the vignette for the R-Package *recordSwapping*, which can be used to apply the record swapping algorithm to a micro data set.
-The implementation of the procedure was done purely in C++ and is based on the SAS code on targeted record swapping from ONS (https://cros-legacy.ec.europa.eu/content/2-record-swapping_en). 
+The implementation of the procedure was done purely in C++ and is based on the SAS code on targeted record swapping from ONS. 
 There are, however, substantial differences between the SAS and C++ Code. Some of these differences are the result of improving the run-time for the C++ implementation. In the next section, the differences between the 2 implementations are presented further.
 The R-Package is just as a front end to easily call the procedures and for testing purposes.
 
