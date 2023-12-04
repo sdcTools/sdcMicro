@@ -12,7 +12,7 @@
 #' @param qual final correction factor
 #' @param survey TRUE, if we have survey data and FALSE if we deal with a population.
 #' @return
-#' \itemize{
+#' \describe{
 #' \item{rk: }{ base individual risk }
 #' \item{method: }{method}
 #' \item{qual: }{final correction factor}

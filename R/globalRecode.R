@@ -10,7 +10,7 @@
 #' @param obj a numeric vector, a \code{data.frame} or an object of class
 #' \code{\link{sdcMicroObj-class}}
 #' @param ... see possible arguments below
-#' \itemize{
+#' \describe{
 #' \item{column: }{which keyVar should be changed. Character vector of length 1 specifying the variable name that
 #' should be recoded (required if \code{obj} is a \code{data.frame} or
 #' an object of class \code{\link{sdcMicroObj-class}}.}

@@ -11,7 +11,7 @@
 #' @name dRisk
 #' @param obj a \code{data.frame} or object of class \code{\link{sdcMicroObj-class}}
 #' @param ... possible arguments are:
-#' \itemize{
+#' \describe{
 #' \item {\code{xm}: }{perturbed data}
 #' \item {\code{k}: }{percentage of the standard deviation}}
 #' @return The disclosure risk or/and the modified \code{\link{sdcMicroObj-class}}

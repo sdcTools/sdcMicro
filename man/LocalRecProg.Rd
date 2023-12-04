@@ -36,7 +36,7 @@ results in complete matches of the data.}
 \item{missingValue}{The output value for a suppressed value.}
 
 \item{...}{see arguments below
-\itemize{
+\describe{
 \item{categorical}{Names of categorical variables}
 \item{numerical}{Names of numerical variables}}}
 }

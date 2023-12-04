@@ -58,7 +58,7 @@ median or weighted mean.}
 If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
 slots are filled, like manipNumVars, risk and utility. If \sQuote{obj} was
 of class \dQuote{data.frame}, an object of class \dQuote{micro} with following entities is returned:
-\itemize{
+\describe{
 \item{\code{x}: }{original data}
 \item{\code{mx}: }{the microaggregated dataset}
 \item{\code{method}: }{method}

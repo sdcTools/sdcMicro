@@ -30,7 +30,7 @@
 #' subsets by specifying k as a vector. If k has only one element, the same value
 #' of k will be used for all subgroups.
 #' @param ... see arguments below
-#' \itemize{
+#' \describe{
 #' \item{keyVars: }{names (or indices) of categorical key variables (for data-frame method)}
 #' \item{strataVars: }{name (or index) of variable which is used for stratification purposes, used
 #' in the data.frame method. This means that k-anonymity is provided within each category

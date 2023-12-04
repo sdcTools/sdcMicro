@@ -7,10 +7,10 @@
 #'
 #' Rank swapping sorts the values of one numeric variable by their numerical
 #' values (ranking).  The restricted range is determined by the rank of two
-#' swapped values, which cannot differ, by definition, by more than \eqn{P}{P}
+#' swapped values, which cannot differ, by definition, by more than P
 #' percent of the total number of observations. Only positive P, R0 and K0 are
 #' used and only one of it must be supplied. If none is supplied, sdcMicro sets
-#' parameter eqn{R0} to 0.95 internally.
+#' parameter r0 to 0.95 internally.
 #'
 #' @name rankSwap
 #' @docType methods

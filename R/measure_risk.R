@@ -45,7 +45,7 @@
 #' @param obj Object of class \code{\link{sdcMicroObj-class}}
 #' @param x Output of measure_risk() or ldiversity()
 #' @param ... see arguments below
-#' \itemize{
+#' \describe{
 #' \item{data: }{Input data, a data.frame.}
 #' \item{keyVars: }{names (or indices) of categorical key variables (for data-frame method)}
 #' \item{w: }{name of variable containing sample weights}
@@ -54,7 +54,7 @@
 #' \item{fast_hier: }{If TRUE a fast approximation is computed if household data are provided.}
 #' }
 #' @return A modified \code{\link{sdcMicroObj-class}} object or a list with the following elements:
-#' \itemize{
+#' \describe{
 #' \item{global_risk_ER: }{expected number of re-identification.}
 #' \item{global_risk: }{global risk (sum of indivdual risks).}
 #' \item{global_risk_pct: }{global risk in percent.}

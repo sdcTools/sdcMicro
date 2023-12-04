@@ -10,7 +10,7 @@ dRisk(obj, ...)
 \item{obj}{a \code{data.frame} or object of class \code{\link{sdcMicroObj-class}}}
 
 \item{...}{possible arguments are:
-\itemize{
+\describe{
 \item {\code{xm}: }{perturbed data}
 \item {\code{k}: }{percentage of the standard deviation}}}
 }

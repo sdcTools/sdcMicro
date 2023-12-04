@@ -19,7 +19,7 @@ ldiversity(obj, ldiv_index = NULL, l_recurs_c = 2, missing = -999, ...)
 \item{obj}{Object of class \code{\link{sdcMicroObj-class}}}
 
 \item{...}{see arguments below
-\itemize{
+\describe{
 \item{data: }{Input data, a data.frame.}
 \item{keyVars: }{names (or indices) of categorical key variables (for data-frame method)}
 \item{w: }{name of variable containing sample weights}
@@ -38,7 +38,7 @@ ldiversity(obj, ldiv_index = NULL, l_recurs_c = 2, missing = -999, ...)
 }
 \value{
 A modified \code{\link{sdcMicroObj-class}} object or a list with the following elements:
-\itemize{
+\describe{
 \item{global_risk_ER: }{expected number of re-identification.}
 \item{global_risk: }{global risk (sum of indivdual risks).}
 \item{global_risk_pct: }{global risk in percent.}

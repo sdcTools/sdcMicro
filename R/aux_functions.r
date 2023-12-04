@@ -410,7 +410,7 @@ setMethod(f="calcRisksX", signature=c("sdcMicroObj"), definition=function(obj, .
 #' the unchanged original variables
 #' @param randomizeRecords (logical) specifies, if the output records should be randomized. The following
 #' options are possible:
-#' \itemize{
+#' \describe{
 #' \item {'no'}{default, no randomization takes place}
 #' \item {'simple'}{records are just randomly swapped.}
 #' \item {'byHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset. If

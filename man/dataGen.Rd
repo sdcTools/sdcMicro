@@ -11,7 +11,7 @@ dataGen(obj, ...)
 \item{obj}{an \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}
 
 \item{...}{see possible arguments below
-\itemize{
+\describe{
 \item{n:}{ amount of observations for the generated data, defaults to 200}
 \item{use:}{ howto compute covariances in case of missing values, see also argument \code{use} in \code{\link{cov}}.
 The default choice is 'everything', other possible choices are 'all.obs', 'complete.obs', 'na.or.complete' or 'pairwise.complete.obs'.}}}

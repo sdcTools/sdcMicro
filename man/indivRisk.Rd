@@ -16,7 +16,7 @@ indivRisk(x, method = "approx", qual = 1, survey = TRUE)
 \item{survey}{TRUE, if we have survey data and FALSE if we deal with a population.}
 }
 \value{
-\itemize{
+\describe{
 \item{rk: }{ base individual risk }
 \item{method: }{method}
 \item{qual: }{final correction factor}

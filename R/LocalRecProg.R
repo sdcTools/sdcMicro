@@ -20,7 +20,7 @@
 #' @param lowMemory Slower algorithm with less memory consumption
 #' @param missingValue The output value for a suppressed value.
 #' @param ... see arguments below
-#' \itemize{
+#' \describe{
 #' \item{categorical}{Names of categorical variables}
 #' \item{numerical}{Names of numerical variables}}
 #' @return dataframe with original variables and the supressed variables

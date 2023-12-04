@@ -10,11 +10,11 @@ subsetMicrodata(obj, type, n)
 \item{obj}{an object of class \code{\link{data.frame}} containing micro data}
 
 \item{type}{algorithm used to sample from original microdata. Currently supported choices are
-\itemize{
-\item \code{n_perc}{ the restricted microdata will be a \code{n-percent} sample of the original microdata.}
-\item \code{first_n}{ only the first \code{n} observations will be used.}
-\item \code{every_n}{ the restricted microdata set consists of every \code{n-th} record.}
-\item \code{size_n}{ a total of \code{n} observations will be randomly drawn.}
+\describe{
+\item{\code{n_perc}}{ the restricted microdata will be a \code{n-percent} sample of the original microdata.}
+\item{\code{first_n}}{ only the first \code{n} observations will be used.}
+\item{\code{every_n}}{ the restricted microdata set consists of every \code{n-th} record.}
+\item{\code{size_n}}{ a total of \code{n} observations will be randomly drawn.}
 }}
 
 \item{n}{numeric vector of length 1 specifying the specific parameter with respect to argument \code{type}.}
