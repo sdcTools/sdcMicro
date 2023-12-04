@@ -411,11 +411,11 @@ setMethod(f="calcRisksX", signature=c("sdcMicroObj"), definition=function(obj, .
 #' @param randomizeRecords (logical) specifies, if the output records should be randomized. The following
 #' options are possible:
 #' \describe{
-#' \item {'no'}{default, no randomization takes place}
-#' \item {'simple'}{records are just randomly swapped.}
-#' \item {'byHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset. If
+#' \item{'no'}{default, no randomization takes place}
+#' \item{'simple'}{records are just randomly swapped.}
+#' \item{'byHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset. If
 #' slot 'hhId' is \code{NULL}, the records or the dataset are randomly changed.}
-#' \item {'withinHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset and
+#' \item{'withinHH'}{if slot 'hhId' is not \code{NULL}, the clusters defined by this variable are randomized across the dataset and
 #' additionally, the order of records within the clusters are also randomly changed. If slot 'hhId' is \code{NULL}, the records or the dataset are
 #' randomly changed.}}
 #' @return a \code{data.frame} containing the anonymized data set
