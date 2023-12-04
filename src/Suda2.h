@@ -8,8 +8,8 @@ typedef int TItemIndex;
 //*============================ DEBUG TRUE/FALSE =========================== *
 BOOL g_Debug = FALSE;
 //*============================ DEBUG TRUE/FALSE =========================== *
-  
-  
+
+
 
 class CEntry : public CChainedList
 {
@@ -477,7 +477,7 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
             CSudaMsu *pNewMsu = CSudaMsu::New(2, g_pEntryCache[0]);
             pNewMsu->m_Var[0].FromItem = ItemI.m_FromItem;
             pNewMsu->m_Var[1].FromItem = ItemJ.m_FromItem;
-            
+
             MsuList.Add(pNewMsu);
 
             if (CorrelationList.m_NbElement)
@@ -526,7 +526,7 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
             g_pNbMsuPerVariable[ItemI.m_VarNum] += m;
             g_pNbMsuPerVariable[ItemJ.m_VarNum] += n;
 
-            
+
 
             if (Entry.m_pContribution){
               Entry.m_pContribution[ItemI.m_VarNum] += m * g_ab[1];
@@ -769,7 +769,7 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
               int VarNum = (k == Msu.m_NbVar) ? ItemI.m_VarNum
                         : ItemList[Msu.m_Var[k].FromItem].m_VarNum;
               if(g_Debug){
-                Rprintf("Add_ Number of NbMsu Per Variable Var0%d:%f \n",VarNum+1,m / g_pNbCorrelated[k]);
+                Rcout << "Add_ Number of NbMsu Per Variable Var" << VarNum+1, << ": ", m / g_pNbCorrelated[k]);
               }
               g_pNbMsuPerVariable[VarNum] += m / g_pNbCorrelated[k];
 
@@ -943,7 +943,7 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
 
   pItemList->CreateIndex();
   pCorItemList ->CreateIndex();
-  
+
   g_pEntryCache = new int[g_BiggestSize];
   g_pEntryCacheOut = new int[g_BiggestSize];
 
@@ -953,11 +953,11 @@ CList<CItem> *Suda2(CEntry *pAllEntry, int NbEntry)
   if (g_Debug){
     Rprintf("Suda2 ==> NbCall = %d\n", g_NbCall);
   }
-    
+
 
   CleanDeleteT(g_pEntryCache);
   CleanDeleteT(g_pEntryCacheOut);
-  
+
   return pItemList;
 }
 
@@ -1198,7 +1198,7 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
   CList<CItem> *pItemList = Suda2(g_pEntry, g_NbEntry);
   if(g_Debug){
     Rprintf("=== NbMsu : %d\n", g_NbMsu);
-    
+
     ForLoop (i, g_NbVarALEX)
     {
       Rprintf("%6d Msu%02d; ", g_NbMsuN[i], i+1);
@@ -1218,16 +1218,16 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
   }
   if(g_Debug){
     Rprintf("=== NbMsu Per Variable :\n");
-    
+
     ForLoop (i, g_NbVarALEX){
       Rprintf("Var%02d: %6d; ", g_pNbCorrelated[i]+1, g_pNbMsuPerVariable[g_pNbCorrelated[i]]);
-      
+
       if (!((i+1) % 5) || i == g_NbVarALEX - 1)
         Rprintf("\n");
     }
     Rprintf("=====================\n");
   }
-  
+
 
 
     //============================ Dis risk
@@ -1250,7 +1250,7 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
     double SudaScore = 0.0;
     ForLoop (j, g_MaxK){
       if(g_Debug){
-        Rprintf("Obs %d - Size of MSU %d - Number of Entries %d, contribution to score: %f\n",i+1,j+1,Entry.m_pNbMsu[j], g_ab[j]);  
+        Rprintf("Obs %d - Size of MSU %d - Number of Entries %d, contribution to score: %f\n",i+1,j+1,Entry.m_pNbMsu[j], g_ab[j]);
       }
       SudaScore += Entry.m_pNbMsu[j] * g_ab[j];
     }
