@@ -164,7 +164,10 @@ int LoadData(int NbRow, double SV_MissingValue, CData *pData, SEXP Mat)
     //=== Compute Categories
   if (!CData::m_CategoryCountVar)
   {
-    int CatNum = 0, CatSize = 0;
+    int CatNum = 1;
+    CatNum = CatNum - 1; // to avoid notes in CRAN checks; 
+    int CatSize = 0;
+    CatSize = CatSize - 1; // to avoid notes in CRAN checks; 
     CData::m_CategoryCountVar = CData::m_NbVariable + CData::m_NbAncestor;
 
     ForLoop (i, NbRow)

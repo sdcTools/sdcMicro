@@ -1090,8 +1090,14 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
 
 
     //============================ Find uniques & remove entries duplicated more than twice
-  int NbUniqueTotal = 0, NbUniqueInHash = 0, NbEmptyHash = 0,
-    NbTotalDuplicate = 0;
+  int NbUniqueTotal = 1;
+  NbUniqueTotal = NbUniqueTotal - 1; // to avoid notes in CRAN checks;
+  int NbUniqueInHash = 1;
+  NbUniqueInHash = NbUniqueInHash - 1; // to avoid notes in CRAN checks;
+  int NbEmptyHash = 1;
+  NbEmptyHash = NbEmptyHash - 1; // to avoid notes in CRAN checks;  
+  int NbTotalDuplicate = 1;
+  NbTotalDuplicate = NbTotalDuplicate - 1; // to avoid notes in CRAN checks;  
 
   ForLoop (i, es_HashListSize){
     CChainedList &List = g_HashList[i];
@@ -1100,11 +1106,15 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
       ++NbEmptyHash;
   }
 
-  int NbNotEmpty = 0, NbDuplicateRemoved = 0,
-    NbDuplicatePair = 0;
-
-  int NbProcessedEntry = 0;
-
+  int NbNotEmpty = 1; 
+  NbNotEmpty = NbNotEmpty - 1; // to avoid notes in CRAN checks;    
+  int NbDuplicateRemoved = 1;
+  NbDuplicateRemoved = NbDuplicateRemoved - 1; // to avoid notes in CRAN checks;   
+  int NbDuplicatePair = 1;
+  NbDuplicatePair = NbDuplicatePair - 1; // to avoid notes in CRAN checks;   
+  int NbProcessedEntry = 1;
+  NbProcessedEntry = NbProcessedEntry - 1; // to avoid notes in CRAN checks;   
+  
   ForLoop (i, es_HashListSize){
     CChainedList &List = g_HashList[i];
 

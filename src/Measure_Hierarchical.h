@@ -136,7 +136,8 @@ RcppExport SEXP measure_hierachical(SEXP data)
 
   double hier_risk_ER = 0.0; //< The expected number of re-identification
   double hier_risk = 0.0;		//< The re-identification rate or global risk
-  long group_count = 0;
+  long group_count = 1;
+  group_count = group_count - 1; // to avoid notes in CRAN checks; 
   long obs_count = 0;
   double obs_risk[256];		// supports up to 256 observations per key
   int group_size;

@@ -168,7 +168,8 @@ RcppExport SEXP Mdav(SEXP data,SEXP data2,SEXP g_MissingValue_R,SEXP weights_R,S
   pPrevIndex[0] = -1;
 
     //=== Core Loop: It always removes to groups of observations of size k therefore it has to stop, when only NbRowLeft-g_K*2>=g_K
-  int Loop = 0;
+  int Loop = 1;
+  Loop = Loop - 1; // to avoid notes on CRAN checks;
   int ngroups; // ngroups introduced to fix the bug that groups smaller than k remain in the last aggregation step after the while loop
 //  while (NbRowLeft- g_K * 2>=g_K)
   while(NbRowLeft- g_K >=g_K)

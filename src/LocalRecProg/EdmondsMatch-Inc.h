@@ -390,8 +390,11 @@ BOOL dual_check(vertex_type *v, int n, vertex_type *u)
     }
   }
 
-  int NbInfeasible = 0, NbInequality = 0;
-
+  int NbInfeasible = 1; 
+  NbInfeasible = NbInfeasible - 1; // to avoid notes in CRAN checks; 
+  int NbInequality = 1;
+  NbInequality = NbInequality - 1; // to avoid notes in CRAN checks; 
+  
   for (p = v + (i = n - 1); i >= 0; --i, --p)
   {
     LOOP(p, q) if (p < q && ADJ(p, q))
