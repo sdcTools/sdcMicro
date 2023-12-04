@@ -97,18 +97,25 @@ of k will be used for all subgroups.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>see arguments below</p><ul><li><p>keyVars: names (or indices) of categorical key variables (for data-frame method)</p></li>
-<li><p>strataVars: name (or index) of variable which is used for stratification purposes, used
+<dd><p>see arguments below</p><dl><dt>keyVars: </dt>
+<dd><p>names (or indices) of categorical key variables (for data-frame method)</p></dd>
+
+<dt>strataVars: </dt>
+<dd><p>name (or index) of variable which is used for stratification purposes, used
 in the data.frame method. This means that k-anonymity is provided within each category
-of the specified variable.</p></li>
-<li><p>alpha: numeric value between 0 and 1 specifying how much keys that
+of the specified variable.</p></dd>
+
+<dt>alpha: </dt>
+<dd><p>numeric value between 0 and 1 specifying how much keys that
 contain missing values (<code>NAs</code>) should contribute to the calculation
 of <code>fk</code> and <code>Fk</code>. For the default value of <code>1</code>, nothing changes with
 respect to the implementation in prior versions. Each <em>wildcard-match</em> would
 be counted while for <code>alpha=0</code> keys with missing values would be basically ignored.
 Used in the data-frame method only because in the method for <code><a href="sdcMicroObj-class.html">sdcMicroObj-class</a></code>-objects,
-this value is extracted from slot <code>options</code>.</p></li>
-</ul></dd>
+this value is extracted from slot <code>options</code>.</p></dd>
+
+
+</dl></dd>
 
 </dl></div>
     <div id="value">

@@ -107,14 +107,15 @@ the unchanged original variables</p></dd>
 
 <dt>randomizeRecords</dt>
 <dd><p>(logical) specifies, if the output records should be randomized. The following
-options are possible:</p><ul><li><p>'no'default, no randomization takes place</p></li>
-<li><p>'simple'records are just randomly swapped.</p></li>
-<li><p>'byHH'if slot 'hhId' is not <code>NULL</code>, the clusters defined by this variable are randomized across the dataset. If
-slot 'hhId' is <code>NULL</code>, the records or the dataset are randomly changed.</p></li>
-<li><p>'withinHH'if slot 'hhId' is not <code>NULL</code>, the clusters defined by this variable are randomized across the dataset and
+options are possible:</p><dl>
+ 'no'default, no randomization takes place
+\item 'simple'records are just randomly swapped.
+\item 'byHH'if slot 'hhId' is not <code>NULL</code>, the clusters defined by this variable are randomized across the dataset. If
+slot 'hhId' is <code>NULL</code>, the records or the dataset are randomly changed.
+\item 'withinHH'if slot 'hhId' is not <code>NULL</code>, the clusters defined by this variable are randomized across the dataset and
 additionally, the order of records within the clusters are also randomly changed. If slot 'hhId' is <code>NULL</code>, the records or the dataset are
-randomly changed.</p></li>
-</ul></dd>
+randomly changed.
+</dl></dd>
 
 </dl></div>
     <div id="value">

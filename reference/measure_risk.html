@@ -89,13 +89,26 @@ global risk. It also computes a risk threshold based on a global risk value.</p>
 
 
 <dt>...</dt>
-<dd><p>see arguments below</p><ul><li><p>data: Input data, a data.frame.</p></li>
-<li><p>keyVars: names (or indices) of categorical key variables (for data-frame method)</p></li>
-<li><p>w: name of variable containing sample weights</p></li>
-<li><p>hid: name of the clustering variable, e.g. the household ID</p></li>
-<li><p>max_global_risk: Maximal global risk for threshold computation</p></li>
-<li><p>fast_hier: If TRUE a fast approximation is computed if household data are provided.</p></li>
-</ul></dd>
+<dd><p>see arguments below</p><dl><dt>data: </dt>
+<dd><p>Input data, a data.frame.</p></dd>
+
+<dt>keyVars: </dt>
+<dd><p>names (or indices) of categorical key variables (for data-frame method)</p></dd>
+
+<dt>w: </dt>
+<dd><p>name of variable containing sample weights</p></dd>
+
+<dt>hid: </dt>
+<dd><p>name of the clustering variable, e.g. the household ID</p></dd>
+
+<dt>max_global_risk: </dt>
+<dd><p>Maximal global risk for threshold computation</p></dd>
+
+<dt>fast_hier: </dt>
+<dd><p>If TRUE a fast approximation is computed if household data are provided.</p></dd>
+
+
+</dl></dd>
 
 
 <dt>ldiv_index</dt>
@@ -118,18 +131,38 @@ global risk. It also computes a risk threshold based on a global risk value.</p>
     <h2>Value</h2>
     
 
-<p>A modified <code><a href="sdcMicroObj-class.html">sdcMicroObj-class</a></code> object or a list with the following elements:</p><ul><li><p>global_risk_ER: expected number of re-identification.</p></li>
-<li><p>global_risk: global risk (sum of indivdual risks).</p></li>
-<li><p>global_risk_pct: global risk in percent.</p></li>
-<li><p>Res: matrix with the risk, frequency in the sample and grossed-up frequency in the population (and the hierachical risk) for each observation.</p></li>
-<li><p>global_threshold: for a given max_global_risk the threshold for the risk of observations.</p></li>
-<li><p>max_global_risk: the input max_global_risk of the function.</p></li>
-<li><p>hier_risk_ER: expected number of re-identification with household structure.</p></li>
-<li><p>hier_risk: global risk with household structure (sum of indivdual risks).</p></li>
-<li><p>hier_risk_pct: global risk with household structure in percent.</p></li>
-<li><p>ldiverstiy: Matrix with Distinct_Ldiversity,
-Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.</p></li>
-</ul><p>Prints risk-information into the console</p>
+<p>A modified <code><a href="sdcMicroObj-class.html">sdcMicroObj-class</a></code> object or a list with the following elements:</p><dl><dt>global_risk_ER: </dt>
+<dd><p>expected number of re-identification.</p></dd>
+
+<dt>global_risk: </dt>
+<dd><p>global risk (sum of indivdual risks).</p></dd>
+
+<dt>global_risk_pct: </dt>
+<dd><p>global risk in percent.</p></dd>
+
+<dt>Res: </dt>
+<dd><p>matrix with the risk, frequency in the sample and grossed-up frequency in the population (and the hierachical risk) for each observation.</p></dd>
+
+<dt>global_threshold: </dt>
+<dd><p>for a given max_global_risk the threshold for the risk of observations.</p></dd>
+
+<dt>max_global_risk: </dt>
+<dd><p>the input max_global_risk of the function.</p></dd>
+
+<dt>hier_risk_ER: </dt>
+<dd><p>expected number of re-identification with household structure.</p></dd>
+
+<dt>hier_risk: </dt>
+<dd><p>global risk with household structure (sum of indivdual risks).</p></dd>
+
+<dt>hier_risk_pct: </dt>
+<dd><p>global risk with household structure in percent.</p></dd>
+
+<dt>ldiverstiy: </dt>
+<dd><p>Matrix with Distinct_Ldiversity,
+Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.</p></dd>
+
+</dl><p>Prints risk-information into the console</p>
 
 
 <p>Information on L-Diversity Measures in the console</p>

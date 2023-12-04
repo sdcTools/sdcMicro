@@ -74,21 +74,28 @@
 
 
 <dt>...</dt>
-<dd><p>see possible arguments below</p><ul><li><p>column: which keyVar should be changed. Character vector of length 1 specifying the variable name that
+<dd><p>see possible arguments below</p><dl><dt>column: </dt>
+<dd><p>which keyVar should be changed. Character vector of length 1 specifying the variable name that
 should be recoded (required if <code>obj</code> is a <code>data.frame</code> or
-an object of class <code><a href="sdcMicroObj-class.html">sdcMicroObj-class</a></code>.</p></li>
-<li><p>breaks: either a numeric vector of cut points or number giving the
-number of intervals which x is to be cut into.</p></li>
-<li><p>labels: labels for the levels of the resulting category. By default,
+an object of class <code><a href="sdcMicroObj-class.html">sdcMicroObj-class</a></code>.</p></dd>
+
+<dt>breaks: </dt>
+<dd><p>either a numeric vector of cut points or number giving the
+number of intervals which x is to be cut into.</p></dd>
+
+<dt>labels: </dt>
+<dd><p>labels for the levels of the resulting category. By default,
 labels are constructed using "(a,b]" interval notation.  If labels = FALSE,
-simple integer codes are returned instead of a factor.</p></li>
-<li><p>method: The following arguments are supported:
-</p><ul><li><p>“equidistant:” for equal sized intervalls</p></li>
+simple integer codes are returned instead of a factor.</p></dd>
+
+<dt>method: </dt>
+<dd><p>The following arguments are supported:</p><ul><li><p>“equidistant:” for equal sized intervalls</p></li>
 <li><p>“logEqui:” for equal sized intervalls for log-transformed data</p></li>
 <li><p>“equalAmount:” for intervalls with approxiomately the same amount
 of observations</p></li>
-</ul></li>
 </ul></dd>
+
+</dl></dd>
 
 </dl></div>
     <div id="value">

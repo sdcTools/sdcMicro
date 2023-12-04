@@ -73,10 +73,14 @@
 
 
 <dt>...</dt>
-<dd><p>see possible arguments below</p><ul><li><p>n: amount of observations for the generated data, defaults to 200</p></li>
-<li><p>use: howto compute covariances in case of missing values, see also argument <code>use</code> in <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></code>.
-The default choice is 'everything', other possible choices are 'all.obs', 'complete.obs', 'na.or.complete' or 'pairwise.complete.obs'.</p></li>
-</ul></dd>
+<dd><p>see possible arguments below</p><dl><dt>n:</dt>
+<dd><p>amount of observations for the generated data, defaults to 200</p></dd>
+
+<dt>use:</dt>
+<dd><p>howto compute covariances in case of missing values, see also argument <code>use</code> in <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></code>.
+The default choice is 'everything', other possible choices are 'all.obs', 'complete.obs', 'na.or.complete' or 'pairwise.complete.obs'.</p></dd>
+
+</dl></dd>
 
 </dl></div>
     <div id="value">
@@ -122,9 +126,9 @@ International Workshop on Privacy in Statistical Databases PSD 2004: Privacy in 
 <span class="r-out co"><span class="r-pr">#&gt;</span> wt     44.19266  -0.3727207  0.9573790</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov</a></span><span class="op">(</span><span class="fu">dataGen</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              hp        drat         wt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> hp   4310.48194 -17.4930005 47.0563739</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> drat  -17.49300   0.2531432 -0.3462806</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wt     47.05637  -0.3462806  1.0577869</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> hp   4805.72936 -17.2462509 44.1062080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> drat  -17.24625   0.3119886 -0.4031333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> wt     44.10621  -0.4031333  0.9965196</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="dataGen-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="fu">dataGen</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
