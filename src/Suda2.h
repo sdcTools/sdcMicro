@@ -769,7 +769,7 @@ void FindMsu(CList<CSudaMsu> &MsuList, CList<CCorrelation> &CorrelationList, CLi
               int VarNum = (k == Msu.m_NbVar) ? ItemI.m_VarNum
                         : ItemList[Msu.m_Var[k].FromItem].m_VarNum;
               if(g_Debug){
-                Rcout << "Add_ Number of NbMsu Per Variable Var" << VarNum+1, << ": ", m / g_pNbCorrelated[k]);
+                Rcpp::Rcout << "Add_ Number of NbMsu Per Variable Var" << VarNum+1 << ": " << m / g_pNbCorrelated[k];
               }
               g_pNbMsuPerVariable[VarNum] += m / g_pNbCorrelated[k];
 
@@ -1095,9 +1095,9 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
   int NbUniqueInHash = 1;
   NbUniqueInHash = NbUniqueInHash - 1; // to avoid notes in CRAN checks;
   int NbEmptyHash = 1;
-  NbEmptyHash = NbEmptyHash - 1; // to avoid notes in CRAN checks;  
+  NbEmptyHash = NbEmptyHash - 1; // to avoid notes in CRAN checks;
   int NbTotalDuplicate = 1;
-  NbTotalDuplicate = NbTotalDuplicate - 1; // to avoid notes in CRAN checks;  
+  NbTotalDuplicate = NbTotalDuplicate - 1; // to avoid notes in CRAN checks;
 
   ForLoop (i, es_HashListSize){
     CChainedList &List = g_HashList[i];
@@ -1106,15 +1106,15 @@ RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP Di
       ++NbEmptyHash;
   }
 
-  int NbNotEmpty = 1; 
-  NbNotEmpty = NbNotEmpty - 1; // to avoid notes in CRAN checks;    
+  int NbNotEmpty = 1;
+  NbNotEmpty = NbNotEmpty - 1; // to avoid notes in CRAN checks;
   int NbDuplicateRemoved = 1;
-  NbDuplicateRemoved = NbDuplicateRemoved - 1; // to avoid notes in CRAN checks;   
+  NbDuplicateRemoved = NbDuplicateRemoved - 1; // to avoid notes in CRAN checks;
   int NbDuplicatePair = 1;
-  NbDuplicatePair = NbDuplicatePair - 1; // to avoid notes in CRAN checks;   
+  NbDuplicatePair = NbDuplicatePair - 1; // to avoid notes in CRAN checks;
   int NbProcessedEntry = 1;
-  NbProcessedEntry = NbProcessedEntry - 1; // to avoid notes in CRAN checks;   
-  
+  NbProcessedEntry = NbProcessedEntry - 1; // to avoid notes in CRAN checks;
+
   ForLoop (i, es_HashListSize){
     CChainedList &List = g_HashList[i];
 
