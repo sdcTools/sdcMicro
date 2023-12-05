@@ -39,8 +39,8 @@
 #' @docType methods
 #' @param obj an \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}
 #' @param ... see possible arguments below
-#' \itemize{
-#' \item{}{xm masked data}
+#' \describe{
+#' \item{xm}{masked data}
 #' \item{k}{weight for adjusting the influence of the robust Mahalanobis
 #' distances, i.e. to increase or decrease each of the disclosure risk intervals.}
 #' \item{k2}{parameter for method RMDID2 to choose a small interval around each
