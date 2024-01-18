@@ -121,6 +121,9 @@ Parameters \code{measure} are ignored for methods \code{mdav} and \code{rmd}.
 }
 \examples{
 data(testdata)
+# dontrun since Examples with CPU time larger 2.5 times elapsed time, because
+# of using data.table and multicore computation.
+\dontrun{
 m <- microaggregation(
   obj = testdata[1:100, c("expend", "income", "savings")],
   method = "mdav",
@@ -148,6 +151,7 @@ sdc <- microaggregation(
   obj = sdc,
   variables = "savings"
 )
+}
 }
 \references{
 Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New Disclosure
