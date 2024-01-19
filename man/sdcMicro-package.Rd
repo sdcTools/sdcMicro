@@ -4,9 +4,10 @@
 \name{sdcMicro-package}
 \alias{sdcMicro-package}
 \alias{sdcMicro}
-\title{Statistical Disclosure Control (SDC) for the generation of protected
-microdata for researchers and for public use.}
+\title{sdcMicro: Statistical Disclosure Control Methods for Anonymization of Data and Risk Estimation}
 \description{
+Data from statistical agencies and other institutions are mostly confidential. This package (see also Templ, Kowarik and Meindl (2017) \doi{10.18637/jss.v067.i04}) can be used for the generation of anonymized (micro)data, i.e. for the creation of public- and scientific-use files. The theoretical basis for the methods implemented can be found in Templ (2017) \doi{10.1007/978-3-319-50272-4}. Various risk estimation and anonymisation methods are included. Note that the package includes a graphical user interface (Meindl and Templ, 2019 \doi{10.3390/a12090191}) that allows to use various methods of this package.
+
 This package includes all methods of the popular software mu-Argus plus
 several new methods. In comparison with mu-Argus the advantages of this
 package are that the results are fully reproducible even with the included
@@ -299,9 +300,33 @@ Imputation: Robust Statistics Applied to Official Statistics},
 Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 264 pages.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/sdcTools/sdcMicro}
+}
+
+}
 \author{
+\strong{Maintainer}: Matthias Templ \email{matthias.templ@gmail.com} (\href{https://orcid.org/0000-0002-8638-5276}{ORCID})
+
+Authors:
+\itemize{
+  \item Bernhard Meindl \email{Bernhard.Meindl@statistik.gv.at}
+  \item Alexander Kowarik \email{Alexander.Kowarik@statistik.gv.at} (\href{https://orcid.org/0000-0001-8598-4130}{ORCID})
+  \item Johannes Gussenbauer \email{johannes.gussenbauer@statistik.gv.at}
+}
+
+Other contributors:
+\itemize{
+  \item Organisation For Economic Co-Operation And Development (Initial published c(++) code (under LGPL) code for rank swapping, mdav-microaggregation, suda2 and other (hierarchical) risk measures) [copyright holder]
+  \item Statistics Netherlands (microAggregation cpp code (under EUPL v1.1)) [copyright holder]
+  \item Pascal Heus (original measure threshold cpp code (under LGPL)) [copyright holder]
+}
+
+
 Matthias Templ, Alexander Kowarik, Bernhard Meindl
 
 Maintainer: Matthias Templ <templ@statistik.tuwien.ac.at>
 }
-\keyword{package}
+\keyword{internal}

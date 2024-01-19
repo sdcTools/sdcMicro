@@ -1,3 +1,5 @@
+#' @keywords internal
+"_PACKAGE"
 #' Statistical Disclosure Control (SDC) for the generation of protected
 #' microdata for researchers and for public use.
 #'
@@ -29,7 +31,6 @@
 #'
 #' @name sdcMicro-package
 #' @aliases sdcMicro-package sdcMicro
-#' @docType package
 #' @author Matthias Templ, Alexander Kowarik, Bernhard Meindl
 #'
 #' Maintainer: Matthias Templ <templ@@statistik.tuwien.ac.at>
@@ -61,7 +62,6 @@
 #' Imputation: Robust Statistics Applied to Official Statistics},
 #' Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 #' 264 pages.
-#' @keywords package
 #' @examples
 #' \donttest{
 #' ## example from Capobianchi, Polettini and Lucarelli:
