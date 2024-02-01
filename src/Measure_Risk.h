@@ -399,6 +399,7 @@ double compute_risk(int freq, double weight)
 /* MAIN */
 /*======*/
 // int argc, char *argv[]
+// [[Rcpp::export]]
 RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, SEXP l_recurs_c_R, SEXP ldiv_index_R, SEXP missing_value_R)
 {
 	int i;//, j, k;

@@ -10,6 +10,75 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// Mdav
+RcppExport SEXP Mdav(SEXP data, SEXP data2, SEXP g_MissingValue_R, SEXP weights_R, SEXP g_K_R);
+RcppExport SEXP _sdcMicro_Mdav(SEXP dataSEXP, SEXP data2SEXP, SEXP g_MissingValue_RSEXP, SEXP weights_RSEXP, SEXP g_K_RSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type data2(data2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_MissingValue_R(g_MissingValue_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type weights_R(weights_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_K_R(g_K_RSEXP);
+    rcpp_result_gen = Rcpp::wrap(Mdav(data, data2, g_MissingValue_R, weights_R, g_K_R));
+    return rcpp_result_gen;
+END_RCPP
+}
+// measure_hierachical
+RcppExport SEXP measure_hierachical(SEXP data);
+RcppExport SEXP _sdcMicro_measure_hierachical(SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    rcpp_result_gen = Rcpp::wrap(measure_hierachical(data));
+    return rcpp_result_gen;
+END_RCPP
+}
+// measure_risk_cpp
+RcppExport SEXP measure_risk_cpp(SEXP data, SEXP weighted_R, SEXP n_key_vars_R, SEXP l_recurs_c_R, SEXP ldiv_index_R, SEXP missing_value_R);
+RcppExport SEXP _sdcMicro_measure_risk_cpp(SEXP dataSEXP, SEXP weighted_RSEXP, SEXP n_key_vars_RSEXP, SEXP l_recurs_c_RSEXP, SEXP ldiv_index_RSEXP, SEXP missing_value_RSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type weighted_R(weighted_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type n_key_vars_R(n_key_vars_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type l_recurs_c_R(l_recurs_c_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ldiv_index_R(ldiv_index_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type missing_value_R(missing_value_RSEXP);
+    rcpp_result_gen = Rcpp::wrap(measure_risk_cpp(data, weighted_R, n_key_vars_R, l_recurs_c_R, ldiv_index_R, missing_value_R));
+    return rcpp_result_gen;
+END_RCPP
+}
+// measure_threshold
+RcppExport SEXP measure_threshold(SEXP data, SEXP global_risk_R);
+RcppExport SEXP _sdcMicro_measure_threshold(SEXP dataSEXP, SEXP global_risk_RSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type global_risk_R(global_risk_RSEXP);
+    rcpp_result_gen = Rcpp::wrap(measure_threshold(data, global_risk_R));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Suda2
+RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP DisFraction_R, SEXP elliot_scores);
+RcppExport SEXP _sdcMicro_Suda2(SEXP dataSEXP, SEXP g_MissingValueALEX_RSEXP, SEXP MaxK_RSEXP, SEXP DisFraction_RSEXP, SEXP elliot_scoresSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_MissingValueALEX_R(g_MissingValueALEX_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type MaxK_R(MaxK_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type DisFraction_R(DisFraction_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type elliot_scores(elliot_scoresSEXP);
+    rcpp_result_gen = Rcpp::wrap(Suda2(data, g_MissingValueALEX_R, MaxK_R, DisFraction_R, elliot_scores));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_calcSuppInds
 List cpp_calcSuppInds(NumericMatrix inp, NumericVector checkVals, List params);
 RcppExport SEXP _sdcMicro_cpp_calcSuppInds(SEXP inpSEXP, SEXP checkValsSEXP, SEXP paramsSEXP) {
@@ -228,14 +297,13 @@ END_RCPP
 }
 
 RcppExport SEXP LocalRecProg_cpp(void *, void *, void *, void *, void *, void *, void *, void *, void *);
-RcppExport SEXP Mdav(void *, void *, void *, void *, void *);
-RcppExport SEXP measure_hierachical(void *);
-RcppExport SEXP measure_risk_cpp(void *, void *, void *, void *, void *, void *);
-RcppExport SEXP measure_threshold(void *, void *);
-RcppExport SEXP RankSwap(void *, void *, void *, void *, void *, void *, void *, void *, void *);
-RcppExport SEXP Suda2(void *, void *, void *, void *, void *);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_sdcMicro_Mdav", (DL_FUNC) &_sdcMicro_Mdav, 5},
+    {"_sdcMicro_measure_hierachical", (DL_FUNC) &_sdcMicro_measure_hierachical, 1},
+    {"_sdcMicro_measure_risk_cpp", (DL_FUNC) &_sdcMicro_measure_risk_cpp, 6},
+    {"_sdcMicro_measure_threshold", (DL_FUNC) &_sdcMicro_measure_threshold, 2},
+    {"_sdcMicro_Suda2", (DL_FUNC) &_sdcMicro_Suda2, 5},
     {"_sdcMicro_cpp_calcSuppInds", (DL_FUNC) &_sdcMicro_cpp_calcSuppInds, 3},
     {"_sdcMicro_microaggregation_argus_cpp", (DL_FUNC) &_sdcMicro_microaggregation_argus_cpp, 3},
     {"_sdcMicro_rankSwap_argus_cpp", (DL_FUNC) &_sdcMicro_rankSwap_argus_cpp, 2},
@@ -251,13 +319,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sdcMicro_testLoop_cpp", (DL_FUNC) &_sdcMicro_testLoop_cpp, 2},
     {"_sdcMicro_test_prioqueue", (DL_FUNC) &_sdcMicro_test_prioqueue, 5},
     {"_sdcMicro_test_comparator", (DL_FUNC) &_sdcMicro_test_comparator, 5},
-    {"LocalRecProg_cpp",    (DL_FUNC) &LocalRecProg_cpp,    9},
-    {"Mdav",                (DL_FUNC) &Mdav,                5},
-    {"measure_hierachical", (DL_FUNC) &measure_hierachical, 1},
-    {"measure_risk_cpp",    (DL_FUNC) &measure_risk_cpp,    6},
-    {"measure_threshold",   (DL_FUNC) &measure_threshold,   2},
-    {"RankSwap",            (DL_FUNC) &RankSwap,            9},
-    {"Suda2",               (DL_FUNC) &Suda2,               5},
+    {"LocalRecProg_cpp", (DL_FUNC) &LocalRecProg_cpp, 9},
     {NULL, NULL, 0}
 };
 

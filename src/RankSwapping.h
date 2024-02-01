@@ -14,6 +14,7 @@
  *
  *  The full text of the license is available at http://www.gnu.org/copyleft/lesser.html
  */
+// [Rcpp::export]
 RcppExport SEXP RankSwap(SEXP data,SEXP data2,SEXP g_MissingValue_R,
 SEXP g_TopRatio_R,SEXP g_BottomRatio_R,SEXP g_K0_R,SEXP g_R0_R,SEXP g_P_R,SEXP seed_R) {
   BEGIN_RCPP

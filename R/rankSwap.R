@@ -188,7 +188,7 @@ setMethod(
   if (is.null(P)) {
     P <- -1
   }
-  dat <- .Call("RankSwap",
+  dat <- RankSwap(
     dataX,
     data2,
     miss_val,

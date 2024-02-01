@@ -977,6 +977,7 @@ void ClearGlobalVariables(void){
 //* ======================================================================== *
 //*                              Main
 //* ======================================================================== *
+// [[Rcpp::export]]
 RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP DisFraction_R, SEXP elliot_scores)
 {
   int i, j, k, l;

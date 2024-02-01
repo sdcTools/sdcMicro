@@ -22,7 +22,7 @@ mdav <- function(data, variables = NULL, weights = NULL, K = 10, missing = -999)
   TF <- is.na(dataX)
   dataX[TF] <- missing
   data2[, ] <- NA
-  dat <- .Call("Mdav", dataX, data2, missing, weights, K)$Res
+  dat <- Mdav(dataX, data2, missing, weights, K)$Res
   try(dat[TF] <- NA)
   data[, variables] <- dat
   invisible(data)

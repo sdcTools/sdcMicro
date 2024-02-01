@@ -114,6 +114,7 @@ int is_same_key(double key1[], double key2[], int key_size)
 /*=====================*/
 /* Main Stata function */
 /*=====================*/
+// [[Rcpp::export]]
 RcppExport SEXP measure_hierachical(SEXP data)
 {
   BEGIN_RCPP
