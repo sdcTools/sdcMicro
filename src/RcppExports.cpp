@@ -10,6 +10,25 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// LocalRecProg_cpp
+List LocalRecProg_cpp(SEXP data, SEXP K_Level_R, SEXP FindLowestK_R, SEXP ancestor_R, SEXP weight_R, SEXP range_R, SEXP categoryCount_R, SEXP LowMemory_R, SEXP g_MissingValue_R);
+RcppExport SEXP _sdcMicro_LocalRecProg_cpp(SEXP dataSEXP, SEXP K_Level_RSEXP, SEXP FindLowestK_RSEXP, SEXP ancestor_RSEXP, SEXP weight_RSEXP, SEXP range_RSEXP, SEXP categoryCount_RSEXP, SEXP LowMemory_RSEXP, SEXP g_MissingValue_RSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type K_Level_R(K_Level_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type FindLowestK_R(FindLowestK_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ancestor_R(ancestor_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type weight_R(weight_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type range_R(range_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type categoryCount_R(categoryCount_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type LowMemory_R(LowMemory_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_MissingValue_R(g_MissingValue_RSEXP);
+    rcpp_result_gen = Rcpp::wrap(LocalRecProg_cpp(data, K_Level_R, FindLowestK_R, ancestor_R, weight_R, range_R, categoryCount_R, LowMemory_R, g_MissingValue_R));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Mdav
 RcppExport SEXP Mdav(SEXP data, SEXP data2, SEXP g_MissingValue_R, SEXP weights_R, SEXP g_K_R);
 RcppExport SEXP _sdcMicro_Mdav(SEXP dataSEXP, SEXP data2SEXP, SEXP g_MissingValue_RSEXP, SEXP weights_RSEXP, SEXP g_K_RSEXP) {
@@ -296,9 +315,8 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP LocalRecProg_cpp(void *, void *, void *, void *, void *, void *, void *, void *, void *);
-
 static const R_CallMethodDef CallEntries[] = {
+    {"_sdcMicro_LocalRecProg_cpp", (DL_FUNC) &_sdcMicro_LocalRecProg_cpp, 9},
     {"_sdcMicro_Mdav", (DL_FUNC) &_sdcMicro_Mdav, 5},
     {"_sdcMicro_measure_hierachical", (DL_FUNC) &_sdcMicro_measure_hierachical, 1},
     {"_sdcMicro_measure_risk_cpp", (DL_FUNC) &_sdcMicro_measure_risk_cpp, 6},
@@ -319,7 +337,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sdcMicro_testLoop_cpp", (DL_FUNC) &_sdcMicro_testLoop_cpp, 2},
     {"_sdcMicro_test_prioqueue", (DL_FUNC) &_sdcMicro_test_prioqueue, 5},
     {"_sdcMicro_test_comparator", (DL_FUNC) &_sdcMicro_test_comparator, 5},
-    {"LocalRecProg_cpp", (DL_FUNC) &LocalRecProg_cpp, 9},
     {NULL, NULL, 0}
 };
 
