@@ -9,11 +9,12 @@
 using namespace Rcpp;
 
 //Mdav
-enum{
-   es_NbHashBitXX  = 16,
-   es_NbHashListXX = 1 << es_NbHashBitXX
- };
+//enum{
+//   es_NbHashBitXX  = 16,
+//   es_NbHashListXX = 1 << es_NbHashBitXX
+// };
 
+#include "Mdav.h"
 #include "LocalRecProg/kneibmatch.cpp"
 
 // [[Rcpp::export()]]

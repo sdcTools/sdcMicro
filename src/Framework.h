@@ -47,8 +47,8 @@ typedef unsigned char uchar;
 typedef int BOOL;
 
 // ============================= Display Messages =================================
-extern char g_TxtBuffer[1024];						// character TxtBufferfer to display messages
-int OS_Printf(const char *Str, ...);
+inline extern char g_TxtBuffer[1024];						// character TxtBufferfer to display messages
+static int OS_Printf(const char *Str, ...);
 
 // ============================= Assert =================================
 #ifdef _DEBUG
@@ -233,7 +233,8 @@ inline T Squared(T n)
 			}					 								\
 		}
 
-extern int g_NbNew;
+inline extern int g_NbNew;
+
 
 //============================================= Strings
 
@@ -247,20 +248,20 @@ extern int g_NbNew;
 	#endif
 
 	#if !defined(strnicmp)
-		int strnicmp(char *str1, const char *str2, int n);
+		static int strnicmp(char *str1, const char *str2, int n);
 	#endif
 #endif // _MSC_VER
 
-char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn = TRUE);
-char *ReplaceChar(char *Str, char OldChar, char NewChar);
-char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter = FALSE, BOOL ReturnNULL = TRUE);
+static char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn = TRUE);
+static char *ReplaceChar(char *Str, char OldChar, char NewChar);
+static char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter = FALSE, BOOL ReturnNULL = TRUE);
 
 	//=== Parsing
-char *RemoveComment(char *Ptr, int Size = -1);	// remove text between /* & */
-char *GoToNextLine(char *Ptr);						// renvoie Ptr avanc� jusqu'apr�s le '\n' suivant
-char *GoTo1stChar(char *Ptr);
-char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
-char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
+static char *RemoveComment(char *Ptr, int Size = -1);	// remove text between /* & */
+static char *GoToNextLine(char *Ptr);						// renvoie Ptr avanc� jusqu'apr�s le '\n' suivant
+static char *GoTo1stChar(char *Ptr);
+static char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
+static char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
 
 //============================================= Time function
 
@@ -283,7 +284,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz);
 
 #endif // _MSC_VER
 
-uint TimeGetMilliSecond(void);
+static uint TimeGetMilliSecond(void);
 
 // ============================= CTooFile =============================
 class CTooFile
@@ -316,7 +317,7 @@ template<class T> inline CTooFile & operator >> (CTooFile &Fp, T &t)
 	return Fp;
 }
 
-inline char *PutName(char *Path, const char *Name)
+static inline char *PutName(char *Path, const char *Name)
 // Put Name to the path: PutName("Tmp\\", "Toto.Txt") => "Tmp\\Toto.Txt"
 {
 	int i = 0, j = 0;
@@ -331,7 +332,7 @@ inline char *PutName(char *Path, const char *Name)
 	return Path;
 }
 
-inline char *GetName(char *Path)
+static inline char *GetName(char *Path)
 // Get filename without path: GetName("Tmp\\Toto.Txt") => "Toto.Txt"
 {
 	int i = 0, j = 0;
@@ -561,8 +562,8 @@ inline CMatrix<T> *MatrixTranspose(CMatrix<T> &Mat)
 // ========================= Main Macro ==========================
 
 typedef int (* MainFunction)(int argc, char *argv[]);
-extern MainFunction g_MyMain;
-extern BOOL g_InMain;
+inline extern MainFunction g_MyMain;
+inline extern BOOL g_InMain;
 
 inline int SubMain(int argc, char *argv[])
 {
@@ -999,7 +1000,7 @@ uint TimeGetMilliSecond(void)
 //
 // ===============================================================================
 
-CTooFile *CTooFile :: Open(const char *Name, BOOL Warn)
+inline CTooFile *CTooFile :: Open(const char *Name, BOOL Warn)
 {
 	int Mode = O_RDONLY | O_BINARY;
 	int Hd = _open(Name, Mode, 0);
@@ -1020,7 +1021,7 @@ CTooFile *CTooFile :: Open(const char *Name, BOOL Warn)
 }
 
 
-void CTooFile :: Close(void)
+inline void CTooFile :: Close(void)
 {
 	_close(m_Hd);
 	m_Hd = -1;
@@ -1030,28 +1031,28 @@ void CTooFile :: Close(void)
 }
 
 
-int CTooFile :: Read(void *Dst, long Nb)
+inline int CTooFile :: Read(void *Dst, long Nb)
 {
 	return _read(m_Hd, Dst, Nb);
 }
 
-int CTooFile :: Seek(int Off, int Mode)
+inline int CTooFile :: Seek(int Off, int Mode)
 {
 	return _lseek(m_Hd, Off, Mode);
 }
 
-int CTooFile :: Tell(void)
+inline int CTooFile :: Tell(void)
 {
 	return Seek(0, SEEK_SET);
 }
 
-int CTooFile :: Size(void)
+inline int CTooFile :: Size(void)
 {
 	return m_FileSize;
 }
 
 
-CTooFile *CTooFile :: Create(const char *Name, int Mode)
+inline CTooFile *CTooFile :: Create(const char *Name, int Mode)
 {
 	int Hd = _open(Name, Mode | O_TRUNC | O_CREAT, S_IWRITE | S_IREAD);
 
@@ -1068,7 +1069,7 @@ CTooFile *CTooFile :: Create(const char *Name, int Mode)
 }
 
 
-int CTooFile :: Write(const void *Src, int Nb)
+inline int CTooFile :: Write(const void *Src, int Nb)
 {
 	int i = _write(m_Hd, Src, Nb);
 	m_Pos += i;
@@ -1078,7 +1079,7 @@ int CTooFile :: Write(const void *Src, int Nb)
 
 // ============================= FileName manipulation =============================
 
-char *PutExt(char *Name, const char *Ext)
+inline char *PutExt(char *Name, const char *Ext)
 // put the Ext to the Name: PutExt("Toto.Tmp", ".Txt") => "Toto.Txt"
 {
 	int s = (int) strlen(Name);
@@ -1103,7 +1104,7 @@ char *PutExt(char *Name, const char *Ext)
 }
 
 
-char *GetExt(char *Name)
+inline char *GetExt(char *Name)
 // Get Ext from a filename: GetExt(Toto.Txt) => ".Txt"
 {
 	int s = (int) strlen(Name);
@@ -1132,10 +1133,10 @@ char *GetExt(char *Name)
 // * ======================================================================== *
 
 MainFunction g_MyMain = NULL;
-int g_NbNew = 0;
+inline int g_NbNew = 0;
 BOOL g_InMain = FALSE;
 
-void *NewFunc(uint Size, int Mode)
+inline void *NewFunc(uint Size, int Mode)
 {
 	void *Ptr = malloc(Size);
 
@@ -1155,7 +1156,7 @@ void *NewFunc(uint Size, int Mode)
 	return Ptr;
 }
 
-void DeleteFunc(void *Ptr, int Mode)
+inline void DeleteFunc(void *Ptr, int Mode)
 {
 	if (g_InMain)
 	{
@@ -1191,18 +1192,18 @@ void DeleteFunc(void *Ptr, int Mode)
 // * 				                   CRandom
 // * ======================================================================== *
 
-CRandom g_TooRandom;
+inline CRandom g_TooRandom;
 
 // use either of the following two sets of parameters
-int CRandom::m_q1 = 13, CRandom::m_q2 = 2, CRandom::m_q3 = 3,
+inline int CRandom::m_q1 = 13, CRandom::m_q2 = 2, CRandom::m_q3 = 3,
 		CRandom::m_p1 = 12, CRandom::m_p2 = 4, CRandom::m_p3 = 17;
 //int CRandom::m_q1 = 3, CRandom::m_q2 = 2, CRandom::m_q3 = 13,
 //	 	CRandom::m_p1 = 20, CRandom::m_p2 = 16, CRandom::m_p3 = 7;
 
-uint CRandom::m_mask1, CRandom::m_mask2, CRandom::m_mask3;
-int CRandom::m_shft1, CRandom::m_shft2, CRandom::m_shft3;
+inline uint CRandom::m_mask1, CRandom::m_mask2, CRandom::m_mask3;
+inline int CRandom::m_shft1, CRandom::m_shft2, CRandom::m_shft3;
 
-float CRandom :: Get(void)
+inline float CRandom :: Get(void)
 {
 	uint b;
 
@@ -1219,7 +1220,7 @@ float CRandom :: Get(void)
 }
 
 
-void CRandom :: SaveSeed(void)
+inline void CRandom :: SaveSeed(void)
 {
 	m_bs1 = m_s1;
 	m_bs2 = m_s2;
@@ -1227,7 +1228,7 @@ void CRandom :: SaveSeed(void)
 }
 
 
-void CRandom :: RestoreSeed(void)
+inline void CRandom :: RestoreSeed(void)
 {
 	m_s1 = m_bs1;
 	m_s2 = m_bs2;
@@ -1235,7 +1236,7 @@ void CRandom :: RestoreSeed(void)
 }
 
 
-void CRandom :: SetSeed(uint a, uint b, uint c)
+inline void CRandom :: SetSeed(uint a, uint b, uint c)
 {
 	uint x = 4294967295U;
 	int k1 = 31, k2 = 29, k3 = 28;
@@ -1331,11 +1332,11 @@ struct SConfig
   double missing_value;       // vlaue of the missing value
 };
 
-SConfig g_Config;
+inline SConfig g_Config;
 
 
 // Function to compare against missing value
-BOOL SF_IsMissing(double value) {
+inline BOOL SF_IsMissing(double value) {
   return g_Config.missing_value == value;
 }
 
@@ -1345,7 +1346,7 @@ BOOL SF_IsMissing(double value) {
 /**
  * Finds a variable category by value
  */
-SCategory *find_var_cat(SVariable var, double value)
+inline SCategory *find_var_cat(SVariable var, double value)
 {
   SCategory *pCat;
 
@@ -1363,7 +1364,7 @@ SCategory *find_var_cat(SVariable var, double value)
 /**
  * Adds a value to a variable category
  */
-void add_var_cat_value(SVariable *p_var, double value)
+inline void add_var_cat_value(SVariable *p_var, double value)
 {
   SCategory *pCat;
 
@@ -1402,7 +1403,7 @@ void add_var_cat_value(SVariable *p_var, double value)
 /**
  * Frees variable memory
  */
-void free_var(SVariable *p_var)
+inline void free_var(SVariable *p_var)
 {
   SCategory *pCat, *pNext;
 
@@ -1422,7 +1423,7 @@ void free_var(SVariable *p_var)
 /**
  * Initialize a variable
  */
-void init_var(SVariable *p_var)
+inline void init_var(SVariable *p_var)
 {
   p_var->position = 0;
   p_var->Nb_Category = 0;
@@ -1437,7 +1438,7 @@ void init_var(SVariable *p_var)
 /**
  * Initialize a variable category
  */
-void init_var_cat(SCategory *pCat)
+inline void init_var_cat(SCategory *pCat)
 {
   pCat->value = 0.0f;//MISSING;
   pCat->freq = -1;
@@ -1448,7 +1449,7 @@ void init_var_cat(SCategory *pCat)
 /**
  * Resets a variable category group frequencies to zero
  */
-void reset_var_cat_group_freq(SVariable *p_var)
+inline void reset_var_cat_group_freq(SVariable *p_var)
 {
   SCategory *pCat;
 
@@ -1464,7 +1465,7 @@ void reset_var_cat_group_freq(SVariable *p_var)
 /**
  * Compares two keys and returns 1 if they are equal
  */
-int is_same_key_Risk(double key1[], double key2[], int key_size)
+inline int is_same_key_Risk(double key1[], double key2[], int key_size)
 {
   int i;
   int rc = 1;
@@ -1481,7 +1482,7 @@ int is_same_key_Risk(double key1[], double key2[], int key_size)
 
   return rc;
 }
-int is_same_key_Risk1(double key1[], double key2[], int key_size)
+inline int is_same_key_Risk1(double key1[], double key2[], int key_size)
 {
   int i;
   int rc = 1;
@@ -1500,7 +1501,7 @@ int is_same_key_Risk1(double key1[], double key2[], int key_size)
   return rc;
 }
 
-int is_same_key_Risk2(double key1[], double key2[], int key_size) {
+inline int is_same_key_Risk2(double key1[], double key2[], int key_size) {
   int i;
   int rc = 1;
 

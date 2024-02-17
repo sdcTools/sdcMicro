@@ -43,12 +43,12 @@ enum{
 #include "RankSwapping.h"
 
 
- //Mdav
-enum{
-   es_NbHashBitXX  = 16,
-   es_NbHashListXX = 1 << es_NbHashBitXX
- };
-#include "Mdav.h"
+//Mdav
+//enum{
+//   es_NbHashBitXX  = 16,
+//   es_NbHashListXX = 1 << es_NbHashBitXX
+// };
+//#include "Mdav.h"
 
 //Suda2
 #include "Suda2.h"

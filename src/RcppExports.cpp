@@ -83,6 +83,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RankSwap
+List RankSwap(SEXP data, SEXP data2, SEXP g_MissingValue_R, SEXP g_TopRatio_R, SEXP g_BottomRatio_R, SEXP g_K0_R, SEXP g_R0_R, SEXP g_P_R, SEXP seed_R);
+RcppExport SEXP _sdcMicro_RankSwap(SEXP dataSEXP, SEXP data2SEXP, SEXP g_MissingValue_RSEXP, SEXP g_TopRatio_RSEXP, SEXP g_BottomRatio_RSEXP, SEXP g_K0_RSEXP, SEXP g_R0_RSEXP, SEXP g_P_RSEXP, SEXP seed_RSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type data2(data2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_MissingValue_R(g_MissingValue_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_TopRatio_R(g_TopRatio_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_BottomRatio_R(g_BottomRatio_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_K0_R(g_K0_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_R0_R(g_R0_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type g_P_R(g_P_RSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type seed_R(seed_RSEXP);
+    rcpp_result_gen = Rcpp::wrap(RankSwap(data, data2, g_MissingValue_R, g_TopRatio_R, g_BottomRatio_R, g_K0_R, g_R0_R, g_P_R, seed_R));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Suda2
 RcppExport SEXP Suda2(SEXP data, SEXP g_MissingValueALEX_R, SEXP MaxK_R, SEXP DisFraction_R, SEXP elliot_scores);
 RcppExport SEXP _sdcMicro_Suda2(SEXP dataSEXP, SEXP g_MissingValueALEX_RSEXP, SEXP MaxK_RSEXP, SEXP DisFraction_RSEXP, SEXP elliot_scoresSEXP) {
@@ -321,6 +340,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sdcMicro_measure_hierachical", (DL_FUNC) &_sdcMicro_measure_hierachical, 1},
     {"_sdcMicro_measure_risk_cpp", (DL_FUNC) &_sdcMicro_measure_risk_cpp, 6},
     {"_sdcMicro_measure_threshold", (DL_FUNC) &_sdcMicro_measure_threshold, 2},
+    {"_sdcMicro_RankSwap", (DL_FUNC) &_sdcMicro_RankSwap, 9},
     {"_sdcMicro_Suda2", (DL_FUNC) &_sdcMicro_Suda2, 5},
     {"_sdcMicro_cpp_calcSuppInds", (DL_FUNC) &_sdcMicro_cpp_calcSuppInds, 3},
     {"_sdcMicro_microaggregation_argus_cpp", (DL_FUNC) &_sdcMicro_microaggregation_argus_cpp, 3},
