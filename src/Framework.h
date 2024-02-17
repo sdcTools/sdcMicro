@@ -1,5 +1,4 @@
-#ifndef __FRAMEWORK_H
-#define __FRAMEWORK_H
+#pragma once
 
 #include <string.h>
 #include <stdlib.h>
@@ -50,7 +49,6 @@ typedef int BOOL;
 // ============================= Display Messages =================================
 extern char g_TxtBuffer[1024];						// character TxtBufferfer to display messages
 int OS_Printf(const char *Str, ...);
-BOOL ShowProgression(const char *Text, int CurrentIndex, int MaxIndex, int &Progression, int Step = 20);
 
 // ============================= Assert =================================
 #ifdef _DEBUG
@@ -644,30 +642,6 @@ int OS_Printf(const char *Str, ...)
 #endif
 }
 
-
-BOOL ShowProgression(const char *Text, int CurrentIndex, int MaxIndex, int &Progression, int Step)
-{
-	int Percent = (CurrentIndex + 1) * 100 / MaxIndex;
-	BOOL Ret = FALSE;
-
-	if (Percent >= Progression + Step)
-	{
-		if (!Progression)
-			OS_Printf("%s:", Text);
-
-		Progression = Percent;
-		OS_Printf(" ...%d%%", Progression);
-		Ret = TRUE;
-	}
-
-	if (Percent >= 100)
-	{
-		OS_Printf("\n");
-		Ret = FALSE;
-	}
-
-	return Ret;
-}
 
 ///============================================= Strings
 #if !defined(_MSC_VER) && !defined(strnicmp)
@@ -1540,4 +1514,3 @@ int is_same_key_Risk2(double key1[], double key2[], int key_size) {
   }
   return rc;
 }
-#endif // __FRAMEWORK_H

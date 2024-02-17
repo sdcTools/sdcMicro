@@ -13,6 +13,7 @@
  *
  *  The full text of the license is available at http://www.gnu.org/copyleft/lesser.html
  */
+
 #include <Rcpp.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -30,6 +31,7 @@
 //#include <malloc.h>
 //#endif
 //#endif
+
 #include "Framework.h"
 
 // //RankSwapping
@@ -48,7 +50,6 @@ enum{
  };
 #include "Mdav.h"
 
-
 //Suda2
 #include "Suda2.h"
 
@@ -56,9 +57,4 @@ enum{
 
 #include "Measure_Risk.h"
 #include "Measure_Hierarchical.h"
-
 #include "Measure_Threshold.h"
-
-#include "LocalRecProg/kneibmatch.cpp"
-
-

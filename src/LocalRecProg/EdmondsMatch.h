@@ -1,3 +1,4 @@
+#pragma once
 
 // Function within a different Namespace, depending of the Matching Type
 int weighted(vertex_type *v, int n, vertex_type *u);

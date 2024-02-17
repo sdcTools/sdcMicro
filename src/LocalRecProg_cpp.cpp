@@ -7,6 +7,13 @@
 
 #include <Rcpp.h>
 using namespace Rcpp;
+
+//Mdav
+enum{
+   es_NbHashBitXX  = 16,
+   es_NbHashListXX = 1 << es_NbHashBitXX
+ };
+
 #include "LocalRecProg/kneibmatch.cpp"
 
 // [[Rcpp::export()]]
@@ -140,11 +147,12 @@ List LocalRecProg_cpp(SEXP data, SEXP K_Level_R, SEXP FindLowestK_R, SEXP ancest
       g_ShiftBound = SHIFT(UPPERBOUND);
     else
       g_ShiftBound = 0;
-    if (Match == e_Match_Kneib){
-      NSKneib::weighted(g_Vertex, g_NbRow_LocRec, g_Vertex + g_NbRow_LocRec);
-    }else{
+    //if (Match == e_Match_Kneib){
+    //  NSKneib::weighted(g_Vertex, g_NbRow_LocRec, g_Vertex + g_NbRow_LocRec);
+    //}else{
       NSComplete::weighted(g_Vertex, g_NbRow_LocRec, g_Vertex + g_NbRow_LocRec);
-    }
+    //}
+
     if (Match != e_Match_Kneib || !FindLowestK)
       break;
     j = 0;
@@ -180,16 +188,16 @@ List LocalRecProg_cpp(SEXP data, SEXP K_Level_R, SEXP FindLowestK_R, SEXP ancest
   }
   BOOL Done = FALSE;
 
-  if (Match == e_Match_Kneib)
-  {
-    Done = NSKneib::match_check(g_Vertex, g_NbRow_LocRec) >= 0
-      && NSKneib::dual_check(g_Vertex, g_NbRow_LocRec, g_Vertex + g_NbRow_LocRec);
-  }
-  else
-  {
+  //if (Match == e_Match_Kneib)
+  //{
+  //  Done = NSKneib::match_check(g_Vertex, g_NbRow_LocRec) >= 0
+  //    && NSKneib::dual_check(g_Vertex, g_NbRow_LocRec, g_Vertex + g_NbRow_LocRec);
+  //}
+  //else
+  //{
     Done = NSComplete::match_check(g_Vertex, g_NbRow_LocRec) >= 0
       && NSComplete::dual_check(g_Vertex, g_NbRow_LocRec, g_Vertex + g_NbRow_LocRec);
-  }
+  //}
   if (Done)
   //if (1)
   {

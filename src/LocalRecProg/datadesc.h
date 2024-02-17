@@ -1,5 +1,7 @@
-#ifndef __DATADESC_H
-#define __DATADESC_H
+#pragma once
+
+#include "../Framework.h"
+#include "../Mdav.h"
 
 #include <vector>
 
@@ -57,5 +59,3 @@ enum EOutput
 
 extern EOutput g_Output;
 extern BOOL g_Debug_LocalRec;
-
-#endif	// __DATADESC_H

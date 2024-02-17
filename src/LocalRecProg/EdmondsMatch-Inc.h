@@ -1,3 +1,5 @@
+#pragma once
+
 #undef LOOP
 #undef END
 #undef WEIGHT
