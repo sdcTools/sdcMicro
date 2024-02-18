@@ -49,7 +49,7 @@ recordSwap(std::vector< std::vector<int> > data, int hid,
 + **risk** vector of vector containing the risk of each individual for each hierarchy level. `risk[0]` corresponds to the risks of the first record for all hierarchy levels, `risk[1]` for the second record and so on. Should be ignored, for now, it is not fully tested yet.
 + **risk_threshold** risk threshold, which determines if a record has to be swapped and over which hierarchy level. This overwrites k_anonymity.
 Should be ignored, for now, it is not fully tested yet.
-+ **k_anonymity** integer defining the threshold of high risk households (k-anonymity). A record is not at risk if `k_anonymity > counts`.
++ **k_anonymity** integer defining the threshold of high risk households (k-anonymity). A record is not at risk if `k_anonymity >= counts`.
 + **risk_variables** column indices of variables in \code{data} which will be considered for estimating the risk. This is only used if `risk` was not supplied.
 + **carry_along** column indices of variables in \code{data} which are additionally swapped. These variables do not interfere with the procedure of finding a record to swap with. This parameter is only used at the end of the procedure when swapping the hierarchies. We note that the variables to be used as `carry_along` should be at household level. In case it is detected that they are at individual level (different values within `hid`), a warning is given because unexpected results may occur since the first observed value within the Household for any variable is used for all members in the swapped household.
 + **count_swapped_records**, **count_swapped_hid** count number of households and records swapped
