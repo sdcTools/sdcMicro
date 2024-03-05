@@ -111,17 +111,17 @@ end to easily call the procedures and for testing purposes.</p>
 <code><a href="../reference/recordSwap.html">recordSwap()</a></code>. All other functions in the package are called
 from inside <code><a href="../reference/recordSwap.html">recordSwap()</a></code> and are only exported for testing
 purposes. The function has the following arguments:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>recordSwap<span class="op">(</span><span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> <span class="op">&gt;</span> data<span class="op">,</span> <span class="dt">int</span> hid<span class="op">,</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> hierarchy<span class="op">,</span> </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&gt;</span> similar<span class="op">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                                           <span class="dt">double</span> swaprate<span class="op">,</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;&gt;</span> risk<span class="op">,</span> <span class="dt">double</span> risk_threshold<span class="op">,</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                                           <span class="dt">int</span> k_anonymity<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> risk_variables<span class="op">,</span>  </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> carry_along<span class="op">,</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                                           <span class="dt">int</span> <span class="op">&amp;</span>count_swapped_records<span class="op">,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                                           <span class="dt">int</span> <span class="op">&amp;</span>count_swapped_hid<span class="op">,</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                                           <span class="bu">std::</span>string<span class="op"> </span>log_file_name<span class="op">,</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                                           <span class="dt">int</span> seed <span class="op">=</span> <span class="dv">123456</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>recordSwap<span class="op">(</span><span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> <span class="op">&gt;</span> data<span class="op">,</span> <span class="dt">int</span> hid<span class="op">,</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> hierarchy<span class="op">,</span> </span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&gt;</span> similar<span class="op">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>                                           <span class="dt">double</span> swaprate<span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;&gt;</span> risk<span class="op">,</span> <span class="dt">double</span> risk_threshold<span class="op">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>                                           <span class="dt">int</span> k_anonymity<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> risk_variables<span class="op">,</span>  </span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>                                           <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> carry_along<span class="op">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>                                           <span class="dt">int</span> <span class="op">&amp;</span>count_swapped_records<span class="op">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>                                           <span class="dt">int</span> <span class="op">&amp;</span>count_swapped_hid<span class="op">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>                                           <span class="bu">std::</span>string log_file_name<span class="op">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>                                           <span class="dt">int</span> seed <span class="op">=</span> <span class="dv">123456</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>
 <strong>data</strong> micro data containing ONLY integer values,
@@ -275,10 +275,10 @@ equal to the number in <code>swaprate</code>. If the proportion of
 already swapped households succeeds these values then records that do
 not fulfil the k-anonymity are also swapped.</li>
 </ul>
-<div class="figure">
-<img src="diagram.png" style="width:100.0%" alt=""><p class="caption">Example for swapping households. The number
+<div class="float">
+<img src="diagram.png" style="width:100.0%" alt="Example for swapping households. The number represents the number of high risk households at each hierarchy level."><div class="figcaption">Example for swapping households. The number
 represents the number of high risk households at each hierarchy
-level.</p>
+level.</div>
 </div>
 <p>Figure 1 displays an example with hierarchy levels NUTS1 &gt; NUTS2
 &gt; NUTTS3 where the numbers of high risk households are displayed at
