@@ -101,6 +101,6 @@ Collate:
     'maG.R'
     'sdcApp.R'
     'show_sdcMicroObj.R'
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 VignetteBuilder: knitr
 Encoding: UTF-8

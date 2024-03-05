@@ -73,14 +73,9 @@ void AddRow(TData *pTotal, TData *Value1v, int *pNbNonMissingValue)
     }
 }
 /*MAIN RCPP Program*/
-RcppExport SEXP Mdav(SEXP data,SEXP data2,SEXP g_MissingValue_R,SEXP weights_R,SEXP g_K_R
-    /*
-     weights_R default rep(1,nvar)
-     g_K_R default 10
-     */
-//SEXP g_TopRatio_R,SEXP g_BottomRatio_R,SEXP g_K0_R,SEXP g_R0_R,SEXP g_P_R,SEXP seed_R
-//,SEXP dists) {
-) {
+
+// [[Rcpp::export]]
+RcppExport SEXP Mdav(SEXP data,SEXP data2,SEXP g_MissingValue_R,SEXP weights_R,SEXP g_K_R) {
   BEGIN_RCPP
   Rcpp::NumericMatrix Mat(data);  // creates Rcpp matrix from SEXP
   Rcpp::NumericMatrix Res(data2); // creates Rcpp matrix from SEXP

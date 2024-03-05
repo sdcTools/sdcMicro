@@ -40,6 +40,7 @@ char buf_treshold[1024];
 /* Main Stata function */
 /*=====================*/
 //int argc, char *argv[]
+// [[Rcpp::export]]
 RcppExport SEXP measure_threshold(SEXP data, SEXP global_risk_R)
 {
 	// int rc = 0;

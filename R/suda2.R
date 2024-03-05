@@ -116,7 +116,7 @@ suda2WORK <- function(data, variables = NULL, missing = -999, DisFraction = 0.01
   }
   dataX <- as.matrix(dataX)
   dataX[is.na(dataX)] <- missing
-  dat <- .Call("Suda2", dataX, missing, ncol(dataX), DisFraction, original_scores)$Res
+  dat <- Suda2(dataX, missing, ncol(dataX), DisFraction, original_scores)$Res
   if (length(variables) == 2) {
     dat <- dat[, -3]
   } else if (length(variables) == 1) {

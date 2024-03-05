@@ -245,7 +245,6 @@ measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_
   ind <- do.call(order, data.frame(dataX))
   dataX <- dataX[ind, , drop=FALSE]
   ind <- order(c(1:nrow(dataX))[ind])
-  # res <- .Call('measure_risk_cpp',dataX,weighted,n_key_vars,2,-99,missing)#
   res <- list()
   res$Res <- Res
   colnames(res$Res) <- c("risk", "fk", "Fk")
@@ -257,7 +256,7 @@ measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_
   if (max_global_risk >= 1 || max_global_risk <= 0) {
     stop("max_global_risk argument must be between 0 and 1!")
   }
-  resth <- .Call("measure_threshold", res$Res[ind, 1], max_global_risk)
+  resth <- measure_threshold(res$Res[ind, 1], max_global_risk)
   if (is.na(resth$global_threshold_unsafe) || is.na(resth$global_threshold_safe) || is.na(resth$global_threshold)) {
     res[["global_threshold"]] <- NA
   } else if (resth$global_threshold_unsafe == resth$global_threshold && resth$global_threshold_safe ==
@@ -290,7 +289,7 @@ measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_
       res[["hier_risk"]] <- sum(res$Res[, 4], na.rm=TRUE)/nrow(res$Res)
       res[["hier_risk_pct"]] <- res[["hier_risk"]] * 100
     } else {
-      resh <- .Call("measure_hierachical", dataX)
+      resh <- measure_hierachical(dataX)
       resh$Res <- resh$Res[ind]
       res$Res <- cbind(res$Res, resh$Res)
       res[["hier_risk_ER"]] <- resh[["hier_risk_ER"]]
@@ -398,7 +397,7 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2
     ldiv_index=-99
   if (length(ldiv_index) > 5)
     stop("Maximal number of sensitivity variables is 5")
-  res <- .Call("measure_risk_cpp", dataX, 0, n_key_vars, l_recurs_c, ldiv_index, missing)
+  res <- measure_risk_cpp(dataX, 0, n_key_vars, l_recurs_c, ldiv_index, missing)
   res$Fk <- res$Res[, 3]
   res$Res <- res$Res[ind, ]
   if (all(ldiv_index != -99)) {

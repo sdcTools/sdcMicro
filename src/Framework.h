@@ -596,7 +596,6 @@ inline int SubMain(int argc, char *argv[])
 		int main(int argc, char *argv[])	{	g_MyMain = MyMain; return SubMain(argc - 1, argv + 1);	}
 #endif	// __PLUGIN
 
-#endif // __FRAMEWORK_H
 
 /**
  * Framework : contains basic multi-purpose functions & classes
@@ -1541,4 +1540,4 @@ int is_same_key_Risk2(double key1[], double key2[], int key_size) {
   }
   return rc;
 }
-
+#endif // __FRAMEWORK_H
