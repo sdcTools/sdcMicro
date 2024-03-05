@@ -1,5 +1,3 @@
-#include "edmonds.h"
-
 BOOL *CData::m_Numerical = NULL;
 float *CData::m_Weight = NULL;
 int CData::m_NbVariable = 0, CData::m_NbAncestor = 0, CData::m_CategoryCountVar = 0;

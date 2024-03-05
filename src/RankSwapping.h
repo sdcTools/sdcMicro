@@ -14,10 +14,13 @@
  *
  *  The full text of the license is available at http://www.gnu.org/copyleft/lesser.html
  */
-// [Rcpp::export]
-RcppExport SEXP RankSwap(SEXP data,SEXP data2,SEXP g_MissingValue_R,
+
+#include <Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+List RankSwap(SEXP data,SEXP data2,SEXP g_MissingValue_R,
 SEXP g_TopRatio_R,SEXP g_BottomRatio_R,SEXP g_K0_R,SEXP g_R0_R,SEXP g_P_R,SEXP seed_R) {
-  BEGIN_RCPP
   int i, j, k;
   Rcpp::NumericMatrix Mat(data);  // creates Rcpp matrix from SEXP
   Rcpp::NumericMatrix Res(data2); // creates Rcpp matrix from SEXP
@@ -340,14 +343,8 @@ SEXP g_TopRatio_R,SEXP g_BottomRatio_R,SEXP g_K0_R,SEXP g_R0_R,SEXP g_P_R,SEXP s
   CleanDeleteT(pOrderedValue);
   CleanDeleteT(pSwapFlag);
   CleanDeleteT(pOrderedSwapFlag);
-
-
-
   return Rcpp::List::create(
       Rcpp::Named( "Res" ) = Res
   ) ;
-
-  END_RCPP
-
 }
 

@@ -21,6 +21,10 @@ measure_threshold <- function(data, global_risk_R) {
     .Call(`_sdcMicro_measure_threshold`, data, global_risk_R)
 }
 
+RankSwap <- function(data, data2, g_MissingValue_R, g_TopRatio_R, g_BottomRatio_R, g_K0_R, g_R0_R, g_P_R, seed_R) {
+    .Call(`_sdcMicro_RankSwap`, data, data2, g_MissingValue_R, g_TopRatio_R, g_BottomRatio_R, g_K0_R, g_R0_R, g_P_R, seed_R)
+}
+
 Suda2 <- function(data, g_MissingValueALEX_R, MaxK_R, DisFraction_R, elliot_scores) {
     .Call(`_sdcMicro_Suda2`, data, g_MissingValueALEX_R, MaxK_R, DisFraction_R, elliot_scores)
 }

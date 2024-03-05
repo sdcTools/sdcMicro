@@ -1,9 +1,8 @@
-
-#ifndef __EDMONDS_H
-#define __EDMONDS_H
+#pragma once
 
 #include "datadesc.h"
 #include "datadesc.cpp"
+//#include "../Framework.h"
 
 #define MALLOC(t, n)		(t *)new t[n]
 #define FREE(a)			CleanDeleteT(a)
@@ -93,4 +92,4 @@ namespace NSKneib
 	#include "EdmondsMatch.h"
 }
 
-#endif	// __EDMONDS_H
+//#endif	// __EDMONDS_H
