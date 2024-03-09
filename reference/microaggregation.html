@@ -244,15 +244,109 @@ which is elsewhere acknowledged.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># dontrun since Examples with CPU time larger 2.5 times elapsed time, because</span></span></span>
+<span class="r-in"><span><span class="co"># donttest since Examples with CPU time larger 2.5 times elapsed time, because</span></span></span>
 <span class="r-in"><span><span class="co"># of using data.table and multicore computation.</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">microaggregation</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span>, <span class="st">"savings"</span><span class="op">)</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"mdav"</span>,</span></span>
 <span class="r-in"><span>  aggr <span class="op">=</span> <span class="fl">4</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $meansx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      expend             income            savings       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   : 1106874   Min.   :    2897   Min.   :  11751  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:25977689   1st Qu.:27750000   1st Qu.:2620342  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :45716872   Median :44850000   Median :4771488  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   :48440371   Mean   :49180278   Mean   :4798498  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:69426340   3rd Qu.:70650000   3rd Qu.:6940269  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   :98685205   Max.   :99600000   Max.   :9984098  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $meansxm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      expend             income            savings       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Min.   :14471827   Min.   : 4482460   Min.   : 872137  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1st Qu.:22752145   1st Qu.:24675000   1st Qu.:2353262  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Median :42916487   Median :46850000   Median :5116959  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Mean   :48440371   Mean   :49180278   Mean   :4798498  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3rd Qu.:71888065   3rd Qu.:65000000   3rd Qu.:7020042  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Max.   :91918606   Max.   :93725000   Max.   :9407783  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $amean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $amedian</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1782512</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $aonestep</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $devvar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3747106</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $amad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5343033</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $acov</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1873553</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $arcov</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $acor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.25935</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $arcor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $acors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6424174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $adlm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1699611</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $adlts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $apcaload</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6853318</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $apppcaload</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.27684</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $totalsOrig</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     expend     income    savings </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4844037117 4918027777  479849813 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $totalsMicro</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numeric(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $atotals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $pmtotals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $util1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 53.39995</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $deigenvalues</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.0596172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $risk2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $wrisk1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9830069</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $wrisk2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## for objects of class sdcMicro:</span></span></span>
 <span class="r-in"><span><span class="co">## no stratification because `@strataVar` is `NULL`</span></span></span>
@@ -274,7 +368,7 @@ which is elsewhere acknowledged.</p>
 <span class="r-in"><span>  obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
 <span class="r-in"><span>  variables <span class="op">=</span> <span class="st">"savings"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>

@@ -99,20 +99,6 @@ strata is shown (if possible)</p></li>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">francdat</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">#l1 &lt;- localSuppression(obj = francdat, k = 2, keyVars = c(2, 4:6))</span></span></span>
-<span class="r-in"><span><span class="co">#l1</span></span></span>
-<span class="r-in"><span><span class="co">#plot(l1)</span></span></span>
-<span class="r-in"><span><span class="co">#</span></span></span>
-<span class="r-in"><span><span class="co">### with details of suppression by strata</span></span></span>
-<span class="r-in"><span><span class="co">#data(testdata2)</span></span></span>
-<span class="r-in"><span><span class="co">#testdata2$ageG &lt;- cut(testdata2$age, 5, labels = paste0("AG",1:5))</span></span></span>
-<span class="r-in"><span><span class="co">#keyVars &lt;- c("urbrur", "roof", "walls", "water", "electcon", "relat", "sex")</span></span></span>
-<span class="r-in"><span><span class="co">#strataVars &lt;- "ageG"</span></span></span>
-<span class="r-in"><span><span class="co">#inp &lt;- testdata2[, c(keyVars, strataVars)]</span></span></span>
-<span class="r-in"><span><span class="co">#ls &lt;- localSuppression(inp, keyVars = 1:7, strataVars = 8)</span></span></span>
-<span class="r-in"><span><span class="co">#print(ls)</span></span></span>
-<span class="r-in"><span><span class="co">#plot(ls)</span></span></span>
-<span class="r-in"><span><span class="co">#plot(ls, showDetails = TRUE)</span></span></span>
 </code></pre></div>
     </div>
   </div>
