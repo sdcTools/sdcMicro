@@ -28,7 +28,6 @@ the paper given below. We need this data set only for demonstration effect,
 i.e. that the package provides the same results as their software.
 }
 \examples{
-
 data(francdat)
 francdat
 }

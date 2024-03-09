@@ -3,7 +3,7 @@ Type: Package
 Title: Statistical Disclosure Control Methods for Anonymization of Data and
     Risk Estimation
 Version: 5.7.8
-Date: 2024-03-07
+Date: 2024-03-09
 Authors@R: c(
   person("Matthias", "Templ", email="matthias.templ@gmail.com", role = c("aut", "cre"), comment=c(ORCID="0000-0002-8638-5276")),
   person("Bernhard", "Meindl", email = "Bernhard.Meindl@statistik.gv.at", role = c("aut")),
@@ -13,11 +13,11 @@ Authors@R: c(
   person("Statistics Netherlands", role=c("cph"), comment="microAggregation cpp code (under EUPL v1.1)"),
   person("Pascal Heus", role=c("cph"), comment="original measure threshold cpp code (under LGPL)"))
 Description: Data from statistical agencies and other institutions are mostly
-    confidential. This package (see also Templ, Kowarik and Meindl (2017) <doi:10.18637/jss.v067.i04>) can be used for the generation of anonymized
+    confidential. This package, introduced in Templ, Kowarik and Meindl (2017) <doi:10.18637/jss.v067.i04>, can be used for the generation of anonymized
     (micro)data, i.e. for the creation of public- and scientific-use files.
     The theoretical basis for the methods implemented can be found in Templ (2017) <doi:10.1007/978-3-319-50272-4>.
-    Various risk estimation and anonymisation methods are included. Note that the package
-    includes a graphical user interface (Meindl and Templ, 2019 <doi:10.3390/a12090191>) that allows to use various methods of this
+    Various risk estimation and anonymization methods are included. Note that the package
+    includes a graphical user interface published in Meindl and Templ (2019) <doi:10.3390/a12090191> that allows to use various methods of this
     package.
 LazyData: TRUE
 ByteCompile: TRUE

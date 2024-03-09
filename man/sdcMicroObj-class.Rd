@@ -116,7 +116,7 @@ ghostVars[[1]][[1]] <- "electcon"
 ghostVars[[1]][[2]] <- c("electcon2","electcon3")
 
 \donttest{
-# donttest because Examples with CPU time > 2.5 times elapsed time
+## donttest because Examples with CPU time > 2.5 times elapsed time
 ## we want variable 'water2' to be linked to key-variable 'water'
 ghostVars[[2]] <- list()
 ghostVars[[2]][[1]] <- "water"

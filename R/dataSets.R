@@ -272,7 +272,6 @@ NULL
 #' @source \url{https://research.cbs.nl/casc/deliv/12d1.pdf}
 #' @keywords datasets
 #' @examples
-#'
 #' data(francdat)
 #' francdat
 NULL

@@ -2,11 +2,11 @@
 % Please edit documentation in R/sdcMicro-package.R
 \docType{package}
 \name{sdcMicro-package}
-\alias{sdcMicro-package}
 \alias{sdcMicro}
+\alias{sdcMicro-package}
 \title{sdcMicro: Statistical Disclosure Control Methods for Anonymization of Data and Risk Estimation}
 \description{
-Data from statistical agencies and other institutions are mostly confidential. This package (see also Templ, Kowarik and Meindl (2017) \doi{10.18637/jss.v067.i04}) can be used for the generation of anonymized (micro)data, i.e. for the creation of public- and scientific-use files. The theoretical basis for the methods implemented can be found in Templ (2017) \doi{10.1007/978-3-319-50272-4}. Various risk estimation and anonymisation methods are included. Note that the package includes a graphical user interface (Meindl and Templ, 2019 \doi{10.3390/a12090191}) that allows to use various methods of this package.
+Data from statistical agencies and other institutions are mostly confidential. This package, introduced in Templ, Kowarik and Meindl (2017) \doi{10.18637/jss.v067.i04}, can be used for the generation of anonymized (micro)data, i.e. for the creation of public- and scientific-use files. The theoretical basis for the methods implemented can be found in Templ (2017) \doi{10.1007/978-3-319-50272-4}. Various risk estimation and anonymization methods are included. Note that the package includes a graphical user interface published in Meindl and Templ (2019) \doi{10.3390/a12090191} that allows to use various methods of this package.
 
 This package includes all methods of the popular software mu-Argus plus
 several new methods. In comparison with mu-Argus the advantages of this

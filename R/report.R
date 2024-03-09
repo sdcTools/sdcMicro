@@ -380,7 +380,7 @@ definition=function(obj, internal, title, outdir) {
 #' @keywords methods
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(testdata2)
 #' sdc <- createSdcObj(
 #'   dat = testdata2,

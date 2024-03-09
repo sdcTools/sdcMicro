@@ -121,9 +121,9 @@ Parameters \code{measure} are ignored for methods \code{mdav} and \code{rmd}.
 }
 \examples{
 data(testdata)
-# dontrun since Examples with CPU time larger 2.5 times elapsed time, because
+# donttest since Examples with CPU time larger 2.5 times elapsed time, because
 # of using data.table and multicore computation.
-\dontrun{
+\donttest{
 m <- microaggregation(
   obj = testdata[1:100, c("expend", "income", "savings")],
   method = "mdav",

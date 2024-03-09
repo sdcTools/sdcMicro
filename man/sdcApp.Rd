@@ -34,7 +34,7 @@ object rather than invoking it. This is useful for deploying \code{sdcApp} via \
 }
 \value{
 starts the interactive graphical user interface which may be used to perform the
-anonymisation process.
+anonymization process.
 }
 \description{
 starts the graphical user interface developed with \emph{shiny}.

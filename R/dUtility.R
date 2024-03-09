@@ -58,9 +58,9 @@
 #' sdc <- createSdcObj(testdata2,
 #'   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
 #'   numVars=c('expend','income','savings'), w='sampling_weight')
-#' ## this is already made internally:
-#' ## sdc <- dUtility(sdc)
-#' ## and already stored in sdc
+#' ## this is already made internally, so you don't need to run this:
+#' \donttest{
+#' sdc <- dUtility(sdc)
 #' }
 dUtility <- function(obj, ...) {
   dUtilityX(obj=obj, ...)

@@ -36,7 +36,7 @@ The application of this function provides you with a html-report for your
 sdcMicro object that contains useful summaries about the anonymization process.
 }
 \examples{
-\dontrun{
+\donttest{
 data(testdata2)
 sdc <- createSdcObj(
   dat = testdata2,

@@ -76,9 +76,9 @@ data(testdata2)
 sdc <- createSdcObj(testdata2,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')
-## this is already made internally:
-## sdc <- dRiskRMD(sdc)
-## and already stored in sdc
+\donttest{
+sdc <- dRiskRMD(sdc)
+}
 }
 \references{
 Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New

@@ -6,7 +6,7 @@
 #' for uploaded files, defaults to 50MB
 #' @param debug logical if \code{TRUE}, set shiny-debugging options
 #' @return starts the interactive graphical user interface which may be used to perform the
-#' anonymisation process.
+#' anonymization process.
 #' @param theme select stylesheet for the interface. Supported choices are
 #' \itemize{
 #' \item 'yeti'
