@@ -108,7 +108,7 @@ print(res3) # of course, nothing has changed!
 ## it is possible use a transition matrix for a variable and use the 'traditional' way
 ## of specifying a number for the minimal diagonal entries of the transision matrix
 ## for other variables. In this case we must supply `pd` as list.
-#res4 <- pram(
+res4 <- pram(
   obj = testdata,
   variables = c("roof", "walls"),
   pd = list(mat, 0.5),
