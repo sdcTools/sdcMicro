@@ -143,7 +143,308 @@ in: Springer International Publishing, 287 pages, 2017. ISBN 978-3-319-50272-4.
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co">## donttest is necessary because of </span></span></span>
+<span class="r-in"><span><span class="co">## Examples with CPU time &gt; 2.5 times elapsed time</span></span></span>
+<span class="r-in"><span><span class="co">## caused by using C++ code and/or data.table</span></span></span>
+<span class="r-in"><span><span class="co">## using a factor variable as input</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">pram</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">$</span><span class="va">roof</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of changed observations: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> x != x_pram : 301 (6.57%)</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Variable: x</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  ----------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Frequencies in original and perturbed data:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 x      2      4      5      6      9     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:           Original Frequencies    814   3697     19     34     16      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: Frequencies after Perturbation    815   3696     23     33     13      0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Transitions:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     transition Frequency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;char&gt;     &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:    1 --&gt; 1       685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    1 --&gt; 2       123</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    1 --&gt; 3         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    1 --&gt; 4         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    1 --&gt; 5         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:    2 --&gt; 1       124</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:    2 --&gt; 2      3552</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    2 --&gt; 3         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    2 --&gt; 4        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    2 --&gt; 5         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    3 --&gt; 2         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    3 --&gt; 3        15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    4 --&gt; 1         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    4 --&gt; 2        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    4 --&gt; 4        19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:    5 --&gt; 1         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:    5 --&gt; 2         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:    5 --&gt; 5         8</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## using a data.frame as input</span></span></span>
+<span class="r-in"><span><span class="co">## pram can only be applied to factors</span></span></span>
+<span class="r-in"><span><span class="co">## -- &gt; we have to recode to factors beforehand</span></span></span>
+<span class="r-in"><span><span class="va">testdata</span><span class="op">$</span><span class="va">roof</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">$</span><span class="va">roof</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">testdata</span><span class="op">$</span><span class="va">walls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">$</span><span class="va">walls</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">testdata</span><span class="op">$</span><span class="va">water</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">$</span><span class="va">water</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## pram() is applied within subgroups defined by</span></span></span>
+<span class="r-in"><span><span class="co">## variables "urbrur" and "sex"</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">pram</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata</span>,</span></span>
+<span class="r-in"><span>  variables <span class="op">=</span> <span class="st">"roof"</span>,</span></span>
+<span class="r-in"><span> strata_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"urbrur"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of changed observations: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> roof != roof_pram : 250 (5.46%)</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Variable: roof</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  ----------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Frequencies in original and perturbed data:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                              roof      2      4      5      6      9     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:           Original Frequencies    814   3697     19     34     16      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: Frequencies after Perturbation    815   3707     21     20     17      0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Transitions:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     transition Frequency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;char&gt;     &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:    1 --&gt; 1       712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    1 --&gt; 2        97</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:    1 --&gt; 3         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:    1 --&gt; 4         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:    1 --&gt; 5         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:    2 --&gt; 1       100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:    2 --&gt; 2      3581</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:    2 --&gt; 3         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:    2 --&gt; 4         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    2 --&gt; 5         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    3 --&gt; 1         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    3 --&gt; 2         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    3 --&gt; 3        13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    4 --&gt; 1         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    4 --&gt; 2        16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:    4 --&gt; 4        16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:    5 --&gt; 2         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:    5 --&gt; 5         8</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## default parameters (pd = 0.8 and alpha = 0.5) for the generation</span></span></span>
+<span class="r-in"><span><span class="co">## of the invariant transition matrix will be used for all variables</span></span></span>
+<span class="r-in"><span><span class="va">res1</span> <span class="op">&lt;-</span> <span class="fu">pram</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata</span>,</span></span>
+<span class="r-in"><span>  variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of changed observations: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> roof != roof_pram : 129 (2.82%)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> walls != walls_pram : 370 (8.08%)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> water != water_pram : 196 (4.28%)</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## specific parameter settings for each variable</span></span></span>
+<span class="r-in"><span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu">pram</span><span class="op">(</span></span></span>
+<span class="r-in"><span>   obj <span class="op">=</span> <span class="va">testdata</span>,</span></span>
+<span class="r-in"><span>   variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   pd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.95</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of changed observations: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> roof != roof_pram : 96 (2.1%)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> walls != walls_pram : 207 (4.52%)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> water != water_pram : 189 (4.13%)</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## detailed information on pram-parameters (such as the transition matrix 'Rs')</span></span></span>
+<span class="r-in"><span><span class="co">## is stored in the output, eg. for variable 'roof'</span></span></span>
+<span class="r-in"><span><span class="co">#attr(res2, "pram_params")$roof</span></span></span>
+<span class="r-in"><span><span class="co">## we can also specify a custom transition-matrix directly</span></span></span>
+<span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">$</span><span class="va">roof</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">testdata</span><span class="op">$</span><span class="va">roof</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res3</span> <span class="op">&lt;-</span> <span class="fu">pram</span><span class="op">(</span></span></span>
+<span class="r-in"><span>   obj <span class="op">=</span> <span class="va">testdata</span>,</span></span>
+<span class="r-in"><span>   variables <span class="op">=</span> <span class="st">"roof"</span>,</span></span>
+<span class="r-in"><span>  pd <span class="op">=</span> <span class="va">mat</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res3</span><span class="op">)</span> <span class="co"># of course, nothing has changed!</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of changed observations: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> roof != roof_pram : 0 (0%)</span>
+<span class="r-in"><span><span class="co">## it is possible use a transition matrix for a variable and use the 'traditional' way</span></span></span>
+<span class="r-in"><span><span class="co">## of specifying a number for the minimal diagonal entries of the transision matrix</span></span></span>
+<span class="r-in"><span><span class="co">## for other variables. In this case we must supply `pd` as list.</span></span></span>
+<span class="r-in"><span><span class="va">res4</span> <span class="op">&lt;-</span> <span class="fu">pram</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata</span>,</span></span>
+<span class="r-in"><span>  variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"roof"</span>, <span class="st">"walls"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  pd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">mat</span>, <span class="fl">0.5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res4</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Number of changed observations: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> - - - - - - - - - - - </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> roof != roof_pram : 0 (0%)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> walls != walls_pram : 537 (11.72%)</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res4</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Variable: roof</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  ----------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Frequencies in original and perturbed data:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                              roof      2      4      5      6      9     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:           Original Frequencies    814   3697     19     34     16      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: Frequencies after Perturbation    814   3697     19     34     16      0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Transitions:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transition Frequency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        &lt;char&gt;     &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:    1 --&gt; 1       814</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:    2 --&gt; 2      3697</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:    3 --&gt; 3        19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:    4 --&gt; 4        34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5:    5 --&gt; 5        16</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Variable: walls</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  ----------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Frequencies in original and perturbed data:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             walls      2      3      9     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:           Original Frequencies   1203   3327     50      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: Frequencies after Perturbation   1182   3343     55      0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Transitions:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transition Frequency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        &lt;char&gt;     &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:    1 --&gt; 1       947</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:    1 --&gt; 2       254</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:    1 --&gt; 3         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:    2 --&gt; 1       234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5:    2 --&gt; 2      3068</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6:    2 --&gt; 3        25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7:    3 --&gt; 1         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8:    3 --&gt; 2        21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9:    3 --&gt; 3        28</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">res4</span>, <span class="st">"pram_params"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $roof</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $roof$Rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2 4 5 6 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 1 0 0 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0 1 0 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0 0 1 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0 0 0 1 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 0 0 0 0 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $roof$pd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2 4 5 6 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 1 0 0 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0 1 0 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0 0 1 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0 0 0 1 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 0 0 0 0 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $roof$alpha</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $walls</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $walls$Rs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            2         3            9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.78415786 0.2150333 0.0008088368</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.07775325 0.9154115 0.0068352155</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 0.01946061 0.4548152 0.5257241473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $walls$pd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $walls$alpha</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## application to objects of class sdcMicro with default parameters</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">testdata2</span><span class="op">$</span><span class="va">urbrur</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">$</span><span class="va">urbrur</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dat <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
+<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"electcon"</span>, <span class="st">"relat"</span>, <span class="st">"sex"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  numVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span>, <span class="st">"savings"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  w <span class="op">=</span> <span class="st">"sampling_weight"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">pram</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
+<span class="r-in"><span>  variables <span class="op">=</span> <span class="st">"urbrur"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"pram"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Post-Randomization (PRAM):</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Variable:urbrur</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> --&gt; final Transition-Matrix:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            1         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.82312481 0.1768752</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.07235803 0.9276420</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Changed observations:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   variable nrChanges percChanges</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   urbrur         8         8.6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## this is equal to the previous application. If argument 'variables' is NULL,</span></span></span>
+<span class="r-in"><span><span class="co">## all variables from slot 'pramVars' will be used if possible.</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>   dat <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
+<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"electcon"</span>, <span class="st">"relat"</span>, <span class="st">"sex"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  numVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span>, <span class="st">"savings"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  w <span class="op">=</span> <span class="st">"sampling_weight"</span>,</span></span>
+<span class="r-in"><span>  pramVars <span class="op">=</span> <span class="st">"urbrur"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">pram</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sdc</span>, type<span class="op">=</span><span class="st">"pram"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Post-Randomization (PRAM):</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Variable:urbrur</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> --&gt; final Transition-Matrix:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            1         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.81443714 0.1855629</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.07591208 0.9240879</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Changed observations:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   variable nrChanges percChanges</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   urbrur        14       15.05</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## we can specify transition matrices for sdcMicroObj-objects too</span></span></span>
+<span class="r-in"><span><span class="co">#testdata2$roof &lt;- factor(testdata2$roof)</span></span></span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  dat <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
+<span class="r-in"><span>  keyVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"roof"</span>, <span class="st">"walls"</span>, <span class="st">"water"</span>, <span class="st">"electcon"</span>, <span class="st">"relat"</span>, <span class="st">"sex"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  numVars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span>, <span class="st">"savings"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  w <span class="op">=</span> <span class="st">"sampling_weight"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">$</span><span class="va">roof</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">$</span><span class="va">roof</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mat</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0.05</span>, <span class="fl">0.05</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `[&lt;-`(`*tmp*`, 1, , value = c(0.9, 0, 0, 0.05, 0.05)):</span> subscript out of bounds</span>
+<span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">pram</span><span class="op">(</span></span></span>
+<span class="r-in"><span>   obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
+<span class="r-in"><span>   variables <span class="op">=</span> <span class="st">"roof"</span>,</span></span>
+<span class="r-in"><span>   pd <span class="op">=</span> <span class="va">mat</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>If pram is applied on key variables, the k-anonymity and risk assessment are not useful anymore.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in inputs_pram(pd = pd, alpha = alpha, levList = levList):</span> at least one variable is not coded as a factor.</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"pram"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> PRAM has not been applied!</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## we can also have a look at the transitions</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, <span class="st">"pram"</span><span class="op">)</span><span class="op">$</span><span class="va">transitions</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+</code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
