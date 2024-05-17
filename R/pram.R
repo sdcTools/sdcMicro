@@ -57,21 +57,21 @@
 #' @examples
 #' data(testdata)
 #' \donttest{
-#' ## donttest is necessary because of 
+#' ## donttest is necessary because of
 #' ## Examples with CPU time > 2.5 times elapsed time
 #' ## caused by using C++ code and/or data.table
 #' ## using a factor variable as input
 #' res <- pram(as.factor(testdata$roof))
 #' print(res)
 #' summary(res)
-#' 
+#'
 #' ## using a data.frame as input
 #' ## pram can only be applied to factors
 #' ## -- > we have to recode to factors beforehand
 #' testdata$roof <- factor(testdata$roof)
 #' testdata$walls <- factor(testdata$walls)
 #' testdata$water <- factor(testdata$water)
-#' 
+#'
 #' ## pram() is applied within subgroups defined by
 #' ## variables "urbrur" and "sex"
 #' res <- pram(
@@ -80,14 +80,14 @@
 #'  strata_variables = c("urbrur", "sex"))
 #' print(res)
 #' summary(res)
-#' 
+#'
 #' ## default parameters (pd = 0.8 and alpha = 0.5) for the generation
 #' ## of the invariant transition matrix will be used for all variables
 #' res1 <- pram(
 #'   obj = testdata,
 #'   variables = c("roof", "walls", "water"))
 #' print(res1)
-#' 
+#'
 #' ## specific parameter settings for each variable
 #' res2 <- pram(
 #'    obj = testdata,
@@ -95,7 +95,7 @@
 #'    pd = c(0.95, 0.8, 0.9),
 #'    alpha = 0.5)
 #' print(res2)
-#' 
+#'
 #' ## detailed information on pram-parameters (such as the transition matrix 'Rs')
 #' ## is stored in the output, eg. for variable 'roof'
 #' #attr(res2, "pram_params")$roof
@@ -118,7 +118,7 @@
 #' print(res4)
 #' summary(res4)
 #' attr(res4, "pram_params")
-#' 
+#'
 #' ## application to objects of class sdcMicro with default parameters
 #' data(testdata2)
 #' testdata2$urbrur <- factor(testdata2$urbrur)
@@ -131,7 +131,7 @@
 #'   obj = sdc,
 #'   variables = "urbrur")
 #' print(sdc, type = "pram")
-#' 
+#'
 #' ## this is equal to the previous application. If argument 'variables' is NULL,
 #' ## all variables from slot 'pramVars' will be used if possible.
 #' sdc <- createSdcObj(
@@ -142,16 +142,16 @@
 #'   pramVars = "urbrur")
 #' sdc <- pram(sdc)
 #' print(sdc, type="pram")
-#' 
+#'
 #' ## we can specify transition matrices for sdcMicroObj-objects too
-#' #testdata2$roof <- factor(testdata2$roof)
+#' testdata2$roof <- factor(testdata2$roof)
 #' sdc <- createSdcObj(
 #'   dat = testdata2,
 #'   keyVars = c("roof", "walls", "water", "electcon", "relat", "sex"),
 #'   numVars = c("expend", "income", "savings"),
 #'   w = "sampling_weight")
 #' mat <- diag(length(levels(testdata2$roof)))
-#' 
+#'
 #' rownames(mat) <- colnames(mat) <- levels(testdata2$roof)
 #' mat[1,] <- c(0.9, 0, 0, 0.05, 0.05)
 #' sdc <- pram(
@@ -159,7 +159,7 @@
 #'    variables = "roof",
 #'    pd = mat)
 #' print(sdc, type = "pram")
-#' 
+#'
 #' ## we can also have a look at the transitions
 #' get.sdcMicroObj(sdc, "pram")$transitions
 #' }
