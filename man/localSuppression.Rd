@@ -35,12 +35,14 @@ of k will be used for all subgroups.}
 in the data.frame method. This means that k-anonymity is provided within each category
 of the specified variable.}
 \item{alpha: }{numeric value between 0 and 1 specifying how much keys that
-contain missing values (\code{NAs}) should contribute to the calculation
-of \code{fk} and \code{Fk}. For the default value of \code{1}, nothing changes with
-respect to the implementation in prior versions. Each \emph{wildcard-match} would
-be counted while for \code{alpha=0} keys with missing values would be basically ignored.
-Used in the data-frame method only because in the method for \code{\link{sdcMicroObj-class}}-objects,
-this value is extracted from slot \code{options}.}
+contain missing values (`NAs`) should contribute to the calculation
+of `fk` and `Fk`. For the default value of `1`, nothing changes with
+respect to the implementation in prior versions. Each *wildcard-match* would
+be counted while for `alpha=0` keys with missing values would be basically ignored.
+Used in the `data.frame` method only because in the method for \code{\link{sdcMicroObj-class}}-objects,
+this value is extracted from slot `options`.}
+\item{nc: }{max. number of cores used when computations are performed by strata. This parameter
+defaults to `1` (no parallelisation) and is ignored on windows-platforms. }
 }}
 }
 \value{
@@ -93,7 +95,7 @@ sdc <- createSdcObj(
   w = "sampling_weight",
   strataVar = "ageG"
 )
-sdc <- localSuppression(sdc)
+sdc <- localSuppression(sdc, nc = 1)
 
 ## it is also possible to provide k-anonymity for subsets of key-variables
 ## with different parameter k!

@@ -25,7 +25,9 @@ LinkingTo: Rcpp
 Depends:
     R (>= 2.10)
 Suggests:
-    laeken,testthat
+    laeken,
+    parallel,
+    testthat
 Imports:
     utils,
     stats,

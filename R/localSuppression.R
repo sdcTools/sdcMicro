@@ -36,12 +36,14 @@
 #' in the data.frame method. This means that k-anonymity is provided within each category
 #' of the specified variable.}
 #' \item{alpha: }{numeric value between 0 and 1 specifying how much keys that
-#' contain missing values (\code{NAs}) should contribute to the calculation
-#' of \code{fk} and \code{Fk}. For the default value of \code{1}, nothing changes with
-#' respect to the implementation in prior versions. Each \emph{wildcard-match} would
-#' be counted while for \code{alpha=0} keys with missing values would be basically ignored.
-#' Used in the data-frame method only because in the method for \code{\link{sdcMicroObj-class}}-objects,
-#' this value is extracted from slot \code{options}.}
+#' contain missing values (`NAs`) should contribute to the calculation
+#' of `fk` and `Fk`. For the default value of `1`, nothing changes with
+#' respect to the implementation in prior versions. Each *wildcard-match* would
+#' be counted while for `alpha=0` keys with missing values would be basically ignored.
+#' Used in the `data.frame` method only because in the method for \code{\link{sdcMicroObj-class}}-objects,
+#' this value is extracted from slot `options`.}
+#' \item{nc: }{max. number of cores used when computations are performed by strata. This parameter
+#' defaults to `1` (no parallelisation) and is ignored on windows-platforms. }
 #' }
 #' @return Manipulated data set with suppressions that has k-anonymity with
 #' respect to specified key-variables or the manipulated data stored in the
@@ -85,7 +87,7 @@
 #'   w = "sampling_weight",
 #'   strataVar = "ageG"
 #' )
-#' sdc <- localSuppression(sdc)
+#' sdc <- localSuppression(sdc, nc = 1)
 #'
 #' ## it is also possible to provide k-anonymity for subsets of key-variables
 #' ## with different parameter k!
@@ -124,7 +126,7 @@ setGeneric("localSuppressionX", function(obj, k = 2, importance = NULL, combs = 
 setMethod(
   f = "localSuppressionX",
   signature = c("sdcMicroObj"),
-  definition = function(obj, k = 2, importance = NULL, combs = NULL) {
+  definition = function(obj, k = 2, importance = NULL, combs = NULL, nc = 1) {
     obj <- nextSdcObj(obj)
     ### get data from manipKeyVars
     df <- as.data.frame(get.sdcMicroObj(obj, type = "manipKeyVars"))
@@ -145,7 +147,8 @@ setMethod(
       k = k,
       combs = combs,
       importance = importance,
-      alpha = alpha)
+      alpha = alpha,
+      nc = nc)
 
     # create final output
     obj <- set.sdcMicroObj(obj, type = "manipKeyVars", input = list(ls$xAnon))
@@ -187,7 +190,8 @@ setMethod(
                         combs = NULL,
                         keyVars,
                         strataVars = NULL,
-                        alpha = 1) {
+                        alpha = 1,
+                        nc = 1) {
 
     localSuppressionWORK(
       x = obj,
@@ -196,7 +200,8 @@ setMethod(
       strataVars = strataVars,
       importance = importance,
       combs = combs,
-      alpha = alpha)
+      alpha = alpha,
+      nc = nc)
   }
 )
 
@@ -338,7 +343,7 @@ suppSubset <- function(x, k, importance, alpha)  {
 sum_na <- function(x) {
   sum(is.na(x))
 }
-localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=NULL, alpha) {
+localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=NULL, alpha, nc=1) {
   # find a suppression pattern for a simple subset that is not stratified
   # input: df=data.table with only keyVars
   # k: parameter for k-anonymity (length 1)
@@ -358,6 +363,17 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     strataVars <- names(x)[strataVars]
   } else {
     strataVarsNum <- match(strataVars, colnames(x))
+  }
+
+  stopifnot(is.numeric(nc))
+  nc <- round(nc)[1]
+  stopifnot(nc >= 1)
+  # parallel::mclapply does only work reliably under linux/mac
+  # and it is not worth bothering dealing with windows here
+  if (!tolower(Sys.info()["sysname"]) %in% c("linux", "darwin")) {
+    nc <- 1
+  } else {
+    nc <- max(1, min(nc, parallel::detectCores() - 1))
   }
 
   # checks and preparations if we apply localSuppression on
@@ -467,14 +483,24 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     supps <- xAnon <- vector("list", length = length(spl))
     totalSupps <- rep(NA, length(spl))
     if (is.null(combs)) {
-      # todo: using parallel/mclapply?
-      for (i in seq_along(spl)) {
-        res <- suppSubset(
-          x = spl[[i]][, keyVars, with = FALSE],
-          k = k,
-          importance = importance,
-          alpha = alpha)
-        xAnon[[i]] <- res$xAnon
+      if (nc == 1) {
+        #message("running serially")
+        xAnon <- lapply(seq_len(length(spl)), function(x) {
+          suppSubset(
+            x = spl[[x]][, keyVars, with = FALSE],
+            k = k,
+            importance = importance,
+            alpha = alpha)$xAnon
+        })
+      } else {
+        #message("running in parallel using ", nc, " cores")
+        xAnon <- parallel::mclapply(seq_len(length(spl)), function(x) {
+          suppSubset(
+            x = spl[[x]][, keyVars, with = FALSE],
+            k = k,
+            importance = importance,
+            alpha = alpha)$xAnon
+        }, mc.cores = nc)
       }
     } else {
       # local Suppression by strata and combination of subsets!
