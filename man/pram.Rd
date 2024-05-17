@@ -55,7 +55,7 @@ in sdcMicro > 4.5.0
 \examples{
 data(testdata)
 \donttest{
-## donttest is necessary because of 
+## donttest is necessary because of
 ## Examples with CPU time > 2.5 times elapsed time
 ## caused by using C++ code and/or data.table
 ## using a factor variable as input
@@ -142,7 +142,7 @@ sdc <- pram(sdc)
 print(sdc, type="pram")
 
 ## we can specify transition matrices for sdcMicroObj-objects too
-#testdata2$roof <- factor(testdata2$roof)
+testdata2$roof <- factor(testdata2$roof)
 sdc <- createSdcObj(
   dat = testdata2,
   keyVars = c("roof", "walls", "water", "electcon", "relat", "sex"),
