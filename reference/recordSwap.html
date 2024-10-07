@@ -4,7 +4,7 @@ risk of each record as well the geographic topology."><!-- mathjax --><script sr
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -32,7 +32,7 @@ risk of each record as well the geographic topology."><!-- mathjax --><script sr
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -42,20 +42,20 @@ risk of each record as well the geographic topology."><!-- mathjax --><script sr
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/sdcTools/sdcMicro/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Targeted Record Swapping</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sdcTools/sdcMicro/blob/HEAD/R/recordSwap.R" class="external-link"><code>R/recordSwap.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sdcTools/sdcMicro/blob/master/R/recordSwap.R" class="external-link"><code>R/recordSwap.R</code></a></small>
     <div class="hidden name"><code>recordSwap.Rd</code></div>
     </div>
 
@@ -67,10 +67,10 @@ risk of each record as well the geographic topology.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">recordSwap</span><span class="op">(</span><span class="va">data</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for sdcMicroObj</span></span>
+<span><span class="co"># S3 method for class 'sdcMicroObj'</span></span>
 <span><span class="fu">recordSwap</span><span class="op">(</span><span class="va">data</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for default</span></span>
+<span><span class="co"># Default S3 method</span></span>
 <span><span class="fu">recordSwap</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">hid</span>,</span>
@@ -91,72 +91,74 @@ risk of each record as well the geographic topology.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>data</dt>
+
+
+<dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>must be either a micro data set in the form of a
 `data.table` or `data.frame`, or an `sdcObject`, see
 <a href="sdcMicroObj-class.html">createSdcObj</a>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>parameters passed to `recordSwap.default()`</p></dd>
 
 
-<dt>hid</dt>
+<dt id="arg-hid">hid<a class="anchor" aria-label="anchor" href="#arg-hid"></a></dt>
 <dd><p>column index or column name in `data` which refers
 to the household identifier.</p></dd>
 
 
-<dt>hierarchy</dt>
+<dt id="arg-hierarchy">hierarchy<a class="anchor" aria-label="anchor" href="#arg-hierarchy"></a></dt>
 <dd><p>column indices or column names of variables in
 `data` which refer to the geographic hierarchy in the micro data
 set. For instance county &gt; municipality &gt; district.</p></dd>
 
 
-<dt>similar</dt>
+<dt id="arg-similar">similar<a class="anchor" aria-label="anchor" href="#arg-similar"></a></dt>
 <dd><p>vector or list of integer vectors or column names
 containing similarity profiles, see details for more explanations.</p></dd>
 
 
-<dt>swaprate</dt>
+<dt id="arg-swaprate">swaprate<a class="anchor" aria-label="anchor" href="#arg-swaprate"></a></dt>
 <dd><p>double between 0 and 1 defining the proportion of
 households which should be swapped, see details for more explanations</p></dd>
 
 
-<dt>risk</dt>
+<dt id="arg-risk">risk<a class="anchor" aria-label="anchor" href="#arg-risk"></a></dt>
 <dd><p>either column indices or column names in `data` or
 `data.table`, `data.frame` or `matrix` indicating risk of each record
 at each hierarchy level. If `risk`-matrix is supplied to swapping procedure
 will not use the k-anonymity rule but the values found in this matrix
 for swapping.
-When using the risk parameter is expected to have assigned a maximum value     
-in a household for each member of the household. If this condition is not      
-satisfied, the risk parameter is automatically adjusted to comply with this    
+When using the risk parameter is expected to have assigned a maximum value
+in a household for each member of the household. If this condition is not
+satisfied, the risk parameter is automatically adjusted to comply with this
 condition.
 If risk parameter is provided then k-anonymity rule is suppressed.</p></dd>
 
 
-<dt>risk_threshold</dt>
+<dt id="arg-risk-threshold">risk_threshold<a class="anchor" aria-label="anchor" href="#arg-risk-threshold"></a></dt>
 <dd><p>single numeric value indicating when a household is
 considered "high risk", e.g. when this household must be swapped. Is only
 used when `risk` is not `NULL`.
-Risk threshold indicates households that have to be swapped, but be aware      
-that households with risk lower than threshold, but with still high enough      
-risk may be swapped as well. Only households with risk set to 0 are not swapped.                                                   
+Risk threshold indicates households that have to be swapped, but be aware
+that households with risk lower than threshold, but with still high enough
+risk may be swapped as well. Only households with risk set to 0 are not swapped.
 Risk and risk threshold must be equal or bigger then 0.</p></dd>
 
 
-<dt>k_anonymity</dt>
+<dt id="arg-k-anonymity">k_anonymity<a class="anchor" aria-label="anchor" href="#arg-k-anonymity"></a></dt>
 <dd><p>integer defining the threshold of high risk households
 (counts&lt;k) for using k-anonymity rule</p></dd>
 
 
-<dt>risk_variables</dt>
+<dt id="arg-risk-variables">risk_variables<a class="anchor" aria-label="anchor" href="#arg-risk-variables"></a></dt>
 <dd><p>column indices or column names of variables in `data`
 which will be considered for estimating the risk. Only used when k-anonymity
 rule is applied.</p></dd>
 
 
-<dt>carry_along</dt>
+<dt id="arg-carry-along">carry_along<a class="anchor" aria-label="anchor" href="#arg-carry-along"></a></dt>
 <dd><p>integer vector indicating additional variables to swap
 besides to hierarchy variables. These variables do not interfere with the
 procedure of finding a record to swap with or calculating risk. This
@@ -166,28 +168,26 @@ be at household level. In case it is detected that they are at individual
 level (different values within `hid`), a warning is given.</p></dd>
 
 
-<dt>return_swapped_id, </dt>
+<dt id="arg-return-swapped-id-">return_swapped_id, <a class="anchor" aria-label="anchor" href="#arg-return-swapped-id-"></a></dt>
 <dd><p>boolean if `TRUE` the output includes an
 additional column showing the `hid` with which a record was swapped with.
 The new column will have the name `paste0(hid,"_swapped")`.</p></dd>
 
 
-<dt>log_file_name</dt>
+<dt id="arg-log-file-name">log_file_name<a class="anchor" aria-label="anchor" href="#arg-log-file-name"></a></dt>
 <dd><p>character, path for writing a log file. The log
 file contains a list of household IDs (`hid`) which could not have been
 swapped and is only created if any such households exist.</p></dd>
 
 
-<dt>seed</dt>
+<dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>integer defining the seed for the random number generator, for
 reproducibility. if `NULL` a random seed will be set using `sample(1e5,1)`.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>`data.table` with swapped records.</p>
+    <p>`data.table` with swapped records.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -208,7 +208,7 @@ to be swapped across this hierarchy level.
 For instance, having a geographic hierarchy of NUTS1 &gt; NUTS2 &gt; NUTS3 the
 counts are calculated for each geographic variable and defined
 `risk_variables`. If the counts for a record falls below `k_anonymity`
-for hierarchy county (NUTS1, NUTS2, ...) then this record needs to be swapped 
+for hierarchy county (NUTS1, NUTS2, ...) then this record needs to be swapped
 across counties.
 Setting `k_anonymity = 0` disables this feature and no risky households
 are defined.</p>
@@ -323,15 +323,15 @@ number of households swapped in total is in coherence to the swaprate.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
