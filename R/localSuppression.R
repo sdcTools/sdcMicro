@@ -38,12 +38,23 @@
 #' \item{alpha: }{numeric value between 0 and 1 specifying how much keys that
 #' contain missing values (`NAs`) should contribute to the calculation
 #' of `fk` and `Fk`. For the default value of `1`, nothing changes with
-#' respect to the implementation in prior versions. Each *wildcard-match* would
-#' be counted while for `alpha=0` keys with missing values would be basically ignored.
+#' respect to the implementation in prior versions. 
 #' Used in the `data.frame` method only because in the method for \code{\link{sdcMicroObj-class}}-objects,
 #' this value is extracted from slot `options`.}
 #' \item{nc: }{max. number of cores used when computations are performed by strata. This parameter
 #' defaults to `1` (no parallelisation) and is ignored on windows-platforms. }
+#' }
+#' \details{
+#' For the parameter `alpha`: For `alpha=1`, each *wildcard-match* would
+#' be counted, while for `alpha=0` keys with missing values will not increase 
+#' the frequency of other keys.
+#' `alpha=0` represents thus the case of building an own category for a missing
+#'  value, while `alpha=1` means that the intruder's *wildcard-match* is correct. 
+#' Both represents extreme cases. For sure, with `alpha=0` likely one underestimates 
+#' frequencies when missing values are present in the key variables.
+#' Note that when the `combs` approach is used together with the rather unrealistic choice of `alpha=0` 
+#' `kAnon()` may result in correct but not simple understandable evaluations of frequencies due 
+#' to the nature that `kAnon` is a heuristic approach that works iteratively.
 #' }
 #' @return Manipulated data set with suppressions that has k-anonymity with
 #' respect to specified key-variables or the manipulated data stored in the
@@ -140,6 +151,9 @@ setMethod(
     }
 
     alpha <- get.sdcMicroObj(obj, type = "options")$alpha
+    if(alpha == 0){
+      warnings("alpha is set to 0. \nIn case of missing values in the key variables, \nfrequency counts may likely to be underestimated. \nWe recommend to increase the values of alpha")
+    }
     ls <- localSuppressionWORK(
       x = df,
       keyVars = keyVars,
@@ -192,7 +206,9 @@ setMethod(
                         strataVars = NULL,
                         alpha = 1,
                         nc = 1) {
-
+    if(alpha == 0){
+      warnings("alpha is set to 0. \nIn case of missing values in the key variables, \nfrequency counts may likely to be underestimated. \nWe recommend to increase the values of alpha")
+    }
     localSuppressionWORK(
       x = obj,
       keyVars = keyVars,
