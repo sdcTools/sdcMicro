@@ -26,7 +26,7 @@
 #' - the matrix must be a square matrix
 #' - the rownames and colnames of the matrix must match the levels (in the same order) of the factor-variable that should be
 #' postrandomized.
-#' - the rowSums and colSums of the matrix need to equal 1
+#' - the rowSums of the matrix need to equal 1
 #'
 #' It is also possible to combine the different ways. For details have a look at the examples.
 #' @param alpha amount of perturbation for the invariant Pram method. This is a numeric vector
