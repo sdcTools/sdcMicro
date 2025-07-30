@@ -220,15 +220,15 @@ test_that("test similarity profiles",{
 
 test_that("test risk parameter - number of hd swaps)",{
   
-  dat_s <- recordSwap(data = dat, hid = hid, hierarchy = hier,
-                      similar,
-                      risk = risk, # TESTING
-                      risk_threshold = risk_threshold, # TESTING
-                      carry_along = NULL,
-                      return_swapped_id = TRUE,
-                      seed=seed,
-                      swaprate = 0 # to test swaping based only on risk values
-  )
+  dat_s <- expect_warning(recordSwap(data = dat, hid = hid, hierarchy = hier,
+                                     similar,
+                                     risk = risk, # TESTING
+                                     risk_threshold = risk_threshold, # TESTING
+                                     carry_along = NULL,
+                                     return_swapped_id = TRUE,
+                                     seed=seed,
+                                     swaprate = 0 # to test swaping based only on risk values
+  ),"risk was adjusted in order to give each household member the maximum household risk value")
   
   # check that swapped regions are identical for each household
   dat_check <- dat_s[,lapply(.SD,uniqueN),by=.(hid),.SDcols=c(hier)]

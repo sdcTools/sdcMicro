@@ -103,7 +103,7 @@ test_that("test para - data, hid, hierarchy, similar, risk_variables, carry_alon
              risk_variables = risk_variables,
              carry_along = NULL,
              return_swapped_id = TRUE,
-             seed=seed),"Columns specified in hid, hierarchy, similar and carry\\_along must contain only integer values at this point")
+             seed=seed),"Columns specified in hid, hierarchy, similar, risk_variables and carry\\_along must contain only integer values at this point")
   dat[,c("h_extra","h_extra2"):=NULL]
   #################################
   

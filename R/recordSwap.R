@@ -297,7 +297,8 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
     N <- NULL
     vhid <- names(data)[hid + 1]
     vidx <- names(data)[idx + 1]
-    agg <- data[, .(N = length(unique(get(vidx)))), by = vhid]
+    agg <- unique(subset(data, select = c(vhid, vidx)))
+    agg <- agg[, .N, by = c(vhid)]
     agg <- agg[N != 1]
     if (nrow(agg) > 0) {
       msg <- paste(
@@ -349,7 +350,7 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
       stop("risk and hierarchy need to address the same number of columns!")
     }
     risk <- checkIndexString(risk,cnames,minLength = 1)
-    risk <- data[,c(risk+1)]
+    risk <- subset(data, select = risk+1)
   }else{
     if(all(!class(risk)%in%c("data.table","data.frame","matrix"))){
       stop("If risk is not a vector containing column indices or column names in data then risk must be either a data.table, data.frame or matrix!")
@@ -364,12 +365,12 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
 
   cnamesrisk <- copy(colnames(risk))
   risk <- data.table(risk)
-
+  
   if(nrow(risk)>0){
     if(is.null(cnamesrisk)){
       message("risk does not contain column names; the first column in risk will be used for the first hierarchy level, e.g ",cnames[hierarchy[1]+1]," and so on.")
     }else{
-      if(!any(cnamesrisk%in%cnames[hierarchy+1])){
+      if(!any(cnamesrisk%in%cnames)){
         stop("the columnnames of risk do not appear in data")
       }
     }
@@ -384,21 +385,16 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
     # every member of the household the highest value in the household.
     risk_variables_names <- copy(colnames(risk))
     risk[,hid_help:=data[[hid+1]]]
-    tryCatch(
-      expr = risk[,lapply(.SD,
-                          function(z){
-                            if( (length(unique(z)) > 1)) {stop()} else {0}
-                          }), # error when value not equal 0
-                  .SDcols=c(risk_variables_names),
-                  by=.(hid_help)], # calculate if each household have unique values
-      error  = function(e){ 
-        message("risk was adjusted in order to give each household member the maximum household risk value")
-        risk[,c(risk_variables_names):=lapply(.SD,max),
-             .SDcols=c(risk_variables_names),
-             by=.(hid_help)] # assign to each household its max value
-        risk[,hid_help:=NULL]
-      }
-    )
+    
+    risk_check <- unique(subset(risk, select = c("hid_help", risk_variables_names)))
+    risk_check <- risk_check[,.N,by=.(hid_help)]
+    if(any(risk_check[["N"]]>1)){
+      warning("risk was adjusted in order to give each household member the maximum household risk value")
+      risk[,c(risk_variables_names):=lapply(.SD,max),
+           .SDcols=c(risk_variables_names),
+           by=.(hid_help)] # assign to each household its max value
+      risk[,hid_help:=NULL]
+    }
   }
 
   # check seed
@@ -452,10 +448,19 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
       which(original_cols %in% z) -1
     })
   }
-
+  
+  # check if any factors are present and cast to integer
+  is_factor <- sapply(data_sw, is.factor)
+  factor_variables <- NULL
+  if(any(is_factor)){
+    factor_variables <- colnames(data_sw)[is_factor]
+    factor_variables_levels <- lapply(subset(data_sw, select = factor_variables),levels)
+    data_sw[,c(factor_variables) := lapply(.SD, as.integer),.SDcols=c(factor_variables)]
+  }
+  
   # check if any non numeric values are present in data
   if(any(!unlist(apply(data_sw,2,is.numeric)))){
-    stop("Columns specified in hid, hierarchy, similar and carry_along must contain only integer values at this point")
+    stop("Columns specified in hid, hierarchy, similar, risk_variables and carry_along must contain only integer values at this point")
   }
 
   # check if any values with NA values are present in data
@@ -508,6 +513,13 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   rm(data_sw)
   setcolorder(data,cnames)
   data[,helpVariableforMergingAfterTRS:=NULL]
+  
+  if(!is.null(factor_variables)){
+    for(s in factor_variables){
+      data[, c(s) := factor(get(s), labels = factor_variables_levels[[s]])]
+    }
+  }
+  
 
   return(data)
 }
