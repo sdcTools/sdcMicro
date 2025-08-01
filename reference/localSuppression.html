@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sdcMicro</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.9</span>
       </span>
     </div>
 
@@ -59,7 +59,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Algorithm to achieve k-anonymity by performing local suppression.</p>
+    <p>Algorithm to achieve <em>k</em>-anonymity by performing local suppression.</p>
     </div>
 
     <div id="ref-usage">
@@ -73,91 +73,77 @@
 
 
 <dl><dt id="arg-obj">obj<a class="anchor" aria-label="anchor" href="#arg-obj"></a></dt>
-<dd><p>a <code><a href="sdcMicroObj-class.html">sdcMicroObj-class</a></code>-object or a <code>data.frame</code></p></dd>
+<dd><p>a <code>sdcMicroObj-class</code> object or a <code>data.frame</code></p></dd>
 
 
 <dt id="arg-k">k<a class="anchor" aria-label="anchor" href="#arg-k"></a></dt>
-<dd><p>threshold for k-anonymity</p></dd>
+<dd><p>Threshold for <em>k</em>-anonymity</p></dd>
 
 
 <dt id="arg-importance">importance<a class="anchor" aria-label="anchor" href="#arg-importance"></a></dt>
-<dd><p>numeric vector of numbers between 1 and n (n=length of
-vector keyVars).  This vector represents the "importance" of variables that
-should be used for local suppression in order to obtain k-anonymity.
-key-variables with importance=1 will - if possible - not suppressed,
-key-variables with importance=n will be used whenever possible.</p></dd>
+<dd><p>Numeric vector of values between 1 and <em>n</em> (<code>n = length(keyVars)</code>).
+This vector defines the "importance" of variables for local suppression.
+Variables with <code>importance = 1</code> will, if possible, not be suppressed;
+variables with <code>importance = n</code> will be prioritized for suppression.</p></dd>
 
 
 <dt id="arg-combs">combs<a class="anchor" aria-label="anchor" href="#arg-combs"></a></dt>
-<dd><p>numeric vector. if specified, the algorithm will provide k-anonymity
-for each combination of n key variables (with n being the value of the ith element
-of this parameter. For example, if combs=c(4,3), the algorithm will provide
-k-anonymity to all combinations of 4 key variables and then k-anonymity to all
-combinations of 3 key variables. It is possible to apply different k to these
-subsets by specifying k as a vector. If k has only one element, the same value
-of k will be used for all subgroups.</p></dd>
+<dd><p>Numeric vector. If specified, the algorithm provides <em>k</em>-anonymity
+for each combination of <em>n</em> key variables (with <em>n</em> being the value of the ith
+element of this parameter). For example, <code>combs = c(4,3)</code> means that <em>k</em>-anonymity
+will be provided for all combinations of 4 and then 3 key variables.
+It is possible to assign different <em>k</em> values for each combination by supplying <code>k</code> as a vector.
+If <code>k</code> has only one value, it will be used for all subsets.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>see arguments below</p><dl><dt>keyVars: </dt>
-<dd><p>names (or indices) of categorical key variables (for data-frame method)</p></dd>
-
-<dt>strataVars: </dt>
-<dd><p>name (or index) of variable which is used for stratification purposes, used
-in the data.frame method. This means that k-anonymity is provided within each category
-of the specified variable.</p></dd>
-
-<dt>alpha: </dt>
-<dd><p>numeric value between 0 and 1 specifying how much keys that
-contain missing values (`NAs`) should contribute to the calculation
-of `fk` and `Fk`. For the default value of `1`, nothing changes with
-respect to the implementation in prior versions. Each *wildcard-match* would
-be counted while for `alpha=0` keys with missing values would be basically ignored.
-Used in the `data.frame` method only because in the method for <code><a href="sdcMicroObj-class.html">sdcMicroObj-class</a></code>-objects,
-this value is extracted from slot `options`.</p></dd>
-
-<dt>nc: </dt>
-<dd><p>max. number of cores used when computations are performed by strata. This parameter
-defaults to `1` (no parallelisation) and is ignored on windows-platforms.</p></dd>
-
-
-</dl></dd>
+<dd><p>see additional arguments below:</p><ul><li><p><strong><code>keyVars</code></strong>: Names or indices of categorical key variables (for data.frame method)</p></li>
+<li><p><strong><code>strataVars</code></strong>: Name or index of the variable used for stratification.
+<em>k</em>-anonymity is ensured within each category of this variable.</p></li>
+<li><p><strong><code>alpha</code></strong>: Numeric value between 0 and 1 specifying how much keys with missing
+values (<code>NA</code>s) contribute to the calculation of <code>fk</code> and <code>Fk</code>.
+Default is <code>1</code>. Used only in the <code>data.frame</code> method.</p></li>
+<li><p><strong><code>nc</code></strong>: Maximum number of cores used for stratified computations.
+Default is <code>1</code>. Parallelization is ignored on Windows.</p></li>
+</ul></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Manipulated data set with suppressions that has k-anonymity with
-respect to specified key-variables or the manipulated data stored in the
-<code><a href="sdcMicroObj-class.html">sdcMicroObj-class</a></code>.</p>
+    <p>A modified dataset with suppressions that meets <em>k</em>-anonymity based on
+the specified key variables, or the modified <code>sdcMicroObj-class</code> object.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>The algorithm provides a k-anonymized data set by suppressing values in key
+    <p>The algorithm provides a <em>k</em>-anonymized data set by suppressing values in key
 variables. The algorithm tries to find an optimal solution to suppress as
 few values as possible and considers the specified importance vector. If not
 specified, the importance vector is constructed in a way such that key
 variables with a high number of characteristics are considered less
 important than key variables with a low number of characteristics.</p>
-<p>The implementation provides k-anonymity per strata, if slot 'strataVar' has
-been set in <code><a href="sdcMicroObj-class.html">sdcMicroObj-class</a></code> or if parameter 'strataVar' is
-used when appying the data.frame method. For details, have a look
-at the examples provided.</p>
+<p>The implementation provides <em>k</em>-anonymity per strata, if slot <code>strataVar</code> has
+been set in <code>sdcMicroObj-class</code> or if parameter <code>strataVar</code> is
+used when applying the <code>data.frame</code> method. For details, see the examples provided.</p>
+<p>For the parameter <code>alpha</code>:</p><ul><li><p><code>alpha = 1</code> counts all <em>wildcard matches</em> (i.e. <code>NA</code>s match everything).</p></li>
+<li><p><code>alpha = 0</code> assumes missing values form their own categories.</p></li>
+</ul><p>These are two extremes. With <code>alpha = 0</code>, frequencies are likely underestimated when
+<code>NA</code>s are present. If <code>combs</code> is used with <code>alpha = 0</code>, the heuristic nature of <code>kAnon()</code>
+may lead to technically correct, but not always intuitively understandable frequency evaluations.</p>
     </div>
     <div id="note">
     <h2>Note</h2>
-    <p>Deprecated methods 'localSupp2' and 'localSupp2Wrapper' are no longer available
-in sdcMicro &gt; 4.5.0.
-<code>kAnon</code> is a more intutitive term for localSuppression because the aim is always
-to obtain k-anonymity for some parts of the data.</p>
+    <p>Deprecated methods <code>localSupp2</code> and <code>localSupp2Wrapper</code> are no longer available
+in <code>sdcMicro</code> versions &gt; 4.5.0.
+<code>kAnon()</code> is a more intuitive term for local suppression, since the goal is to achieve <em>k</em>-anonymity.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
-<em>Springer International Publishing</em>, 287 pages, 2017. ISBN 978-3-319-50272-4.
+    <p>Templ, M. <em>Statistical Disclosure Control for Microdata: Methods and Applications in R.</em>
+Springer International Publishing, 287 pages, 2017. ISBN: 978-3-319-50272-4.
 <a href="https://doi.org/10.1007/978-3-319-50272-4" class="external-link">doi:10.1007/978-3-319-50272-4</a></p>
-<p>Templ, M. and Kowarik, A. and Meindl, B.
-Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
-<em>Journal of Statistical Software</em>, <strong>67</strong> (4), 1–36, 2015. <a href="https://doi.org/10.18637/jss.v067.i04" class="external-link">doi:10.18637/jss.v067.i04</a></p>
+<p>Templ, M., Kowarik, A., Meindl, B.
+<em>Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.</em>
+Journal of Statistical Software, <strong>67</strong>(4), 1–36, 2015. <a href="https://doi.org/10.18637/jss.v067.i04" class="external-link">doi:10.18637/jss.v067.i04</a></p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -170,7 +156,7 @@ Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">francdat</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Local Suppression</span></span></span>
-<span class="r-in"><span><span class="va">localS</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">francdat</span>, keyVar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">localS</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">francdat</span>, keyVar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">localS</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> -----------------------</span>
@@ -194,7 +180,7 @@ Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">sdc</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## for objects of class sdcMicro, with stratification</span></span></span>
-<span class="r-in"><span><span class="va">testdata2</span><span class="op">$</span><span class="va">ageG</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">$</span><span class="va">age</span>, <span class="fl">5</span>, labels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"AG"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">testdata2</span><span class="op">$</span><span class="va">ageG</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">$</span><span class="va">age</span>, <span class="fl">5</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"AG"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdcMicroObj-class.html">createSdcObj</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  dat <span class="op">=</span> <span class="va">testdata2</span>,</span></span>
 <span class="r-in"><span>  keyVars <span class="op">=</span> <span class="va">kv</span>,</span></span>
@@ -214,7 +200,7 @@ Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">sdc</span>, k <span class="op">=</span> <span class="va">k</span>, combs <span class="op">=</span> <span class="va">combs</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## data.frame method (no stratification)</span></span></span>
-<span class="r-in"><span><span class="va">inp</span> <span class="op">&lt;-</span> <span class="va">testdata2</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">kv</span>, <span class="st">"ageG"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">inp</span> <span class="op">&lt;-</span> <span class="va">testdata2</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">kv</span>, <span class="st">"ageG"</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">ls</span> <span class="op">&lt;-</span> <span class="fu">localSuppression</span><span class="op">(</span><span class="va">inp</span>, keyVars <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ls</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
