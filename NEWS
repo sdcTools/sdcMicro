@@ -1,4 +1,4 @@
-# next
+# 5.7.9
 - Improvements for `recordSwap()`:
   + `hid`, `risk_variables`, `hierarchy`, `similar` and `carry_along` now accept factor variables as inputs
   +  Input checking has been improved, previously supplying a factor to hid resulted in very long pre-processing times
