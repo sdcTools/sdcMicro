@@ -14,3 +14,4 @@ src/recordSwap/compile.sh
 ^pkgdown$
 vignettes/precompile.R
 vignettes/recordSwapping.Rmd.orig
+ctime.pdf
