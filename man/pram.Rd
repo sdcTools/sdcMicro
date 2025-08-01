@@ -29,7 +29,7 @@ be constructed as follows:
 \item the matrix must be a square matrix
 \item the rownames and colnames of the matrix must match the levels (in the same order) of the factor-variable that should be
 postrandomized.
-\item the rowSums and colSums of the matrix need to equal 1
+\item the rowSums of the matrix need to equal 1
 }
 
 It is also possible to combine the different ways. For details have a look at the examples.}

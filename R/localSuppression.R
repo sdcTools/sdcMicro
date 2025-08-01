@@ -1,86 +1,79 @@
 #' Local Suppression to obtain k-anonymity
 #'
-#' Algorithm to achieve k-anonymity by performing local suppression.
+#' Algorithm to achieve *k*-anonymity by performing local suppression.
 #'
-#' The algorithm provides a k-anonymized data set by suppressing values in key
+#' The algorithm provides a *k*-anonymized data set by suppressing values in key
 #' variables. The algorithm tries to find an optimal solution to suppress as
 #' few values as possible and considers the specified importance vector. If not
 #' specified, the importance vector is constructed in a way such that key
 #' variables with a high number of characteristics are considered less
 #' important than key variables with a low number of characteristics.
 #'
-#' The implementation provides k-anonymity per strata, if slot 'strataVar' has
-#' been set in \code{\link{sdcMicroObj-class}} or if parameter 'strataVar' is
-#' used when appying the data.frame method. For details, have a look
-#' at the examples provided.
+#' The implementation provides *k*-anonymity per strata, if slot `strataVar` has
+#' been set in `sdcMicroObj-class` or if parameter `strataVar` is
+#' used when applying the `data.frame` method. For details, see the examples provided.
 #'
 #' @rdname localSuppression
-#' @param obj a \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}
-#' @param k threshold for k-anonymity
-#' @param importance numeric vector of numbers between 1 and n (n=length of
-#' vector keyVars).  This vector represents the "importance" of variables that
-#' should be used for local suppression in order to obtain k-anonymity.
-#' key-variables with importance=1 will - if possible - not suppressed,
-#' key-variables with importance=n will be used whenever possible.
-#' @param combs numeric vector. if specified, the algorithm will provide k-anonymity
-#' for each combination of n key variables (with n being the value of the ith element
-#' of this parameter. For example, if combs=c(4,3), the algorithm will provide
-#' k-anonymity to all combinations of 4 key variables and then k-anonymity to all
-#' combinations of 3 key variables. It is possible to apply different k to these
-#' subsets by specifying k as a vector. If k has only one element, the same value
-#' of k will be used for all subgroups.
-#' @param ... see arguments below
-#' \describe{
-#' \item{keyVars: }{names (or indices) of categorical key variables (for data-frame method)}
-#' \item{strataVars: }{name (or index) of variable which is used for stratification purposes, used
-#' in the data.frame method. This means that k-anonymity is provided within each category
-#' of the specified variable.}
-#' \item{alpha: }{numeric value between 0 and 1 specifying how much keys that
-#' contain missing values (`NAs`) should contribute to the calculation
-#' of `fk` and `Fk`. For the default value of `1`, nothing changes with
-#' respect to the implementation in prior versions. 
-#' Used in the `data.frame` method only because in the method for \code{\link{sdcMicroObj-class}}-objects,
-#' this value is extracted from slot `options`.}
-#' \item{nc: }{max. number of cores used when computations are performed by strata. This parameter
-#' defaults to `1` (no parallelisation) and is ignored on windows-platforms. }
-#' }
-#' \details{
-#' For the parameter `alpha`: For `alpha=1`, each *wildcard-match* would
-#' be counted, while for `alpha=0` keys with missing values will not increase 
-#' the frequency of other keys.
-#' `alpha=0` represents thus the case of building an own category for a missing
-#'  value, while `alpha=1` means that the intruder's *wildcard-match* is correct. 
-#' Both represents extreme cases. For sure, with `alpha=0` likely one underestimates 
-#' frequencies when missing values are present in the key variables.
-#' Note that when the `combs` approach is used together with the rather unrealistic choice of `alpha=0` 
-#' `kAnon()` may result in correct but not simple understandable evaluations of frequencies due 
-#' to the nature that `kAnon` is a heuristic approach that works iteratively.
-#' }
-#' @return Manipulated data set with suppressions that has k-anonymity with
-#' respect to specified key-variables or the manipulated data stored in the
-#' \code{\link{sdcMicroObj-class}}.
+#' @param obj a `sdcMicroObj-class` object or a `data.frame`
+#' @param k Threshold for *k*-anonymity
+#' @param importance Numeric vector of values between 1 and *n* (`n = length(keyVars)`).
+#' This vector defines the "importance" of variables for local suppression.
+#' Variables with `importance = 1` will, if possible, not be suppressed;
+#' variables with `importance = n` will be prioritized for suppression.
+#' @param combs Numeric vector. If specified, the algorithm provides *k*-anonymity
+#' for each combination of *n* key variables (with *n* being the value of the ith
+#' element of this parameter). For example, `combs = c(4,3)` means that *k*-anonymity
+#' will be provided for all combinations of 4 and then 3 key variables.
+#' It is possible to assign different *k* values for each combination by supplying `k` as a vector.
+#' If `k` has only one value, it will be used for all subsets.
+#' @param ... see additional arguments below:
+#' - **`keyVars`**: Names or indices of categorical key variables (for data.frame method)
+#' - **`strataVars`**: Name or index of the variable used for stratification.
+#'   *k*-anonymity is ensured within each category of this variable.
+#' - **`alpha`**: Numeric value between 0 and 1 specifying how much keys with missing
+#'   values (`NA`s) contribute to the calculation of `fk` and `Fk`.
+#'   Default is `1`. Used only in the `data.frame` method.
+#' - **`nc`**: Maximum number of cores used for stratified computations.
+#'   Default is `1`. Parallelization is ignored on Windows.
+#'
+#' @details
+#' For the parameter `alpha`:
+#' - `alpha = 1` counts all *wildcard matches* (i.e. `NA`s match everything).
+#' - `alpha = 0` assumes missing values form their own categories.
+#'
+#' These are two extremes. With `alpha = 0`, frequencies are likely underestimated when
+#' `NA`s are present. If `combs` is used with `alpha = 0`, the heuristic nature of `kAnon()`
+#' may lead to technically correct, but not always intuitively understandable frequency evaluations.
+#'
+#' @return
+#' A modified dataset with suppressions that meets *k*-anonymity based on
+#' the specified key variables, or the modified `sdcMicroObj-class` object.
+#'
 #' @author Bernhard Meindl, Matthias Templ
+#'
 #' @references
-#' Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
-#' \emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+#' Templ, M. *Statistical Disclosure Control for Microdata: Methods and Applications in R.*
+#' Springer International Publishing, 287 pages, 2017. ISBN: 978-3-319-50272-4.
 #' \doi{10.1007/978-3-319-50272-4}
 #'
-#' Templ, M. and Kowarik, A. and Meindl, B.
-#' Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
-#' \emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+#' Templ, M., Kowarik, A., Meindl, B.
+#' *Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.*
+#' Journal of Statistical Software, **67**(4), 1–36, 2015. \doi{10.18637/jss.v067.i04}
 #'
 #' @keywords manip
 #' @export
-#' @note Deprecated methods 'localSupp2' and 'localSupp2Wrapper' are no longer available
-#' in sdcMicro > 4.5.0.
-#' \code{kAnon} is a more intutitive term for localSuppression because the aim is always
-#' to obtain k-anonymity for some parts of the data.
+#' @md
+#' @note
+#' Deprecated methods `localSupp2` and `localSupp2Wrapper` are no longer available
+#' in `sdcMicro` versions > 4.5.0.
+#' `kAnon()` is a more intuitive term for local suppression, since the goal is to achieve *k*-anonymity.
+#'
 #' @examples
 #' \donttest{
 #' data(francdat)
 #'
 #' ## Local Suppression
-#' localS <- localSuppression(francdat, keyVar=c(4,5,6))
+#' localS <- localSuppression(francdat, keyVar = c(4, 5, 6))
 #' localS
 #' plot(localS)
 #'
@@ -91,7 +84,7 @@
 #' sdc <- localSuppression(sdc)
 #'
 #' ## for objects of class sdcMicro, with stratification
-#' testdata2$ageG <- cut(testdata2$age, 5, labels=paste0("AG",1:5))
+#' testdata2$ageG <- cut(testdata2$age, 5, labels = paste0("AG", 1:5))
 #' sdc <- createSdcObj(
 #'   dat = testdata2,
 #'   keyVars = kv,
@@ -111,7 +104,7 @@
 #' sdc <- localSuppression(sdc, k = k, combs = combs)
 #'
 #' ## data.frame method (no stratification)
-#' inp <- testdata2[,c(kv, "ageG")]
+#' inp <- testdata2[, c(kv, "ageG")]
 #' ls <- localSuppression(inp, keyVars = 1:7)
 #' print(ls)
 #' plot(ls)
@@ -127,7 +120,8 @@ localSuppression <- function(obj, k = 2, importance = NULL, combs = NULL, ...) {
     k = k,
     importance = importance,
     combs = combs,
-    ...)
+    ...
+  )
 }
 
 setGeneric("localSuppressionX", function(obj, k = 2, importance = NULL, combs = NULL, ...) {
@@ -151,7 +145,7 @@ setMethod(
     }
 
     alpha <- get.sdcMicroObj(obj, type = "options")$alpha
-    if(alpha == 0){
+    if (alpha == 0) {
       warnings("alpha is set to 0. \nIn case of missing values in the key variables, \nfrequency counts may likely to be underestimated. \nWe recommend to increase the values of alpha")
     }
     ls <- localSuppressionWORK(
@@ -162,7 +156,8 @@ setMethod(
       combs = combs,
       importance = importance,
       alpha = alpha,
-      nc = nc)
+      nc = nc
+    )
 
     # create final output
     obj <- set.sdcMicroObj(obj, type = "manipKeyVars", input = list(ls$xAnon))
@@ -206,7 +201,7 @@ setMethod(
                         strataVars = NULL,
                         alpha = 1,
                         nc = 1) {
-    if(alpha == 0){
+    if (alpha == 0) {
       warnings("alpha is set to 0. \nIn case of missing values in the key variables, \nfrequency counts may likely to be underestimated. \nWe recommend to increase the values of alpha")
     }
     localSuppressionWORK(
@@ -217,11 +212,12 @@ setMethod(
       importance = importance,
       combs = combs,
       alpha = alpha,
-      nc = nc)
+      nc = nc
+    )
   }
 )
 
-suppSubset <- function(x, k, importance, alpha)  {
+suppSubset <- function(x, k, importance, alpha) {
   # checks
   if (length(k) != 1 | k < 1) {
     stop("argument 'k' must be of length 1 and > 0.", call. = FALSE)
@@ -299,7 +295,7 @@ suppSubset <- function(x, k, importance, alpha)  {
   mat <- as.matrix(mat)
   while (runInd) {
     ind.problem <- which(ff$fk < k)
-    ind.problem  <- ind.problem[order(rk$rk[ind.problem], decreasing = TRUE)]
+    ind.problem <- ind.problem[order(rk$rk[ind.problem], decreasing = TRUE)]
     for (i in seq_along(ind.problem)) {
       params <- list(alpha = alpha, id = as.integer(ind.problem[i]))
       res <- cpp_calcSuppInds(mat, mat[ind.problem[i], ], params = params)
@@ -353,13 +349,13 @@ suppSubset <- function(x, k, importance, alpha)  {
     setkey(x, "idvarextraforsls")
     x[, idvarextraforsls := NULL]
   }
-  out <- list(xAnon = x)#, supps=supps, totalSupps=totalSupps)
+  out <- list(xAnon = x) # , supps=supps, totalSupps=totalSupps)
   return(out)
 }
 sum_na <- function(x) {
   sum(is.na(x))
 }
-localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=NULL, alpha, nc=1) {
+localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importance = NULL, alpha, nc = 1) {
   # find a suppression pattern for a simple subset that is not stratified
   # input: df=data.table with only keyVars
   # k: parameter for k-anonymity (length 1)
@@ -419,8 +415,8 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
       length(table(y))
     }), .SDcols = keyVars]
     importance <- match(names(xx), names(
-      sort(unlist(xx), decreasing = FALSE))
-      )
+      sort(unlist(xx), decreasing = FALSE)
+    ))
   } else {
     if (length(setdiff(sort(importance), 1:length(keyVars))) > 0) {
       e <- "The importance vector needs to be discrete numbers between 1 and the number of key variables."
@@ -452,7 +448,8 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
         x = inpDat,
         k = k,
         importance = importance,
-        alpha = alpha)
+        alpha = alpha
+      )
       xAnon <- res$xAnon
     } else {
       # no strata but subsets of key variables (combs)
@@ -460,11 +457,11 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
       tmpDat <- copy(x)
       for (gr in seq_along(tree)) {
         cur_k <- k[gr]
-        #log <- paste0("providing ",cur_k,"-Anonymity for ",ncol(tree[[gr]])," combinations ")
-        #log <- paste0(log, "of ",combs[gr]," key variables.\n")
-        #message(log)
+        # log <- paste0("providing ",cur_k,"-Anonymity for ",ncol(tree[[gr]])," combinations ")
+        # log <- paste0(log, "of ",combs[gr]," key variables.\n")
+        # message(log)
         for (comb in 1:ncol(tree[[gr]])) {
-          #message("combination",comb,"|",ncol(tree[[gr]]),"\n")
+          # message("combination",comb,"|",ncol(tree[[gr]]),"\n")
           counter <- counter + 1
           kV <- tree[[gr]][, comb]
           cur_importance <- rank(importance[kV], ties.method = "min")
@@ -473,7 +470,8 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
             x = inpDat,
             k = cur_k,
             importance = cur_importance,
-            alpha = alpha)
+            alpha = alpha
+          )
 
           # replace: is there a more elegant way?
           for (z in 1:length(kV)) {
@@ -500,22 +498,24 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     totalSupps <- rep(NA, length(spl))
     if (is.null(combs)) {
       if (nc == 1) {
-        #message("running serially")
+        # message("running serially")
         xAnon <- lapply(seq_len(length(spl)), function(x) {
           suppSubset(
             x = spl[[x]][, keyVars, with = FALSE],
             k = k,
             importance = importance,
-            alpha = alpha)$xAnon
+            alpha = alpha
+          )$xAnon
         })
       } else {
-        #message("running in parallel using ", nc, " cores")
+        # message("running in parallel using ", nc, " cores")
         xAnon <- parallel::mclapply(seq_len(length(spl)), function(x) {
           suppSubset(
             x = spl[[x]][, keyVars, with = FALSE],
             k = k,
             importance = importance,
-            alpha = alpha)$xAnon
+            alpha = alpha
+          )$xAnon
         }, mc.cores = nc)
       }
     } else {
@@ -525,9 +525,9 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
         tmpDat <- copy(spl[[i]])
         for (gr in seq_along(tree)) {
           cur_k <- k[gr]
-          #log <- paste0("providing ",cur_k,"-Anonymity for ",ncol(tree[[gr]])," combinations ")
-          #log <- paste0(log, "of ",combs[gr]," key variables in strata ", names(spl)[i],"!\n")
-          #message(log)
+          # log <- paste0("providing ",cur_k,"-Anonymity for ",ncol(tree[[gr]])," combinations ")
+          # log <- paste0(log, "of ",combs[gr]," key variables in strata ", names(spl)[i],"!\n")
+          # message(log)
           for (comb in 1:ncol(tree[[gr]])) {
             counter <- counter + 1
             kV <- tree[[gr]][, comb]
@@ -537,7 +537,8 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
               x = inpDat,
               k = cur_k,
               importance = cur_importance,
-              alpha = alpha)
+              alpha = alpha
+            )
 
             # replace: is there a more elegant way?
             for (z in 1:length(kV)) {
@@ -577,9 +578,11 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
     supps[, c(keyVars) := totalSupps[, keyVars, with = FALSE] - NAinKey[, keyVars, with = FALSE]]
 
     supps <- as.data.frame(supps)
-    rownames(supps) <- supps$strata; supps$strata <- NULL
+    rownames(supps) <- supps$strata
+    supps$strata <- NULL
     totalSupps <- as.data.frame(totalSupps)
-    rownames(totalSupps) <- totalSupps$strata; totalSupps$strata <- NULL
+    rownames(totalSupps) <- totalSupps$strata
+    totalSupps$strata <- NULL
   }
 
   newSupps <- utils::tail(rowSums(supps), 1)
@@ -614,7 +617,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k=2, combs, importance=
 #' @examples
 #' ## example from Capobianchi, Polettini and Lucarelli:
 #' data(francdat)
-#' l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))
+#' l1 <- localSuppression(francdat, keyVars = c(2, 4, 5, 6))
 #' l1
 #'
 print.localSuppression <- function(x, ...) {
@@ -623,7 +626,7 @@ print.localSuppression <- function(x, ...) {
   addSupps <- utils::tail(rowSums(x$supps), 1)
 
   pp <- "\n-----------------------\n"
-  pp <- paste0(pp, "Total number of suppressions in the key variables: ", totSupps," (new: ", addSupps, ")\n\n")
+  pp <- paste0(pp, "Total number of suppressions in the key variables: ", totSupps, " (new: ", addSupps, ")\n\n")
   if (!is.na(x$threshold)) {
     pp <- paste0(pp, "Number of suppressions by key variables:\n\n")
     message(pp)
@@ -645,36 +648,36 @@ print.localSuppression <- function(x, ...) {
 
   dt <- x$supps
   for (i in 1:ncol(dt)) {
-    dt[[i]] <- paste0(dt[[i]], " (",x$totalSupps[[i]],")")
+    dt[[i]] <- paste0(dt[[i]], " (", x$totalSupps[[i]], ")")
   }
   message(pp)
   print(dt)
 
-  if (byStrata==TRUE) {
+  if (byStrata == TRUE) {
     if (is.null(x$combs)) {
       if (all(x$anonymity)) {
         pp <- paste0("\n", x$k, "-anonymity == TRUE in all strata!\n")
       } else {
         prob <- rownames(x$supps)[which(!x$anonymity)]
         pp <- paste0("\n", x$k, "-anonymity == FALSE in the following strata:\n")
-        pp <- paste0(pp, paste0(rownames(x$supps)[which(!x$anonymity)], collapse=", "))
+        pp <- paste0(pp, paste0(rownames(x$supps)[which(!x$anonymity)], collapse = ", "))
       }
     } else {
       pp <- "\nk-anonymity has been achieved within strata and for combinations of key-variables!"
       for (i in 1:length(x$combs)) {
-        pp <- paste(pp, paste0("\n", x$k[i], "-anonymity == ", all(x$anonymity)," for all ",x$combs[i],"-dimensional subsets of key variables within stratas"))
+        pp <- paste(pp, paste0("\n", x$k[i], "-anonymity == ", all(x$anonymity), " for all ", x$combs[i], "-dimensional subsets of key variables within stratas"))
       }
-      pp <- paste0(pp,"\n")
+      pp <- paste0(pp, "\n")
     }
   } else {
     if (!is.null(x$combs)) {
       pp <- NULL
       for (i in 1:length(x$combs)) {
-        pp <- paste(pp, paste0("\n", x$k[i], "-anonymity == ", all(x$anonymity)," for all ",x$combs[i],"-dimensional subsets of key variables"))
+        pp <- paste(pp, paste0("\n", x$k[i], "-anonymity == ", all(x$anonymity), " for all ", x$combs[i], "-dimensional subsets of key variables"))
       }
       pp <- paste(pp, "\n")
     } else {
-      pp <- paste0("\n", x$k, "-anonymity == ", all(x$anonymity),"\n")
+      pp <- paste0("\n", x$k, "-anonymity == ", all(x$anonymity), "\n")
     }
   }
   pp <- paste0(pp, "-----------------------\n")
@@ -731,12 +734,13 @@ plot.localSuppression <- function(x, ...) {
   df <- data.frame(
     keyVar = keyVar,
     strata = rep(rownames(inp), each = ncol(inp)),
-    vals = as.vector(as.matrix(t(inp))))
+    vals = as.vector(as.matrix(t(inp)))
+  )
 
   # barplot
   p <- ggplot(df, aes(x = keyVar, y = vals, fill = "darkgrey"))
   p <- p + geom_bar(color = "black", stat = "identity")
-  p <- p + geom_text(aes(y = vals *  1.015, label = vals, vjust = 0), size = 3)
+  p <- p + geom_text(aes(y = vals * 1.015, label = vals, vjust = 0), size = 3)
   if (nrow(inp) > 1) {
     p <- p + facet_wrap(~strata)
     p <- p + ggtitle("Number of suppressions to achieve k-anonymity by strata")
@@ -750,11 +754,12 @@ plot.localSuppression <- function(x, ...) {
 
 #' @rdname localSuppression
 #' @export
-kAnon <- function(obj, k=2, importance=NULL, combs=NULL, ...) {
+kAnon <- function(obj, k = 2, importance = NULL, combs = NULL, ...) {
   localSuppression(
     obj = obj,
     k = k,
     importance = importance,
     combs = combs,
-    ...)
+    ...
+  )
 }

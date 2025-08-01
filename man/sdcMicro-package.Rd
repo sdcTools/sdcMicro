@@ -2,8 +2,8 @@
 % Please edit documentation in R/sdcMicro-package.R
 \docType{package}
 \name{sdcMicro-package}
-\alias{sdcMicro}
 \alias{sdcMicro-package}
+\alias{sdcMicro}
 \title{sdcMicro: Statistical Disclosure Control Methods for Anonymization of Data and Risk Estimation}
 \description{
 Data from statistical agencies and other institutions are mostly confidential. This package, introduced in Templ, Kowarik and Meindl (2017) \doi{10.18637/jss.v067.i04}, can be used for the generation of anonymized (micro)data, i.e. for the creation of public- and scientific-use files. The theoretical basis for the methods implemented can be found in Templ (2017) \doi{10.1007/978-3-319-50272-4}. Various risk estimation and anonymization methods are included. Note that the package includes a graphical user interface published in Meindl and Templ (2019) \doi{10.3390/a12090191} that allows to use various methods of this package.
@@ -308,11 +308,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Matthias Templ \email{matthias.templ@gmail.com} (\href{https://orcid.org/0000-0002-8638-5276}{ORCID})
+\strong{Maintainer}: Bernhard Meindl \email{Bernhard.Meindl@statistik.gv.at}
 
 Authors:
 \itemize{
-  \item Bernhard Meindl \email{Bernhard.Meindl@statistik.gv.at}
+  \item Matthias Templ \email{matthias.templ@gmail.com} (\href{https://orcid.org/0000-0002-8638-5276}{ORCID})
   \item Alexander Kowarik \email{Alexander.Kowarik@statistik.gv.at} (\href{https://orcid.org/0000-0001-8598-4130}{ORCID})
   \item Johannes Gussenbauer \email{johannes.gussenbauer@statistik.gv.at}
 }

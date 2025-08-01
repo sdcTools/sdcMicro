@@ -50,7 +50,7 @@ data("Tarragona", package = "sdcMicro")
 res1 <- addNoise(obj = Tarragona, variables = colnames(Tarragona), noise = 100)
 IL_correl(x = as.data.frame(res1$x), xm = as.data.frame(res1$xm))
 
-res2 <- addNoise(obj = Tarragona, variables = colnames(Tarragona), noise = 25) 
+res2 <- addNoise(obj = Tarragona, variables = colnames(Tarragona), noise = 25)
 IL_correl(x = as.data.frame(res2$x), xm = as.data.frame(res2$xm))
 
 # creating test-inputs

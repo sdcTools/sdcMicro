@@ -10,74 +10,74 @@ localSuppression(obj, k = 2, importance = NULL, combs = NULL, ...)
 kAnon(obj, k = 2, importance = NULL, combs = NULL, ...)
 }
 \arguments{
-\item{obj}{a \code{\link{sdcMicroObj-class}}-object or a \code{data.frame}}
+\item{obj}{a \code{sdcMicroObj-class} object or a \code{data.frame}}
 
-\item{k}{threshold for k-anonymity}
+\item{k}{Threshold for \emph{k}-anonymity}
 
-\item{importance}{numeric vector of numbers between 1 and n (n=length of
-vector keyVars).  This vector represents the "importance" of variables that
-should be used for local suppression in order to obtain k-anonymity.
-key-variables with importance=1 will - if possible - not suppressed,
-key-variables with importance=n will be used whenever possible.}
+\item{importance}{Numeric vector of values between 1 and \emph{n} (\code{n = length(keyVars)}).
+This vector defines the "importance" of variables for local suppression.
+Variables with \code{importance = 1} will, if possible, not be suppressed;
+variables with \code{importance = n} will be prioritized for suppression.}
 
-\item{combs}{numeric vector. if specified, the algorithm will provide k-anonymity
-for each combination of n key variables (with n being the value of the ith element
-of this parameter. For example, if combs=c(4,3), the algorithm will provide
-k-anonymity to all combinations of 4 key variables and then k-anonymity to all
-combinations of 3 key variables. It is possible to apply different k to these
-subsets by specifying k as a vector. If k has only one element, the same value
-of k will be used for all subgroups.}
+\item{combs}{Numeric vector. If specified, the algorithm provides \emph{k}-anonymity
+for each combination of \emph{n} key variables (with \emph{n} being the value of the ith
+element of this parameter). For example, \code{combs = c(4,3)} means that \emph{k}-anonymity
+will be provided for all combinations of 4 and then 3 key variables.
+It is possible to assign different \emph{k} values for each combination by supplying \code{k} as a vector.
+If \code{k} has only one value, it will be used for all subsets.}
 
-\item{...}{see arguments below
-\describe{
-\item{keyVars: }{names (or indices) of categorical key variables (for data-frame method)}
-\item{strataVars: }{name (or index) of variable which is used for stratification purposes, used
-in the data.frame method. This means that k-anonymity is provided within each category
-of the specified variable.}
-\item{alpha: }{numeric value between 0 and 1 specifying how much keys that
-contain missing values (`NAs`) should contribute to the calculation
-of `fk` and `Fk`. For the default value of `1`, nothing changes with
-respect to the implementation in prior versions. Each *wildcard-match* would
-be counted while for `alpha=0` keys with missing values would be basically ignored.
-Used in the `data.frame` method only because in the method for \code{\link{sdcMicroObj-class}}-objects,
-this value is extracted from slot `options`.}
-\item{nc: }{max. number of cores used when computations are performed by strata. This parameter
-defaults to `1` (no parallelisation) and is ignored on windows-platforms. }
+\item{...}{see additional arguments below:
+\itemize{
+\item \strong{\code{keyVars}}: Names or indices of categorical key variables (for data.frame method)
+\item \strong{\code{strataVars}}: Name or index of the variable used for stratification.
+\emph{k}-anonymity is ensured within each category of this variable.
+\item \strong{\code{alpha}}: Numeric value between 0 and 1 specifying how much keys with missing
+values (\code{NA}s) contribute to the calculation of \code{fk} and \code{Fk}.
+Default is \code{1}. Used only in the \code{data.frame} method.
+\item \strong{\code{nc}}: Maximum number of cores used for stratified computations.
+Default is \code{1}. Parallelization is ignored on Windows.
 }}
 }
 \value{
-Manipulated data set with suppressions that has k-anonymity with
-respect to specified key-variables or the manipulated data stored in the
-\code{\link{sdcMicroObj-class}}.
+A modified dataset with suppressions that meets \emph{k}-anonymity based on
+the specified key variables, or the modified \code{sdcMicroObj-class} object.
 }
 \description{
-Algorithm to achieve k-anonymity by performing local suppression.
+Algorithm to achieve \emph{k}-anonymity by performing local suppression.
 }
 \details{
-The algorithm provides a k-anonymized data set by suppressing values in key
+The algorithm provides a \emph{k}-anonymized data set by suppressing values in key
 variables. The algorithm tries to find an optimal solution to suppress as
 few values as possible and considers the specified importance vector. If not
 specified, the importance vector is constructed in a way such that key
 variables with a high number of characteristics are considered less
 important than key variables with a low number of characteristics.
 
-The implementation provides k-anonymity per strata, if slot 'strataVar' has
-been set in \code{\link{sdcMicroObj-class}} or if parameter 'strataVar' is
-used when appying the data.frame method. For details, have a look
-at the examples provided.
+The implementation provides \emph{k}-anonymity per strata, if slot \code{strataVar} has
+been set in \code{sdcMicroObj-class} or if parameter \code{strataVar} is
+used when applying the \code{data.frame} method. For details, see the examples provided.
+
+For the parameter \code{alpha}:
+\itemize{
+\item \code{alpha = 1} counts all \emph{wildcard matches} (i.e. \code{NA}s match everything).
+\item \code{alpha = 0} assumes missing values form their own categories.
+}
+
+These are two extremes. With \code{alpha = 0}, frequencies are likely underestimated when
+\code{NA}s are present. If \code{combs} is used with \code{alpha = 0}, the heuristic nature of \code{kAnon()}
+may lead to technically correct, but not always intuitively understandable frequency evaluations.
 }
 \note{
-Deprecated methods 'localSupp2' and 'localSupp2Wrapper' are no longer available
-in sdcMicro > 4.5.0.
-\code{kAnon} is a more intutitive term for localSuppression because the aim is always
-to obtain k-anonymity for some parts of the data.
+Deprecated methods \code{localSupp2} and \code{localSupp2Wrapper} are no longer available
+in \code{sdcMicro} versions > 4.5.0.
+\code{kAnon()} is a more intuitive term for local suppression, since the goal is to achieve \emph{k}-anonymity.
 }
 \examples{
 \donttest{
 data(francdat)
 
 ## Local Suppression
-localS <- localSuppression(francdat, keyVar=c(4,5,6))
+localS <- localSuppression(francdat, keyVar = c(4, 5, 6))
 localS
 plot(localS)
 
@@ -88,7 +88,7 @@ sdc <- createSdcObj(testdata2, keyVars = kv, w = "sampling_weight")
 sdc <- localSuppression(sdc)
 
 ## for objects of class sdcMicro, with stratification
-testdata2$ageG <- cut(testdata2$age, 5, labels=paste0("AG",1:5))
+testdata2$ageG <- cut(testdata2$age, 5, labels = paste0("AG", 1:5))
 sdc <- createSdcObj(
   dat = testdata2,
   keyVars = kv,
@@ -108,7 +108,7 @@ k <- c(10, 20, 30)
 sdc <- localSuppression(sdc, k = k, combs = combs)
 
 ## data.frame method (no stratification)
-inp <- testdata2[,c(kv, "ageG")]
+inp <- testdata2[, c(kv, "ageG")]
 ls <- localSuppression(inp, keyVars = 1:7)
 print(ls)
 plot(ls)
@@ -120,13 +120,13 @@ plot(ls)
 }
 }
 \references{
-Templ, M. Statistical Disclosure Control for Microdata: Methods and Applications in R.
-\emph{Springer International Publishing}, 287 pages, 2017. ISBN 978-3-319-50272-4.
+Templ, M. \emph{Statistical Disclosure Control for Microdata: Methods and Applications in R.}
+Springer International Publishing, 287 pages, 2017. ISBN: 978-3-319-50272-4.
 \doi{10.1007/978-3-319-50272-4}
 
-Templ, M. and Kowarik, A. and Meindl, B.
-Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.
-\emph{Journal of Statistical Software}, \strong{67} (4), 1--36, 2015. \doi{10.18637/jss.v067.i04}
+Templ, M., Kowarik, A., Meindl, B.
+\emph{Statistical Disclosure Control for Micro-Data Using the R Package sdcMicro.}
+Journal of Statistical Software, \strong{67}(4), 1–36, 2015. \doi{10.18637/jss.v067.i04}
 }
 \author{
 Bernhard Meindl, Matthias Templ

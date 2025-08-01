@@ -62,7 +62,7 @@ global risk, defined in Skinner and Holmes (1998).
 \examples{
 ## data.frame method
 data(testdata2)
-form <- ~sex+water+roof
+form <- ~ sex + water + roof
 w <- "sampling_weight"
 \donttest{
 (modRisk(testdata2, method = "default", formulaM = form, weights = w))
@@ -74,10 +74,11 @@ w <- "sampling_weight"
 ## application to a sdcMicroObj
 data(testdata2)
 sdc <- createSdcObj(testdata2,
- keyVars = c("urbrur", "roof", "walls", "electcon", "relat", "sex"),
- numVars = c("expend", "income", "savings"),
- w = "sampling_weight")
-sdc <- modRisk(sdc, form = ~sex+water+roof)
+  keyVars = c("urbrur", "roof", "walls", "electcon", "relat", "sex"),
+  numVars = c("expend", "income", "savings"),
+  w = "sampling_weight"
+)
+sdc <- modRisk(sdc, form = ~ sex + water + roof)
 slot(sdc, "risk")$model
 }
 
@@ -90,7 +91,7 @@ f <- as.formula(paste(" ~ ", "db040 + hsize + rb090 +
              hsize:rb090"))
 w <- "rb050"
 (modRisk(eusilc, method = "default", weights = w, formulaM = f, bound = 5))
-(modRisk(eusilc, method = "CE", weights =  w, formulaM = f, bound = 5))
+(modRisk(eusilc, method = "CE", weights = w, formulaM = f, bound = 5))
 (modRisk(eusilc, method = "PML", weights = w, formulaM = f, bound = 5))
 (modRisk(eusilc, method = "weightedLLM", weights = w, formulaM = f, bound = 5))
 }
@@ -109,7 +110,7 @@ Statistical Databases. Lecture Notes in Computer Science.  Springer-Verlag,
 Clogg, C.C. and Eliasson, S.R. (1987). \emph{Some Common Problems in Log-Linear Analysis}. Sociological Methods and Research, 8-44.
 }
 \seealso{
-\code{\link{loglm}}, \code{\link{measure_risk}}
+\code{\link[MASS]{loglm}}, \code{\link{measure_risk}}
 }
 \author{
 Matthias Templ, Marius Totter, Bernhard Meindl

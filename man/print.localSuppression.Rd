@@ -21,7 +21,7 @@ Print method for objects from class localSuppression
 \examples{
 ## example from Capobianchi, Polettini and Lucarelli:
 data(francdat)
-l1 <- localSuppression(francdat, keyVars=c(2,4,5,6))
+l1 <- localSuppression(francdat, keyVars = c(2, 4, 5, 6))
 l1
 
 }
