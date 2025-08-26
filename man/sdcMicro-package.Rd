@@ -308,11 +308,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Bernhard Meindl \email{Bernhard.Meindl@statistik.gv.at}
+\strong{Maintainer}: Matthias Templ \email{matthias.templ@gmail.com} (\href{https://orcid.org/0000-0002-8638-5276}{ORCID})
 
 Authors:
 \itemize{
-  \item Matthias Templ \email{matthias.templ@gmail.com} (\href{https://orcid.org/0000-0002-8638-5276}{ORCID})
+  \item Bernhard Meindl \email{Bernhard.Meindl@statistik.gv.at}
   \item Alexander Kowarik \email{Alexander.Kowarik@statistik.gv.at} (\href{https://orcid.org/0000-0001-8598-4130}{ORCID})
   \item Johannes Gussenbauer \email{johannes.gussenbauer@statistik.gv.at}
 }

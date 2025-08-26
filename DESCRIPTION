@@ -73,6 +73,8 @@ Collate:
     'GUIfunctions.R'
     'indivRisk.R'
     'infoLoss.R'
+    'KI_createSdcObj.R'
+    'ki_access_utilities.R'
     'LocalRecProg.R'
     'localSupp.R'
     'localSuppression.R'
