@@ -7,12 +7,14 @@
 <url><loc>/index.html</loc></url>
 <url><loc>/reference/CASCrefmicrodata.html</loc></url>
 <url><loc>/reference/EIA.html</loc></url>
+<url><loc>/reference/KI_createSdcObj.html</loc></url>
 <url><loc>/reference/LocalRecProg.html</loc></url>
 <url><loc>/reference/Tarragona.html</loc></url>
 <url><loc>/reference/addGhostVars.html</loc></url>
 <url><loc>/reference/addNoise.html</loc></url>
 <url><loc>/reference/argus_microaggregation.html</loc></url>
 <url><loc>/reference/argus_rankswap.html</loc></url>
+<url><loc>/reference/build_llm_prompt.html</loc></url>
 <url><loc>/reference/calcRisks.html</loc></url>
 <url><loc>/reference/casc1.html</loc></url>
 <url><loc>/reference/createDat.html</loc></url>
@@ -24,6 +26,7 @@
 <url><loc>/reference/distributeDraws_cpp.html</loc></url>
 <url><loc>/reference/distributeRandom_cpp.html</loc></url>
 <url><loc>/reference/extractManipData.html</loc></url>
+<url><loc>/reference/extract_variable_metadata.html</loc></url>
 <url><loc>/reference/francdat.html</loc></url>
 <url><loc>/reference/free1.html</loc></url>
 <url><loc>/reference/freq.html</loc></url>
@@ -62,6 +65,7 @@
 <url><loc>/reference/print.pram.html</loc></url>
 <url><loc>/reference/print.sdcMicroObj.html</loc></url>
 <url><loc>/reference/print.suda2.html</loc></url>
+<url><loc>/reference/query_llm_for_roles.html</loc></url>
 <url><loc>/reference/randSample_cpp.html</loc></url>
 <url><loc>/reference/rankSwap.html</loc></url>
 <url><loc>/reference/readMicrodata.html</loc></url>
