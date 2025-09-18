@@ -81,6 +81,7 @@ for(i in c(1:7,9)) testdata[,i] <- as.factor(testdata[,i])
 test <- microaggrGower(testdata,variables=c("relat","age","expend"),
   dist_var=c("age","sex","income","savings"),by=c("urbrur","roof"))
 
+for(i in c(1:7,9)) testdata[,i] <- as.ordered(testdata[,i])
 sdc <- createSdcObj(testdata,
   keyVars=c('urbrur','roof','walls','water','electcon','relat','sex'),
   numVars=c('expend','income','savings'), w='sampling_weight')

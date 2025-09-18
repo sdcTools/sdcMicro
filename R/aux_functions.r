@@ -471,10 +471,10 @@ setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function
   ## quick and dirty: ensure that keyVars are factors:
   if (!is.null(k) && !ignoreKeyVars) {
     for (i in seq_len(ncol(k))) {
-      cc <- class(origKeys[[colnames(k)[i]]])
+      cc <- class(origKeys[[colnames(k)[i]]])[1]
       vname <- colnames(k)[i]
       v_p <- o[[vname]]
-      if (cc != class(v_p)) {
+      if (cc != class(v_p)[1]) {
         if (cc == "integer") {
           o[[vname]] <- as.integer(v_p)
         }
@@ -486,6 +486,9 @@ setMethod(f="extractManipDataX", signature=c("sdcMicroObj"), definition=function
         }
         if (cc == "logical") {
           o[[vname]] <- as.logical(v_p)
+        }
+        if (cc == "ordered") {
+          o[[vname]] <- as.ordered(v_p)
         }
       }
     }
