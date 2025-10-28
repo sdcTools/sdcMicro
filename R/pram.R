@@ -507,9 +507,9 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
     ll <- levels(data$tmpfactor_for_pram)
 
     # calculate or check and use transition-matrix
-    Rs <- calcTransitionMatrix(xvec=data[[v]], pd=pd[[i]], alpha=alpha[[i]])
     for (si in ll) {
       ii <- which(data$tmpfactor_for_pram==si & !is.na(data[[v]]))
+      Rs <- calcTransitionMatrix(xvec=data[[v]][ii], pd=pd[[i]], alpha=alpha[[i]])
       res <- do.pram(x=data[ii][[v]], Rs=Rs)$xpramed
       cmd <- paste0("data[ii,",v,"_pram:=res]")
       eval(parse(text=cmd))
