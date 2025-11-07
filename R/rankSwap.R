@@ -201,6 +201,7 @@ setMethod(
   if (sum(index_missing) > 0 & is.na(missing)) {
     dat[dat == miss_val] <- NA
   }
+  attributes(dat) <- NULL
   obj[, variables] <- dat
   invisible(obj)
 })
