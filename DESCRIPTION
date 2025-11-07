@@ -52,7 +52,9 @@ Imports:
     DT,
     shinyBS,
     prettydoc,
-    VIM(>= 4.7.0)
+    VIM (>= 4.7.0),
+    httr,
+    jsonlite
 License: GPL-2
 URL: https://github.com/sdcTools/sdcMicro
 Collate:
@@ -105,6 +107,6 @@ Collate:
     'maG.R'
     'sdcApp.R'
     'show_sdcMicroObj.R'
-RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Encoding: UTF-8
+RoxygenNote: 7.3.3
