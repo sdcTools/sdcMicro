@@ -233,6 +233,40 @@ summaryfn <- function(x) {
   vv
 }
 
+# to get rid of the shinyBS dependency
+tipify <- function(el, title, placement = "bottom", trigger = "hover", options = NULL) {
+  # generate a unique ID for the wrapper element and wrap element in span-tag
+  wrapper_id <- paste0("tip-", round(runif(1, 1e9, 9e9)), "-", as.integer(Sys.time()))
+  wrapped_el <- tags$span(id = wrapper_id, el)
+
+  # define the JS options, forcing html: true allows to render inline-html code
+  js_options <- list(
+    html = TRUE
+  )
+  if (!is.null(options)) {
+    js_options <- c(js_options, options)
+  }
+
+  # add req. attributes
+  wrapped_el <- htmltools::tagAppendAttributes(
+    wrapped_el,
+    "data-toggle" = "tooltip",
+    "data-placement" = placement,
+    "data-trigger" = trigger
+  )
+
+  # the attribute should be treated as html-content
+  wrapped_el$attribs$title <- htmltools::HTML(title)
+
+  # the js-script to initialize the tooltip using the generated id
+  init_script <- tags$script(HTML(paste0(
+    "$(document).ready(function() { $('#", wrapper_id, "').tooltip(",
+      jsonlite::toJSON(js_options, auto_unbox = TRUE),
+    ");});"
+  )))
+  return(tagList(wrapped_el, init_script))
+}
+
 # global, reactive data-structure
 data(testdata, envir = .GlobalEnv)
 data(testdata2, envir = .GlobalEnv)

@@ -50,7 +50,6 @@ Imports:
     haven,
     rhandsontable,
     DT,
-    shinyBS,
     prettydoc,
     VIM (>= 4.7.0),
     httr,
