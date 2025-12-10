@@ -11,7 +11,6 @@
 #' @import xtable
 #' @import data.table
 #' @import ggplot2
-#' @import shinyBS
 #' @import shiny
 #' @import rhandsontable
 #' @importFrom DT datatable

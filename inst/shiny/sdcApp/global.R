@@ -3,7 +3,6 @@ library(grid)
 library(sdcMicro)
 library(rhandsontable)
 library(haven)
-library(shinyBS)
 library(data.table)
 
 if (!getShinyOption("sdcAppInvoked", FALSE)) {### Beginning required code for deployment
