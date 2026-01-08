@@ -4,20 +4,42 @@
 \alias{build_llm_prompt}
 \title{Build LLM Prompt for Variable Role Classification}
 \usage{
-build_llm_prompt(meta, policy)
+build_llm_prompt(meta, policy, codebook = NULL)
 }
 \arguments{
-\item{meta}{A data.frame with variable metadata.}
+\item{meta}{A data.frame with variable metadata (name, class, cardinality).}
 
 \item{policy}{One of `"open"`, `"restricted"`, or `"confidential"`.}
+
+\item{codebook}{Optional path to a CSV, TSV, YAML, JSON, TXT, or PDF file describing variable definitions.}
 }
 \value{
 A character string prompt.
+
+A character string prompt.
 }
 \description{
-Constructs a prompt for the LLM using metadata and the data-sharing context.
+Constructs a prompt for the LLM using metadata and optional codebook and data-sharing context.
 }
 \author{
 Matthias Templ
 }
+\keyword{Build}
+\keyword{Classification}
+\keyword{Constructs}
+\keyword{LLM}
+\keyword{Prompt}
+\keyword{Role}
+\keyword{Variable}
+\keyword{a}
+\keyword{and}
+\keyword{codebook,}
+\keyword{context.}
+\keyword{data-sharing}
+\keyword{for}
 \keyword{internal}
+\keyword{metadata,}
+\keyword{optional}
+\keyword{prompt}
+\keyword{the}
+\keyword{using}

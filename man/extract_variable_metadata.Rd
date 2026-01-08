@@ -9,13 +9,13 @@ extract_variable_metadata(dat, codebook = NULL)
 \arguments{
 \item{dat}{A data.frame.}
 
-\item{codebook}{Optional path to a codebook file (not used yet).}
+\item{codebook}{Optional path to a codebook file (.csv, .tsv, .json, .yaml, .txt, or .pdf)}
 }
 \value{
 A data.frame with columns: `varname`, `class`, and `n_unique`.
 }
 \description{
-Extracts variable names, types, and cardinality from a data frame.
+Extracts variable names, types, and cardinality from a data frame, optionally integrating a codebook.
 }
 \author{
 Matthias Templ

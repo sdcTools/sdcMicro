@@ -10,6 +10,7 @@ KI_createSdcObj(
   policy = c("open", "restricted", "confidential"),
   model = "gpt-4",
   api_key = Sys.getenv("OPENAI_API_KEY"),
+  info = TRUE,
   ...
 )
 }
@@ -23,6 +24,8 @@ KI_createSdcObj(
 \item{model}{The LLM model to use (default: `"gpt-4"`).}
 
 \item{api_key}{OpenAI API key, defaulting to the `OPENAI_API_KEY` environment variable.}
+
+\item{info}{Logical; if TRUE, prints the LLM classification result.}
 
 \item{...}{Additional arguments passed to `createSdcObj()`.}
 }
