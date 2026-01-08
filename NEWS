@@ -1,3 +1,7 @@
+# 5.7.10
+- fix inconsistency in `rankSwap()` Output [Issue #361]
+- remove shinyBS dependency in `sdcApp`
+
 # 5.7.9
 - Improvements for `recordSwap()`:
   + `hid`, `risk_variables`, `hierarchy`, `similar` and `carry_along` now accept factor variables as inputs
