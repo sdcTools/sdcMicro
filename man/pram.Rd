@@ -162,8 +162,8 @@ print(sdc, type = "pram")
 get.sdcMicroObj(sdc, "pram")$transitions
 }
 }
-\references{
-\url{https://www.gnu.org/software/glpk/}
+\author{
+Alexander Kowarik, Matthias Templ, Bernhard Meindl
 
 Kowarik, A. and Templ, M. and Meindl, B. and Fonteneau, F. and Prantner, B.:
 \emph{Testing of IHSN Cpp Code and Inclusion of New Methods into sdcMicro},
@@ -177,8 +177,5 @@ Micro-Data Using the R Package sdcMicro.} in: Journal of Statistical Software, \
 Templ, M.: \emph{Statistical Disclosure Control for Microdata: Methods and Applications in R.}
 in: Springer International Publishing, 287 pages, 2017. ISBN 978-3-319-50272-4.
 \doi{10.1007/978-3-319-50272-4}
-}
-\author{
-Alexander Kowarik, Matthias Templ, Bernhard Meindl
 }
 \keyword{manip}

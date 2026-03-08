@@ -847,8 +847,134 @@ output$ui_sdcObj_create <- renderUI({
     column(width = 12, offset = 0, p("Select variables and set parameters to create the SDC problem."), class="wb-header-hint"),
     # column(8, div(style='padding-right: 15px;height: 550px; overflow-y: scroll',uiOutput("ui_sdcObj_create1")), uiOutput("setup_moreparams"), uiOutput("setupbtn")),
     # column(8, div(style='height: 550px;',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
-    column(8, div(style='',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn")),
+    column(8, div(style='',uiOutput("ui_sdcObj_create1")), uiOutput("setupbtn"), uiOutput("ui_ai_suggest_btn")),
     column(4, uiOutput("setup_moreparams"), uiOutput("sel_sdc_infovar"), uiOutput("ui_sdcObj_info"), align="center")
   )
   out
+})
+
+# --- AI suggest variables button ---
+output$ui_ai_suggest_btn <- renderUI({
+  if (is.null(obj$inputdata)) return(NULL)
+  fluidRow(
+    column(12, tags$hr()),
+    column(12, myActionButton("btn_ai_suggest_vars",
+      label = "AI suggest variables", "success"), align = "center")
+  )
+})
+
+# AI suggest handler
+observeEvent(input$btn_ai_suggest_vars, {
+  inputdata <- obj$inputdata
+  if (is.null(inputdata)) return()
+
+  # Check for API key
+  provider <- if (!is.null(input$ai_provider)) input$ai_provider else "openai"
+  env_key <- ai_detect_api_key(provider)
+  if (!nzchar(env_key)) {
+    showModal(modalDialog(
+      title = "API Key Required",
+      p("No API key found in environment variables.",
+        "Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, or LLM_API_KEY before running sdcApp.",
+        "Alternatively, configure the key in the AI-Assisted tab."),
+      footer = modalButton("OK"), easyClose = TRUE
+    ))
+    return()
+  }
+
+  progress <- shiny::Progress$new()
+  on.exit(progress$close())
+  progress$set(message = "Asking AI to classify variables...", value = 0.2)
+
+  tryCatch({
+    meta <- sdcMicro:::extract_variable_metadata(inputdata)
+    prompt <- sdcMicro:::build_llm_prompt(meta, policy = "open")
+    roles <- sdcMicro:::query_llm_for_roles(prompt, provider = provider, api_key = env_key)
+
+    progress$set(message = "Done!", value = 1)
+
+    # Build role description
+    reasoning_raw <- roles$reasoning
+    if (is.list(reasoning_raw)) {
+      reasoning <- paste(
+        vapply(names(reasoning_raw), function(nm) {
+          paste0(nm, ": ", reasoning_raw[[nm]])
+        }, character(1)),
+        collapse = "\n"
+      )
+    } else if (is.character(reasoning_raw)) {
+      reasoning <- paste(reasoning_raw, collapse = "\n")
+    } else {
+      reasoning <- ""
+    }
+    role_lines <- c(
+      paste("Key variables:", paste(roles$keyVars, collapse = ", ")),
+      paste("Numerical variables:", paste(roles$numVars, collapse = ", ")),
+      paste("PRAM variables:", if (length(roles$pramVars) > 0) paste(roles$pramVars, collapse = ", ") else "(none)"),
+      paste("Weight variable:", if (!is.null(roles$weightVar) && nzchar(roles$weightVar)) roles$weightVar else "(none)"),
+      paste("Household ID:", if (!is.null(roles$hhId) && nzchar(roles$hhId)) roles$hhId else "(none)")
+    )
+
+    showModal(modalDialog(
+      title = "AI Variable Classification",
+      if (nzchar(reasoning)) tagList(
+        h5("Reasoning"),
+        tags$blockquote(style = "border-left: 3px solid #ccc; padding-left: 10px; color: #555;", reasoning),
+        tags$hr()
+      ) else NULL,
+      h5("Proposed Roles"),
+      tags$pre(paste(role_lines, collapse = "\n")),
+      footer = tagList(
+        myActionButton("btn_ai_accept_roles", "Accept", "primary"),
+        modalButton("Reject")
+      ),
+      size = "l", easyClose = TRUE
+    ))
+
+    obj$ai_suggest_roles <- roles
+  }, error = function(e) {
+    showModal(modalDialog(
+      title = "AI Suggestion Failed",
+      p(paste("Error:", e$message)),
+      footer = modalButton("OK"), easyClose = TRUE
+    ))
+  })
+})
+
+# Accept AI-suggested roles: programmatically update the setup table
+observeEvent(input$btn_ai_accept_roles, {
+  roles <- obj$ai_suggest_roles
+  if (is.null(roles)) return()
+  removeModal()
+
+  vars <- allVars()
+  if (is.null(vars)) return()
+  vv <- obj$setupval_inc
+  n <- length(vars)
+
+  for (i in seq_len(n)) {
+    vname <- vars[i]
+    # Determine key radio value
+    if (vname %in% roles$keyVars) {
+      key_val <- "Cat."
+    } else if (vname %in% roles$numVars) {
+      key_val <- "Cont."
+    } else {
+      key_val <- "No"
+    }
+    updateRadioButtons(session, paste0("setup_key_", vv, "_", i), selected = key_val)
+    updateCheckboxInput(session, paste0("setup_pram_", vv, "_", i),
+      value = vname %in% roles$pramVars)
+    updateCheckboxInput(session, paste0("setup_weight_", vv, "_", i),
+      value = identical(vname, roles$weightVar))
+    updateCheckboxInput(session, paste0("setup_cluster_", vv, "_", i),
+      value = identical(vname, roles$hhId))
+  }
+
+  showNotification(
+    paste("AI selections applied:", length(roles$keyVars), "key vars,",
+      length(roles$numVars), "num vars.",
+      "Please verify and click 'Setup SDC problem'."),
+    type = "message", duration = 8
+  )
 })

@@ -35,10 +35,8 @@
 #include "Framework.h"
 
 // //RankSwapping
-enum{
-	 es_NbHashBit	=	16,
-	 es_NbHashList	=	1 << es_NbHashBit
- };
+static constexpr int es_NbHashBit  = 16;
+static constexpr int es_NbHashList = 1 << es_NbHashBit;
 
 #include "RankSwapping.h"
 

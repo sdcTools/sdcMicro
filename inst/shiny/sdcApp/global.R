@@ -266,6 +266,69 @@ tipify <- function(el, title, placement = "bottom", trigger = "hover", options =
   return(tagList(wrapped_el, init_script))
 }
 
+# bsButton replacement (shinyBS removed)
+bsButton <- function(inputId, label, icon = NULL, ..., style = "default",
+                     size = "default", type = "action", block = FALSE,
+                     disabled = FALSE, value = FALSE) {
+  btn <- shiny::actionButton(inputId, label, icon, ...)
+  # Apply Bootstrap style
+  if (style != "default") {
+    btn$attribs$class <- gsub("btn-default", paste0("btn-", style), btn$attribs$class)
+  }
+  # Apply size class
+  sz <- switch(size, "extra-small" = "btn-xs", small = "btn-sm", large = "btn-lg", NULL)
+  if (!is.null(sz)) {
+    btn$attribs$class <- paste(btn$attribs$class, sz)
+  }
+  # Block-level button
+
+  if (isTRUE(block)) {
+    btn$attribs$class <- paste(btn$attribs$class, "btn-block")
+  }
+  # Disabled state
+  if (isTRUE(disabled)) {
+    btn$attribs$disabled <- "disabled"
+  }
+  btn
+}
+
+# updateButton replacement (shinyBS removed)
+updateButton <- function(session, inputId, label = NULL, icon = NULL,
+                         value = NULL, style = NULL, size = NULL,
+                         block = NULL, disabled = NULL) {
+  if (!is.null(size)) {
+    size <- switch(size, "extra-small" = "btn-xs", small = "btn-sm",
+                   large = "btn-lg", default = "default")
+  }
+  data <- list(id = inputId, label = label, icon = if (!is.null(icon)) as.character(icon),
+               value = value, style = style, size = size,
+               block = block, disabled = disabled)
+  data <- data[!vapply(data, is.null, logical(1))]
+  session$sendCustomMessage("bsButtonUpdate", data)
+}
+
+# bsModal replacement (shinyBS removed)
+bsModal <- function(id, title, trigger, ..., size, footer = NULL, close.button = TRUE) {
+  sz <- "modal-dialog"
+  if (!missing(size)) {
+    sz <- paste("modal-dialog", switch(size, large = "modal-lg", small = "modal-sm", ""))
+  }
+  if (is.null(footer)) footer <- tagList()
+  if (close.button) {
+    footer <- tagAppendChild(footer, tags$button(type = "button",
+      class = "btn btn-default", `data-dismiss` = "modal", "Close"))
+  }
+  bsTag <- tags$div(class = sz, tags$div(class = "modal-content",
+    tags$div(class = "modal-header",
+      tags$button(type = "button", class = "close", `data-dismiss` = "modal",
+        tags$span(HTML("&times;"))),
+      tags$h4(class = "modal-title", title)),
+    tags$div(class = "modal-body", list(...)),
+    tags$div(class = "modal-footer", footer)))
+  tags$div(class = "modal sbs-modal fade", id = id, tabindex = "-1",
+    `data-sbs-trigger` = trigger, bsTag)
+}
+
 # global, reactive data-structure
 data(testdata, envir = .GlobalEnv)
 data(testdata2, envir = .GlobalEnv)
@@ -426,6 +489,16 @@ obj$cur_selection_script <- "btn_export_script_1" # navigation for reproducibili
 obj$cur_selection_microdata <- "btn_menu_microdata_1" # navigation for microdata
 obj$cur_selection_import <- "btn_import_data_1" # navigation for import
 obj$cur_selection_anon <- "btn_sel_anon_1" # navigation for anonymization
+
+# AI-assisted anonymization state
+obj$ai_provider <- "openai"
+obj$ai_model <- NULL
+obj$ai_api_key <- NULL          # NULL = auto-detect from env
+obj$ai_results <- NULL          # list of strategy results after agentic loop
+obj$ai_selected_idx <- 1        # index of selected strategy in results
+obj$ai_running <- FALSE         # TRUE while agentic loop is executing
+obj$ai_live_table <- NULL       # data.frame for live progress display
+obj$ai_suggest_roles <- NULL    # proposed roles from AI_createSdcObj
 
 # for stata-labelling
 obj$stata_labs <- NULL

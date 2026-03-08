@@ -703,6 +703,9 @@ int stricmp(char *str1, char *str2)
 }
 #endif // _MSC_VER
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn)
 {
 	if (Max > 0)
@@ -993,6 +996,7 @@ uint TimeGetMilliSecond(void)
 	return (tv.tv_sec & 0x000FFFFFF) * 1000 + tv.tv_usec / 1000;
 }
 
+#pragma GCC diagnostic pop
 
 // ===============================================================================
 //

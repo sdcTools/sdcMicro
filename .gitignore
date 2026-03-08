@@ -33,3 +33,6 @@ inst/shiny/sdcApp/.vscode
 inst/shiny/sdcApp/www/.sass-cache
 ihsn-extra-sidebar.css.map
 docs
+.claude/
+CLAUDE.md
+docs/plans/

@@ -1,0 +1,808 @@
+---
+title: "AI-Assisted Statistical Disclosure Control with sdcMicro"
+author: "Matthias Templ"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 4
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{AI-Assisted Statistical Disclosure Control with sdcMicro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ai_assisted.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = FALSE,
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Abstract {-}
+
+We present AI-assisted anonymization features for the **sdcMicro** R package
+that integrate large language models (LLMs) into the statistical disclosure
+control workflow. Two exported functions — `AI_createSdcObj()` for variable
+classification and `AI_applyAnonymization()` for anonymization strategy
+generation — use structured tool calling to propose, evaluate, and refine
+anonymization strategies via an agentic optimization loop. The implementation
+follows a privacy-by-design principle: only metadata (variable names, types,
+cardinality, and factor levels) is transmitted to the LLM, never the actual
+microdata. A provider-agnostic interface supports OpenAI, Anthropic, and local
+LLM deployments. All AI suggestions include transparent reasoning, generate
+reproducible R code, and require explicit user confirmation. The features are
+also integrated into the **sdcApp** Shiny GUI.
+
+# Introduction {#introduction}
+
+Statistical disclosure control (SDC) is a necessary step in preparing microdata
+for release, aiming to prevent re-identification of individual respondents while
+preserving the analytical utility of the data [@hundepool2012; @templ2017]. The
+**sdcMicro** package [@templ2015sdcmicro] provides a comprehensive suite of
+methods for anonymizing microdata in **R** [@R2024], including local
+suppression, recoding, perturbation, and risk estimation.
+
+However, applying SDC methods effectively requires substantial domain expertise.
+Practitioners must decide which variables to treat as quasi-identifiers (i.e.,
+variables that, in combination, could enable re-identification), which
+anonymization techniques to apply, and how to balance disclosure risk against
+information loss. These decisions depend on the data structure, the release
+context, and the sensitivity of the variables — making SDC a complex,
+labor-intensive process.
+
+Recent advances in large language models (LLMs) offer new possibilities for
+assisting with such expert tasks. LLMs can process metadata descriptions,
+suggest variable classifications, and propose strategies consistent with
+established practices [@brown2020gpt3; @chen2021codex]. However, integrating
+LLMs into statistical workflows raises important concerns about data privacy,
+reproducibility, and user control.
+
+This vignette introduces the AI-assisted anonymization features in **sdcMicro**,
+which address these challenges through three design principles:
+
+1. **Privacy by design**: Only metadata (variable names, types, cardinality, and
+   factor levels) is transmitted to the LLM — never the actual microdata.
+2. **Transparency**: Every LLM decision includes human-readable reasoning and
+   generates reproducible R code.
+3. **User control**: All AI suggestions require explicit confirmation; users can
+   review, modify, or reject any proposal.
+
+The implementation consists of two exported functions — `AI_createSdcObj()` for
+LLM-assisted variable classification and `AI_applyAnonymization()` for
+LLM-assisted anonymization strategy generation — and a graphical user interface
+integrated into the existing **sdcApp** Shiny application.
+
+The remainder of this vignette is organized as follows: Section 2 provides
+background on SDC and LLM integration challenges. Section 3 describes the
+software design. Sections 4 and 5 present the two main functions with examples.
+Section 6 describes the GUI integration. Section 7 discusses advantages,
+limitations, and related work.
+
+## Prerequisites {#prerequisites}
+
+The AI features require an API key from a supported LLM provider. Set it as an
+environment variable before using the functions:
+
+```{r}
+# Option 1: Set in your R session
+Sys.setenv(OPENAI_API_KEY = "sk-...")
+
+# Option 2: Add to your ~/.Renviron file (persists across sessions)
+# OPENAI_API_KEY=sk-...
+
+# Verify the key is set
+nzchar(Sys.getenv("OPENAI_API_KEY"))
+```
+
+For Anthropic, use `ANTHROPIC_API_KEY`. For local LLM deployments (Ollama,
+vLLM), no API key may be needed — see Section 3.2.
+
+The **httr** and **jsonlite** packages are required for API communication and
+are automatically installed as dependencies of **sdcMicro**.
+
+## Quick start {#quickstart}
+
+The minimal workflow requires two steps — variable classification and
+anonymization:
+
+```{r}
+library(sdcMicro)
+data(testdata)
+
+# Step 1: AI-assisted variable classification
+sdc <- AI_createSdcObj(dat = testdata, policy = "open")
+
+# Step 2: AI-assisted anonymization
+sdc <- AI_applyAnonymization(sdc, k = 3)
+
+# Step 3: Extract the anonymized data
+anon_data <- extractManipData(sdc)
+head(anon_data)
+```
+
+Both functions display the LLM's reasoning and ask for confirmation before
+proceeding. The following sections explain each component in detail.
+
+# Background {#background}
+
+## Statistical disclosure control
+
+The goal of SDC is to transform microdata such that no individual respondent can
+be re-identified, while preserving as much analytical utility as possible
+[@hundepool2012; @templ2017]. Before applying any SDC method, **direct
+identifiers** (names, ID numbers, addresses) must be removed from the
+dataset — this is a prerequisite, not part of the SDC process itself.
+
+SDC methods for the remaining variables can be broadly categorized into methods
+for categorical variables (recoding, local suppression, post-randomization) and
+methods for continuous variables (microaggregation, noise addition, rank
+swapping) [@domingo2001]. The risk of re-identification is commonly measured
+through $k$-anonymity: a dataset satisfies $k$-anonymity if each record is
+indistinguishable from at least $k - 1$ other records with respect to the
+quasi-identifiers [@samarati2001; @sweeney2002].
+
+While $k$-anonymity is widely used, it has known limitations: it does not protect
+against attribute disclosure when all records in an equivalence class share the
+same sensitive value (homogeneity attack). $\ell$-diversity
+[@machanavajjhala2007] addresses this by requiring that sensitive attributes
+have at least $\ell$ distinct values within each equivalence class. The current
+AI-assisted features in **sdcMicro** target $k$-anonymity; support for
+$\ell$-diversity constraints is planned for future releases.
+
+A central challenge in SDC is selecting the right combination of methods and
+parameters to achieve adequate protection with minimal information loss. This
+typically involves iterative experimentation, guided by the practitioner's
+experience with the data and release context.
+
+## LLMs in statistical workflows
+
+Large language models have demonstrated the ability to process data
+descriptions, suggest analytical approaches, and generate code
+[@brown2020gpt3; @chen2021codex]. More recently, tool-augmented LLMs have shown
+the ability to select and invoke structured function calls based on task
+descriptions [@schick2023toolformer]. In the SDC context, LLMs can draw on their
+training in statistical methodology to propose variable classifications and
+anonymization strategies. However, several challenges must be addressed:
+
+- **Data privacy**: Sending microdata to external APIs would defeat the purpose
+  of anonymization. Any LLM integration must ensure that only non-identifying
+  metadata is transmitted.
+- **Reliability**: LLM outputs are stochastic and may contain errors. The system
+  must validate all suggestions before execution.
+- **Reproducibility**: Applied methods must be logged as executable R code for
+  audit trails and replication.
+
+## Provider landscape
+
+The LLM ecosystem includes multiple providers with different APIs: OpenAI
+(GPT-4.1, GPT-4o), Anthropic (Claude Sonnet 4), and numerous
+OpenAI-compatible endpoints (Ollama for local deployment, Azure OpenAI, vLLM,
+Groq, Together AI). A practical integration should support provider switching
+without code changes, accommodating institutional preferences and data
+governance requirements.
+
+# Software design {#design}
+
+## Architecture overview
+
+The AI-assisted features in **sdcMicro** are organized in four layers:
+
+1. **Provider abstraction** (`query_llm()`): A unified interface for
+   communicating with LLMs across different providers.
+2. **Metadata extraction**: Functions that summarize data structure without
+   exposing individual records.
+3. **Prompt engineering**: Domain-specific prompts that guide the LLM toward
+   appropriate SDC decisions.
+4. **Structured tool calling**: A schema-based approach where the LLM specifies
+   method calls as structured objects rather than raw code.
+
+```
+                ┌─────────────────────┐
+                │   User Interface    │
+                │ (R console / sdcApp)│
+                └────────┬────────────┘
+                         │
+          ┌──────────────┴──────────────┐
+          │                             │
+  ┌───────▼───────┐           ┌────────▼────────┐
+  │AI_createSdcObj│           │AI_applyAnon…    │
+  │(variable roles)│          │(strategies)      │
+  └───────┬───────┘           └────────┬────────┘
+          │                             │
+  ┌───────▼─────────────────────────────▼───────┐
+  │         Metadata Extraction Layer           │
+  │  (names, types, cardinality, factor levels) │
+  │  *** No personal data transmitted ***       │
+  └─────────────────┬───────────────────────────┘
+                    │
+          ┌─────────▼─────────┐
+          │    query_llm()    │
+          │ Provider-agnostic │
+          └───┬───────┬───┬───┘
+              │       │   │
+        OpenAI  Anthropic  Custom
+```
+
+## Privacy by design {#privacy}
+
+The most critical design decision is that **no personal data is ever transmitted
+to the LLM**. The metadata extraction layer (`extract_variable_metadata()` and
+`summarize_sdcObj_structure()`) produces only:
+
+- Variable names and data types (factor, numeric, character)
+- Number of unique values per variable
+- Factor level labels (e.g., `"male"`, `"female"` — category names, not
+  individual records)
+- Aggregate risk metrics ($k$-anonymity violation counts)
+
+This means that even if the LLM provider retains query data, no individual
+records are exposed. The metadata is equivalent to what would appear in a
+codebook or data dictionary — public information about the data structure.
+
+## Provider-agnostic LLM access {#providers}
+
+The `query_llm()` function provides a unified interface supporting three
+provider modes:
+
+```{r}
+# OpenAI (default)
+query_llm(prompt, provider = "openai")
+
+# Anthropic (native Messages API)
+query_llm(prompt, provider = "anthropic")
+
+# Any OpenAI-compatible endpoint (Ollama, Azure, vLLM, etc.)
+query_llm(prompt, provider = "custom",
+          base_url = "http://localhost:11434/v1",
+          model = "llama3")
+```
+
+API keys are auto-detected from environment variables (`OPENAI_API_KEY`,
+`ANTHROPIC_API_KEY`, or the generic `LLM_API_KEY`), with an interactive prompt as
+fallback in console sessions. Provider-specific differences (Anthropic's
+`x-api-key` header, `anthropic-version` field, system prompt placement) are
+handled transparently.
+
+## Structured tool calling {#tools}
+
+Rather than asking the LLM to generate raw R code — which would require complex
+parsing, validation, and carry injection risks — the system uses **structured
+tool calling** (a mechanism where the LLM outputs structured JSON conforming to
+pre-defined schemas, rather than free-form text). Six tool schemas are defined:
+
+| Tool | Parameters | Purpose |
+|------|-----------|---------|
+| `groupAndRename` | `var`, `before`, `after` | Merge factor levels in a categorical variable |
+| `localSuppression` | `k` | Enforce $k$-anonymity via cell suppression |
+| `microaggregation` | `variables`, `method` | Aggregate numerical variables |
+| `addNoise` | `variables`, `noise` | Add noise to numerical variables |
+| `pram` | — | Post-randomization method (PRAM) for categorical variables |
+| `topBotCoding` | `column`, `value`, `replacement`, `kind` | Cap extreme values (top/bottom coding) |
+
+Note that `localSuppression` is included in the schema for completeness but is
+always applied automatically by the framework after each strategy — the LLM does
+not propose it directly.
+
+The LLM returns tool calls as structured JSON objects. For OpenAI and Anthropic,
+native function/tool calling APIs are used; for custom providers, a text-based
+JSON fallback is employed. All parameters are validated before execution by
+`execute_tool_calls()`, which checks that variable names exist in the correct
+role (key variables for `groupAndRename`, numerical variables for
+`microaggregation`, etc.).
+
+## Combined utility measure {#utility}
+
+To compare anonymization strategies quantitatively, we define a combined utility
+score $U$ that captures the three main dimensions of information loss:
+
+$$U = w_1 \cdot S + w_2 \cdot C + w_3 \cdot \text{IL1s}$$
+
+where $n$ is the number of records, $p_{\text{key}}$ is the number of key
+variables, and $p_{\text{num}}$ is the number of numerical variables:
+
+- $S$ (Suppression Rate) = $\frac{\text{new NAs}}{n \times p_{\text{key}}}$
+  measures the proportion of values suppressed by `localSuppression()`.
+  Bounded in $[0, 1]$.
+- $C$ (Category Loss) = $\text{mean}_{j=1}^{p_{\text{key}}}\left(1 - \frac{L_j^{\text{after}}}{L_j^{\text{before}}}\right)$
+  measures the average reduction in the number of distinct levels ($L_j$) across
+  key variables from `groupAndRename()`. Only non-suppressed values are counted,
+  ensuring $C$ and $S$ measure orthogonal aspects of information loss.
+  Bounded in $[0, 1]$.
+- $\text{IL1s}$ (Information Loss) = the IL1s measure from `dUtility()`
+  [@mateo2004], normalized by $n \times p_{\text{num}}$. This is the
+  standard-deviation-scaled variant, computed as
+  $\sum_{i,j} |x_{ij} - \tilde{x}_{ij}| / (\text{sd}(x_j) \sqrt{2})$
+  divided by the number of cells. Set to 0 if no numerical variables are present.
+  Note that IL1s is not strictly bounded in $[0, 1]$ for large perturbations.
+
+Lower scores indicate better utility preservation. The default weights are
+$w_1 = w_2 = w_3 = 1/3$. Since the three components are not on fully
+commensurable scales, these equal weights are a pragmatic starting point rather
+than a principled optimum. Users should adjust weights to reflect their
+priorities — for example, setting $w_1 = 0.6, w_2 = 0.2, w_3 = 0.2$
+prioritizes minimizing suppressions. The weights are automatically normalized
+to sum to 1, so `weights = c(3, 1, 1)` is equivalent to `c(0.6, 0.2, 0.2)`.
+
+# LLM-assisted variable classification {#classification}
+
+## The `AI_createSdcObj()` function
+
+The first AI-assisted function helps users classify dataset variables into SDC
+roles. The essential call is:
+
+```{r}
+sdc <- AI_createSdcObj(dat = testdata, policy = "open")
+```
+
+Additional parameters control the LLM provider (`provider`, `model`, `api_key`,
+`base_url`), interactive confirmation (`confirm`), and verbosity (`info`). See
+`?AI_createSdcObj` for all options.
+
+The `policy` parameter provides context to the LLM about the intended data
+release: `"open"` for publicly downloadable data (requiring stronger
+protection), `"restricted"` for access via a research data center, and
+`"confidential"` for limited access under legal agreements.
+
+The function extracts variable metadata from `dat`, constructs a prompt that
+includes the data-sharing policy context, and queries the LLM for role
+assignments. The LLM returns a JSON object classifying each variable as one of:
+
+- **Key variable** (`keyVars`): Categorical quasi-identifiers — variables that
+  describe individuals and could, in combination, enable re-identification
+  (e.g., age group, sex, region)
+- **Numerical variable** (`numVars`): Continuous quasi-identifiers requiring
+  perturbative methods rather than suppression (e.g., income, expenditure)
+- **PRAM variable** (`pramVars`): Variables suitable for the Post-Randomization
+  Method (PRAM), which perturbs categorical values using a transition matrix.
+  Often used for detailed categorical variables such as geographic codes
+- **Weight variable** (`weightVar`): Sampling weight (only relevant for complex
+  survey designs)
+- **Household ID** (`hhId`): Cluster/household identifier (for hierarchical data
+  such as persons within households)
+- **Strata variable** (`strataVar`): Stratification variable
+
+Note that sensitive variables (`sensibleVar` in **sdcMicro**) are not currently
+classified by the LLM. If your data contains sensitive attributes (e.g., health
+status, income class) that require $\ell$-diversity checks, set them manually
+via `createSdcObj()`.
+
+## Reasoning transparency
+
+Each classification includes a `reasoning` field explaining the LLM's rationale:
+
+```{r}
+library(sdcMicro)
+data(testdata)
+sdc <- AI_createSdcObj(dat = testdata, policy = "open")
+```
+
+```
+--- LLM Variable Classification ---
+Reasoning:
+  keyVars: Variables 'urbrur', 'roof', 'walls', 'water', 'electcon',
+    'relat', 'sex' are categorical quasi-identifiers that describe
+    individual characteristics and could be used for re-identification.
+  numVars: Variables 'expend', 'income', 'savings' are continuous
+    and can reveal individual economic status.
+  weightVar: 'sampling_weight' represents survey sampling weights.
+  hhId: 'ori_hid' identifies household clusters.
+
+Proposed roles:
+  Key variables:   urbrur, roof, walls, water, electcon, relat, sex
+  Num. variables:  expend, income, savings
+  Weight variable: sampling_weight
+  Household ID:    ori_hid
+
+Accept this classification? [Y/n/q]:
+```
+
+## Interactive confirmation
+
+When `confirm = TRUE` (the default), the user must explicitly accept the
+classification before the `sdcMicroObj` is created. Pressing `n` returns the
+proposed roles as a list, allowing programmatic editing:
+
+```{r}
+# Reject and modify
+roles <- AI_createSdcObj(dat = testdata, policy = "open")
+# User presses 'n' — roles is returned as a list
+roles$keyVars <- c(roles$keyVars, "age")  # Add age as key variable
+sdc <- createSdcObj(testdata,
+                    keyVars = roles$keyVars,
+                    numVars = roles$numVars,
+                    weightVar = roles$weightVar,
+                    hhId = roles$hhId)
+```
+
+In non-interactive sessions (e.g., batch scripts), confirmation is skipped
+automatically.
+
+# LLM-assisted anonymization {#anonymization}
+
+## The `AI_applyAnonymization()` function
+
+The second AI-assisted function implements an **agentic loop** — an iterative
+process where the LLM proposes anonymization strategies, receives quantitative
+feedback, and refines its proposals. The essential call is:
+
+```{r}
+sdc <- AI_applyAnonymization(sdc, k = 3)
+```
+
+Key parameters include `n_strategies` (number of initial strategies, default 3),
+`max_iter` (refinement iterations, default 2), and `weights` (utility score
+weights, default equal). The function also accepts `provider`, `model`,
+`api_key`, and `base_url` for LLM configuration. When `generateReport = TRUE`
+(the default), HTML reports are written to the working directory. See
+`?AI_applyAnonymization` for all options.
+
+**Choosing $k$:** For public-use files, $k = 5$ is common practice; for
+scientific-use files with restricted access, $k = 3$ may suffice. Higher values
+of $k$ provide stronger protection at the cost of more information loss.
+
+## Agentic loop: batch and refinement {#agentic}
+
+The anonymization proceeds in two phases:
+
+**Batch phase.** The LLM receives a summary of the `sdcMicroObj` structure
+(variable names, types, factor levels, current $k$-anonymity violations) and
+proposes `n_strategies` distinct anonymization strategies as structured tool
+calls. Each strategy is evaluated on an independent copy of the `sdcMicroObj`:
+
+1. Execute the tool calls (recoding, noise addition, etc.)
+2. Apply `localSuppression(k = k)` to enforce $k$-anonymity on the key variables
+3. Compute the utility score $U$
+
+**Refinement phase.** The LLM receives the utility scores from all evaluated
+strategies and is asked to propose up to `max_iter` improved strategies. This
+iterative feedback loop allows the LLM to condition on the quantitative results
+and adjust its proposals accordingly.
+
+```
+  ┌───────────────────┐
+  │ Summarize sdcObj  │
+  │ (metadata only)   │
+  └────────┬──────────┘
+           │
+  ┌────────▼──────────┐
+  │ LLM: propose N    │
+  │ strategies        │
+  └────────┬──────────┘
+           │
+  ┌────────▼──────────┐     ┌──────────────────┐
+  │ Evaluate each on  │────►│ Utility scores   │
+  │ copy + localSupp  │     │ S, C, IL1s, U    │
+  └───────────────────┘     └────────┬─────────┘
+                                     │
+                            ┌────────▼──────────┐
+                            │ LLM: refine based │
+                            │ on scores         │
+                            │ (max_iter rounds)  │
+                            └────────┬──────────┘
+                                     │
+                            ┌────────▼──────────┐
+                            │ Select best       │
+                            │ strategy (min U)  │
+                            └───────────────────┘
+```
+
+A key insight is that `localSuppression()` always achieves $k$-anonymity on the
+categorical key variables, by suppressing (setting to `NA`) the minimum number of
+values needed. The optimization therefore focuses on minimizing the total
+information loss by balancing recoding (which increases category loss $C$ but
+reduces the need for suppressions) against suppression (which increases the
+suppression rate $S$ but preserves category structure).
+
+## Example session
+
+```{r}
+library(sdcMicro)
+data(testdata)
+
+# Step 1: Create sdcObj with AI-assisted variable classification
+sdc <- AI_createSdcObj(dat = testdata, policy = "open")
+
+# Step 2: Apply AI-assisted anonymization
+sdc <- AI_applyAnonymization(sdc, k = 3, n_strategies = 3)
+```
+
+A typical console output:
+
+```
+=== Batch phase: requesting 3 strategies ===
+  Evaluating conservative...
+    U=0.0126 (S=0.0091, C=0.0286, IL1=0.0000)
+  Evaluating moderate...
+    U=0.0367 (S=0.0071, C=0.0643, IL1=0.0388)
+  Evaluating aggressive...
+    U=0.3525 (S=0.0057, C=0.1991, IL1=0.8527)
+=== Refinement iteration 1/2 ===
+    U=0.0282 (S=0.0084, C=0.0762, IL1=0.0000)
+=== Refinement iteration 2/2 ===
+    U=0.0198 (S=0.0088, C=0.0505, IL1=0.0000)
+
+=== Best strategy: 'conservative' (U=0.0126) ===
+  Suppression rate: 0.0091
+  Category loss:    0.0286
+  IL1:              0.0000
+
+k-violations after: 0 / 4580
+
+Accept this strategy? [Y/n/q]:
+```
+
+The output shows three initial strategies with different aggressiveness levels,
+followed by two refinement iterations. Each line reports the total utility score
+$U$ and its three components in parentheses: suppression rate $S$, category loss
+$C$, and numerical information loss IL1s. The conservative strategy wins with
+$U = 0.0126$, meaning less than 1% of values were suppressed, less than 3% of
+categorical diversity was reduced, and no numerical perturbation was applied.
+All 4580 records satisfy 3-anonymity (zero violations).
+
+After accepting a strategy, extract the anonymized data and review the results:
+
+```{r}
+# Extract anonymized data
+anon_data <- extractManipData(sdc)
+
+# Review risk and utility
+print(sdc, "risk")
+```
+
+## Adjusting utility weights
+
+Users can prioritize different aspects of information loss depending on the
+intended use of the data. If the downstream analysis requires exact category
+counts (e.g., cross-tabulations by region), penalize category loss more
+heavily. If the analysis uses regression on continuous variables, penalize
+numerical information loss:
+
+```{r}
+# Minimize suppressions (prefer recoding over suppression)
+sdc <- AI_applyAnonymization(sdc, k = 3,
+  weights = c(0.6, 0.2, 0.2))
+
+# Preserve categorical diversity (for cross-tabulations)
+sdc <- AI_applyAnonymization(sdc, k = 3,
+  weights = c(0.2, 0.6, 0.2))
+```
+
+## Using different LLM providers
+
+The choice of provider depends on the institutional context. Use OpenAI or
+Anthropic for the highest-quality strategy suggestions. Use a local LLM when
+data governance policies prohibit sending even metadata to external services —
+this provides the strongest privacy guarantee, as nothing leaves the local
+machine:
+
+```{r}
+# OpenAI (default) — best strategy quality
+sdc <- AI_applyAnonymization(sdc, k = 3)
+
+# Anthropic Claude — comparable quality, different provider
+sdc <- AI_applyAnonymization(sdc, k = 3, provider = "anthropic")
+
+# Local Ollama instance — maximum privacy, no external communication
+sdc <- AI_applyAnonymization(sdc, k = 3,
+  provider = "custom",
+  base_url = "http://localhost:11434/v1",
+  model = "llama3")
+```
+
+Note that smaller local models may produce lower-quality strategies, particularly
+for the structured JSON output format required by the tool calling mechanism.
+GPT-4.1, Claude Sonnet 4, and similar frontier models consistently produce
+well-formed strategies.
+
+# Graphical user interface {#gui}
+
+The AI-assisted features described in the preceding sections are fully
+integrated into **sdcApp**, the Shiny-based graphical user interface shipped
+with **sdcMicro** and launched via `sdcApp()`. The GUI exposes the same
+functionality as the programmatic API through three complementary entry points,
+making the AI capabilities accessible to users who prefer interactive
+point-and-click workflows.
+
+## AI variable suggestion {#gui-suggest}
+
+The first entry point appears during SDC problem setup. When a dataset has been
+loaded and the user is assigning variable roles (key variables, numerical
+variables, weight, household ID, etc.), a button labelled **"AI suggest
+variables"** invokes `AI_createSdcObj()` in the background. The LLM receives
+only the variable metadata — names, types, cardinalities, and factor levels —
+and returns a proposed classification together with a natural-language
+explanation. The result is presented in a modal dialog that shows the reasoning
+behind each role assignment and a summary of the proposed configuration.
+
+If the user clicks **Accept**, the suggestions are automatically transferred
+into the setup table: radio buttons for key/numerical classification and
+checkboxes for weight, household ID, and PRAM roles are set accordingly. The
+user retains full control and can adjust any of these selections before
+finalising the SDC problem. This workflow lowers the barrier to entry for
+practitioners who may be unfamiliar with the subtleties of variable role
+assignment, while preserving the human-in-the-loop principle.
+
+## AI-Assisted anonymization panel {#gui-anon}
+
+The second and primary entry point is a dedicated **AI-Assisted** tab in the
+application's navigation bar. Its sidebar collects the configuration parameters
+required by the agentic loop: the LLM provider and model, the API key (with an
+indicator that shows whether a key was detected in the environment), the desired
+$k$-anonymity level, the number of candidate strategies, and the utility weight
+preset. Four presets are offered — *Balanced*, *Minimize suppressions*,
+*Preserve categories*, and *Custom* — where the last option reveals three
+sliders for manual weight specification ($w_1$, $w_2$, $w_3$). When the
+**Custom** provider is selected, an additional field for the base URL appears,
+enabling connection to locally deployed models.
+
+Clicking **"Run AI Anonymization"** triggers the agentic loop described in
+Section 5. A progress bar tracks the LLM query and strategy
+evaluation. Once the loop completes, the results are displayed in an interactive
+table whose columns report the strategy name (e.g., "conservative", "moderate",
+"aggressive"), the combined utility score $U$, and its three component scores.
+The row corresponding to the best strategy is highlighted in green.
+
+Selecting a row in the table reveals two additional panels: a text block with
+the LLM's reasoning and a collapsible section labelled **"Methods applied"**
+that shows the exact R code the strategy would execute. Three action buttons
+govern the next step. **Apply selected** executes the strategy on the current
+`sdcMicroObj`, generates the corresponding reproducible R code, and presents a
+confirmation dialog recommending that the user review the Risk/Utility tab.
+**Refine further** feeds the current scores back to the LLM for an additional
+iteration of the refinement phase; the resulting improved strategy is appended
+to the table. **Cancel** discards the results without modifying the data.
+
+A third, convenience entry point is provided by a green **"AI-assisted"** button
+at the top of the Anonymize sidebar, which navigates directly to the AI-Assisted
+tab.
+
+## Reproducibility {#gui-repro}
+
+Reproducibility is a central design goal of the GUI integration. When a strategy
+is applied through the AI-Assisted panel, the corresponding R code is
+automatically appended to the internal reproducibility script that **sdcApp**
+maintains throughout a session. Users can navigate to the **Reproducibility**
+tab at any time to inspect, copy, or download the complete analysis script. The
+script captures both manually applied methods and AI-suggested ones in the order
+they were executed, ensuring that the entire anonymization workflow can be
+reproduced outside of the GUI in a plain R session.
+
+# Discussion {#discussion}
+
+## Advantages and limitations
+
+The AI-assisted approach addresses several practical challenges that arise in
+traditional manual SDC workflows. Perhaps most significantly, it lowers the
+expertise barrier: practitioners who are not deeply familiar with the full range
+of SDC methods can obtain reasonable starting configurations by describing their
+data to the system and reviewing the LLM's proposals. The batch-and-refine
+architecture encourages systematic exploration of the strategy space, evaluating
+multiple candidate strategies simultaneously rather than following a single path
+as is common in manual practice. The combined utility score provides a
+quantitative basis for comparing strategies, moving the selection process from
+subjective judgement toward a more structured evaluation framework. Throughout
+this process, transparency is maintained because every suggestion is accompanied
+by the LLM's reasoning and the exact R code that would be executed.
+
+These advantages must be weighed against several important limitations. First,
+the quality of the generated strategies depends directly on the capabilities of
+the underlying language model. Smaller or less capable models may produce
+suboptimal parameter choices, particularly when the data structure is complex or
+when the structured JSON output format is not well supported. Second, cloud-based
+LLMs incur per-query costs and network latency; local deployment via Ollama
+eliminates both concerns but requires adequate hardware. Third, and most
+fundamentally, the AI suggestions should be understood as a starting point
+rather than a final answer. Domain knowledge about the data, the intended
+release context, and applicable regulations remains essential for responsible
+disclosure control. Finally, LLM outputs are inherently stochastic: different
+runs may produce different strategies even for identical inputs. Setting
+`temperature = 0` in `query_llm()` improves reproducibility but does not
+guarantee identical outputs across calls.
+
+## Privacy considerations
+
+A central design principle of the implementation is that the LLM never receives
+the actual microdata. The metadata extraction routines transmit only information
+equivalent to what would appear in a public codebook: variable names, data types,
+cardinality statistics, factor level labels, and aggregate risk metrics. Even if
+the LLM provider retains queries for logging or training purposes, the exposure
+is limited to this structural description of the dataset.
+
+Users should be aware, however, that variable names and factor level labels can
+themselves carry sensitive information. In such cases, it is advisable to rename
+variables or recode levels before invoking the AI features. For environments
+where no data — not even metadata — may leave the local machine, the
+provider-agnostic architecture supports deployment of a local LLM through
+Ollama or any other OpenAI-compatible endpoint, ensuring that all communication
+remains on-premises.
+
+## Comparison with related work
+
+Several established tools provide automated or semi-automated SDC, but none
+currently incorporate LLM-assisted decision support.
+
+**ARX** [@prasser2020arx] performs an exhaustive search over user-defined
+generalization hierarchies and offers strong optimality guarantees within its
+transformation model, but requires the user to specify the set of permissible
+transformations upfront. The LLM-based approach in **sdcMicro** complements
+this style of optimisation by automatically proposing which combination of
+recoding, suppression, and perturbation operations to apply, informed by the
+data's metadata rather than a predefined lattice.
+
+**$\mu$-Argus** and **$\tau$-Argus** [@glemba2024muargus] provide mature
+graphical interfaces for microdata and tabular data protection respectively,
+with built-in rule-based heuristics. Their workflows are well-established in
+national statistical offices but do not offer the kind of natural-language
+interaction or adaptive strategy generation that an LLM enables.
+**synthpop** [@nowok2016synthpop] and **simPop** [@templ2017simPop] take a
+fundamentally different approach by generating entirely synthetic datasets
+rather than perturbing the original records; they do not involve method
+selection or parameter tuning in the SDC sense and therefore address a
+complementary use case.
+
+General-purpose AI coding assistants such as ChatGPT or GitHub Copilot can
+generate R code for anonymization when prompted, but they operate without the
+safeguards that the structured tool calling architecture provides. In
+particular, they lack parameter validation against the actual data, do not
+enforce the separation between metadata and microdata, and cannot evaluate the
+resulting strategies against quantitative risk and utility metrics. The
+structured tool calling approach adopted here avoids the fragility of raw code
+generation while retaining the flexibility to combine multiple SDC methods
+within a single strategy.
+
+# Summary and outlook {#summary}
+
+This paper presented AI-assisted anonymization features for the **sdcMicro** R
+package. The contribution consists of three components: LLM-assisted variable
+classification via `AI_createSdcObj()`, an agentic anonymization loop with
+structured tool calling via `AI_applyAnonymization()`, and full integration of
+both capabilities into the **sdcApp** Shiny GUI. Together, these components
+form a decision-support system that augments — rather than replaces — human
+expertise in statistical disclosure control.
+
+Three design principles guided the implementation. First, a strict
+privacy-by-design policy ensures that only metadata is transmitted to the LLM,
+never the microdata itself. Second, transparency is maintained by exposing the
+LLM's reasoning and generating reproducible R code for every suggested
+operation. Third, user control is preserved through interactive confirmation
+dialogs at each step, so that no anonymization method is applied without
+explicit approval.
+
+The provider-agnostic architecture supports commercial LLM services (OpenAI,
+Anthropic), self-hosted open-weight models via Ollama or any OpenAI-compatible
+endpoint, and can be extended to additional providers by supplying a base URL
+and API key. This flexibility allows organisations to balance the trade-off
+between model capability and data governance requirements according to their own
+policies.
+
+Several directions for future work emerge from the current implementation.
+First, the tool calling schema could be extended to support $\ell$-diversity
+constraints and the explicit handling of sensitive variables, broadening the
+range of privacy models the system can target. Second, systematic benchmarks
+comparing AI-suggested strategies against expert-crafted configurations across
+diverse datasets would provide empirical evidence on the practical benefit of
+the approach. Third, the combined utility score could incorporate additional
+information loss measures such as propensity scores or the Hellinger distance.
+Finally, continued improvements in local open-weight language models may soon
+make it feasible to achieve strategy quality comparable to frontier cloud
+models in fully air-gapped environments.
+
+# Computational details {#computational}
+
+The results in this vignette were obtained using **R** `r paste(R.version$major,
+R.version$minor, sep = ".")` with **sdcMicro** `r packageVersion("sdcMicro")`.
+**R** and all packages used are available from the Comprehensive R Archive
+Network (CRAN) at [https://CRAN.R-project.org/](https://CRAN.R-project.org/).
+
+The AI features require an API key for a supported LLM provider (OpenAI,
+Anthropic) or a locally running OpenAI-compatible endpoint. The
+**httr** and **jsonlite** packages are used for API communication. The example
+session shown in Section 5.2 was generated using GPT-4.1 with
+`temperature = 0`.
+
+# References {#references}

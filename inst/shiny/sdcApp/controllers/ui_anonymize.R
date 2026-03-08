@@ -42,9 +42,14 @@ output$ui_anonymize_sidebar_left <- renderUI({
       column(12, btn_reset, class="wb-action-button wb-action-button-top"))
   })
   output$ui_sel_anon_btns <- renderUI({
+    # AI-assisted button (top, green, visually distinct)
+    out <- list(
+      fluidRow(column(12, h4("AI-assisted"), align = "center")),
+      fluidRow(column(12, bsButton("btn_ai_goto_tab", label = "AI-assisted",
+        block = TRUE, size = "extra-small", style = "success")))
+    )
 
     df_choices <- choices_anon_menu()
-    out <- NULL
     for (i in 1:nrow(df_choices)) {
       curid <- paste0("btn_sel_anon_",i)
       if (!is.na(df_choices$header[i])) {
@@ -191,4 +196,9 @@ output$ui_anonymize <- renderUI({
     return(uiOutput("ui_anonymize_withsidebar"))
   }
   return(invisible(NULL))
+})
+
+# Navigate to AI tab when AI button clicked in Anonymize sidebar
+observeEvent(input$btn_ai_goto_tab, {
+  updateNavbarPage(session, inputId = "mainnav", selected = "AI-Assisted")
 })

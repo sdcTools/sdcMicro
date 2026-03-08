@@ -1,3 +1,23 @@
+# 5.8.1
+- New AI-assisted anonymization features:
+  + `AI_createSdcObj()`: LLM-assisted variable classification into SDC roles
+    (key variables, numerical variables, PRAM variables, weight, household ID)
+  + `AI_applyAnonymization()`: Agentic loop that proposes, evaluates, and refines
+    anonymization strategies using structured tool calling
+  + Provider-agnostic LLM access via `query_llm()` supporting OpenAI, Anthropic,
+    and any OpenAI-compatible endpoint (Ollama, Azure, vLLM)
+  + Privacy by design: only metadata (variable names, types, cardinality, factor
+    levels) is sent to the LLM — never the actual microdata
+  + Combined utility score for quantitative strategy comparison
+  + New vignette: "AI-Assisted Statistical Disclosure Control with sdcMicro"
+- AI integration in `sdcApp()`:
+  + New "AI-Assisted" tab for interactive strategy generation and comparison
+  + "AI suggest variables" button in the setup panel with auto-fill
+  + Applied AI methods tracked in the Reproducibility tab
+- Renamed function prefixes from `KI_` to `AI_` for consistency
+- Remove `shinyBS` dependency; replaced with pure R+JS implementations
+- Fix deprecated enum-to-float arithmetic warnings in C++ code (`RankSwapping.h`, `Mdav.h`) flagged by clang 21+ and gcc 14+
+
 # 5.7.10
 - fix inconsistency in `rankSwap()` Output [Issue #361]
 - remove shinyBS dependency in `sdcApp`

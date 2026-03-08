@@ -15,3 +15,6 @@ src/recordSwap/compile.sh
 vignettes/precompile.R
 vignettes/recordSwapping.Rmd.orig
 ctime.pdf
+^\.claude$
+^CLAUDE\.md$
+^docs/plans$

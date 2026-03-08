@@ -24,10 +24,8 @@
 #include "Framework.h"
 
 //Mdav
-enum{
-   es_NbHashBitXX  = 16,
-   es_NbHashListXX = 1 << es_NbHashBitXX
- };
+static constexpr int es_NbHashBitXX  = 16;
+static constexpr int es_NbHashListXX = 1 << es_NbHashBitXX;
 
 typedef double TData;
 typedef float TDist;
