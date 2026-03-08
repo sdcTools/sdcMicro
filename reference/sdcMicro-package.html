@@ -28,7 +28,7 @@ when applying the methods on data."><!-- mathjax --><script src="https://cdnjs.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sdcMicro</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.7.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.8.1</span>
       </span>
     </div>
 
@@ -46,6 +46,9 @@ when applying the methods on data."><!-- mathjax --><script src="https://cdnjs.c
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/ai_assisted_anonymization.html">AI-Assisted Statistical Disclosure Control with sdcMicro</a>
+    </li>
+    <li>
       <a href="../articles/recordSwapping.html">Targeted Record Swapping</a>
     </li>
   </ul></li>
@@ -748,12 +751,12 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-msg co"><span class="r-pr">#&gt;</span> setting parameter R0 = 0.95 as no inputs have been specified.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 94228053 59400000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 34278077 19400000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 34531757 63000000 5221783.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 10289346 79300000 8576560.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 14171992 83100000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 52476561 35000000 1715291.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 93527508 62600000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 28530788 19500000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 23373601 61400000 6164515.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 23139691 76300000 9231343.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8562446 84500000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 46002021 27200000  663956.7</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">individual</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              risk  fk    Fk</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 9.433072e-05 107 10700</span>
@@ -783,14 +786,14 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-in"><span><span class="co">## topBotCoding</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 94228053 59400000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 34278077 19400000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 34531757 63000000 5221783.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 10289346 79300000 8576560.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 14171992 83100000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 52476561 35000000 1715291.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 93527508 62600000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 28530788 19500000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 23373601 61400000 6164515.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 23139691 76300000 9231343.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8562446 84500000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 46002021 27200000  663956.7</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.0069869</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.007860262</span>
 <span class="r-in"><span><span class="va">sdc</span> <span class="op">&lt;-</span> <span class="fu"><a href="topBotCoding.html">topBotCoding</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  obj <span class="op">=</span> <span class="va">sdc</span>,</span></span>
 <span class="r-in"><span>  value <span class="op">=</span> <span class="fl">60000000</span>,</span></span>
@@ -799,14 +802,14 @@ Suedwestdeutscher Verlag fuer Hochschulschriften, 2009, ISBN: 3838108280,
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="get.sdcMicroObj.html">get.sdcMicroObj</a></span><span class="op">(</span><span class="va">sdc</span>, type <span class="op">=</span> <span class="st">"manipNumVars"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     expend   income   savings</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 94228053 59400000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 34278077 19400000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 34531757 62000000 5221783.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 10289346 62000000 8576560.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 14171992 62000000  231542.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 52476561 35000000 1715291.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 93527508 62000000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 28530788 19500000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 23373601 62000000 6164515.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 23139691 62000000 9231343.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  8562446 62000000  231542.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 46002021 27200000  663956.7</span>
 <span class="r-in"><span><span class="va">sdc</span><span class="op">@</span><span class="va">risk</span><span class="op">$</span><span class="va">numeric</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.003056769</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.004366812</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## LocalRecProg</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">testdata2</span><span class="op">)</span></span></span>
