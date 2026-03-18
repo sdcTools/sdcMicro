@@ -1,3 +1,10 @@
+# 5.8.2
+- Bugfix: `ldiversity()` now computes distinct l-diversity measure correctly in case of `NAs` in Keyvars
+  * improved/simplified uderlying C++ code
+  * added Unit-Tests for `ldiversity()`
+- Fixing some Header-Definitions for CRAN-Compliance
+- Updated Unit-Tests for `pram()`
+
 # 5.8.1
 - New AI-assisted anonymization features:
   + `AI_createSdcObj()`: LLM-assisted variable classification into SDC roles
