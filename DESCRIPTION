@@ -25,6 +25,8 @@ LinkingTo: Rcpp
 Depends:
     R (>= 2.10)
 Suggests:
+    cluster,
+    clue,
     laeken,
     parallel,
     testthat,
@@ -95,6 +97,7 @@ Collate:
     'pram.R'
     'rankSwap.R'
     'RcppExports.R'
+    'recordLinkage.R'
     'recordSwap.R'
     'report.R'
     'riskyCells.R'
