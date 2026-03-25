@@ -306,8 +306,18 @@ measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_
 #' @param missing a integer value to be used as missing value in the C++ routine
 #' @param ldiv_index indices (or names) of the variables used for l-diversity
 #' @param l_recurs_c l-Diversity Constant
-ldiversity <- function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-999, ...) {
-  ldiversityX(obj=obj, ldiv_index=ldiv_index, l_recurs_c=l_recurs_c, missing=missing, ...)
+ldiversity <- function(obj,
+                       ldiv_index = NULL,
+                       l_recurs_c = 2,
+                       missing = -999,
+                       ...) {
+  ldiversityX(
+    obj = obj,
+    ldiv_index = ldiv_index,
+    l_recurs_c = l_recurs_c,
+    missing = missing,
+    ...
+  )
 }
 
 setGeneric("ldiversityX", function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-999, ...) {
@@ -321,23 +331,27 @@ definition=function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-999) {
   n <- obj@manipNumVars
   s <- obj@manipStrataVar
   ldiv_index <- ldiv_index
-  if ( is.null(ldiv_index) ) {
+  if (is.null(ldiv_index)) {
     sensVar <- get.sdcMicroObj(obj, "sensibleVar")
-    if ( is.null(sensVar) ) {
+    if (is.null(sensVar)) {
       err <- paste0("You need to specify argument 'sensibleVar' in 'createSdcObj()'")
-      err <- paste0(err, " or specify it directly (argument 'ldiv_index') so that the")
+      err <- paste0(err,
+        " or specify it directly (argument 'ldiv_index') so that the")
       err <- paste0(err, " ldiversity risk-measure can be calculated!\n")
       stop(err)
     } else{
       ldiv_index <- sensVar
     }
   }
-  if (!is.null(k))
+  if (!is.null(k)) {
     o[, colnames(k)] <- k
-  if (!is.null(n))
+  }
+  if (!is.null(n)) {
     o[, colnames(n)] <- n
-  if (!is.null(s))
+  }
+  if (!is.null(s)) {
     o$sdcGUI_strataVar <- s
+  }
   kV <- colnames(obj@origData)[get.sdcMicroObj(obj, "keyVars")]
   obj@risk$ldiversity <- ldiversityWORK(
     data = o,
@@ -371,48 +385,83 @@ ldiversityWORK <- function(data, keyVars, ldiv_index, missing=-999, l_recurs_c=2
       stop("Please define valid key variables", call. = FALSE)
     }
   }
+
+  # Index of sensitive variable(s)
   if (!is.null(ldiv_index)) {
     if (is.numeric(ldiv_index)) {
       ldiv_var <- colnames(data)[ldiv_index]
-      ldiv_index <- length(variables) + 1:length(ldiv_index)
     } else if (is.character(ldiv_index)) {
       ldiv_var <- ldiv_index
-      ldiv_index <- length(variables) + 1:length(ldiv_index)
     }
-    if (any(ldiv_var %in% variables))
-      stop("Sensitivity variable should not be a keyVariable")
-  } else ldiv_var <- character(0)
 
+    # Calculate the 1-based index for the C++ matrix (KeyVars + SensVars)
+    ldiv_index_cpp <- length(variables) + 1:length(ldiv_index)
+
+    if (any(ldiv_var %in% variables)) {
+      stop("Sensitivity variable should not be a keyVariable")
+    }
+  } else {
+    ldiv_var <- character(0)
+    ldiv_index_cpp <- -99
+  }
+
+  # Prep data (factors/strings -> numeric)
   n_key_vars <- length(variables)
   dataX <- data[, c(variables, ldiv_var), drop=FALSE]
   for (i in 1:ncol(dataX)) {
-    if (!is.numeric(dataX[, i]))
-      dataX[, i] <- as.numeric(unlist(dataX[, i]))
+    if (!is.numeric(dataX[, i])) {
+      dataX[, i] <- as.numeric(as.factor(dataX[, i]))
+    }
   }
   dataX <- as.matrix(dataX)
-  ind <- do.call(order, data.frame(dataX))
-  dataX <- dataX[ind, , drop=FALSE]
-  ind <- order(c(1:nrow(dataX))[ind])
-  if (is.null(ldiv_index))
-    ldiv_index=-99
-  if (length(ldiv_index) > 5)
+
+  # Order data for C++ Function
+  # Matrix is ordered in a way so that NAs are grouped together for the C++ group-matching
+  # na.last = TRUE ensures that NAs appear at the end of their respective groups
+  ind <- do.call(order, c(as.data.frame(dataX), list(na.last = TRUE)))
+  dataX_sorted <- dataX[ind, , drop = FALSE]
+
+  # We need an index to be able to restore original order after
+  # calling the c++ function
+  back_ind <- order(ind)
+
+  # Call C++ function
+  if (length(ldiv_index_cpp) > 5) {
     stop("Maximal number of sensitivity variables is 5")
-  res <- measure_risk_cpp(dataX, 0, n_key_vars, l_recurs_c, ldiv_index, missing)
-  res$Fk <- res$Res[, 3]
-  res$Res <- res$Res[ind, ]
-  if (all(ldiv_index != -99)) {
-    res$Mat_Risk <- res$Mat_Risk[ind, ]
-    names(res)[names(res) == "Mat_Risk"] <- "ldiversity"
-    colnames(res$ldiversity) <- c(paste(rep(ldiv_var, each=3), rep(c("Distinct_Ldiversity",
-      "Entropy_Ldiversity", "Recursive_Ldiversity"), length(ldiv_index)), sep="_"),
-      "MultiEntropy_Ldiversity", "MultiRecursive_Ldiversity")
-  } else {
-    res <- res[names(res) != "Mat_Risk"]
   }
-  ind <- order(res$Res[, 1], decreasing=TRUE)
-  res <- res$ldiversity
-  class(res) <- "ldiversity"
-  invisible(res)
+
+  res <- measure_risk_cpp(
+    data = dataX_sorted,
+    weighted_R = 0,
+    n_key_vars_R = n_key_vars,
+    l_recurs_c_R = l_recurs_c,
+    ldiv_index_R = ldiv_index_cpp,
+    missing_value_R = missing
+  )
+
+  # Re-order results back to original order
+  res$Fk <- res$Res[back_ind, 3]
+
+  if (all(ldiv_index_cpp != -99)) {
+    # Reorder the risk matrix to match original data input
+    ldiv_mat <- res$Mat_Risk[back_ind, , drop = FALSE]
+
+    # Specifiy column names
+    col_names <- c(paste(rep(ldiv_var, each = 3), rep(
+      c(
+        "Distinct_Ldiversity",
+        "Entropy_Ldiversity",
+        "Recursive_Ldiversity"
+      ), length(ldiv_var)), sep = "_"),
+    "MultiEntropy_Ldiversity",
+    "MultiRecursive_Ldiversity")
+    colnames(ldiv_mat) <- col_names
+    res_final <- ldiv_mat
+  } else {
+    res_final <- res$Res[back_ind, ]
+  }
+  class(res_final) <- "ldiversity"
+  invisible(res_final)
 }
 
 #' Print method for objects of class measure_risk

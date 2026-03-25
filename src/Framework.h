@@ -48,7 +48,7 @@ typedef int BOOL;
 
 // ============================= Display Messages =================================
 inline extern char g_TxtBuffer[1024];						// character TxtBufferfer to display messages
-static int OS_Printf(const char *Str, ...);
+inline int OS_Printf(const char *Str, ...);
 
 // ============================= Assert =================================
 #ifdef _DEBUG
@@ -252,16 +252,16 @@ inline extern int g_NbNew;
 	#endif
 #endif // _MSC_VER
 
-static char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn = TRUE);
-static char *ReplaceChar(char *Str, char OldChar, char NewChar);
-static char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter = FALSE, BOOL ReturnNULL = TRUE);
+inline static char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn = TRUE);
+inline static char *ReplaceChar(char *Str, char OldChar, char NewChar);
+inline static char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter = FALSE, BOOL ReturnNULL = TRUE);
 
-	//=== Parsing
-static char *RemoveComment(char *Ptr, int Size = -1);	// remove text between /* & */
-static char *GoToNextLine(char *Ptr);						// renvoie Ptr avanc� jusqu'apr�s le '\n' suivant
-static char *GoTo1stChar(char *Ptr);
-static char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
-static char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
+//=== Parsing
+inline static char *RemoveComment(char *Ptr, int Size = -1);	// remove text between /* & */
+inline static char *GoToNextLine(char *Ptr);	// returns the ptr moved forward to the character right after the next newline
+inline static char *GoTo1stChar(char *Ptr);
+inline static char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
+inline static char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
 
 //============================================= Time function
 
@@ -284,7 +284,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz);
 
 #endif // _MSC_VER
 
-static uint TimeGetMilliSecond(void);
+inline static uint TimeGetMilliSecond(void);
 
 // ============================= CTooFile =============================
 class CTooFile
@@ -618,7 +618,7 @@ inline int SubMain(int argc, char *argv[])
 	#include <iostream>
 #endif
 
-char g_TxtBuffer[1024];						// character TxtBufferfer to display messages
+inline char g_TxtBuffer[1024];						// character TxtBufferfer to display messages
 
 int OS_Printf(const char *Str, ...)
 {
@@ -703,10 +703,7 @@ int stricmp(char *str1, char *str2)
 }
 #endif // _MSC_VER
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
-
-char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn)
+inline char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn)
 {
 	if (Max > 0)
 	{
@@ -716,7 +713,7 @@ char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn)
 	return Dst;
 }
 
-char *ReplaceChar(char *Str, char OldChar, char NewChar)
+inline char *ReplaceChar(char *Str, char OldChar, char NewChar)
 {
 	char *Ret = Str;
 
@@ -731,7 +728,7 @@ char *ReplaceChar(char *Str, char OldChar, char NewChar)
 	return Ret;
 }
 
-char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter, BOOL ReturnNULL)
+inline char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter, BOOL ReturnNULL)
 {
 	int l = (int) strlen(SubString);
 
@@ -753,7 +750,7 @@ char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter, BOOL ReturnNULL)
 }
 
 ///============================================= Parsing
-char *RemoveComment(char *Ptr, int Size)
+inline char *RemoveComment(char *Ptr, int Size)
 {
 	if (Size < 0)
 		Size = (int) strlen(Ptr) + 1;
@@ -804,7 +801,7 @@ char *RemoveComment(char *Ptr, int Size)
 }
 
 
-char *GoToNextLine(char *Ptr)
+inline char *GoToNextLine(char *Ptr)
 {
 	ASSERT(Ptr != NULL);
 
@@ -829,7 +826,7 @@ char *GoToNextLine(char *Ptr)
 }
 
 
-char *GoTo1stChar(char *Ptr)
+inline char *GoTo1stChar(char *Ptr)
 {
 	while ((*Ptr == ' ' || *Ptr == '\t') && *Ptr != 0 && *Ptr != '\r' && *Ptr != '\n')
 		++Ptr;
@@ -838,7 +835,7 @@ char *GoTo1stChar(char *Ptr)
 }
 
 
-char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
+inline char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
 {
 	//BOOL Warn = FALSE;
 	int i = 0;
@@ -892,7 +889,7 @@ char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
 }
 
 
-char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
+inline char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
 {
 	//BOOL Warn = FALSE;
 	int i = 0;
@@ -987,7 +984,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 
 #endif // _MSC_VER
 
-uint TimeGetMilliSecond(void)
+inline uint TimeGetMilliSecond(void)
 {
 	struct timeval tv;
 
@@ -995,8 +992,6 @@ uint TimeGetMilliSecond(void)
 
 	return (tv.tv_sec & 0x000FFFFFF) * 1000 + tv.tv_usec / 1000;
 }
-
-#pragma GCC diagnostic pop
 
 // ===============================================================================
 //
