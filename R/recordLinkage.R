@@ -169,6 +169,12 @@ recordLinkage <- function(x,
   if (!is.numeric(tol) || length(tol) != 1L || !is.finite(tol) || tol < 0) {
     stop("`tol` must be a single non-negative finite number.", call. = FALSE)
   }
+  if (!requireNamespace("clue", quietly = TRUE)) {
+    stop("Package 'clue' is required for this function.", call. = FALSE)
+  }
+  if (!requireNamespace("cluster", quietly = TRUE)) {
+    stop("Package 'cluster' is required for this function.", call. = FALSE)
+  }
 
   # identifier handling --------------------------------------------------------
   if (is.null(x_id)) {

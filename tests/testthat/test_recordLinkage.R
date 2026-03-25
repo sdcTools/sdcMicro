@@ -3,6 +3,9 @@
 # load library
 library(testthat)
 
+testthat::skip_if_not_installed("clue")
+testthat::skip_if_not_installed("cluster")
+
 test_that("recordLinkage returns correct match rate (example 1 from Harrenz et al. (2015))", {
   x <- data.frame(
     v1 = c(1, 0, -1, 0),
