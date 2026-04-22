@@ -35,17 +35,20 @@ follows a privacy-by-design principle: only metadata (variable names, types,
 cardinality, and factor levels) is transmitted to the LLM, never the actual
 microdata. A provider-agnostic interface supports OpenAI, Anthropic, and local
 LLM deployments. All AI suggestions include transparent reasoning, generate
-reproducible R code, and require explicit user confirmation. The features are
-also integrated into the **sdcApp** Shiny GUI.
+reproducible R code, and require explicit user confirmation. On the bundled
+`testdata` example (4,580 records, 7 key variables), the agentic loop reaches
+$k = 3$ with zero violations while suppressing under 1% of key-variable cells
+and leaving numerical variables unperturbed. The features are also integrated
+into the **sdcApp** Shiny GUI.
 
 # Introduction {#introduction}
 
 Statistical disclosure control (SDC) is a necessary step in preparing microdata
 for release, aiming to prevent re-identification of individual respondents while
 preserving the analytical utility of the data [@hundepool2012; @templ2017]. The
-**sdcMicro** package [@templ2015sdcmicro] provides a comprehensive suite of
-methods for anonymizing microdata in **R** [@R2024], including local
-suppression, recoding, perturbation, and risk estimation.
+**sdcMicro** package [@templ2015sdcmicro] provides a suite of methods for
+anonymizing microdata in **R** [@R2024], including local suppression,
+recoding, perturbation, and risk estimation.
 
 However, applying SDC methods effectively requires substantial domain expertise.
 Practitioners must decide which variables to treat as quasi-identifiers (i.e.,
@@ -55,10 +58,10 @@ information loss. These decisions depend on the data structure, the release
 context, and the sensitivity of the variables — making SDC a complex,
 labor-intensive process.
 
-Recent advances in large language models (LLMs) offer new possibilities for
-assisting with such expert tasks. LLMs can process metadata descriptions,
-suggest variable classifications, and propose strategies consistent with
-established practices [@brown2020gpt3; @chen2021codex]. However, integrating
+Recent advances in large language models offer new possibilities for assisting
+with such expert tasks. LLMs can process metadata descriptions, suggest
+variable classifications, and propose strategies consistent with established
+practices [@brown2020gpt3; @chen2021codex]. However, integrating
 LLMs into statistical workflows raises important concerns about data privacy,
 reproducibility, and user control.
 
@@ -100,7 +103,7 @@ nzchar(Sys.getenv("OPENAI_API_KEY"))
 ```
 
 For Anthropic, use `ANTHROPIC_API_KEY`. For local LLM deployments (Ollama,
-vLLM), no API key may be needed — see Section 3.2.
+vLLM), no API key may be needed — see Section 3.3.
 
 The **httr** and **jsonlite** packages are required for API communication and
 are automatically installed as dependencies of **sdcMicro**.
@@ -140,17 +143,21 @@ dataset — this is a prerequisite, not part of the SDC process itself.
 
 SDC methods for the remaining variables can be broadly categorized into methods
 for categorical variables (recoding, local suppression, post-randomization) and
-methods for continuous variables (microaggregation, noise addition, rank
-swapping) [@domingo2001]. The risk of re-identification is commonly measured
-through $k$-anonymity: a dataset satisfies $k$-anonymity if each record is
-indistinguishable from at least $k - 1$ other records with respect to the
-quasi-identifiers [@samarati2001; @sweeney2002].
+methods for continuous variables (microaggregation — in particular the MDAV
+algorithm of @domingoferrer2002mdav, noise addition, and rank swapping
+following @moore1996rankswap) [@domingo2001]. The risk of re-identification is
+commonly measured through $k$-anonymity: given a set $Q$ of quasi-identifiers,
+records are partitioned into equivalence classes that agree on $Q$, and a
+dataset satisfies $k$-anonymity if every equivalence class has size at least
+$k$ [@samarati2001; @sweeney2002]. Equivalently, each record shares its
+quasi-identifier values with at least $k - 1$ other records.
 
 While $k$-anonymity is widely used, it has known limitations: it does not protect
 against attribute disclosure when all records in an equivalence class share the
-same sensitive value (homogeneity attack). $\ell$-diversity
-[@machanavajjhala2007] addresses this by requiring that sensitive attributes
-have at least $\ell$ distinct values within each equivalence class. The current
+same sensitive value (homogeneity attack). Distinct $\ell$-diversity
+[@machanavajjhala2007] addresses this by requiring that the sensitive attribute
+takes at least $\ell$ distinct values within each equivalence class; entropy
+and recursive $(c, \ell)$-diversity are stronger variants. The current
 AI-assisted features in **sdcMicro** target $k$-anonymity; support for
 $\ell$-diversity constraints is planned for future releases.
 
@@ -161,13 +168,14 @@ experience with the data and release context.
 
 ## LLMs in statistical workflows
 
-Large language models have demonstrated the ability to process data
-descriptions, suggest analytical approaches, and generate code
-[@brown2020gpt3; @chen2021codex]. More recently, tool-augmented LLMs have shown
-the ability to select and invoke structured function calls based on task
-descriptions [@schick2023toolformer]. In the SDC context, LLMs can draw on their
-training in statistical methodology to propose variable classifications and
-anonymization strategies. However, several challenges must be addressed:
+Large language models can process data descriptions, suggest analytical
+approaches, and generate code [@brown2020gpt3; @chen2021codex]. More recently,
+tool-augmented LLMs have been shown to select and invoke structured function
+calls based on task descriptions [@schick2023toolformer], and iterative
+propose–evaluate–refine strategies such as Self-Refine [@madaan2023selfrefine]
+and ReAct [@yao2023react] have proven effective for multi-step reasoning tasks.
+In the SDC context, LLMs can draw on their training in statistical methodology
+to propose variable classifications and anonymization strategies. However, several challenges must be addressed:
 
 - **Data privacy**: Sending microdata to external APIs would defeat the purpose
   of anonymization. Any LLM integration must ensure that only non-identifying
@@ -210,7 +218,7 @@ The AI-assisted features in **sdcMicro** are organized in four layers:
           ┌──────────────┴──────────────┐
           │                             │
   ┌───────▼───────┐           ┌────────▼────────┐
-  │AI_createSdcObj│           │AI_applyAnon…    │
+  │AI_createSdcObj│           │AI_applyAnonym.  │
   │(variable roles)│          │(strategies)      │
   └───────┬───────┘           └────────┬────────┘
           │                             │
@@ -271,9 +279,9 @@ handled transparently.
 ## Structured tool calling {#tools}
 
 Rather than asking the LLM to generate raw R code — which would require complex
-parsing, validation, and carry injection risks — the system uses **structured
-tool calling** (a mechanism where the LLM outputs structured JSON conforming to
-pre-defined schemas, rather than free-form text). Six tool schemas are defined:
+parsing and validation, and would carry injection risks — the system uses
+**structured tool calling** (a mechanism where the LLM outputs structured JSON
+conforming to predefined schemas, rather than free-form text). Six tool schemas are defined:
 
 | Tool | Parameters | Purpose |
 |------|-----------|---------|
@@ -298,32 +306,42 @@ role (key variables for `groupAndRename`, numerical variables for
 ## Combined utility measure {#utility}
 
 To compare anonymization strategies quantitatively, we define a combined utility
-score $U$ that captures the three main dimensions of information loss:
+loss score $U$ that captures the three main dimensions of information loss:
 
 $$U = w_1 \cdot S + w_2 \cdot C + w_3 \cdot \text{IL1s}$$
 
-where $n$ is the number of records, $p_{\text{key}}$ is the number of key
-variables, and $p_{\text{num}}$ is the number of numerical variables:
+Let $n$ denote the number of records, $\mathcal{K} = \{X_1, \ldots, X_{p_{\text{key}}}\}$
+the set of categorical key variables, and $p_{\text{num}}$ the number of
+numerical variables. The three components are:
 
 - $S$ (Suppression Rate) = $\frac{\text{new NAs}}{n \times p_{\text{key}}}$
   measures the proportion of values suppressed by `localSuppression()`.
   Bounded in $[0, 1]$.
-- $C$ (Category Loss) = $\text{mean}_{j=1}^{p_{\text{key}}}\left(1 - \frac{L_j^{\text{after}}}{L_j^{\text{before}}}\right)$
-  measures the average reduction in the number of distinct levels ($L_j$) across
-  key variables from `groupAndRename()`. Only non-suppressed values are counted,
-  ensuring $C$ and $S$ measure orthogonal aspects of information loss.
-  Bounded in $[0, 1]$.
-- $\text{IL1s}$ (Information Loss) = the IL1s measure from `dUtility()`
-  [@mateo2004], normalized by $n \times p_{\text{num}}$. This is the
-  standard-deviation-scaled variant, computed as
-  $\sum_{i,j} |x_{ij} - \tilde{x}_{ij}| / (\text{sd}(x_j) \sqrt{2})$
-  divided by the number of cells. Set to 0 if no numerical variables are present.
-  Note that IL1s is not strictly bounded in $[0, 1]$ for large perturbations.
+- $C$ (Category Loss) = $\frac{1}{p_{\text{key}}} \sum_{j=1}^{p_{\text{key}}}
+  \left(1 - \frac{L_j^{\text{after}}}{L_j^{\text{before}}}\right)$ measures the
+  average reduction in the number of distinct levels $L_j$ across key variables
+  resulting from `groupAndRename()`, where $L_j^{\text{after}}$ is computed
+  *before* `localSuppression()` is applied so that $C$ and $S$ measure orthogonal
+  aspects of information loss. Variables with $L_j^{\text{before}} \le 1$ (e.g.,
+  all values missing) are excluded from the mean. Monotonicity of merging gives
+  $C \in [0, 1]$.
+- $\text{IL1s}$ (Information Loss) — the standard-deviation-scaled absolute
+  deviation of @yancey2002, popularized in the SDC literature by @mateo2004 and
+  implemented in `dUtility()`:
+  $$\text{IL1s} = \frac{1}{n \, p_{\text{num}}}
+  \sum_{j=1}^{p_{\text{num}}} \sum_{i=1}^{n}
+  \frac{|x_{ij} - \tilde{x}_{ij}|}{\sqrt{2}\, \text{sd}(x_j)}$$
+  where $\text{sd}(x_j)$ is computed on the original variable. Set to 0 if no
+  numerical variables are present. The $\sqrt{2}$ factor calibrates the
+  expected deviation under a Gaussian perturbation model. IL1s is non-negative
+  but not bounded above; strategies with large perturbations may produce values
+  exceeding 1.
 
-Lower scores indicate better utility preservation. The default weights are
-$w_1 = w_2 = w_3 = 1/3$. Since the three components are not on fully
-commensurable scales, these equal weights are a pragmatic starting point rather
-than a principled optimum. Users should adjust weights to reflect their
+Lower scores indicate better utility preservation. Because IL1s and the two
+proportions $S, C$ live on different scales, $U$ is a weighted loss, not a
+proportion; it should be interpreted only relatively, for ranking strategies.
+The default weights are $w_1 = w_2 = w_3 = 1/3$ — a pragmatic starting point
+rather than a principled optimum. Users should adjust weights to reflect their
 priorities — for example, setting $w_1 = 0.6, w_2 = 0.2, w_3 = 0.2$
 prioritizes minimizing suppressions. The weights are automatically normalized
 to sum to 1, so `weights = c(3, 1, 1)` is equivalent to `c(0.6, 0.2, 0.2)`.
@@ -447,7 +465,11 @@ of $k$ provide stronger protection at the cost of more information loss.
 
 ## Agentic loop: batch and refinement {#agentic}
 
-The anonymization proceeds in two phases:
+The design follows the propose–evaluate–refine pattern established for
+tool-augmented language models [@schick2023toolformer; @yao2023react;
+@madaan2023selfrefine], specialized here to the SDC setting through a
+domain-specific tool schema and a risk–utility feedback signal. The
+anonymization proceeds in two phases:
 
 **Batch phase.** The LLM receives a summary of the `sdcMicroObj` structure
 (variable names, types, factor levels, current $k$-anonymity violations) and
@@ -491,9 +513,9 @@ and adjust its proposals accordingly.
                             └───────────────────┘
 ```
 
-A key insight is that `localSuppression()` always achieves $k$-anonymity on the
-categorical key variables, by suppressing (setting to `NA`) the minimum number of
-values needed. The optimization therefore focuses on minimizing the total
+Note that `localSuppression()` always achieves $k$-anonymity on the categorical
+key variables, by suppressing (setting to `NA`) the values selected by its
+heuristic. The optimization therefore focuses on minimizing the total
 information loss by balancing recoding (which increases category loss $C$ but
 reduces the need for suppressions) against suppression (which increases the
 suppression rate $S$ but preserves category structure).
@@ -516,20 +538,20 @@ A typical console output:
 ```
 === Batch phase: requesting 3 strategies ===
   Evaluating conservative...
-    U=0.0126 (S=0.0091, C=0.0286, IL1=0.0000)
+    U=0.0126 (S=0.0091, C=0.0286, IL1s=0.0000)
   Evaluating moderate...
-    U=0.0367 (S=0.0071, C=0.0643, IL1=0.0388)
+    U=0.0367 (S=0.0071, C=0.0643, IL1s=0.0388)
   Evaluating aggressive...
-    U=0.3525 (S=0.0057, C=0.1991, IL1=0.8527)
+    U=0.3525 (S=0.0057, C=0.1991, IL1s=0.8527)
 === Refinement iteration 1/2 ===
-    U=0.0282 (S=0.0084, C=0.0762, IL1=0.0000)
+    U=0.0282 (S=0.0084, C=0.0762, IL1s=0.0000)
 === Refinement iteration 2/2 ===
-    U=0.0198 (S=0.0088, C=0.0505, IL1=0.0000)
+    U=0.0198 (S=0.0088, C=0.0505, IL1s=0.0000)
 
 === Best strategy: 'conservative' (U=0.0126) ===
   Suppression rate: 0.0091
   Category loss:    0.0286
-  IL1:              0.0000
+  IL1s:             0.0000
 
 k-violations after: 0 / 4580
 
@@ -542,7 +564,7 @@ $U$ and its three components in parentheses: suppression rate $S$, category loss
 $C$, and numerical information loss IL1s. The conservative strategy wins with
 $U = 0.0126$, meaning less than 1% of values were suppressed, less than 3% of
 categorical diversity was reduced, and no numerical perturbation was applied.
-All 4580 records satisfy 3-anonymity (zero violations).
+All 4580 records satisfy $3$-anonymity (zero violations).
 
 After accepting a strategy, extract the anonymized data and review the results:
 
@@ -596,21 +618,22 @@ sdc <- AI_applyAnonymization(sdc, k = 3,
 
 Note that smaller local models may produce lower-quality strategies, particularly
 for the structured JSON output format required by the tool calling mechanism.
-GPT-4.1, Claude Sonnet 4, and similar frontier models consistently produce
-well-formed strategies.
+In our testing, state-of-the-art models such as GPT-4.1 and Claude Sonnet 4
+typically produced well-formed strategies; open-weight models below roughly 8B
+parameters required more refinement iterations.
 
 # Graphical user interface {#gui}
 
 The AI-assisted features described in the preceding sections are fully
 integrated into **sdcApp**, the Shiny-based graphical user interface shipped
 with **sdcMicro** and launched via `sdcApp()`. The GUI exposes the same
-functionality as the programmatic API through three complementary entry points,
-making the AI capabilities accessible to users who prefer interactive
-point-and-click workflows.
+functionality as the programmatic API through three access points, making the
+AI capabilities accessible to users who prefer interactive point-and-click
+workflows.
 
 ## AI variable suggestion {#gui-suggest}
 
-The first entry point appears during SDC problem setup. When a dataset has been
+The first access point appears during SDC problem setup. When a dataset has been
 loaded and the user is assigning variable roles (key variables, numerical
 variables, weight, household ID, etc.), a button labelled **"AI suggest
 variables"** invokes `AI_createSdcObj()` in the background. The LLM receives
@@ -623,13 +646,13 @@ If the user clicks **Accept**, the suggestions are automatically transferred
 into the setup table: radio buttons for key/numerical classification and
 checkboxes for weight, household ID, and PRAM roles are set accordingly. The
 user retains full control and can adjust any of these selections before
-finalising the SDC problem. This workflow lowers the barrier to entry for
+finalizing the SDC problem. This workflow lowers the barrier to entry for
 practitioners who may be unfamiliar with the subtleties of variable role
 assignment, while preserving the human-in-the-loop principle.
 
 ## AI-Assisted anonymization panel {#gui-anon}
 
-The second and primary entry point is a dedicated **AI-Assisted** tab in the
+The main access point is a dedicated **AI-Assisted** tab in the
 application's navigation bar. Its sidebar collects the configuration parameters
 required by the agentic loop: the LLM provider and model, the API key (with an
 indicator that shows whether a key was detected in the environment), the desired
@@ -657,9 +680,8 @@ confirmation dialog recommending that the user review the Risk/Utility tab.
 iteration of the refinement phase; the resulting improved strategy is appended
 to the table. **Cancel** discards the results without modifying the data.
 
-A third, convenience entry point is provided by a green **"AI-assisted"** button
-at the top of the Anonymize sidebar, which navigates directly to the AI-Assisted
-tab.
+A convenience shortcut is provided by a green **"AI-assisted"** button at the
+top of the Anonymize sidebar, which navigates directly to the AI-Assisted tab.
 
 ## Reproducibility {#gui-repro}
 
@@ -677,32 +699,32 @@ reproduced outside of the GUI in a plain R session.
 ## Advantages and limitations
 
 The AI-assisted approach addresses several practical challenges that arise in
-traditional manual SDC workflows. Perhaps most significantly, it lowers the
-expertise barrier: practitioners who are not deeply familiar with the full range
-of SDC methods can obtain reasonable starting configurations by describing their
-data to the system and reviewing the LLM's proposals. The batch-and-refine
-architecture encourages systematic exploration of the strategy space, evaluating
-multiple candidate strategies simultaneously rather than following a single path
-as is common in manual practice. The combined utility score provides a
-quantitative basis for comparing strategies, moving the selection process from
-subjective judgement toward a more structured evaluation framework. Throughout
-this process, transparency is maintained because every suggestion is accompanied
-by the LLM's reasoning and the exact R code that would be executed.
+traditional manual SDC workflows. It lowers the expertise barrier: practitioners
+unfamiliar with the full range of SDC methods can obtain reasonable starting
+configurations by describing their data to the system and reviewing the LLM's
+proposals. The batch-and-refine architecture encourages systematic exploration
+of the strategy space, evaluating multiple candidate strategies in parallel
+rather than following a single path as is common in manual practice. The
+combined utility score provides a quantitative basis for comparing strategies,
+replacing subjective judgement with a structured comparison. Every suggestion
+is accompanied by the LLM's reasoning and the exact R code that would be
+executed, so the process remains auditable end to end.
 
-These advantages must be weighed against several important limitations. First,
-the quality of the generated strategies depends directly on the capabilities of
-the underlying language model. Smaller or less capable models may produce
-suboptimal parameter choices, particularly when the data structure is complex or
-when the structured JSON output format is not well supported. Second, cloud-based
-LLMs incur per-query costs and network latency; local deployment via Ollama
-eliminates both concerns but requires adequate hardware. Third, and most
-fundamentally, the AI suggestions should be understood as a starting point
-rather than a final answer. Domain knowledge about the data, the intended
-release context, and applicable regulations remains essential for responsible
-disclosure control. Finally, LLM outputs are inherently stochastic: different
-runs may produce different strategies even for identical inputs. Setting
-`temperature = 0` in `query_llm()` improves reproducibility but does not
-guarantee identical outputs across calls.
+These advantages must be weighed against four limitations. The quality of the
+generated strategies depends directly on the capabilities of the underlying
+language model; smaller or less capable models may produce suboptimal parameter
+choices, particularly when the data structure is complex or when the structured
+JSON output format is not well supported. Cloud-based LLMs incur per-query
+costs and network latency, while local deployment via Ollama removes both
+concerns but requires adequate hardware. The AI suggestions should be
+understood as a starting point rather than a final answer: domain knowledge
+about the data, the intended release context, and applicable regulations
+remains essential for responsible disclosure control. Finally, LLM outputs are
+stochastic, and different runs may produce different strategies even for
+identical inputs. Setting `temperature = 0` in `query_llm()` improves
+reproducibility but does not guarantee identical outputs across calls, because
+even at $T = 0$ modern GPU inference introduces non-determinism through
+non-associative floating-point reductions.
 
 ## Privacy considerations
 
@@ -723,27 +745,27 @@ remains on-premises.
 
 ## Comparison with related work
 
-Several established tools provide automated or semi-automated SDC, but none
-currently incorporate LLM-assisted decision support.
+Several established tools provide automated or semi-automated SDC. To the
+authors' knowledge, none currently incorporate LLM-assisted decision support.
 
 **ARX** [@prasser2020arx] performs an exhaustive search over user-defined
 generalization hierarchies and offers strong optimality guarantees within its
 transformation model, but requires the user to specify the set of permissible
 transformations upfront. The LLM-based approach in **sdcMicro** complements
-this style of optimisation by automatically proposing which combination of
+this style of optimization by automatically proposing which combination of
 recoding, suppression, and perturbation operations to apply, informed by the
 data's metadata rather than a predefined lattice.
 
-**$\mu$-Argus** and **$\tau$-Argus** [@glemba2024muargus] provide mature
+**$\mu$-Argus** and **$\tau$-Argus** [@hundepool2012] provide mature
 graphical interfaces for microdata and tabular data protection respectively,
 with built-in rule-based heuristics. Their workflows are well-established in
 national statistical offices but do not offer the kind of natural-language
 interaction or adaptive strategy generation that an LLM enables.
 **synthpop** [@nowok2016synthpop] and **simPop** [@templ2017simPop] take a
-fundamentally different approach by generating entirely synthetic datasets
-rather than perturbing the original records; they do not involve method
-selection or parameter tuning in the SDC sense and therefore address a
-complementary use case.
+different approach by generating entirely synthetic datasets rather than
+perturbing the original records; they do not involve method selection or
+parameter tuning in the SDC sense and therefore address a complementary use
+case.
 
 General-purpose AI coding assistants such as ChatGPT or GitHub Copilot can
 generate R code for anonymization when prompted, but they operate without the
@@ -760,36 +782,37 @@ within a single strategy.
 This paper presented AI-assisted anonymization features for the **sdcMicro** R
 package. The contribution consists of three components: LLM-assisted variable
 classification via `AI_createSdcObj()`, an agentic anonymization loop with
-structured tool calling via `AI_applyAnonymization()`, and full integration of
-both capabilities into the **sdcApp** Shiny GUI. Together, these components
-form a decision-support system that augments — rather than replaces — human
-expertise in statistical disclosure control.
+structured tool calling via `AI_applyAnonymization()`, and integration of both
+capabilities into the **sdcApp** Shiny GUI. The methodological contribution is
+the integration of metadata-only prompting, an SDC-specific structured tool
+schema, and a utility-scored refinement loop — individual ingredients such as
+tool calling and self-refinement are established in the LLM literature
+[@schick2023toolformer; @yao2023react; @madaan2023selfrefine] but have not, to
+the authors' knowledge, been combined for statistical disclosure control.
+Together, these components form a decision-support system that supports, not
+replaces, the practitioner's judgement.
 
-Three design principles guided the implementation. First, a strict
-privacy-by-design policy ensures that only metadata is transmitted to the LLM,
-never the microdata itself. Second, transparency is maintained by exposing the
-LLM's reasoning and generating reproducible R code for every suggested
-operation. Third, user control is preserved through interactive confirmation
-dialogs at each step, so that no anonymization method is applied without
-explicit approval.
+The implementation rests on three commitments: metadata-only transmission of
+variable descriptions (never microdata), visible LLM reasoning paired with
+reproducible R code, and explicit user confirmation before any method is
+applied.
 
 The provider-agnostic architecture supports commercial LLM services (OpenAI,
 Anthropic), self-hosted open-weight models via Ollama or any OpenAI-compatible
 endpoint, and can be extended to additional providers by supplying a base URL
-and API key. This flexibility allows organisations to balance the trade-off
-between model capability and data governance requirements according to their own
-policies.
+and API key. This flexibility allows organizations to weigh model capability
+against data governance requirements according to their own policies.
 
-Several directions for future work emerge from the current implementation.
-First, the tool calling schema could be extended to support $\ell$-diversity
-constraints and the explicit handling of sensitive variables, broadening the
-range of privacy models the system can target. Second, systematic benchmarks
-comparing AI-suggested strategies against expert-crafted configurations across
-diverse datasets would provide empirical evidence on the practical benefit of
-the approach. Third, the combined utility score could incorporate additional
-information loss measures such as propensity scores or the Hellinger distance.
-Finally, continued improvements in local open-weight language models may soon
-make it feasible to achieve strategy quality comparable to frontier cloud
+Four extensions are tractable from the current codebase. The tool calling
+schema could be extended to support $\ell$-diversity constraints and the
+explicit handling of sensitive variables, broadening the range of privacy
+models the system can target. Systematic benchmarks comparing AI-suggested
+strategies against expert-crafted configurations across diverse datasets
+would provide empirical evidence on the practical benefit of the approach.
+The combined utility score could incorporate additional information loss
+measures such as propensity scores or the Hellinger distance. Finally,
+continued improvements in local open-weight language models may soon make it
+feasible to achieve strategy quality comparable to state-of-the-art cloud
 models in fully air-gapped environments.
 
 # Computational details {#computational}
@@ -802,7 +825,7 @@ Network (CRAN) at [https://CRAN.R-project.org/](https://CRAN.R-project.org/).
 The AI features require an API key for a supported LLM provider (OpenAI,
 Anthropic) or a locally running OpenAI-compatible endpoint. The
 **httr** and **jsonlite** packages are used for API communication. The example
-session shown in Section 5.2 was generated using GPT-4.1 with
+session shown in Section 5.3 was generated using GPT-4.1 with
 `temperature = 0`.
 
 # References {#references}

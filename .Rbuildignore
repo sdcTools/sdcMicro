@@ -18,3 +18,4 @@ ctime.pdf
 ^\.claude$
 ^CLAUDE\.md$
 ^docs/plans$
+^LICENSE$

@@ -1,5 +1,5 @@
 @Article{templ2015sdcmicro,
-  title   = {{sdcMicro}: Statistical Disclosure Control Methods for Anonymization of Data and Risk Estimation},
+  title   = {Statistical Disclosure Control for Micro-Data Using the {R} Package {sdcMicro}},
   author  = {Matthias Templ and Alexander Kowarik and Bernhard Meindl},
   journal = {Journal of Statistical Software},
   year    = {2015},
@@ -60,13 +60,14 @@
 }
 
 @Article{prasser2020arx,
-  title   = {{ARX} -- Data Anonymization Tool},
-  author  = {Fabian Prasser and Florian Kohlmayer and Ronald Lautenschl{\"a}ger and Klaus A. Kuhn},
-  journal = {SoftwareX},
+  title   = {Flexible Data Anonymization Using {ARX} -- Current Status and Challenges Ahead},
+  author  = {Fabian Prasser and Johanna Eicher and Helmut Spengler and Raffael Bild and Klaus A. Kuhn},
+  journal = {Software: Practice and Experience},
   year    = {2020},
-  volume  = {11},
-  pages   = {100389},
-  doi     = {10.1016/j.softx.2019.100389}
+  volume  = {50},
+  number  = {7},
+  pages   = {1277--1304},
+  doi     = {10.1002/spe.2812}
 }
 
 @Book{hundepool2012,
@@ -94,19 +95,20 @@
   pages   = {111--133}
 }
 
-@Article{mateo2004,
-  title   = {Comparing {SDC} Methods for Microdata on the Basis of Information Loss and Disclosure Risk},
-  author  = {Josep Maria Mateo-Sanz and Josep Domingo-Ferrer and Francesc Seb{\'e}},
-  journal = {Privacy in Statistical Databases},
-  year    = {2004},
-  pages   = {95--106},
-  publisher = {Springer},
-  doi     = {10.1007/978-3-540-25955-8_8}
+@InProceedings{mateo2004,
+  title     = {Probabilistic Information Loss Measures in Confidentiality Protection of Continuous Microdata},
+  author    = {Josep Maria Mateo-Sanz and Josep Domingo-Ferrer and Francesc Seb{\'e}},
+  booktitle = {Privacy in Statistical Databases ({PSD} 2004)},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {3050},
+  year      = {2004},
+  pages     = {95--106},
+  publisher = {Springer}
 }
 
 @Article{brown2020gpt3,
   title   = {Language Models Are Few-Shot Learners},
-  author  = {Tom Brown and Benjamin Mann and Nick Ryder and Melanie Subbiah and Jared Kaplan and Prafulla Dhariwal and Arvind Neelakantan and Pranav Shyamal and Girish Sastry and Amanda Askell and others},
+  author  = {Tom Brown and Benjamin Mann and Nick Ryder and Melanie Subbiah and Jared Kaplan and Prafulla Dhariwal and Arvind Neelakantan and Pranav Shyam and Girish Sastry and Amanda Askell and others},
   journal = {Advances in Neural Information Processing Systems},
   volume  = {33},
   pages   = {1877--1901},
@@ -116,7 +118,7 @@
 
 @Article{schick2023toolformer,
   title   = {Toolformer: Language Models Can Teach Themselves to Use Tools},
-  author  = {Timo Schick and Jane Dwivedi-Yu and Roberto Dessì and Roberta Raileanu and Maria Lomeli and Eric Hambro and Luke Zettlemoyer and Nicola Cancedda and Thomas Scialom},
+  author  = {Timo Schick and Jane Dwivedi-Yu and Roberto Dessì and Roberta Raileanu and Maria Lomeli and Luke Zettlemoyer and Nicola Cancedda and Thomas Scialom},
   journal = {Advances in Neural Information Processing Systems},
   volume  = {36},
   pages   = {68539--68551},
@@ -124,14 +126,6 @@
   doi     = {10.48550/arXiv.2302.04761}
 }
 
-@InProceedings{glemba2024muargus,
-  title     = {{\textmu}-{ARGUS} and {\texttau}-{ARGUS}: Open Source Software for Statistical Disclosure Control},
-  author    = {Peter-Paul de Wolf and Andrzej Mlodak and Kamil Wilak},
-  booktitle = {Privacy in Statistical Databases},
-  year      = {2024},
-  publisher = {Springer},
-  doi       = {10.1007/978-3-031-69651-0_6}
-}
 
 @Article{templ2017simPop,
   title   = {Simulation of Synthetic Complex Data: The {R} Package {simPop}},
@@ -153,4 +147,53 @@
   number  = {11},
   pages   = {1--26},
   doi     = {10.18637/jss.v074.i11}
+}
+
+@InProceedings{yancey2002,
+  title     = {Disclosure Risk Assessment in Perturbative Microdata Protection},
+  author    = {William E. Yancey and William E. Winkler and Robert H. Creecy},
+  booktitle = {Inference Control in Statistical Databases},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {2316},
+  year      = {2002},
+  pages     = {135--152},
+  publisher = {Springer},
+  doi       = {10.1007/3-540-47804-3_11}
+}
+
+@Article{domingoferrer2002mdav,
+  title   = {Practical Data-Oriented Microaggregation for Statistical Disclosure Control},
+  author  = {Josep Domingo-Ferrer and Josep Maria Mateo-Sanz},
+  journal = {IEEE Transactions on Knowledge and Data Engineering},
+  year    = {2002},
+  volume  = {14},
+  number  = {1},
+  pages   = {189--201},
+  doi     = {10.1109/69.979982}
+}
+
+@TechReport{moore1996rankswap,
+  title       = {Controlled Data Swapping Techniques for Masking Public Use Microdata Sets},
+  author      = {Richard A. Moore},
+  institution = {U.S. Bureau of the Census, Statistical Research Division},
+  year        = {1996},
+  type        = {Research Report},
+  number      = {RR96-04}
+}
+
+@InProceedings{madaan2023selfrefine,
+  title     = {{Self-Refine}: Iterative Refinement with Self-Feedback},
+  author    = {Aman Madaan and Niket Tandon and Prakhar Gupta and Skyler Hallinan and Luyu Gao and Sarah Wiegreffe and Uri Alon and Nouha Dziri and Shrimai Prabhumoye and Yiming Yang and Shashank Gupta and Bodhisattwa Prasad Majumder and Katherine Hermann and Sean Welleck and Amir Yazdanbakhsh and Peter Clark},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {36},
+  year      = {2023},
+  doi       = {10.48550/arXiv.2303.17651}
+}
+
+@InProceedings{yao2023react,
+  title     = {{ReAct}: Synergizing Reasoning and Acting in Language Models},
+  author    = {Shunyu Yao and Jeffrey Zhao and Dian Yu and Nan Du and Izhak Shafran and Karthik Narasimhan and Yuan Cao},
+  booktitle = {International Conference on Learning Representations ({ICLR})},
+  year      = {2023},
+  doi       = {10.48550/arXiv.2210.03629}
 }

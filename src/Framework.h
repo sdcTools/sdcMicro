@@ -48,7 +48,7 @@ typedef int BOOL;
 
 // ============================= Display Messages =================================
 inline extern char g_TxtBuffer[1024];						// character TxtBufferfer to display messages
-inline int OS_Printf(const char *Str, ...);
+static int OS_Printf(const char *Str, ...);
 
 // ============================= Assert =================================
 #ifdef _DEBUG
@@ -252,16 +252,16 @@ inline extern int g_NbNew;
 	#endif
 #endif // _MSC_VER
 
-inline static char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn = TRUE);
-inline static char *ReplaceChar(char *Str, char OldChar, char NewChar);
-inline static char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter = FALSE, BOOL ReturnNULL = TRUE);
+static char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn = TRUE);
+static char *ReplaceChar(char *Str, char OldChar, char NewChar);
+static char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter = FALSE, BOOL ReturnNULL = TRUE);
 
-//=== Parsing
-inline static char *RemoveComment(char *Ptr, int Size = -1);	// remove text between /* & */
-inline static char *GoToNextLine(char *Ptr);	// returns the ptr moved forward to the character right after the next newline
-inline static char *GoTo1stChar(char *Ptr);
-inline static char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
-inline static char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
+	//=== Parsing
+static char *RemoveComment(char *Ptr, int Size = -1);	// remove text between /* & */
+static char *GoToNextLine(char *Ptr);						// renvoie Ptr avanc� jusqu'apr�s le '\n' suivant
+static char *GoTo1stChar(char *Ptr);
+static char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
+static char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar = TRUE);
 
 //============================================= Time function
 
@@ -284,7 +284,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz);
 
 #endif // _MSC_VER
 
-inline static uint TimeGetMilliSecond(void);
+static uint TimeGetMilliSecond(void);
 
 // ============================= CTooFile =============================
 class CTooFile
@@ -618,7 +618,7 @@ inline int SubMain(int argc, char *argv[])
 	#include <iostream>
 #endif
 
-inline char g_TxtBuffer[1024];						// character TxtBufferfer to display messages
+char g_TxtBuffer[1024];						// character TxtBufferfer to display messages
 
 int OS_Printf(const char *Str, ...)
 {
@@ -703,7 +703,8 @@ int stricmp(char *str1, char *str2)
 }
 #endif // _MSC_VER
 
-inline char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn)
+__attribute__((unused))
+static char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn)
 {
 	if (Max > 0)
 	{
@@ -713,7 +714,8 @@ inline char *Strncpy(char *Dst, const char *Src, int Max, BOOL Warn)
 	return Dst;
 }
 
-inline char *ReplaceChar(char *Str, char OldChar, char NewChar)
+__attribute__((unused))
+static char *ReplaceChar(char *Str, char OldChar, char NewChar)
 {
 	char *Ret = Str;
 
@@ -728,7 +730,8 @@ inline char *ReplaceChar(char *Str, char OldChar, char NewChar)
 	return Ret;
 }
 
-inline char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter, BOOL ReturnNULL)
+__attribute__((unused))
+static char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter, BOOL ReturnNULL)
 {
 	int l = (int) strlen(SubString);
 
@@ -750,7 +753,8 @@ inline char *Stristr(char *Ptr, char *SubString, BOOL LeaveAfter, BOOL ReturnNUL
 }
 
 ///============================================= Parsing
-inline char *RemoveComment(char *Ptr, int Size)
+__attribute__((unused))
+static char *RemoveComment(char *Ptr, int Size)
 {
 	if (Size < 0)
 		Size = (int) strlen(Ptr) + 1;
@@ -801,7 +805,8 @@ inline char *RemoveComment(char *Ptr, int Size)
 }
 
 
-inline char *GoToNextLine(char *Ptr)
+__attribute__((unused))
+static char *GoToNextLine(char *Ptr)
 {
 	ASSERT(Ptr != NULL);
 
@@ -826,7 +831,8 @@ inline char *GoToNextLine(char *Ptr)
 }
 
 
-inline char *GoTo1stChar(char *Ptr)
+__attribute__((unused))
+static char *GoTo1stChar(char *Ptr)
 {
 	while ((*Ptr == ' ' || *Ptr == '\t') && *Ptr != 0 && *Ptr != '\r' && *Ptr != '\n')
 		++Ptr;
@@ -835,7 +841,8 @@ inline char *GoTo1stChar(char *Ptr)
 }
 
 
-inline char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
+__attribute__((unused))
+static char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
 {
 	//BOOL Warn = FALSE;
 	int i = 0;
@@ -889,7 +896,8 @@ inline char *ParseString(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
 }
 
 
-inline char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
+__attribute__((unused))
+static char *ParseLine(char *Ptr, char *Str, int Size, BOOL AdvanceTo1stChar)
 {
 	//BOOL Warn = FALSE;
 	int i = 0;
@@ -984,7 +992,8 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 
 #endif // _MSC_VER
 
-inline uint TimeGetMilliSecond(void)
+__attribute__((unused))
+static uint TimeGetMilliSecond(void)
 {
 	struct timeval tv;
 
