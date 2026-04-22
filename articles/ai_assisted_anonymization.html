@@ -85,7 +85,7 @@ sdcMicro</h1>
                         <h4 data-toc-skip class="author">Matthias
 Templ</h4>
             
-            <h4 data-toc-skip class="date">2026-03-25</h4>
+            <h4 data-toc-skip class="date">2026-04-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sdcTools/sdcMicro/blob/master/vignettes/ai_assisted_anonymization.Rmd" class="external-link"><code>vignettes/ai_assisted_anonymization.Rmd</code></a></small>
       <div class="hidden name"><code>ai_assisted_anonymization.Rmd</code></div>
@@ -109,8 +109,13 @@ implementation follows a privacy-by-design principle: only metadata
 to the LLM, never the actual microdata. A provider-agnostic interface
 supports OpenAI, Anthropic, and local LLM deployments. All AI
 suggestions include transparent reasoning, generate reproducible R code,
-and require explicit user confirmation. The features are also integrated
-into the <strong>sdcApp</strong> Shiny GUI.</p>
+and require explicit user confirmation. On the bundled
+<code>testdata</code> example (4,580 records, 7 key variables), the
+agentic loop reaches
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">k = 3</annotation></semantics></math>
+with zero violations while suppressing under 1% of key-variable cells
+and leaving numerical variables unperturbed. The features are also
+integrated into the <strong>sdcApp</strong> Shiny GUI.</p>
 </div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
@@ -119,9 +124,10 @@ into the <strong>sdcApp</strong> Shiny GUI.</p>
 microdata for release, aiming to prevent re-identification of individual
 respondents while preserving the analytical utility of the data <span class="citation">(Hundepool et al. 2012; Templ 2017)</span>. The
 <strong>sdcMicro</strong> package <span class="citation">(Templ,
-Kowarik, and Meindl 2015)</span> provides a comprehensive suite of
-methods for anonymizing microdata in <strong>R</strong> <span class="citation">(R Core Team 2024)</span>, including local suppression,
-recoding, perturbation, and risk estimation.</p>
+Kowarik, and Meindl 2015)</span> provides a suite of methods for
+anonymizing microdata in <strong>R</strong> <span class="citation">(R
+Core Team 2024)</span>, including local suppression, recoding,
+perturbation, and risk estimation.</p>
 <p>However, applying SDC methods effectively requires substantial domain
 expertise. Practitioners must decide which variables to treat as
 quasi-identifiers (i.e., variables that, in combination, could enable
@@ -129,12 +135,13 @@ re-identification), which anonymization techniques to apply, and how to
 balance disclosure risk against information loss. These decisions depend
 on the data structure, the release context, and the sensitivity of the
 variables — making SDC a complex, labor-intensive process.</p>
-<p>Recent advances in large language models (LLMs) offer new
-possibilities for assisting with such expert tasks. LLMs can process
-metadata descriptions, suggest variable classifications, and propose
-strategies consistent with established practices <span class="citation">(Brown et al. 2020; Chen et al. 2021)</span>. However,
-integrating LLMs into statistical workflows raises important concerns
-about data privacy, reproducibility, and user control.</p>
+<p>Recent advances in large language models offer new possibilities for
+assisting with such expert tasks. LLMs can process metadata
+descriptions, suggest variable classifications, and propose strategies
+consistent with established practices <span class="citation">(Brown et
+al. 2020; Chen et al. 2021)</span>. However, integrating LLMs into
+statistical workflows raises important concerns about data privacy,
+reproducibility, and user control.</p>
 <p>This vignette introduces the AI-assisted anonymization features in
 <strong>sdcMicro</strong>, which address these challenges through three
 design principles:</p>
@@ -176,7 +183,7 @@ it as an environment variable before using the functions:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OPENAI_API_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>For Anthropic, use <code>ANTHROPIC_API_KEY</code>. For local LLM
 deployments (Ollama, vLLM), no API key may be needed — see Section
-3.2.</p>
+3.3.</p>
 <p>The <strong>httr</strong> and <strong>jsonlite</strong> packages are
 required for API communication and are automatically installed as
 dependencies of <strong>sdcMicro</strong>.</p>
@@ -220,25 +227,37 @@ itself.</p>
 <p>SDC methods for the remaining variables can be broadly categorized
 into methods for categorical variables (recoding, local suppression,
 post-randomization) and methods for continuous variables
-(microaggregation, noise addition, rank swapping) <span class="citation">(Domingo-Ferrer and Mateo-Sanz 2001)</span>. The risk
-of re-identification is commonly measured through
+(microaggregation — in particular the MDAV algorithm of <span class="citation">Domingo-Ferrer and Mateo-Sanz (2002)</span>, noise
+addition, and rank swapping following <span class="citation">Moore
+(1996)</span>) <span class="citation">(Domingo-Ferrer and Mateo-Sanz
+2001)</span>. The risk of re-identification is commonly measured through
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-anonymity:
-a dataset satisfies
+given a set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>
+of quasi-identifiers, records are partitioned into equivalence classes
+that agree on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>,
+and a dataset satisfies
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-anonymity
-if each record is indistinguishable from at least
+if every equivalence class has size at least
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math><span class="citation">(Samarati 2001; Sweeney 2002)</span>.
+Equivalently, each record shares its quasi-identifier values with at
+least
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k - 1</annotation></semantics></math>
-other records with respect to the quasi-identifiers <span class="citation">(Samarati 2001; Sweeney 2002)</span>.</p>
+other records.</p>
 <p>While
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-anonymity
 is widely used, it has known limitations: it does not protect against
 attribute disclosure when all records in an equivalence class share the
-same sensitive value (homogeneity attack).
+same sensitive value (homogeneity attack). Distinct
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
 <span class="citation">(Machanavajjhala et al. 2007)</span> addresses
-this by requiring that sensitive attributes have at least
+this by requiring that the sensitive attribute takes at least
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>
-distinct values within each equivalence class. The current AI-assisted
-features in <strong>sdcMicro</strong> target
+distinct values within each equivalence class; entropy and recursive
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>c</mi><mo>,</mo><mo>ℓ</mo><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(c, \ell)</annotation></semantics></math>-diversity
+are stronger variants. The current AI-assisted features in
+<strong>sdcMicro</strong> target
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-anonymity;
 support for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
@@ -252,12 +271,17 @@ context.</p>
 <div class="section level3">
 <h3 id="llms-in-statistical-workflows">LLMs in statistical workflows<a class="anchor" aria-label="anchor" href="#llms-in-statistical-workflows"></a>
 </h3>
-<p>Large language models have demonstrated the ability to process data
-descriptions, suggest analytical approaches, and generate code <span class="citation">(Brown et al. 2020; Chen et al. 2021)</span>. More
-recently, tool-augmented LLMs have shown the ability to select and
-invoke structured function calls based on task descriptions <span class="citation">(Schick et al. 2023)</span>. In the SDC context, LLMs
-can draw on their training in statistical methodology to propose
-variable classifications and anonymization strategies. However, several
+<p>Large language models can process data descriptions, suggest
+analytical approaches, and generate code <span class="citation">(Brown
+et al. 2020; Chen et al. 2021)</span>. More recently, tool-augmented
+LLMs have been shown to select and invoke structured function calls
+based on task descriptions <span class="citation">(Schick et al.
+2023)</span>, and iterative propose–evaluate–refine strategies such as
+Self-Refine <span class="citation">(Madaan et al. 2023)</span> and ReAct
+<span class="citation">(Yao et al. 2023)</span> have proven effective
+for multi-step reasoning tasks. In the SDC context, LLMs can draw on
+their training in statistical methodology to propose variable
+classifications and anonymization strategies. However, several
 challenges must be addressed:</p>
 <ul>
 <li>
@@ -316,7 +340,7 @@ raw code.</li>
           ┌──────────────┴──────────────┐
           │                             │
   ┌───────▼───────┐           ┌────────▼────────┐
-  │AI_createSdcObj│           │AI_applyAnon…    │
+  │AI_createSdcObj│           │AI_applyAnonym.  │
   │(variable roles)│          │(strategies)      │
   └───────┬───────┘           └────────┬────────┘
           │                             │
@@ -381,9 +405,9 @@ system prompt placement) are handled transparently.</p>
 <h3 id="tools">Structured tool calling<a class="anchor" aria-label="anchor" href="#tools"></a>
 </h3>
 <p>Rather than asking the LLM to generate raw R code — which would
-require complex parsing, validation, and carry injection risks — the
-system uses <strong>structured tool calling</strong> (a mechanism where
-the LLM outputs structured JSON conforming to pre-defined schemas,
+require complex parsing and validation, and would carry injection risks
+— the system uses <strong>structured tool calling</strong> (a mechanism
+where the LLM outputs structured JSON conforming to predefined schemas,
 rather than free-form text). Six tool schemas are defined:</p>
 <table class="table">
 <colgroup>
@@ -455,17 +479,17 @@ checks that variable names exist in the correct role (key variables for
 <h3 id="utility">Combined utility measure<a class="anchor" aria-label="anchor" href="#utility"></a>
 </h3>
 <p>To compare anonymization strategies quantitatively, we define a
-combined utility score
+combined utility loss score
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>
 that captures the three main dimensions of information loss:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><msub><mi>w</mi><mn>1</mn></msub><mo>⋅</mo><mi>S</mi><mo>+</mo><msub><mi>w</mi><mn>2</mn></msub><mo>⋅</mo><mi>C</mi><mo>+</mo><msub><mi>w</mi><mn>3</mn></msub><mo>⋅</mo><mtext mathvariant="normal">IL1s</mtext></mrow><annotation encoding="application/x-tex">U = w_1 \cdot S + w_2 \cdot C + w_3 \cdot \text{IL1s}</annotation></semantics></math></p>
-<p>where
+<p>Let
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
-is the number of records,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">key</mtext></msub><annotation encoding="application/x-tex">p_{\text{key}}</annotation></semantics></math>
-is the number of key variables, and
+denote the number of records,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝒦</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>X</mi><msub><mi>p</mi><mtext mathvariant="normal">key</mtext></msub></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\mathcal{K} = \{X_1, \ldots, X_{p_{\text{key}}}\}</annotation></semantics></math>
+the set of categorical key variables, and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mtext mathvariant="normal">num</mtext></msub><annotation encoding="application/x-tex">p_{\text{num}}</annotation></semantics></math>
-is the number of numerical variables:</p>
+the number of numerical variables. The three components are:</p>
 <ul>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
@@ -477,35 +501,51 @@ measures the proportion of values suppressed by
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
 (Category Loss) =
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mtext mathvariant="normal">mean</mtext><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>p</mi><mtext mathvariant="normal">key</mtext></msub></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msubsup><mi>L</mi><mi>j</mi><mtext mathvariant="normal">after</mtext></msubsup><msubsup><mi>L</mi><mi>j</mi><mtext mathvariant="normal">before</mtext></msubsup></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{mean}_{j=1}^{p_{\text{key}}}\left(1 - \frac{L_j^{\text{after}}}{L_j^{\text{before}}}\right)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><msub><mi>p</mi><mtext mathvariant="normal">key</mtext></msub></mfrac><msubsup><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>p</mi><mtext mathvariant="normal">key</mtext></msub></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msubsup><mi>L</mi><mi>j</mi><mtext mathvariant="normal">after</mtext></msubsup><msubsup><mi>L</mi><mi>j</mi><mtext mathvariant="normal">before</mtext></msubsup></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\frac{1}{p_{\text{key}}} \sum_{j=1}^{p_{\text{key}}}
+\left(1 - \frac{L_j^{\text{after}}}{L_j^{\text{before}}}\right)</annotation></semantics></math>
 measures the average reduction in the number of distinct levels
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mi>j</mi></msub><annotation encoding="application/x-tex">L_j</annotation></semantics></math>)
-across key variables from <code><a href="../reference/groupAndRename.html">groupAndRename()</a></code>. Only
-non-suppressed values are counted, ensuring
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mi>j</mi></msub><annotation encoding="application/x-tex">L_j</annotation></semantics></math>
+across key variables resulting from <code><a href="../reference/groupAndRename.html">groupAndRename()</a></code>, where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>L</mi><mi>j</mi><mtext mathvariant="normal">after</mtext></msubsup><annotation encoding="application/x-tex">L_j^{\text{after}}</annotation></semantics></math>
+is computed <em>before</em> <code><a href="../reference/localSuppression.html">localSuppression()</a></code> is applied
+so that
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-measure orthogonal aspects of information loss. Bounded in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math>.</li>
+measure orthogonal aspects of information loss. Variables with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>L</mi><mi>j</mi><mtext mathvariant="normal">before</mtext></msubsup><mo>≤</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">L_j^{\text{before}} \le 1</annotation></semantics></math>
+(e.g., all values missing) are excluded from the mean. Monotonicity of
+merging gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">C \in [0, 1]</annotation></semantics></math>.</li>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">IL1s</mtext><annotation encoding="application/x-tex">\text{IL1s}</annotation></semantics></math>
-(Information Loss) = the IL1s measure from <code><a href="../reference/dUtility.html">dUtility()</a></code> <span class="citation">(Mateo-Sanz, Domingo-Ferrer, and Sebé 2004)</span>,
-normalized by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>×</mo><msub><mi>p</mi><mtext mathvariant="normal">num</mtext></msub></mrow><annotation encoding="application/x-tex">n \times p_{\text{num}}</annotation></semantics></math>.
-This is the standard-deviation-scaled variant, computed as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>x</mi><mo accent="true">̃</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">|</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">sd</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><msqrt><mn>2</mn></msqrt><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\sum_{i,j} |x_{ij} - \tilde{x}_{ij}| / (\text{sd}(x_j) \sqrt{2})</annotation></semantics></math>
-divided by the number of cells. Set to 0 if no numerical variables are
-present. Note that IL1s is not strictly bounded in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math>
-for large perturbations.</li>
+(Information Loss) — the standard-deviation-scaled absolute deviation of
+<span class="citation">Yancey, Winkler, and Creecy (2002)</span>,
+popularized in the SDC literature by <span class="citation">Mateo-Sanz,
+Domingo-Ferrer, and Sebé (2004)</span> and implemented in
+<code><a href="../reference/dUtility.html">dUtility()</a></code>:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">IL1s</mtext><mo>=</mo><mfrac><mn>1</mn><mrow><mi>n</mi><mspace width="0.167em"></mspace><msub><mi>p</mi><mtext mathvariant="normal">num</mtext></msub></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>p</mi><mtext mathvariant="normal">num</mtext></msub></munderover><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>x</mi><mo accent="true">̃</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">|</mo></mrow><mrow><msqrt><mn>2</mn></msqrt><mspace width="0.167em"></mspace><mtext mathvariant="normal">sd</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">\text{IL1s} = \frac{1}{n \, p_{\text{num}}}
+\sum_{j=1}^{p_{\text{num}}} \sum_{i=1}^{n}
+\frac{|x_{ij} - \tilde{x}_{ij}|}{\sqrt{2}\, \text{sd}(x_j)}</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">sd</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{sd}(x_j)</annotation></semantics></math>
+is computed on the original variable. Set to 0 if no numerical variables
+are present. The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mn>2</mn></msqrt><annotation encoding="application/x-tex">\sqrt{2}</annotation></semantics></math>
+factor calibrates the expected deviation under a Gaussian perturbation
+model. IL1s is non-negative but not bounded above; strategies with large
+perturbations may produce values exceeding 1.</li>
 </ul>
-<p>Lower scores indicate better utility preservation. The default
-weights are
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mn>1</mn></msub><mo>=</mo><msub><mi>w</mi><mn>2</mn></msub><mo>=</mo><msub><mi>w</mi><mn>3</mn></msub><mo>=</mo><mn>1</mn><mi>/</mi><mn>3</mn></mrow><annotation encoding="application/x-tex">w_1 = w_2 = w_3 = 1/3</annotation></semantics></math>.
-Since the three components are not on fully commensurable scales, these
-equal weights are a pragmatic starting point rather than a principled
-optimum. Users should adjust weights to reflect their priorities — for
-example, setting
+<p>Lower scores indicate better utility preservation. Because IL1s and
+the two proportions
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>,</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">S, C</annotation></semantics></math>
+live on different scales,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>
+is a weighted loss, not a proportion; it should be interpreted only
+relatively, for ranking strategies. The default weights are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mn>1</mn></msub><mo>=</mo><msub><mi>w</mi><mn>2</mn></msub><mo>=</mo><msub><mi>w</mi><mn>3</mn></msub><mo>=</mo><mn>1</mn><mi>/</mi><mn>3</mn></mrow><annotation encoding="application/x-tex">w_1 = w_2 = w_3 = 1/3</annotation></semantics></math>
+— a pragmatic starting point rather than a principled optimum. Users
+should adjust weights to reflect their priorities — for example, setting
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mn>1</mn></msub><mo>=</mo><mn>0.6</mn><mo>,</mo><msub><mi>w</mi><mn>2</mn></msub><mo>=</mo><mn>0.2</mn><mo>,</mo><msub><mi>w</mi><mn>3</mn></msub><mo>=</mo><mn>0.2</mn></mrow><annotation encoding="application/x-tex">w_1 = 0.6, w_2 = 0.2, w_3 = 0.2</annotation></semantics></math>
 prioritizes minimizing suppressions. The weights are automatically
 normalized to sum to 1, so <code>weights = c(3, 1, 1)</code> is
@@ -650,7 +690,11 @@ provide stronger protection at the cost of more information loss.</p>
 <div class="section level3">
 <h3 id="agentic">Agentic loop: batch and refinement<a class="anchor" aria-label="anchor" href="#agentic"></a>
 </h3>
-<p>The anonymization proceeds in two phases:</p>
+<p>The design follows the propose–evaluate–refine pattern established
+for tool-augmented language models <span class="citation">(Schick et al.
+2023; Yao et al. 2023; Madaan et al. 2023)</span>, specialized here to
+the SDC setting through a domain-specific tool schema and a risk–utility
+feedback signal. The anonymization proceeds in two phases:</p>
 <p><strong>Batch phase.</strong> The LLM receives a summary of the
 <code>sdcMicroObj</code> structure (variable names, types, factor
 levels, current
@@ -697,10 +741,10 @@ proposals accordingly.</p>
                             │ Select best       │
                             │ strategy (min U)  │
                             └───────────────────┘</code></pre>
-<p>A key insight is that <code><a href="../reference/localSuppression.html">localSuppression()</a></code> always achieves
+<p>Note that <code><a href="../reference/localSuppression.html">localSuppression()</a></code> always achieves
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-anonymity
 on the categorical key variables, by suppressing (setting to
-<code>NA</code>) the minimum number of values needed. The optimization
+<code>NA</code>) the values selected by its heuristic. The optimization
 therefore focuses on minimizing the total information loss by balancing
 recoding (which increases category loss
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
@@ -724,20 +768,20 @@ but preserves category structure).</p>
 <p>A typical console output:</p>
 <pre><code>=== Batch phase: requesting 3 strategies ===
   Evaluating conservative...
-    U=0.0126 (S=0.0091, C=0.0286, IL1=0.0000)
+    U=0.0126 (S=0.0091, C=0.0286, IL1s=0.0000)
   Evaluating moderate...
-    U=0.0367 (S=0.0071, C=0.0643, IL1=0.0388)
+    U=0.0367 (S=0.0071, C=0.0643, IL1s=0.0388)
   Evaluating aggressive...
-    U=0.3525 (S=0.0057, C=0.1991, IL1=0.8527)
+    U=0.3525 (S=0.0057, C=0.1991, IL1s=0.8527)
 === Refinement iteration 1/2 ===
-    U=0.0282 (S=0.0084, C=0.0762, IL1=0.0000)
+    U=0.0282 (S=0.0084, C=0.0762, IL1s=0.0000)
 === Refinement iteration 2/2 ===
-    U=0.0198 (S=0.0088, C=0.0505, IL1=0.0000)
+    U=0.0198 (S=0.0088, C=0.0505, IL1s=0.0000)
 
 === Best strategy: 'conservative' (U=0.0126) ===
   Suppression rate: 0.0091
   Category loss:    0.0286
-  IL1:              0.0000
+  IL1s:             0.0000
 
 k-violations after: 0 / 4580
 
@@ -754,7 +798,9 @@ and numerical information loss IL1s. The conservative strategy wins with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mn>0.0126</mn></mrow><annotation encoding="application/x-tex">U = 0.0126</annotation></semantics></math>,
 meaning less than 1% of values were suppressed, less than 3% of
 categorical diversity was reduced, and no numerical perturbation was
-applied. All 4580 records satisfy 3-anonymity (zero violations).</p>
+applied. All 4580 records satisfy
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3</mn><annotation encoding="application/x-tex">3</annotation></semantics></math>-anonymity
+(zero violations).</p>
 <p>After accepting a strategy, extract the anonymized data and review
 the results:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -803,8 +849,10 @@ nothing leaves the local machine:</p>
 <span>  model <span class="op">=</span> <span class="st">"llama3"</span><span class="op">)</span></span></code></pre></div>
 <p>Note that smaller local models may produce lower-quality strategies,
 particularly for the structured JSON output format required by the tool
-calling mechanism. GPT-4.1, Claude Sonnet 4, and similar frontier models
-consistently produce well-formed strategies.</p>
+calling mechanism. In our testing, state-of-the-art models such as
+GPT-4.1 and Claude Sonnet 4 typically produced well-formed strategies;
+open-weight models below roughly 8B parameters required more refinement
+iterations.</p>
 </div>
 </div>
 <div class="section level2">
@@ -814,13 +862,13 @@ consistently produce well-formed strategies.</p>
 fully integrated into <strong>sdcApp</strong>, the Shiny-based graphical
 user interface shipped with <strong>sdcMicro</strong> and launched via
 <code><a href="../reference/sdcApp.html">sdcApp()</a></code>. The GUI exposes the same functionality as the
-programmatic API through three complementary entry points, making the AI
-capabilities accessible to users who prefer interactive point-and-click
+programmatic API through three access points, making the AI capabilities
+accessible to users who prefer interactive point-and-click
 workflows.</p>
 <div class="section level3">
 <h3 id="gui-suggest">AI variable suggestion<a class="anchor" aria-label="anchor" href="#gui-suggest"></a>
 </h3>
-<p>The first entry point appears during SDC problem setup. When a
+<p>The first access point appears during SDC problem setup. When a
 dataset has been loaded and the user is assigning variable roles (key
 variables, numerical variables, weight, household ID, etc.), a button
 labelled <strong>“AI suggest variables”</strong> invokes
@@ -834,7 +882,7 @@ configuration.</p>
 automatically transferred into the setup table: radio buttons for
 key/numerical classification and checkboxes for weight, household ID,
 and PRAM roles are set accordingly. The user retains full control and
-can adjust any of these selections before finalising the SDC problem.
+can adjust any of these selections before finalizing the SDC problem.
 This workflow lowers the barrier to entry for practitioners who may be
 unfamiliar with the subtleties of variable role assignment, while
 preserving the human-in-the-loop principle.</p>
@@ -842,11 +890,11 @@ preserving the human-in-the-loop principle.</p>
 <div class="section level3">
 <h3 id="gui-anon">AI-Assisted anonymization panel<a class="anchor" aria-label="anchor" href="#gui-anon"></a>
 </h3>
-<p>The second and primary entry point is a dedicated
-<strong>AI-Assisted</strong> tab in the application’s navigation bar.
-Its sidebar collects the configuration parameters required by the
-agentic loop: the LLM provider and model, the API key (with an indicator
-that shows whether a key was detected in the environment), the desired
+<p>The main access point is a dedicated <strong>AI-Assisted</strong> tab
+in the application’s navigation bar. Its sidebar collects the
+configuration parameters required by the agentic loop: the LLM provider
+and model, the API key (with an indicator that shows whether a key was
+detected in the environment), the desired
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-anonymity
 level, the number of candidate strategies, and the utility weight
 preset. Four presets are offered — <em>Balanced</em>, <em>Minimize
@@ -879,7 +927,7 @@ current scores back to the LLM for an additional iteration of the
 refinement phase; the resulting improved strategy is appended to the
 table. <strong>Cancel</strong> discards the results without modifying
 the data.</p>
-<p>A third, convenience entry point is provided by a green
+<p>A convenience shortcut is provided by a green
 <strong>“AI-assisted”</strong> button at the top of the Anonymize
 sidebar, which navigates directly to the AI-Assisted tab.</p>
 </div>
@@ -904,35 +952,35 @@ workflow can be reproduced outside of the GUI in a plain R session.</p>
 <h3 id="advantages-and-limitations">Advantages and limitations<a class="anchor" aria-label="anchor" href="#advantages-and-limitations"></a>
 </h3>
 <p>The AI-assisted approach addresses several practical challenges that
-arise in traditional manual SDC workflows. Perhaps most significantly,
-it lowers the expertise barrier: practitioners who are not deeply
-familiar with the full range of SDC methods can obtain reasonable
-starting configurations by describing their data to the system and
-reviewing the LLM’s proposals. The batch-and-refine architecture
-encourages systematic exploration of the strategy space, evaluating
-multiple candidate strategies simultaneously rather than following a
-single path as is common in manual practice. The combined utility score
-provides a quantitative basis for comparing strategies, moving the
-selection process from subjective judgement toward a more structured
-evaluation framework. Throughout this process, transparency is
-maintained because every suggestion is accompanied by the LLM’s
-reasoning and the exact R code that would be executed.</p>
-<p>These advantages must be weighed against several important
-limitations. First, the quality of the generated strategies depends
-directly on the capabilities of the underlying language model. Smaller
-or less capable models may produce suboptimal parameter choices,
-particularly when the data structure is complex or when the structured
-JSON output format is not well supported. Second, cloud-based LLMs incur
-per-query costs and network latency; local deployment via Ollama
-eliminates both concerns but requires adequate hardware. Third, and most
-fundamentally, the AI suggestions should be understood as a starting
-point rather than a final answer. Domain knowledge about the data, the
-intended release context, and applicable regulations remains essential
-for responsible disclosure control. Finally, LLM outputs are inherently
-stochastic: different runs may produce different strategies even for
+arise in traditional manual SDC workflows. It lowers the expertise
+barrier: practitioners unfamiliar with the full range of SDC methods can
+obtain reasonable starting configurations by describing their data to
+the system and reviewing the LLM’s proposals. The batch-and-refine
+architecture encourages systematic exploration of the strategy space,
+evaluating multiple candidate strategies in parallel rather than
+following a single path as is common in manual practice. The combined
+utility score provides a quantitative basis for comparing strategies,
+replacing subjective judgement with a structured comparison. Every
+suggestion is accompanied by the LLM’s reasoning and the exact R code
+that would be executed, so the process remains auditable end to end.</p>
+<p>These advantages must be weighed against four limitations. The
+quality of the generated strategies depends directly on the capabilities
+of the underlying language model; smaller or less capable models may
+produce suboptimal parameter choices, particularly when the data
+structure is complex or when the structured JSON output format is not
+well supported. Cloud-based LLMs incur per-query costs and network
+latency, while local deployment via Ollama removes both concerns but
+requires adequate hardware. The AI suggestions should be understood as a
+starting point rather than a final answer: domain knowledge about the
+data, the intended release context, and applicable regulations remains
+essential for responsible disclosure control. Finally, LLM outputs are
+stochastic, and different runs may produce different strategies even for
 identical inputs. Setting <code>temperature = 0</code> in
 <code><a href="../reference/query_llm.html">query_llm()</a></code> improves reproducibility but does not guarantee
-identical outputs across calls.</p>
+identical outputs across calls, because even at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">T = 0</annotation></semantics></math>
+modern GPU inference introduces non-determinism through non-associative
+floating-point reductions.</p>
 </div>
 <div class="section level3">
 <h3 id="privacy-considerations">Privacy considerations<a class="anchor" aria-label="anchor" href="#privacy-considerations"></a>
@@ -955,31 +1003,32 @@ endpoint, ensuring that all communication remains on-premises.</p>
 <div class="section level3">
 <h3 id="comparison-with-related-work">Comparison with related work<a class="anchor" aria-label="anchor" href="#comparison-with-related-work"></a>
 </h3>
-<p>Several established tools provide automated or semi-automated SDC,
-but none currently incorporate LLM-assisted decision support.</p>
+<p>Several established tools provide automated or semi-automated SDC. To
+the authors’ knowledge, none currently incorporate LLM-assisted decision
+support.</p>
 <p><strong>ARX</strong> <span class="citation">(Prasser et al.
 2020)</span> performs an exhaustive search over user-defined
 generalization hierarchies and offers strong optimality guarantees
 within its transformation model, but requires the user to specify the
 set of permissible transformations upfront. The LLM-based approach in
-<strong>sdcMicro</strong> complements this style of optimisation by
+<strong>sdcMicro</strong> complements this style of optimization by
 automatically proposing which combination of recoding, suppression, and
 perturbation operations to apply, informed by the data’s metadata rather
 than a predefined lattice.</p>
 <p><strong><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>μ</mi><annotation encoding="application/x-tex">\mu</annotation></semantics></math>-Argus</strong>
 and
 <strong><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math>-Argus</strong>
-<span class="citation">(Wolf, Mlodak, and Wilak 2024)</span> provide
-mature graphical interfaces for microdata and tabular data protection
+<span class="citation">(Hundepool et al. 2012)</span> provide mature
+graphical interfaces for microdata and tabular data protection
 respectively, with built-in rule-based heuristics. Their workflows are
 well-established in national statistical offices but do not offer the
 kind of natural-language interaction or adaptive strategy generation
 that an LLM enables. <strong>synthpop</strong> <span class="citation">(Nowok, Raab, and Dibben 2016)</span> and
 <strong>simPop</strong> <span class="citation">(Templ et al.
-2017)</span> take a fundamentally different approach by generating
-entirely synthetic datasets rather than perturbing the original records;
-they do not involve method selection or parameter tuning in the SDC
-sense and therefore address a complementary use case.</p>
+2017)</span> take a different approach by generating entirely synthetic
+datasets rather than perturbing the original records; they do not
+involve method selection or parameter tuning in the SDC sense and
+therefore address a complementary use case.</p>
 <p>General-purpose AI coding assistants such as ChatGPT or GitHub
 Copilot can generate R code for anonymization when prompted, but they
 operate without the safeguards that the structured tool calling
@@ -1000,37 +1049,38 @@ single strategy.</p>
 components: LLM-assisted variable classification via
 <code><a href="../reference/AI_createSdcObj.html">AI_createSdcObj()</a></code>, an agentic anonymization loop with
 structured tool calling via <code><a href="../reference/AI_applyAnonymization.html">AI_applyAnonymization()</a></code>, and
-full integration of both capabilities into the <strong>sdcApp</strong>
-Shiny GUI. Together, these components form a decision-support system
-that augments — rather than replaces — human expertise in statistical
-disclosure control.</p>
-<p>Three design principles guided the implementation. First, a strict
-privacy-by-design policy ensures that only metadata is transmitted to
-the LLM, never the microdata itself. Second, transparency is maintained
-by exposing the LLM’s reasoning and generating reproducible R code for
-every suggested operation. Third, user control is preserved through
-interactive confirmation dialogs at each step, so that no anonymization
-method is applied without explicit approval.</p>
+integration of both capabilities into the <strong>sdcApp</strong> Shiny
+GUI. The methodological contribution is the integration of metadata-only
+prompting, an SDC-specific structured tool schema, and a utility-scored
+refinement loop — individual ingredients such as tool calling and
+self-refinement are established in the LLM literature <span class="citation">(Schick et al. 2023; Yao et al. 2023; Madaan et al.
+2023)</span> but have not, to the authors’ knowledge, been combined for
+statistical disclosure control. Together, these components form a
+decision-support system that supports, not replaces, the practitioner’s
+judgement.</p>
+<p>The implementation rests on three commitments: metadata-only
+transmission of variable descriptions (never microdata), visible LLM
+reasoning paired with reproducible R code, and explicit user
+confirmation before any method is applied.</p>
 <p>The provider-agnostic architecture supports commercial LLM services
 (OpenAI, Anthropic), self-hosted open-weight models via Ollama or any
 OpenAI-compatible endpoint, and can be extended to additional providers
 by supplying a base URL and API key. This flexibility allows
-organisations to balance the trade-off between model capability and data
-governance requirements according to their own policies.</p>
-<p>Several directions for future work emerge from the current
-implementation. First, the tool calling schema could be extended to
-support
+organizations to weigh model capability against data governance
+requirements according to their own policies.</p>
+<p>Four extensions are tractable from the current codebase. The tool
+calling schema could be extended to support
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
 constraints and the explicit handling of sensitive variables, broadening
-the range of privacy models the system can target. Second, systematic
-benchmarks comparing AI-suggested strategies against expert-crafted
-configurations across diverse datasets would provide empirical evidence
-on the practical benefit of the approach. Third, the combined utility
-score could incorporate additional information loss measures such as
-propensity scores or the Hellinger distance. Finally, continued
-improvements in local open-weight language models may soon make it
-feasible to achieve strategy quality comparable to frontier cloud models
-in fully air-gapped environments.</p>
+the range of privacy models the system can target. Systematic benchmarks
+comparing AI-suggested strategies against expert-crafted configurations
+across diverse datasets would provide empirical evidence on the
+practical benefit of the approach. The combined utility score could
+incorporate additional information loss measures such as propensity
+scores or the Hellinger distance. Finally, continued improvements in
+local open-weight language models may soon make it feasible to achieve
+strategy quality comparable to state-of-the-art cloud models in fully
+air-gapped environments.</p>
 </div>
 <div class="section level2">
 <h2 id="computational">Computational details<a class="anchor" aria-label="anchor" href="#computational"></a>
@@ -1042,7 +1092,7 @@ packages used are available from the Comprehensive R Archive Network
 <p>The AI features require an API key for a supported LLM provider
 (OpenAI, Anthropic) or a locally running OpenAI-compatible endpoint. The
 <strong>httr</strong> and <strong>jsonlite</strong> packages are used
-for API communication. The example session shown in Section 5.2 was
+for API communication. The example session shown in Section 5.3 was
 generated using GPT-4.1 with <code>temperature = 0</code>.</p>
 </div>
 <div class="section level2">
@@ -1067,6 +1117,11 @@ Quantitative Comparison of Disclosure Control Methods for
 Microdata.”</span> <em>Confidentiality, Disclosure and Data Access:
 Theory and Practical Applications for Statistical Agencies</em>, 111–33.
 </div>
+<div id="ref-domingoferrer2002mdav" class="csl-entry">
+———. 2002. <span>“Practical Data-Oriented Microaggregation for
+Statistical Disclosure Control.”</span> <em>IEEE Transactions on
+Knowledge and Data Engineering</em> 14 (1): 189–201. <a href="https://doi.org/10.1109/69.979982" class="external-link">https://doi.org/10.1109/69.979982</a>.
+</div>
 <div id="ref-hundepool2012" class="csl-entry">
 Hundepool, Anco, Josep Domingo-Ferrer, Luisa Franconi, Sarah Giessing,
 Eric Schulte Nordholt, Keith Spicer, and Peter-Paul de Wolf. 2012.
@@ -1079,11 +1134,23 @@ Muthuramakrishnan Venkitasubramaniam. 2007. <span>“L-Diversity: Privacy
 Beyond k-Anonymity.”</span> <em>ACM Transactions on Knowledge Discovery
 from Data</em> 1 (1): 3. <a href="https://doi.org/10.1145/1217299.1217302" class="external-link">https://doi.org/10.1145/1217299.1217302</a>.
 </div>
+<div id="ref-madaan2023selfrefine" class="csl-entry">
+Madaan, Aman, Niket Tandon, Prakhar Gupta, Skyler Hallinan, Luyu Gao,
+Sarah Wiegreffe, Uri Alon, et al. 2023. <span>“<span>Self-Refine</span>:
+Iterative Refinement with Self-Feedback.”</span> In <em>Advances in
+Neural Information Processing Systems</em>. Vol. 36. <a href="https://doi.org/10.48550/arXiv.2303.17651" class="external-link">https://doi.org/10.48550/arXiv.2303.17651</a>.
+</div>
 <div id="ref-mateo2004" class="csl-entry">
 Mateo-Sanz, Josep Maria, Josep Domingo-Ferrer, and Francesc Sebé. 2004.
-<span>“Comparing <span>SDC</span> Methods for Microdata on the Basis of
-Information Loss and Disclosure Risk.”</span> <em>Privacy in Statistical
-Databases</em>, 95–106. <a href="https://doi.org/10.1007/978-3-540-25955-8_8" class="external-link">https://doi.org/10.1007/978-3-540-25955-8_8</a>.
+<span>“Probabilistic Information Loss Measures in Confidentiality
+Protection of Continuous Microdata.”</span> In <em>Privacy in
+Statistical Databases (<span>PSD</span> 2004)</em>, 3050:95–106. Lecture
+Notes in Computer Science. Springer.
+</div>
+<div id="ref-moore1996rankswap" class="csl-entry">
+Moore, Richard A. 1996. <span>“Controlled Data Swapping Techniques for
+Masking Public Use Microdata Sets.”</span> Research Report RR96-04. U.S.
+Bureau of the Census, Statistical Research Division.
 </div>
 <div id="ref-nowok2016synthpop" class="csl-entry">
 Nowok, Beata, Gillian M. Raab, and Chris Dibben. 2016. <span>“<span class="nocase">synthpop</span>: Bespoke Creation of Synthetic Data in
@@ -1091,9 +1158,10 @@ Nowok, Beata, Gillian M. Raab, and Chris Dibben. 2016. <span>“<span class="noc
 (11): 1–26. <a href="https://doi.org/10.18637/jss.v074.i11" class="external-link">https://doi.org/10.18637/jss.v074.i11</a>.
 </div>
 <div id="ref-prasser2020arx" class="csl-entry">
-Prasser, Fabian, Florian Kohlmayer, Ronald Lautenschläger, and Klaus A.
-Kuhn. 2020. <span>“<span>ARX</span> – Data Anonymization Tool.”</span>
-<em>SoftwareX</em> 11: 100389. <a href="https://doi.org/10.1016/j.softx.2019.100389" class="external-link">https://doi.org/10.1016/j.softx.2019.100389</a>.
+Prasser, Fabian, Johanna Eicher, Helmut Spengler, Raffael Bild, and
+Klaus A. Kuhn. 2020. <span>“Flexible Data Anonymization Using
+<span>ARX</span> – Current Status and Challenges Ahead.”</span>
+<em>Software: Practice and Experience</em> 50 (7): 1277–1304. <a href="https://doi.org/10.1002/spe.2812" class="external-link">https://doi.org/10.1002/spe.2812</a>.
 </div>
 <div id="ref-R2024" class="csl-entry">
 R Core Team. 2024. <em>R: A Language and Environment for Statistical
@@ -1107,9 +1175,9 @@ Engineering</em> 13 (6): 1010–27. <a href="https://doi.org/10.1109/69.971193" 
 </div>
 <div id="ref-schick2023toolformer" class="csl-entry">
 Schick, Timo, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria
-Lomeli, Eric Hambro, Luke Zettlemoyer, Nicola Cancedda, and Thomas
-Scialom. 2023. <span>“Toolformer: Language Models Can Teach Themselves
-to Use Tools.”</span> <em>Advances in Neural Information Processing
+Lomeli, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom. 2023.
+<span>“Toolformer: Language Models Can Teach Themselves to Use
+Tools.”</span> <em>Advances in Neural Information Processing
 Systems</em> 36: 68539–51. <a href="https://doi.org/10.48550/arXiv.2302.04761" class="external-link">https://doi.org/10.48550/arXiv.2302.04761</a>.
 </div>
 <div id="ref-sweeney2002" class="csl-entry">
@@ -1124,8 +1192,8 @@ Publishing. <a href="https://doi.org/10.1007/978-3-319-50272-4" class="external-
 </div>
 <div id="ref-templ2015sdcmicro" class="csl-entry">
 Templ, Matthias, Alexander Kowarik, and Bernhard Meindl. 2015.
-<span>“<span class="nocase">sdcMicro</span>: Statistical Disclosure
-Control Methods for Anonymization of Data and Risk Estimation.”</span>
+<span>“Statistical Disclosure Control for Micro-Data Using the
+<span>R</span> Package <span class="nocase">sdcMicro</span>.”</span>
 <em>Journal of Statistical Software</em> 67 (4): 1–36. <a href="https://doi.org/10.18637/jss.v067.i04" class="external-link">https://doi.org/10.18637/jss.v067.i04</a>.
 </div>
 <div id="ref-templ2017simPop" class="csl-entry">
@@ -1134,12 +1202,18 @@ Dupriez. 2017. <span>“Simulation of Synthetic Complex Data: The
 <span>R</span> Package <span class="nocase">simPop</span>.”</span>
 <em>Journal of Statistical Software</em> 79 (10): 1–38. <a href="https://doi.org/10.18637/jss.v079.i10" class="external-link">https://doi.org/10.18637/jss.v079.i10</a>.
 </div>
-<div id="ref-glemba2024muargus" class="csl-entry">
-Wolf, Peter-Paul de, Andrzej Mlodak, and Kamil Wilak. 2024.
-<span>“<span></span>-<span>ARGUS</span> and
-<span></span>-<span>ARGUS</span>: Open Source Software for Statistical
-Disclosure Control.”</span> In <em>Privacy in Statistical
-Databases</em>. Springer. <a href="https://doi.org/10.1007/978-3-031-69651-0_6" class="external-link">https://doi.org/10.1007/978-3-031-69651-0_6</a>.
+<div id="ref-yancey2002" class="csl-entry">
+Yancey, William E., William E. Winkler, and Robert H. Creecy. 2002.
+<span>“Disclosure Risk Assessment in Perturbative Microdata
+Protection.”</span> In <em>Inference Control in Statistical
+Databases</em>, 2316:135–52. Lecture Notes in Computer Science.
+Springer. <a href="https://doi.org/10.1007/3-540-47804-3_11" class="external-link">https://doi.org/10.1007/3-540-47804-3_11</a>.
+</div>
+<div id="ref-yao2023react" class="csl-entry">
+Yao, Shunyu, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik
+Narasimhan, and Yuan Cao. 2023. <span>“<span>ReAct</span>: Synergizing
+Reasoning and Acting in Language Models.”</span> In <em>International
+Conference on Learning Representations (<span>ICLR</span>)</em>. <a href="https://doi.org/10.48550/arXiv.2210.03629" class="external-link">https://doi.org/10.48550/arXiv.2210.03629</a>.
 </div>
 </div>
 </div>
