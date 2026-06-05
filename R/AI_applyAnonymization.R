@@ -18,6 +18,14 @@
 #' @param n_strategies Number of strategies in the initial batch (default 3).
 #' @param weights Numeric vector of length 3: weights for suppression rate,
 #'   category loss, and IL1 in the utility score. Default \code{c(1/3, 1/3, 1/3)}.
+#' @param tol Minimum reduction in the combined utility score \eqn{U} for a
+#'   refinement iteration to count as an improvement; refinements that lower
+#'   \eqn{U} by less than \code{tol} are treated as a stall. Default \code{1e-3}.
+#' @param patience Number of consecutive refinement iterations without an
+#'   improvement greater than \code{tol} that triggers early stopping of the
+#'   refinement loop. Default \code{1}. The initial batch phase always runs in
+#'   full; \code{max_iter} remains the upper bound on the number of refinement
+#'   iterations.
 #' @param generateReport If \code{TRUE}, generates internal and external reports.
 #' @return Modified sdcMicroObj with the best anonymization strategy applied.
 #' @author Matthias Templ
@@ -37,8 +45,12 @@ AI_applyAnonymization <- function(sdcObj, k = 3, verbose = TRUE,
                                   base_url = NULL, confirm = TRUE,
                                   max_iter = 2, n_strategies = 3,
                                   weights = c(1/3, 1/3, 1/3),
+                                  tol = 1e-3, patience = 1L,
                                   generateReport = TRUE) {
   provider <- match.arg(provider)
+  stopifnot(is.numeric(tol), length(tol) == 1L, tol >= 0,
+            is.numeric(patience), length(patience) == 1L, patience >= 1)
+  patience <- as.integer(patience)
   summary_info <- summarize_sdcObj_structure(sdcObj, k)
   tool_schemas <- get_tool_schemas()
 
@@ -133,7 +145,8 @@ AI_applyAnonymization <- function(sdcObj, k = 3, verbose = TRUE,
   best_idx <- which.min(vapply(results, function(r) r$score$total, numeric(1)))
   best <- results[[best_idx]]
 
-  # ====== Phase 2: Refinement ======
+  # ====== Phase 2: Refinement (with early stopping) ======
+  no_improve <- 0L
   for (iter in seq_len(max_iter)) {
     if (verbose) message(sprintf("=== Refinement iteration %d/%d ===", iter, max_iter))
 
@@ -179,9 +192,27 @@ AI_applyAnonymization <- function(sdcObj, k = 3, verbose = TRUE,
     result_entry <- list(strategy = refined, sdcObj = sdcObj_copy, score = score)
     results[[length(results) + 1]] <- result_entry
 
+    # Early stopping: an iteration counts as progress only if it lowers the best
+    # utility score by more than `tol`. After `patience` consecutive stalled
+    # iterations the refinement loop terminates early (the batch phase has
+    # already produced at least one candidate, so `best` is always defined).
+    improved <- score$total < (best$score$total - tol)
     if (score$total < best$score$total) {
       best <- result_entry
       if (verbose) message("  -> New best!")
+    }
+    if (improved) {
+      no_improve <- 0L
+    } else {
+      no_improve <- no_improve + 1L
+      if (no_improve >= patience) {
+        if (verbose) {
+          message(sprintf(
+            "  Early stopping after iteration %d: no improvement > tol (%.4g) for %d consecutive iteration(s).",
+            iter, tol, patience))
+        }
+        break
+      }
     }
   }
 

@@ -1,4 +1,8 @@
 # 5.8.2
+- `AI_applyAnonymization()` gains early stopping of the refinement loop via the new
+  `tol` and `patience` arguments: refinement now terminates once the combined utility
+  score U stops improving by more than `tol` for `patience` consecutive iterations,
+  instead of always running all `max_iter` rounds.
 - Bugfix: `ldiversity()` now computes distinct l-diversity measure correctly in case of `NAs` in Keyvars
   * improved/simplified uderlying C++ code
   * added Unit-Tests for `ldiversity()`

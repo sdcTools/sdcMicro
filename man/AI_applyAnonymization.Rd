@@ -16,6 +16,8 @@ AI_applyAnonymization(
   max_iter = 2,
   n_strategies = 3,
   weights = c(1/3, 1/3, 1/3),
+  tol = 0.001,
+  patience = 1L,
   generateReport = TRUE
 )
 }
@@ -44,6 +46,16 @@ best strategy and asks for confirmation before applying.}
 
 \item{weights}{Numeric vector of length 3: weights for suppression rate,
 category loss, and IL1 in the utility score. Default \code{c(1/3, 1/3, 1/3)}.}
+
+\item{tol}{Minimum reduction in the combined utility score \eqn{U} for a
+refinement iteration to count as an improvement; refinements that lower
+\eqn{U} by less than \code{tol} are treated as a stall. Default \code{1e-3}.}
+
+\item{patience}{Number of consecutive refinement iterations without an
+improvement greater than \code{tol} that triggers early stopping of the
+refinement loop. Default \code{1}. The initial batch phase always runs in
+full; \code{max_iter} remains the upper bound on the number of refinement
+iterations.}
 
 \item{generateReport}{If \code{TRUE}, generates internal and external reports.}
 }
