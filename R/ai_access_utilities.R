@@ -329,7 +329,8 @@ parse_tool_calls_text <- function(content) {
 #' @param api_key API key. If \code{NULL}, auto-detected from environment variables:
 #'   \code{OPENAI_API_KEY}, \code{ANTHROPIC_API_KEY}, or \code{LLM_API_KEY}.
 #' @param base_url Base URL for the API. Defaults per provider; required for \code{"custom"}.
-#' @param temperature Sampling temperature (default 0 for deterministic output).
+#' @param temperature Sampling temperature (default 0 for deterministic output). Ignored for
+#'   OpenAI GPT-5.x and o-series reasoning models, which do not accept a custom temperature.
 #' @param tools Optional list of tool schemas (from \code{get_tool_schemas()}). When provided,
 #'   enables tool calling and returns a structured list instead of a string.
 #'
@@ -436,9 +437,13 @@ query_llm <- function(prompt,
       messages = list(
         list(role = "system", content = system_prompt),
         list(role = "user", content = effective_prompt)
-      ),
-      temperature = temperature
+      )
     )
+    # GPT-5.x and o-series reasoning models reject a custom sampling temperature;
+    # only send `temperature` for models that support it.
+    if (!grepl("^(gpt-5|o[0-9])", model, ignore.case = TRUE)) {
+      req_body$temperature <- temperature
+    }
     # Add tools for OpenAI native tool calling (not for custom/text fallback)
     if (!is.null(tools) && !use_text_fallback) {
       req_body$tools <- format_tools_openai(tools)

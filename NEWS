@@ -3,6 +3,8 @@
   `tol` and `patience` arguments: refinement now terminates once the combined utility
   score U stops improving by more than `tol` for `patience` consecutive iterations,
   instead of always running all `max_iter` rounds.
+- `query_llm()` now omits the `temperature` parameter for OpenAI GPT-5.x and o-series
+  reasoning models (which do not accept a custom temperature), enabling use of e.g. `gpt-5.5`.
 - Bugfix: `ldiversity()` now computes distinct l-diversity measure correctly in case of `NAs` in Keyvars
   * improved/simplified uderlying C++ code
   * added Unit-Tests for `ldiversity()`

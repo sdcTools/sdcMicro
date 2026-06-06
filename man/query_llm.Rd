@@ -31,7 +31,8 @@ query_llm(
 
 \item{base_url}{Base URL for the API. Defaults per provider; required for \code{"custom"}.}
 
-\item{temperature}{Sampling temperature (default 0 for deterministic output).}
+\item{temperature}{Sampling temperature (default 0 for deterministic output). Ignored for
+OpenAI GPT-5.x and o-series reasoning models, which do not accept a custom temperature.}
 
 \item{tools}{Optional list of tool schemas (from \code{get_tool_schemas()}). When provided,
 enables tool calling and returns a structured list instead of a string.}
