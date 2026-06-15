@@ -1,0 +1,48 @@
+Illustrative session from the SoftwareX paper "sdcMicro meets GPT"
+====================================================================
+Model: GPT-4.1 (OpenAI), temperature = 0
+Data:  testdata (bundled with sdcMicro; 4,580 persons in 1,011 households)
+Code:
+    library(sdcMicro)
+    data(testdata)
+    Sys.setenv(OPENAI_API_KEY = "sk-...")
+    sdc <- AI_createSdcObj(dat = testdata, policy = "open")
+    sdc <- AI_applyAnonymization(sdc, k = 3, n_strategies = 3)
+    anon_data <- extractManipData(sdc)
+
+Note: LLM output is stochastic across sessions even at temperature = 0; this
+transcript documents the session printed in the paper. The early-stopping
+line reflects sdcMicro >= 5.8.2 (tol = 1e-3, patience = 1).
+
+--------------------------------------------------------------------
+Step 1: AI_createSdcObj(dat = testdata, policy = "open")
+--------------------------------------------------------------------
+
+--- LLM Variable Classification ---
+Reasoning:
+  keyVars: 'urbrur', 'roof', 'walls', 'water', 'electcon',
+    'relat', 'sex' are categorical quasi-identifiers.
+  numVars: 'expend', 'income', 'savings' are continuous and
+    can reveal economic status.
+  weightVar: 'sampling_weight' is the survey weight.
+  hhId: 'ori_hid' identifies household clusters.
+Accept this classification? [Y/n/q]: Y
+
+--------------------------------------------------------------------
+Step 2: AI_applyAnonymization(sdc, k = 3, n_strategies = 3)
+--------------------------------------------------------------------
+
+=== Batch phase: requesting 3 strategies ===
+  Evaluating conservative...
+    U=0.0126 (S=0.0091, C=0.0286, IL1s=0.0000)
+  Evaluating moderate...
+    U=0.0367 (S=0.0071, C=0.0643, IL1s=0.0388)
+  Evaluating aggressive...
+    U=0.3525 (S=0.0057, C=0.1991, IL1s=0.8527)
+=== Refinement iteration 1/2 ===
+    U=0.0282 (S=0.0084, C=0.0762, IL1s=0.0000)
+  Early stopping: no improvement over U=0.0126 (tol=0.001).
+
+=== Best strategy: 'conservative' (U=0.0126) ===
+k-violations after: 0 / 4580
+Accept this strategy? [Y/n/q]: Y
