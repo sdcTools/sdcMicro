@@ -19,7 +19,7 @@ When tools is provided, uses native tool calling (OpenAI/Anthropic) or JSON fall
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sdcMicro</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.8.2</span>
       </span>
     </div>
 
@@ -114,7 +114,8 @@ When <code>tools</code> is provided, uses native tool calling (OpenAI/Anthropic)
 
 
 <dt id="arg-temperature">temperature<a class="anchor" aria-label="anchor" href="#arg-temperature"></a></dt>
-<dd><p>Sampling temperature (default 0 for deterministic output).</p></dd>
+<dd><p>Sampling temperature (default 0 for deterministic output). Ignored for
+OpenAI GPT-5.x and o-series reasoning models, which do not accept a custom temperature.</p></dd>
 
 
 <dt id="arg-tools">tools<a class="anchor" aria-label="anchor" href="#arg-tools"></a></dt>

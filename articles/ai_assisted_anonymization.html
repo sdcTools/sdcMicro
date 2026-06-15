@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sdcMicro</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.8.2</span>
       </span>
     </div>
 
@@ -85,7 +85,7 @@ sdcMicro</h1>
                         <h4 data-toc-skip class="author">Matthias
 Templ</h4>
             
-            <h4 data-toc-skip class="date">2026-04-22</h4>
+            <h4 data-toc-skip class="date">2026-06-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sdcTools/sdcMicro/blob/master/vignettes/ai_assisted_anonymization.Rmd" class="external-link"><code>vignettes/ai_assisted_anonymization.Rmd</code></a></small>
       <div class="hidden name"><code>ai_assisted_anonymization.Rmd</code></div>
@@ -123,11 +123,11 @@ integrated into the <strong>sdcApp</strong> Shiny GUI.</p>
 <p>Statistical disclosure control (SDC) is a necessary step in preparing
 microdata for release, aiming to prevent re-identification of individual
 respondents while preserving the analytical utility of the data <span class="citation">(Hundepool et al. 2012; Templ 2017)</span>. The
-<strong>sdcMicro</strong> package <span class="citation">(Templ,
-Kowarik, and Meindl 2015)</span> provides a suite of methods for
-anonymizing microdata in <strong>R</strong> <span class="citation">(R
-Core Team 2024)</span>, including local suppression, recoding,
-perturbation, and risk estimation.</p>
+<strong>sdcMicro</strong> package <span class="citation">(Templ et al.
+2015)</span> provides a suite of methods for anonymizing microdata in
+<strong>R</strong> <span class="citation">(R Core Team 2024)</span>,
+including local suppression, recoding, perturbation, and risk
+estimation.</p>
 <p>However, applying SDC methods effectively requires substantial domain
 expertise. Practitioners must decide which variables to treat as
 quasi-identifiers (i.e., variables that, in combination, could enable
@@ -138,10 +138,10 @@ variables — making SDC a complex, labor-intensive process.</p>
 <p>Recent advances in large language models offer new possibilities for
 assisting with such expert tasks. LLMs can process metadata
 descriptions, suggest variable classifications, and propose strategies
-consistent with established practices <span class="citation">(Brown et
-al. 2020; Chen et al. 2021)</span>. However, integrating LLMs into
-statistical workflows raises important concerns about data privacy,
-reproducibility, and user control.</p>
+consistent with established practices <span class="citation">(<span class="nocase">Brown et al.</span> 2020; <span class="nocase">Chen et
+al.</span> 2021)</span>. However, integrating LLMs into statistical
+workflows raises important concerns about data privacy, reproducibility,
+and user control.</p>
 <p>This vignette introduces the AI-assisted anonymization features in
 <strong>sdcMicro</strong>, which address these challenges through three
 design principles:</p>
@@ -250,17 +250,17 @@ other records.</p>
 is widely used, it has known limitations: it does not protect against
 attribute disclosure when all records in an equivalence class share the
 same sensitive value (homogeneity attack). Distinct
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℓ</mi><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
 <span class="citation">(Machanavajjhala et al. 2007)</span> addresses
 this by requiring that the sensitive attribute takes at least
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℓ</mi><annotation encoding="application/x-tex">\ell</annotation></semantics></math>
 distinct values within each equivalence class; entropy and recursive
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>c</mi><mo>,</mo><mo>ℓ</mo><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(c, \ell)</annotation></semantics></math>-diversity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>c</mi><mo>,</mo><mi>ℓ</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(c, \ell)</annotation></semantics></math>-diversity
 are stronger variants. The current AI-assisted features in
 <strong>sdcMicro</strong> target
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-anonymity;
 support for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℓ</mi><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
 constraints is planned for future releases.</p>
 <p>A central challenge in SDC is selecting the right combination of
 methods and parameters to achieve adequate protection with minimal
@@ -272,17 +272,15 @@ context.</p>
 <h3 id="llms-in-statistical-workflows">LLMs in statistical workflows<a class="anchor" aria-label="anchor" href="#llms-in-statistical-workflows"></a>
 </h3>
 <p>Large language models can process data descriptions, suggest
-analytical approaches, and generate code <span class="citation">(Brown
-et al. 2020; Chen et al. 2021)</span>. More recently, tool-augmented
-LLMs have been shown to select and invoke structured function calls
-based on task descriptions <span class="citation">(Schick et al.
-2023)</span>, and iterative propose–evaluate–refine strategies such as
-Self-Refine <span class="citation">(Madaan et al. 2023)</span> and ReAct
-<span class="citation">(Yao et al. 2023)</span> have proven effective
-for multi-step reasoning tasks. In the SDC context, LLMs can draw on
-their training in statistical methodology to propose variable
-classifications and anonymization strategies. However, several
-challenges must be addressed:</p>
+analytical approaches, and generate code <span class="citation">(<span class="nocase">Brown et al.</span> 2020; <span class="nocase">Chen et
+al.</span> 2021)</span>. More recently, tool-augmented LLMs have been
+shown to select and invoke structured function calls based on task
+descriptions <span class="citation">(Schick et al. 2023)</span>, and
+iterative propose–evaluate–refine strategies such as Self-Refine <span class="citation">(Madaan et al. 2023)</span> and ReAct <span class="citation">(Yao et al. 2023)</span> have proven effective for
+multi-step reasoning tasks. In the SDC context, LLMs can draw on their
+training in statistical methodology to propose variable classifications
+and anonymization strategies. However, several challenges must be
+addressed:</p>
 <ul>
 <li>
 <strong>Data privacy</strong>: Sending microdata to external APIs
@@ -497,7 +495,7 @@ the number of numerical variables. The three components are:</p>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mtext mathvariant="normal">new NAs</mtext><mrow><mi>n</mi><mo>×</mo><msub><mi>p</mi><mtext mathvariant="normal">key</mtext></msub></mrow></mfrac><annotation encoding="application/x-tex">\frac{\text{new NAs}}{n \times p_{\text{key}}}</annotation></semantics></math>
 measures the proportion of values suppressed by
 <code><a href="../reference/localSuppression.html">localSuppression()</a></code>. Bounded in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math>.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math>.</li>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
 (Category Loss) =
@@ -516,19 +514,18 @@ measure orthogonal aspects of information loss. Variables with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>L</mi><mi>j</mi><mtext mathvariant="normal">before</mtext></msubsup><mo>≤</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">L_j^{\text{before}} \le 1</annotation></semantics></math>
 (e.g., all values missing) are excluded from the mean. Monotonicity of
 merging gives
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">C \in [0, 1]</annotation></semantics></math>.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>∈</mo><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">C \in [0, 1]</annotation></semantics></math>.</li>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">IL1s</mtext><annotation encoding="application/x-tex">\text{IL1s}</annotation></semantics></math>
 (Information Loss) — the standard-deviation-scaled absolute deviation of
-<span class="citation">Yancey, Winkler, and Creecy (2002)</span>,
-popularized in the SDC literature by <span class="citation">Mateo-Sanz,
-Domingo-Ferrer, and Sebé (2004)</span> and implemented in
-<code><a href="../reference/dUtility.html">dUtility()</a></code>:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">IL1s</mtext><mo>=</mo><mfrac><mn>1</mn><mrow><mi>n</mi><mspace width="0.167em"></mspace><msub><mi>p</mi><mtext mathvariant="normal">num</mtext></msub></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>p</mi><mtext mathvariant="normal">num</mtext></msub></munderover><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>x</mi><mo accent="true">̃</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">|</mo></mrow><mrow><msqrt><mn>2</mn></msqrt><mspace width="0.167em"></mspace><mtext mathvariant="normal">sd</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">\text{IL1s} = \frac{1}{n \, p_{\text{num}}}
+<span class="citation">Yancey et al. (2002)</span>, popularized in the
+SDC literature by <span class="citation">Mateo-Sanz et al. (2004)</span>
+and implemented in <code><a href="../reference/dUtility.html">dUtility()</a></code>:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">IL1s</mtext><mo>=</mo><mfrac><mn>1</mn><mrow><mi>n</mi><mspace width="0.167em"></mspace><msub><mi>p</mi><mtext mathvariant="normal">num</mtext></msub></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>p</mi><mtext mathvariant="normal">num</mtext></msub></munderover><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mfrac><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>x</mi><mo accent="true">̃</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="prefix">|</mo></mrow><mrow><msqrt><mn>2</mn></msqrt><mspace width="0.167em"></mspace><mtext mathvariant="normal">sd</mtext><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\text{IL1s} = \frac{1}{n \, p_{\text{num}}}
 \sum_{j=1}^{p_{\text{num}}} \sum_{i=1}^{n}
 \frac{|x_{ij} - \tilde{x}_{ij}|}{\sqrt{2}\, \text{sd}(x_j)}</annotation></semantics></math>
 where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">sd</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{sd}(x_j)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">sd</mtext><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\text{sd}(x_j)</annotation></semantics></math>
 is computed on the original variable. Set to 0 if no numerical variables
 are present. The
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mn>2</mn></msqrt><annotation encoding="application/x-tex">\sqrt{2}</annotation></semantics></math>
@@ -606,7 +603,7 @@ Stratification variable</li>
 <strong>sdcMicro</strong>) are not currently classified by the LLM. If
 your data contains sensitive attributes (e.g., health status, income
 class) that require
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℓ</mi><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
 checks, set them manually via <code><a href="../reference/sdcMicroObj-class.html">createSdcObj()</a></code>.</p>
 </div>
 <div class="section level3">
@@ -1023,12 +1020,12 @@ graphical interfaces for microdata and tabular data protection
 respectively, with built-in rule-based heuristics. Their workflows are
 well-established in national statistical offices but do not offer the
 kind of natural-language interaction or adaptive strategy generation
-that an LLM enables. <strong>synthpop</strong> <span class="citation">(Nowok, Raab, and Dibben 2016)</span> and
-<strong>simPop</strong> <span class="citation">(Templ et al.
-2017)</span> take a different approach by generating entirely synthetic
-datasets rather than perturbing the original records; they do not
-involve method selection or parameter tuning in the SDC sense and
-therefore address a complementary use case.</p>
+that an LLM enables. <strong>synthpop</strong> <span class="citation">(Nowok et al. 2016)</span> and <strong>simPop</strong>
+<span class="citation">(Templ et al. 2017)</span> take a different
+approach by generating entirely synthetic datasets rather than
+perturbing the original records; they do not involve method selection or
+parameter tuning in the SDC sense and therefore address a complementary
+use case.</p>
 <p>General-purpose AI coding assistants such as ChatGPT or GitHub
 Copilot can generate R code for anonymization when prompted, but they
 operate without the safeguards that the structured tool calling
@@ -1070,7 +1067,7 @@ organizations to weigh model capability against data governance
 requirements according to their own policies.</p>
 <p>Four extensions are tractable from the current codebase. The tool
 calling schema could be extended to support
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℓ</mi><annotation encoding="application/x-tex">\ell</annotation></semantics></math>-diversity
 constraints and the explicit handling of sensitive variables, broadening
 the range of privacy models the system can target. Systematic benchmarks
 comparing AI-suggested strategies against expert-crafted configurations
@@ -1086,7 +1083,7 @@ air-gapped environments.</p>
 <h2 id="computational">Computational details<a class="anchor" aria-label="anchor" href="#computational"></a>
 </h2>
 <p>The results in this vignette were obtained using <strong>R</strong>
-4.5.3 with <strong>sdcMicro</strong> 5.8.1. <strong>R</strong> and all
+4.6.0 with <strong>sdcMicro</strong> 5.8.2. <strong>R</strong> and all
 packages used are available from the Comprehensive R Archive Network
 (CRAN) at <a href="https://CRAN.R-project.org/" class="external-link">https://CRAN.R-project.org/</a>.</p>
 <p>The AI features require an API key for a supported LLM provider
@@ -1098,18 +1095,17 @@ generated using GPT-4.1 with <code>temperature = 0</code>.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-brown2020gpt3" class="csl-entry">
-Brown, Tom, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan,
-Prafulla Dhariwal, Arvind Neelakantan, et al. 2020. <span>“Language
-Models Are Few-Shot Learners.”</span> <em>Advances in Neural Information
-Processing Systems</em> 33: 1877–1901. <a href="https://doi.org/10.48550/arXiv.2005.14165" class="external-link">https://doi.org/10.48550/arXiv.2005.14165</a>.
+<span class="nocase">Brown, Tom, Benjamin Mann, Nick Ryder, et
+al.</span> 2020. <span>“Language Models Are Few-Shot Learners.”</span>
+<em>Advances in Neural Information Processing Systems</em> 33: 1877–901.
+<a href="https://doi.org/10.48550/arXiv.2005.14165" class="external-link">https://doi.org/10.48550/arXiv.2005.14165</a>.
 </div>
 <div id="ref-chen2021codex" class="csl-entry">
-Chen, Mark, Jerry Tworek, Heewoo Jun, Qiming Yuan, Henrique Ponde de
-Oliveira Pinto, Jared Kaplan, Harri Edwards, et al. 2021.
-<span>“Evaluating Large Language Models Trained on Code.”</span>
-<em>arXiv Preprint arXiv:2107.03374</em>. <a href="https://doi.org/10.48550/arXiv.2107.03374" class="external-link">https://doi.org/10.48550/arXiv.2107.03374</a>.
+<span class="nocase">Chen, Mark, Jerry Tworek, Heewoo Jun, et al.</span>
+2021. <span>“Evaluating Large Language Models Trained on Code.”</span>
+<em>arXiv Preprint arXiv:2107.03374</em>, ahead of print. <a href="https://doi.org/10.48550/arXiv.2107.03374" class="external-link">https://doi.org/10.48550/arXiv.2107.03374</a>.
 </div>
 <div id="ref-domingo2001" class="csl-entry">
 Domingo-Ferrer, Josep, and Josep Maria Mateo-Sanz. 2001. <span>“A
@@ -1118,13 +1114,13 @@ Microdata.”</span> <em>Confidentiality, Disclosure and Data Access:
 Theory and Practical Applications for Statistical Agencies</em>, 111–33.
 </div>
 <div id="ref-domingoferrer2002mdav" class="csl-entry">
-———. 2002. <span>“Practical Data-Oriented Microaggregation for
-Statistical Disclosure Control.”</span> <em>IEEE Transactions on
-Knowledge and Data Engineering</em> 14 (1): 189–201. <a href="https://doi.org/10.1109/69.979982" class="external-link">https://doi.org/10.1109/69.979982</a>.
+Domingo-Ferrer, Josep, and Josep Maria Mateo-Sanz. 2002.
+<span>“Practical Data-Oriented Microaggregation for Statistical
+Disclosure Control.”</span> <em>IEEE Transactions on Knowledge and Data
+Engineering</em> 14 (1): 189–201. <a href="https://doi.org/10.1109/69.979982" class="external-link">https://doi.org/10.1109/69.979982</a>.
 </div>
 <div id="ref-hundepool2012" class="csl-entry">
-Hundepool, Anco, Josep Domingo-Ferrer, Luisa Franconi, Sarah Giessing,
-Eric Schulte Nordholt, Keith Spicer, and Peter-Paul de Wolf. 2012.
+Hundepool, Anco, Josep Domingo-Ferrer, Luisa Franconi, et al. 2012.
 <em>Statistical Disclosure Control</em>. Wiley Series in Survey
 Methodology. John Wiley &amp; Sons. <a href="https://doi.org/10.1002/9781118348239" class="external-link">https://doi.org/10.1002/9781118348239</a>.
 </div>
@@ -1135,22 +1131,22 @@ Beyond k-Anonymity.”</span> <em>ACM Transactions on Knowledge Discovery
 from Data</em> 1 (1): 3. <a href="https://doi.org/10.1145/1217299.1217302" class="external-link">https://doi.org/10.1145/1217299.1217302</a>.
 </div>
 <div id="ref-madaan2023selfrefine" class="csl-entry">
-Madaan, Aman, Niket Tandon, Prakhar Gupta, Skyler Hallinan, Luyu Gao,
-Sarah Wiegreffe, Uri Alon, et al. 2023. <span>“<span>Self-Refine</span>:
-Iterative Refinement with Self-Feedback.”</span> In <em>Advances in
-Neural Information Processing Systems</em>. Vol. 36. <a href="https://doi.org/10.48550/arXiv.2303.17651" class="external-link">https://doi.org/10.48550/arXiv.2303.17651</a>.
+Madaan, Aman, Niket Tandon, Prakhar Gupta, et al. 2023.
+<span>“<span>Self-Refine</span>: Iterative Refinement with
+Self-Feedback.”</span> <em>Advances in Neural Information Processing
+Systems</em> 36. <a href="https://doi.org/10.48550/arXiv.2303.17651" class="external-link">https://doi.org/10.48550/arXiv.2303.17651</a>.
 </div>
 <div id="ref-mateo2004" class="csl-entry">
 Mateo-Sanz, Josep Maria, Josep Domingo-Ferrer, and Francesc Sebé. 2004.
 <span>“Probabilistic Information Loss Measures in Confidentiality
-Protection of Continuous Microdata.”</span> In <em>Privacy in
-Statistical Databases (<span>PSD</span> 2004)</em>, 3050:95–106. Lecture
-Notes in Computer Science. Springer.
+Protection of Continuous Microdata.”</span> <em>Privacy in Statistical
+Databases (<span>PSD</span> 2004)</em>, Lecture notes in computer
+science, vol. 3050: 95–106.
 </div>
 <div id="ref-moore1996rankswap" class="csl-entry">
-Moore, Richard A. 1996. <span>“Controlled Data Swapping Techniques for
-Masking Public Use Microdata Sets.”</span> Research Report RR96-04. U.S.
-Bureau of the Census, Statistical Research Division.
+Moore, Richard A. 1996. <em>Controlled Data Swapping Techniques for
+Masking Public Use Microdata Sets</em>. Research Report Nos. RR96-04.
+U.S. Bureau of the Census, Statistical Research Division.
 </div>
 <div id="ref-nowok2016synthpop" class="csl-entry">
 Nowok, Beata, Gillian M. Raab, and Chris Dibben. 2016. <span>“<span class="nocase">synthpop</span>: Bespoke Creation of Synthetic Data in
@@ -1161,12 +1157,11 @@ Nowok, Beata, Gillian M. Raab, and Chris Dibben. 2016. <span>“<span class="noc
 Prasser, Fabian, Johanna Eicher, Helmut Spengler, Raffael Bild, and
 Klaus A. Kuhn. 2020. <span>“Flexible Data Anonymization Using
 <span>ARX</span> – Current Status and Challenges Ahead.”</span>
-<em>Software: Practice and Experience</em> 50 (7): 1277–1304. <a href="https://doi.org/10.1002/spe.2812" class="external-link">https://doi.org/10.1002/spe.2812</a>.
+<em>Software: Practice and Experience</em> 50 (7): 1277–304. <a href="https://doi.org/10.1002/spe.2812" class="external-link">https://doi.org/10.1002/spe.2812</a>.
 </div>
 <div id="ref-R2024" class="csl-entry">
 R Core Team. 2024. <em>R: A Language and Environment for Statistical
-Computing</em>. Vienna, Austria: R Foundation for Statistical Computing.
-<a href="https://www.R-project.org/" class="external-link">https://www.R-project.org/</a>.
+Computing</em>. R Foundation for Statistical Computing. <a href="https://www.R-project.org/" class="external-link">https://www.R-project.org/</a>.
 </div>
 <div id="ref-samarati2001" class="csl-entry">
 Samarati, Pierangela. 2001. <span>“Protecting Respondents’ Identities in
@@ -1174,8 +1169,7 @@ Microdata Release.”</span> <em>IEEE Transactions on Knowledge and Data
 Engineering</em> 13 (6): 1010–27. <a href="https://doi.org/10.1109/69.971193" class="external-link">https://doi.org/10.1109/69.971193</a>.
 </div>
 <div id="ref-schick2023toolformer" class="csl-entry">
-Schick, Timo, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria
-Lomeli, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom. 2023.
+Schick, Timo, Jane Dwivedi-Yu, Roberto Dessì, et al. 2023.
 <span>“Toolformer: Language Models Can Teach Themselves to Use
 Tools.”</span> <em>Advances in Neural Information Processing
 Systems</em> 36: 68539–51. <a href="https://doi.org/10.48550/arXiv.2302.04761" class="external-link">https://doi.org/10.48550/arXiv.2302.04761</a>.
@@ -1205,15 +1199,14 @@ Dupriez. 2017. <span>“Simulation of Synthetic Complex Data: The
 <div id="ref-yancey2002" class="csl-entry">
 Yancey, William E., William E. Winkler, and Robert H. Creecy. 2002.
 <span>“Disclosure Risk Assessment in Perturbative Microdata
-Protection.”</span> In <em>Inference Control in Statistical
-Databases</em>, 2316:135–52. Lecture Notes in Computer Science.
-Springer. <a href="https://doi.org/10.1007/3-540-47804-3_11" class="external-link">https://doi.org/10.1007/3-540-47804-3_11</a>.
+Protection.”</span> <em>Inference Control in Statistical Databases</em>,
+Lecture notes in computer science, vol. 2316: 135–52. <a href="https://doi.org/10.1007/3-540-47804-3_11" class="external-link">https://doi.org/10.1007/3-540-47804-3_11</a>.
 </div>
 <div id="ref-yao2023react" class="csl-entry">
-Yao, Shunyu, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik
-Narasimhan, and Yuan Cao. 2023. <span>“<span>ReAct</span>: Synergizing
-Reasoning and Acting in Language Models.”</span> In <em>International
-Conference on Learning Representations (<span>ICLR</span>)</em>. <a href="https://doi.org/10.48550/arXiv.2210.03629" class="external-link">https://doi.org/10.48550/arXiv.2210.03629</a>.
+Yao, Shunyu, Jeffrey Zhao, Dian Yu, et al. 2023.
+<span>“<span>ReAct</span>: Synergizing Reasoning and Acting in Language
+Models.”</span> <em>International Conference on Learning Representations
+(<span>ICLR</span>)</em>. <a href="https://doi.org/10.48550/arXiv.2210.03629" class="external-link">https://doi.org/10.48550/arXiv.2210.03629</a>.
 </div>
 </div>
 </div>

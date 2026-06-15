@@ -19,7 +19,7 @@ with a combined utility score, and the best is selected."><!-- mathjax --><scrip
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sdcMicro</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.8.2</span>
       </span>
     </div>
 
@@ -82,6 +82,8 @@ with a combined utility score, and the best is selected.</p>
 <span>  max_iter <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  n_strategies <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span>,</span>
+<span>  tol <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>  patience <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  generateReport <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -135,6 +137,20 @@ best strategy and asks for confirmation before applying.</p></dd>
 <dt id="arg-weights">weights<a class="anchor" aria-label="anchor" href="#arg-weights"></a></dt>
 <dd><p>Numeric vector of length 3: weights for suppression rate,
 category loss, and IL1 in the utility score. Default <code>c(1/3, 1/3, 1/3)</code>.</p></dd>
+
+
+<dt id="arg-tol">tol<a class="anchor" aria-label="anchor" href="#arg-tol"></a></dt>
+<dd><p>Minimum reduction in the combined utility score \(U\) for a
+refinement iteration to count as an improvement; refinements that lower
+\(U\) by less than <code>tol</code> are treated as a stall. Default <code>1e-3</code>.</p></dd>
+
+
+<dt id="arg-patience">patience<a class="anchor" aria-label="anchor" href="#arg-patience"></a></dt>
+<dd><p>Number of consecutive refinement iterations without an
+improvement greater than <code>tol</code> that triggers early stopping of the
+refinement loop. Default <code>1</code>. The initial batch phase always runs in
+full; <code>max_iter</code> remains the upper bound on the number of refinement
+iterations.</p></dd>
 
 
 <dt id="arg-generatereport">generateReport<a class="anchor" aria-label="anchor" href="#arg-generatereport"></a></dt>
