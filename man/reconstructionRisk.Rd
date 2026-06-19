@@ -9,10 +9,10 @@
 \usage{
 reconstructionRisk(
   x,
-  keyVars,
+  keyVars = NULL,
   w = NULL,
   accuracy = NULL,
-  survey = !is.null(w),
+  survey = NULL,
   method = "approx"
 )
 
@@ -23,10 +23,12 @@ reconstructionRisk(
 \method{print}{summary.reconstructionRisk}(x, ...)
 }
 \arguments{
-\item{x}{a \code{data.frame} (or \code{matrix}) holding the key variables; key
-columns may contain \code{NA}.}
+\item{x}{a \code{data.frame}, \code{matrix}, or \code{\linkS4class{sdcMicroObj}}
+object. For an \code{sdcMicroObj} the (possibly suppressed) manipulated key
+variables and the survey weight are used; key columns may contain \code{NA}.}
 
-\item{keyVars}{column names or indices of the categorical key variables.}
+\item{keyVars}{column names or indices of the categorical key variables. Ignored
+(taken from the object) when \code{x} is an \code{sdcMicroObj}.}
 
 \item{w}{optional column name or index of a sampling-weight variable, passed to
 \code{\link{freqCalc}} for the population frequency estimate \code{Fk}.}
@@ -40,7 +42,7 @@ numeric vector of length \code{length(keyVars)}.}
 
 \item{survey}{\code{TRUE} for survey data (Benedetti-Franconi individual risk via
 \code{\link{indivRisk}}), \code{FALSE} for a population (risk \code{= 1 / fk}).
-Defaults to \code{TRUE} when \code{w} is supplied.}
+Defaults (\code{NULL}) to \code{TRUE} when a weight is available.}
 
 \item{method}{\code{"approx"} (default) or \code{"exact"}, passed to
 \code{\link{indivRisk}}.}
@@ -107,6 +109,16 @@ rr
 ## bounds bracket the reference risk by construction:
 stopifnot(all(rr$risk_lower <= rr$risk + 1e-9),
           all(rr$risk <= rr$risk_upper + 1e-9))
+
+## sdcMicroObj method: uses the suppressed manipulated keys and the weight
+\donttest{
+data(testdata)
+sdc <- createSdcObj(testdata,
+  keyVars = c("urbrur", "roof", "walls", "water", "sex"),
+  w = "sampling_weight")
+sdc <- localSuppression(sdc)
+reconstructionRisk(sdc)
+}
 }
 \references{
 Shlomo, N. and Skinner, C. (2010). Assessing the protection provided by

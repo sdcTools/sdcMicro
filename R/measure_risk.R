@@ -52,6 +52,7 @@
 #' \item{hid: }{name of the clustering variable, e.g. the household ID}
 #' \item{max_global_risk: }{Maximal global risk for threshold computation}
 #' \item{fast_hier: }{If TRUE a fast approximation is computed if household data are provided.}
+#' \item{reconstruction: }{If TRUE (default FALSE), additionally estimate \code{\link{reconstructionRisk}} for key variables containing missing values; attached as list element \code{reconstruction}.}
 #' }
 #' @return A modified \code{\link{sdcMicroObj-class}} object or a list with the following elements:
 #' \describe{
@@ -65,7 +66,8 @@
 #' \item{hier_risk: }{global risk with household structure (sum of indivdual risks).}
 #' \item{hier_risk_pct: }{global risk with household structure in percent.}
 #' \item{ldiverstiy: }{Matrix with Distinct_Ldiversity,
-#' Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}}
+#' Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}
+#' \item{reconstruction: }{present only if \code{reconstruction = TRUE}: a list with per-record reconstruction \code{risk} and bounds (\code{lower}, \code{upper}), per-key \code{accuracy}, and \code{n_missing}.}}
 #' @author Alexander Kowarik, Bernhard Meindl, Matthias Templ, Bernd Prantner, minor parts of IHSN C++ source
 #' @seealso \code{\link{freqCalc}}, \code{\link{indivRisk}}
 #' @references Franconi, L. and Polettini, S. (2004) \emph{Individual risk
@@ -174,6 +176,7 @@ setMethod(f="measure_riskX", signature=c("sdcMicroObj"),
     risk$global$hier_risk_pct <- res$hier_risk_pct
   }
   risk$individual <- res$Res
+  if (!is.null(res$reconstruction)) risk$reconstruction <- res$reconstruction
 
   obj <- set.sdcMicroObj(obj, type="risk", input=list(risk))
   obj
@@ -190,7 +193,7 @@ definition=function(obj, ...) {
   measure_riskWORK(data=obj, alpha=alpha, ...)
 })
 
-measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_global_risk=0.01, fast_hier=TRUE, alpha) {
+measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_global_risk=0.01, fast_hier=TRUE, alpha, reconstruction=FALSE) {
   if (!is.data.frame(data)) {
     data <- as.data.frame(data)
   }
@@ -297,6 +300,12 @@ measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_
       res[["hier_risk_pct"]] <- resh[["hier_risk_pct"]]
     }
     colnames(res$Res) <- c("risk", "fk", "Fk", "hier_risk")
+  }
+  if (isTRUE(reconstruction)) {
+    rr <- reconstructionRisk(data, keyVars=variables, w=weight_variable,
+      survey=!is.null(weight_variable))
+    res$reconstruction <- list(risk=rr$risk, lower=rr$risk_lower, upper=rr$risk_upper,
+      accuracy=rr$accuracy, n_missing=rr$n_missing)
   }
   invisible(res)
 }
@@ -497,6 +506,15 @@ print.measure_risk <- function(x, ...) {
       message("Hierarchical risk not available\n")
       message("--------------------------\n")
     }
+  }
+  if ("reconstruction" %in% names(x)) {
+    rc <- x$reconstruction
+    message("--------------------------\n")
+    message("Reconstruction risk (", rc$n_missing, " records with missing keys)\n")
+    message("mean risk: lower=", round(mean(rc$lower), 4),
+      " reference=", round(mean(rc$risk), 4),
+      " upper=", round(mean(rc$upper), 4), "\n")
+    message("--------------------------\n")
   }
 }
 

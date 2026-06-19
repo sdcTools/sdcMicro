@@ -83,3 +83,53 @@ test_that("default accuracy is higher for a well-predicted key than a random one
   rr <- reconstructionRisk(dat, keyVars = 1:3, survey = FALSE)
   expect_gt(rr$accuracy["a"], rr$accuracy["rnd"])
 })
+
+test_that("sdcMicroObj method uses the suppressed manipulated keys + weight", {
+  data(testdata, package = "sdcMicro")
+  kv <- c("urbrur", "roof", "walls", "water", "sex")
+  sdc <- createSdcObj(testdata, keyVars = kv, w = "sampling_weight")
+  sdc <- localSuppression(sdc)
+  rr <- reconstructionRisk(sdc)
+
+  expect_s3_class(rr, "reconstructionRisk")
+  expect_true(rr$n_missing > 0)                    # localSuppression introduced NAs
+  expect_length(rr$risk, nrow(testdata))
+  expect_true(all(rr$risk_lower <= rr$risk + 1e-9))
+  expect_true(all(rr$risk <= rr$risk_upper + 1e-9))
+
+  # identical to calling the data.frame method on the manipulated keys + weight
+  manip <- sdc@manipKeyVars
+  manip$.w <- testdata$sampling_weight
+  rr2 <- reconstructionRisk(manip, keyVars = seq_along(kv), w = ncol(manip))
+  expect_equal(rr$risk, rr2$risk)
+
+  expect_warning(reconstructionRisk(sdc, keyVars = 1:2), "ignored")
+})
+
+test_that("measure_risk(reconstruction=TRUE) adds the field; default is unchanged", {
+  data(testdata, package = "sdcMicro")
+  kv <- c("urbrur", "roof", "walls", "water", "sex")
+  sdc <- createSdcObj(testdata, keyVars = kv, w = "sampling_weight")
+  sdc <- localSuppression(sdc)
+
+  sdc0 <- measure_risk(sdc)                         # default: no reconstruction field
+  expect_null(sdc0@risk$reconstruction)
+
+  sdc1 <- measure_risk(sdc, reconstruction = TRUE)  # opt-in: additive field
+  rc <- sdc1@risk$reconstruction
+  expect_false(is.null(rc))
+  expect_length(rc$risk, nrow(testdata))
+  expect_true(all(rc$lower <= rc$risk + 1e-9))
+  expect_true(all(rc$risk  <= rc$upper + 1e-9))
+  # the existing individual-risk output is byte-identical with/without the option
+  expect_equal(sdc0@risk$individual, sdc1@risk$individual)
+})
+
+test_that("measure_risk data.frame method supports reconstruction", {
+  data(testdata, package = "sdcMicro")
+  kv <- c("urbrur", "roof", "walls", "water", "sex")
+  td <- testdata; td$roof[1:30] <- NA              # induce missings in a key
+  mr <- measure_risk(td, keyVars = kv, w = "sampling_weight", reconstruction = TRUE)
+  expect_false(is.null(mr$reconstruction))
+  expect_length(mr$reconstruction$risk, nrow(td))
+})

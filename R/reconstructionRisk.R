@@ -33,9 +33,11 @@
 #' complete records - this function assigns a missing-aware risk to the suppressed
 #' records directly.
 #'
-#' @param x a \code{data.frame} (or \code{matrix}) holding the key variables; key
-#'   columns may contain \code{NA}.
-#' @param keyVars column names or indices of the categorical key variables.
+#' @param x a \code{data.frame}, \code{matrix}, or \code{\linkS4class{sdcMicroObj}}
+#'   object. For an \code{sdcMicroObj} the (possibly suppressed) manipulated key
+#'   variables and the survey weight are used; key columns may contain \code{NA}.
+#' @param keyVars column names or indices of the categorical key variables. Ignored
+#'   (taken from the object) when \code{x} is an \code{sdcMicroObj}.
 #' @param w optional column name or index of a sampling-weight variable, passed to
 #'   \code{\link{freqCalc}} for the population frequency estimate \code{Fk}.
 #' @param accuracy per-key reconstruction accuracy of the intruder (the probability
@@ -46,7 +48,7 @@
 #'   numeric vector of length \code{length(keyVars)}.
 #' @param survey \code{TRUE} for survey data (Benedetti-Franconi individual risk via
 #'   \code{\link{indivRisk}}), \code{FALSE} for a population (risk \code{= 1 / fk}).
-#'   Defaults to \code{TRUE} when \code{w} is supplied.
+#'   Defaults (\code{NULL}) to \code{TRUE} when a weight is available.
 #' @param method \code{"approx"} (default) or \code{"exact"}, passed to
 #'   \code{\link{indivRisk}}.
 #'
@@ -87,11 +89,39 @@
 #' ## bounds bracket the reference risk by construction:
 #' stopifnot(all(rr$risk_lower <= rr$risk + 1e-9),
 #'           all(rr$risk <= rr$risk_upper + 1e-9))
-reconstructionRisk <- function(x, keyVars, w = NULL, accuracy = NULL,
-                               survey = !is.null(w), method = "approx") {
+#'
+#' ## sdcMicroObj method: uses the suppressed manipulated keys and the weight
+#' \donttest{
+#' data(testdata)
+#' sdc <- createSdcObj(testdata,
+#'   keyVars = c("urbrur", "roof", "walls", "water", "sex"),
+#'   w = "sampling_weight")
+#' sdc <- localSuppression(sdc)
+#' reconstructionRisk(sdc)
+#' }
+reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
+                               survey = NULL, method = "approx") {
+  ## sdcMicroObj method: use the (possibly suppressed) manipulated key variables
+  if (inherits(x, "sdcMicroObj")) {
+    if (!is.null(keyVars))
+      warning("'keyVars' is ignored for 'sdcMicroObj' input; the object's key variables are used")
+    manip <- get.sdcMicroObj(x, type = "manipKeyVars")
+    wv <- get.sdcMicroObj(x, type = "weightVar")
+    dat <- manip
+    ww <- NULL
+    if (length(wv) > 0) {
+      dat[[".reconstructionWeight"]] <- get.sdcMicroObj(x, type = "origData")[, wv]
+      ww <- ncol(dat)
+    }
+    if (is.null(survey)) survey <- length(wv) > 0
+    return(reconstructionRisk(dat, keyVars = seq_len(ncol(manip)), w = ww,
+                              accuracy = accuracy, survey = survey, method = method))
+  }
   if (is.matrix(x)) x <- as.data.frame(x)
-  if (!is.data.frame(x)) stop("'x' must be a data.frame or matrix")
+  if (!is.data.frame(x)) stop("'x' must be a 'data.frame', 'matrix' or 'sdcMicroObj'")
   if (nrow(x) == 0L) stop("'x' has no rows")
+  if (is.null(keyVars)) stop("'keyVars' must be supplied for 'data.frame' input")
+  if (is.null(survey)) survey <- !is.null(w)
 
   ## resolve key-variable names / indices
   if (is.character(keyVars)) {
