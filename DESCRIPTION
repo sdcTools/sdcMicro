@@ -97,6 +97,7 @@ Collate:
     'pram.R'
     'rankSwap.R'
     'RcppExports.R'
+    'reconstructionRisk.R'
     'recordLinkage.R'
     'recordSwap.R'
     'report.R'
