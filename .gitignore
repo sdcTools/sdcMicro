@@ -36,3 +36,5 @@ docs
 .claude/
 CLAUDE.md
 docs/plans/
+.agents/
+AGENTS.md
