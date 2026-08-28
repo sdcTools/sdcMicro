@@ -151,3 +151,15 @@ test_that("measure_risk data.frame method supports reconstruction", {
   expect_false(is.null(mr$reconstruction))
   expect_length(mr$reconstruction$risk, nrow(td))
 })
+
+test_that("measure_risk(reconstruction=TRUE) on an sdcMicroObj takes the scenario-B path", {
+  data(testdata, package = "sdcMicro")
+  kv <- c("urbrur", "roof", "walls", "water", "sex")
+  sdc <- createSdcObj(testdata, keyVars = kv, w = "sampling_weight")
+  sdc <- localSuppression(sdc)
+  rc <- measure_risk(sdc, reconstruction = TRUE)@risk$reconstruction
+  rr <- reconstructionRisk(sdc)
+  expect_equal(rc$scenario, "B (known truth)")
+  expect_equal(rc$risk, rr$risk)
+  expect_equal(rc$reconstruction_prob, rr$reconstruction_prob)
+})
