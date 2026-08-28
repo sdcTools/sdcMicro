@@ -97,13 +97,31 @@ test_that("sdcMicroObj method uses the suppressed manipulated keys + weight", {
   expect_true(all(rr$risk_lower <= rr$risk + 1e-9))
   expect_true(all(rr$risk <= rr$risk_upper + 1e-9))
 
-  # identical to calling the data.frame method on the manipulated keys + weight
+  # scenario B: the object passes the original key values on automatically
+  expect_equal(rr$scenario, "B (known truth)")
+  # identical to the data.frame method on the manipulated keys + weight + original
   manip <- sdc@manipKeyVars
   manip$.w <- testdata$sampling_weight
-  rr2 <- reconstructionRisk(manip, keyVars = seq_along(kv), w = ncol(manip))
+  rr2 <- reconstructionRisk(manip, keyVars = seq_along(kv), w = ncol(manip),
+                            original = testdata[, kv])
   expect_equal(rr$risk, rr2$risk)
 
   expect_warning(reconstructionRisk(sdc, keyVars = 1:2), "ignored")
+})
+
+test_that("scenario B weight is the per-record probability of the true value", {
+  set.seed(3); n <- 600
+  o <- sample(1:3, n, replace = TRUE)
+  a <- ifelse(runif(n) < 0.85, 1L, 2L)            # value 1 common (~85%), value 2 rare
+  orig <- data.frame(a = a, o = o)
+  rel <- orig; rel$a <- NA_integer_               # suppress 'a' everywhere
+  rr <- reconstructionRisk(rel, keyVars = 1:2, original = orig, survey = FALSE)
+
+  expect_equal(rr$scenario, "B (known truth)")
+  # records whose true value is the common one are far easier to reconstruct
+  expect_gt(mean(rr$reconstruction_prob[a == 1]), mean(rr$reconstruction_prob[a == 2]))
+  expect_true(all(rr$reconstruction_prob >= 0 & rr$reconstruction_prob <= 1))
+  expect_true(all(rr$risk_lower <= rr$risk + 1e-9) && all(rr$risk <= rr$risk_upper + 1e-9))
 })
 
 test_that("measure_risk(reconstruction=TRUE) adds the field; default is unchanged", {

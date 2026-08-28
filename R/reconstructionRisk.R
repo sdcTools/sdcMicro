@@ -18,10 +18,11 @@
 #'     key variables (the released file is returned to its un-suppressed equivalence
 #'     classes).}
 #'   \item{\code{risk}}{the \emph{reference} risk of a realistic reconstruct-and-attack
-#'     intruder, interpolating between the bounds by the per-key reconstruction
-#'     accuracy \code{accuracy} (the diagonal of the implied misclassification
-#'     matrix). For a record with missing keys \eqn{M}, \code{risk = max(prod(accuracy[M])
-#'     * risk_upper, risk_lower)}.}
+#'     intruder, interpolating between the bounds by a reconstruction weight. In
+#'     scenario B (argument \code{original} supplied, e.g. for an \code{sdcMicroObj})
+#'     the weight is the \emph{per-record} predictive probability of the record's true
+#'     value; otherwise (scenario A) it is the average per-key \code{accuracy}. For a
+#'     record \code{i}, \code{risk = max(weight_i * risk_upper_i, risk_lower_i)}.}
 #' }
 #'
 #' The construction follows the misclassification-risk framework of Shlomo and
@@ -51,11 +52,19 @@
 #'   Defaults (\code{NULL}) to \code{TRUE} when a weight is available.
 #' @param method \code{"approx"} (default) or \code{"exact"}, passed to
 #'   \code{\link{indivRisk}}.
+#' @param original optional original (pre-suppression) values of the key variables,
+#'   one column per key variable, same rows as \code{x} and without missing values
+#'   (scenario B, where the agency knows the suppressed truth). When supplied, the
+#'   conservative bound is computed on the true cells and the reconstruction weight is
+#'   each record's predictive probability of its true value. For an \code{sdcMicroObj}
+#'   the original key variables are used automatically.
 #'
 #' @return An object of class \code{"reconstructionRisk"}: a list with per-record
-#'   vectors \code{risk}, \code{risk_lower}, \code{risk_upper}, \code{fk}, \code{Fk},
-#'   the \code{accuracy} used, the number of records with at least one missing key
-#'   \code{n_missing}, and bookkeeping (\code{knames}, \code{method}, \code{survey}).
+#'   vectors \code{risk}, \code{risk_lower}, \code{risk_upper}, \code{reconstruction_prob}
+#'   (the per-record reconstruction weight), \code{fk}, \code{Fk}, the per-key
+#'   \code{accuracy}, the \code{scenario}, the number of records with at least one
+#'   missing key \code{n_missing}, and bookkeeping (\code{knames}, \code{method},
+#'   \code{survey}).
 #'
 #' @references
 #' Shlomo, N. and Skinner, C. (2010). Assessing the protection provided by
@@ -100,12 +109,16 @@
 #' reconstructionRisk(sdc)
 #' }
 reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
-                               survey = NULL, method = "approx") {
-  ## sdcMicroObj method: use the (possibly suppressed) manipulated key variables
+                               survey = NULL, method = "approx", original = NULL) {
+  ## sdcMicroObj method: use the (possibly suppressed) manipulated key variables.
+  ## The agency knows the suppressed truth (scenario B), so the original key values
+  ## are passed on for the per-record reconstruction probability and the true cells.
   if (inherits(x, "sdcMicroObj")) {
     if (!is.null(keyVars))
       warning("'keyVars' is ignored for 'sdcMicroObj' input; the object's key variables are used")
     manip <- get.sdcMicroObj(x, type = "manipKeyVars")
+    kvIdx <- get.sdcMicroObj(x, type = "keyVars")
+    orig_keys <- get.sdcMicroObj(x, type = "origData")[, kvIdx, drop = FALSE]
     wv <- get.sdcMicroObj(x, type = "weightVar")
     dat <- manip
     ww <- NULL
@@ -115,7 +128,8 @@ reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
     }
     if (is.null(survey)) survey <- length(wv) > 0
     return(reconstructionRisk(dat, keyVars = seq_len(ncol(manip)), w = ww,
-                              accuracy = accuracy, survey = survey, method = method))
+                              accuracy = accuracy, survey = survey, method = method,
+                              original = orig_keys))
   }
   if (is.matrix(x)) x <- as.data.frame(x)
   if (!is.data.frame(x)) stop("'x' must be a 'data.frame', 'matrix' or 'sdcMicroObj'")
@@ -154,24 +168,39 @@ reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
   fc_lo <- freqCalc(x, keyVars = kidx, w = w, alpha = 1)
   rk_lo <- indivRisk(fc_lo, method = method, survey = survey)$rk
 
-  ## 3. conservative bound (perfect reconstruction): modal-impute the keys, then count
-  x_imp <- x
-  x_imp[, kidx] <- .impute_modal(K)
-  fc_hi <- freqCalc(x_imp, keyVars = kidx, w = w, alpha = 1)
-  rk_hi <- indivRisk(fc_hi, method = method, survey = survey)$rk
-
-  ## 4. reference risk: reconstruct-and-attack, scaled by per-record reconstruction success
-  prod_acc <- rep(1, nrow(x))
-  if (any(has_na)) {
-    prod_acc[has_na] <- vapply(which(has_na),
-      function(i) prod(acc[miss_mat[i, ]]), numeric(1))
+  ## 3. conservative bound (perfect reconstruction) and 4. reference risk.
+  ## With 'original' (scenario B: the agency knows the suppressed truth) the
+  ## conservative bound uses the TRUE cells and the reconstruction weight is the
+  ## per-record predictive probability of the record's true value, pi_i(c_i).
+  ## Otherwise (scenario A: the truth is unknown) modal imputation and the average
+  ## per-key 'accuracy' are used as an approximation.
+  if (!is.null(original)) {
+    original <- as.data.frame(original)
+    if (ncol(original) != nkey || nrow(original) != nrow(x))
+      stop("'original' must have one column per key variable and the same rows as 'x'")
+    x_true <- x; x_true[, kidx] <- original
+    fc_hi <- freqCalc(x_true, keyVars = kidx, w = w, alpha = 1)
+    rk_hi <- indivRisk(fc_hi, method = method, survey = survey)$rk
+    rec_prob <- .recon_prob_record(original, miss_mat)
+  } else {
+    x_imp <- x
+    x_imp[, kidx] <- .impute_modal(K)
+    fc_hi <- freqCalc(x_imp, keyVars = kidx, w = w, alpha = 1)
+    rk_hi <- indivRisk(fc_hi, method = method, survey = survey)$rk
+    rec_prob <- rep(1, nrow(x))
+    if (any(has_na)) {
+      rec_prob[has_na] <- vapply(which(has_na),
+        function(i) prod(acc[miss_mat[i, ]]), numeric(1))
+    }
   }
-  rk_ref <- pmax(prod_acc * rk_hi, rk_lo)
+  rk_ref <- pmax(rec_prob * rk_hi, rk_lo)
 
   res <- list(
     risk = rk_ref, risk_lower = rk_lo, risk_upper = rk_hi,
     fk = fc_lo$fk, Fk = fc_lo$Fk,
-    accuracy = acc, n_missing = sum(has_na), N = nrow(x),
+    accuracy = acc, reconstruction_prob = rec_prob,
+    scenario = if (is.null(original)) "A (modal imputation)" else "B (known truth)",
+    n_missing = sum(has_na), N = nrow(x),
     knames = knames, method = method, survey = survey, call = match.call()
   )
   class(res) <- "reconstructionRisk"
@@ -187,6 +216,32 @@ reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
   modes <- tapply(y[obs], sig[obs], function(v) names(sort(table(v), decreasing = TRUE))[1L])
   pred <- modes[sig[obs]]
   mean(pred == y[obs], na.rm = TRUE)
+}
+
+## per-record reconstruction probability (scenario B): for each record, the product
+## over its missing keys of P(X_j = the record's TRUE value | its other keys),
+## estimated from the complete (original) key data. A record whose suppressed value
+## is rare in its cell gets a low probability (it is hard to reconstruct).
+## Note: for records with several missing keys each factor conditions on ALL other
+## keys at their true values (a product of full conditionals). This coincides with
+## the exact chain-rule probability when one key is missing; with several missing
+## keys the direction of the discrepancy depends on their dependence given the
+## observed keys and is not uniformly conservative.
+.recon_prob_record <- function(orig, miss_mat) {
+  orig <- as.data.frame(orig)
+  n <- nrow(orig); nkey <- ncol(orig)
+  prob <- rep(1, n)
+  for (j in seq_len(nkey)) {
+    mi <- which(miss_mat[, j])
+    if (!length(mi)) next
+    others <- setdiff(seq_len(nkey), j)
+    so <- if (length(others)) .keysig(orig[others]) else rep("", n)
+    yj <- as.character(orig[[j]])
+    tab <- table(so, yj)
+    csz <- rowSums(tab)
+    prob[mi] <- prob[mi] * mapply(function(s, v) tab[s, v] / csz[s], so[mi], yj[mi])
+  }
+  prob
 }
 
 ## modal imputation of every NA in the key columns, cell-wise on the other keys

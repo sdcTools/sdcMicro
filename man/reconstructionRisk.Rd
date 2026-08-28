@@ -13,7 +13,8 @@ reconstructionRisk(
   w = NULL,
   accuracy = NULL,
   survey = NULL,
-  method = "approx"
+  method = "approx",
+  original = NULL
 )
 
 \method{print}{reconstructionRisk}(x, ...)
@@ -47,15 +48,24 @@ Defaults (\code{NULL}) to \code{TRUE} when a weight is available.}
 \item{method}{\code{"approx"} (default) or \code{"exact"}, passed to
 \code{\link{indivRisk}}.}
 
+\item{original}{optional original (pre-suppression) values of the key variables,
+one column per key variable, same rows as \code{x} and without missing values
+(scenario B, where the agency knows the suppressed truth). When supplied, the
+conservative bound is computed on the true cells and the reconstruction weight is
+each record's predictive probability of its true value. For an \code{sdcMicroObj}
+the original key variables are used automatically.}
+
 \item{\dots}{further arguments (currently ignored).}
 
 \item{object}{an object of class \code{"reconstructionRisk"}.}
 }
 \value{
 An object of class \code{"reconstructionRisk"}: a list with per-record
-  vectors \code{risk}, \code{risk_lower}, \code{risk_upper}, \code{fk}, \code{Fk},
-  the \code{accuracy} used, the number of records with at least one missing key
-  \code{n_missing}, and bookkeeping (\code{knames}, \code{method}, \code{survey}).
+  vectors \code{risk}, \code{risk_lower}, \code{risk_upper}, \code{reconstruction_prob}
+  (the per-record reconstruction weight), \code{fk}, \code{Fk}, the per-key
+  \code{accuracy}, the \code{scenario}, the number of records with at least one
+  missing key \code{n_missing}, and bookkeeping (\code{knames}, \code{method},
+  \code{survey}).
 }
 \description{
 Estimates individual re-identification risk when one or more categorical key
@@ -77,10 +87,11 @@ key variables and reports three quantities per record:
     key variables (the released file is returned to its un-suppressed equivalence
     classes).}
   \item{\code{risk}}{the \emph{reference} risk of a realistic reconstruct-and-attack
-    intruder, interpolating between the bounds by the per-key reconstruction
-    accuracy \code{accuracy} (the diagonal of the implied misclassification
-    matrix). For a record with missing keys \eqn{M}, \code{risk = max(prod(accuracy[M])
-    * risk_upper, risk_lower)}.}
+    intruder, interpolating between the bounds by a reconstruction weight. In
+    scenario B (argument \code{original} supplied, e.g. for an \code{sdcMicroObj})
+    the weight is the \emph{per-record} predictive probability of the record's true
+    value; otherwise (scenario A) it is the average per-key \code{accuracy}. For a
+    record \code{i}, \code{risk = max(weight_i * risk_upper_i, risk_lower_i)}.}
 }
 
 The construction follows the misclassification-risk framework of Shlomo and
