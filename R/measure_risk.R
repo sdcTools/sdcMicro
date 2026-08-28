@@ -54,6 +54,7 @@
 #' \item{fast_hier: }{If TRUE a fast approximation is computed if household data are provided.}
 #' \item{reconstruction: }{If TRUE (default FALSE), additionally estimate \code{\link{reconstructionRisk}} for key variables containing missing values; attached as list element \code{reconstruction}. For an \code{sdcMicroObj} the original (pre-suppression) key values are used (scenario B).}
 #' \item{original: }{optional original key values (data-frame method only), passed to \code{\link{reconstructionRisk}}.}
+#' \item{model: }{reconstruction model passed to \code{\link{reconstructionRisk}} (\code{"envelope"}, the default, \code{"conditional"} or \code{"marginal"}).}
 #' }
 #' @return A modified \code{\link{sdcMicroObj-class}} object or a list with the following elements:
 #' \describe{
@@ -68,7 +69,7 @@
 #' \item{hier_risk_pct: }{global risk with household structure in percent.}
 #' \item{ldiverstiy: }{Matrix with Distinct_Ldiversity,
 #' Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}
-#' \item{reconstruction: }{present only if \code{reconstruction = TRUE}: a list with per-record reconstruction \code{risk} and bounds (\code{lower}, \code{upper}), the per-record \code{reconstruction_prob}, per-key \code{accuracy}, the \code{scenario} and \code{n_missing}.}}
+#' \item{reconstruction: }{present only if \code{reconstruction = TRUE}: a list with per-record reconstruction \code{risk} and bounds (\code{lower}, \code{upper}), the per-record \code{reconstruction_prob}, per-key \code{accuracy}, the \code{scenario}, the reconstruction \code{model} and \code{n_missing}.}}
 #' @author Alexander Kowarik, Bernhard Meindl, Matthias Templ, Bernd Prantner, minor parts of IHSN C++ source
 #' @seealso \code{\link{freqCalc}}, \code{\link{indivRisk}}
 #' @references Franconi, L. and Polettini, S. (2004) \emph{Individual risk
@@ -196,7 +197,7 @@ definition=function(obj, ...) {
   measure_riskWORK(data=obj, alpha=alpha, ...)
 })
 
-measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_global_risk=0.01, fast_hier=TRUE, alpha, reconstruction=FALSE, original=NULL) {
+measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_global_risk=0.01, fast_hier=TRUE, alpha, reconstruction=FALSE, original=NULL, model="envelope") {
   if (!is.data.frame(data)) {
     data <- as.data.frame(data)
   }
@@ -306,10 +307,10 @@ measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_
   }
   if (isTRUE(reconstruction)) {
     rr <- reconstructionRisk(data, keyVars=variables, w=weight_variable,
-      survey=!is.null(weight_variable), original=original)
+      survey=!is.null(weight_variable), original=original, model=model)
     res$reconstruction <- list(risk=rr$risk, lower=rr$risk_lower, upper=rr$risk_upper,
       reconstruction_prob=rr$reconstruction_prob, accuracy=rr$accuracy,
-      scenario=rr$scenario, n_missing=rr$n_missing)
+      scenario=rr$scenario, model=rr$model, n_missing=rr$n_missing)
   }
   invisible(res)
 }

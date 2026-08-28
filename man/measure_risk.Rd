@@ -28,6 +28,7 @@ ldiversity(obj, ldiv_index = NULL, l_recurs_c = 2, missing = -999, ...)
 \item{fast_hier: }{If TRUE a fast approximation is computed if household data are provided.}
 \item{reconstruction: }{If TRUE (default FALSE), additionally estimate \code{\link{reconstructionRisk}} for key variables containing missing values; attached as list element \code{reconstruction}. For an \code{sdcMicroObj} the original (pre-suppression) key values are used (scenario B).}
 \item{original: }{optional original key values (data-frame method only), passed to \code{\link{reconstructionRisk}}.}
+\item{model: }{reconstruction model passed to \code{\link{reconstructionRisk}} (\code{"envelope"}, the default, \code{"conditional"} or \code{"marginal"}).}
 }}
 
 \item{ldiv_index}{indices (or names) of the variables used for l-diversity}
@@ -52,7 +53,7 @@ A modified \code{\link{sdcMicroObj-class}} object or a list with the following e
 \item{hier_risk_pct: }{global risk with household structure in percent.}
 \item{ldiverstiy: }{Matrix with Distinct_Ldiversity,
 Entropy_Ldiversity and Recursive_Ldiversity for each sensitivity variable.}
-\item{reconstruction: }{present only if \code{reconstruction = TRUE}: a list with per-record reconstruction \code{risk} and bounds (\code{lower}, \code{upper}), the per-record \code{reconstruction_prob}, per-key \code{accuracy}, the \code{scenario} and \code{n_missing}.}}
+\item{reconstruction: }{present only if \code{reconstruction = TRUE}: a list with per-record reconstruction \code{risk} and bounds (\code{lower}, \code{upper}), the per-record \code{reconstruction_prob}, per-key \code{accuracy}, the \code{scenario}, the reconstruction \code{model} and \code{n_missing}.}}
 
 Prints risk-information into the console
 

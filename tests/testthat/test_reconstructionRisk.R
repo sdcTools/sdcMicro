@@ -163,3 +163,50 @@ test_that("measure_risk(reconstruction=TRUE) on an sdcMicroObj takes the scenari
   expect_equal(rc$risk, rr$risk)
   expect_equal(rc$reconstruction_prob, rr$reconstruction_prob)
 })
+
+## the ten-record toy population of the paper (Sections 3-4): records 4 and 5 have Q3 blanked;
+## their true values are 2 (common: 6 of 10) and 3 (rare: 1 of 10)
+toy_example <- function() {
+  toy  <- data.frame(Q1 = c(1,1,1,1,1,2,2,2,2,2), Q2 = c(1,1,1,1,1,2,2,2,2,2),
+                     Q3 = c(1,1,1,NA,NA,2,2,2,2,2))
+  orig <- toy; orig$Q3[4:5] <- c(2, 3)
+  list(toy = toy, orig = orig)
+}
+
+test_that("default model is the envelope over {marginal, conditional} (paper Table 4.1)", {
+  te <- toy_example()
+  rr <- reconstructionRisk(te$toy, keyVars = 1:3, survey = FALSE, original = te$orig)
+  expect_equal(rr$model, "envelope")
+  # the file marginal recovers Q3 = 2 with 0.6 and Q3 = 3 with 0.1; the own-cell
+  # conditional gives 1/5 for both, so the envelope is 0.6 and 0.2
+  expect_equal(unname(rr$reconstruction_prob[4:5]), c(0.6, 0.2))
+  expect_equal(unname(rr$risk), c(rep(1/3, 3), 0.6, 0.2, rep(0.2, 5)))
+})
+
+test_that("model = 'conditional' / 'marginal' select one library member; the envelope dominates both", {
+  te <- toy_example()
+  args <- list(te$toy, keyVars = 1:3, survey = FALSE, original = te$orig)
+  cond <- do.call(reconstructionRisk, c(args, model = "conditional"))
+  marg <- do.call(reconstructionRisk, c(args, model = "marginal"))
+  env  <- do.call(reconstructionRisk, c(args, model = "envelope"))
+  expect_equal(unname(cond$reconstruction_prob[4:5]), c(0.2, 0.2))  # 1 of 5 in cell (1, 1)
+  expect_equal(unname(marg$reconstruction_prob[4:5]), c(0.6, 0.1))
+  expect_equal(unname(env$reconstruction_prob),
+               pmax(unname(cond$reconstruction_prob), unname(marg$reconstruction_prob)))
+  expect_equal(unname(cond$risk[4:5]), c(0.2, 0.2))                 # the Section 4 degeneracy
+  expect_error(do.call(reconstructionRisk, c(args, model = "oracle")))
+})
+
+test_that("measure_risk(reconstruction=TRUE) passes 'model' through and reports it", {
+  data(testdata, package = "sdcMicro")
+  kv <- c("urbrur", "roof", "walls", "water", "sex")
+  sdc <- createSdcObj(testdata, keyVars = kv, w = "sampling_weight")
+  sdc <- localSuppression(sdc)
+  rc_default <- measure_risk(sdc, reconstruction = TRUE)@risk$reconstruction
+  expect_equal(rc_default$model, "envelope")
+  rc <- measure_risk(sdc, reconstruction = TRUE, model = "conditional")@risk$reconstruction
+  rr <- reconstructionRisk(sdc, model = "conditional")
+  expect_equal(rc$model, "conditional")
+  expect_equal(rc$risk, rr$risk)
+})
+

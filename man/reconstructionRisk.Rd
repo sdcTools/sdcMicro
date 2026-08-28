@@ -14,7 +14,8 @@ reconstructionRisk(
   accuracy = NULL,
   survey = NULL,
   method = "approx",
-  original = NULL
+  original = NULL,
+  model = c("envelope", "conditional", "marginal")
 )
 
 \method{print}{reconstructionRisk}(x, ...)
@@ -55,6 +56,17 @@ conservative bound is computed on the true cells and the reconstruction weight i
 each record's predictive probability of its true value. For an \code{sdcMicroObj}
 the original key variables are used automatically.}
 
+\item{model}{predictive model for the per-record reconstruction probability in
+scenario B (ignored without \code{original}). For each missing key of a record the
+probability of the record's true value is evaluated under \code{"conditional"} (the
+empirical distribution of that key given the record's other keys, estimated from the
+complete data), \code{"marginal"} (the empirical marginal of that key), or
+\code{"envelope"} (the default: the maximum of the two, i.e. the hit probability of
+the better of the two reconstruction strategies); the per-key probabilities are
+multiplied over the record's missing keys. The own-cell conditional alone degenerates
+to the optimistic bound in a population (its probability is the ratio of the true-cell
+to the observed-key-cell frequency), which is why the envelope is the default.}
+
 \item{\dots}{further arguments (currently ignored).}
 
 \item{object}{an object of class \code{"reconstructionRisk"}.}
@@ -63,9 +75,9 @@ the original key variables are used automatically.}
 An object of class \code{"reconstructionRisk"}: a list with per-record
   vectors \code{risk}, \code{risk_lower}, \code{risk_upper}, \code{reconstruction_prob}
   (the per-record reconstruction weight), \code{fk}, \code{Fk}, the per-key
-  \code{accuracy}, the \code{scenario}, the number of records with at least one
-  missing key \code{n_missing}, and bookkeeping (\code{knames}, \code{method},
-  \code{survey}).
+  \code{accuracy}, the \code{scenario}, the \code{model} used for the reconstruction
+  weight (\code{NA} in scenario A), the number of records with at least one missing key
+  \code{n_missing}, and bookkeeping (\code{knames}, \code{method}, \code{survey}).
 }
 \description{
 Estimates individual re-identification risk when one or more categorical key
@@ -90,8 +102,9 @@ key variables and reports three quantities per record:
     intruder, interpolating between the bounds by a reconstruction weight. In
     scenario B (argument \code{original} supplied, e.g. for an \code{sdcMicroObj})
     the weight is the \emph{per-record} predictive probability of the record's true
-    value; otherwise (scenario A) it is the average per-key \code{accuracy}. For a
-    record \code{i}, \code{risk = max(weight_i * risk_upper_i, risk_lower_i)}.}
+    value under \code{model}; otherwise (scenario A) it is the average per-key
+    \code{accuracy}. For a record \code{i},
+    \code{risk = max(weight_i * risk_upper_i, risk_lower_i)}.}
 }
 
 The construction follows the misclassification-risk framework of Shlomo and

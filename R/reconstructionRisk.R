@@ -21,8 +21,9 @@
 #'     intruder, interpolating between the bounds by a reconstruction weight. In
 #'     scenario B (argument \code{original} supplied, e.g. for an \code{sdcMicroObj})
 #'     the weight is the \emph{per-record} predictive probability of the record's true
-#'     value; otherwise (scenario A) it is the average per-key \code{accuracy}. For a
-#'     record \code{i}, \code{risk = max(weight_i * risk_upper_i, risk_lower_i)}.}
+#'     value under \code{model}; otherwise (scenario A) it is the average per-key
+#'     \code{accuracy}. For a record \code{i},
+#'     \code{risk = max(weight_i * risk_upper_i, risk_lower_i)}.}
 #' }
 #'
 #' The construction follows the misclassification-risk framework of Shlomo and
@@ -58,13 +59,23 @@
 #'   conservative bound is computed on the true cells and the reconstruction weight is
 #'   each record's predictive probability of its true value. For an \code{sdcMicroObj}
 #'   the original key variables are used automatically.
+#' @param model predictive model for the per-record reconstruction probability in
+#'   scenario B (ignored without \code{original}). For each missing key of a record the
+#'   probability of the record's true value is evaluated under \code{"conditional"} (the
+#'   empirical distribution of that key given the record's other keys, estimated from the
+#'   complete data), \code{"marginal"} (the empirical marginal of that key), or
+#'   \code{"envelope"} (the default: the maximum of the two, i.e. the hit probability of
+#'   the better of the two reconstruction strategies); the per-key probabilities are
+#'   multiplied over the record's missing keys. The own-cell conditional alone degenerates
+#'   to the optimistic bound in a population (its probability is the ratio of the true-cell
+#'   to the observed-key-cell frequency), which is why the envelope is the default.
 #'
 #' @return An object of class \code{"reconstructionRisk"}: a list with per-record
 #'   vectors \code{risk}, \code{risk_lower}, \code{risk_upper}, \code{reconstruction_prob}
 #'   (the per-record reconstruction weight), \code{fk}, \code{Fk}, the per-key
-#'   \code{accuracy}, the \code{scenario}, the number of records with at least one
-#'   missing key \code{n_missing}, and bookkeeping (\code{knames}, \code{method},
-#'   \code{survey}).
+#'   \code{accuracy}, the \code{scenario}, the \code{model} used for the reconstruction
+#'   weight (\code{NA} in scenario A), the number of records with at least one missing key
+#'   \code{n_missing}, and bookkeeping (\code{knames}, \code{method}, \code{survey}).
 #'
 #' @references
 #' Shlomo, N. and Skinner, C. (2010). Assessing the protection provided by
@@ -109,7 +120,9 @@
 #' reconstructionRisk(sdc)
 #' }
 reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
-                               survey = NULL, method = "approx", original = NULL) {
+                               survey = NULL, method = "approx", original = NULL,
+                               model = c("envelope", "conditional", "marginal")) {
+  model <- match.arg(model)
   ## sdcMicroObj method: use the (possibly suppressed) manipulated key variables.
   ## The agency knows the suppressed truth (scenario B), so the original key values
   ## are passed on for the per-record reconstruction probability and the true cells.
@@ -129,7 +142,7 @@ reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
     if (is.null(survey)) survey <- length(wv) > 0
     return(reconstructionRisk(dat, keyVars = seq_len(ncol(manip)), w = ww,
                               accuracy = accuracy, survey = survey, method = method,
-                              original = orig_keys))
+                              original = orig_keys, model = model))
   }
   if (is.matrix(x)) x <- as.data.frame(x)
   if (!is.data.frame(x)) stop("'x' must be a 'data.frame', 'matrix' or 'sdcMicroObj'")
@@ -181,7 +194,7 @@ reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
     x_true <- x; x_true[, kidx] <- original
     fc_hi <- freqCalc(x_true, keyVars = kidx, w = w, alpha = 1)
     rk_hi <- indivRisk(fc_hi, method = method, survey = survey)$rk
-    rec_prob <- .recon_prob_record(original, miss_mat)
+    rec_prob <- .recon_prob_record(original, miss_mat, model)
   } else {
     x_imp <- x
     x_imp[, kidx] <- .impute_modal(K)
@@ -200,6 +213,7 @@ reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
     fk = fc_lo$fk, Fk = fc_lo$Fk,
     accuracy = acc, reconstruction_prob = rec_prob,
     scenario = if (is.null(original)) "A (modal imputation)" else "B (known truth)",
+    model = if (is.null(original)) NA_character_ else model,
     n_missing = sum(has_na), N = nrow(x),
     knames = knames, method = method, survey = survey, call = match.call()
   )
@@ -218,30 +232,52 @@ reconstructionRisk <- function(x, keyVars = NULL, w = NULL, accuracy = NULL,
   mean(pred == y[obs], na.rm = TRUE)
 }
 
-## per-record reconstruction probability (scenario B): for each record, the product
-## over its missing keys of P(X_j = the record's TRUE value | its other keys),
-## estimated from the complete (original) key data. A record whose suppressed value
-## is rare in its cell gets a low probability (it is hard to reconstruct).
-## Note: for records with several missing keys each factor conditions on ALL other
-## keys at their true values (a product of full conditionals). This coincides with
-## the exact chain-rule probability when one key is missing; with several missing
-## keys the direction of the discrepancy depends on their dependence given the
-## observed keys and is not uniformly conservative.
-.recon_prob_record <- function(orig, miss_mat) {
-  orig <- as.data.frame(orig)
+## per-key predictive probability of each record's TRUE value (scenario B), as an
+## n x nkey matrix with 1 where the key is observed:
+##   "conditional": P(X_j = c_ij | the record's other keys at their true values),
+##                  the empirical conditional estimated from the complete data;
+##   "marginal":    P(X_j = c_ij), the empirical marginal of key j.
+## A record whose suppressed value is rare (in its cell, or in the file) gets a low
+## probability: it is hard to reconstruct.
+.recon_prob_matrix <- function(orig, miss_mat, member) {
   n <- nrow(orig); nkey <- ncol(orig)
-  prob <- rep(1, n)
+  P <- matrix(1, n, nkey)
   for (j in seq_len(nkey)) {
     mi <- which(miss_mat[, j])
     if (!length(mi)) next
-    others <- setdiff(seq_len(nkey), j)
-    so <- if (length(others)) .keysig(orig[others]) else rep("", n)
     yj <- as.character(orig[[j]])
-    tab <- table(so, yj)
-    csz <- rowSums(tab)
-    prob[mi] <- prob[mi] * mapply(function(s, v) tab[s, v] / csz[s], so[mi], yj[mi])
+    if (member == "marginal") {
+      pm <- table(yj) / n
+      P[mi, j] <- as.numeric(pm[yj[mi]])
+    } else {
+      others <- setdiff(seq_len(nkey), j)
+      so <- if (length(others)) .keysig(orig[others]) else rep("", n)
+      tab <- table(so, yj)
+      csz <- rowSums(tab)
+      P[mi, j] <- mapply(function(s, v) tab[s, v] / csz[s], so[mi], yj[mi])
+    }
   }
-  prob
+  P
+}
+
+## per-record reconstruction probability (scenario B): the product over a record's
+## missing keys of the per-key probability under 'model'; "envelope" takes, per key,
+## the maximum over the library {conditional, marginal} -- the hit probability of the
+## better of the two reconstruction strategies.
+## Note: for records with several missing keys each conditional factor conditions on
+## ALL other keys at their true values (a product of full conditionals). This
+## coincides with the exact chain-rule probability when one key is missing; with
+## several missing keys the direction of the discrepancy depends on their dependence
+## given the observed keys and is not uniformly conservative.
+.recon_prob_record <- function(orig, miss_mat, model = "envelope") {
+  orig <- as.data.frame(orig)
+  P <- switch(model,
+    conditional = .recon_prob_matrix(orig, miss_mat, "conditional"),
+    marginal    = .recon_prob_matrix(orig, miss_mat, "marginal"),
+    envelope    = pmax(.recon_prob_matrix(orig, miss_mat, "conditional"),
+                       .recon_prob_matrix(orig, miss_mat, "marginal")),
+    stop("unknown 'model'"))
+  unname(apply(P, 1, prod))
 }
 
 ## modal imputation of every NA in the key columns, cell-wise on the other keys
@@ -283,6 +319,8 @@ print.reconstructionRisk <- function(x, ...) {
   cat("key variables:", paste(x$knames, collapse = ", "), "\n")
   cat("reconstruction accuracy:",
       paste(sprintf("%s=%.2f", x$knames, x$accuracy), collapse = "  "), "\n")
+  cat("scenario:", x$scenario,
+      if (!is.na(x$model)) paste0("| reconstruction model: ", x$model) else "", "\n")
   cat(sprintf("mean risk: lower=%.4f  reference=%.4f  upper=%.4f\n",
               mean(x$risk_lower), mean(x$risk), mean(x$risk_upper)))
   cat(sprintf("%d record(s) with reference risk > 0.1\n", hi))
