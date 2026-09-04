@@ -1,7 +1,8 @@
-Illustrative session from the SoftwareX paper "sdcMicro meets GPT"
+Illustrative session from the SoftwareX paper
+"sdcMicro: AI-assisted statistical disclosure control of microdata in R"
 ====================================================================
 Model: GPT-4.1 (OpenAI), temperature = 0
-Data:  testdata (bundled with sdcMicro; 4,580 persons in 1,011 households)
+Data:  testdata (bundled with sdcMicro; 4,580 persons in 1,000 households)
 Code:
     library(sdcMicro)
     data(testdata)
