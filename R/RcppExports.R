@@ -33,6 +33,10 @@ cpp_calcSuppInds <- function(inp, checkVals, params) {
     .Call(`_sdcMicro_cpp_calcSuppInds`, inp, checkVals, params)
 }
 
+cpp_greedy2_core <- function(vm, patKeys, patMasks, patCost, patMass, k) {
+    .Call(`_sdcMicro_cpp_greedy2_core`, vm, patKeys, patMasks, patCost, patMass, k)
+}
+
 microaggregation_argus_cpp <- function(inp, k, useOptimal) {
     .Call(`_sdcMicro_microaggregation_argus_cpp`, inp, k, useOptimal)
 }

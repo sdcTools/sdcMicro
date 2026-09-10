@@ -130,6 +130,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_greedy2_core
+List cpp_greedy2_core(IntegerMatrix vm, List patKeys, List patMasks, List patCost, List patMass, NumericVector k);
+RcppExport SEXP _sdcMicro_cpp_greedy2_core(SEXP vmSEXP, SEXP patKeysSEXP, SEXP patMasksSEXP, SEXP patCostSEXP, SEXP patMassSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type vm(vmSEXP);
+    Rcpp::traits::input_parameter< List >::type patKeys(patKeysSEXP);
+    Rcpp::traits::input_parameter< List >::type patMasks(patMasksSEXP);
+    Rcpp::traits::input_parameter< List >::type patCost(patCostSEXP);
+    Rcpp::traits::input_parameter< List >::type patMass(patMassSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_greedy2_core(vm, patKeys, patMasks, patCost, patMass, k));
+    return rcpp_result_gen;
+END_RCPP
+}
 // microaggregation_argus_cpp
 List microaggregation_argus_cpp(NumericMatrix inp, NumericVector k, NumericVector useOptimal);
 RcppExport SEXP _sdcMicro_microaggregation_argus_cpp(SEXP inpSEXP, SEXP kSEXP, SEXP useOptimalSEXP) {
@@ -343,6 +359,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sdcMicro_RankSwap", (DL_FUNC) &_sdcMicro_RankSwap, 9},
     {"_sdcMicro_Suda2", (DL_FUNC) &_sdcMicro_Suda2, 5},
     {"_sdcMicro_cpp_calcSuppInds", (DL_FUNC) &_sdcMicro_cpp_calcSuppInds, 3},
+    {"_sdcMicro_cpp_greedy2_core", (DL_FUNC) &_sdcMicro_cpp_greedy2_core, 6},
     {"_sdcMicro_microaggregation_argus_cpp", (DL_FUNC) &_sdcMicro_microaggregation_argus_cpp, 3},
     {"_sdcMicro_rankSwap_argus_cpp", (DL_FUNC) &_sdcMicro_rankSwap_argus_cpp, 2},
     {"_sdcMicro_recordSwap_cpp", (DL_FUNC) &_sdcMicro_recordSwap_cpp, 12},

@@ -35,8 +35,30 @@
 #'   Default is `1`. Used only in the `data.frame` method.
 #' - **`nc`**: Maximum number of cores used for stratified computations.
 #'   Default is `1`. Parallelization is ignored on Windows.
+#' - **`method`**: Which engine decides *which* cells to suppress. The default
+#'   `"heuristic"` is the original sweep described above and is unchanged.
+#'   `"greedy2"` is a cost-effectiveness greedy with exact per-record steps
+#'   that needs no solver and never suppresses more cells than the sweep on
+#'   the benchmark files. `"optimal"` solves a mixed-integer program over the
+#'   violator-only restriction, `"aggregate"` an exact tuple-indexed program
+#'   for the unrestricted problem, and `"lns"` a large-neighbourhood search
+#'   around the former; these three need a MILP backend (the `highs` package
+#'   is enough) and honour a `time_limit`. Stratification, `combs` and ghost
+#'   variables work with every engine. See [ls_supp_subset()].
+#' - **`control`**: Named list of engine arguments, for example
+#'   `list(solver = "highs", time_limit = 60, max_per_record = 1)`. With
+#'   `max_per_record = 1` a solver keeps to the sweep's own shape of at most
+#'   one suppressed cell per record; without a cap the cheapest solutions can
+#'   concentrate the whole loss on very few records.
 #'
 #' @details
+#' For `method` other than `"heuristic"`, `importance` is read as a linear cost
+#' per key variable (`1` = most important, i.e. most expensive to suppress)
+#' and unit costs are used when it is not supplied; the default order the
+#' sweep derives from the category counts is *not* handed to an engine. The
+#' returned object then also carries `method`, `objective`, `bound`, `gap`,
+#' `status`, `time` and `solver`, and `print()` reports them.
+#'
 #' For the parameter `alpha`:
 #' - `alpha = 1` counts all *wildcard matches* (i.e. `NA`s match everything).
 #' - `alpha = 0` assumes missing values form their own categories.
@@ -131,7 +153,8 @@ setGeneric("localSuppressionX", function(obj, k = 2, importance = NULL, combs = 
 setMethod(
   f = "localSuppressionX",
   signature = c("sdcMicroObj"),
-  definition = function(obj, k = 2, importance = NULL, combs = NULL, nc = 1) {
+  definition = function(obj, k = 2, importance = NULL, combs = NULL, nc = 1,
+                        method = "heuristic", control = list()) {
     obj <- nextSdcObj(obj)
     ### get data from manipKeyVars
     df <- as.data.frame(get.sdcMicroObj(obj, type = "manipKeyVars"))
@@ -156,7 +179,9 @@ setMethod(
       combs = combs,
       importance = importance,
       alpha = alpha,
-      nc = nc
+      nc = nc,
+      method = method,
+      control = control
     )
 
     # create final output
@@ -200,7 +225,9 @@ setMethod(
                         keyVars,
                         strataVars = NULL,
                         alpha = 1,
-                        nc = 1) {
+                        nc = 1,
+                        method = "heuristic",
+                        control = list()) {
     if (alpha == 0) {
       warnings("alpha is set to 0. \nIn case of missing values in the key variables, \nfrequency counts may likely to be underestimated. \nWe recommend to increase the values of alpha")
     }
@@ -212,12 +239,25 @@ setMethod(
       importance = importance,
       combs = combs,
       alpha = alpha,
-      nc = nc
+      nc = nc,
+      method = method,
+      control = control
     )
   }
 )
 
-suppSubset <- function(x, k, importance, alpha) {
+suppSubset <- function(x, k, importance, alpha, method = "heuristic", control = list()) {
+  # Engines other than the original sweep live in the ls_* functions and take
+  # the same input: key columns in, key columns with added NA out. Everything
+  # above this point -- strata, combs, ghost variables, the suppression
+  # accounting -- is shared by dispatching here rather than in the callers.
+  if (method != "heuristic") {
+    res <- ls_supp_subset(x = x, k = k, importance = importance, alpha = alpha,
+                          method = method, control = control)
+    # the sweep returns a data.table of the key columns; the callers count on it
+    res$xAnon <- as.data.table(res$xAnon)[, names(x), with = FALSE]
+    return(res)
+  }
   # checks
   if (length(k) != 1 | k < 1) {
     stop("argument 'k' must be of length 1 and > 0.", call. = FALSE)
@@ -355,12 +395,24 @@ suppSubset <- function(x, k, importance, alpha) {
 sum_na <- function(x) {
   sum(is.na(x))
 }
-localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importance = NULL, alpha, nc = 1) {
+localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importance = NULL, alpha, nc = 1,
+                                 method = "heuristic", control = list()) {
   # find a suppression pattern for a simple subset that is not stratified
   # input: df=data.table with only keyVars
   # k: parameter for k-anonymity (length 1)
   # importance: importance-vector with length equals ncol(df)
   strata <- NULL
+  method <- match.arg(method, c("heuristic", "greedy2", "optimal", "aggregate", "lns"))
+  # 'importance' means different things to the two families of engines: the
+  # sweep uses it as a tie-break ORDER and always materialises a default from
+  # the category counts (below); the ls_* engines read it as a linear COST.
+  # Remember whether the user supplied one, so that the default order is never
+  # handed to a solver as a cost vector.
+  importance_supplied <- !is.null(importance)
+  eng_importance <- function(imp) {
+    if (method == "heuristic" || importance_supplied) imp else NULL
+  }
+  engine_info <- list()
   if (!"data.table" %in% class(x)) {
     x <- as.data.table(x)
   }
@@ -447,9 +499,12 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
       res <- suppSubset(
         x = inpDat,
         k = k,
-        importance = importance,
-        alpha = alpha
+        importance = eng_importance(importance),
+        alpha = alpha,
+        method = method,
+        control = control
       )
+      engine_info[[length(engine_info) + 1]] <- res$info
       xAnon <- res$xAnon
     } else {
       # no strata but subsets of key variables (combs)
@@ -469,9 +524,12 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
           res <- suppSubset(
             x = inpDat,
             k = cur_k,
-            importance = cur_importance,
-            alpha = alpha
+            importance = eng_importance(cur_importance),
+            alpha = alpha,
+            method = method,
+            control = control
           )
+          engine_info[[length(engine_info) + 1]] <- res$info
 
           # replace: is there a more elegant way?
           for (z in 1:length(kV)) {
@@ -499,24 +557,32 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
     if (is.null(combs)) {
       if (nc == 1) {
         # message("running serially")
-        xAnon <- lapply(seq_len(length(spl)), function(x) {
+        resl <- lapply(seq_len(length(spl)), function(x) {
           suppSubset(
             x = spl[[x]][, keyVars, with = FALSE],
             k = k,
-            importance = importance,
-            alpha = alpha
-          )$xAnon
+            importance = eng_importance(importance),
+            alpha = alpha,
+            method = method,
+            control = control
+          )
         })
+        engine_info <- c(engine_info, lapply(resl, `[[`, "info"))
+        xAnon <- lapply(resl, `[[`, "xAnon")
       } else {
         # message("running in parallel using ", nc, " cores")
-        xAnon <- parallel::mclapply(seq_len(length(spl)), function(x) {
+        resl <- parallel::mclapply(seq_len(length(spl)), function(x) {
           suppSubset(
             x = spl[[x]][, keyVars, with = FALSE],
             k = k,
-            importance = importance,
-            alpha = alpha
-          )$xAnon
+            importance = eng_importance(importance),
+            alpha = alpha,
+            method = method,
+            control = control
+          )
         }, mc.cores = nc)
+        engine_info <- c(engine_info, lapply(resl, `[[`, "info"))
+        xAnon <- lapply(resl, `[[`, "xAnon")
       }
     } else {
       # local Suppression by strata and combination of subsets!
@@ -536,9 +602,12 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
             res <- suppSubset(
               x = inpDat,
               k = cur_k,
-              importance = cur_importance,
-              alpha = alpha
+              importance = eng_importance(cur_importance),
+              alpha = alpha,
+              method = method,
+              control = control
             )
+            engine_info[[length(engine_info) + 1]] <- res$info
 
             # replace: is there a more elegant way?
             for (z in 1:length(kV)) {
@@ -597,8 +666,27 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
     importance = importance,
     k = k,
     threshold = NA,
-    combs = combs
+    combs = combs,
+    method = method
   )
+  if (method != "heuristic") {
+    # one engine call per stratum and/or combination; summarise as the sweep's
+    # own accounting does, over the whole file
+    info <- engine_info[!vapply(engine_info, is.null, logical(1))]
+    num <- function(nm, f) {
+      v <- unlist(lapply(info, `[[`, nm))
+      if (length(v) == 0 || all(is.na(v))) NA_real_ else f(v, na.rm = TRUE)
+    }
+    stat <- unlist(lapply(info, `[[`, "status"))
+    res$objective <- num("objective", sum)
+    res$bound <- num("bound", sum)
+    res$gap <- num("gap", max)
+    res$status <- if (length(stat) == 0 || all(is.na(stat))) NA_character_ else
+      if (all(stat == "optimal", na.rm = TRUE)) "optimal" else stat[which(stat != "optimal")[1]]
+    res$time <- num("time", sum)
+    sv <- unique(unlist(lapply(info, `[[`, "solver")))
+    res$solver <- if (length(sv) == 0 || all(is.na(sv))) NA_character_ else paste(sv[!is.na(sv)], collapse = ",")
+  }
   class(res) <- "localSuppression"
   invisible(res)
 }
@@ -627,6 +715,19 @@ print.localSuppression <- function(x, ...) {
 
   pp <- "\n-----------------------\n"
   pp <- paste0(pp, "Total number of suppressions in the key variables: ", totSupps, " (new: ", addSupps, ")\n\n")
+  if (!is.null(x$method) && x$method != "heuristic") {
+    pp <- paste0(pp, "Method: ", x$method)
+    if (!is.null(x$status) && !is.na(x$status)) {
+      pp <- paste0(pp, " (", x$status)
+      if (!is.null(x$gap) && !is.na(x$gap) && x$status != "optimal") {
+        pp <- paste0(pp, ", gap ", format(round(100 * x$gap, 1)), "%")
+      }
+      pp <- paste0(pp, ")")
+    }
+    if (!is.null(x$solver) && !is.na(x$solver)) pp <- paste0(pp, ", solver ", x$solver)
+    if (!is.null(x$time) && !is.na(x$time)) pp <- paste0(pp, ", ", format(round(x$time, 1)), " s")
+    pp <- paste0(pp, "\n\n")
+  }
   if (!is.na(x$threshold)) {
     pp <- paste0(pp, "Number of suppressions by key variables:\n\n")
     message(pp)

@@ -272,16 +272,30 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
     outT <- data.table(keyVars, supps=as.integer(suppsT[nrow(suppsT)]), supps_percT)
     setnames(outT, c("KeyVar", "Suppressions (#)", "Suppressions (%)"))
 
+    ## engine diagnostics: NULL for the original sweep, so everything that
+    ## read this list before keeps reading exactly what it read before
+    note <- ls_method_note(ls)
     if (docat) {
       message(txt_ls)
       print(out, row.names=F)
+      if (!is.null(note)) {
+        message("\n", note)
+      }
       message(hr,"\n\n")
     }
     return(invisible(list(
       "supps"=out[,c(1,3,5), with=FALSE],
       "suppsT"=outT,
       "threshold"=ls$threshold,
-      "strataVars"=ls$strataVars
+      "strataVars"=ls$strataVars,
+      "method"=ls$method,
+      "objective"=ls$objective,
+      "bound"=ls$bound,
+      "gap"=ls$gap,
+      "status"=ls$status,
+      "time"=ls$time,
+      "solver"=ls$solver,
+      "note"=note
     )))
   }
 

@@ -17,5 +17,7 @@ vignettes/recordSwapping.Rmd.orig
 ctime.pdf
 ^\.claude$
 ^CLAUDE\.md$
+^\.agents$
+^AGENTS\.md$
 ^docs/plans$
 ^LICENSE$

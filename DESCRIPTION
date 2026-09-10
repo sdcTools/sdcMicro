@@ -30,7 +30,10 @@ Suggests:
     parallel,
     testthat,
     pdftools,
-    yaml
+    yaml,
+    highs,
+    scip,
+    gurobi
 Imports:
     utils,
     stats,
@@ -56,7 +59,8 @@ Imports:
     prettydoc,
     VIM (>= 4.7.0),
     httr,
-    jsonlite
+    jsonlite,
+    Matrix
 License: GPL-2
 URL: https://github.com/sdcTools/sdcMicro
 Collate:
@@ -112,6 +116,17 @@ Collate:
     'maG.R'
     'sdcApp.R'
     'show_sdcMicroObj.R'
+    'ls_globals.R'
+    'ls_check.R'
+    'solve_milp.R'
+    'ls_greedy2.R'
+    'ls_optimal.R'
+    'ls_aggregate.R'
+    'ls_minuc.R'
+    'ls_hub.R'
+    'ls_lns.R'
+    'ls_target.R'
+    'ls_supp_subset.R'
 VignetteBuilder: knitr
 Encoding: UTF-8
 RoxygenNote: 7.3.3

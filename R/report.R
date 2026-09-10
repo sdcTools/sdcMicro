@@ -296,6 +296,10 @@ definition=function(obj, internal, title, outdir) {
       rownames(df) <- c("Number of Suppression", "Percentage")
       localSupps <- list()
       localSupps$tab <- df
+      ## which engine produced them, and what it proved (NULL for the sweep)
+      ls_slot <- get.sdcMicroObj(obj, "localSuppression")
+      localSupps$method <- ls_slot$method
+      localSupps$note <- ls_method_note(ls_slot)
       repObj <- set.reportObj(repObj, "localSupps", list(localSupps))
     }
   }

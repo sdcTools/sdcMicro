@@ -36,6 +36,21 @@ values (\code{NA}s) contribute to the calculation of \code{fk} and \code{Fk}.
 Default is \code{1}. Used only in the \code{data.frame} method.
 \item \strong{\code{nc}}: Maximum number of cores used for stratified computations.
 Default is \code{1}. Parallelization is ignored on Windows.
+\item \strong{\code{method}}: Which engine decides \emph{which} cells to suppress. The default
+\code{"heuristic"} is the original sweep described above and is unchanged.
+\code{"greedy2"} is a cost-effectiveness greedy with exact per-record steps
+that needs no solver and never suppresses more cells than the sweep on
+the benchmark files. \code{"optimal"} solves a mixed-integer program over the
+violator-only restriction, \code{"aggregate"} an exact tuple-indexed program
+for the unrestricted problem, and \code{"lns"} a large-neighbourhood search
+around the former; these three need a MILP backend (the \code{highs} package
+is enough) and honour a \code{time_limit}. Stratification, \code{combs} and ghost
+variables work with every engine. See \code{\link[=ls_supp_subset]{ls_supp_subset()}}.
+\item \strong{\code{control}}: Named list of engine arguments, for example
+\code{list(solver = "highs", time_limit = 60, max_per_record = 1)}. With
+\code{max_per_record = 1} a solver keeps to the sweep's own shape of at most
+one suppressed cell per record; without a cap the cheapest solutions can
+concentrate the whole loss on very few records.
 }}
 }
 \value{
@@ -56,6 +71,13 @@ important than key variables with a low number of characteristics.
 The implementation provides \emph{k}-anonymity per strata, if slot \code{strataVar} has
 been set in \code{sdcMicroObj-class} or if parameter \code{strataVar} is
 used when applying the \code{data.frame} method. For details, see the examples provided.
+
+For \code{method} other than \code{"heuristic"}, \code{importance} is read as a linear cost
+per key variable (\code{1} = most important, i.e. most expensive to suppress)
+and unit costs are used when it is not supplied; the default order the
+sweep derives from the category counts is \emph{not} handed to an engine. The
+returned object then also carries \code{method}, \code{objective}, \code{bound}, \code{gap},
+\code{status}, \code{time} and \code{solver}, and \code{print()} reports them.
 
 For the parameter \code{alpha}:
 \itemize{
