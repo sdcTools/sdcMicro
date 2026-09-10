@@ -1,4 +1,47 @@
 # 5.8.2
+- `localSuppression()` / `kAnon()` gain a `method` argument. The default
+  `"heuristic"` is the original sweep and is unchanged, cell for cell. The new
+  engines decide *which* cells to suppress differently and never need more
+  than the sweep on the benchmark files:
+  + `"greedy2"`: cost-effectiveness greedy with exact per-record steps, no
+    solver required (Rcpp core, `src/greedy2.cpp`)
+  + `"optimal"`: exact MILP over the violator-only restriction
+  + `"aggregate"`: exact MILP indexed by distinct tuples, for the unrestricted
+    problem; also takes any `alpha`, per-record thresholds and classical
+    (identical-tuple) k-anonymity
+  + `"lns"`: large-neighbourhood search around the pair-based model
+  The MILP engines need a backend: `highs` (Suggests, CRAN) is enough; `scip`
+  (Suggests, CRAN) and `gurobi` (Suggests; not on CRAN, available from
+  gurobi.com under its own licence, as e.g. `prioritizr` declares it) are
+  alternatives. A `control`
+  list carries `solver`, `time_limit` and `max_per_record`. Stratification,
+  `combs` and ghost variables work with every engine because the dispatch sits
+  in `suppSubset()`, below all of them.
+- `sdcApp` exposes the engines. The k-anonymity panel gains an algorithm
+  selector that offers only what can run on the current problem (a MILP
+  backend must be installed for the exact engines; every engine but
+  `"aggregate"` needs `alpha = 1`), the solver, time limit and per-record cap
+  for the exact engines, and a line stating how many records still violate the
+  selected k. The generated script, the summary page and the SDC report record
+  which engine ran and what it proved -- an audit trail must show that a solve
+  was truncated, not only that it was started.
+- A suppression pattern is never handed on unverified: every engine's result is
+  re-counted with `freqCalc()`'s own count at the problem's `alpha` before it
+  is returned. A solver that finds no solution within its time limit, or a
+  per-record cap that makes an instance infeasible, now raises an error instead
+  of returning a partially protected file.
+- New exported function `ls_solvers()`: which MILP backends are installed.
+- New exported functions behind those engines: `ls_check()` (the criterion as
+  `freqCalc()` counts it, plus classical k-anonymity), `ls_greedy2()`,
+  `ls_optimal()`, `ls_aggregate()`, `ls_lns()`, `ls_hub()` (the closed-form
+  construction), `ls_minuc()`, `ls_target()` (per-record thresholds from an
+  individual-risk bound), `ls_supp_subset()` and `solve_milp()`.
+- New tests (2,200 lines) including a brute-force oracle over all suppression
+  patterns that every exact engine is checked against.
+- Documentation of a usage pitfall: `freqCalc()` coerces key columns with
+  `as.numeric()`, so *character* keys are read as missing, i.e. as wildcards,
+  and `kAnon()` then reports success while suppressing nothing. Recode to
+  factor or integer first; `ls_check()` and `ls_target()` do so internally.
 - `AI_applyAnonymization()` gains early stopping of the refinement loop via the new
   `tol` and `patience` arguments: refinement now terminates once the combined utility
   score U stops improving by more than `tol` for `patience` consecutive iterations,

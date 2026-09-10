@@ -170,6 +170,9 @@ if ( is.list(ls) ) {
   cat(paste0("The table below shows for each categorical key variable the number (1st row) "))
   cat(paste0("and the percentages (2nd row) of suppressed cells."))
   print(kable(ls$tab), row.names=TRUE); cat("\n\n")
+  if (!is.null(ls$note)) {
+    cat(paste0("*", ls$note, "*\n\n"))
+  }
 }
 ```
 

@@ -326,6 +326,77 @@ kAnon_useImportance <- reactive({
   res
 })
 
+# which suppression engines can run on the current problem?
+# the exact ones need a MILP backend, and every engine but the aggregated
+# model counts the way freqCalc() does only at alpha = 1
+kAnon_methods <- reactive({
+  curObj <- sdcObj()
+  alpha <- 1
+  if (!is.null(curObj)) {
+    a <- get.sdcMicroObj(curObj, "options")$alpha
+    if (!is.null(a) && length(a) == 1 && !is.na(a)) {
+      alpha <- a
+    }
+  }
+  solvers <- ls_solvers()
+  wildcard_ok <- isTRUE(all.equal(alpha, 1))
+
+  methods <- "heuristic"
+  labels <- "Standard (current default, one cell per record and sweep)"
+  hint <- character(0)
+
+  if (wildcard_ok) {
+    methods <- c(methods, "greedy2")
+    labels <- c(labels, "Improved greedy (fewer suppressions, no solver needed)")
+  } else {
+    hint <- c(hint, paste0("This problem counts with alpha = ", alpha,
+      ". The greedy and the per-record optimiser are exact for alpha = 1 only; ",
+      "the aggregated model counts exactly as freqCalc() does for any alpha."))
+  }
+  if (length(solvers) > 0) {
+    if (wildcard_ok) {
+      methods <- c(methods, "optimal")
+      labels <- c(labels, "Exact, capped per record (suppresses only in records that violate k)")
+    }
+    methods <- c(methods, "aggregate")
+    labels <- c(labels, "Exact overall (fewest suppressions; may concentrate the loss on few records)")
+  } else {
+    hint <- c(hint, paste0("The exact engines need a MILP solver. None is installed; ",
+      "install.packages(\"highs\") enables them."))
+  }
+  list(
+    methods = methods,
+    labels = labels,
+    hint = if (length(hint) == 0) NULL else paste(hint, collapse = " ")
+  )
+})
+
+# how many records still violate the k that is currently selected?
+# read off the risk slot (fk is freqCalc's wildcard count), never recomputed
+kAnon_violators <- reactive({
+  curObj <- sdcObj()
+  if (is.null(curObj)) {
+    return(NA_integer_)
+  }
+  if (isTRUE(input$rb_kanon_useCombs == "Yes")) {
+    pp <- kAnon_comb_params()
+    if (is.null(pp) || length(pp$k) == 0) {
+      return(NA_integer_)
+    }
+    k <- max(as.numeric(pp$k))
+  } else {
+    if (is.null(input$sl_kanon_k)) {
+      return(NA_integer_)
+    }
+    k <- as.numeric(input$sl_kanon_k)
+  }
+  risk <- get.sdcMicroObj(curObj, "risk")$individual
+  if (is.null(risk) || !"fk" %in% colnames(risk)) {
+    return(NA_integer_)
+  }
+  sum(risk[, "fk"] < k)
+})
+
 # UI-output for kAnon()
 output$ui_kAnon_header <- renderUI({
 out <- fluidRow(
@@ -442,6 +513,57 @@ output$ui_kAnon <- renderUI({
     out
   })
 
+  output$kanon_method <- renderUI({
+    mm <- kAnon_methods()
+    txt_tooltip <- "The standard algorithm suppresses one cell per violating record and sweep. The other engines decide the whole pattern at once and need fewer suppressions for the same k; the exact ones report whether they proved optimality."
+    sel <- input$rb_kanon_method
+    if (is.null(sel) || !sel %in% mm$methods) {
+      sel <- "heuristic"
+    }
+    ch <- mm$methods
+    names(ch) <- mm$labels
+    out <- radioButtons("rb_kanon_method", choices=ch, selected=sel, width="100%", inline=FALSE,
+      label=p("Which algorithm should decide the suppressions?", tipify(icon("circle-info"), title=txt_tooltip, placement="top")))
+    out <- list(fluidRow(column(12, out, align="center")))
+    if (!is.null(mm$hint)) {
+      out <- list(out, fluidRow(column(12, helpText(mm$hint), align="center")))
+    }
+    nv <- kAnon_violators()
+    if (!is.na(nv)) {
+      txt <- paste0(nv, " record(s) currently violate the selected k.")
+      if (nv > 500) {
+        txt <- paste(txt, "With this many, the exact engines can take minutes; they stop at the time limit and report the remaining gap.")
+      }
+      out <- list(out, fluidRow(column(12, helpText(txt), align="center")))
+    }
+    out
+  })
+
+  output$kanon_method_opts <- renderUI({
+    if (is.null(input$rb_kanon_method) || input$rb_kanon_method %in% c("heuristic", "greedy2")) {
+      return(NULL)
+    }
+    solvers <- ls_solvers()
+    if (length(solvers) == 0) {
+      return(NULL)
+    }
+    txt_solver <- "The MILP backend. HiGHS ships as a CRAN package and is enough for most problems; SCIP and Gurobi are alternatives for hard instances."
+    txt_time <- "The solver stops here and returns the best solution it has found, together with the remaining optimality gap."
+    out <- fluidRow(
+      column(6, selectInput("sel_kanon_solver", choices=solvers, selected=solvers[1], width="100%",
+        label=p("Solver", tipify(icon("circle-info"), title=txt_solver, placement="top")))),
+      column(6, sliderInput("sl_kanon_timelimit", min=10, max=600, value=60, step=10, width="100%",
+        label=p("Time limit (seconds)", tipify(icon("circle-info"), title=txt_time, placement="top")))))
+    if (input$rb_kanon_method == "optimal") {
+      nkv <- max(1, length(get_keyVars()))
+      txt_cap <- "The cheapest solutions can strip a few records almost bare and leave the rest untouched. The cap limits how much any single record may lose. 0 lifts it."
+      out <- list(out, fluidRow(column(12, sliderInput("sl_kanon_maxper", min=0, max=nkv, value=1, step=1, width="100%",
+        label=p("Maximum suppressed values per record (0 = no cap)", tipify(icon("circle-info"), title=txt_cap, placement="top"))), align="center")))
+      out <- list(out, fluidRow(column(12, helpText("Without a cap the optimiser may concentrate the whole loss on very few records. If no capped solution exists, the run reports it instead of returning a partially protected file."), align="center")))
+    }
+    out
+  })
+
   output$kanon_btn <- renderUI({
     btn <- NULL
     impvec <- kAnon_impvec()
@@ -489,7 +611,9 @@ output$ui_kAnon <- renderUI({
   # show combs-ui?
 
   out <- list(out, fluidRow(column(12, uiOutput("kanon_use_combs"), align="center")))
-  out <- list(out, uiOutput("ui_kanon_combs"), uiOutput("kanon_btn"))
+  out <- list(out, uiOutput("ui_kanon_combs"))
+  out <- list(out, uiOutput("kanon_method"), uiOutput("kanon_method_opts"))
+  out <- list(out, uiOutput("kanon_btn"))
   out
 })
 

@@ -307,6 +307,11 @@ shinyServer(function(session, input, output) {
       cmd_strata1 <- cmd_strata2 <- NA
     }
 
+    method <- input$rb_kanon_method
+    if (is.null(method)) {
+      method <- "heuristic"
+    }
+
     cmd <- paste0("sdcObj <- kAnon(sdcObj")
     if (kAnon_useImportance()) {
       cur_importance <- kAnon_impvec()
@@ -318,7 +323,17 @@ shinyServer(function(session, input, output) {
       xx <- x[,lapply(.SD, function(y) { length(table(y))}), .SDcols=get_keyVars_names()]
       cur_importance <- order(unlist(as.vector(xx)), decreasing = TRUE)
     }
-    cmd <- paste0(cmd,", importance=",VecToRStr(cur_importance, quoted=FALSE))
+    # the standard sweep reads 'importance' as a tie-break ORDER and always has
+    # one; the other engines read it as a linear COST. The order materialised
+    # above for the summary page must therefore not travel to them - only an
+    # importance the user actually set is a statement about cost.
+    use_importance <- method=="heuristic" || kAnon_useImportance()
+    if (use_importance) {
+      cmd <- paste0(cmd,", importance=",VecToRStr(cur_importance, quoted=FALSE))
+      txt_imp <- paste0(" (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[order(as.numeric(cur_importance))]),")")
+    } else {
+      txt_imp <- " (all key variables equally costly)"
+    }
 
     if (input$rb_kanon_useCombs=="Yes") {
       params <- kAnon_comb_params()
@@ -326,14 +341,44 @@ shinyServer(function(session, input, output) {
       k <- params$k
       txt_action <- NULL
       for (i in 1:length(k)) {
-        txt_action <- paste0(txt_action, "Establishing ",k[i],"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[order(as.numeric(cur_importance))]),") for all ",params$use[i],"-combinations of key variables.\n\n")
+        txt_action <- paste0(txt_action, "Establishing ",k[i],"-anonymity in key variables",txt_imp," for all ",params$use[i],"-combinations of key variables.\n\n")
       }
     } else {
       cmd <- paste0(cmd, ", combs=NULL")
       k <- input$sl_kanon_k
-      txt_action <- paste0("Establishing ",k,"-anonymity in key variables (with following order of importance: ",VecToRStr_txt(get_keyVars_names()[order(as.numeric(cur_importance))]),")")
+      txt_action <- paste0("Establishing ",k,"-anonymity in key variables",txt_imp)
     }
-    cmd <- paste0(cmd, ", k=",VecToRStr(k, quoted=FALSE),")")
+    cmd <- paste0(cmd, ", k=",VecToRStr(k, quoted=FALSE))
+
+    if (method!="heuristic") {
+      cmd <- paste0(cmd, ", method=", dQuote(method))
+      ctrl <- character(0)
+      if (method %in% c("optimal","aggregate")) {
+        solver <- input$sel_kanon_solver
+        if (is.null(solver)) {
+          solver <- ls_solvers()[1]
+        }
+        ctrl <- c(ctrl, paste0("solver=", dQuote(solver)))
+        if (!is.null(input$sl_kanon_timelimit)) {
+          ctrl <- c(ctrl, paste0("time_limit=", input$sl_kanon_timelimit))
+        }
+      }
+      if (method=="optimal") {
+        if (!is.null(input$sl_kanon_maxper) && as.numeric(input$sl_kanon_maxper) > 0) {
+          ctrl <- c(ctrl, paste0("max_per_record=", input$sl_kanon_maxper))
+        }
+        # a solve that runs out of time needs a feasible solution to fall back
+        # on, otherwise there is nothing to release
+        ctrl <- c(ctrl, paste0("warm_start=", dQuote("greedy2")))
+      }
+      if (length(ctrl) > 0) {
+        cmd <- paste0(cmd, ", control=list(", paste(ctrl, collapse=", "), ")")
+      }
+      # which engine ran, and what it proved, is appended to the audit trail
+      # after the run (btn_kanon below) -- claiming it here would only repeat
+      # what was asked for
+    }
+    cmd <- paste0(cmd, ")")
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })
 
@@ -1245,8 +1290,16 @@ shinyServer(function(session, input, output) {
     obj$comptime <- obj$comptime+ptm[3]
     progress$set(message="Performing local suppression - please wait", value = 1)
     if (is.null(lastError())) {
-      obj$lastaction <- res$txt_action
-      obj$anon_performed <- c(obj$anon_performed, res$txt_action)
+      txt_action <- res$txt_action
+      # an audit trail must record whether the solve was truncated
+      if (!is.null(obj$sdcObj)) {
+        note <- print(obj$sdcObj, type="ls", docat=FALSE)$note
+        if (!is.null(note)) {
+          txt_action <- paste0(txt_action, "\n", note)
+        }
+      }
+      obj$lastaction <- txt_action
+      obj$anon_performed <- c(obj$anon_performed, txt_action)
     }
   })
   # suppress risky observations

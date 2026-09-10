@@ -173,6 +173,12 @@ output$ui_sdcObj_summary <- renderUI({
       column(12, p(txt)),
       column(12, p(txt2)),
       column(12, renderTable(dt), class="wn-info-table")))
+    # which engine decided the pattern, and what it proved (NULL for the
+    # standard sweep, which claims nothing)
+    if (!is.null(x$note)) {
+      out <- list(out, fluidRow(column(12, p(code(x$note)))))
+    }
+    out
   })
   output$show_info_pram <- renderUI({
     curObj <- sdcObj()
