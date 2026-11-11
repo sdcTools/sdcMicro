@@ -22,7 +22,7 @@ maGowerWORK <- function(data, variables=colnames(data), aggr=3, dist_var=variabl
   levOrders <- vector()
   if (length(orders) > 0) {
     for (i in 1:length(orders)) {
-      levOrders[i] <- levels(data[, orders[i]])[length(levels(data[, orders[i]]))]
+      levOrders[i] <- nlevels(data[, orders[i]])
     }
   }
   factors <- vector()
