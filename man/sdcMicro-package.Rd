@@ -104,7 +104,7 @@ topBotCoding(
 
 ## Numerical Rank Swapping:
 data(Tarragona)
-Tarragona1 <- rankSwap(Tarragona, P = 10, K0 = NULL, R0 = NULL)
+Tarragona1 <- rankSwap(Tarragona, P = 0.1, K0 = NULL, R0 = NULL)
 
 ## Microaggregation:
 m1 <- microaggregation(Tarragona, method = "onedims", aggr = 3)

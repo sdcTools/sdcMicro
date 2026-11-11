@@ -13,7 +13,8 @@
 #' @param aggr aggregation level (default=3)
 #' @param nc number of clusters. Necessary, if a method will need a clustering procedure
 #' @param transf Transformation of variables before clustering.
-#' @param p Swapping range, if method swappNum has been chosen
+#' @param p Swapping range as a proportion of the swappable records (argument
+#' \code{P} of \code{\link{rankSwap}}), if method swappNum has been chosen
 #' @param noise noise addition, if an addNoise method has been chosen
 #' @param w variables for swapping, if method swappNum has been chosen
 #' @param delta parameter for adding noise method `"correlated2"`
@@ -40,7 +41,7 @@
 #' }
 valTable <- function(x, method = c("simple", "onedims", "clustpppca", "addNoise: additive", "swappNum"),
   measure = "mean", clustermethod = "clara", aggr = 3, nc = 8, transf = "log",
-  p = 15, noise = 15, w = 1:dim(x)[2], delta = 0.1) {
+  p = 0.15, noise = 15, w = 1:dim(x)[2], delta = 0.1) {
 
   # vars to keep from summary.micro()
   keep <- c("amean", "amedian", "aonestep", "devvar", "amad", "acov", "acor",

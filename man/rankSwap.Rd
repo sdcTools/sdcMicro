@@ -44,11 +44,14 @@ R_1/R_2} where \eqn{R_1}{R_1} is the correlation coefficient of the two
 fields after swapping, and \eqn{R_2}{R_2} is the correlation coefficient of
 the two fields before swapping.}
 
-\item{P}{Rank range as percentage of total sample size. We can specify the
-rank range itself directly, noted as \eqn{P}{P}, which is the percentage of
-the records. So two records are eligible for swapping if their ranks,
-\eqn{i}{i} and \eqn{j}{j} respectively, satisfy \eqn{| i-j | \le \frac{P
-N}{100}}{abs(i-j)<P*N/100}, where \eqn{N}{N} is the total sample size.}
+\item{P}{Rank range as a proportion (not a percentage) of the number of
+swappable records, a value between 0 and 1; use \code{P = 0.1} for a 10\%
+rank range. For the value at rank \eqn{j}{j} among the swappable values, the
+swap partner is drawn at random from the not yet swapped values at ranks
+\eqn{k}{k} with \eqn{j < k < j + P N_s}{j < k < j + P*N_s}, where
+\eqn{N_s}{N_s} is the number of swappable records: the number of
+observations minus missing values and the values grouped by
+\code{TopPercent} and \code{BottomPercent}.}
 
 \item{missing}{missing - the value to be used as missing value
 in the C++ routine instead of NA. If NA, a suitable value is calculated internally.
@@ -69,10 +72,18 @@ determined and the correlation coefficient makes sense.
 \details{
 Rank swapping sorts the values of one numeric variable by their numerical
 values (ranking).  The restricted range is determined by the rank of two
-swapped values, which cannot differ, by definition, by more than P
-percent of the total number of observations. Only positive P, R0 and K0 are
-used and only one of it must be supplied. If none is supplied, sdcMicro sets
-parameter r0 to 0.95 internally.
+swapped values, which cannot differ by more than a proportion \code{P} of
+the number of swappable records. Missing values and the values grouped by
+\code{TopPercent} and \code{BottomPercent} are not swapped and do not count
+as swappable records. Only non-negative P, R0 and K0 are used and only one
+of them must be supplied. If none is supplied, sdcMicro sets parameter R0 to
+0.95 internally. If \code{R0} or \code{K0} is supplied, the rank range is
+derived from it for each variable.
+
+Note that \code{P} is a proportion, whereas \code{TopPercent} and
+\code{BottomPercent} are percentages: a 10\% rank range is \code{P = 0.1},
+while 5\% top coding is \code{TopPercent = 5}. Values of \code{P} larger
+than 1 do not restrict the rank range at all and raise a warning.
 }
 \examples{
 data(testdata2)

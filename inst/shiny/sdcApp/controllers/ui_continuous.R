@@ -440,7 +440,7 @@ output$ui_rankswap <- renderUI({
     txt_tooltip <- paste0(txt_tooltip, "The algorithm preserves the correlation between variables within a certain range based on the specified multivariate preservation factor R_0, such that R_1/R_2 > R_0 where R_1 is the correlation coefficient of the two variables after swapping, ")
     txt_tooltip <- paste0(txt_tooltip, "and R_2 is the correlation coefficient of the two variables before swapping.")
     txt_tooltip <- paste0(txt_tooltip, "<br><b>P:</b><br />")
-    txt_tooltip <- paste0(txt_tooltip, "This parameter (P) describes the size of the rank range as percentage of the total sample size. So two records are eligible for swapping if their ranks, i and j respectively, satisfy abs(i-j) < P*N/100, where N is the total sample size.")
+    txt_tooltip <- paste0(txt_tooltip, "This parameter (P) describes the size of the rank range as a proportion of the swappable records (P = 0.1 is a 10% rank range). The value at rank j is swapped with a value at a rank k drawn at random from j < k < j + P*N_s, where N_s is the number of swappable records (excluding missing values and top/bottom grouped values).")
     rb_rankswap_p_k0_r0 <- radioButtons("rb_rankswap_p_k0_r0",
                                         label=p("Method to compute swap rate:", tipify(icon("circle-info"),
                                                                                        title=txt_tooltip, placement="top")),
@@ -448,9 +448,9 @@ output$ui_rankswap <- renderUI({
   })
   
   output$sl_rankswap_p_k0_r0 <- renderUI({
-    txt_tooltip <- "For K0 and R0 a value between 0 and 1 will be used directly and for P it will be multiplied by 100."
+    txt_tooltip <- "The value between 0 and 1 is used directly for K0, R0 and P (for P, the rank range as a proportion of the swappable records)."
     sliderInput("sl_rankswap_p_k0_r0",
-                label=p("Set rank range as percentage of total sample size.", tipify(icon("circle-info"), title=txt_tooltip, placement="top")),
+                label=p("Set the value of the selected parameter (K0, R0 or P).", tipify(icon("circle-info"), title=txt_tooltip, placement="top")),
                 min=0, max=1, step=0.01, value=0.95, width="100%")
   })
  
