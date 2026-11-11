@@ -74,7 +74,7 @@
 <span>  aggr <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  nc <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>  transf <span class="op">=</span> <span class="st">"log"</span>,</span>
-<span>  p <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>  p <span class="op">=</span> <span class="fl">0.15</span>,</span>
 <span>  noise <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>  w <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,</span>
 <span>  delta <span class="op">=</span> <span class="fl">0.1</span></span>
@@ -115,7 +115,8 @@ or rank swapping methods.</p></dd>
 
 
 <dt id="arg-p">p<a class="anchor" aria-label="anchor" href="#arg-p"></a></dt>
-<dd><p>Swapping range, if method swappNum has been chosen</p></dd>
+<dd><p>Swapping range as a proportion of the swappable records (argument
+<code>P</code> of <code><a href="rankSwap.html">rankSwap</a></code>), if method swappNum has been chosen</p></dd>
 
 
 <dt id="arg-noise">noise<a class="anchor" aria-label="anchor" href="#arg-noise"></a></dt>

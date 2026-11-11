@@ -84,7 +84,7 @@
                         <h4 data-toc-skip class="author">Bernhard
 Meindl</h4>
             
-            <h4 data-toc-skip class="date">2026-09-04</h4>
+            <h4 data-toc-skip class="date">2026-11-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sdcTools/sdcMicro/blob/master/vignettes/sdcMicro.Rmd" class="external-link"><code>vignettes/sdcMicro.Rmd</code></a></small>
       <div class="hidden name"><code>sdcMicro.Rmd</code></div>
@@ -1660,16 +1660,15 @@ refer to the top- and bottom- percentages that should be grouped
 together before the method is applied. Both sliders have by default a
 value of <code>0</code> (the minimum) and can take values up to
 <code>25</code>.</p>
-<p>The sliders <code>Subset-mean preservation factor</code>,
-<code>Multivariate preservation factor</code> and
-<code>Rank range as percentage of total sample size.</code> allow to
-fine-tune the algorihm. The first slider refers to argument
-<code>K0</code>, the second to argument <code>R0</code> and the third
-slider to argument <code>P</code> in <code><a href="../reference/rankSwap.html">rankSwap()</a></code>. The
-default values of these sliders are equal to the default values for the
-function itself and can be changed within reasonable ranges. For details
-on the impact of these parameters, please see
-<code><a href="../reference/rankSwap.html">?rankSwap</a></code>.</p>
+<p>The radio buttons <code>Method to compute swap rate</code> select
+which of the arguments <code>K0</code> (subset-mean preservation
+factor), <code>R0</code> (multivariate preservation factor) or
+<code>P</code> (rank range) of <code><a href="../reference/rankSwap.html">rankSwap()</a></code> controls the
+algorithm, and the slider next to them sets its value between
+<code>0</code> and <code>1</code>. All three are used as given; in
+particular, <code>P</code> is a proportion of the swappable records, so
+a value of <code>0.1</code> is a rank range of 10%. For details on the
+impact of these parameters, please see <code><a href="../reference/rankSwap.html">?rankSwap</a></code>.</p>
 <p>Once all options have been set, a button labeled
 <code>Apply rank swapping</code> appears at the bottom of the page.
 Clicking this button applies the algorithm on the selected variables

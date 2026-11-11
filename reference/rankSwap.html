@@ -127,11 +127,14 @@ the two fields before swapping.</p></dd>
 
 
 <dt id="arg-p">P<a class="anchor" aria-label="anchor" href="#arg-p"></a></dt>
-<dd><p>Rank range as percentage of total sample size. We can specify the
-rank range itself directly, noted as \(P\), which is the percentage of
-the records. So two records are eligible for swapping if their ranks,
-\(i\) and \(j\) respectively, satisfy \(| i-j | \le \frac{P
-N}{100}\), where \(N\) is the total sample size.</p></dd>
+<dd><p>Rank range as a proportion (not a percentage) of the number of
+swappable records, a value between 0 and 1; use <code>P = 0.1</code> for a 10%
+rank range. For the value at rank \(j\) among the swappable values, the
+swap partner is drawn at random from the not yet swapped values at ranks
+\(k\) with \(j &lt; k &lt; j + P N_s\), where
+\(N_s\) is the number of swappable records: the number of
+observations minus missing values and the values grouped by
+<code>TopPercent</code> and <code>BottomPercent</code>.</p></dd>
 
 
 <dt id="arg-missing">missing<a class="anchor" aria-label="anchor" href="#arg-missing"></a></dt>
@@ -153,10 +156,17 @@ this value.</p></dd>
     <h2>Details</h2>
     <p>Rank swapping sorts the values of one numeric variable by their numerical
 values (ranking).  The restricted range is determined by the rank of two
-swapped values, which cannot differ, by definition, by more than P
-percent of the total number of observations. Only positive P, R0 and K0 are
-used and only one of it must be supplied. If none is supplied, sdcMicro sets
-parameter r0 to 0.95 internally.</p>
+swapped values, which cannot differ by more than a proportion <code>P</code> of
+the number of swappable records. Missing values and the values grouped by
+<code>TopPercent</code> and <code>BottomPercent</code> are not swapped and do not count
+as swappable records. Only non-negative P, R0 and K0 are used and only one
+of them must be supplied. If none is supplied, sdcMicro sets parameter R0 to
+0.95 internally. If <code>R0</code> or <code>K0</code> is supplied, the rank range is
+derived from it for each variable.</p>
+<p>Note that <code>P</code> is a proportion, whereas <code>TopPercent</code> and
+<code>BottomPercent</code> are percentages: a 10% rank range is <code>P = 0.1</code>,
+while 5% top coding is <code>TopPercent = 5</code>. Values of <code>P</code> larger
+than 1 do not restrict the rank range at all and raise a warning.</p>
     </div>
     <div id="references">
     <h2>References</h2>
