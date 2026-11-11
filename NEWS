@@ -1,4 +1,8 @@
 # 5.8.2
+- Bugfix: `microaggrGower()` passed the label of the last level of each ordered
+  factor to `VIM::gowerD()` instead of the number of levels. This failed with
+  VIM >= 7.5.1, which validates the argument, and with earlier VIM versions gave
+  wrong distances for ordered factors whose labels are not `"1"`, ..., `"n"`.
 - `AI_applyAnonymization()` gains early stopping of the refinement loop via the new
   `tol` and `patience` arguments: refinement now terminates once the combined utility
   score U stops improving by more than `tol` for `patience` consecutive iterations,
