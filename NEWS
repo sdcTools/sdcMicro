@@ -3,6 +3,17 @@
   factor to `VIM::gowerD()` instead of the number of levels. This failed with
   VIM >= 7.5.1, which validates the argument, and with earlier VIM versions gave
   wrong distances for ordered factors whose labels are not `"1"`, ..., `"n"`.
+- `rankSwap()`: the documentation of `P` now matches the implementation. `P` is the
+  rank range as a *proportion* of the swappable records (`P = 0.1` for a 10% rank
+  range), not a percentage of the total sample size; swappable records exclude
+  missing values and the values grouped by `TopPercent`/`BottomPercent`. `P > 1`
+  (which does not restrict the rank range at all) now raises a warning, negative
+  `P` an error. Thanks to the user who reported the mismatch.
+- Bugfix (sdcApp): rank swapping with method `P` multiplied the slider value by
+  100, so e.g. 0.95 was passed as `P = 95` and records were swapped without any
+  rank restriction. The slider value is now passed unchanged.
+- `valTable()`: the default swapping range for method `"swappNum"` is now
+  `p = 0.15` (previously `p = 15`, i.e. an unrestricted rank range).
 - `AI_applyAnonymization()` gains early stopping of the refinement loop via the new
   `tol` and `patience` arguments: refinement now terminates once the combined utility
   score U stops improving by more than `tol` for `patience` consecutive iterations,
