@@ -6,6 +6,14 @@
   households. Results for data sorted by `hid` are unchanged.
 - Bugfix `recordSwap()`: `risk` given as a column name did not work if the column
   itself was called `risk` (error, or a wrong column used as risk).
+- Bugfix `localSuppression()` / `kAnon()` for data frames with `combs`: the subsets of
+  key variables and the `importance` vector were addressed by column position, which
+  is only correct if the key variables are the leading columns of the data. Otherwise
+  a user-supplied `importance` was applied to the wrong variables, and with
+  `strataVars` wrong columns were processed (too few suppressions although
+  `anonymity = TRUE` was reported, or an error). The subsets are now formed over the
+  key variables wherever they are in the data. Results are unchanged if the key
+  variables are the leading columns, and for `sdcMicroObj` objects.
 - `createSdcObj()` works without categorical key variables (#91): `keyVars` is now
   optional, e.g. `createSdcObj(Tarragona, numVars = c("SALES", "NET.PROFIT"))`; at least
   one of `keyVars` and `numVars` must be given. For such an object no frequency counts
