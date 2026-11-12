@@ -17,7 +17,8 @@ microaggregation(
   measure = "mean",
   trim = 0,
   varsort = 1,
-  transf = "log"
+  transf = "log",
+  gamma = 0.2
 )
 }
 \arguments{
@@ -35,7 +36,7 @@ stratification-variable defined in slot \code{@strataVar} is used. This slot can
 time using \code{strataVar<-}.}
 
 \item{method}{pca, rmd, onedims, single, simple, clustpca, pppca,
-clustpppca, mdav, clustmcdpca, influence, mcdpca}
+clustpppca, mdav, vmdav, clustmcdpca, influence, mcdpca}
 
 \item{weights}{sampling weights. If obj is of class sdcMicroObj the vector
 of sampling weights is chosen automatically. If determined, a weighted
@@ -53,6 +54,10 @@ median or weighted mean.}
 \item{varsort}{variable for sorting, if method=single}
 
 \item{transf}{transformation for data x}
+
+\item{gamma}{gain factor of method \sQuote{vmdav} (a single non-negative number,
+default 0.2), ignored by all other methods. The larger \code{gamma}, the more
+readily a group is extended beyond \code{aggr} records; see Details.}
 }
 \value{
 If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
@@ -114,10 +119,33 @@ With method \sQuote{simple} one can apply microaggregation directly on the
 (unsorted) data. It is useful for the comparison with other methods as a
 benchmark, i.e. replies the question how much better is a sorting of the
 data before aggregation.
+
+Method \sQuote{vmdav} (V-MDAV, Solanas and Martinez-Balleste, 2006) forms groups
+of variable size. \code{aggr} is then the \emph{minimum} group size \eqn{k}.
+The variables are standardised, and until fewer than \eqn{k} records are left,
+a group is built from the record that is most distant from the centroid of the
+data and its \eqn{k - 1} nearest unassigned records. The group is then extended:
+let \eqn{e} be the unassigned record closest to the group, \eqn{d_{in}} its
+distance to the nearest record of the group and \eqn{d_{out}} its distance to
+the nearest other unassigned record. \eqn{e} joins the group if
+\eqn{d_{in} < \gamma d_{out}}{d_in < gamma * d_out}, and this is repeated until the
+condition fails or the group has \eqn{2k - 1} records. Records that are left at
+the end (fewer than \eqn{k}) are added to the group with the closest centroid, so
+that a group can exceed \eqn{2k - 1} records by at most \eqn{k - 1}. Every group
+has at least \eqn{k} records. With \code{gamma = 0} no group is extended and the
+group size is fixed as for \sQuote{mdav}; the authors used \code{gamma = 0.2} for
+scattered data and \code{gamma = 1.1} for data with natural clusters, where the
+information loss can be much lower than with a fixed group size. The values are
+aggregated with the arithmetic mean. Ties are broken by the order of the
+records, so that the result is deterministic. Distances between records with
+missing values are computed from the variables observed in both records;
+missing values stay missing. The method needs no distance matrix, but its
+running time grows quadratically with the number of records.
 }
 \note{
-if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored.
-Parameters \code{measure} are ignored for methods \code{mdav} and \code{rmd}.
+if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored,
+except for method \code{vmdav}, which is also applied to a single variable.
+Parameters \code{measure} are ignored for methods \code{mdav}, \code{vmdav} and \code{rmd}.
 }
 \examples{
 data(testdata)
@@ -130,6 +158,15 @@ m <- microaggregation(
   aggr = 4
 )
 summary(m)
+
+## variable group size (V-MDAV): aggr is the minimum group size
+mv <- microaggregation(
+  obj = testdata[1:100, c("expend", "income", "savings")],
+  method = "vmdav",
+  aggr = 4,
+  gamma = 1.1
+)
+table(table(mv$mx$expend))
 
 ## for objects of class sdcMicro:
 ## no stratification because `@strataVar` is `NULL`
@@ -154,6 +191,10 @@ sdc <- microaggregation(
 }
 }
 \references{
+Solanas, A. and Martinez-Balleste, A., \emph{V-MDAV: A Multivariate
+Microaggregation With Variable Group Size}, in COMPSTAT 2006, Rome, pp. 917-925,
+2006.
+
 Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New Disclosure
 Risk Measures for Continuous Microdata Masking}, Lecture Notes in Computer
 Science, Privacy in Statistical Databases, vol. 5262, pp. 113-126, 2008.
