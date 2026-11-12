@@ -240,7 +240,7 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
                        log_file_name = "TRS_logfile.txt",
                        seed = NULL, ...){
 
-  helpVariableforMergingAfterTRS <- . <- hid_help <- NULL
+  helpVariableforMergingAfterTRS <- helpVariableforRiskOrder <- . <- hid_help <- NULL
 
   # check data
   if(missing(data)){
