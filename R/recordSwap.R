@@ -91,6 +91,12 @@
 #' satisfied, the risk parameter is automatically adjusted to comply with this    
 #' condition.
 #' If risk parameter is provided then k-anonymity rule is suppressed.
+#' The risk values are also the sampling weights of the donor households: the
+#' higher the risk of a household at a hierarchy level, the more likely it is
+#' chosen as donor at this level, and a household with risk 0 at a hierarchy
+#' level is never used as donor at this level. To allow households which are
+#' not at risk as donors, give them a small positive risk below
+#' `risk_threshold`.
 #' @param risk_threshold single numeric value indicating when a household is
 #' considered "high risk", e.g. when this household must be swapped. Is only
 #' used when `risk` is not `NULL`.
@@ -112,7 +118,10 @@
 #' level (different values within `hid`), a warning is given.
 #' @param return_swapped_id, boolean if `TRUE` the output includes an
 #' additional column showing the `hid` with which a record was swapped with.
-#' The new column will have the name `paste0(hid,"_swapped")`.
+#' The new column will have the name `paste0(hid,"_swapped")`. Both households
+#' of a swap get the identifier of their partner, the household that had to be
+#' swapped as well as its donor. Selecting the households for which the two
+#' identifiers differ therefore also returns the donors.
 #' @param log_file_name character, path for writing a log file. The log
 #' file contains a list of household IDs (`hid`) which could not have been
 #' swapped and is only created if any such households exist.

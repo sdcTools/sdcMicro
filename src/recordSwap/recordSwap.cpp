@@ -439,16 +439,17 @@ std::map<std::vector<int>,std::pair<int,int>> distributeDraws(std::map<std::vect
   // pick first draw_excess values and add one to them
   int z = 0;
   int v = 0;
-  int count_swaps=0;
   // certain groups will get one more draw
   for(auto const&x : draw_group){
+    if(v>(draw_excess-1)){
+      // all draw_excess have been distributed, or there is nothing to distribute
+      // (draw_excess==0, e.g. swaprate=0): without this check coming first the
+      // first group got an extra draw whenever add_extra[0]==0
+      break;
+    }
     if(add_extra[v]==z){
       draw_group[x.first].second++;
       v++;
-    }
-    count_swaps = count_swaps+draw_group[x.first].second;
-    if(v>(draw_excess-1)){
-      break; // if all draw_excess have been distributed break procedure
     }
     z++;
   }
@@ -660,8 +661,16 @@ std::vector< std::vector<int> > recordSwap(std::vector< std::vector<int> > data,
     // create map for random numbers (ordered)
     // makes sampling in each iteration obsolete
     // look up in these maps instead
+    // a household with risk 0 at a hierarchy level has sampling weight 0 and is
+    // never a donor at this level. Such households must not be inserted: they all
+    // have the key 0 and would overwrite each other, which left the last household
+    // of the data as the only (and deterministic) donor with risk 0.
+    // The random number is drawn in any case, to keep the random number stream.
     for(int j=0;j<nhier;j++){
-      samp_order_donor[j][prob[z][j]/exp_dist(mersenne_engine)] = z;
+      double samp_key = prob[z][j]/exp_dist(mersenne_engine);
+      if(prob[z][j]>0){
+        samp_order_donor[j][samp_key] = z;
+      }
     }
 
     // count number of households
