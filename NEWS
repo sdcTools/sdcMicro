@@ -1,4 +1,17 @@
 # 5.8.2
+- Bugfix `recordSwap()` (#333): with a user-supplied `risk`, all households with risk 0
+  at a hierarchy level shared one entry in the internal donor list, so that exactly one
+  of them, always the last household of the data, could still be chosen as donor. In
+  the example of the issue this household was swapped although its risk was 0.
+  Households with risk 0 at a hierarchy level are now never donors at this level, as
+  documented ("only households with risk set to 0 are not swapped"); a household at
+  risk without a suitable donor is reported in the log file as before. Give non-risky
+  households a small positive risk to allow them as donors.
+- Bugfix `recordSwap()`: if the number of swaps to distribute over the lowest hierarchy
+  level was 0 (e.g. `swaprate = 0`), the first group nevertheless received one swap
+  with probability 1 / (number of groups). Results with `swaprate > 0` are unchanged.
+- `recordSwap()`: the documentation of `risk` and `return_swapped_id` states that risk
+  values are donor sampling weights and that donors are flagged as swapped, too.
 - `addNoise(method = "ROMM")` is reimplemented (#271, thanks to Øyvind Langsrud for the
   report and the QR formulation, cf. his R package RegSDC). **Results change:** the
   perturbed data now have exactly the same sample means and the same sample covariance
