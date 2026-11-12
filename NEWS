@@ -1,4 +1,14 @@
 # 5.8.2
+- `pram()`: the documentation of `pd` and `alpha` now describes what is computed (#347).
+  `pd` is the lower bound of the diagonal of the *initial* matrix `P`; the matrix
+  that is applied is the invariant matrix `Rs = alpha * R + (1 - alpha) * I`, whose
+  diagonal can be smaller than `pd`. Its rows sum to 1, its columns in general do not;
+  invariance means `p' Rs = p'` for the observed frequencies `p`. The behaviour is
+  unchanged. A new Details section explains the construction.
+- `pram()`: a user-supplied transition matrix is now accepted if its row sums equal 1
+  up to numerical tolerance (`sqrt(.Machine$double.eps)`). Previously the check used
+  `.Machine$double.eps`, so valid matrices (e.g. with entries `1/49`) could be rejected
+  because of floating-point rounding.
 - Bugfix: `microaggrGower()` passed the label of the last level of each ordered
   factor to `VIM::gowerD()` instead of the number of levels. This failed with
   VIM >= 7.5.1, which validates the argument, and with earlier VIM versions gave

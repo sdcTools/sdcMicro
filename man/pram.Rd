@@ -20,21 +20,28 @@ automatically for an object of class \linkS4class{sdcMicroObj}. One can also spe
 an integer vector or factor that specifies that desired groups. This vector must match the dimension
 of the input data set, however. For a possible use case, have a look at the examples.}
 
-\item{pd}{minimum diagonal entries for the generated transition matrix P.
-Either a vector of length 1 (which is recycled) or a vector of the same length as
-the number of variables that should be postrandomized. It is also possible to set \code{pd}
-to a numeric matrix. This matrix will be used directly as the transition matrix. The matrix must
-be constructed as follows:
+\item{pd}{lower bound for the diagonal entries of the \emph{initial} transition matrix \code{P}
+from which the invariant transition matrix is derived (see Details). Note that \code{pd} is
+\strong{not} a lower bound for the diagonal of the matrix that is finally applied to the data:
+the diagonal entries of the applied matrix can be smaller than \code{pd}, the more so the
+larger \code{alpha} is. Either a vector of length 1 (which is recycled) or a vector of the
+same length as the number of variables that should be postrandomized. It is also possible
+to set \code{pd} to a numeric matrix. This matrix will be used directly as the transition
+matrix, which is the way to go if specific (e.g. guaranteed minimal) diagonal entries
+are required. The matrix must be constructed as follows:
 \itemize{
 \item the matrix must be a square matrix
 \item the rownames and colnames of the matrix must match the levels (in the same order) of the factor-variable that should be
 postrandomized.
-\item the rowSums of the matrix need to equal 1
+\item the rowSums of the matrix need to equal 1 (up to numerical tolerance); the column sums
+are not restricted
 }
 
 It is also possible to combine the different ways. For details have a look at the examples.}
 
-\item{alpha}{amount of perturbation for the invariant Pram method. This is a numeric vector
+\item{alpha}{amount of perturbation for the invariant Pram method, a number between
+0 and 1. With \code{alpha = 0} the data are not changed at all, with \code{alpha = 1} the
+invariant transition matrix \code{R} is applied in full (see Details). This is a numeric vector
 of length 1 (that will be recycled if necessary) or a vector of the same length as the number
 of variables. If one specified as transition matrix directly, \code{alpha} is ignored.}
 }
@@ -47,6 +54,34 @@ To be used on categorical data stored as factors. The algorithm randomly
 changes the values of variables in selected records (usually the risky ones)
 according to an invariant probability transition matrix or a custom-defined
 transition matrix.
+}
+\details{
+If \code{pd} is a number, the transition matrix is generated in three steps, separately for
+each variable and each stratum:
+\enumerate{
+\item An initial transition matrix \code{P} is drawn. Its diagonal entries are sampled
+uniformly from the interval \verb{[pd, 1]}; the remaining probability mass of each row is
+spread evenly over the other categories. Only for this matrix \code{pd} is a lower bound of
+the diagonal.
+\item From \code{P} and the observed relative frequencies \code{p} of the categories, the invariant
+matrix \verb{R = P Q} is computed, where \code{Q} is the estimated backward transition matrix
+with entries \verb{Q[k, j] = P[j, k] p[j] / sum_i(p[i] P[i, k])}.
+\item The matrix that is applied to the data is \code{Rs = alpha * R + (1 - alpha) * I} with
+\code{I} being the identity matrix.
+}
+
+Since \code{R} is a product of two transition matrices, its diagonal entries are in general
+smaller than those of \code{P}. The diagonal of \code{Rs} therefore can be below \code{pd}, in
+particular for large \code{alpha}. This is intended; if a lower bound for the diagonal of
+the applied matrix is needed, a transition matrix should be passed to \code{pd} directly.
+
+The rows of \code{Rs} sum up to 1 (row \code{i} holds the probabilities that category \code{i} is
+changed into each of the categories), the columns in general do not. Invariance
+means that the observed distribution is preserved in expectation, \verb{p' Rs = p'}; it does
+not mean that the column sums equal 1.
+
+The matrix that was used (for the last stratum, if strata are present) is available
+in the output, see \code{attr(res, "pram_params")} in the examples.
 }
 \note{
 Deprecated method 'pram_strata' is no longer available

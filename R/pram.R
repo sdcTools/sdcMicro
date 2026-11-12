@@ -17,21 +17,54 @@
 #' automatically for an object of class [sdcMicroObj-class]. One can also specify
 #' an integer vector or factor that specifies that desired groups. This vector must match the dimension
 #' of the input data set, however. For a possible use case, have a look at the examples.
-#' @param pd minimum diagonal entries for the generated transition matrix P.
-#' Either a vector of length 1 (which is recycled) or a vector of the same length as
-#' the number of variables that should be postrandomized. It is also possible to set `pd`
-#' to a numeric matrix. This matrix will be used directly as the transition matrix. The matrix must
-#' be constructed as follows:
+#' @param pd lower bound for the diagonal entries of the *initial* transition matrix `P`
+#' from which the invariant transition matrix is derived (see Details). Note that `pd` is
+#' **not** a lower bound for the diagonal of the matrix that is finally applied to the data:
+#' the diagonal entries of the applied matrix can be smaller than `pd`, the more so the
+#' larger `alpha` is. Either a vector of length 1 (which is recycled) or a vector of the
+#' same length as the number of variables that should be postrandomized. It is also possible
+#' to set `pd` to a numeric matrix. This matrix will be used directly as the transition
+#' matrix, which is the way to go if specific (e.g. guaranteed minimal) diagonal entries
+#' are required. The matrix must be constructed as follows:
 #'
 #' - the matrix must be a square matrix
 #' - the rownames and colnames of the matrix must match the levels (in the same order) of the factor-variable that should be
 #' postrandomized.
-#' - the rowSums of the matrix need to equal 1
+#' - the rowSums of the matrix need to equal 1 (up to numerical tolerance); the column sums
+#' are not restricted
 #'
 #' It is also possible to combine the different ways. For details have a look at the examples.
-#' @param alpha amount of perturbation for the invariant Pram method. This is a numeric vector
+#' @param alpha amount of perturbation for the invariant Pram method, a number between
+#' 0 and 1. With `alpha = 0` the data are not changed at all, with `alpha = 1` the
+#' invariant transition matrix `R` is applied in full (see Details). This is a numeric vector
 #' of length 1 (that will be recycled if necessary) or a vector of the same length as the number
 #' of variables. If one specified as transition matrix directly, `alpha` is ignored.
+#' @details
+#' If `pd` is a number, the transition matrix is generated in three steps, separately for
+#' each variable and each stratum:
+#'
+#' 1. An initial transition matrix `P` is drawn. Its diagonal entries are sampled
+#' uniformly from the interval `[pd, 1]`; the remaining probability mass of each row is
+#' spread evenly over the other categories. Only for this matrix `pd` is a lower bound of
+#' the diagonal.
+#' 2. From `P` and the observed relative frequencies `p` of the categories, the invariant
+#' matrix `R = P Q` is computed, where `Q` is the estimated backward transition matrix
+#' with entries `Q[k, j] = P[j, k] p[j] / sum_i(p[i] P[i, k])`.
+#' 3. The matrix that is applied to the data is `Rs = alpha * R + (1 - alpha) * I` with
+#' `I` being the identity matrix.
+#'
+#' Since `R` is a product of two transition matrices, its diagonal entries are in general
+#' smaller than those of `P`. The diagonal of `Rs` therefore can be below `pd`, in
+#' particular for large `alpha`. This is intended; if a lower bound for the diagonal of
+#' the applied matrix is needed, a transition matrix should be passed to `pd` directly.
+#'
+#' The rows of `Rs` sum up to 1 (row `i` holds the probabilities that category `i` is
+#' changed into each of the categories), the columns in general do not. Invariance
+#' means that the observed distribution is preserved in expectation, `p' Rs = p'`; it does
+#' not mean that the column sums equal 1.
+#'
+#' The matrix that was used (for the last stratum, if strata are present) is available
+#' in the output, see `attr(res, "pram_params")` in the examples.
 #' @return a modified [sdcMicroObj-class] object or a new object containing
 #' original and post-randomized variables (with suffix "_pram").
 #' @author Alexander Kowarik, Matthias Templ, Bernhard Meindl
@@ -411,7 +444,7 @@ pramWORK <- function(data, variables=NULL, strata_variables=NULL, params) {
       if (nrow(pd) != L | ncol(pd) != L) {
         stop("dimensions of transition-matrix do not match!\n")
       }
-      if (any(abs(rowSums(pd)-1) > .Machine$double.eps)) {
+      if (any(abs(rowSums(pd)-1) > sqrt(.Machine$double.eps))) {
         stop("rowSums of transition-matrix do not always equal 1!\n")
       }
       if (!identical(rownames(pd), levs)) {
