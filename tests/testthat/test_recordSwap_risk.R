@@ -77,3 +77,21 @@ test_that("households with risk 0 are not used as donors", {
   expect_equal(first_rows[hid == donor, hsize], cand$hsize)
   expect_false(first_rows[hid == donor, nuts1] == cand$nuts1)
 })
+
+test_that("the swap rate is met exactly if the swaps divide evenly among the groups", {
+  skip_on_cran()
+  # four regions of 100 households and swaprate = 0.1: five swaps per region, i.e. 40
+  # swapped households. Up to 5.8.1 the first region could get one swap too many (42).
+  set.seed(1)
+  d <- data.table(hid = 1:400, reg = rep(1:4, each = 100), hsize = 1L,
+                  age = sample(1:5, 400, replace = TRUE))
+  n_swapped <- vapply(1:40, function(s) {
+    res <- recordSwap(
+      data = copy(d), hid = "hid", hierarchy = "reg", similar = "hsize",
+      risk_variables = "age", k_anonymity = 0, swaprate = 0.1,
+      return_swapped_id = TRUE, seed = s, log_file_name = tempfile()
+    )
+    length(swapped_hids(res))
+  }, integer(1))
+  expect_true(all(n_swapped == 40L), info = paste(sort(unique(n_swapped)), collapse = ", "))
+})
