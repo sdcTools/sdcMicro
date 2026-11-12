@@ -42,6 +42,53 @@
   `as.numeric()`, so *character* keys are read as missing, i.e. as wildcards,
   and `kAnon()` then reports success while suppressing nothing. Recode to
   factor or integer first; `ls_check()` and `ls_target()` do so internally.
+- Bugfix `recordSwap()` (#333): with a user-supplied `risk`, all households with risk 0
+  at a hierarchy level shared one entry in the internal donor list, so that exactly one
+  of them, always the last household of the data, could still be chosen as donor. In
+  the example of the issue this household was swapped although its risk was 0.
+  Households with risk 0 at a hierarchy level are now never donors at this level, as
+  documented ("only households with risk set to 0 are not swapped"); a household at
+  risk without a suitable donor is reported in the log file as before. Give non-risky
+  households a small positive risk to allow them as donors.
+- Bugfix `recordSwap()`: if the number of swaps to distribute over the lowest hierarchy
+  level was 0 (e.g. `swaprate = 0`), the first group nevertheless received one swap
+  with probability 1 / (number of groups). Results with `swaprate > 0` are unchanged.
+- `recordSwap()`: the documentation of `risk` and `return_swapped_id` states that risk
+  values are donor sampling weights and that donors are flagged as swapped, too.
+- `addNoise(method = "ROMM")` is reimplemented (#271, thanks to Øyvind Langsrud for the
+  report and the QR formulation, cf. his R package RegSDC). **Results change:** the
+  perturbed data now have exactly the same sample means and the same sample covariance
+  matrix as the original data; previously the means were not preserved. The method no
+  longer builds and orthonormalizes an n x n matrix, so it needs O(n p^2) time instead
+  of O(n^3) and no n x n memory (4580 x 3 values: well below a second). The meaning and
+  the default of `p` are kept (`p = 0`: no change). Rows with missing values are returned
+  unchanged, with a warning (previously the whole result was `NA`); more complete rows
+  than variables are required; constant and collinear variables are handled.
+- `pram()`: the documentation of `pd` and `alpha` now describes what is computed (#347).
+  `pd` is the lower bound of the diagonal of the *initial* matrix `P`; the matrix
+  that is applied is the invariant matrix `Rs = alpha * R + (1 - alpha) * I`, whose
+  diagonal can be smaller than `pd`. Its rows sum to 1, its columns in general do not;
+  invariance means `p' Rs = p'` for the observed frequencies `p`. The behaviour is
+  unchanged. A new Details section explains the construction.
+- `pram()`: a user-supplied transition matrix is now accepted if its row sums equal 1
+  up to numerical tolerance (`sqrt(.Machine$double.eps)`). Previously the check used
+  `.Machine$double.eps`, so valid matrices (e.g. with entries `1/49`) could be rejected
+  because of floating-point rounding.
+- Bugfix: `microaggrGower()` passed the label of the last level of each ordered
+  factor to `VIM::gowerD()` instead of the number of levels. This failed with
+  VIM >= 7.5.1, which validates the argument, and with earlier VIM versions gave
+  wrong distances for ordered factors whose labels are not `"1"`, ..., `"n"`.
+- `rankSwap()`: the documentation of `P` now matches the implementation. `P` is the
+  rank range as a *proportion* of the swappable records (`P = 0.1` for a 10% rank
+  range), not a percentage of the total sample size; swappable records exclude
+  missing values and the values grouped by `TopPercent`/`BottomPercent`. `P > 1`
+  (which does not restrict the rank range at all) now raises a warning, negative
+  `P` an error. Thanks to the user who reported the mismatch.
+- Bugfix (sdcApp): rank swapping with method `P` multiplied the slider value by
+  100, so e.g. 0.95 was passed as `P = 95` and records were swapped without any
+  rank restriction. The slider value is now passed unchanged.
+- `valTable()`: the default swapping range for method `"swappNum"` is now
+  `p = 0.15` (previously `p = 15`, i.e. an unrestricted rank range).
 - `AI_applyAnonymization()` gains early stopping of the refinement loop via the new
   `tol` and `patience` arguments: refinement now terminates once the combined utility
   score U stops improving by more than `tol` for `patience` consecutive iterations,

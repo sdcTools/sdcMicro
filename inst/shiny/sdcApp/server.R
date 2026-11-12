@@ -643,7 +643,7 @@ shinyServer(function(session, input, output) {
     }else if(input$rb_rankswap_p_k0_r0=="R0"){
       rankswap_r0 <- input$sl_rankswap_p_k0_r0
     }else if(input$rb_rankswap_p_k0_r0=="P"){
-      rankswap_p <- input$sl_rankswap_p_k0_r0*100
+      rankswap_p <- input$sl_rankswap_p_k0_r0
     }
     cmd <- paste0(cmd, ", K0=",rankswap_k0)
     cmd <- paste0(cmd, ", R0=",rankswap_r0)

@@ -12,7 +12,7 @@ valTable(
   aggr = 3,
   nc = 8,
   transf = "log",
-  p = 15,
+  p = 0.15,
   noise = 15,
   w = 1:dim(x)[2],
   delta = 0.1
@@ -34,7 +34,8 @@ or rank swapping methods.}
 
 \item{transf}{Transformation of variables before clustering.}
 
-\item{p}{Swapping range, if method swappNum has been chosen}
+\item{p}{Swapping range as a proportion of the swappable records (argument
+\code{P} of \code{\link{rankSwap}}), if method swappNum has been chosen}
 
 \item{noise}{noise addition, if an addNoise method has been chosen}
 
