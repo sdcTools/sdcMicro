@@ -1,4 +1,11 @@
 # 5.8.2
+- Bugfix `recordSwap()`: a user-supplied `risk` was assigned to the wrong households
+  if `data` was not sorted by `hid`. `data` is sorted internally, but the rows of
+  `risk` were left in their original order, so that mostly households without risk
+  were swapped and households at risk were not. The risk values now follow their
+  households. Results for data sorted by `hid` are unchanged.
+- Bugfix `recordSwap()`: `risk` given as a column name did not work if the column
+  itself was called `risk` (error, or a wrong column used as risk).
 - `createSdcObj()` works without categorical key variables (#91): `keyVars` is now
   optional, e.g. `createSdcObj(Tarragona, numVars = c("SALES", "NET.PROFIT"))`; at least
   one of `keyVars` and `numVars` must be given. For such an object no frequency counts
