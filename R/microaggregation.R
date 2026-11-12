@@ -48,6 +48,28 @@
 #' benchmark, i.e. replies the question how much better is a sorting of the
 #' data before aggregation.
 #'
+#' Method \sQuote{vmdav} (V-MDAV, Solanas and Martinez-Balleste, 2006) forms groups
+#' of variable size. \code{aggr} is then the \emph{minimum} group size \eqn{k}.
+#' The variables are standardised, and until fewer than \eqn{k} records are left,
+#' a group is built from the record that is most distant from the centroid of the
+#' data and its \eqn{k - 1} nearest unassigned records. The group is then extended:
+#' let \eqn{e} be the unassigned record closest to the group, \eqn{d_{in}} its
+#' distance to the nearest record of the group and \eqn{d_{out}} its distance to
+#' the nearest other unassigned record. \eqn{e} joins the group if
+#' \eqn{d_{in} < \gamma d_{out}}{d_in < gamma * d_out}, and this is repeated until the
+#' condition fails or the group has \eqn{2k - 1} records. Records that are left at
+#' the end (fewer than \eqn{k}) are added to the group with the closest centroid, so
+#' that a group can exceed \eqn{2k - 1} records by at most \eqn{k - 1}. Every group
+#' has at least \eqn{k} records. With \code{gamma = 0} no group is extended and the
+#' group size is fixed as for \sQuote{mdav}; the authors used \code{gamma = 0.2} for
+#' scattered data and \code{gamma = 1.1} for data with natural clusters, where the
+#' information loss can be much lower than with a fixed group size. The values are
+#' aggregated with the arithmetic mean. Ties are broken by the order of the
+#' records, so that the result is deterministic. Distances between records with
+#' missing values are computed from the variables observed in both records;
+#' missing values stay missing. The method needs no distance matrix, but its
+#' running time grows quadratically with the number of records.
+#'
 #' @name microaggregation
 #' @docType methods
 #' @param obj either an object of class \code{\link{sdcMicroObj-class}} or a \code{data.frame}
@@ -60,7 +82,7 @@
 #' stratification-variable defined in slot \code{@strataVar} is used. This slot can be changed any
 #' time using \code{strataVar<-}.
 #' @param method pca, rmd, onedims, single, simple, clustpca, pppca,
-#' clustpppca, mdav, clustmcdpca, influence, mcdpca
+#' clustpppca, mdav, vmdav, clustmcdpca, influence, mcdpca
 #' @param nc number of cluster, if the chosen method performs cluster analysis
 #' @param weights sampling weights. If obj is of class sdcMicroObj the vector
 #' of sampling weights is chosen automatically. If determined, a weighted
@@ -71,6 +93,9 @@
 #' @param trim trimming percentage, if measure=trim
 #' @param varsort variable for sorting, if method=single
 #' @param transf transformation for data x
+#' @param gamma gain factor of method \sQuote{vmdav} (a single non-negative number,
+#' default 0.2), ignored by all other methods. The larger \code{gamma}, the more
+#' readily a group is extended beyond \code{aggr} records; see Details.
 #' @return If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
 #' slots are filled, like manipNumVars, risk and utility. If \sQuote{obj} was
 #' of class \dQuote{data.frame}, an object of class \dQuote{micro} with following entities is returned:
@@ -80,8 +105,9 @@
 #' \item{\code{method}: }{method}
 #' \item{\code{aggr}: }{aggregation level}
 #' \item{\code{measure}: }{proximity measure for aggregation}}
-#' @note if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored.
-#' Parameters \code{measure} are ignored for methods \code{mdav} and \code{rmd}.
+#' @note if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored,
+#' except for method \code{vmdav}, which is also applied to a single variable.
+#' Parameters \code{measure} are ignored for methods \code{mdav}, \code{vmdav} and \code{rmd}.
 #' @author Matthias Templ, Bernhard Meindl
 #'
 #' For method \dQuote{mdav}: This work is being supported by the International
@@ -94,6 +120,10 @@
 #' @seealso \code{\link{summary.micro}}, \code{\link{plotMicro}},
 #' \code{\link{valTable}}
 #' @references
+#' Solanas, A. and Martinez-Balleste, A., \emph{V-MDAV: A Multivariate
+#' Microaggregation With Variable Group Size}, in COMPSTAT 2006, Rome, pp. 917-925,
+#' 2006.
+#'
 #' Templ, M. and Meindl, B., \emph{Robust Statistics Meets SDC: New Disclosure
 #' Risk Measures for Continuous Microdata Masking}, Lecture Notes in Computer
 #' Science, Privacy in Statistical Databases, vol. 5262, pp. 113-126, 2008.
@@ -129,6 +159,15 @@
 #' )
 #' summary(m)
 #'
+#' ## variable group size (V-MDAV): aggr is the minimum group size
+#' mv <- microaggregation(
+#'   obj = testdata[1:100, c("expend", "income", "savings")],
+#'   method = "vmdav",
+#'   aggr = 4,
+#'   gamma = 1.1
+#' )
+#' table(table(mv$mx$expend))
+#'
 #' ## for objects of class sdcMicro:
 #' ## no stratification because `@strataVar` is `NULL`
 #' data(testdata2)
@@ -152,25 +191,25 @@
 #' }
 microaggregation <- function(obj, variables=NULL, aggr=3, strata_variables=NULL,
   method="mdav", weights=NULL, nc=8, clustermethod="clara",
-  measure="mean", trim=0, varsort=1, transf="log") {
+  measure="mean", trim=0, varsort=1, transf="log", gamma=0.2) {
 
   if (!is.data.frame(obj) & !is.null(strata_variables)) {
     message("Argument 'strata_variables' is ignored. Only variables specified in slot 'strataVar' (if any) of the input object are used!\n")
   }
   microaggregationX(obj=obj, variables=variables, aggr=aggr, strata_variables=strata_variables,
     method=method, weights=weights, nc=nc, clustermethod=clustermethod,
-    measure=measure, trim=trim, varsort=varsort, transf=transf)
+    measure=measure, trim=trim, varsort=varsort, transf=transf, gamma=gamma)
 }
 
 setGeneric("microaggregationX", function(obj, variables=NULL, aggr=3, strata_variables=NULL,
   method="mdav", weights=NULL, nc=8, clustermethod="clara",
-  measure="mean", trim=0, varsort=1, transf="log") {
+  measure="mean", trim=0, varsort=1, transf="log", gamma=0.2) {
   standardGeneric("microaggregationX")
 })
 
 setMethod(f="microaggregationX", signature=c("sdcMicroObj"), definition=function(obj,
   variables=NULL, aggr=3, method="mdav", nc=8, clustermethod="clara",
-  measure="mean", trim=0, varsort=1, transf="log") {
+  measure="mean", trim=0, varsort=1, transf="log", gamma=0.2) {
 
   x <- get.sdcMicroObj(obj, type="manipNumVars")
   if (is.null(variables)) {
@@ -193,7 +232,7 @@ setMethod(f="microaggregationX", signature=c("sdcMicroObj"), definition=function
   }
   res <- microaggregationWORK(x, variables=variables, aggr=aggr, strata_variables=strataVars,
     method=method, weights=weights, nc=nc, clustermethod=clustermethod,
-    measure=measure, trim=trim, varsort=varsort, transf=transf)
+    measure=measure, trim=trim, varsort=varsort, transf=transf, gamma=gamma)
   obj <- nextSdcObj(obj)
   x[, variables] <- res$mx[, variables]
 
@@ -207,19 +246,19 @@ setMethod(f="microaggregationX", signature=c("sdcMicroObj"), definition=function
 setMethod(f="microaggregationX", signature=c("data.frame"), definition=function(obj,
   variables=NULL, aggr=3, strata_variables=NULL, method="mdav", weights=NULL,
   nc=8, clustermethod="clara", measure="mean", trim=0, varsort=1,
-  transf="log") {
+  transf="log", gamma=0.2) {
 
   if (is.null(variables)) {
     variables <- colnames(obj)
   }
   microaggregationWORK(x=obj, variables=variables, aggr=aggr, strata_variables=strata_variables,
     method=method, weights=weights, nc=nc, clustermethod=clustermethod,
-    measure=measure, trim=trim, varsort=varsort, transf=transf)
+    measure=measure, trim=trim, varsort=varsort, transf=transf, gamma=gamma)
 })
 
 microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3,
   weights=NULL, nc=8, clustermethod="clara", measure="mean",
-  trim=0, varsort=1, transf="log", strata_variables=NULL) {
+  trim=0, varsort=1, transf="log", strata_variables=NULL, gamma=0.2) {
 
   ## helper-functions used in several micro_xxx() functions
   factorOfTotals <- function(x, aggr) {
@@ -732,11 +771,52 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
       varsort=NULL, transf=NULL, blowup=FALSE, blowxm=resX, fot=0))
   }
 
+  # V-MDAV (Solanas and Martinez-Balleste, 2006): groups of variable size, at
+  # least 'aggr' records each, on the standardised variables; group means
+  micro_vmdav <- function(x, aggr, gamma) {
+    xm <- as.matrix(x)
+    if (!is.numeric(xm)) {
+      stop("method 'vmdav' needs numeric variables.")
+    }
+    storage.mode(xm) <- "double"
+    if (nrow(xm) < aggr) {
+      stop("method 'vmdav' needs at least 'aggr' (", aggr, ") observations",
+        if (!is.null(strata_variables)) " in each stratum", ", found ", nrow(xm), ".")
+    }
+    csd <- apply(xm, 2, stats::sd, na.rm=TRUE)
+    csd[is.na(csd) | csd == 0] <- 1 # constant variables do not contribute
+    xs <- sweep(sweep(xm, 2, colMeans(xm, na.rm=TRUE), "-"), 2, csd, "/")
+    xs[is.nan(xs)] <- NA
+    g <- vmdav_partition(xs, k=aggr, gamma=gamma)
+    isna <- is.na(xm)
+    xm[isna] <- 0
+    gm <- rowsum(xm, g, reorder=TRUE) / rowsum(1 - isna, g, reorder=TRUE)
+    gm <- gm[as.character(g), , drop=FALSE]
+    gm[isna] <- NA
+    resX <- x
+    for (j in seq_len(ncol(resX))) {
+      resX[[j]] <- gm[, j]
+    }
+    return(list(x=x, method="vmdav", clustering=FALSE, aggr=aggr, nc=NULL,
+      xm=NULL, roundxm=NULL, clustermethod=NULL, measure="mean", trim=NULL,
+      varsort=NULL, transf=NULL, blowup=FALSE, blowxm=resX, fot=0))
+  }
+
   stopifnot(method %in% c("simple", "single", "onedims", "pca", "mcdpca", "pppca",
-    "clustmcdpca", "clustpppca", "clustpca", "rmd", "mdav", "influence"))
+    "clustmcdpca", "clustpppca", "clustpca", "rmd", "mdav", "vmdav", "influence"))
+  if (method == "vmdav") {
+    if (!is.numeric(gamma) || length(gamma) != 1 || is.na(gamma) || gamma < 0) {
+      stop("'gamma' must be a single non-negative number.")
+    }
+    if (!is.numeric(aggr) || length(aggr) != 1 || is.na(aggr) || aggr < 1) {
+      stop("'aggr' must be a single positive number.")
+    }
+  }
   rownames(x) <- 1:nrow(x)
 
-  if (length(variables) == 1) {
+  # a single variable: mafast() forms groups of fixed size, so it cannot stand
+  # in for 'vmdav'
+  if (length(variables) == 1 && method != "vmdav") {
     res <- list()
     res$mx <- mafast(x, variables=variables, by=strata_variables, aggr=aggr,
       measure=eval(parse(text=measure)))
@@ -805,6 +885,9 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
     if (method == "mdav") {
       res <- micro_mdav(x, aggr)
     }
+    if (method == "vmdav") {
+      res <- micro_vmdav(x, aggr=aggr, gamma=gamma)
+    }
     res$fot <- factorOfTotals(x, aggr)
     reslist[[spind]] <- res
   }
@@ -822,9 +905,10 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
     res$fot <- fot
   }
 
-  res$x <- res$x[order(as.numeric(rownames(res$x))), ]
-  res$blowxm <- res$blowxm[order(as.numeric(rownames(res$blowxm))), ]
-  res$blowxm <- res$blowxm[1:nrow(xall), ]
+  # drop=FALSE: 'vmdav' is also applied to a single variable
+  res$x <- res$x[order(as.numeric(rownames(res$x))), , drop=FALSE]
+  res$blowxm <- res$blowxm[order(as.numeric(rownames(res$blowxm))), , drop=FALSE]
+  res$blowxm <- res$blowxm[1:nrow(xall), , drop=FALSE]
   class(res) <- "micro"
   res$mx <- as.data.frame(res$blowxm)
   colnames(res$mx) <- variables
@@ -835,6 +919,110 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
   }
   class(res1) <- "micro"
   return(res1)
+}
+
+# V-MDAV partition (Solanas and Martinez-Balleste, COMPSTAT 2006, Algorithm 1).
+#
+# x      numeric matrix, used as it is (no standardisation); may contain NA
+# k      minimum group size
+# gamma  gain factor of the extension step, expression (5) of the paper
+#
+# Returns an integer vector with the group of each record. Distances are
+# Euclidean and computed when they are needed, the n x n distance matrix of
+# the paper is not stored. With missing values a distance is computed from the
+# variables observed in both records and scaled to all variables, as in
+# stats::dist(); two records without a common variable are infinitely far apart.
+#
+# Points the paper leaves open, and what is done here:
+# - ties (most distant record, nearest records, e_min) are broken by the order
+#   of the records instead of at random, so that the result is reproducible;
+# - if e_min is the last unassigned record, d_out does not exist; the group is
+#   not extended and the record goes to its closest group in the last step;
+# - "closest group" for the records left at the end is the group with the
+#   closest centroid; the centroids are those of the groups before any of the
+#   left-over records is added.
+vmdav_partition <- function(x, k, gamma=0.2) {
+  x <- as.matrix(x)
+  n <- nrow(x)
+  p <- ncol(x)
+  k <- as.integer(k)
+  stopifnot(is.numeric(x), k >= 1, n >= k, is.numeric(gamma), length(gamma) == 1, gamma >= 0)
+  has_na <- anyNA(x)
+
+  # distances between the point 'pt' (a vector of length p) and the rows 'idx' of 'mat'
+  dist_rows <- function(pt, mat, idx) {
+    acc <- numeric(length(idx))
+    if (!has_na) {
+      for (j in seq_len(p)) {
+        d <- mat[idx, j] - pt[j]
+        acc <- acc + d * d
+      }
+      return(sqrt(acc))
+    }
+    cnt <- numeric(length(idx))
+    for (j in seq_len(p)) {
+      d <- mat[idx, j] - pt[j]
+      ok <- !is.na(d)
+      acc[ok] <- acc[ok] + d[ok] * d[ok]
+      cnt <- cnt + ok
+    }
+    acc <- sqrt(acc * p / cnt)
+    acc[cnt == 0] <- Inf
+    acc
+  }
+
+  group <- integer(n)
+  # distance to the centroid of the data set, computed once
+  dc <- dist_rows(colMeans(x, na.rm=TRUE), x, seq_len(n))
+  dc[!is.finite(dc)] <- -Inf # records without any value are never a seed
+  idx <- seq_len(n) # unassigned records
+  g <- 0L
+  while (length(idx) >= k) {
+    # the unassigned record most distant from the centroid and its k - 1 nearest records
+    e <- which.max(dc[idx])
+    d <- dist_rows(x[idx[e], ], x, idx)
+    d[e] <- -1
+    sel <- order(d)[seq_len(k)]
+    members <- idx[sel]
+    g <- g + 1L
+    group[members] <- g
+    idx <- idx[-sel]
+    size <- k
+    if (gamma > 0 && length(idx) > 1 && size < 2L * k - 1L) {
+      # dmin: distance of each unassigned record to the nearest record of the group
+      dmin <- d[-sel]
+      for (m in members[-1]) {
+        dmin <- pmin(dmin, dist_rows(x[m, ], x, idx))
+      }
+      while (size < 2L * k - 1L && length(idx) > 1) {
+        j <- which.min(dmin)
+        d_in <- dmin[j]
+        d_out <- min(dist_rows(x[idx[j], ], x, idx[-j]))
+        if (!(d_in < gamma * d_out)) {
+          break
+        }
+        emin <- idx[j]
+        group[emin] <- g
+        size <- size + 1L
+        idx <- idx[-j]
+        dmin <- pmin(dmin[-j], dist_rows(x[emin, ], x, idx))
+      }
+    }
+  }
+  # fewer than k records are left: each goes to the group with the closest centroid
+  if (length(idx) > 0) {
+    done <- which(group > 0L)
+    xx <- x[done, , drop=FALSE]
+    isna <- is.na(xx)
+    xx[isna] <- 0
+    cen <- rowsum(xx, group[done], reorder=TRUE) / rowsum(1 - isna, group[done], reorder=TRUE)
+    cen[is.nan(cen)] <- NA
+    has_na <- has_na || anyNA(cen)
+    for (i in idx) {
+      group[i] <- which.min(dist_rows(x[i, ], cen, seq_len(g)))
+    }
+  }
+  group
 }
 
 #' Print method for objects from class micro

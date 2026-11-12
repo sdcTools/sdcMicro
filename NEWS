@@ -1,4 +1,12 @@
 # 5.8.2
+- New method `microaggregation(method = "vmdav")`: V-MDAV, multivariate microaggregation
+  with variable group size (Solanas and Martinez-Balleste, 2006) (#311). `aggr` is the
+  minimum group size k; a group is extended by nearby records, up to 2k - 1, as long as
+  a record is closer to the group than `gamma` times its distance to the nearest other
+  unassigned record. The new argument `gamma` (default 0.2) is the gain factor of the
+  paper: 0 gives groups of fixed size, values around 1 suit data with natural clusters.
+  Works for data frames (also with `strata_variables` and for a single variable) and for
+  `sdcMicroObj` objects. All other methods are unchanged.
 - Bugfix `recordSwap()`: a user-supplied `risk` was assigned to the wrong households
   if `data` was not sorted by `hid`. `data` is sorted internally, but the rows of
   `risk` were left in their original order, so that mostly households without risk
