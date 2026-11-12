@@ -19,7 +19,11 @@ output$ui_sdcObj_summary <- renderUI({
     out <- fluidRow(
       column(12, h3("Summary of dataset and variable selection"), class="wb-header"),
       column(12, p("The loaded dataset consists of", code(x$dims[1]),"records and",code(x$dims[2]),"variables."), class="wb-header-hint"),
-      column(12, list("Categorical key variable(s):", lapply(x$keyVars, function(x) {code(x)})) ))
+      column(12, if (length(x$keyVars)>0) {
+        list("Categorical key variable(s):", lapply(x$keyVars, function(x) {code(x)}))
+      } else {
+        list("Categorical key variable(s):", em("none (numerical key variables only)"))
+      }))
 
     if (length(x$numVars)>0) {
       out <- list(out, fluidRow(
@@ -84,6 +88,9 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     x <- print(curObj, type="kAnon", docat=FALSE)
+    if (is.null(x)) { # no categorical key vars
+      return(invisible(NULL))
+    }
     txt <- "Below the number of observations violating k-anonymity is shown for the original data and the modified dataset"
     dt <- data.table(
       "k-anonymity"=paste0(c(2,3,5),"-anonymity"),
@@ -105,6 +112,9 @@ output$ui_sdcObj_summary <- renderUI({
       return(invisible(NULL))
     }
     x <- print(curObj, type="risk", docat=FALSE)
+    if (is.null(x)) { # no categorical key vars
+      return(invisible(NULL))
+    }
     reident <- x[[1]]$reident
     riskyobs <- x[[1]]$riskyObs
     txt_risk <- "Observations with a higher risk than the main part of the data are defined as observations with an individual risk higher than the median "
@@ -599,9 +609,9 @@ output$setupbtn <- renderUI({
   deleteVariable <- shinyValue(paste0("setup_remove_",vv,"_"), n)
 
   ## key-variables
-  # no categorical key variable
-  if (sum(useAsKeys=="Cat.")==0) {
-    return(myErrBtn("tmp", label="Error: No categorical key variables selected"))
+  # no key variable at all; numerical key variables alone are sufficient
+  if (sum(useAsKeys=="Cat.")==0 && sum(useAsKeys=="Cont.")==0) {
+    return(myErrBtn("tmp", label="Error: No key variables selected"))
   }
   # some selected categorical key-variables are numeric or character
   ii <- which(useAsKeys=="Cat." & types%in%c("numeric","character"))

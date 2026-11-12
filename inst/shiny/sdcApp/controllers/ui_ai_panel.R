@@ -426,6 +426,15 @@ observeEvent(input$btn_ai_run, {
     ))
     return(NULL)
   }
+  if (length(curObj@keyVars) == 0) {
+    showModal(modalDialog(
+      p("AI-assisted anonymization needs categorical key variables. The current SDC problem has numerical key variables only."),
+      title = "No categorical key variables",
+      footer = modalButton("OK"),
+      easyClose = TRUE
+    ))
+    return(NULL)
+  }
 
   # Check API key
   api_key <- ai_get_api_key()
