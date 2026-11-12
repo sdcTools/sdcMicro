@@ -33,7 +33,17 @@ standardizeInput <- function(obj, v) {
 #' @name sdcMicroObj-class
 #' @param dat The microdata set. A numeric matrix or data frame containing the data.
 #' @param keyVars Indices or names of categorical key variables. They must, of
-#' course, match with the columns of \sQuote{dat}.
+#' course, match with the columns of \sQuote{dat}. May be left out (\code{NULL})
+#' if the data contain numerical key variables only (\code{numVars}); at least
+#' one of \code{keyVars} and \code{numVars} must be given. Without categorical
+#' key variables no frequency counts and no risk measures for categorical key
+#' variables are computed (\code{risk$individual} and \code{risk$global} are
+#' \code{NULL}), the methods for numerical variables (e.g.
+#' \code{\link{microaggregation}}, \code{\link{addNoise}}, \code{\link{rankSwap}},
+#' \code{\link{dRisk}}, \code{\link{dUtility}}) work as usual, and methods that
+#' need categorical key variables (e.g. \code{\link{localSuppression}},
+#' \code{\link{kAnon}}, \code{\link{globalRecode}}, \code{\link{suda2}}) stop
+#' with an error.
 #' @param pramVars Indices or names of categorical variables considered to be pramed.
 #' @param numVars Index or names of continuous key variables.
 #' @param ghostVars if specified a list which each element being a list of exactly two elements.
@@ -112,10 +122,26 @@ standardizeInput <- function(obj, v) {
 #'    weightVar=w, excludeVars=c("relat","electcon","hhcivil","ori_hid","expend"))
 #' colnames(get.sdcMicroObj(obj, "origData"))
 #' }
-createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NULL, weightVar=NULL,
+#'
+#' ## numerical key variables only (no categorical key variables)
+#' data(Tarragona)
+#' obj <- createSdcObj(Tarragona,
+#'   numVars=c("CURRENT.ASSETS", "SALES", "DEPRECIATION", "GROSS.PROFIT", "NET.PROFIT"))
+#' obj <- microaggregation(obj, aggr=3)
+#' obj
+createSdcObj <- function(dat, keyVars=NULL, numVars=NULL, pramVars=NULL, ghostVars=NULL, weightVar=NULL,
   hhId=NULL, strataVar=NULL, sensibleVar=NULL, excludeVars=NULL, options=NULL, seed=NULL,
   randomizeRecords=FALSE, alpha=1) {
   obj <- new("sdcMicroObj")
+
+  if (length(keyVars) == 0 && length(numVars) == 0) {
+    stop("createSdcObj: at least one of 'keyVars' (categorical key variables) and ",
+      "'numVars' (numerical key variables) must be specified.", call. = FALSE)
+  }
+  if (length(keyVars) == 0 && !is.null(ghostVars)) {
+    stop("createSdcObj: 'ghostVars' are linked to categorical key variables, ",
+      "but no 'keyVars' are specified.", call. = FALSE)
+  }
 
   if(!is.null(options)){
     # check if options is a named list
@@ -156,7 +182,7 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
   options$randomizeRecords <- randomizeRecords
   obj <- set.sdcMicroObj(obj, type="origData", input=list(dat))
 
-  usedVars <- c(standardizeInput(obj, keyVars),
+  usedVars <- c(if (length(keyVars) > 0) standardizeInput(obj, keyVars),
     standardizeInput(obj, numVars), standardizeInput(obj, pramVars),
     standardizeInput(obj, weightVar), standardizeInput(obj, hhId),
     standardizeInput(obj, strataVar), standardizeInput(obj, sensibleVar))
@@ -178,16 +204,19 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
   }
 
   # key-variables
-  keyVarInd <- standardizeInput(obj, keyVars)
-  TFcharacter <- lapply(dat[, keyVarInd, drop=FALSE], class) %in% "character"
-  if (any(TFcharacter)) {
-    for (kvi in which(TFcharacter)) {
-      dat[, keyVarInd[kvi]] <- as.factor(dat[, keyVarInd[kvi]])
+  # (none if only numerical key variables are defined: the slots stay NULL)
+  keyVarInd <- if (length(keyVars) > 0) standardizeInput(obj, keyVars) else NULL
+  if (length(keyVarInd) > 0) {
+    TFcharacter <- lapply(dat[, keyVarInd, drop=FALSE], class) %in% "character"
+    if (any(TFcharacter)) {
+      for (kvi in which(TFcharacter)) {
+        dat[, keyVarInd[kvi]] <- as.factor(dat[, keyVarInd[kvi]])
+      }
     }
-  }
 
-  obj <- set.sdcMicroObj(obj, type="keyVars", input=list(keyVarInd))
-  obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(dat[, keyVarInd, drop=FALSE]))
+    obj <- set.sdcMicroObj(obj, type="keyVars", input=list(keyVarInd))
+    obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(dat[, keyVarInd, drop=FALSE]))
+  }
 
   if (!is.null(pramVars)) {
     pramVarInd <- standardizeInput(obj, pramVars)
@@ -257,7 +286,10 @@ createSdcObj <- function(dat, keyVars, numVars=NULL, pramVars=NULL, ghostVars=NU
   options$alpha <- alpha
   obj <- set.sdcMicroObj(obj, type="options", input=list(options))
 
-  obj <- measure_risk(obj)
+  # risk for categorical key variables
+  if (hasKeyVars(obj)) {
+    obj <- measure_risk(obj)
+  }
   obj@originalRisk <- obj@risk
 
   if (length(numVars) > 0) {
@@ -375,16 +407,19 @@ setMethod(f="calcRisksX", signature=c("sdcMicroObj"), definition=function(obj, .
   risk <- get.sdcMicroObj(obj, type="risk")
   modelSet <- (!is.null(risk$model))
   suda2Set <- (!is.null(risk$suda2))
-  obj <- measure_risk(obj)
-  if (modelSet) {
-    kv <- colnames(get.sdcMicroObj(obj, type = "manipKeyVars"))
-    obj <- modRisk(
-      obj = obj,
-      method = "IPF",
-      formulaM = as.formula(paste(" ~ ", paste(kv, collapse="+"))))
-  }
-  if (suda2Set) {
-    obj <- suda2(obj)
+  # risk measures for categorical key variables
+  if (hasKeyVars(obj)) {
+    obj <- measure_risk(obj)
+    if (modelSet) {
+      kv <- colnames(get.sdcMicroObj(obj, type = "manipKeyVars"))
+      obj <- modRisk(
+        obj = obj,
+        method = "IPF",
+        formulaM = as.formula(paste(" ~ ", paste(kv, collapse="+"))))
+    }
+    if (suda2Set) {
+      obj <- suda2(obj)
+    }
   }
   if (length(get.sdcMicroObj(obj, type="manipNumVars")) > 0) {
     obj <- dRisk(obj)
@@ -557,4 +592,19 @@ addWarning <- function(obj, warnMsg, method, variable=NA) {
   }
   obj <- set.sdcMicroObj(obj, type="additionalResults", list(addRes))
   obj
+}
+
+# Are categorical key variables defined in an sdcMicroObj? An object created with
+# numerical key variables only (createSdcObj(dat, numVars = ...)) has none.
+hasKeyVars <- function(obj) {
+  length(get.sdcMicroObj(obj, type = "keyVars")) > 0
+}
+
+# Stop with a clear message in methods that work on categorical key variables.
+needKeyVars <- function(obj, fun) {
+  if (!hasKeyVars(obj)) {
+    stop("'", fun, "()' needs categorical key variables, but none are defined in this ",
+      "object (see argument 'keyVars' of createSdcObj()).", call. = FALSE)
+  }
+  invisible(TRUE)
 }

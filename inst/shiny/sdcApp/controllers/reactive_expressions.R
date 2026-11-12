@@ -118,6 +118,20 @@ get_keyVars <- reactive({
   return(curObj@keyVars)
 })
 
+# are categorical key variables defined? An sdcProblem may be set up with
+# numerical key variables only (createSdcObj(dat, numVars = ...))
+has_keyVars <- reactive({
+  length(get_keyVars()) > 0
+})
+
+# shown instead of pages that need categorical key variables
+ui_no_keyVars <- function() {
+  fluidRow(
+    column(12, h4("No categorical key variables", align="center")),
+    column(12, p("The current SDC problem was set up with numerical key variables only.
+      This page needs categorical key variables.", align="center")))
+}
+
 # categorical key variables by names
 get_keyVars_names <- reactive({
   if (is.null(sdcObj())) {

@@ -91,6 +91,8 @@
 #' satisfied, the risk parameter is automatically adjusted to comply with this    
 #' condition.
 #' If risk parameter is provided then k-anonymity rule is suppressed.
+#' The rows of a `risk` table refer to the rows of `data` in the order in
+#' which `data` is supplied; `data` need not be sorted by `hid`.
 #' The risk values are also the sampling weights of the donor households: the
 #' higher the risk of a household at a hierarchy level, the more likely it is
 #' chosen as donor at this level, and a household with risk 0 at a hierarchy
@@ -238,7 +240,7 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
                        log_file_name = "TRS_logfile.txt",
                        seed = NULL, ...){
 
-  helpVariableforMergingAfterTRS <- . <- hid_help <- NULL
+  helpVariableforMergingAfterTRS <- helpVariableforRiskOrder <- . <- hid_help <- NULL
 
   # check data
   if(missing(data)){
@@ -359,7 +361,9 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
       stop("risk and hierarchy need to address the same number of columns!")
     }
     risk <- checkIndexString(risk,cnames,minLength = 1)
-    risk <- subset(data, select = risk+1)
+    # select by position; subset(data, select = risk+1) took a column of data
+    # that is itself called 'risk' for the index
+    risk <- as.data.table(as.list(data)[risk+1])
   }else{
     if(all(!class(risk)%in%c("data.table","data.frame","matrix"))){
       stop("If risk is not a vector containing column indices or column names in data then risk must be either a data.table, data.frame or matrix!")
@@ -420,8 +424,14 @@ recordSwap.default <- function(data, hid, hierarchy, similar,
   ##########################
   # setup data and inputs for c++ function
 
-  # order data
+  # order data; the rows of risk belong to the rows of data and are
+  # brought into the same order
+  data[,helpVariableforRiskOrder:=.I]
   setkeyv(data,cnames[hid+1])
+  if(nrow(risk)>0){
+    risk <- risk[data[["helpVariableforRiskOrder"]]]
+  }
+  data[,helpVariableforRiskOrder:=NULL]
   # take sub data
   data[,helpVariableforMergingAfterTRS:=.I]
   sim_vars <- sort(unique(unlist(similar)))

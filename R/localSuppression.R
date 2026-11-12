@@ -172,6 +172,7 @@ setMethod(
   signature = c("sdcMicroObj"),
   definition = function(obj, k = 2, importance = NULL, combs = NULL, nc = 1,
                         method = "heuristic", control = list()) {
+    needKeyVars(obj, "localSuppression")
     obj <- nextSdcObj(obj)
     ### get data from manipKeyVars
     df <- as.data.frame(get.sdcMicroObj(obj, type = "manipKeyVars"))
@@ -474,9 +475,11 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
       stop("at least one element of 'combs' is to large!", call. = FALSE)
     }
 
-    # all combinations we need to tackle are stored here
+    # all combinations we need to tackle are stored here, as indices within
+    # 'keyVars' (not as column positions in 'x': the key variables need not be
+    # the leading columns, and 'importance' is indexed by key variable)
     tree <- lapply(combs, function(x) {
-      utils::combn(keyVarsNum, x)
+      utils::combn(seq_along(keyVars), x)
     })
   }
 
@@ -539,7 +542,9 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
           counter <- counter + 1
           kV <- tree[[gr]][, comb]
           cur_importance <- rank(importance[kV], ties.method = "min")
-          inpDat <- tmpDat[, kV, with = F]
+          # 'tmpDat' holds all columns of 'x': address the key variables by name
+          cur_vars <- keyVars[kV]
+          inpDat <- tmpDat[, cur_vars, with = F]
           res <- suppSubset(
             x = inpDat,
             k = cur_k,
@@ -552,7 +557,7 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
 
           # replace: is there a more elegant way?
           for (z in 1:length(kV)) {
-            set(tmpDat, i = NULL, j = kV[z], res$xAnon[[z]])
+            set(tmpDat, i = NULL, j = cur_vars[z], res$xAnon[[z]])
           }
         }
       }
@@ -841,6 +846,9 @@ plot.localSuppression <- function(x, ...) {
 #' @rdname localSuppression
 #' @export
 kAnon <- function(obj, k = 2, importance = NULL, combs = NULL, ...) {
+  if (inherits(obj, "sdcMicroObj")) {
+    needKeyVars(obj, "kAnon")
+  }
   localSuppression(
     obj = obj,
     k = k,

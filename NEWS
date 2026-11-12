@@ -60,6 +60,42 @@
   `as.numeric()`, so *character* keys are read as missing, i.e. as wildcards,
   and `kAnon()` then reports success while suppressing nothing. Recode to
   factor or integer first; `ls_check()` and `ls_target()` do so internally.
+- Bugfix `recordSwap()`: a user-supplied `risk` was assigned to the wrong households
+  if `data` was not sorted by `hid`. `data` is sorted internally, but the rows of
+  `risk` were left in their original order, so that mostly households without risk
+  were swapped and households at risk were not. The risk values now follow their
+  households. Results for data sorted by `hid` are unchanged.
+- Bugfix `recordSwap()`: `risk` given as a column name did not work if the column
+  itself was called `risk` (error, or a wrong column used as risk).
+- Bugfix `localSuppression()` / `kAnon()` for data frames with `combs`: the subsets of
+  key variables and the `importance` vector were addressed by column position, which
+  is only correct if the key variables are the leading columns of the data. Otherwise
+  a user-supplied `importance` was applied to the wrong variables, and with
+  `strataVars` wrong columns were processed (too few suppressions although
+  `anonymity = TRUE` was reported, or an error). The subsets are now formed over the
+  key variables wherever they are in the data. Results are unchanged if the key
+  variables are the leading columns, and for `sdcMicroObj` objects.
+- `createSdcObj()` works without categorical key variables (#91): `keyVars` is now
+  optional, e.g. `createSdcObj(Tarragona, numVars = c("SALES", "NET.PROFIT"))`; at least
+  one of `keyVars` and `numVars` must be given. For such an object no frequency counts
+  and no risk measures for categorical key variables are computed (`risk$individual`
+  and `risk$global` are `NULL`). The methods for numerical variables
+  (`microaggregation()`, `mafast()`, `microaggrGower()`, `addNoise()`, `rankSwap()`,
+  `shuffle()`, `topBotCoding()`, `dRisk()`, `dUtility()`, `dRiskRMD()`), `pram()` on
+  pram variables, `undolast()`, `extractManipData()`, `writeSafeFile()` and `report()`
+  work; `show()` and `print()` leave out the sections on categorical key variables.
+  Methods that need categorical key variables (`localSuppression()`, `kAnon()`,
+  `localSupp()`, `globalRecode()`, `groupAndRename()`, `varToFactor()`,
+  `varToNumeric()`, `ldiversity()`, `LocalRecProg()`, `suda2()`, `riskyCells()`,
+  `modRisk()`, `measure_risk()`, `freq()`, `kAnon_violations()`, `addGhostVars()`,
+  `AI_applyAnonymization()`) stop with a clear message. Objects with categorical key
+  variables behave as before.
+- `sdcApp()`: an SDC problem can be set up with numerical key variables only (#91).
+  The summary page, the side bar and the generated script leave out everything on
+  categorical key variables; the pages that need them (linked variables, recoding,
+  k-anonymity, suppression by risk, the categorical risk and result pages, AI-assisted
+  anonymization) show a notice instead. PRAM and the methods and results for numerical
+  variables work as usual.
 - Bugfix `recordSwap()` (#333): with a user-supplied `risk`, all households with risk 0
   at a hierarchy level shared one entry in the internal donor list, so that exactly one
   of them, always the last household of the data, could still be chosen as donor. In
@@ -70,7 +106,11 @@
   households a small positive risk to allow them as donors.
 - Bugfix `recordSwap()`: if the number of swaps to distribute over the lowest hierarchy
   level was 0 (e.g. `swaprate = 0`), the first group nevertheless received one swap
-  with probability 1 / (number of groups). Results with `swaprate > 0` are unchanged.
+  with probability 1 / (number of groups). The same happened with `swaprate > 0`
+  whenever the swaps divided evenly among the groups (e.g. four regions of 100
+  households and `swaprate = 0.1`: 42 instead of 40 swapped households in about a third
+  of the runs); the swap rate is now met exactly there. All other results with
+  `swaprate > 0` are unchanged.
 - `recordSwap()`: the documentation of `risk` and `return_swapped_id` states that risk
   values are donor sampling weights and that donors are flagged as swapped, too.
 - `addNoise(method = "ROMM")` is reimplemented (#271, thanks to Øyvind Langsrud for the

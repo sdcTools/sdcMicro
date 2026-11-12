@@ -117,5 +117,11 @@ test_that("dataframe without missing, k = 2, importance=c(3,2,1), combs=NULL)", 
 
 test_that("dataframe without missing, k = 2, importance=c(3,2,1), combs=c(3:2))", {
   sample_DataX <- localSuppression(sample_Data, keyVars = paste0("Var",3:5), k =2, importance=c(3,2,1), combs=c(3:2))
-  expect_equal(sum(sample_DataX$totalSupps),11L)
+  # 11 up to version 5.8.1: 'importance' was indexed by the column positions 3:5
+  # instead of by key variable; with the key variables as leading columns the old
+  # code gave 10 as well
+  expect_equal(sum(sample_DataX$totalSupps),10L)
+  lead <- sample_Data[, c(paste0("Var",3:5), "Var1", "Var2", "Var6")]
+  sample_DataL <- localSuppression(lead, keyVars = paste0("Var",3:5), k =2, importance=c(3,2,1), combs=c(3:2))
+  expect_equal(sum(sample_DataL$totalSupps),10L)
 })

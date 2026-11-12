@@ -113,6 +113,7 @@ ls_stratum_combs <- function(d, tree, k, importance, use_importance, alpha, meth
   for (gr in seq_along(tree)) {
     cur_k <- k[gr]
     for (comb in seq_len(ncol(tree[[gr]]))) {
+      # indices within the key variables, which are the leading columns of 'd'
       kV <- tree[[gr]][, comb]
       cur_importance <- rank(importance[kV], ties.method = "min")
       res <- suppSubset(

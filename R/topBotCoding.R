@@ -73,7 +73,9 @@ definition=function(obj, value, replacement, kind="top", column=NULL) {
     x <- manipPramVars[,column]
     manipPramVars[,column] <- topBotCoding(x, value=value,replacement=replacement,kind=kind)
     obj <- set.sdcMicroObj(obj, type="manipPramVars", input=list(manipPramVars))
-    obj <- measure_risk(obj)
+    if (hasKeyVars(obj)) {
+      obj <- measure_risk(obj)
+    }
   } else if(column%in%colnames(o)){
     #message("topBotCoding on variable which is neither a categorical nor a numeric key variable.")
     x <- o[[column]]

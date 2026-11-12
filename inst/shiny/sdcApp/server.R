@@ -490,7 +490,12 @@ shinyServer(function(session, input, output) {
     # create stratification variable if more than 1 variable is listed!
     strataVar <- NULL
     cmd <- paste0("obj$sdcObj <- createSdcObj(dat=obj$inputdata,")
-    cmd <- paste0(cmd, "\n\tkeyVars=",VecToRStr(kV, quoted=TRUE))
+    if (length(kV)>0) {
+      cmd <- paste0(cmd, "\n\tkeyVars=",VecToRStr(kV, quoted=TRUE))
+    } else {
+      # only numerical key variables
+      cmd <- paste0(cmd, "\n\tkeyVars=NULL")
+    }
     if (!is.null(nV)) {
       cmd <- paste0(cmd, ", \n\tnumVars=",VecToRStr(nV, quoted=TRUE))
     } else {
@@ -1000,13 +1005,17 @@ shinyServer(function(session, input, output) {
       )
     })
 
-    obj$rbs <- lapply(1:nrKeyVars, function(i) {
+    obj$rbs <- lapply(seq_len(nrKeyVars), function(i) {
       id <- paste0("rb_kanon_usecombs_", i)
       radioButtons(id, label=p(paste("Apply k-anonymity to all subsets of",i,"key variables?")),
         selected=input[[id]], width="100%", inline=TRUE, choices=c("No", "Yes"))
     })
     # reset all menu items to first choice
     obj$cur_selection_results <- "btn_results_1"
+    if (nrKeyVars == 0) {
+      # no categorical key variables: start with the numerical results
+      obj$cur_selection_results <- "btn_results_8"
+    }
     obj$cur_selection_exports <- "btn_export_results_1"
     obj$cur_selection_script <- "btn_export_script_1"
     obj$cur_selection_microdata <- "btn_menu_microdata_1"

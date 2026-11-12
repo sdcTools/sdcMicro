@@ -73,8 +73,14 @@ output$ui_anonymize_sidebar_left <- renderUI({
 })
 
 # center column main
+# linked variables, recoding, k-anonymity and suppression by risk need categorical key variables
+anon_needs_keyVars <- paste0("btn_sel_anon_", c(3, 5, 6, 9))
+
 output$ui_main_anon_header <- renderUI({
   val <- obj$cur_selection_anon
+  if (val %in% anon_needs_keyVars && !has_keyVars()) {
+    return(invisible(NULL))
+  }
   if (val=="btn_sel_anon_2") {
     return(uiOutput("ui_sdcObj_explorevars_header"))
   }
@@ -120,6 +126,9 @@ output$ui_main_anon_header <- renderUI({
 # center column header
 output$ui_main_anon <- renderUI({
   val <- obj$cur_selection_anon
+  if (val %in% anon_needs_keyVars && !has_keyVars()) {
+    return(ui_no_keyVars())
+  }
   if (val=="btn_sel_anon_2") {
     return(uiOutput("ui_sdcObj_explorevars"))
   }
