@@ -17,6 +17,8 @@
   fast default heuristic the gain is small (bootstrap sample of 200 000 records: 1.6 s
   against 1.1 s) or absent (1 million records: 7.2 s against 7.0 s), and a socket
   cluster is slower than `nc = 1` there because of its start-up time of about a second.
+  In `sdcApp()` the k-anonymity page offers the number of cores as soon as a
+  stratification variable is selected.
 - `localSuppression()` / `kAnon()` gain a `method` argument. The default
   `"heuristic"` is the original sweep and is unchanged, cell for cell. The new
   engines decide *which* cells to suppress differently and never need more
