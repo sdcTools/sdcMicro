@@ -35,7 +35,19 @@ If \code{k} has only one value, it will be used for all subsets.}
 values (\code{NA}s) contribute to the calculation of \code{fk} and \code{Fk}.
 Default is \code{1}. Used only in the \code{data.frame} method.
 \item \strong{\code{nc}}: Maximum number of cores used for stratified computations.
-Default is \code{1}. Parallelization is ignored on Windows.
+Default is \code{1}, i.e. the strata are processed one after the other. With
+\code{nc > 1} (and more than one stratum) the strata are processed in parallel
+using the base package \pkg{parallel}: by forked processes on Linux and
+macOS and by a socket (PSOCK) cluster of \code{nc} R sessions on Windows. At
+most all but one of the available cores are used. The result is identical
+to the one obtained with \code{nc = 1}. Parallel processing pays off if the
+computation within a stratum is expensive, in particular with an exact
+engine; with the fast default heuristic the gain is small, since splitting
+and combining the data are not parallelised. On a socket cluster the
+sessions have to be started and the data of each stratum are copied to
+them, which costs about a second. The largest stratum bounds the gain. In
+the parallel workers \pkg{data.table} and the MILP solver use one thread
+each.
 \item \strong{\code{method}}: Which engine decides \emph{which} cells to suppress. The default
 \code{"heuristic"} is the original sweep described above and is unchanged.
 \code{"greedy2"} is a cost-effectiveness greedy with exact per-record steps

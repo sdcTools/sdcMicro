@@ -127,6 +127,7 @@ Collate:
     'ls_lns.R'
     'ls_target.R'
     'ls_supp_subset.R'
+    'ls_parallel.R'
 VignetteBuilder: knitr
 Encoding: UTF-8
 RoxygenNote: 7.3.3
