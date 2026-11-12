@@ -132,6 +132,7 @@ setMethod(
   f = "localSuppressionX",
   signature = c("sdcMicroObj"),
   definition = function(obj, k = 2, importance = NULL, combs = NULL, nc = 1) {
+    needKeyVars(obj, "localSuppression")
     obj <- nextSdcObj(obj)
     ### get data from manipKeyVars
     df <- as.data.frame(get.sdcMicroObj(obj, type = "manipKeyVars"))
@@ -755,6 +756,9 @@ plot.localSuppression <- function(x, ...) {
 #' @rdname localSuppression
 #' @export
 kAnon <- function(obj, k = 2, importance = NULL, combs = NULL, ...) {
+  if (inherits(obj, "sdcMicroObj")) {
+    needKeyVars(obj, "kAnon")
+  }
   localSuppression(
     obj = obj,
     k = k,

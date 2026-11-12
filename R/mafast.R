@@ -70,9 +70,11 @@ setMethod(f="mafastX", signature=c("sdcMicroObj"), definition=function(obj, vari
     if (!is.null(obj@strataVar))
       by <- colnames(obj@origData)[obj@strataVar]
   } else if (!all(by %in% colnames(x))) {
-    tmp <- obj@manipKeyVars[, by[by %in% colnames(obj@manipKeyVars) & !by %in% colnames(x)],
-      drop=FALSE]
-    x <- cbind(x, tmp)
+    if (hasKeyVars(obj)) {
+      tmp <- obj@manipKeyVars[, by[by %in% colnames(obj@manipKeyVars) & !by %in% colnames(x)],
+        drop=FALSE]
+      x <- cbind(x, tmp)
+    }
     if (!all(by %in% colnames(x))) {
       tmp <- obj@origData[, by[!by %in% colnames(x)], drop=FALSE]
       x <- cbind(x, tmp)

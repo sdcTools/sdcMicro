@@ -75,6 +75,7 @@ setGeneric("globalRecodeX", function(obj, ...) {
 
 setMethod(f="globalRecodeX", signature = c("sdcMicroObj"),
 definition=function(obj, column, ...) {
+  needKeyVars(obj, "globalRecode")
   x <- get.sdcMicroObj(obj, type="manipKeyVars")
   x <- globalRecode(x, column=column, ... )
   obj <- nextSdcObj(obj)

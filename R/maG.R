@@ -183,7 +183,9 @@ setMethod(f="microaggrGowerX", signature=c("sdcMicroObj"),
     mixed=mixed, mixed.constant=mixed.constant, trace=trace, weights=weights, numFun=numFun,
     catFun=catFun, addRandom=addRandom)
   obj <- set.sdcMicroObj(obj, type="manipNumVars", input=list(as.data.frame(res[, nV])))
-  obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(as.data.frame(res[, kV])))
+  if (length(kV) > 0) {
+    obj <- set.sdcMicroObj(obj, type="manipKeyVars", input=list(as.data.frame(res[, kV])))
+  }
   obj <- dRisk(obj)
   obj <- dUtility(obj)
   obj <- calcRisks(obj)

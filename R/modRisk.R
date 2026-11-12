@@ -116,6 +116,7 @@ setGeneric("modRiskX", function(obj, method = "default", weights, formulaM, boun
 setMethod(
   f = "modRiskX", signature = c("sdcMicroObj"),
   definition = function(obj, method = "default", weights, formulaM, bound = Inf) {
+    needKeyVars(obj, "modRisk")
     vars <- labels(terms(formulaM))
     mk <- get.sdcMicroObj(obj, type = "manipKeyVars")
     mn <- get.sdcMicroObj(obj, type = "manipNumVars")

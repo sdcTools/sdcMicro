@@ -11,7 +11,7 @@
 \usage{
 createSdcObj(
   dat,
-  keyVars,
+  keyVars = NULL,
   numVars = NULL,
   pramVars = NULL,
   ghostVars = NULL,
@@ -36,7 +36,17 @@ strataVar(object) <- value
 \item{dat}{The microdata set. A numeric matrix or data frame containing the data.}
 
 \item{keyVars}{Indices or names of categorical key variables. They must, of
-course, match with the columns of \sQuote{dat}.}
+course, match with the columns of \sQuote{dat}. May be left out (\code{NULL})
+if the data contain numerical key variables only (\code{numVars}); at least
+one of \code{keyVars} and \code{numVars} must be given. Without categorical
+key variables no frequency counts and no risk measures for categorical key
+variables are computed (\code{risk$individual} and \code{risk$global} are
+\code{NULL}), the methods for numerical variables (e.g.
+\code{\link{microaggregation}}, \code{\link{addNoise}}, \code{\link{rankSwap}},
+\code{\link{dRisk}}, \code{\link{dUtility}}) work as usual, and methods that
+need categorical key variables (e.g. \code{\link{localSuppression}},
+\code{\link{kAnon}}, \code{\link{globalRecode}}, \code{\link{suda2}}) stop
+with an error.}
 
 \item{numVars}{Index or names of continuous key variables.}
 
@@ -141,6 +151,13 @@ obj <- createSdcObj(testdata, keyVars=c("urbrur","roof","walls"), numVars="savin
    weightVar=w, excludeVars=c("relat","electcon","hhcivil","ori_hid","expend"))
 colnames(get.sdcMicroObj(obj, "origData"))
 }
+
+## numerical key variables only (no categorical key variables)
+data(Tarragona)
+obj <- createSdcObj(Tarragona,
+  numVars=c("CURRENT.ASSETS", "SALES", "DEPRECIATION", "GROSS.PROFIT", "NET.PROFIT"))
+obj <- microaggregation(obj, aggr=3)
+obj
 }
 \references{
 Templ, M. and Meindl, B. and Kowarik, A.: \emph{Statistical Disclosure Control for

@@ -77,6 +77,7 @@ setGeneric("suda2X", function(obj, ...) {
 })
 
 setMethod(f="suda2X", signature=c("sdcMicroObj"), definition=function(obj, ...) {
+  needKeyVars(obj, "suda2")
   manipData <- get.sdcMicroObj(obj, type = "manipKeyVars")
   keyVars <- colnames(manipData)
 

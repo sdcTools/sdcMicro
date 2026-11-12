@@ -83,6 +83,7 @@ setMethod(f="LocalRecProgX", signature=c("sdcMicroObj"),
 definition=function(obj, ancestors=NULL, ancestor_setting=NULL, k_level=2,
   FindLowestK=TRUE, weight=NULL, lowMemory=FALSE, missingValue=NA, ...) {
 
+  needKeyVars(obj, "LocalRecProg")
   keyVars <- get.sdcMicroObj(obj, type="manipKeyVars")
   manipData <- keyVars
   keyVarIndices <- colnames(manipData)

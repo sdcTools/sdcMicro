@@ -254,6 +254,7 @@ setGeneric("kAnon_violations", function(object, weighted, k) {
 #' @export
 setMethod(f="kAnon_violations", signature=c("sdcMicroObj", "logical", "numeric"),
 definition=function(object, weighted, k) {
+  needKeyVars(object, "kAnon_violations")
   stopifnot(k>0)
   stopifnot(length(k)==1)
   stopifnot(length(weighted)==1)
