@@ -119,7 +119,7 @@ output$ui_microaggregation <- renderUI({
     if (input$rb_microagg_cluster=="Yes") {
       return(c("influence", "clustpca", "clustmcdpca", "clustpppca"))
     } else {
-      return(c("mdav", "rmd", "simple", "single","onedims", "pca", "mcdpca", "pppca"))
+      return(c("mdav", "vmdav", "rmd", "simple", "single","onedims", "pca", "mcdpca", "pppca"))
     }
   })
 
@@ -173,6 +173,7 @@ output$ui_microaggregation <- renderUI({
     req(input$rb_microagg_cluster)
     txt <- "MDAV is the default method. The methods differ with respect to the way records are grouped (the distance measure used to measure the proximity between two records or the sorting algorithm) and whether clustering is applied before microaggregation.<br />"
     txt <- paste(txt, "<strong>mdav</strong> - grouping is based on classical (Euclidean) distance measures<br />")
+    txt <- paste(txt, "<strong>vmdav</strong> - see mdav, with a variable group size: the aggregation level is the minimum group size and a group is extended by nearby records, steered by the gain factor gamma<br />")
     txt <- paste(txt, "<strong>rmd</strong> - grouping is based on robust multivariate (Mahalanobis) distance measures<br />")
     txt <- paste(txt, "<strong>simple</strong> - groups are formed on the unsorted data (for testing purposes only)<br />")
     txt <- paste(txt, "<strong>single</strong> - grouping is based on sorting the data on a single variable in ascending or descending order and all records are sorted based on this variable, the sorting variable can be selected<br />")
@@ -202,10 +203,24 @@ output$ui_microaggregation <- renderUI({
       selected=input$sel_microagg_v, width="100%", multiple=TRUE)
   })
   output$ui_microagg_agglevel <- renderUI({
-    txt_tooltip <- "Specifies the group size"
+    txt_tooltip <- "Specifies the group size. For method vmdav this is the minimum group size, groups can be larger."
     sliderInput("sl_microagg_aggr",
       label=p("Aggregation-level", tipify(icon("circle-info"), title=txt_tooltip, placement="top")),
       min=1, max=15, step=1, value=3, width="100%")
+  })
+  output$ui_microagg_gamma <- renderUI({
+    txt_tooltip <- "Gain factor of method vmdav. A group of the minimum size is extended by the closest unassigned record as long as its distance to the group is smaller than gamma times its distance to the nearest other unassigned record (up to twice the minimum size minus one).<br />"
+    txt_tooltip <- paste(txt_tooltip, "<strong>0</strong> - groups of fixed size, as with mdav<br />")
+    txt_tooltip <- paste(txt_tooltip, "<strong>0.2</strong> - default, suggested for scattered data<br />")
+    txt_tooltip <- paste(txt_tooltip, "<strong>1.1</strong> - suggested for data with natural clusters<br />")
+    txt_tooltip <- paste(txt_tooltip, "A large value can increase the information loss on scattered data, it is worth comparing a few values.")
+    val <- isolate(input$sl_microagg_gamma)
+    if (is.null(val)) {
+      val <- 0.2
+    }
+    sliderInput("sl_microagg_gamma",
+      label=p("Gain factor (gamma)", tipify(icon("circle-info"), title=txt_tooltip, placement="top")),
+      min=0, max=2, step=0.1, value=val, width="100%")
   })
   output$ui_microagg_aggmeasures <- renderUI({
     txt_tooltip <- "Specifies the group statistic that replaces all values in a group.  The default is the mean, but other measures of location can be used, especially when the group size for aggregation is larger than 3.<br />"
@@ -240,11 +255,19 @@ output$ui_microaggregation <- renderUI({
   # single: --> aggr, measure, trim, varsort
   # influence, clustpca, clustmcdpca, clustpppca: --> aggr, measure, trim, clustermethod, transf, nc
   # rmd, mdav: aggr,
+  # vmdav: aggr, gamma
   if ( !is.null(input$sel_microagg_method) ) {
-    out <- list(out, fluidRow(
-      column(6, uiOutput("ui_microagg_agglevel"), align="center"),
-      column(6, uiOutput("ui_microagg_vars"), align="center")))
-    if (!input$sel_microagg_method %in% c("mdav","rmd")) {
+    if (input$sel_microagg_method=="vmdav") {
+      out <- list(out, fluidRow(
+        column(4, uiOutput("ui_microagg_agglevel"), align="center"),
+        column(4, uiOutput("ui_microagg_gamma"), align="center"),
+        column(4, uiOutput("ui_microagg_vars"), align="center")))
+    } else {
+      out <- list(out, fluidRow(
+        column(6, uiOutput("ui_microagg_agglevel"), align="center"),
+        column(6, uiOutput("ui_microagg_vars"), align="center")))
+    }
+    if (!input$sel_microagg_method %in% c("mdav","rmd","vmdav")) {
       if (input$sel_microagg_method=="single") {
         out <- list(out, fluidRow(
           column(4, uiOutput("ui_microagg_aggmeasures"), align="center"),

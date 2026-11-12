@@ -530,9 +530,19 @@ shinyServer(function(session, input, output) {
     cmd <- paste0(cmd, ", aggr=",input$sl_microagg_aggr)
     cmd <- paste0(cmd, ", method=",dQuote(m_method))
 
-    txt_action <- paste0(txt_action, " (method=",dQuote(m_method)," and size=",input$sl_microagg_aggr,")\n")
+    if (m_method=="vmdav") {
+      # variable group size: gain factor, default of microaggregation() until the slider exists
+      gamma <- input$sl_microagg_gamma
+      if (is.null(gamma)) {
+        gamma <- 0.2
+      }
+      cmd <- paste0(cmd, ", gamma=",gamma)
+      txt_action <- paste0(txt_action, " (method=",dQuote(m_method),", minimum size=",input$sl_microagg_aggr," and gamma=",gamma,")\n")
+    } else {
+      txt_action <- paste0(txt_action, " (method=",dQuote(m_method)," and size=",input$sl_microagg_aggr,")\n")
+    }
 
-    if (!m_method %in% c("mdav","rmd")) {
+    if (!m_method %in% c("mdav","rmd","vmdav")) {
       cmd <- paste0(cmd, ", measure=",dQuote(input$sl_microagg_measure))
       cmd <- paste0(cmd, ", trim=",input$sl_microagg_trim)
       if (m_method=="single") {
