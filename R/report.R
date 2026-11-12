@@ -110,6 +110,9 @@ definition=function(obj, internal, title, outdir) {
   y1cn <- get.sdcMicroObj(obj, type="keyVars"); y1cn <- cn[y1cn]
   y2cn <- get.sdcMicroObj(obj, type="numVars"); y2cn <- cn[y2cn]
 
+  if (length(y1cn) == 0) {
+    y1cn <- "not defined"
+  }
   if (length(y2cn) == 0) {
     y2cn <- "not defined"
   }
@@ -146,13 +149,18 @@ definition=function(obj, internal, title, outdir) {
   ## information about anonymisation methods
   delDirect <- get.sdcMicroObj(obj, "deletedVars")
 
-  dat_kv <- x[, get.sdcMicroObj(obj, "keyVars")]
-  dat_modkv <- get.sdcMicroObj(obj, "manipKeyVars")
-  if (!identical(sapply(dat_kv, levels), sapply(dat_modkv, levels))) {
-    # probably due to group_vars
-    modCat <- TRUE
+  if (!hasKeyVars(obj)) {
+    # only numerical key variables are defined
+    modCat <- NA
   } else {
-    modCat <- sum(!(dat_kv == dat_modkv),na.rm=TRUE) > 0
+    dat_kv <- x[, get.sdcMicroObj(obj, "keyVars")]
+    dat_modkv <- get.sdcMicroObj(obj, "manipKeyVars")
+    if (!identical(sapply(dat_kv, levels), sapply(dat_modkv, levels))) {
+      # probably due to group_vars
+      modCat <- TRUE
+    } else {
+      modCat <- sum(!(dat_kv == dat_modkv),na.rm=TRUE) > 0
+    }
   }
 
   if (is.null(get.sdcMicroObj(obj, "manipNumVars"))) {
@@ -195,6 +203,12 @@ definition=function(obj, internal, title, outdir) {
   ## k-anonymity if we pram, kAnon is useless
   if (is.list(get.reportObj(repObj, "pram"))) {
     repObj <- set.reportObj(repObj, "kAnon", list(NULL))
+  }
+
+  ## no measures for categorical key variables if none are defined
+  if (!hasKeyVars(obj)) {
+    repObj <- set.reportObj(repObj, "kAnon", list(NULL))
+    repObj <- set.reportObj(repObj, "indivRisk", list(NULL))
   }
 
   if (is.list(get.reportObj(repObj, "kAnon"))) {
@@ -269,7 +283,8 @@ definition=function(obj, internal, title, outdir) {
   ## information about data-utility
   if (is.list(get.reportObj(repObj, "dataUtility"))) {
     dU <- list()
-    for (i in y1cn) {
+    # one table per categorical key variable (none if only numerical ones are defined)
+    for (i in colnames(y1)) {
       dU[[i]] <- list()
       dat_o <- as.data.frame.table(table(x[[i]], useNA="ifany"))
       dat_m <- as.data.frame.table(table(factor(y1[[i]]), useNA="ifany"))
@@ -280,6 +295,9 @@ definition=function(obj, internal, title, outdir) {
       df$Categories[is.na(df$Categories)] <- "NA"
       dU[[i]]$title <- i
       dU[[i]]$tab <- df
+    }
+    if (length(dU) == 0) {
+      dU <- NULL
     }
     repObj <- set.reportObj(repObj, "dataUtility", list(dU))
   }

@@ -66,6 +66,7 @@ setGeneric("localSuppX", function(obj, threshold = 0.15, keyVar) {
 
 setMethod(f="localSuppX", signature=c(obj="sdcMicroObj"),
 definition = function(obj, threshold=0.15, keyVar) {
+  needKeyVars(obj, "localSupp")
   obj <- nextSdcObj(obj)
 
   manipData <- get.sdcMicroObj(obj, type="manipKeyVars")

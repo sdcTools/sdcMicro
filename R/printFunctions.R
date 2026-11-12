@@ -30,6 +30,7 @@ setGeneric("freqX", function(obj, type="fk") {
 
 setMethod(f="freqX", signature=c("sdcMicroObj"),
 definition = function(obj, type="fk") {
+  needKeyVars(obj, "freq")
   if (type == "fk")
     ret <- obj@risk$individual[, 2] else if (type == "Fk")
     ret <- obj@risk$individual[, 3] else stop(paste("type=", type, "is unknown."))
@@ -95,6 +96,13 @@ definition = function(x, type = "kAnon", docat=TRUE, ...) {
 
   # type=kAnon,ls,recode,risk,numrisk,general
   obj <- x
+  # nothing to report on categorical key variables if none are defined
+  if (type %in% c("kAnon", "risk", "recode") && !hasKeyVars(x)) {
+    if (docat) {
+      message("No categorical key variables are defined (print type '", type, "' does not apply).\n")
+    }
+    return(invisible(NULL))
+  }
   hr <- paste0(rep("-", 70), collapse="")
   tabsp <- "  "
   n <- nrow(get.sdcMicroObj(x, "origData"))

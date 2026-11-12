@@ -313,6 +313,7 @@ setGeneric("varToFactorX", function(obj, var) {
 
 setMethod(f="varToFactorX", signature=c("sdcMicroObj"),
 definition=function(obj, var) {
+  needKeyVars(obj, "varToFactor")
   obj <- nextSdcObj(obj)
   x <- get.sdcMicroObj(obj, type="manipKeyVars")
   x2 <- varToFactor(x, var=var)
@@ -347,6 +348,7 @@ setGeneric("varToNumericX", function(obj, var) {
 
 setMethod(f="varToNumericX", signature=c("sdcMicroObj"),
 definition=function(obj, var) {
+  needKeyVars(obj, "varToNumeric")
   obj <- nextSdcObj(obj)
   x <- get.sdcMicroObj(obj, type="manipKeyVars")
   suppressWarnings(tmpvar <- as.numeric(as.character(x[, var])))

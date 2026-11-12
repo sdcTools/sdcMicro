@@ -144,6 +144,7 @@ setGeneric("measure_riskX", function(obj, ...) {
 
 setMethod(f="measure_riskX", signature=c("sdcMicroObj"),
   definition=function(obj, ...) {
+  needKeyVars(obj, "measure_risk")
   origData <- get.sdcMicroObj(obj, type="origData")
 
   manipData <- get.sdcMicroObj(obj, type="manipKeyVars")
@@ -326,6 +327,7 @@ setGeneric("ldiversityX", function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-
 
 setMethod(f="ldiversityX", signature=c("sdcMicroObj"),
 definition=function(obj, ldiv_index=NULL, l_recurs_c=2, missing=-999) {
+  needKeyVars(obj, "ldiversity")
   o <- obj@origData
   k <- obj@manipKeyVars
   n <- obj@manipNumVars

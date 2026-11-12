@@ -82,6 +82,7 @@ definition=function(obj, var, before, after, addNA=FALSE) {
 
 setMethod(f="groupAndRenameX", signature=c("sdcMicroObj"),
 definition=function(obj, var, before, after, addNA=FALSE) {
+  needKeyVars(obj, "groupAndRename")
   obj <- nextSdcObj(obj)
   manipKey <- get.sdcMicroObj(obj, type="manipKeyVars")
   if (!var %in% colnames(manipKey)) {

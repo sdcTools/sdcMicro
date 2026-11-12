@@ -51,6 +51,7 @@ AI_applyAnonymization <- function(sdcObj, k = 3, verbose = TRUE,
   stopifnot(is.numeric(tol), length(tol) == 1L, tol >= 0,
             is.numeric(patience), length(patience) == 1L, patience >= 1)
   patience <- as.integer(patience)
+  needKeyVars(sdcObj, "AI_applyAnonymization")
   summary_info <- summarize_sdcObj_structure(sdcObj, k)
   tool_schemas <- get_tool_schemas()
 

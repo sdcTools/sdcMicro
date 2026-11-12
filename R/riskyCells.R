@@ -117,6 +117,7 @@ riskyCells <- function(obj, useIdentificationLevel=FALSE, threshold, ...) {
   params <- list(...)
 
   if (inherits(obj, "sdcMicroObj")) {
+    needKeyVars(obj, "riskyCells")
     if (!is.null(params$keyVars)) {
       warning("argument 'keyVars' has been specified, but is ignored because argument 'obj' is not a data.frame!")
     }

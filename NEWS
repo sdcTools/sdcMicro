@@ -1,4 +1,20 @@
 # 5.8.2
+- `createSdcObj()` works without categorical key variables (#91): `keyVars` is now
+  optional, e.g. `createSdcObj(Tarragona, numVars = c("SALES", "NET.PROFIT"))`; at least
+  one of `keyVars` and `numVars` must be given. For such an object no frequency counts
+  and no risk measures for categorical key variables are computed (`risk$individual`
+  and `risk$global` are `NULL`). The methods for numerical variables
+  (`microaggregation()`, `mafast()`, `microaggrGower()`, `addNoise()`, `rankSwap()`,
+  `shuffle()`, `topBotCoding()`, `dRisk()`, `dUtility()`, `dRiskRMD()`), `pram()` on
+  pram variables, `undolast()`, `extractManipData()`, `writeSafeFile()` and `report()`
+  work; `show()` and `print()` leave out the sections on categorical key variables.
+  Methods that need categorical key variables (`localSuppression()`, `kAnon()`,
+  `localSupp()`, `globalRecode()`, `groupAndRename()`, `varToFactor()`,
+  `varToNumeric()`, `ldiversity()`, `LocalRecProg()`, `suda2()`, `riskyCells()`,
+  `modRisk()`, `measure_risk()`, `freq()`, `kAnon_violations()`, `addGhostVars()`,
+  `AI_applyAnonymization()`) stop with a clear message. Objects with categorical key
+  variables behave as before. `sdcApp()` still requires at least one categorical key
+  variable.
 - Bugfix `recordSwap()` (#333): with a user-supplied `risk`, all households with risk 0
   at a hierarchy level shared one entry in the internal donor list, so that exactly one
   of them, always the last household of the data, could still be chosen as donor. In

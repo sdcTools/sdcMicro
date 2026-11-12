@@ -105,7 +105,10 @@ setMethod(f="shuffleX", signature=c("sdcMicroObj"),
   vars <- gsub(" ", "", unlist(strsplit(as.character(form)[[2]], "\\+")))
   pred <- gsub(" ", "", unlist(strsplit(as.character(form)[[3]], "\\+")))
 
-  x <- cbind(xn, xk)
+  x <- xn
+  if (!is.null(xk)) {
+    x <- cbind(x, xk)
+  }
   if (!is.null(xs)) {
     x <- cbind(x, xs)
   }

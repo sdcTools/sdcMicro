@@ -36,6 +36,7 @@ setGeneric("addGhostVarsX", function(obj, keyVar, ghostVars) {
 
 setMethod(f="addGhostVarsX", signature=c(obj="sdcMicroObj", keyVar="character", ghostVars="character"),
 definition = function(obj, keyVar, ghostVars) {
+  needKeyVars(obj, "addGhostVars")
   obj <- nextSdcObj(obj)
   cn <- colnames(get.sdcMicroObj(obj, type="origData"))
   kv <- cn[get.sdcMicroObj(obj, type="keyVars")]
