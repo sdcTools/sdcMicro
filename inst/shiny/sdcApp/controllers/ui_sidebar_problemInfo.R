@@ -34,6 +34,9 @@ output$risk_sb_anonymize <- renderUI({
   if (is.null(curObj)) {
     return(NULL)
   }
+  if (!has_keyVars()) { # no categorical key vars: nothing to count
+    return(NULL)
+  }
 
   # current
   risks <- get_risk()

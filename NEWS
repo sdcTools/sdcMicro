@@ -28,8 +28,13 @@
   `varToNumeric()`, `ldiversity()`, `LocalRecProg()`, `suda2()`, `riskyCells()`,
   `modRisk()`, `measure_risk()`, `freq()`, `kAnon_violations()`, `addGhostVars()`,
   `AI_applyAnonymization()`) stop with a clear message. Objects with categorical key
-  variables behave as before. `sdcApp()` still requires at least one categorical key
-  variable.
+  variables behave as before.
+- `sdcApp()`: an SDC problem can be set up with numerical key variables only (#91).
+  The summary page, the side bar and the generated script leave out everything on
+  categorical key variables; the pages that need them (linked variables, recoding,
+  k-anonymity, suppression by risk, the categorical risk and result pages, AI-assisted
+  anonymization) show a notice instead. PRAM and the methods and results for numerical
+  variables work as usual.
 - Bugfix `recordSwap()` (#333): with a user-supplied `risk`, all households with risk 0
   at a hierarchy level shared one entry in the internal donor list, so that exactly one
   of them, always the last household of the data, could still be chosen as donor. In

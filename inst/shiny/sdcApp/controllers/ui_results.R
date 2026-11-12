@@ -1,6 +1,12 @@
+# the first seven pages are about categorical key variables
+results_need_keyVars <- paste0("btn_results_", 1:7)
+
 output$ui_results_main_header <- renderUI({
   out <- NULL
   val <- obj$cur_selection_results
+  if (val %in% results_need_keyVars && !has_keyVars()) {
+    return(invisible(NULL))
+  }
   ## Categorical (defined in controller/ui_results_categorical.R)
   if (val=="btn_results_1") {
     return(uiOutput("ui_rescat_riskinfo_header"))
@@ -40,6 +46,9 @@ output$ui_results_main_header <- renderUI({
 output$ui_results_main <- renderUI({
   out <- NULL
   val <- obj$cur_selection_results
+  if (val %in% results_need_keyVars && !has_keyVars()) {
+    return(ui_no_keyVars())
+  }
   ## Categorical (defined in controller/ui_results_categorical.R)
   if (val=="btn_results_1") {
     return(uiOutput("ui_rescat_riskinfo"))
