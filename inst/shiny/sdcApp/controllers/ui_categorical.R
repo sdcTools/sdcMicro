@@ -586,6 +586,25 @@ output$ui_kAnon <- renderUI({
       choices=c("no stratification", setdiff(poss_strataVarP(), c(get_all_numericvars_name(), get_keyVars_names()))), multiple=FALSE, width="75%")
   })
 
+  # number of cores: only if the method runs within strata, which are then
+  # processed in parallel
+  output$kanon_nc <- renderUI({
+    if (is.null(input$kanon_strataV) || input$kanon_strataV=="no stratification") {
+      return(NULL)
+    }
+    ncmax <- parallel::detectCores()-1
+    if (is.na(ncmax) || ncmax < 2) {
+      return(NULL)
+    }
+    sel <- isolate(input$sl_kanon_nc)
+    if (is.null(sel)) {
+      sel <- 1
+    }
+    txt_tooltip <- "The groups are processed in parallel on this number of cores. This pays off with the exact engines, which need time for each group. With the standard algorithm the gain is small. For the standard algorithm and the exact engines solved to optimality the result does not depend on the number of cores."
+    sliderInput("sl_kanon_nc", min=1, max=ncmax, value=min(as.numeric(sel), ncmax), step=1, width="75%",
+      label=p("Number of cores used for the groups", tipify(icon("circle-info"), title=txt_tooltip, placement="top")))
+  })
+
   output$kanon_use_importance <- renderUI({
     txt_tooltip <- "Values in variables with high importance (low values) are less likely to be suppressed than values in variables with low importance (high values)"
     radioButtons(inputId="rb_show_importance",
@@ -602,6 +621,7 @@ output$ui_kAnon <- renderUI({
   })
 
   out <- fluidRow(column(12, uiOutput("kanon_strata"), align="center"))
+  out <- list(out, fluidRow(column(12, uiOutput("kanon_nc"), align="center"))) # NULL without strata
   out <- list(out, fluidRow(
     column(12, uiOutput("kanon_use_importance"), align="center"),
     column(12, helpText("Tip - The total number of suppressions is likely to increase by specifying an importance vector. Specifying an importance vector can affect the computation time."), align="center")

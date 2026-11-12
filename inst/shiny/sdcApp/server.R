@@ -378,6 +378,10 @@ shinyServer(function(session, input, output) {
       # after the run (btn_kanon below) -- claiming it here would only repeat
       # what was asked for
     }
+    # strata in parallel
+    if (input$kanon_strataV!="no stratification" && !is.null(input$sl_kanon_nc) && as.numeric(input$sl_kanon_nc) > 1) {
+      cmd <- paste0(cmd, ", nc=", as.integer(input$sl_kanon_nc))
+    }
     cmd <- paste0(cmd, ")")
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
   })

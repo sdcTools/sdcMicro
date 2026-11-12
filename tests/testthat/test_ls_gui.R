@@ -302,3 +302,40 @@ test_that("lifting the cap is what the user must do, not the default", {
     expect_false(grepl("max_per_record", r$cmd))
   })
 })
+
+# ---- strata in parallel (issue #349) ----------------------------------------
+
+test_that("the number of cores is offered and passed on only for a stratified run", {
+  skip_app()
+  skip_on_cran()
+  shiny::testServer(shiny::shinyAppDir(app_dir()), {
+    html <- function(x) paste(as.character(x), collapse = "")
+    obj$sdcObj <- toy_sdc()
+    session$setInputs(kanon_strataV = "no stratification", rb_show_importance = "No",
+                      rb_kanon_useCombs = "No", sl_kanon_k = 3,
+                      rb_kanon_method = "heuristic", sl_kanon_nc = 2)
+    expect_gt(nchar(html(output$ui_kAnon)), 0)
+    ## without strata there is nothing to run in parallel
+    expect_identical(html(output$kanon_nc), "")
+    expect_false(grepl("nc=", code_kAnon()$cmd))
+
+    session$setInputs(kanon_strataV = "sex", sl_kanon_nc = 1)
+    expect_false(grepl("nc=", code_kAnon()$cmd))
+    if (isTRUE(parallel::detectCores() >= 3)) {
+      expect_match(html(output$kanon_nc), 'id="sl_kanon_nc"')
+    }
+
+    session$setInputs(sl_kanon_nc = 2)
+    r <- code_kAnon()
+    expect_match(r$cmd, ", nc=2)", fixed = TRUE)
+
+    ## the generated command runs and gives the serial result
+    run <- function(cmd) {
+      sdcObj <- toy_sdc()
+      strataVar(sdcObj) <- "sex"
+      eval(parse(text = cmd))
+      get.sdcMicroObj(sdcObj, "manipKeyVars")
+    }
+    expect_identical(run(r$cmd), run(sub(", nc=2", "", r$cmd, fixed = TRUE)))
+  })
+})
