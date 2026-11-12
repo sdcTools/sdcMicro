@@ -34,7 +34,19 @@
 #'   values (`NA`s) contribute to the calculation of `fk` and `Fk`.
 #'   Default is `1`. Used only in the `data.frame` method.
 #' - **`nc`**: Maximum number of cores used for stratified computations.
-#'   Default is `1`. Parallelization is ignored on Windows.
+#'   Default is `1`, i.e. the strata are processed one after the other. With
+#'   `nc > 1` (and more than one stratum) the strata are processed in parallel
+#'   using the base package \pkg{parallel}: by forked processes on Linux and
+#'   macOS and by a socket (PSOCK) cluster of `nc` R sessions on Windows. At
+#'   most all but one of the available cores are used. The result is identical
+#'   to the one obtained with `nc = 1`. Parallel processing pays off if the
+#'   computation within a stratum is expensive, in particular with an exact
+#'   engine; with the fast default heuristic the gain is small, since splitting
+#'   and combining the data are not parallelised. On a socket cluster the
+#'   sessions have to be started and the data of each stratum are copied to
+#'   them, which costs about a second. The largest stratum bounds the gain. In
+#'   the parallel workers \pkg{data.table} and the MILP solver use one thread
+#'   each.
 #' - **`method`**: Which engine decides *which* cells to suppress. The default
 #'   `"heuristic"` is the original sweep described above and is unchanged.
 #'   `"greedy2"` is a cost-effectiveness greedy with exact per-record steps
@@ -432,13 +444,15 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
   stopifnot(is.numeric(nc))
   nc <- round(nc)[1]
   stopifnot(nc >= 1)
-  # parallel::mclapply does only work reliably under linux/mac
-  # and it is not worth bothering dealing with windows here
-  if (!tolower(Sys.info()["sysname"]) %in% c("linux", "darwin")) {
-    nc <- 1
-  } else {
-    nc <- max(1, min(nc, parallel::detectCores() - 1))
+  # strata are computed in parallel if nc > 1: forked processes on linux/mac,
+  # a PSOCK cluster on windows (see ls_lapply()). One core is left free.
+  ncores <- parallel::detectCores()
+  if (is.na(ncores)) {
+    ncores <- 2
   }
+  nc <- max(1, min(nc, ncores - 1))
+  # "PSOCK" forces the socket cluster on any platform (used for testing)
+  cl_type <- getOption("sdcMicro.ls_cluster_type", "auto")
 
   # checks and preparations if we apply localSuppression on
   # subsets of key variables
@@ -555,70 +569,36 @@ localSuppressionWORK <- function(x, keyVars, strataVars, k = 2, combs, importanc
     supps <- xAnon <- vector("list", length = length(spl))
     totalSupps <- rep(NA, length(spl))
     if (is.null(combs)) {
-      if (nc == 1) {
-        # message("running serially")
-        resl <- lapply(seq_len(length(spl)), function(x) {
-          suppSubset(
-            x = spl[[x]][, keyVars, with = FALSE],
-            k = k,
-            importance = eng_importance(importance),
-            alpha = alpha,
-            method = method,
-            control = control
-          )
-        })
-        engine_info <- c(engine_info, lapply(resl, `[[`, "info"))
-        xAnon <- lapply(resl, `[[`, "xAnon")
-      } else {
-        # message("running in parallel using ", nc, " cores")
-        resl <- parallel::mclapply(seq_len(length(spl)), function(x) {
-          suppSubset(
-            x = spl[[x]][, keyVars, with = FALSE],
-            k = k,
-            importance = eng_importance(importance),
-            alpha = alpha,
-            method = method,
-            control = control
-          )
-        }, mc.cores = nc)
-        engine_info <- c(engine_info, lapply(resl, `[[`, "info"))
-        xAnon <- lapply(resl, `[[`, "xAnon")
-      }
+      resl <- ls_lapply(
+        unname(lapply(spl, function(d) d[, keyVars, with = FALSE])),
+        suppSubset,
+        k = k,
+        importance = eng_importance(importance),
+        alpha = alpha,
+        method = method,
+        control = control,
+        nc = nc,
+        cl_type = cl_type
+      )
+      engine_info <- c(engine_info, lapply(resl, `[[`, "info"))
+      xAnon <- lapply(resl, `[[`, "xAnon")
     } else {
       # local Suppression by strata and combination of subsets!
-      for (i in seq_along(spl)) {
-        counter <- 0
-        tmpDat <- copy(spl[[i]])
-        for (gr in seq_along(tree)) {
-          cur_k <- k[gr]
-          # log <- paste0("providing ",cur_k,"-Anonymity for ",ncol(tree[[gr]])," combinations ")
-          # log <- paste0(log, "of ",combs[gr]," key variables in strata ", names(spl)[i],"!\n")
-          # message(log)
-          for (comb in 1:ncol(tree[[gr]])) {
-            counter <- counter + 1
-            kV <- tree[[gr]][, comb]
-            cur_importance <- rank(importance[kV], ties.method = "min")
-            inpDat <- tmpDat[, kV, with = FALSE]
-            res <- suppSubset(
-              x = inpDat,
-              k = cur_k,
-              importance = eng_importance(cur_importance),
-              alpha = alpha,
-              method = method,
-              control = control
-            )
-            engine_info[[length(engine_info) + 1]] <- res$info
-
-            # replace: is there a more elegant way?
-            for (z in 1:length(kV)) {
-              set(tmpDat, i = NULL, j = kV[z], res$xAnon[[z]])
-            }
-          }
-        }
-        # prepare output
-        tmpDat[, sortid := NULL]
-        xAnon[[i]] <- tmpDat
-      }
+      resl <- ls_lapply(
+        unname(spl),
+        ls_stratum_combs,
+        tree = tree,
+        k = k,
+        importance = importance,
+        use_importance = method == "heuristic" || importance_supplied,
+        alpha = alpha,
+        method = method,
+        control = control,
+        nc = nc,
+        cl_type = cl_type
+      )
+      engine_info <- c(engine_info, unlist(lapply(resl, `[[`, "info"), recursive = FALSE))
+      xAnon <- lapply(resl, `[[`, "xAnon")
     }
     xAnon <- rbindlist(xAnon)
     xAnon[, sortid := sortid]

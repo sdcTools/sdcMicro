@@ -8,6 +8,11 @@
 #' the only one intended to ship with sdcMicro; `"scip"` (Apache-2.0, builds
 #' from source) is the opt-in backend for hard instances.
 #'
+#' Threads: the `highs` and `scip` backends run on one thread. `gurobi` uses its
+#' own default (all cores) unless `options(sdcMicro.milp_threads = )` is set;
+#' [localSuppression()] sets it to 1 in its workers when strata are processed
+#' in parallel (`nc > 1`).
+#'
 #' @param obj Numeric objective coefficients, length `n`. Always **minimised**.
 #' @param A Constraint matrix with `n` columns.
 #' @param sense Row senses, `">="`, `"<="` or `"=="`; recycled to `nrow(A)`.
@@ -155,6 +160,10 @@ milp_gurobi <- function(obj, A, sense, rhs, types, lower, upper,
   if (!is.null(start)) model$start <- start      # NA entries are completed
   params <- list(OutputFlag = 0, MIPGap = gap)
   if (is.finite(time_limit)) params$TimeLimit <- time_limit
+  # gurobi takes all cores unless told otherwise; one thread per worker when
+  # strata are solved in parallel (highs and scip run on one thread anyway)
+  threads <- ls_milp_threads()
+  if (!is.null(threads)) params$Threads <- threads
   res <- gurobi::gurobi(model, params = params)
   status <- switch(res$status,
                    OPTIMAL = "optimal", TIME_LIMIT = "time_limit",

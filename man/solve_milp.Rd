@@ -60,4 +60,9 @@ changes the model. See `docs/07-paper-P1-EJOR-plan.md` (work package A1).
 Backends: `"highs"` (HiGHS, MIT licence, CRAN binaries) is the default and
 the only one intended to ship with sdcMicro; `"scip"` (Apache-2.0, builds
 from source) is the opt-in backend for hard instances.
+
+Threads: the `highs` and `scip` backends run on one thread. `gurobi` uses its
+own default (all cores) unless `options(sdcMicro.milp_threads = )` is set;
+[localSuppression()] sets it to 1 in its workers when strata are processed
+in parallel (`nc > 1`).
 }
