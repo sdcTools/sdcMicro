@@ -25,7 +25,11 @@
   households a small positive risk to allow them as donors.
 - Bugfix `recordSwap()`: if the number of swaps to distribute over the lowest hierarchy
   level was 0 (e.g. `swaprate = 0`), the first group nevertheless received one swap
-  with probability 1 / (number of groups). Results with `swaprate > 0` are unchanged.
+  with probability 1 / (number of groups). The same happened with `swaprate > 0`
+  whenever the swaps divided evenly among the groups (e.g. four regions of 100
+  households and `swaprate = 0.1`: 42 instead of 40 swapped households in about a third
+  of the runs); the swap rate is now met exactly there. All other results with
+  `swaprate > 0` are unchanged.
 - `recordSwap()`: the documentation of `risk` and `return_swapped_id` states that risk
   values are donor sampling weights and that donors are flagged as swapped, too.
 - `addNoise(method = "ROMM")` is reimplemented (#271, thanks to Øyvind Langsrud for the
