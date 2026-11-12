@@ -38,8 +38,13 @@
 #'   `nc > 1` (and more than one stratum) the strata are processed in parallel
 #'   using the base package \pkg{parallel}: by forked processes on Linux and
 #'   macOS and by a socket (PSOCK) cluster of `nc` R sessions on Windows. At
-#'   most all but one of the available cores are used. The result is identical
-#'   to the one obtained with `nc = 1`. Parallel processing pays off if the
+#'   most all but one of the available cores are used. For the deterministic
+#'   engines (`"heuristic"`, `"greedy2"`, and the exact engines when the solver
+#'   proves optimality) the result is identical to the one obtained with
+#'   `nc = 1`. `"lns"` draws random numbers, and a solve stopped by its time
+#'   limit depends on the timing; such results can differ between runs and
+#'   between values of `nc` (the parallel workers do not use the random number
+#'   stream of the calling session). Parallel processing pays off if the
 #'   computation within a stratum is expensive, in particular with an exact
 #'   engine; with the fast default heuristic the gain is small, since splitting
 #'   and combining the data are not parallelised. On a socket cluster the

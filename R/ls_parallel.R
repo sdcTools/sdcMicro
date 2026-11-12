@@ -13,7 +13,9 @@
 # cl_type  "auto" picks "PSOCK" on Windows and "FORK" elsewhere
 #
 # The result is in the order of X and equal to lapply(X, FUN, ...). An error in
-# a worker is an error here. Each worker uses one data.table thread and one
+# a worker is an error here, a warning in a worker is a warning here (each
+# distinct message once). FUN must not rely on the random number stream of the
+# calling session: the workers have their own. Each worker uses one data.table thread and one
 # MILP solver thread (see ls_milp_threads()), otherwise nc workers times the
 # threads of each would oversubscribe the cores.
 ls_lapply <- function(X, FUN, ..., nc = 1, cl_type = c("auto", "FORK", "PSOCK")) {
@@ -28,14 +30,30 @@ ls_lapply <- function(X, FUN, ..., nc = 1, cl_type = c("auto", "FORK", "PSOCK"))
   if (cl_type == "FORK" && .Platform$OS.type == "windows") {
     stop("a fork cluster is not available on Windows.", call. = FALSE)
   }
+  # warnings raised in a worker are collected and raised again in the calling
+  # session; otherwise they would be lost
   worker <- function(x, .fun, .args) {
     data.table::setDTthreads(1L)
     options(sdcMicro.milp_threads = 1L)
-    do.call(.fun, c(list(x), .args))
+    warn <- character(0)
+    value <- withCallingHandlers(
+      do.call(.fun, c(list(x), .args)),
+      warning = function(w) {
+        warn <<- c(warn, conditionMessage(w))
+        invokeRestart("muffleWarning")
+      }
+    )
+    list(value = value, warnings = warn)
   }
   # the wrapper itself needs nothing from this package
   environment(worker) <- globalenv()
   args <- list(...)
+  collect <- function(res) {
+    for (w in unique(unlist(lapply(res, `[[`, "warnings")))) {
+      warning(w, call. = FALSE)
+    }
+    lapply(res, `[[`, "value")
+  }
 
   if (cl_type == "FORK") {
     msgs <- character(0)
@@ -57,15 +75,16 @@ ls_lapply <- function(X, FUN, ..., nc = 1, cl_type = c("auto", "FORK", "PSOCK"))
       stop("parallel computation of the strata failed: ", paste(unique(msgs), collapse = "; "),
            call. = FALSE)
     }
-    return(res)
+    return(collect(res))
   }
 
   cl <- parallel::makeCluster(nc, type = "PSOCK")
   on.exit(parallel::stopCluster(cl), add = TRUE)
-  tryCatch(
+  res <- tryCatch(
     parallel::parLapply(cl, X, worker, .fun = FUN, .args = args),
     error = function(e) stop(conditionMessage(e), call. = FALSE)
   )
+  collect(res)
 }
 
 # Number of threads a MILP backend may use, from option 'sdcMicro.milp_threads';

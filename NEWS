@@ -3,8 +3,11 @@
   platform (#349). `nc > 1` used forked processes on Linux and macOS and was silently
   ignored on Windows; on Windows a socket (PSOCK) cluster from the base package
   `parallel` is used now. Parallel processing also covers the combination of strata
-  with `combs`, which always ran serially. The results are identical to `nc = 1`
-  (the default, unchanged). An error in one stratum now stops the call with the
+  with `combs`, which always ran serially. For the deterministic engines
+  (`"heuristic"`, `"greedy2"`, exact engines solved to proven optimality) the results
+  are identical to `nc = 1` (the default, unchanged); `"lns"` and solves stopped by the
+  time limit are not reproducible across values of `nc`. Warnings raised within a
+  stratum are passed on. An error in one stratum now stops the call with the
   original message instead of an unrelated "subscript out of bounds". Each worker uses
   one `data.table` thread and one solver thread (`gurobi`; `highs` and `scip` are
   single-threaded anyway). No new dependency. Benchmark on `testdata` with five strata
