@@ -74,6 +74,24 @@ test_that("ls_lapply() passes on an error raised in a worker", {
   expect_error(sdcMicro:::ls_lapply(1:3, f, nc = 2, cl_type = "PSOCK"), "stratum two failed")
 })
 
+test_that("ls_lapply() passes on a warning raised in a worker", {
+  skip_on_cran()
+  f <- global_fun(function(i) {
+    if (i == 2) warning("stratum two warns")
+    i
+  })
+  expect_warning(res <- sdcMicro:::ls_lapply(1:3, f, nc = 1), "stratum two warns")
+  if (!is_windows) {
+    expect_warning(res <- sdcMicro:::ls_lapply(1:3, f, nc = 2, cl_type = "FORK"), "stratum two warns")
+    expect_identical(res, as.list(1:3))
+  }
+  expect_warning(res <- sdcMicro:::ls_lapply(1:3, f, nc = 2, cl_type = "PSOCK"), "stratum two warns")
+  expect_identical(res, as.list(1:3))
+  # a result may be NULL
+  g <- global_fun(function(i) if (i == 2) NULL else i)
+  expect_identical(sdcMicro:::ls_lapply(1:3, g, nc = 2, cl_type = "PSOCK"), list(1L, NULL, 3L))
+})
+
 test_that("the number of solver threads is read from an option", {
   old <- options(sdcMicro.milp_threads = NULL)
   on.exit(options(old), add = TRUE)
