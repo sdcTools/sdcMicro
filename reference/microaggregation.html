@@ -78,7 +78,8 @@
 <span>  measure <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>  trim <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  varsort <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  transf <span class="op">=</span> <span class="st">"log"</span></span>
+<span>  transf <span class="op">=</span> <span class="st">"log"</span>,</span>
+<span>  gamma <span class="op">=</span> <span class="fl">0.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -109,7 +110,7 @@ time using <code>strataVar&lt;-</code>.</p></dd>
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>pca, rmd, onedims, single, simple, clustpca, pppca,
-clustpppca, mdav, clustmcdpca, influence, mcdpca</p></dd>
+clustpppca, mdav, vmdav, clustmcdpca, influence, mcdpca</p></dd>
 
 
 <dt id="arg-weights">weights<a class="anchor" aria-label="anchor" href="#arg-weights"></a></dt>
@@ -141,6 +142,12 @@ median or weighted mean.</p></dd>
 
 <dt id="arg-transf">transf<a class="anchor" aria-label="anchor" href="#arg-transf"></a></dt>
 <dd><p>transformation for data x</p></dd>
+
+
+<dt id="arg-gamma">gamma<a class="anchor" aria-label="anchor" href="#arg-gamma"></a></dt>
+<dd><p>gain factor of method ‘vmdav’ (a single non-negative number,
+default 0.2), ignored by all other methods. The larger <code>gamma</code>, the more
+readily a group is extended beyond <code>aggr</code> records; see Details.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -202,15 +209,40 @@ affected.</p>
 (unsorted) data. It is useful for the comparison with other methods as a
 benchmark, i.e. replies the question how much better is a sorting of the
 data before aggregation.</p>
+<p>Method ‘vmdav’ (V-MDAV, Solanas and Martinez-Balleste, 2006) forms groups
+of variable size. <code>aggr</code> is then the <em>minimum</em> group size \(k\).
+The variables are standardised, and until fewer than \(k\) records are left,
+a group is built from the record that is most distant from the centroid of the
+data and its \(k - 1\) nearest unassigned records. The group is then extended:
+let \(e\) be the unassigned record closest to the group, \(d_{in}\) its
+distance to the nearest record of the group and \(d_{out}\) its distance to
+the nearest other unassigned record. \(e\) joins the group if
+\(d_{in} &lt; \gamma d_{out}\), and this is repeated until the
+condition fails or the group has \(2k - 1\) records. Records that are left at
+the end (fewer than \(k\)) are added to the group with the closest centroid, so
+that a group can exceed \(2k - 1\) records by at most \(k - 1\). Every group
+has at least \(k\) records. With <code>gamma = 0</code> no group is extended and the
+group size is fixed as for ‘mdav’; the authors used <code>gamma = 0.2</code> for
+scattered data and <code>gamma = 1.1</code> for data with natural clusters, where the
+information loss can be much lower than with a fixed group size. The values are
+aggregated with the arithmetic mean. Ties are broken by the order of the
+records, so that the result is deterministic. Distances between records with
+missing values are computed from the variables observed in both records;
+missing values stay missing. The method needs no distance matrix, but its
+running time grows quadratically with the number of records.</p>
     </div>
     <div id="note">
     <h2>Note</h2>
-    <p>if only one variable is specified, <code><a href="mafast.html">mafast</a></code> is applied and argument <code>method</code> is ignored.
-Parameters <code>measure</code> are ignored for methods <code>mdav</code> and <code>rmd</code>.</p>
+    <p>if only one variable is specified, <code><a href="mafast.html">mafast</a></code> is applied and argument <code>method</code> is ignored,
+except for method <code>vmdav</code>, which is also applied to a single variable.
+Parameters <code>measure</code> are ignored for methods <code>mdav</code>, <code>vmdav</code> and <code>rmd</code>.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Templ, M. and Meindl, B., <em>Robust Statistics Meets SDC: New Disclosure
+    <p>Solanas, A. and Martinez-Balleste, A., <em>V-MDAV: A Multivariate
+Microaggregation With Variable Group Size</em>, in COMPSTAT 2006, Rome, pp. 917-925,
+2006.</p>
+<p>Templ, M. and Meindl, B., <em>Robust Statistics Meets SDC: New Disclosure
 Risk Measures for Continuous Microdata Masking</em>, Lecture Notes in Computer
 Science, Privacy in Statistical Databases, vol. 5262, pp. 113-126, 2008.</p>
 <p>Templ, M. <em>Statistical Disclosure Control for Microdata Using the
@@ -350,6 +382,18 @@ which is elsewhere acknowledged.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $wrisk2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## variable group size (V-MDAV): aggr is the minimum group size</span></span></span>
+<span class="r-in"><span><span class="va">mv</span> <span class="op">&lt;-</span> <span class="fu">microaggregation</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  obj <span class="op">=</span> <span class="va">testdata</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expend"</span>, <span class="st">"income"</span>, <span class="st">"savings"</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"vmdav"</span>,</span></span>
+<span class="r-in"><span>  aggr <span class="op">=</span> <span class="fl">4</span>,</span></span>
+<span class="r-in"><span>  gamma <span class="op">=</span> <span class="fl">1.1</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mv</span><span class="op">$</span><span class="va">mx</span><span class="op">$</span><span class="va">expend</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 5 6 7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 4 4 4 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## for objects of class sdcMicro:</span></span></span>
 <span class="r-in"><span><span class="co">## no stratification because `@strataVar` is `NULL`</span></span></span>
