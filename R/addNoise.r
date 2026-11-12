@@ -12,11 +12,29 @@
 #' method \sQuote{correlated2} adds noise and preserves the covariances as
 #' described in R. Brand (2001) or in the reference given below. Method
 #' \sQuote{restr} takes the sample size into account when adding noise. Method
-#' \sQuote{ROMM} is an implementation of the algorithm ROMM (Random
-#' Orthogonalized Matrix Masking) (Fienberg, 2004).  Method \sQuote{outdect}
+#' \sQuote{outdect}
 #' adds noise only to outliers. The outliers are identified with univariate
 #' and robust multivariate procedures based on a robust mahalanobis distances
 #' calculated by the MCD estimator.
+#'
+#' Method \sQuote{ROMM} is random orthogonal matrix masking (Ting, Fienberg and
+#' Trottini, 2008). The perturbed data have exactly the same sample means and the
+#' same sample covariance matrix as the original data. The implementation follows a
+#' suggestion of Øyvind Langsrud (see function \code{RegSDCgen()} of his R package
+#' \pkg{RegSDC}, \url{https://github.com/olangsrud/RegSDC}): the centred data are
+#' decomposed as \eqn{QR} by a QR decomposition, normally distributed noise with
+#' standard deviation \code{p} is added to the orthonormal matrix \eqn{Q}, the result
+#' is centred and orthonormalized again and finally multiplied by \eqn{R}. The amount
+#' of perturbation is set by argument \code{p} (default \code{0.001}); \code{noise} is
+#' not used. With \code{p = 0} the data are not changed. For small \code{p} each value
+#' is perturbed by noise with a standard deviation of roughly
+#' \eqn{p \sqrt{n - 1}}{p * sqrt(n - 1)} times the standard deviation of its variable
+#' (\eqn{n} the number of observations), for large \code{p} the perturbed values are
+#' essentially unrelated to the original ones, apart from the preserved means and
+#' covariances. Rows with missing values are not perturbed and are returned unchanged
+#' (with a warning); the means and covariances are then preserved for the complete
+#' rows. More complete rows than variables are required. Constant variables are
+#' returned unchanged.
 #'
 #' @name addNoise
 #' @param obj either a \code{data.frame} or a \code{\link{sdcMicroObj-class}} that should be perturbed
@@ -24,7 +42,10 @@
 #' @param noise amount of noise (in percentages)
 #' @param method choose between \sQuote{additive}, \sQuote{correlated},
 #' \sQuote{correlated2}, \sQuote{restr}, \sQuote{ROMM}, \sQuote{outdect}
-#' @param ... see possible arguments below
+#' @param ... further arguments: \code{p} (a non-negative number, default
+#' \code{0.001}), the amount of perturbation for method \sQuote{ROMM}, and
+#' \code{delta} (default \code{0.1}), the amount of noise for method
+#' \sQuote{correlated2}. See Details.
 #' @return If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
 #' slots are filled, like manipNumVars, risk and utility.
 #'
@@ -178,61 +199,46 @@ addNoiseWORK <- function(x, noise=150, method="additive", p=0.001, delta=0.1) {
     x <- cc * x + d
     x
   }
+  # Random orthogonal matrix masking that preserves the sample means and the
+  # sample covariance matrix exactly. QR formulation suggested by O. Langsrud
+  # in issue #271 (cf. RegSDCgen() in his R package RegSDC); extended here by the
+  # handling of missing values, rank-deficient data and the signs of the basis.
   addNoise_ROMM <- function(x, p) {
-    orthonormalization <- function(u=NULL, basis=TRUE, norm=TRUE) {
-      if (is.null(u)) {
-        return(NULL)
-      }
-      if (!(is.matrix(u))) {
-        u <- as.matrix(u)
-      }
-      p <- nrow(u)
-      n <- ncol(u)
-      if (prod(abs(La.svd(u)$d) > 1e-08) == 0) {
-        stop("colinears vectors")
-      }
-      if (p < n) {
-        warning("orthonormalization(): too much vectors to orthogonalize.\n")
-        u <- as.matrix(u[, 1:p])
-        n <- p
-      }
-      if (basis & (p > n)) {
-        base <- diag(p)
-        coef.proj <- crossprod(u, base)/diag(crossprod(u))
-        base2 <- base - u %*% matrix(coef.proj, nrow=n, ncol=p)
-        norm.base2 <- diag(crossprod(base2))
-        base <- as.matrix(base[, order(norm.base2) > n])
-        u <- cbind(u, base)
-        n <- p
-      }
-      v <- u
-      if (n > 1) {
-        for (i in 2:n) {
-          coef.proj <- c(crossprod(u[,i], v[,1:(i - 1)]))/diag(crossprod(v[,1:(i-1)]))
-          v[,i] <- u[,i] - matrix(v[,1:(i-1)], nrow=p) %*% matrix(coef.proj, nrow=i-1)
-        }
-      }
-      if (norm) {
-        coef.proj <- 1/sqrt(diag(crossprod(v)))
-        v <- t(t(v) * coef.proj)
-      }
-      return(v)
+    if (!is.numeric(p) || length(p) != 1 || is.na(p) || p < 0) {
+      stop("addNoise: for method 'ROMM', argument 'p' must be a single non-negative number.\n")
     }
-    ROMM <- function(x, p1=p) {
-      N <- nrow(x)
-      M <- matrix(stats::rnorm(N * N), ncol=N, nrow=N)
-      I <- diag(1, N)
-      P <- I + p1 * M
-      Torthon <- orthonormalization(P)
-      x <- Torthon %*% as.matrix(x)
-      x
+    xm <- as.matrix(x)
+    cc <- stats::complete.cases(xm)
+    n <- sum(cc)
+    k <- ncol(xm)
+    if (n <= k) {
+      stop("addNoise: method 'ROMM' needs more complete rows than variables (",
+        n, " complete rows, ", k, " variables).\n")
     }
-    cn1 <- colnames(x)
-    rn1 <- rownames(x)
-    x <- ROMM(x, p) # FIXME!
-    colnames(x) <- cn1
-    rownames(x) <- rn1
-    x
+    if (n < nrow(xm)) {
+      warning("addNoise (method 'ROMM'): ", nrow(xm) - n, " rows with missing values ",
+        "were not perturbed and are returned unchanged.\n", call. = FALSE)
+    }
+    if (p == 0) {
+      return(xm)
+    }
+    y <- xm[cc, , drop=FALSE]
+    mu <- colMeans(y)
+    # centred data = Q1 %*% R1; qr() moves (near-)collinear columns to the end,
+    # so the columns of R1 have to be put back into the original order
+    qr1 <- qr(sweep(y, 2, mu))
+    R1 <- qr.R(qr1)[, order(qr1$pivot), drop=FALSE]
+    # perturb the orthonormal basis, centre it and orthonormalize it again
+    z <- qr.Q(qr1) + p * matrix(stats::rnorm(n * k), nrow=n, ncol=k)
+    qr2 <- qr(sweep(z, 2, colMeans(z)))
+    if (qr2$rank < k) {
+      stop("addNoise: method 'ROMM' failed, the perturbed basis is rank deficient.\n")
+    }
+    # the QR decomposition is unique only up to the signs of the columns of Q;
+    # with a positive diagonal of R the new basis tends to the old one for p -> 0
+    Q2 <- sweep(qr.Q(qr2), 2, sign(diag(qr.R(qr2))), "*")
+    xm[cc, ] <- sweep(Q2 %*% R1, 2, mu, "+")
+    xm
   }
   addNoise_outdect <- function(x, noise) {
     wnoise <- noise/100

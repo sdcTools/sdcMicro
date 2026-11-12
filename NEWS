@@ -1,4 +1,13 @@
 # 5.8.2
+- `addNoise(method = "ROMM")` is reimplemented (#271, thanks to Øyvind Langsrud for the
+  report and the QR formulation, cf. his R package RegSDC). **Results change:** the
+  perturbed data now have exactly the same sample means and the same sample covariance
+  matrix as the original data; previously the means were not preserved. The method no
+  longer builds and orthonormalizes an n x n matrix, so it needs O(n p^2) time instead
+  of O(n^3) and no n x n memory (4580 x 3 values: well below a second). The meaning and
+  the default of `p` are kept (`p = 0`: no change). Rows with missing values are returned
+  unchanged, with a warning (previously the whole result was `NA`); more complete rows
+  than variables are required; constant and collinear variables are handled.
 - `pram()`: the documentation of `pd` and `alpha` now describes what is computed (#347).
   `pd` is the lower bound of the diagonal of the *initial* matrix `P`; the matrix
   that is applied is the invariant matrix `Rs = alpha * R + (1 - alpha) * I`, whose
