@@ -6,7 +6,8 @@
   unassigned record. The new argument `gamma` (default 0.2) is the gain factor of the
   paper: 0 gives groups of fixed size, values around 1 suit data with natural clusters.
   Works for data frames (also with `strata_variables` and for a single variable) and for
-  `sdcMicroObj` objects. All other methods are unchanged.
+  `sdcMicroObj` objects. All other methods are unchanged. `sdcApp()` offers the method
+  on the microaggregation page, with a slider for `gamma`.
 - Bugfix `recordSwap()`: a user-supplied `risk` was assigned to the wrong households
   if `data` was not sorted by `hid`. `data` is sorted internally, but the rows of
   `risk` were left in their original order, so that mostly households without risk
