@@ -46,8 +46,9 @@ test_that("data frame, numeric values (noise = default, correlated2 method)", {
 ###########################################################################################################################################
 test_that("data frame, numeric values (noise = default, ROMM method)", {
   set.seed(3)
-  fr <- addNoise(sample_Data, method = "ROMM")
-  fr2 <- addNoise(sample_Data, noise = 20, method = "ROMM")
+  # ROMM is controlled by 'p', not by 'noise'
+  fr <- addNoise(sample_Data, method = "ROMM", p = 0.1)
+  fr2 <- addNoise(sample_Data, method = "ROMM", p = 0.001)
   expect_true(all(colMeans(abs(sample_Data-fr$xm))>0))
   expect_true(mean(colMeans(abs(fr$xm-fr$x)))>mean(colMeans(abs(fr2$xm-fr2$x))))
 })
@@ -178,9 +179,8 @@ test_that("data frame, numeric values with one entire column, one entire row wit
 ###########################################################################################################################################
 test_that("data frame, numeric values with one entire column, one entire row with NAs (noise = default, ROMM method)", {
   set.seed(3)
-  fr <- addNoise(sample_Data, method = "ROMM")
-  fr2 <- addNoise(sample_Data, noise = 20, method = "ROMM")
-  expect_true(all(is.na(fr$xm)))
+  # no complete row is left: ROMM cannot be applied
+  expect_error(addNoise(sample_Data, method = "ROMM"), "more complete rows than variables")
 })
 ###########################################################################################################################################
 

@@ -305,7 +305,7 @@ output$ui_noise <- renderUI({
       lab <- p("Set amount of noise (parameter 'delta')", tipify(icon("circle-info"), title=txt_tooltip, placement="top"))
       par <- c(value=0.1, min=0.1, max=2, step=0.01)
     } else if (input$sel_noise_method=="ROMM") {
-      txt_tooltip <- 'Parameter "p" is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes and the default value 0.001 to virtually no changes.'
+      txt_tooltip <- 'Parameter "p" is the multiplication factor for the method ROMM and corresponds to the magnitude of the perturbation. The value zero leads to no changes; the changes grow with p and with the number of observations. Means and covariances of the variables are preserved exactly.'
       lab <- p("Set amount of noise (parameter 'p')", tipify(icon("circle-info"), title=txt_tooltip, placement="top"))
       par <- c(value=0.001, min=0.001, max=0.3, step=0.001)
     } else if (input$sel_noise_method=="correlated"){

@@ -16,7 +16,10 @@ addNoise(obj, variables = NULL, noise = 150, method = "additive", ...)
 \item{method}{choose between \sQuote{additive}, \sQuote{correlated},
 \sQuote{correlated2}, \sQuote{restr}, \sQuote{ROMM}, \sQuote{outdect}}
 
-\item{...}{see possible arguments below}
+\item{...}{further arguments: \code{p} (a non-negative number, default
+\code{0.001}), the amount of perturbation for method \sQuote{ROMM}, and
+\code{delta} (default \code{0.1}), the amount of noise for method
+\sQuote{correlated2}. See Details.}
 }
 \value{
 If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
@@ -43,11 +46,29 @@ depending on its size and standard deviation. \sQuote{correlated} and
 method \sQuote{correlated2} adds noise and preserves the covariances as
 described in R. Brand (2001) or in the reference given below. Method
 \sQuote{restr} takes the sample size into account when adding noise. Method
-\sQuote{ROMM} is an implementation of the algorithm ROMM (Random
-Orthogonalized Matrix Masking) (Fienberg, 2004).  Method \sQuote{outdect}
+\sQuote{outdect}
 adds noise only to outliers. The outliers are identified with univariate
 and robust multivariate procedures based on a robust mahalanobis distances
 calculated by the MCD estimator.
+
+Method \sQuote{ROMM} is random orthogonal matrix masking (Ting, Fienberg and
+Trottini, 2008). The perturbed data have exactly the same sample means and the
+same sample covariance matrix as the original data. The implementation follows a
+suggestion of Øyvind Langsrud (see function \code{RegSDCgen()} of his R package
+\pkg{RegSDC}, \url{https://github.com/olangsrud/RegSDC}): the centred data are
+decomposed as \eqn{QR} by a QR decomposition, normally distributed noise with
+standard deviation \code{p} is added to the orthonormal matrix \eqn{Q}, the result
+is centred and orthonormalized again and finally multiplied by \eqn{R}. The amount
+of perturbation is set by argument \code{p} (default \code{0.001}); \code{noise} is
+not used. With \code{p = 0} the data are not changed. For small \code{p} each value
+is perturbed by noise with a standard deviation of roughly
+\eqn{p \sqrt{n - 1}}{p * sqrt(n - 1)} times the standard deviation of its variable
+(\eqn{n} the number of observations), for large \code{p} the perturbed values are
+essentially unrelated to the original ones, apart from the preserved means and
+covariances. Rows with missing values are not perturbed and are returned unchanged
+(with a warning); the means and covariances are then preserved for the complete
+rows. More complete rows than variables are required. Constant variables are
+returned unchanged.
 }
 \examples{
 
