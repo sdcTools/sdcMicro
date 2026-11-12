@@ -57,6 +57,8 @@ in a household for each member of the household. If this condition is not
 satisfied, the risk parameter is automatically adjusted to comply with this    
 condition.
 If risk parameter is provided then k-anonymity rule is suppressed.
+The rows of a `risk` table refer to the rows of `data` in the order in
+which `data` is supplied; `data` need not be sorted by `hid`.
 The risk values are also the sampling weights of the donor households: the
 higher the risk of a household at a hierarchy level, the more likely it is
 chosen as donor at this level, and a household with risk 0 at a hierarchy

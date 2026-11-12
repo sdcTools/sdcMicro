@@ -95,3 +95,40 @@ test_that("the swap rate is met exactly if the swaps divide evenly among the gro
   }, integer(1))
   expect_true(all(n_swapped == 40L), info = paste(sort(unique(n_swapped)), collapse = ", "))
 })
+
+# 1000 single-person households in random row order, 44 of them at risk
+unsorted_data <- function() {
+  set.seed(5)
+  d <- data.table(hid = sample(1:1000), reg = sample(1:5, 1000, replace = TRUE), hsize = 1L,
+                  age = sample(1:5, 1000, replace = TRUE))
+  d[, rk := 0]
+  d[sample(.N, 44), rk := 0.9]
+  d
+}
+swap_rk <- function(d, risk = "rk") {
+  res <- suppressMessages(recordSwap(
+    data = copy(d), hid = "hid", hierarchy = "reg", similar = "hsize", risk = risk,
+    risk_threshold = 0.5, swaprate = 0, return_swapped_id = TRUE, seed = 1,
+    log_file_name = tempfile()
+  ))
+  sort(swapped_hids(res))
+}
+
+test_that("a user-supplied risk stays with its household if data is not sorted by hid", {
+  d <- unsorted_data()
+  risky <- d[rk > 0, hid]
+  swapped <- swap_rk(d)
+  expect_gt(length(swapped), 30)
+  expect_true(all(swapped %in% risky))
+  # the row order of the input does not matter
+  expect_identical(swapped, swap_rk(d[order(hid)]))
+  # risk as a matrix in the row order of data
+  expect_identical(swapped, swap_rk(d, risk = as.matrix(d[, .(reg = rk)])))
+})
+
+test_that("the risk column may be called 'risk'", {
+  d <- unsorted_data()
+  d2 <- copy(d)
+  setnames(d2, "rk", "risk")
+  expect_identical(swap_rk(d2, risk = "risk"), swap_rk(d))
+})
