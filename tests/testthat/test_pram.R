@@ -99,3 +99,46 @@ test_that("pram integrates with sdcMicro objects", {
   expect_true("urbrur" %in% names(pram_info$comparison))
   expect_s3_class(pram_info$comparison$urbrur, "data.table")
 })
+
+test_that("the generated transition matrix is row-stochastic and invariant (#347)", {
+  data(testdata)
+  x <- factor(testdata$roof)
+  set.seed(347)
+  res <- pram(x, pd = 0.8, alpha = 1)
+  Rs <- attr(res, "pram_params")$x$Rs
+  p <- as.numeric(table(x)) / length(x)
+
+  expect_equal(unname(rowSums(Rs)), rep(1, nlevels(x)))
+  # invariance refers to the observed distribution, not to column sums
+  expect_equal(as.numeric(p %*% Rs), p)
+  expect_false(isTRUE(all.equal(unname(colSums(Rs)), rep(1, nlevels(x)))))
+})
+
+test_that("alpha = 0 leaves the data unchanged (#347)", {
+  data(testdata)
+  x <- factor(testdata$roof)
+  res <- pram(x, pd = 0.5, alpha = 0)
+  Rs <- attr(res, "pram_params")$x$Rs
+  expect_equal(unname(Rs), diag(nlevels(x)))
+  expect_identical(res$x, res$x_pram)
+})
+
+test_that("a user-supplied matrix may deviate from row sums 1 by rounding error (#347)", {
+  set.seed(1)
+  L <- 49
+  x <- factor(sample(seq_len(L), 2000, replace = TRUE), levels = seq_len(L))
+  mat <- matrix(1 / L, nrow = L, ncol = L, dimnames = list(levels(x), levels(x)))
+  # the row sums are 1 only up to floating-point error
+  expect_gt(max(abs(rowSums(mat) - 1)), .Machine$double.eps)
+  expect_error(pram(x, pd = mat), NA)
+
+  # a guaranteed diagonal of 0.8, the rest spread evenly
+  x12 <- factor(sample(month.abb, 500, replace = TRUE), levels = month.abb)
+  mat12 <- matrix(0.2 / 11, nrow = 12, ncol = 12, dimnames = list(month.abb, month.abb))
+  diag(mat12) <- 0.8
+  expect_error(pram(x12, pd = mat12), NA)
+
+  # a real violation is still rejected
+  mat12[1, 2] <- mat12[1, 2] + 1e-4
+  expect_error(pram(x12, pd = mat12), "rowSums")
+})
