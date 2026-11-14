@@ -84,7 +84,7 @@ $( document ).ajaxComplete(function() {
   setHeightForTables();
 });
 
-$( document ).load(function() {
+$( window ).on("load", function() {
     console.log( "load!" );
 });
 
