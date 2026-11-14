@@ -110,6 +110,7 @@ build_anonymization_prompt <- function(summary_info, k) {
     "microaggregation(sdcObj, variables, method):",
     "- For numerical variables. The argument is called `variables` (not `numVars`).",
     "- Use method = \"mdav\" for datasets under 20000 rows, \"onedims\" for larger.",
+    "- method = \"vmdav\" is an alternative to \"mdav\" (also under 20000 rows): the groups have a variable size of at least the aggregation level, which suits numerical variables with natural clusters.",
     "- Example: sdcObj <- microaggregation(sdcObj, variables = c(\"income\"), method = \"mdav\")",
     "",
     "addNoise(sdcObj, variables, noise):",
@@ -408,7 +409,7 @@ build_agentic_prompt <- function(summary_info, k, n_strategies = 3, tool_schemas
     "",
     "Each strategy is a sequence of tool calls. Available tools:",
     "- groupAndRename(var, before, after): Merge factor levels of a key variable. 'before' must list ALL levels.",
-    "- microaggregation(variables, method): For numerical variables. method = 'mdav' or 'onedims'.",
+    "- microaggregation(variables, method): For numerical variables. method = 'mdav', 'vmdav' or 'onedims'.",
     "- addNoise(variables, noise): Add noise to numerical variables.",
     if (length(summary_info$pramVars) > 0) "- pram(): Apply post-randomization to PRAM variables." else "",
     "- topBotCoding(column, value, replacement, kind): Top/bottom coding for numerical variables.",
@@ -556,7 +557,7 @@ get_tool_schemas <- function() {
       description = "Apply microaggregation to numerical variables.",
       parameters = list(
         variables = list(type = "array", items = list(type = "string"), description = "Numerical variable names"),
-        method = list(type = "string", description = "Method: 'mdav' (< 20000 rows) or 'onedims' (larger)")
+        method = list(type = "string", description = "Method: 'mdav' or 'vmdav' (< 20000 rows; 'vmdav' forms groups of variable size) or 'onedims' (larger)")
       ),
       required = c("variables", "method")
     ),
