@@ -77,3 +77,33 @@ test_that("get_tool_schemas returns valid list", {
   expect_true("localSuppression" %in% tool_names)
   expect_true("microaggregation" %in% tool_names)
 })
+
+test_that("execute_tool_calls applies onedimsopt and the refinement step where available", {
+  data(testdata2, package = "sdcMicro")
+  mk <- function() createSdcObj(testdata2,
+    keyVars = c("urbrur", "roof", "walls"),
+    numVars = c("expend", "income", "savings"),
+    w = "sampling_weight")
+  num <- c("expend", "income", "savings")
+  r <- execute_tool_calls(mk(), list(list(tool = "microaggregation", variables = "income",
+    method = "onedimsopt")))
+  expect_equal(r@manipNumVars$income,
+    microaggregation(testdata2[, "income", drop = FALSE], method = "onedimsopt")$mx$income)
+
+  r <- execute_tool_calls(mk(), list(list(tool = "microaggregation", variables = num,
+    method = "mdav", refine = TRUE)))
+  expect_equal(r@manipNumVars, microaggregation(mk(), method = "mdav", refine = TRUE)@manipNumVars)
+  expect_false(isTRUE(all.equal(r@manipNumVars, microaggregation(mk(), method = "mdav")@manipNumVars)))
+
+  # refine is ignored where microaggregation() does not offer it
+  r <- execute_tool_calls(mk(), list(list(tool = "microaggregation", variables = num,
+    method = "onedimsopt", refine = TRUE)))
+  expect_equal(r@manipNumVars, microaggregation(mk(), method = "onedimsopt")@manipNumVars)
+  r <- execute_tool_calls(mk(), list(list(tool = "microaggregation", variables = "income",
+    method = "mdav", refine = TRUE)))
+  expect_equal(r@manipNumVars, microaggregation(mk(), variables = "income", method = "mdav")@manipNumVars)
+
+  props <- Filter(function(s) s$name == "microaggregation", get_tool_schemas())[[1]]$parameters
+  expect_true("refine" %in% names(props))
+  expect_match(props$method$description, "onedimsopt")
+})

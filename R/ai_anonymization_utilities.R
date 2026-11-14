@@ -111,6 +111,8 @@ build_anonymization_prompt <- function(summary_info, k) {
     "- For numerical variables. The argument is called `variables` (not `numVars`).",
     "- Use method = \"mdav\" for datasets under 20000 rows, \"onedims\" for larger.",
     "- method = \"vmdav\" is an alternative to \"mdav\" (also under 20000 rows): the groups have a variable size of at least the aggregation level, which suits numerical variables with natural clusters.",
+    "- method = \"onedimsopt\" is the exact version of \"onedims\": each variable on its own, with the smallest possible information loss; fast for any number of rows and the best choice for a single variable.",
+    "- Optional refine = TRUE (with \"mdav\" or \"vmdav\", at least two variables, under 5000 rows, no missing values): a local search improves the groups and lowers the information loss.",
     "- Example: sdcObj <- microaggregation(sdcObj, variables = c(\"income\"), method = \"mdav\")",
     "",
     "addNoise(sdcObj, variables, noise):",
@@ -409,7 +411,7 @@ build_agentic_prompt <- function(summary_info, k, n_strategies = 3, tool_schemas
     "",
     "Each strategy is a sequence of tool calls. Available tools:",
     "- groupAndRename(var, before, after): Merge factor levels of a key variable. 'before' must list ALL levels.",
-    "- microaggregation(variables, method): For numerical variables. method = 'mdav', 'vmdav' or 'onedims'.",
+    "- microaggregation(variables, method): For numerical variables. method = 'mdav', 'vmdav', 'onedims' or 'onedimsopt'; optional refine = true.",
     "- addNoise(variables, noise): Add noise to numerical variables.",
     if (length(summary_info$pramVars) > 0) "- pram(): Apply post-randomization to PRAM variables." else "",
     "- topBotCoding(column, value, replacement, kind): Top/bottom coding for numerical variables.",
@@ -557,7 +559,8 @@ get_tool_schemas <- function() {
       description = "Apply microaggregation to numerical variables.",
       parameters = list(
         variables = list(type = "array", items = list(type = "string"), description = "Numerical variable names"),
-        method = list(type = "string", description = "Method: 'mdav' or 'vmdav' (< 20000 rows; 'vmdav' forms groups of variable size) or 'onedims' (larger)")
+        method = list(type = "string", description = "Method: 'mdav' or 'vmdav' (< 20000 rows; 'vmdav' forms groups of variable size), 'onedims' (larger) or 'onedimsopt' (exact version of 'onedims', any size, best for a single variable)"),
+        refine = list(type = "boolean", description = "Optional. true: improve the groups by a local search, which lowers the information loss (under 5000 rows). Ignored where it is not available: methods 'onedims' and 'onedimsopt', a single variable (except with 'vmdav'), missing values.")
       ),
       required = c("variables", "method")
     ),
@@ -638,7 +641,13 @@ execute_tool_calls <- function(sdcObj, calls) {
             stop(sprintf("Variable '%s' not found in numVars.", v), call. = FALSE)
         }
         method <- if (!is.null(call$method)) call$method else "mdav"
-        sdcObj <- microaggregation(sdcObj, variables = variables, method = method)
+        # the refinement step is applied only where microaggregation() offers it
+        refine <- isTRUE(as.logical(call$refine)) &&
+          !method %in% c("onedims", "onedimsopt") &&
+          (length(variables) > 1 || method == "vmdav") &&
+          !anyNA(get.sdcMicroObj(sdcObj, type = "manipNumVars")[, variables])
+        sdcObj <- microaggregation(sdcObj, variables = variables, method = method,
+          refine = refine)
       },
       "addNoise" = {
         variables <- as.character(unlist(call$variables))

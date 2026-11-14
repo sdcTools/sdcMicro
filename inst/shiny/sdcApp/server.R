@@ -508,9 +508,26 @@ shinyServer(function(session, input, output) {
     return(list(cmd=cmd, txt_action=txt_action))
   })
 
+  # is the refinement step of microaggregation() available for the current
+  # choices? Not for the methods that group each variable separately and not
+  # for a single variable (except with vmdav), see ?microaggregation
+  microagg_refine_ok <- reactive({
+    m_method <- input$sel_microagg_method
+    if (is.null(m_method) || m_method %in% c("onedims","onedimsopt")) {
+      return(FALSE)
+    }
+    nv <- length(input$sel_microagg_v)
+    if (nv == 0) {
+      nv <- length(get_numVars_names())
+    }
+    nv > 1 || m_method=="vmdav"
+  })
+
   # code for microaggregation()
   code_microaggregation <- reactive({
     m_method <- input$sel_microagg_method
+    refine <- microagg_refine_ok() && isTRUE(input$rb_microagg_refine=="Yes")
+    txt_refine <- if (refine) ", groups refined by a local search" else ""
     cmd <- NULL
     if (input$sel_microagg_strata!="no stratification") {
       res <- code_reset_strata(new_strataV=input$sel_microagg_strata, ex_strataV=NULL)
@@ -537,12 +554,12 @@ shinyServer(function(session, input, output) {
         gamma <- 0.2
       }
       cmd <- paste0(cmd, ", gamma=",gamma)
-      txt_action <- paste0(txt_action, " (method=",dQuote(m_method),", minimum size=",input$sl_microagg_aggr," and gamma=",gamma,")\n")
+      txt_action <- paste0(txt_action, " (method=",dQuote(m_method),", minimum size=",input$sl_microagg_aggr," and gamma=",gamma,txt_refine,")\n")
     } else {
-      txt_action <- paste0(txt_action, " (method=",dQuote(m_method)," and size=",input$sl_microagg_aggr,")\n")
+      txt_action <- paste0(txt_action, " (method=",dQuote(m_method)," and size=",input$sl_microagg_aggr,txt_refine,")\n")
     }
 
-    if (!m_method %in% c("mdav","rmd","vmdav")) {
+    if (!m_method %in% c("mdav","rmd","vmdav","onedimsopt")) {
       cmd <- paste0(cmd, ", measure=",dQuote(input$sl_microagg_measure))
       cmd <- paste0(cmd, ", trim=",input$sl_microagg_trim)
       if (m_method=="single") {
@@ -557,6 +574,9 @@ shinyServer(function(session, input, output) {
       cmd <- paste0(cmd, ", clustermethod=",dQuote(input$rb_microagg_clustermethod))
       cmd <- paste0(cmd, ", transf=",dQuote(input$rb_microagg_transf))
       cmd <- paste0(cmd, ", nc=",input$sl_microagg_nc)
+    }
+    if (refine) {
+      cmd <- paste0(cmd, ", refine=TRUE")
     }
     cmd <- paste0(cmd,")")
     return(list(cmd=cmd, cmd_strata1=cmd_strata1, cmd_strata2=cmd_strata2, txt_action=txt_action))
