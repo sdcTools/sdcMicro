@@ -1,4 +1,4 @@
-# 5.8.2
+# 5.8.3
 - New method `microaggregation(method = "onedimsopt")`: optimal univariate
   microaggregation (Hansen and Mukherjee, 2003). Each variable is treated on its own, as
   with `"onedims"`, but the sorted values are cut into groups of `aggr` to `2 * aggr - 1`
@@ -112,6 +112,16 @@
   rank restriction. The slider value is now passed unchanged.
 - `valTable()`: the default swapping range for method `"swappNum"` is now
   `p = 0.15` (previously `p = 15`, i.e. an unrestricted rank range).
+- Bugfix `sdcApp()`: the session froze if the active entry of a sidebar menu was clicked
+  (e.g. "Show summary" after a method had been applied) and then another entry. The
+  observers of the menu buttons fired when they were created and set the selection in
+  turn without end.
+- `sdcApp()`: no JavaScript error `e.indexOf is not a function` any more when the app is
+  loaded. A handler in `ihsn-style.js` used `.load()`, which jQuery 3 no longer provides.
+- `AI_applyAnonymization()`: the prompts and the tool description know
+  `microaggregation(method = "vmdav")`.
+
+# 5.8.2
 - `AI_applyAnonymization()` gains early stopping of the refinement loop via the new
   `tol` and `patience` arguments: refinement now terminates once the combined utility
   score U stops improving by more than `tol` for `patience` consecutive iterations,
@@ -123,14 +133,6 @@
   * added Unit-Tests for `ldiversity()`
 - Fixing some Header-Definitions for CRAN-Compliance
 - Updated Unit-Tests for `pram()`
-- Bugfix `sdcApp()`: the session froze if the active entry of a sidebar menu was clicked
-  (e.g. "Show summary" after a method had been applied) and then another entry. The
-  observers of the menu buttons fired when they were created and set the selection in
-  turn without end.
-- `sdcApp()`: no JavaScript error `e.indexOf is not a function` any more when the app is
-  loaded. A handler in `ihsn-style.js` used `.load()`, which jQuery 3 no longer provides.
-- `AI_applyAnonymization()`: the prompts and the tool description know
-  `microaggregation(method = "vmdav")`.
 
 # 5.8.1
 - New AI-assisted anonymization features:

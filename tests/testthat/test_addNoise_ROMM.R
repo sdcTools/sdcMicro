@@ -1,6 +1,6 @@
 library(sdcMicro)
 
-# ROMM as implemented since 5.8.2 (issue #271): mean and covariance preserving,
+# ROMM as implemented since 5.8.3 (issue #271): mean and covariance preserving,
 # following the QR formulation suggested by Oyvind Langsrud (R package RegSDC).
 
 # the time limit makes a regression to the former O(n^3) algorithm fail instead of hang
