@@ -106,6 +106,10 @@
   * added Unit-Tests for `ldiversity()`
 - Fixing some Header-Definitions for CRAN-Compliance
 - Updated Unit-Tests for `pram()`
+- `sdcApp()`: no JavaScript error `e.indexOf is not a function` any more when the app is
+  loaded. A handler in `ihsn-style.js` used `.load()`, which jQuery 3 no longer provides.
+- `AI_applyAnonymization()`: the prompts and the tool description know
+  `microaggregation(method = "vmdav")`.
 
 # 5.8.1
 - New AI-assisted anonymization features:
