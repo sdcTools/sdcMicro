@@ -18,7 +18,8 @@ microaggregation(
   trim = 0,
   varsort = 1,
   transf = "log",
-  gamma = 0.2
+  gamma = 0.2,
+  refine = FALSE
 )
 }
 \arguments{
@@ -35,7 +36,7 @@ within strata defined by the variables. For \code{\link{sdcMicroObj-class}}-obje
 stratification-variable defined in slot \code{@strataVar} is used. This slot can be changed any
 time using \code{strataVar<-}.}
 
-\item{method}{pca, rmd, onedims, single, simple, clustpca, pppca,
+\item{method}{pca, rmd, onedims, onedimsopt, single, simple, clustpca, pppca,
 clustpppca, mdav, vmdav, clustmcdpca, influence, mcdpca}
 
 \item{weights}{sampling weights. If obj is of class sdcMicroObj the vector
@@ -58,6 +59,10 @@ median or weighted mean.}
 \item{gamma}{gain factor of method \sQuote{vmdav} (a single non-negative number,
 default 0.2), ignored by all other methods. The larger \code{gamma}, the more
 readily a group is extended beyond \code{aggr} records; see Details.}
+
+\item{refine}{logical (default \code{FALSE}). If \code{TRUE}, the groups found by
+the method are improved by a local search (moving and swapping records) before
+they are aggregated; see Details.}
 }
 \value{
 If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
@@ -141,11 +146,43 @@ records, so that the result is deterministic. Distances between records with
 missing values are computed from the variables observed in both records;
 missing values stay missing. The method needs no distance matrix, but its
 running time grows quadratically with the number of records.
+
+Method \sQuote{onedimsopt} is optimal univariate microaggregation (Hansen and
+Mukherjee, 2003). Like \sQuote{onedims} it treats each variable on its own. Instead
+of cutting the sorted values into groups of exactly \code{aggr} values, it finds
+the partition into groups of at least \code{aggr} values (\eqn{k}) with the smallest
+within-group sum of squares. Such a partition consists of groups of \eqn{k} to
+\eqn{2k - 1} neighbours in the sorted values (Domingo-Ferrer and Mateo-Sanz, 2002)
+and corresponds to a shortest path, which is found by dynamic programming in
+\eqn{O(kn)} after sorting. For a single variable no partition into groups of at
+least \eqn{k} values loses less information. For several variables the result is
+the best individual ranking; as with \sQuote{onedims} the groups differ from
+variable to variable, so that a record is not hidden in one group of \eqn{k}
+records. The groups are replaced by their means, \code{measure}, \code{trim} and
+\code{weights} are not used. Missing values stay missing and the observed values
+of a variable are grouped among themselves.
+
+With \code{refine = TRUE} the groups of a method are improved by a local search
+before they are aggregated. The variables are standardised and the records are
+visited in turn. A record is moved to another group, or it changes places with a
+record of another group, if this lowers the within-group sum of squares; of all
+such changes for the record the best one is made. A group never falls below
+\code{aggr} records, and no record is moved into a group that already has
+\eqn{2k - 1} records. The search ends when no move and no swap lowers the sum of
+squares any more. The result is a local optimum, in general not the global one,
+and its information loss is never higher than without the refinement. A local
+search that improves a feasible partition step by step is also the building block
+of the iterated local search of Laszlo and Mukherjee (2015). The refined groups
+are replaced by their unweighted means, whatever \code{measure} and
+\code{weights} are. One pass over the
+records costs \eqn{O(n^2 p)} for \eqn{n} records and \eqn{p} variables. The
+refinement is not available for \sQuote{onedims} and \sQuote{onedimsopt}, for a
+single variable (except with \sQuote{vmdav}) and for data with missing values.
 }
 \note{
 if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored,
-except for method \code{vmdav}, which is also applied to a single variable.
-Parameters \code{measure} are ignored for methods \code{mdav}, \code{vmdav} and \code{rmd}.
+except for the methods \code{vmdav} and \code{onedimsopt}, which are also applied to a single variable.
+Parameters \code{measure} are ignored for methods \code{mdav}, \code{vmdav}, \code{onedimsopt} and \code{rmd}.
 }
 \examples{
 data(testdata)
@@ -167,6 +204,26 @@ mv <- microaggregation(
   gamma = 1.1
 )
 table(table(mv$mx$expend))
+
+## refinement step: the groups of a method are improved by a local search
+mr <- microaggregation(
+  obj = testdata[1:100, c("expend", "income", "savings")],
+  method = "mdav",
+  aggr = 4,
+  refine = TRUE
+)
+# sum of squared differences to the original values, standardised variables
+s <- apply(m$x, 2, sd)
+c(mdav = sum(scale(m$x - m$mx, FALSE, s)^2),
+  refined = sum(scale(mr$x - mr$mx, FALSE, s)^2))
+
+## optimal univariate microaggregation of each variable
+mo <- microaggregation(
+  obj = testdata[1:100, c("expend", "income", "savings")],
+  method = "onedimsopt",
+  aggr = 4
+)
+table(table(mo$mx$expend))
 
 ## for objects of class sdcMicro:
 ## no stratification because `@strataVar` is `NULL`
@@ -191,6 +248,18 @@ sdc <- microaggregation(
 }
 }
 \references{
+Domingo-Ferrer, J. and Mateo-Sanz, J.M., \emph{Practical Data-Oriented
+Microaggregation for Statistical Disclosure Control}, IEEE Transactions on
+Knowledge and Data Engineering, 14 (1), pp. 189-201, 2002.
+
+Hansen, S.L. and Mukherjee, S., \emph{A Polynomial Algorithm for Optimal
+Univariate Microaggregation}, IEEE Transactions on Knowledge and Data
+Engineering, 15 (4), pp. 1043-1044, 2003. \doi{10.1109/TKDE.2003.1209020}
+
+Laszlo, M. and Mukherjee, S., \emph{Iterated Local Search for
+Microaggregation}, Journal of Systems and Software, 100, pp. 15-26, 2015.
+\doi{10.1016/j.jss.2014.10.012}
+
 Solanas, A. and Martinez-Balleste, A., \emph{V-MDAV: A Multivariate
 Microaggregation With Variable Group Size}, in COMPSTAT 2006, Rome, pp. 917-925,
 2006.

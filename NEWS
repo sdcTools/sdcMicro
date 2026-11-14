@@ -1,4 +1,17 @@
 # 5.8.2
+- New method `microaggregation(method = "onedimsopt")`: optimal univariate
+  microaggregation (Hansen and Mukherjee, 2003). Each variable is treated on its own, as
+  with `"onedims"`, but the sorted values are cut into groups of `aggr` to `2 * aggr - 1`
+  values such that the within-group sum of squares is as small as possible; for a single
+  variable no partition into groups of at least `aggr` values loses less information.
+  Runs in O(aggr * n) after sorting, also within strata, with missing values, for a
+  single variable and for `sdcMicroObj` objects.
+- New argument `microaggregation(refine = TRUE)`: the groups found by a method (e.g.
+  `"mdav"`, `"vmdav"`, `"rmd"`, `"pca"`) are improved by a local search that moves and
+  swaps records as long as this lowers the within-group sum of squares of the
+  standardised variables. Groups keep at least `aggr` records and the information loss is
+  never higher than without the refinement. The refined groups are replaced by their
+  means. Default `FALSE`: all results are unchanged unless the argument is set.
 - New method `microaggregation(method = "vmdav")`: V-MDAV, multivariate microaggregation
   with variable group size (Solanas and Martinez-Balleste, 2006) (#311). `aggr` is the
   minimum group size k; a group is extended by nearby records, up to 2k - 1, as long as

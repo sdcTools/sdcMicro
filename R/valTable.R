@@ -52,7 +52,7 @@ valTable <- function(x, method = c("simple", "onedims", "clustpppca", "addNoise:
   for (i in 1:length(method)) {
     message("method ", i, "|", length(method), ": ", shQuote(method[i]))
     message("--> compute results")
-    if (method[i] %in% c("simple", "single", "onedims", "pca", "pppca", "clustpca",
+    if (method[i] %in% c("simple", "single", "onedims", "onedimsopt", "pca", "pppca", "clustpca",
                          "clustpppca", "mdav", "vmdav", "influence", "rmd", "clustmcdpca", "mcdpca")) {
       m[[i]] <- microaggregation(
           obj = x,
