@@ -5,13 +5,17 @@
   values such that the within-group sum of squares is as small as possible; for a single
   variable no partition into groups of at least `aggr` values loses less information.
   Runs in O(aggr * n) after sorting, also within strata, with missing values, for a
-  single variable and for `sdcMicroObj` objects.
+  single variable and for `sdcMicroObj` objects. `sdcApp()` offers the method on the
+  microaggregation page.
 - New argument `microaggregation(refine = TRUE)`: the groups found by a method (e.g.
   `"mdav"`, `"vmdav"`, `"rmd"`, `"pca"`) are improved by a local search that moves and
   swaps records as long as this lowers the within-group sum of squares of the
   standardised variables. Groups keep at least `aggr` records and the information loss is
   never higher than without the refinement. The refined groups are replaced by their
   means. Default `FALSE`: all results are unchanged unless the argument is set.
+  `sdcApp()` offers the refinement as a yes/no choice on the microaggregation page. The
+  prompts and the tool description of `AI_applyAnonymization()` know `"onedimsopt"` and
+  `refine`.
 - New method `microaggregation(method = "vmdav")`: V-MDAV, multivariate microaggregation
   with variable group size (Solanas and Martinez-Balleste, 2006) (#311). `aggr` is the
   minimum group size k; a group is extended by nearby records, up to 2k - 1, as long as
@@ -119,6 +123,10 @@
   * added Unit-Tests for `ldiversity()`
 - Fixing some Header-Definitions for CRAN-Compliance
 - Updated Unit-Tests for `pram()`
+- Bugfix `sdcApp()`: the session froze if the active entry of a sidebar menu was clicked
+  (e.g. "Show summary" after a method had been applied) and then another entry. The
+  observers of the menu buttons fired when they were created and set the selection in
+  turn without end.
 - `sdcApp()`: no JavaScript error `e.indexOf is not a function` any more when the app is
   loaded. A handler in `ihsn-style.js` used `.load()`, which jQuery 3 no longer provides.
 - `AI_applyAnonymization()`: the prompts and the tool description know

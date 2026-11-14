@@ -119,7 +119,7 @@ output$ui_microaggregation <- renderUI({
     if (input$rb_microagg_cluster=="Yes") {
       return(c("influence", "clustpca", "clustmcdpca", "clustpppca"))
     } else {
-      return(c("mdav", "vmdav", "rmd", "simple", "single","onedims", "pca", "mcdpca", "pppca"))
+      return(c("mdav", "vmdav", "rmd", "simple", "single","onedims", "onedimsopt", "pca", "mcdpca", "pppca"))
     }
   })
 
@@ -178,6 +178,7 @@ output$ui_microaggregation <- renderUI({
     txt <- paste(txt, "<strong>simple</strong> - groups are formed on the unsorted data (for testing purposes only)<br />")
     txt <- paste(txt, "<strong>single</strong> - grouping is based on sorting the data on a single variable in ascending or descending order and all records are sorted based on this variable, the sorting variable can be selected<br />")
     txt <- paste(txt, "<strong>onedims</strong> - individual ranking method, each variable is sorted and grouped individually, univariate statistics are preserved, but multivariate statistics are severely affected<br />")
+    txt <- paste(txt, "<strong>onedimsopt</strong> - see onedims, but the sorted values of each variable are cut into groups of variable size such that the information loss is as small as possible (optimal univariate microaggregation); the aggregation level is the minimum group size<br />")
     txt <- paste(txt, "<strong>pca</strong> - grouping is based on principal component analysis where the records are sorted and grouped based on the first principal component<br />")
     txt <- paste(txt, "<strong>mdcpca</strong> - see pca, before computing the principal components, the data is scaled by the mean and standard deviations (of the good part of the data) <br />")
     txt <- paste(txt, "<strong>pppca</strong> - see pca, using a robust pca method<br /><br />")
@@ -203,7 +204,7 @@ output$ui_microaggregation <- renderUI({
       selected=input$sel_microagg_v, width="100%", multiple=TRUE)
   })
   output$ui_microagg_agglevel <- renderUI({
-    txt_tooltip <- "Specifies the group size. For method vmdav this is the minimum group size, groups can be larger."
+    txt_tooltip <- "Specifies the group size. For the methods vmdav and onedimsopt this is the minimum group size, groups can be larger."
     sliderInput("sl_microagg_aggr",
       label=p("Aggregation-level", tipify(icon("circle-info"), title=txt_tooltip, placement="top")),
       min=1, max=15, step=1, value=3, width="100%")
@@ -221,6 +222,23 @@ output$ui_microaggregation <- renderUI({
     sliderInput("sl_microagg_gamma",
       label=p("Gain factor (gamma)", tipify(icon("circle-info"), title=txt_tooltip, placement="top")),
       min=0, max=2, step=0.1, value=val, width="100%")
+  })
+  # refinement step: offered for all methods that form common groups for the
+  # variables; for a single variable (except with vmdav) only a hint is shown
+  output$ui_microagg_refine <- renderUI({
+    if (!microagg_refine_ok()) {
+      return(helpText("The refinement of the groups is not available for a single variable. Method onedimsopt gives the optimal groups in that case."))
+    }
+    txt_tooltip <- "After the method has formed the groups, a local search moves and swaps records between the groups as long as this lowers the information loss (within-group sum of squares of the standardised variables). The groups keep at least the aggregation level and the information loss is never higher than without the refinement.<br />"
+    txt_tooltip <- paste(txt_tooltip, "The refined groups are replaced by their means, whatever aggregation statistic is selected.<br />")
+    txt_tooltip <- paste(txt_tooltip, "The run takes longer: the time grows quadratically with the number of records. Not available for data with missing values in the variables.")
+    sel <- isolate(input$rb_microagg_refine)
+    if (is.null(sel)) {
+      sel <- "No"
+    }
+    radioButtons("rb_microagg_refine",
+      label=p("Refine the groups by a local search?", tipify(icon("circle-info"), title=txt_tooltip, placement="top")),
+      choices=c("No","Yes"), selected=sel, inline=TRUE, width="100%")
   })
   output$ui_microagg_aggmeasures <- renderUI({
     txt_tooltip <- "Specifies the group statistic that replaces all values in a group.  The default is the mean, but other measures of location can be used, especially when the group size for aggregation is larger than 3.<br />"
@@ -256,18 +274,26 @@ output$ui_microaggregation <- renderUI({
   # influence, clustpca, clustmcdpca, clustpppca: --> aggr, measure, trim, clustermethod, transf, nc
   # rmd, mdav: aggr,
   # vmdav: aggr, gamma
+  # onedimsopt: aggr
+  # all but onedims and onedimsopt: refine
   if ( !is.null(input$sel_microagg_method) ) {
     if (input$sel_microagg_method=="vmdav") {
       out <- list(out, fluidRow(
+        column(3, uiOutput("ui_microagg_agglevel"), align="center"),
+        column(3, uiOutput("ui_microagg_gamma"), align="center"),
+        column(3, uiOutput("ui_microagg_refine"), align="center"),
+        column(3, uiOutput("ui_microagg_vars"), align="center")))
+    } else if (!input$sel_microagg_method %in% c("onedims","onedimsopt")) {
+      out <- list(out, fluidRow(
         column(4, uiOutput("ui_microagg_agglevel"), align="center"),
-        column(4, uiOutput("ui_microagg_gamma"), align="center"),
+        column(4, uiOutput("ui_microagg_refine"), align="center"),
         column(4, uiOutput("ui_microagg_vars"), align="center")))
     } else {
       out <- list(out, fluidRow(
         column(6, uiOutput("ui_microagg_agglevel"), align="center"),
         column(6, uiOutput("ui_microagg_vars"), align="center")))
     }
-    if (!input$sel_microagg_method %in% c("mdav","rmd","vmdav")) {
+    if (!input$sel_microagg_method %in% c("mdav","rmd","vmdav","onedimsopt")) {
       if (input$sel_microagg_method=="single") {
         out <- list(out, fluidRow(
           column(4, uiOutput("ui_microagg_aggmeasures"), align="center"),
