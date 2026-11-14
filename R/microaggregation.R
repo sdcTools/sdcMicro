@@ -70,6 +70,38 @@
 #' missing values stay missing. The method needs no distance matrix, but its
 #' running time grows quadratically with the number of records.
 #'
+#' Method \sQuote{onedimsopt} is optimal univariate microaggregation (Hansen and
+#' Mukherjee, 2003). Like \sQuote{onedims} it treats each variable on its own. Instead
+#' of cutting the sorted values into groups of exactly \code{aggr} values, it finds
+#' the partition into groups of at least \code{aggr} values (\eqn{k}) with the smallest
+#' within-group sum of squares. Such a partition consists of groups of \eqn{k} to
+#' \eqn{2k - 1} neighbours in the sorted values (Domingo-Ferrer and Mateo-Sanz, 2002)
+#' and corresponds to a shortest path, which is found by dynamic programming in
+#' \eqn{O(kn)} after sorting. For a single variable no partition into groups of at
+#' least \eqn{k} values loses less information. For several variables the result is
+#' the best individual ranking; as with \sQuote{onedims} the groups differ from
+#' variable to variable, so that a record is not hidden in one group of \eqn{k}
+#' records. The groups are replaced by their means, \code{measure}, \code{trim} and
+#' \code{weights} are not used. Missing values stay missing and the observed values
+#' of a variable are grouped among themselves.
+#'
+#' With \code{refine = TRUE} the groups of a method are improved by a local search
+#' before they are aggregated. The variables are standardised and the records are
+#' visited in turn. A record is moved to another group, or it changes places with a
+#' record of another group, if this lowers the within-group sum of squares; of all
+#' such changes for the record the best one is made. A group never falls below
+#' \code{aggr} records, and no record is moved into a group that already has
+#' \eqn{2k - 1} records. The search ends when no move and no swap lowers the sum of
+#' squares any more. The result is a local optimum, in general not the global one,
+#' and its information loss is never higher than without the refinement. A local
+#' search that improves a feasible partition step by step is also the building block
+#' of the iterated local search of Laszlo and Mukherjee (2015). The refined groups
+#' are replaced by their unweighted means, whatever \code{measure} and
+#' \code{weights} are. One pass over the
+#' records costs \eqn{O(n^2 p)} for \eqn{n} records and \eqn{p} variables. The
+#' refinement is not available for \sQuote{onedims} and \sQuote{onedimsopt}, for a
+#' single variable (except with \sQuote{vmdav}) and for data with missing values.
+#'
 #' @name microaggregation
 #' @docType methods
 #' @param obj either an object of class \code{\link{sdcMicroObj-class}} or a \code{data.frame}
@@ -81,7 +113,7 @@
 #' within strata defined by the variables. For \code{\link{sdcMicroObj-class}}-objects, the
 #' stratification-variable defined in slot \code{@strataVar} is used. This slot can be changed any
 #' time using \code{strataVar<-}.
-#' @param method pca, rmd, onedims, single, simple, clustpca, pppca,
+#' @param method pca, rmd, onedims, onedimsopt, single, simple, clustpca, pppca,
 #' clustpppca, mdav, vmdav, clustmcdpca, influence, mcdpca
 #' @param nc number of cluster, if the chosen method performs cluster analysis
 #' @param weights sampling weights. If obj is of class sdcMicroObj the vector
@@ -96,6 +128,9 @@
 #' @param gamma gain factor of method \sQuote{vmdav} (a single non-negative number,
 #' default 0.2), ignored by all other methods. The larger \code{gamma}, the more
 #' readily a group is extended beyond \code{aggr} records; see Details.
+#' @param refine logical (default \code{FALSE}). If \code{TRUE}, the groups found by
+#' the method are improved by a local search (moving and swapping records) before
+#' they are aggregated; see Details.
 #' @return If \sQuote{obj} was of class \code{\link{sdcMicroObj-class}} the corresponding
 #' slots are filled, like manipNumVars, risk and utility. If \sQuote{obj} was
 #' of class \dQuote{data.frame}, an object of class \dQuote{micro} with following entities is returned:
@@ -106,8 +141,8 @@
 #' \item{\code{aggr}: }{aggregation level}
 #' \item{\code{measure}: }{proximity measure for aggregation}}
 #' @note if only one variable is specified, \code{\link{mafast}} is applied and argument \code{method} is ignored,
-#' except for method \code{vmdav}, which is also applied to a single variable.
-#' Parameters \code{measure} are ignored for methods \code{mdav}, \code{vmdav} and \code{rmd}.
+#' except for the methods \code{vmdav} and \code{onedimsopt}, which are also applied to a single variable.
+#' Parameters \code{measure} are ignored for methods \code{mdav}, \code{vmdav}, \code{onedimsopt} and \code{rmd}.
 #' @author Matthias Templ, Bernhard Meindl
 #'
 #' For method \dQuote{mdav}: This work is being supported by the International
@@ -120,6 +155,18 @@
 #' @seealso \code{\link{summary.micro}}, \code{\link{plotMicro}},
 #' \code{\link{valTable}}
 #' @references
+#' Domingo-Ferrer, J. and Mateo-Sanz, J.M., \emph{Practical Data-Oriented
+#' Microaggregation for Statistical Disclosure Control}, IEEE Transactions on
+#' Knowledge and Data Engineering, 14 (1), pp. 189-201, 2002.
+#'
+#' Hansen, S.L. and Mukherjee, S., \emph{A Polynomial Algorithm for Optimal
+#' Univariate Microaggregation}, IEEE Transactions on Knowledge and Data
+#' Engineering, 15 (4), pp. 1043-1044, 2003. \doi{10.1109/TKDE.2003.1209020}
+#'
+#' Laszlo, M. and Mukherjee, S., \emph{Iterated Local Search for
+#' Microaggregation}, Journal of Systems and Software, 100, pp. 15-26, 2015.
+#' \doi{10.1016/j.jss.2014.10.012}
+#'
 #' Solanas, A. and Martinez-Balleste, A., \emph{V-MDAV: A Multivariate
 #' Microaggregation With Variable Group Size}, in COMPSTAT 2006, Rome, pp. 917-925,
 #' 2006.
@@ -168,6 +215,26 @@
 #' )
 #' table(table(mv$mx$expend))
 #'
+#' ## refinement step: the groups of a method are improved by a local search
+#' mr <- microaggregation(
+#'   obj = testdata[1:100, c("expend", "income", "savings")],
+#'   method = "mdav",
+#'   aggr = 4,
+#'   refine = TRUE
+#' )
+#' # sum of squared differences to the original values, standardised variables
+#' s <- apply(m$x, 2, sd)
+#' c(mdav = sum(scale(m$x - m$mx, FALSE, s)^2),
+#'   refined = sum(scale(mr$x - mr$mx, FALSE, s)^2))
+#'
+#' ## optimal univariate microaggregation of each variable
+#' mo <- microaggregation(
+#'   obj = testdata[1:100, c("expend", "income", "savings")],
+#'   method = "onedimsopt",
+#'   aggr = 4
+#' )
+#' table(table(mo$mx$expend))
+#'
 #' ## for objects of class sdcMicro:
 #' ## no stratification because `@strataVar` is `NULL`
 #' data(testdata2)
@@ -191,25 +258,25 @@
 #' }
 microaggregation <- function(obj, variables=NULL, aggr=3, strata_variables=NULL,
   method="mdav", weights=NULL, nc=8, clustermethod="clara",
-  measure="mean", trim=0, varsort=1, transf="log", gamma=0.2) {
+  measure="mean", trim=0, varsort=1, transf="log", gamma=0.2, refine=FALSE) {
 
   if (!is.data.frame(obj) & !is.null(strata_variables)) {
     message("Argument 'strata_variables' is ignored. Only variables specified in slot 'strataVar' (if any) of the input object are used!\n")
   }
   microaggregationX(obj=obj, variables=variables, aggr=aggr, strata_variables=strata_variables,
     method=method, weights=weights, nc=nc, clustermethod=clustermethod,
-    measure=measure, trim=trim, varsort=varsort, transf=transf, gamma=gamma)
+    measure=measure, trim=trim, varsort=varsort, transf=transf, gamma=gamma, refine=refine)
 }
 
 setGeneric("microaggregationX", function(obj, variables=NULL, aggr=3, strata_variables=NULL,
   method="mdav", weights=NULL, nc=8, clustermethod="clara",
-  measure="mean", trim=0, varsort=1, transf="log", gamma=0.2) {
+  measure="mean", trim=0, varsort=1, transf="log", gamma=0.2, refine=FALSE) {
   standardGeneric("microaggregationX")
 })
 
 setMethod(f="microaggregationX", signature=c("sdcMicroObj"), definition=function(obj,
   variables=NULL, aggr=3, method="mdav", nc=8, clustermethod="clara",
-  measure="mean", trim=0, varsort=1, transf="log", gamma=0.2) {
+  measure="mean", trim=0, varsort=1, transf="log", gamma=0.2, refine=FALSE) {
 
   x <- get.sdcMicroObj(obj, type="manipNumVars")
   if (is.null(variables)) {
@@ -232,7 +299,7 @@ setMethod(f="microaggregationX", signature=c("sdcMicroObj"), definition=function
   }
   res <- microaggregationWORK(x, variables=variables, aggr=aggr, strata_variables=strataVars,
     method=method, weights=weights, nc=nc, clustermethod=clustermethod,
-    measure=measure, trim=trim, varsort=varsort, transf=transf, gamma=gamma)
+    measure=measure, trim=trim, varsort=varsort, transf=transf, gamma=gamma, refine=refine)
   obj <- nextSdcObj(obj)
   x[, variables] <- res$mx[, variables]
 
@@ -246,19 +313,19 @@ setMethod(f="microaggregationX", signature=c("sdcMicroObj"), definition=function
 setMethod(f="microaggregationX", signature=c("data.frame"), definition=function(obj,
   variables=NULL, aggr=3, strata_variables=NULL, method="mdav", weights=NULL,
   nc=8, clustermethod="clara", measure="mean", trim=0, varsort=1,
-  transf="log", gamma=0.2) {
+  transf="log", gamma=0.2, refine=FALSE) {
 
   if (is.null(variables)) {
     variables <- colnames(obj)
   }
   microaggregationWORK(x=obj, variables=variables, aggr=aggr, strata_variables=strata_variables,
     method=method, weights=weights, nc=nc, clustermethod=clustermethod,
-    measure=measure, trim=trim, varsort=varsort, transf=transf, gamma=gamma)
+    measure=measure, trim=trim, varsort=varsort, transf=transf, gamma=gamma, refine=refine)
 })
 
 microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3,
   weights=NULL, nc=8, clustermethod="clara", measure="mean",
-  trim=0, varsort=1, transf="log", strata_variables=NULL, gamma=0.2) {
+  trim=0, varsort=1, transf="log", strata_variables=NULL, gamma=0.2, refine=FALSE) {
 
   ## helper-functions used in several micro_xxx() functions
   factorOfTotals <- function(x, aggr) {
@@ -802,21 +869,100 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
       varsort=NULL, transf=NULL, blowup=FALSE, blowxm=resX, fot=0))
   }
 
-  stopifnot(method %in% c("simple", "single", "onedims", "pca", "mcdpca", "pppca",
-    "clustmcdpca", "clustpppca", "clustpca", "rmd", "mdav", "vmdav", "influence"))
+  # optimal univariate microaggregation (Hansen and Mukherjee, 2003), applied
+  # to each variable separately; group means
+  micro_onedimsopt <- function(x, aggr) {
+    resX <- x
+    for (j in seq_len(ncol(x))) {
+      v <- x[[j]]
+      if (!is.numeric(v)) {
+        stop("method 'onedimsopt' needs numeric variables.")
+      }
+      ok <- !is.na(v)
+      if (sum(ok) < aggr) {
+        stop("method 'onedimsopt' needs at least 'aggr' (", aggr, ") observed values",
+          " in each variable", if (!is.null(strata_variables)) " and stratum",
+          ", found ", sum(ok), " in ", sQuote(colnames(x)[j]), ".")
+      }
+      v <- as.numeric(v)
+      v[ok] <- stats::ave(v[ok], onedimsopt_partition(v[ok], k=aggr))
+      resX[[j]] <- v
+    }
+    return(list(x=x, method="onedimsopt", clustering=FALSE, aggr=aggr, nc=NULL,
+      xm=NULL, roundxm=NULL, clustermethod=NULL, measure="mean", trim=NULL,
+      varsort=NULL, transf=NULL, blowup=FALSE, blowxm=resX, fot=0))
+  }
+
+  # refinement step: recover the groups from the aggregated values 'blowxm',
+  # improve them by local search on the standardised variables and replace
+  # each group by its means
+  micro_refine <- function(x, res, aggr) {
+    xm <- as.matrix(x)
+    if (!is.numeric(xm)) {
+      stop("'refine' needs numeric variables.")
+    }
+    if (anyNA(xm)) {
+      stop("'refine' is not available for data with missing values in the variables.")
+    }
+    storage.mode(xm) <- "double"
+    bx <- as.data.frame(res$blowxm)
+    if (!is.null(rownames(res$blowxm))) {
+      bx <- bx[match(rownames(x), rownames(res$blowxm)), , drop=FALSE]
+    }
+    key <- do.call(paste, c(unname(bx), sep="\r"))
+    g <- match(key, unique(key))
+    if (anyNA(bx) || any(tabulate(g) < aggr)) {
+      stop("'refine': the groups of method ", sQuote(method), " could not be recovered.")
+    }
+    csd <- apply(xm, 2, stats::sd)
+    csd[is.na(csd) | csd == 0] <- 1 # constant variables do not contribute
+    xs <- sweep(sweep(xm, 2, colMeans(xm), "-"), 2, csd, "/")
+    g <- microagg_refine(xs, group=g, k=aggr)
+    gm <- rowsum(xm, g, reorder=TRUE) / tabulate(g)
+    gm <- gm[g, , drop=FALSE]
+    resX <- x
+    for (j in seq_len(ncol(resX))) {
+      resX[[j]] <- gm[, j]
+    }
+    res$blowxm <- resX
+    res$measure <- "mean"
+    res
+  }
+
+  stopifnot(method %in% c("simple", "single", "onedims", "onedimsopt", "pca", "mcdpca",
+    "pppca", "clustmcdpca", "clustpppca", "clustpca", "rmd", "mdav", "vmdav", "influence"))
   if (method == "vmdav") {
     if (!is.numeric(gamma) || length(gamma) != 1 || is.na(gamma) || gamma < 0) {
       stop("'gamma' must be a single non-negative number.")
     }
+  }
+  if (method %in% c("vmdav", "onedimsopt")) {
     if (!is.numeric(aggr) || length(aggr) != 1 || is.na(aggr) || aggr < 1) {
       stop("'aggr' must be a single positive number.")
+    }
+  }
+  if (!is.logical(refine) || length(refine) != 1 || is.na(refine)) {
+    stop("'refine' must be TRUE or FALSE.")
+  }
+  if (refine) {
+    if (method == "onedims") {
+      stop("'refine' is not available for method 'onedims', which forms the groups",
+        " for each variable separately; see method 'onedimsopt'.")
+    }
+    if (method == "onedimsopt") {
+      stop("'refine' is not available for method 'onedimsopt', which is already",
+        " optimal for each variable.")
+    }
+    if (length(variables) == 1 && method != "vmdav") {
+      stop("'refine' is not available for a single variable; method 'onedimsopt'",
+        " gives the optimal groups in that case.")
     }
   }
   rownames(x) <- 1:nrow(x)
 
   # a single variable: mafast() forms groups of fixed size, so it cannot stand
-  # in for 'vmdav'
-  if (length(variables) == 1 && method != "vmdav") {
+  # in for 'vmdav' and 'onedimsopt'
+  if (length(variables) == 1 && !method %in% c("vmdav", "onedimsopt")) {
     res <- list()
     res$mx <- mafast(x, variables=variables, by=strata_variables, aggr=aggr,
       measure=eval(parse(text=measure)))
@@ -888,6 +1034,12 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
     if (method == "vmdav") {
       res <- micro_vmdav(x, aggr=aggr, gamma=gamma)
     }
+    if (method == "onedimsopt") {
+      res <- micro_onedimsopt(x, aggr=aggr)
+    }
+    if (refine) {
+      res <- micro_refine(x, res=res, aggr=aggr)
+    }
     res$fot <- factorOfTotals(x, aggr)
     reslist[[spind]] <- res
   }
@@ -905,7 +1057,7 @@ microaggregationWORK <- function(x, variables=colnames(x), method="mdav", aggr=3
     res$fot <- fot
   }
 
-  # drop=FALSE: 'vmdav' is also applied to a single variable
+  # drop=FALSE: 'vmdav' and 'onedimsopt' are also applied to a single variable
   res$x <- res$x[order(as.numeric(rownames(res$x))), , drop=FALSE]
   res$blowxm <- res$blowxm[order(as.numeric(rownames(res$blowxm))), , drop=FALSE]
   res$blowxm <- res$blowxm[1:nrow(xall), , drop=FALSE]
@@ -1244,4 +1396,173 @@ summary.micro <- function(object, ...) {
     risk2 = risk2,
     wrisk1 = wrisk1,
     wrisk2 = wrisk2)
+}
+
+# Optimal univariate microaggregation (Hansen and Mukherjee, 2003).
+#
+# x  numeric vector without missing values
+# k  minimum group size
+#
+# Returns an integer vector with the group of each value; the groups are
+# numbered along the sorted values. The partition minimises the within-group
+# sum of squares among all partitions into groups of at least k values.
+#
+# An optimal partition consists of groups that are contiguous in the sorted
+# values, and no group needs more than 2k - 1 values (Domingo-Ferrer and
+# Mateo-Sanz, 2002). It is therefore a shortest path from node 0 to node n in
+# the graph with an arc (i, j) for k <= j - i <= 2k - 1, whose length is the
+# sum of squares of the sorted values i + 1, ..., j. The path is found by
+# dynamic programming in O(k n) after sorting. Ties between paths are broken
+# in favour of the larger last group.
+#
+# The sums of squares come from cumulative sums of the standardised values,
+# which keeps them accurate for large values with a small spread.
+onedimsopt_partition <- function(x, k) {
+  n <- length(x)
+  k <- as.integer(k)
+  stopifnot(is.numeric(x), !anyNA(x), k >= 1, n >= k)
+  s <- stats::sd(x)
+  if (n < 2L * k || is.na(s) || s == 0) {
+    return(rep(1L, n)) # a single group is the only, or an optimal, partition
+  }
+  o <- order(x)
+  z <- (as.numeric(x[o]) - mean(x)) / s
+  c1 <- c(0, cumsum(z))
+  c2 <- c(0, cumsum(z * z))
+  cost <- c(0, rep(Inf, n)) # cost[j + 1]: smallest sum of squares for the first j values
+  pred <- integer(n + 1L)
+  for (j in k:n) {
+    i <- max(0L, j - 2L * k + 1L):(j - k)
+    d <- c1[j + 1L] - c1[i + 1L]
+    val <- cost[i + 1L] + pmax(0, c2[j + 1L] - c2[i + 1L] - d * d / (j - i))
+    b <- which.min(val)
+    cost[j + 1L] <- val[b]
+    pred[j + 1L] <- i[b]
+  }
+  gs <- integer(n)
+  j <- n
+  g <- 0L
+  while (j > 0L) {
+    i <- pred[j + 1L]
+    g <- g + 1L
+    gs[(i + 1L):j] <- g
+    j <- i
+  }
+  group <- integer(n)
+  group[o] <- g + 1L - gs
+  group
+}
+
+# Refinement of a microaggregation partition by local search.
+#
+# x      numeric matrix without missing values, used as it is (no standardisation)
+# group  group of each record; all groups have at least k records
+# k      minimum group size
+# maxit  maximum number of sweeps over the records
+#
+# Returns an integer vector with the refined group of each record. The
+# within-group sum of squares (SSE) of the result is never larger than that of
+# 'group', and all groups keep at least k records.
+#
+# In a sweep the records are visited in their order. For record i of group A
+# two kinds of changes are evaluated:
+# - move:  i goes to another group B. Allowed if A keeps at least k records
+#          and B has fewer than 2k - 1 (larger groups are never needed,
+#          Domingo-Ferrer and Mateo-Sanz, 2002).
+#          delta = |B| / (|B| + 1) d(i, c_B)^2 - |A| / (|A| - 1) d(i, c_A)^2
+# - swap:  i changes places with a record j of another group B; the group
+#          sizes do not change.
+#          delta = d(j, c_A)^2 - d(i, c_A)^2 + d(i, c_B)^2 - d(j, c_B)^2 -
+#                  d(i, j)^2 (1 / |A| + 1 / |B|)
+# with the centroids c before the change. The change with the smallest delta
+# is carried out at once if it lowers the SSE, which is checked on the two
+# groups themselves. The sweeps end when one of them changes nothing: no move
+# and no swap improves the partition any more (a local optimum). One sweep
+# costs O(n^2 p).
+microagg_refine <- function(x, group, k, maxit=100L) {
+  x <- as.matrix(x)
+  n <- nrow(x)
+  k <- as.integer(k)
+  stopifnot(is.numeric(x), !anyNA(x), length(group) == n, k >= 1)
+  g <- match(group, unique(group))
+  G <- max(g)
+  size <- tabulate(g, G)
+  stopifnot(all(size >= k))
+  if (G < 2L) {
+    return(g)
+  }
+  eps <- 1e-10
+  cap <- 2L * k - 1L
+  cen <- rowsum(x, g, reorder=TRUE) / size
+  r <- rowSums(x * x)
+  own <- rowSums((x - cen[g, , drop=FALSE])^2) # squared distance to the own centroid
+  ss <- function(m) sum(sweep(m, 2, colMeans(m))^2)
+  converged <- FALSE
+  for (it in seq_len(maxit)) {
+    changed <- FALSE
+    for (i in seq_len(n)) {
+      A <- g[i]
+      a <- size[A]
+      xi <- x[i, ]
+      dic <- rowSums((cen - rep(xi, each=G))^2) # record i to all centroids
+      best <- -eps
+      act <- 0L
+      if (a > k) {
+        dm <- size / (size + 1) * dic - a / (a - 1) * dic[A]
+        dm[A] <- Inf
+        dm[size >= cap] <- Inf
+        b <- which.min(dm)
+        if (dm[b] < best) {
+          best <- dm[b]
+          act <- 1L
+          B <- b
+        }
+      }
+      pr <- x %*% cbind(xi, cen[A, ])
+      dij <- r + r[i] - 2 * pr[, 1]
+      djA <- r + sum(cen[A, ]^2) - 2 * pr[, 2]
+      ds <- djA - dic[A] + dic[g] - own - dij * (1 / a + 1 / size[g])
+      ds[g == A] <- Inf
+      j <- which.min(ds)
+      if (ds[j] < best) {
+        act <- 2L
+        B <- g[j]
+      }
+      if (act == 0L) {
+        next
+      }
+      iA <- which(g == A)
+      iB <- which(g == B)
+      if (act == 1L) {
+        nA <- iA[iA != i]
+        nB <- c(iB, i)
+      } else {
+        nA <- c(iA[iA != i], j)
+        nB <- c(iB[iB != j], i)
+      }
+      # the deltas above are computed with rounding error: confirm on the groups
+      if (ss(x[nA, , drop=FALSE]) + ss(x[nB, , drop=FALSE]) >=
+          ss(x[iA, , drop=FALSE]) + ss(x[iB, , drop=FALSE]) - eps) {
+        next
+      }
+      g[nA] <- A
+      g[nB] <- B
+      size[A] <- length(nA)
+      size[B] <- length(nB)
+      cen[A, ] <- colMeans(x[nA, , drop=FALSE])
+      cen[B, ] <- colMeans(x[nB, , drop=FALSE])
+      own[nA] <- rowSums((x[nA, , drop=FALSE] - rep(cen[A, ], each=length(nA)))^2)
+      own[nB] <- rowSums((x[nB, , drop=FALSE] - rep(cen[B, ], each=length(nB)))^2)
+      changed <- TRUE
+    }
+    if (!changed) {
+      converged <- TRUE
+      break
+    }
+  }
+  if (!converged) {
+    warning("microaggregation: the refinement step stopped after ", maxit,
+      " sweeps without reaching a local optimum.")
+  }
+  g
 }
