@@ -165,6 +165,11 @@ fixUploadedFilesNames <- function(x) {
   x
 }
 
+# The observers are created whenever the menu is rendered. ignoreInit=TRUE: an
+# observer must not fire when it is created. Otherwise two buttons with a
+# non-zero value (the active entry was clicked, then another one) make the new
+# observers of each rendering set the selection in turn, which triggers the next
+# rendering, and the session never returns.
 genObserver_menus <- function(pat="btn_results_", n=1, updateVal) {
   res <- paste0('observeEvent(input$',pat,n,', {
     curid <- "',pat,n,'"
@@ -176,7 +181,7 @@ genObserver_menus <- function(pat="btn_results_", n=1, updateVal) {
     }
     obj$',updateVal,' <- "',pat,n,'"
     updateButton(session, curid, style="primary")
-  });
+  }, ignoreInit=TRUE);
   ')
   res
 }
