@@ -19,3 +19,5 @@ ctime.pdf
 ^CLAUDE\.md$
 ^docs/plans$
 ^LICENSE$
+^\.agents$
+^AGENTS\.md$
