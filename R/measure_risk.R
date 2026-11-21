@@ -183,12 +183,11 @@ setMethod(f="measure_riskX", signature=c("sdcMicroObj"),
 setMethod(f="measure_riskX", signature=c("data.frame"),
 definition=function(obj, ...) {
   params <- list(...)
-  if (!is.null(params$alpha)) {
-    alpha <- params$alpha
-  } else {
-    alpha <- 1
+  # alpha is passed on once: it used to be given by name and again within '...'
+  if (is.null(params$alpha)) {
+    params$alpha <- 1
   }
-  measure_riskWORK(data=obj, alpha=alpha, ...)
+  do.call(measure_riskWORK, c(list(data=obj), params))
 })
 
 measure_riskWORK <- function(data, keyVars, w=NULL, missing=-999, hid=NULL, max_global_risk=0.01, fast_hier=TRUE, alpha) {

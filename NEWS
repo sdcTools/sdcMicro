@@ -1,4 +1,17 @@
 # 5.8.3
+- Bugfix `indivRisk()`: a non-integer frequency count with `1 < fk < 2` got the
+  individual risk 0. Such counts arise from `freqCalc()` with `0 < alpha < 1` and
+  missing values in the key variables, so that `measure_risk()` and the risk slots of
+  an `sdcMicroObj` created with `alpha` below 1 were affected as well; the records
+  concerned are among those with the highest risk. Only the cases `fk == 1`,
+  `fk == 2` and `fk > 2` were covered. The risk is now the posterior mean of `1/Fk`
+  under the same negative binomial model, evaluated by numerical integration, which
+  reduces to the closed forms for `fk = 1` and `fk = 2`. With `method = "exact"` the
+  same holds for a non-integer `fk > 2`, where the result was `NaN`. Results for
+  integer `fk`, and hence for `alpha = 1` or data without missing values in the key
+  variables, are unchanged.
+- Bugfix `measure_risk()` for a `data.frame`: the argument `alpha` led to the error
+  "formal argument "alpha" matched by multiple actual arguments".
 - New method `microaggregation(method = "onedimsopt")`: optimal univariate
   microaggregation (Hansen and Mukherjee, 2003). Each variable is treated on its own, as
   with `"onedims"`, but the sorted values are cut into groups of `aggr` to `2 * aggr - 1`
