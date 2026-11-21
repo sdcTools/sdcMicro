@@ -116,6 +116,16 @@ risk.  Further details can be found at the link given below.</p>
     <h2>Details</h2>
     <p>S4 class sdcMicro objects are only supported by function <em>measure_risk</em>
 that also estimates the individual risk with the same method.</p>
+<p>The frequency counts need not be integers: with missing values in the key
+variables and <code>0 &lt; alpha &lt; 1</code>, <code><a href="freqCalc.html">freqCalc</a></code> returns counts
+such as <code>fk = 1.5</code>. For these the risk is the same posterior mean of
+\(1/F_k\) as for integer counts (\(F_k - f_k\) negative binomial with
+size \(f_k\) and probability \(p_k = f_k/F_k\)),
+$$r_k = p_k^{f_k} \int_0^1 t^{f_k - 1} (1 - (1 - p_k) t)^{-f_k} dt,$$
+evaluated numerically. It reduces to the closed forms used for
+\(f_k = 1\) and \(f_k = 2\). Method “approx” uses it for
+non-integer \(f_k &lt; 2\) and keeps its approximation for \(f_k &gt; 2\);
+method “exact” uses it for all non-integer \(f_k\).</p>
     </div>
     <div id="note">
     <h2>Note</h2>
