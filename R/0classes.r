@@ -36,6 +36,7 @@
 #' @importFrom stats cov
 #' @importFrom stats formula
 #' @importFrom stats glm
+#' @importFrom stats integrate
 #' @importFrom stats lm
 #' @importFrom stats mad
 #' @importFrom stats median

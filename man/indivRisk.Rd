@@ -31,6 +31,17 @@ risk.  Further details can be found at the link given below.
 \details{
 S4 class sdcMicro objects are only supported by function \emph{measure_risk}
 that also estimates the individual risk with the same method.
+
+The frequency counts need not be integers: with missing values in the key
+variables and \code{0 < alpha < 1}, \code{\link{freqCalc}} returns counts
+such as \code{fk = 1.5}. For these the risk is the same posterior mean of
+\eqn{1/F_k} as for integer counts (\eqn{F_k - f_k} negative binomial with
+size \eqn{f_k} and probability \eqn{p_k = f_k/F_k}),
+\deqn{r_k = p_k^{f_k} \int_0^1 t^{f_k - 1} (1 - (1 - p_k) t)^{-f_k} dt,}
+evaluated numerically. It reduces to the closed forms used for
+\eqn{f_k = 1} and \eqn{f_k = 2}. Method \dQuote{approx} uses it for
+non-integer \eqn{f_k < 2} and keeps its approximation for \eqn{f_k > 2};
+method \dQuote{exact} uses it for all non-integer \eqn{f_k}.
 }
 \note{
 The base individual risk method was developed by Benedetti,
